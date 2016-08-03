@@ -30,21 +30,16 @@
 
         parse: function (response) {
             if (response.data) {
-                if (response.data.thisWeek) {
-                    _.map(response.data.thisWeek, function (employee) {
+                if (response.data.next7days) {
+                    _.map(response.data.next7days, function (employee) {
                         employee.dueDate = common.utcDateToLocaleDateTime(employee.dueDate);
                         return employee;
                     });
                 }
-                if (response.data.tomorrow) {
-                    _.map(response.data.tomorrow, function (employee) {
-                        employee.dueDate = common.utcDateToLocaleHours(employee.dueDate);
-                        return employee;
-                    });
-                }
+
                 if (response.data.overdue) {
                     _.map(response.data.overdue, function (employee) {
-                        employee.dueDate = common.utcDateToLocaleHours(employee.dueDate);
+                        employee.dueDate = common.utcDateToLocaleDate(employee.dueDate);
                         return employee;
                     });
                 }

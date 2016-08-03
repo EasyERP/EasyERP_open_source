@@ -4,7 +4,7 @@
 <% data.forEach(function(task, index){ %>
 <tr data-index="<%=index%>" data-id="<%= task._id%>"
     class="stage-<%=(task.workflow) ? task.workflow.status.toLowerCase() : ''%>">
-    <td class="centerCell"><input type="checkbox" <%=task.workflow.status === 'Done' ? 'checked' : ''%> value="<%=task._id%>" class="checkbox"/></td>
+    <td class="centerCell"><input type="checkbox" data-sequence="<%= task.sequence%>" <%=task.workflow.status === 'Done' ? 'checked' : ''%> value="<%=task.workflow._id%>" class="checkbox"/></td>
     <td ><span data-color="<%=(task.category) ?task.category.color : ''%>"><%=(task.category) ? task.category.name : ''%></span></td>
     <td><div class="dealTableDescription"><%=task.description%></div></td>
 

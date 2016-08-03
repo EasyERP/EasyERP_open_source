@@ -23,7 +23,7 @@ define([
             'click td:not(:has("input[type="checkbox"]"))': 'goToEditDialog',
             'click .stageSelectType'                      : 'showNewSelectType',
             'click .newSelectList li'                     : 'chooseOption',
-            'click .checkbox '              : 'checked'
+            'mousedown .checkbox'              : 'checked'
         },
 
         initialize: function (options) {
@@ -62,15 +62,21 @@ define([
 
         checked: function (e) {
             var $target = $(e.target);
-            var id = $(e.target).closest('tr').attr('data-id');
+            var id = $target.closest('tr').attr('data-id');
+            var workflow = $(e.target).val();
+            var sequence = $target.attr('data-sequence');
             var model = new CurrentModel({_id : id});
-            e.preventDefault();
 
-            if ($target.attr('checked')=== 'chc'){
+            e.stopPropagation();
+
+            if ($target.prop('checked')){
                 return false;
             }
 
-            model.save({workflow : '5783b351df8b918c31af24ab'},{patch : true, validate: false})
+            model.save({sequenceStart : sequence, workflow : '5783b351df8b918c31af24ab', sequence : -1, workflowStart : workflow},{patch : true, validate: false,
+            success : function(){
+                $target.prop('checked', true);
+            }});
 
         },
 
