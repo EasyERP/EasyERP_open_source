@@ -1,0 +1,45 @@
+.dateListElement {
+  width: 400px;
+}
+
+.dateListElementTitle {
+
+  .count {
+
+  }
+}
+
+.dateListItem {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+
+  .dateListCheckboxWrap {
+    padding: 0 20px;
+    -webkit-flex-shrink: 0;
+    flex-shrink: 0;
+  }
+
+  .dateListBody {
+    -webkit-flex-grow: 1;
+    flex-grow: 1;
+
+    .dateListHeader {
+      &:after {
+        content: '';
+        display: table;
+        clear: both;
+      }
+    }
+
+    .dateListDescription {
+
+    }
+
+    .dateListFooter {
+
+    }
+  }
+}
