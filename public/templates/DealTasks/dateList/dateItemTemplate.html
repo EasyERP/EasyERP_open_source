@@ -1,15 +1,17 @@
-<table id="<%=type%>">
-    <h2><%=type%></h2>
-<% data.forEach(function(task, index){ %>
-<tr data-index="<%=index%>" data-id="<%= task._id%>"
-    class="stage-<%=(task.workflow) ? task.workflow.status.toLowerCase() : ''%>">
-    <td class="centerCell"><input type="checkbox" <%=task.workflow.status === 'Done' ? 'checked' : ''%> value="<%=task._id%>" class="checkbox"/></td>
-    <td ><span data-color="<%=(task.category) ?task.category.color : ''%>"><%=(task.category) ? task.category.name : ''%></span></td>
-    <td><div class="dealTableDescription"><%=task.description%></div></td>
+<div class="dateListWrap">
+    <table id="<%=type%>">
+        <h2><%=type%></h2>
+        <% data.forEach(function(task, index){ %>
+        <tr data-index="<%=index%>" data-id="<%= task._id%>"
+            class="stage-<%=(task.workflow) ? task.workflow.status.toLowerCase() : ''%>">
+            <td class="centerCell"><input type="checkbox" <%=task.workflow.status === 'Done' ? 'checked' : ''%> value="<%=task._id%>" class="checkbox"/></td>
+            <td ><span data-color="<%=(task.category) ?task.category.color : ''%>"><%=(task.category) ? task.category.name : ''%></span></td>
+            <td><div class="dealTableDescription"><%=task.description%></div></td>
 
-    <td><%=(task.assignedTo) ?task.assignedTo.name.first + ' ' + task.assignedTo.name.last : ''%></td>
-    <td><a href="<%=(task.contact) ? '/#easyErp/Persons/form/' + task.contact._id : (task.company) ?'/#easyErp/Companies/form/' + task.company._id : ''%>"><%=(task.contact && task.contact.name) ?  'for ' + task.contact.name.first + ' ' + task.contact.name.last : (task.company && task.company.name) ?  'for ' +  task.company.name.first : ''%></a></td>
-    <td><%=task.dueDate%></td>
-</tr>
-<% }) %>
-</table>
+            <td><%=(task.assignedTo) ?task.assignedTo.name.first + ' ' + task.assignedTo.name.last : ''%></td>
+            <td><a href="<%=(task.contact) ? '/#easyErp/Persons/form/' + task.contact._id : (task.company) ?'/#easyErp/Companies/form/' + task.company._id : ''%>"><%=(task.contact && task.contact.name) ?  'for ' + task.contact.name.first + ' ' + task.contact.name.last : (task.company && task.company.name) ?  'for ' +  task.company.name.first : ''%></a></td>
+            <td><%=task.dueDate%></td>
+        </tr>
+        <% }) %>
+    </table>
+</div>
