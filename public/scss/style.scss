@@ -19,11 +19,12 @@
 
 // General styles
 
-//@import "general/forms";
+@import "general/forms";
 
 
 // Styles for specific modules
 @import "modules/products";
+@import "modules/lists";
 @import "modules/dialog";
 @import "modules/opportunities";
 @import "modules/dashboard";

@@ -1,16 +1,29 @@
-<table id="<%=type%>">
-    <h2><%=type %></h2>
-    <h2><%=data.length%></h2>
-<% data.forEach(function(task, index){ %>
-<tr data-index="<%=index%>" data-id="<%= task._id%>"
-    class="stage-<%=(task.workflow) ? task.workflow.status.toLowerCase() : ''%>">
-    <td class="centerCell"><input type="checkbox" <%=task.workflow.status === 'Done' ? 'checked' : ''%> value="<%=task._id%>" class="checkbox"/></td>
-    <td ><span data-color="<%=(task.category) ?task.category.color : ''%>"><%=(task.category) ? task.category.name : ''%></span></td>
-    <td><div class="dealTableDescription"><%=task.description%></div></td>
+<div id="<%=type%>" class="dateListElement">
+    <span class="dateListElementTitle"><%=type %><span class="count"><%=data.length%></span></span>
+    <% data.forEach(function(task, index){ %>
+    <div data-index="<%=index%>" data-id="<%= task._id%>" class="stage-<%=(task.workflow) ? task.workflow.status.toLowerCase() : ''%> dateListItem">
+        <div class="dateListCheckboxWrap">
+            <label class="_customCHeckbox">
+                <input type="checkbox" <%=task.workflow.status === 'Done' ? 'checked' : ''%> value="<%=task._id%>" class="checkbox"/>
+                <span></span>
+            </label>
+        </div>
+        <div class="dateListBody">
+            <div class="dateListHeader">
+                <span data-color="<%=(task.category) ?task.category.color : ''%>" class="_tagSmall"><%=(task.category) ? task.category.name : ''%></span>
+            </div>
 
-    <td><%=(task.assignedTo) ?task.assignedTo.name.first + ' ' + task.assignedTo.name.last : ''%></td>
-    <td><a href="<%=(task.contact) ? '/#easyErp/Persons/form/' + task.contact._id : (task.company) ?'/#easyErp/Companies/form/' + task.company._id : ''%>"><%=(task.contact && task.contact.name) ?  'for ' + task.contact.name.first + ' ' + task.contact.name.last : (task.company && task.company.name) ?  'for ' +  task.company.name.first : ''%></a></td>
-    <td><%=task.dueDate%></td>
-</tr>
-<% }) %>
-</table>
+            <div class="dateListDescription"><%=task.description%></div>
+
+            <div class="dateListFooter">
+                <!--<a href="<%=(task.contact) ? '/#easyErp/Persons/form/' + task.contact._id : (task.company) ?'/#easyErp/Companies/form/' + task.company._id : ''%>"><%=(task.contact && task.contact.name) ? task.contact.name.first + ' ' + task.contact.name.last : (task.company && task.company.name) ?  task.company.name.first : ''%></a>-->
+                <span><%=task.dueDate%></span>
+                <% if (task.assignedTo){%>
+                <span class="grey">for</span>
+                <span><%=(task.assignedTo) ?  task.assignedTo.name.first + ' ' + task.assignedTo.name.last : ''%></span>
+                <% }%>
+            </div>
+        </div>
+    </div>
+    <% }) %>
+</div>
