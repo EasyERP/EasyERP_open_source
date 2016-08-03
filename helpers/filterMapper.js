@@ -91,7 +91,7 @@ var FilterMapper = function () {
 
             filterType = filterType && filterType !== '' ? filterType : filterConstantsByName.type || 'ObjectId';
 
-            if (filterName !== 'startDate' || filterName !== 'endDate')  {
+            if (filterValues && (filterName !== 'startDate' || filterName !== 'endDate'))  {
                 filterResObject[filterBackend] = ConvertType(filterValues, filterType);
             }
 

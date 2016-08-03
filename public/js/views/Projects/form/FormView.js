@@ -908,7 +908,8 @@ define([
             var filter = {
                 project: {
                     key  : 'project._id',
-                    value: [_id]
+                    value: [_id],
+                    type : 'ObjectId'
                 }
             };
             dataService.getData('invoices/stats/project', {filter: filter}, function (response) {
