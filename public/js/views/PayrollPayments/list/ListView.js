@@ -102,7 +102,7 @@ define([
             var targetEl = $(e.target);
             var tr = targetEl.closest('tr');
             var id = tr.attr('data-id');
-            var requestedUrl = 'payment/';
+            var requestedUrl = 'payments/';
 
             dataService.getData(requestedUrl, {viewType: 'form', id: id}, function (response) {
                 if (!response.error) {
