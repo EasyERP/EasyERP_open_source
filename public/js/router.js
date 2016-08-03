@@ -492,7 +492,7 @@ define([
 
                 require([contentViewUrl], function (contentView) {
                     var contentview = new contentView({startTime: startTime});
-                    var url = '#easyErp/Profiles';
+                    var url = '#easyErp/import';
 
                     custom.setCurrentVT('list');
 
