@@ -1321,7 +1321,7 @@ define([
             }
         },
 
-        goToKanban: function (contentType, parrentContentId) {
+        goToKanban: function (contentType, parrentContentId, filter) {
             var self = this;
             this.checkLogin(function (success) {
                 if (success) {
@@ -1349,6 +1349,8 @@ define([
                 custom.setCurrentVT('kanban');
                 require([contentViewUrl, topBarViewUrl, collectionUrl], function (contentView, topBarView, workflowsCollection) {
                     var startTime = new Date();
+
+                    App.filtersObject.filter = filter;
 
                     var collection = new workflowsCollection({id: contentType});
 
