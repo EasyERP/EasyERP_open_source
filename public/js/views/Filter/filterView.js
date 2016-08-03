@@ -172,7 +172,7 @@ define([
 
             if (filterView === 'productCategory') {
                 delete App.filtersObject.filter.productCategory;
-                
+
                 self.setDbOnce();
                 self.showFilterIcons(App.filtersObject.filter);
                 this.trigger('categoryRemoved');
@@ -212,7 +212,7 @@ define([
         showHideValues: function (e) {
             var filterGroupContainer = $(e.target).closest('.filterGroup');
 
-            if (this.previousGroupContainer) {
+            if (this.previousGroupContainer && (this.previousGroupContainer.html() !== filterGroupContainer.html())) {
                 this.toggleGroup(this.previousGroupContainer);
             }
 
