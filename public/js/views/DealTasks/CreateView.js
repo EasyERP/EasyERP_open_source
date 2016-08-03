@@ -189,12 +189,14 @@ define([
                 changeYear : true
             });
             this.$el.find('#dueDateHours').spinner({
-                min:0,
-                max:23
+                min:'0',
+                max:'23',
+                numberFormat: "d2"
             });
             this.$el.find('#dueDateMinutes, #dueDateSeconds').spinner({
-                min: 0,
-                max:59
+                min: '0',
+                max:'59',
+                numberFormat: "d2"
             });
 
             this.delegateEvents(this.events);
