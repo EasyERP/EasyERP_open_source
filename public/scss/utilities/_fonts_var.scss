@@ -1,6 +1,6 @@
 // General variables ----
 $serif: sans-serif;
-$font-path: '../fonts/';
+$font-path: '../font/';
 // ----------------------
 
 // Fonts path -----------
@@ -22,18 +22,9 @@ $base-font-file  : (
 $base-font-name  : (
         1: 'OpenSans Light',
         2: 'OpenSans Regular',
-        4: 'OpenSans SemiBold',
-        3: 'OpenSans Bold',
+        3: 'OpenSans SemiBold',
+        4: 'OpenSans Bold',
         5: 'OpenSans ExtraBold'
-);
-// ----------------------
-// Fonts svg id ---------
-$base-font-svg-id  : (
-        1: 'opensans-light',
-        2: 'opensans-regular',
-        3: 'opensans-semibold',
-        4: 'opensans-bold',
-        5: 'opensans-extrabold'
 );
 // ----------------------
 // Fonts weight ---------
@@ -50,15 +41,14 @@ $base-font : (
         'regular'  : 'OpenSans Regular',
         'semibold' : 'OpenSans SemiBold',
         'bold'     : 'OpenSans Bold',
-        'exrtabold': 'OpenSans ExtraBold'
+        'extrabold': 'OpenSans ExtraBold'
 );
-
-
+// ----------------------
 // All fonts array
 $fonts: (
         "base-font"  : $base-font
 );
-
+// ----------------------
 // usage: font("type_of_font", "name_of_font")
 // to avoid to repeating map-get($fonts, ...)
 
@@ -74,12 +64,12 @@ $fonts: (
 }
 
 // Fonts family variables
-$light-font-family : font("base-font", "light"), $serif !default;
-$base-font-family  : font("base-font", "regular"), $serif !default;
-$bold-font-family  : font("base-font", "bold"), $serif !default;
+$light-font-family     : font("base-font", "light"), $serif !default;
+$base-font-family      : font("base-font", "regular"), $serif !default;
 $semibold-font-family  : font("base-font", "semibold"), $serif !default;
-$extrabold-font-family  : font("base-font", "extrabold"), $serif !default;
-
+$bold-font-family      : font("base-font", "bold"), $serif !default;
+$extrabold-font-family : font("base-font", "extrabold"), $serif !default;
+// ----------------------
 // Typography -----------
 @function lineHeight($x, $y) {
   @return $x / $y; // values in px
