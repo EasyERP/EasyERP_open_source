@@ -1,5 +1,6 @@
 <table id="<%=type%>">
-    <h2><%=type%></h2>
+    <h2><%=type %></h2>
+    <h2><%=data.length%></h2>
 <% data.forEach(function(task, index){ %>
 <tr data-index="<%=index%>" data-id="<%= task._id%>"
     class="stage-<%=(task.workflow) ? task.workflow.status.toLowerCase() : ''%>">
