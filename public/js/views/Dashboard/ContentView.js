@@ -325,7 +325,8 @@ define([
         showDatePickers: function (e) {
             var $target = $(e.target);
             this.removeAllChecked();
-            $target.toggleClass('checkedValue');
+
+            this.changeClass($target);
             this.$el.find('.customTime').toggleClass('hidden');
         },
 

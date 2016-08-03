@@ -2511,47 +2511,6 @@ body {
   height: 100%;
   width: 210px;
 }
-.vocationFilter .dateFilter,
-.vocationFilter .dateFilterLeadsByName {
-  width: 200px;
-  top: 8px;
-  left: 0;
-  z-index: 10;
-  background-color: #ffffff;
-}
-.vocationFilter .dateFilter li,
-.vocationFilter .dateFilterLeadsByName li {
-  font-size: 12px;
-  text-align: center;
-  color: #000000;
-}
-.vocationFilter .dateFilter li #startTime,
-.vocationFilter .dateFilterLeadsByName li #startTime,
-.vocationFilter .dateFilter li #endTime,
-.vocationFilter .dateFilterLeadsByName li #endTime {
-  line-height: 24px;
-}
-.vocationFilter .dateFilter .frameDetail label,
-.vocationFilter .dateFilterLeadsByName .frameDetail label {
-  display: inline-block;
-  min-width: 15%;
-  margin-right: 2%;
-  text-align: left;
-}
-.vocationFilter .dateFilter .frameDetail input,
-.vocationFilter .dateFilterLeadsByName .frameDetail input {
-  width: 75%;
-}
-.vocationFilter .dateFilter .customTime label + input[type='text'],
-.vocationFilter .dateFilterLeadsByName .customTime label + input[type='text'] {
-  margin-bottom: 5px;
-}
-.vocationFilter .dateFilter .buttons,
-.vocationFilter .dateFilterLeadsByName .buttons {
-  width: 100%;
-  margin: 15px 0;
-  text-align: center;
-}
 .settings_modal .check_wrap {
   float: left;
   width: 20px;
