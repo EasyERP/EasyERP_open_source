@@ -474,38 +474,14 @@ var Module = function (models, event) {
                         sequence   : 1,
                         taskCount  : 1
                     }
-                },
-                {
-                    $group: {
-                        _id  : null,
-                        total: {$sum: 1},
-                        root : {$push: '$$ROOT'}
-                    }
-                },
-                {
-                    $unwind: '$root'
-                },
-                {
-                    $project: {
-                        _id        : '$root._id',
-                        workflow   : '$root.workflow',
-                        category   : '$root.category',
-                        assignedTo : '$root.assignedTo',
-                        description: '$root.description',
-                        dueDate    : '$root.dueDate',
-                        taskCount  : '$root.taskCount',
-                        company    : '$root.company',
-                        contact    : '$root.contact',
-                        deal       : '$root.deal',
-                        total      : 1
-                    }
                 }, {
                     $group: {
                         _id: null,
-                        doc: '$$ROOT'
+                        doc: {$push : '$$ROOT'}
                     }
                 }, {
                     $project: {
+                        _id : 0,
                         overdue : {
                             $filter: {
                                 input: '$doc',
@@ -520,8 +496,8 @@ var Module = function (models, event) {
                                 input: '$doc',
                                 as   : 'task',
                                 cond : {
-                                    $and: [{$lte: ['$$task.dueDate', moment().startOf('day').toDate()]},
-                                        {$gte: ['$$task.dueDate', moment().endOf('day').toDate()]}
+                                    $and: [{$gte: ['$$task.dueDate', moment().startOf('day').toDate()]},
+                                        {$lte: ['$$task.dueDate', moment().endOf('day').toDate()]}
                                     ]
                                 }
                             }
@@ -531,8 +507,8 @@ var Module = function (models, event) {
                                 input: '$doc',
                                 as   : 'task',
                                 cond : {
-                                    $and: [{$lte: ['$$task.dueDate', moment().add(1, 'days').startOf('day').toDate()]},
-                                        {$gte: ['$$task.dueDate', moment().add(1, 'days').endOf('day').toDate()]}
+                                    $and: [{$gte: ['$$task.dueDate', moment().add(1, 'days').startOf('day').toDate()]},
+                                        {$lte: ['$$task.dueDate', moment().add(1, 'days').endOf('day').toDate()]}
                                     ]
 
                                 }
@@ -544,28 +520,43 @@ var Module = function (models, event) {
                                 as   : 'task',
                                 cond : {
                                     $and: [
-                                        {$lte: ['$$task.dueDate', moment().startOf('day').toDate()]},
-                                        {$gte: ['$$task.dueDate', moment().add(7, 'days').endOf('day').toDate()]}
+                                        {$gte: ['$$task.dueDate', moment().startOf('day').toDate()]},
+                                        {$lte: ['$$task.dueDate', moment().add(7, 'days').endOf('day').toDate()]}
                                     ]
                                 }
                             }
                         }
+                    }  }/*,
+                {
+                    $project : {
+                        thisWeek : {
+                            count : {$sum: '$thisWeek'},
+                            data  : '$thisWeek'
+                        },
+                        tomorrow : {
+                            count : {$sum: '$tomorrow'},
+                            data  : '$tomorrow'
+                        },
+                        today : {
+                            count : {$sum: '$today'},
+                            data  : '$today'
+                        },
+                        overdue : {
+                            count : {$sum: '$overdue'},
+                            data  : '$overdue'
+                        }
                     }
-                }
+                }*/
+
 
             ], function (err, result) {
                 var count;
-                var response = {};
 
                 if (err) {
                     return next(err);
                 }
 
-                count = result[0] && result[0].total ? result[0].total : 0;
-
-                response.total = count;
-                response.data = result;
-                res.status(200).send(response);
+                res.status(200).send({data : result[0]});
             });
 
     }

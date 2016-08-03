@@ -299,12 +299,12 @@
 
             this.$el.find('#dueDate').datepicker({dateFormat: 'd M, yy', minDate: new Date()});
             this.$el.find('#dueDateHours').spinner({
-                min: 1,
+                min: 0,
                 max: 23,
                 numberFormat: 'd2'
             });
             this.$el.find('#dueDateMinutes, #dueDateSeconds').spinner({
-                min: 1,
+                min: 0,
                 max: 59,
                 numberFormat: 'd2'
             });

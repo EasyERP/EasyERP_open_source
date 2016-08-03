@@ -24,7 +24,7 @@ define([
             });
         },
 
-        parse: function (response) {
+        /*parse: function (response) {
             if (response && response.attachments) {
                 _.map(response.attachments, function (attachment) {
                     attachment.uploadDate = common.utcDateToLocaleDate(attachment.uploadDate);
@@ -38,7 +38,7 @@ define([
                 });
             }
             return response;
-        },
+        },*/
 
         validate: function (attrs) {
             var errors = [];
