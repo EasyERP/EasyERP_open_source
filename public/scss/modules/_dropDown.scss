@@ -78,7 +78,7 @@
       &:after {
         content: "";
         position: absolute;
-        right: 0;
+        right: 10px;
         bottom: 10px;
         display: inline-block;
         width: 0;
@@ -96,8 +96,7 @@
       }
       > input {
         height: 26px;
-        width: 165px;
-        float: right;
+        width: 100%;
         cursor: pointer;
       }
       &:after {
