@@ -24,12 +24,12 @@
   src: url("../font/opensans/opensans-regular.woff2") format("woff2"), url("../font/opensans/opensans-regular.woff") format("woff"), url("../font/opensans/opensans-regular.ttf") format("truetype");
   font-weight: 400; }
 @font-face {
-    font-family: "OpenSans Bold";
+  font-family: "OpenSans Bold";
   font-style: normal;
   src: url("../font/opensans/opensans-semibold.woff2") format("woff2"), url("../font/opensans/opensans-semibold.woff") format("woff"), url("../font/opensans/opensans-semibold.ttf") format("truetype");
   font-weight: 600; }
 @font-face {
-    font-family: "OpenSans SemiBold";
+  font-family: "OpenSans SemiBold";
   font-style: normal;
   src: url("../font/opensans/opensans-bold.woff2") format("woff2"), url("../font/opensans/opensans-bold.woff") format("woff"), url("../font/opensans/opensans-bold.ttf") format("truetype");
   font-weight: 700; }
@@ -1869,7 +1869,7 @@
 
 .tagsLabel {
   display: inline-block;
-    line-height: 18px;
+  line-height: 18px;
   color: #000; }
 
 .moduleList .largeBtn,
@@ -2204,25 +2204,21 @@
   margin-right: 10px; }
 
 .col1-4 {
-    width: 25%;
-}
+  width: 25%; }
 
 .col1-3 {
-    width: 33%;
-}
+  width: 33%; }
 
 .newTasksContainer {
   padding-top: 30px !important; }
-
-.newTasksContainer .taskTop .editTags {
+  .newTasksContainer .taskTop .editTags {
     padding: 0 5px;
     float: right;
     height: 20px;
     line-height: 18px;
     color: #fff;
     font-size: 13px;
-    border-radius: 3px;
-}
+    border-radius: 3px; }
   .newTasksContainer .taskTitle {
     font-size: 23px;
     padding-left: 26px;
@@ -2415,20 +2411,18 @@
 ._filterDropDownWrap > ul > li:first-child {
   text-align: right;
   color: #333;
-    cursor: pointer;
-    line-height: 26px;
-}
+  cursor: pointer;
+  line-height: 26px; }
 
 ._filterDropDownBody {
   padding: 7px 0;
-    border: 1px solid rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(0, 0, 0, 0.15);
   color: #4d4d4d;
   box-shadow: 5px 5px rgba(102, 102, 102, 0.1); }
   ._filterDropDownBody .filterValues {
     font-size: 13px;
     padding: 0 25px;
-      text-align: left;
-  }
+    text-align: left; }
     ._filterDropDownBody .filterValues:hover {
       background-color: #f5f5f5; }
     ._filterDropDownBody .filterValues.checkedValue {
@@ -2466,21 +2460,18 @@
         border-right: 4px solid transparent;
         border-top: 4px solid #4d4d4d; }
       ._filterDropDownBody .customTime .customTimeItem > label {
-          float: left;
-          clear: both;
-          line-height: 26px;
-      }
+        float: left;
+        clear: both;
+        line-height: 26px; }
       ._filterDropDownBody .customTime .customTimeItem > input {
         height: 26px;
-          width: 165px;
-          float: right;
+        width: 165px;
+        float: right;
         cursor: pointer; }
-
-._filterDropDownBody .customTime .customTimeItem:after {
-    content: '';
-    display: table;
-    clear: both;
-}
+      ._filterDropDownBody .customTime .customTimeItem:after {
+        content: '';
+        display: table;
+        clear: both; }
 
 .chartTopBox ._filterDropDownWrap {
   margin-top: 9px; }
