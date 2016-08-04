@@ -11,8 +11,9 @@ define([
     'views/Notes/AttachView',
     'views/Category/TagView',
     'constants',
-    'moment'
-], function (Backbone, $, _, ParentView, CreateTemplate, showSelectTemplate, TaskModel, common, populate, AttachView, CategoryView, CONSTANTS, moment) {
+    'moment',
+    'helpers/keyValidator'
+], function (Backbone, $, _, ParentView, CreateTemplate, showSelectTemplate, TaskModel, common, populate, AttachView, CategoryView, CONSTANTS, moment, keyValidator) {
 
     var CreateView = ParentView.extend({
         el         : '#content-holder',
@@ -22,7 +23,9 @@ define([
 
         events: {
             'click .removeSelect': 'removeSelect',
-            'mouseup .time'      : 'validateInput'
+            'keyup .time'      : 'validateInput',
+            'keypress .time'                            : 'keypress',
+            'change .time'   : 'changeInput',
         },
 
         initialize: function () {
@@ -41,6 +44,20 @@ define([
 
             if ($target.val() > maxVal) {
                 $target.val('' + maxVal);
+            }
+        },
+
+        keypress: function (e) {
+            return keyValidator(e);
+        },
+
+        changeInput : function(e) {
+            var $target = $(e.target);
+
+            e.preventDefault();
+
+            if ($target.val().length === 1) {
+                $target.val('0' + $target.val());
             }
         },
 

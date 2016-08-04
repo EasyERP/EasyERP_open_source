@@ -20,10 +20,10 @@ define([
         contentType             : 'DealTasks',
 
         events: {
-            'click td:not(:has("input[type="checkbox"]"))': 'goToEditDialog',
-            'click .stageSelectType'                      : 'showNewSelectType',
-            'click .newSelectList li'                     : 'chooseOption',
-            'mousedown .checkbox'              : 'checked'
+            'click div.dateListItem'    : 'goToEditDialog',
+            'click .stageSelectType'    : 'showNewSelectType',
+            'click .newSelectList li'   : 'chooseOption',
+            'mousedown ._customCHeckbox': 'checked'
         },
 
         initialize: function (options) {
@@ -41,7 +41,7 @@ define([
 
             e.preventDefault();
 
-            id = $(e.target).closest('tr').attr('data-id');
+            id = $(e.target).closest('.dateListItem').attr('data-id');
             model = new CurrentModel({validate: false});
 
             model.urlRoot = '/dealTasks/';
@@ -61,21 +61,23 @@ define([
         },
 
         checked: function (e) {
-            var $target = $(e.target);
-            var id = $target.closest('tr').attr('data-id');
-            var workflow = $(e.target).val();
-            var sequence = $target.attr('data-sequence');
+            var $target = $(e.target).parent('label');
+
+            var input = $target.find('input');
+            var id = $target.closest('.dateListItem').attr('data-id');
+            var workflow = input.val();
+            var sequence = input.attr('data-sequence');
             var model = new CurrentModel({_id : id});
 
             e.stopPropagation();
 
-            if ($target.prop('checked')){
+            if (input.prop('checked')){
                 return false;
             }
 
             model.save({sequenceStart : sequence, workflow : '5783b351df8b918c31af24ab', sequence : -1, workflowStart : workflow},{patch : true, validate: false,
             success : function(){
-                $target.prop('checked', true);
+                input.prop('checked', true);
             }});
 
         },
