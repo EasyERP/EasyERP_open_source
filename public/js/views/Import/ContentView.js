@@ -19,11 +19,12 @@ define([
         contentTemplate       : _.template(ContentTemplate),
         importTemplate        : _.template(ImportTemplate),
         importProgressTemplate: _.template(ImportProgressTemplate),
-        childView: null,
+        childView             : null,
 
         events: {
             'click .importBtn'   : 'importFile',
-            'change .inputAttach': 'importFiles'
+            'change .inputAttach': 'importFiles',
+            'click .mappingBtn'  : 'goToMapping'
         },
 
         initialize: function () {
@@ -44,7 +45,10 @@ define([
         },
 
         goToMapping: function () {
-            var $thisEl = this.$el;
+
+            if (this.childView) {
+                this.childView.undelegateEvents();
+            }
 
             this.childView = new MappingContentView();
         },
