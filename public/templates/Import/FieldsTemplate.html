@@ -1,17 +1,14 @@
 <div style="display: inline-block">
-    <div>
-        <div style="display: inline-block; border: groove; background-color: chartreuse ; color: #00A000; font-size: 30px; width: 50%; height: 50px">First</div>
-        <div style="display: inline-block; border: groove; background-color: chartreuse ; color: #00A000; font-size: 30px; width: 49%; height: 50px">Second</div>
-    </div>
+
     <% _.each(content, function(item, key){%>
         <div>
-            <div style="display: inline-block; border: groove; background-color: yellow ; color: #00A000; font-size: 30px; width: 50%; height: 60px"><%= key %></div>
-            <div data-name="<%= item %>" class="dbFieldItem <% if (item) { %> dbFieldItemDrag <% } %>" style="display: inline-block; border: groove; background-color: yellow ; color: #00A000; font-size: 30px; width: 49%; height: 60px"><%= item %></div>
+            <div><%= key %></div>
+            <div data-name="<%= item %>" class="dbFieldItem <% if (item) { %> dbFieldItemDrag <% } %>"><%= item %></div>
         </div>
     <% }); %>
 </div>
-<div id="fieldsContainer" style="float: right">
-    <ul style="font-size: 30px; color: red">
+<div id="fieldsContainer">
+    <ul>
         <% _.each(fields, function(item, key){%>
             <li>
                 <%= key %>
@@ -21,9 +18,9 @@
     <br>
     <% _.each(fields, function(item, key) {%>
         <div class="tabItem">
-            <ul style="font-size: 20px;">
+            <ul >
                 <% _.each(item, function(itemOne) { %>
-                    <li class="fieldItem" style="cursor: pointer" data-name="<%= itemOne %>">
+                    <li class="fieldItem" data-name="<%= itemOne %>">
                         <%= itemOne %>
                     </li>
                 <% }); %>
