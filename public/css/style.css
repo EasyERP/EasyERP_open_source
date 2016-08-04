@@ -1737,6 +1737,10 @@
 ._importTabs .tabListItem ._importStep {
   font-weight: bold; }
 
+.ui-draggable.draggableActive {
+  position: fixed !important;
+  z-index: 10; }
+
 .propertyContainer a:hover {
   text-decoration: none; }
 
