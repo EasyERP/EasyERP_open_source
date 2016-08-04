@@ -1,25 +1,26 @@
 <button id="clickToReset">reset</button>
-<div style="display: inline-block; width: 50%" id="dbContentBlock">
-    <div>
-        <div style="display: inline-block; border: groove; background-color: chartreuse ; color: #00A000; font-size: 30px; width: 50%; height: 50px">First</div>
-        <div style="display: inline-block; border: groove; background-color: chartreuse ; color: #00A000; font-size: 30px; width: 49%; height: 50px">Second</div>
-    </div>
+<div class="_contentBlock" id="dbContentBlock">
     <% _.each(content, function(item, key){%>
-        <div class="content">
-            <div class="firstColumn" style="display: inline-block; border: groove; background-color: yellow ; color: #00A000; font-size: 30px; width: 50%; height: 60px"><%= key %></div>
-            <div data-name="<%= item %>" class="secondColumn dbFieldItem <% if (item) { %> dbFieldItemDrag <% } %>" style="display: inline-block; border: groove; background-color: yellow ; color: #00A000; font-size: 30px; width: 49%; height: 60px"><%= item %></div>
+        <div class="content _contentBlockRow unmapped">
+            <div class="firstColumn _rowItem"><%= key %></div>
+            <div data-name="<%= item %>" class="secondColumn dbFieldItem <% if (item) { %> dbFieldItemDrag <% } %> _rowItem" ><%= item %></div>
         </div>
     <% }); %>
 </div>
-<div id="fieldsContainer" style=" float: right; width: 45%">
-    <% _.each(fields, function(item, key) {%>
-        <div class="tabItem" data-tab="<%= key %>" style="display: inline-block; width: 300px">
-            <div style="font-size: 30px; color: red; width: 300px">
+<div id="fieldsContainer" style="float: right">
+    <ul style="font-size: 30px; color: red">
+        <% _.each(fields, function(item, key){%>
+            <li>
                 <%= key %>
-            </div>
+            </li>
+        <% }); %>
+    </ul>
+    <br>
+    <% _.each(fields, function(item, key) {%>
+        <div class="tabItem" data-tab="<%= key %>">
             <ul style="font-size: 20px;">
                 <% _.each(item, function(itemOne) { %>
-                    <li class="fieldItem" style="cursor: pointer" data-parent="<%= key %>" data-name="<%= itemOne %>">
+                    <li class="fieldItem" style="cursor: pointer" data-name="<%= itemOne %>">
                         <%= itemOne %>
                     </li>
                 <% }); %>
