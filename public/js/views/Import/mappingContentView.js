@@ -3,11 +3,12 @@ define([
     'jQuery',
     'Underscore',
     'text!templates/Import/FieldsTemplate.html',
+    'views/Import/previewContentView',
     'constants/importMapping',
     'constants',
     'dataService',
     'common'
-], function (Backbone, $, _, ContentTemplate, importMapping, CONSTANTS, dataService, common) {
+], function (Backbone, $, _, ContentTemplate, PreviewView, importMapping, CONSTANTS, dataService, common) {
     'use strict';
 
     var mappingContentView = Backbone.View.extend({
@@ -52,7 +53,10 @@ define([
                 }
             }
 
-            dataService.postData(url, fieldsObject, function(data) {
+            dataService.postData(url, fieldsObject, function(err, data) {
+                if (err) {
+                    return alert(err.responseText)
+                }
                 alert('post is successfull');
             });
         },
