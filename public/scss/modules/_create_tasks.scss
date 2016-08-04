@@ -15,6 +15,12 @@
   padding-top: 30px !important;
 
   .taskTop {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+
     .editTags {
       padding: 0 5px;
       float: right;

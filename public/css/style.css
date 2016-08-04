@@ -2272,14 +2272,19 @@ label._customCHeckbox input[type="checkbox"] {
 
 .newTasksContainer {
   padding-top: 30px !important; }
-  .newTasksContainer .taskTop .editTags {
-    padding: 0 5px;
-    float: right;
-    height: 20px;
-    line-height: 18px;
-    color: #fff;
-    font-size: 13px;
-    border-radius: 3px; }
+  .newTasksContainer .taskTop {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex; }
+    .newTasksContainer .taskTop .editTags {
+      padding: 0 5px;
+      float: right;
+      height: 20px;
+      line-height: 18px;
+      color: #fff;
+      font-size: 13px;
+      border-radius: 3px; }
   .newTasksContainer .taskTitle {
     font-size: 23px;
     padding-left: 26px;

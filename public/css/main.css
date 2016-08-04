@@ -4164,13 +4164,28 @@ table.kanban tbody td:nth-child(n+2) {
   clear: both;
 }
 .inputDateActionBlock {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
   display: flex;
+  margin-top: 15px;
 }
 .inputDateActionBlock > .ui-spinner {
   flex-grow: 1;
 }
-.inputDateActionBlock > .ui-spinner > input:nth-child(n+2) {
-  border-right: 0;
+.inputDateActionBlock > .ui-spinner:nth-child(n+2) input {
+  border-left: 0;
+}
+.inputDateActionBlock > .ui-spinner .ui-spinner-up,
+.inputDateActionBlock > .ui-spinner .ui-spinner-down {
+  right: 5px;
+}
+.inputDateActionBlock > .ui-spinner .ui-spinner-down {
+  bottom: 2px;
+}
+.superCenter {
+  margin: auto;
 }
 .collapsed .sideMenu {
   width: 40px !important;

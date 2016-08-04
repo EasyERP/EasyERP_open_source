@@ -2056,16 +2056,33 @@ table {
 }
 
 .inputDateActionBlock {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
   display: flex;
+  margin-top: 15px;
 
   > .ui-spinner {
     flex-grow: 1;
 
-    > input {
+    &:nth-child(n+2) {
 
-      &:nth-child(n+2) {
-        border-right: 0;
+      input {
+        border-left: 0;
       }
     }
+
+    .ui-spinner-up,
+    .ui-spinner-down {
+      right: 5px;
+    }
+    .ui-spinner-down {
+      bottom: 2px;
+    }
   }
+}
+
+.superCenter {
+  margin: auto;
 }
