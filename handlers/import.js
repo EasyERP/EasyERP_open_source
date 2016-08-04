@@ -64,11 +64,13 @@ var Module = function (models) {
                 return next(err);
             }
 
-            importedKeyArray = _.values(importedData.result);
+            if (importedData) {
+                importedKeyArray = _.values(importedData.result);
 
-            mappedObj = splitFields(personKeysArray, importedKeyArray);
+                mappedObj = splitFields(personKeysArray, importedKeyArray);
+            }
 
-            res.status(200).send(mappedObj);
+            res.status(200).send(mappedObj || {});
         });
     };
 
