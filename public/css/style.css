@@ -1656,6 +1656,11 @@
 .mainTabs .avatarInfoContainer {
   margin-left: 160px; }
 
+._contentBlock,
+._tabsBlock {
+  height: calc(100vh - 205px);
+  overflow-y: scroll; }
+
 ._importListBody {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -1666,20 +1671,36 @@
     -webkit-box-flex: 1;
         -ms-flex-positive: 1;
             flex-grow: 1;
-    padding: 16px 24px; }
+    padding: 16px 0 16px 24px; }
   ._importListBody ._tabsBlock {
     -webkit-flex-shrink: 0;
     -ms-flex-negative: 0;
         flex-shrink: 0;
-    width: 480px; }
-    ._importListBody ._tabsBlock ._importListTabs > li {
-      display: inline-block; }
+    width: 500px;
+    padding-right: 20px;
+    margin-left: 20px; }
+    ._importListBody ._tabsBlock ._importListTabs {
+      border-bottom: 1px solid #c8c8d3; }
+      ._importListBody ._tabsBlock ._importListTabs li {
+        display: inline-block;
+        vertical-align: bottom;
+        padding: 10px 15px;
+        cursor: pointer; }
+        ._importListBody ._tabsBlock ._importListTabs li.active {
+          background: #3291c8;
+          color: #ffffff; }
     ._importListBody ._tabsBlock ._importTabItem {
       width: 100%;
-      padding: 24px;
+      padding: 24px 0;
       display: none; }
       ._importListBody ._tabsBlock ._importTabItem.active {
         display: block; }
+    ._importListBody ._tabsBlock .fieldItem {
+      padding: 10px 15px;
+      border: 1px solid #c8c8d3;
+      margin-bottom: 10px;
+      cursor: move;
+      background: #ffffff; }
 
 ._contentBlockRow {
   display: -webkit-box;
@@ -1701,6 +1722,13 @@
             flex-grow: 1; }
     ._contentBlockRow ._rowItem:nth-child(n+2) {
       border-left: 1px solid #c2c8cd; }
+
+._importTabs .tabListItem span {
+  display: inline-block !important;
+  color: #ffffff;
+  line-height: 12px; }
+._importTabs .tabListItem ._importStep {
+  font-weight: bold; }
 
 .propertyContainer a:hover {
   text-decoration: none; }

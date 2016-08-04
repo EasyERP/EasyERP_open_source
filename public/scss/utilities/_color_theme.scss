@@ -79,3 +79,11 @@ $tasks-item-bg: map-get($erp-colors, 'lighter-gray');
 $passed-bg: map-get($erp-colors, 'green');
 // -----------------------
 
+// Import -------------
+$importStepColor: map-get($erp-colors, 'gray');
+$importFieldItemBorderColor: map-get($erp-colors, 'light-gray');
+$importTabsBorderColor: map-get($erp-colors, 'light-gray');
+$importTabsBorderBgActive: map-get($erp-colors, 'blue');
+
+// -----------------------
+
