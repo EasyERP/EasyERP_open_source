@@ -1,34 +1,31 @@
-<div>
-    <table>
-        <tr>
-            <td><h3 style="font-size: 70px">First</h3></td>
-            <td><h3 style="font-size: 70px">Second</h3></td>
-        </tr>
-        <% _.each(content, function(item, key){%>
-            <tr>
-                <td style="font-size: 60px"><%= key %></td>
-                <td style="font-size: 60px"><%= item %></td>
-            </tr>
-        <% }); %>
-
-    </table>
+<div style="display: inline-block">
+    <div>
+        <div style="display: inline-block; border: groove; background-color: chartreuse ; color: #00A000; font-size: 30px; width: 50%; height: 50px">First</div>
+        <div style="display: inline-block; border: groove; background-color: chartreuse ; color: #00A000; font-size: 30px; width: 49%; height: 50px">Second</div>
+    </div>
+    <% _.each(content, function(item, key){%>
+        <div>
+            <div style="display: inline-block; border: groove; background-color: yellow ; color: #00A000; font-size: 30px; width: 50%; height: 60px"><%= key %></div>
+            <div data-name="<%= item %>" class="dbFieldItem <% if (item) { %> dbFieldItemDrag <% } %>" style="display: inline-block; border: groove; background-color: yellow ; color: #00A000; font-size: 30px; width: 49%; height: 60px"><%= item %></div>
+        </div>
+    <% }); %>
 </div>
 <div id="fieldsContainer" style="float: right">
-    <ul>
+    <ul style="font-size: 30px; color: red">
         <% _.each(fields, function(item, key){%>
-        <li>
-            <%= key %>
-        </li>
+            <li>
+                <%= key %>
+            </li>
         <% }); %>
     </ul>
     <br>
     <% _.each(fields, function(item, key) {%>
         <div class="tabItem">
-            <ul>
+            <ul style="font-size: 20px;">
                 <% _.each(item, function(itemOne) { %>
-                <li>
-                    <%= itemOne %>
-                </li>
+                    <li class="fieldItem" style="cursor: pointer" data-name="<%= itemOne %>">
+                        <%= itemOne %>
+                    </li>
                 <% }); %>
             </ul>
         </div>

@@ -45,10 +45,14 @@ define([
         },
 
         goToMapping: function () {
+            var $progresBarStep = this.$el.find('.step2');
+
+            $progresBarStep.addClass('active');
 
             if (this.childView) {
                 this.childView.undelegateEvents();
             }
+
 
             this.childView = new MappingContentView();
         },
