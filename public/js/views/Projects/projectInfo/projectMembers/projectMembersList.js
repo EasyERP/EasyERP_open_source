@@ -493,6 +493,7 @@ define([
             } else {
                 row.remove();
                 this.collection.remove(model);
+                self.showCreateBtn();
                 self.editLastMember();
             }
         },
