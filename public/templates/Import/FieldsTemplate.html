@@ -2,13 +2,13 @@
 <div class="_contentBlock" id="dbContentBlock">
     <% _.each(content, function(item, key){%>
         <div class="content _contentBlockRow unmapped">
-            <div class="firstColumn _rowItem"><%= key %></div>
+            <div data-name="<%= key %>" class="firstColumn _rowItem"><%= key %></div>
             <div data-name="<%= item %>" class="secondColumn dbFieldItem <% if (item) { %> dbFieldItemDrag <% } %> _rowItem" ><%= item %></div>
         </div>
     <% }); %>
 </div>
 <div id="fieldsContainer" style="float: right">
-    <ul style="font-size: 30px; color: red">
+    <ul>
         <% _.each(fields, function(item, key){%>
             <li>
                 <%= key %>
@@ -18,9 +18,9 @@
     <br>
     <% _.each(fields, function(item, key) {%>
         <div class="tabItem" data-tab="<%= key %>">
-            <ul style="font-size: 20px;">
+            <ul>
                 <% _.each(item, function(itemOne) { %>
-                    <li class="fieldItem" style="cursor: pointer" data-name="<%= itemOne %>">
+                    <li class="fieldItem" style="cursor: pointer" data-parent="<%= key %>" data-name="<%= itemOne %>">
                         <%= itemOne %>
                     </li>
                 <% }); %>

@@ -39,28 +39,22 @@ define([
 
         goToPreview: function () {
             var $thisEl = this.$el;
-            var url = 'BlaBlaBla';
+            var url = '/importFile/imported';
             var $dbContentBlock = $thisEl.find('#dbContentBlock');
             var fieldsObject = {};
             var $content = $dbContentBlock.find('.content');
 
-            //console.log($dbContentBlock.find('.content'));
-            //TODO chande to data attribute
             for (var i = 0; i < $content.length; i++) {
-                var firstColumnVal = $($content[i]).find('.firstColumn').text();
-                var secondColumnVal = $($content[i]).find('.secondColumn').text();
+                var firstColumnVal = $($content[i]).find('.firstColumn').data('name');
+                var secondColumnVal = $($content[i]).find('.secondColumn').data('name');
                 if (secondColumnVal) {
                     fieldsObject[firstColumnVal] = secondColumnVal;
                 }
             }
 
-            console.log(fieldsObject);
-
             dataService.postData(url, fieldsObject, function(data) {
-
+                alert('post is successfull');
             });
-
-            //$contentBlock.html();
         },
 
         findKeyByValue: function(obj, value) {
@@ -168,8 +162,7 @@ define([
             });
 
             $thisEl.find('.fieldItem').draggable({
-                revert: true,
-                revertDuration: 300
+                revert: true
             });
         }
     });
