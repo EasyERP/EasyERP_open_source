@@ -61,7 +61,7 @@ define([
         },
 
         enabledNextBtn: function () {
-            this.$el.find('.stageBtn').prop("disabled", false)
+            this.$el.find('.stageBtn').prop('disabled', false);
         },
 
         render: function () {
