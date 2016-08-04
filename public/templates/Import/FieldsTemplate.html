@@ -1,23 +1,21 @@
-<div style="display: inline-block">
-
+<div class="_contentBlock">
     <% _.each(content, function(item, key){%>
-        <div>
-            <div><%= key %></div>
-            <div data-name="<%= item %>" class="dbFieldItem <% if (item) { %> dbFieldItemDrag <% } %>"><%= item %></div>
+        <div class="_contentBlockRow unmapped">
+            <div class="_rowItem"><%= key %></div>
+            <div data-name="<%= item %>" class="dbFieldItem <% if (item) { %> dbFieldItemDrag <% } %> _rowItem" ><%= item %></div>
         </div>
     <% }); %>
 </div>
-<div id="fieldsContainer">
-    <ul>
+<div id="fieldsContainer" class="_tabsBlock">
+    <ul class="_importListTabs">
         <% _.each(fields, function(item, key){%>
             <li>
                 <%= key %>
             </li>
         <% }); %>
     </ul>
-    <br>
     <% _.each(fields, function(item, key) {%>
-        <div class="tabItem">
+        <div class="_importTabItem active">
             <ul >
                 <% _.each(item, function(itemOne) { %>
                     <li class="fieldItem" data-name="<%= itemOne %>">
@@ -26,7 +24,6 @@
                 <% }); %>
             </ul>
         </div>
-        <br>
     <% }); %>
 </div>
 
