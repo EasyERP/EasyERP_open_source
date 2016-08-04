@@ -1,5 +1,5 @@
 <div id="timeLineBody" class="noteMainContainer timeNote">
-    <h3>Recent Activities</h3>
+
     <%_.each(response, function(val,key){ %>
     <% var login = val.editedBy ? (App.currentUser._id === val.editedBy._id) ? 'You': val.editedBy.login : '' %>
 
