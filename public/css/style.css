@@ -1659,7 +1659,8 @@
 ._contentBlock,
 ._tabsBlock {
   height: calc(100vh - 205px);
-  overflow-y: scroll; }
+  overflow-y: auto;
+  overflow-x: hidden; }
 
 ._importListBody {
   display: -webkit-box;
@@ -1696,6 +1697,8 @@
       ._importListBody ._tabsBlock ._importTabItem.active {
         display: block; }
     ._importListBody ._tabsBlock .fieldItem {
+      width: 100%;
+      max-width: 460px;
       padding: 10px 15px;
       border: 1px solid #c8c8d3;
       margin-bottom: 10px;
@@ -1722,6 +1725,10 @@
             flex-grow: 1; }
     ._contentBlockRow ._rowItem:nth-child(n+2) {
       border-left: 1px solid #c2c8cd; }
+  ._contentBlockRow ._movingItem {
+    min-height: 50px;
+    padding: 17px 15px;
+    cursor: move; }
 
 ._importTabs .tabListItem span {
   display: inline-block !important;
@@ -1729,6 +1736,10 @@
   line-height: 12px; }
 ._importTabs .tabListItem ._importStep {
   font-weight: bold; }
+
+.ui-draggable.draggableActive {
+  position: fixed !important;
+  z-index: 10; }
 
 .propertyContainer a:hover {
   text-decoration: none; }
