@@ -11,6 +11,12 @@
   }
 }
 
+._contentBlock,
+._tabsBlock {
+  height: calc(100vh - 205px);
+  overflow-y: scroll;
+}
+
 ._importListBody {
   display: -webkit-box;
   display: -moz-box;
@@ -21,28 +27,49 @@
   ._contentBlock {
     -webkit-flex-grow: 1;
     flex-grow: 1;
-    padding: 16px 24px;
+    padding: 16px 0 16px 24px;
   }
 
   ._tabsBlock {
     -webkit-flex-shrink: 0;
     flex-shrink: 0;
-    width: 480px;
+    width: 500px;
+    padding-right: 20px;
+    margin-left: 20px;
 
     ._importListTabs {
-      > li {
+      border-bottom: 1px solid $importTabsBorderColor;
+
+      li {
         display: inline-block;
+        vertical-align: bottom;
+        padding: 10px 15px;
+        cursor: pointer;
+
+        &.active {
+          background: $importTabsBorderBgActive;
+          color: $white;
+        }
       }
     }
 
     ._importTabItem {
       width: 100%;
-      padding: 24px;
+      padding: 24px 0;
       display: none;
+
 
       &.active {
         display: block;
       }
+    }
+
+    .fieldItem {
+      padding: 10px 15px;
+      border: 1px solid $importFieldItemBorderColor;
+      margin-bottom: 10px;
+      cursor: move;
+      background: $white;
     }
   }
 }
@@ -71,6 +98,21 @@
 
     &:nth-child(n+2) {
       border-left: 1px solid #c2c8cd;
+    }
+  }
+}
+
+._importTabs {
+  .tabListItem {
+    span {
+      display: inline-block !important;
+      color: $white;
+      line-height: 12px;
+    }
+
+    ._importStep {
+      color: $importStepColor;
+      font-weight: bold;
     }
   }
 }
