@@ -64,4 +64,5 @@ module.exports = (function () {
     require('./dealTask.js');
     require('./payrollStructureTypes.js');
     require('./cashTransfer.js');
+    require('./import.js');
 })();

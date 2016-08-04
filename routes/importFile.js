@@ -9,8 +9,11 @@ var multipart = require('connect-multiparty');
 var multipartMiddleware = multipart();
 var async = require('async');
 var logWriter = require('../helpers/logger.js');
+var ImportSchema = mongoose.Schemas.Imports;
+var ImportHandler = require('../handlers/import');
 
 module.exports = function (models) {
+    var imports = new ImportHandler(models);
 
     function getExtension(filename) {
         var i = filename.lastIndexOf('.');
@@ -28,6 +31,7 @@ module.exports = function (models) {
         var collection, schema, Model;
         var keysAliases = [];
         var expertedKey = [];
+        var userId = req.session.uId;
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
 
@@ -43,7 +47,7 @@ module.exports = function (models) {
 
                     return;
                 }
-                task = importMap[modelName];
+              /*  task = importMap[modelName];
 
                 if (!task) {
                     error = new Error('Model name\"' + modelName + '\" is not valid');
@@ -60,12 +64,12 @@ module.exports = function (models) {
                 for (var key in aliases) {
                     keysAliases.push(key);
                     expertedKey.push(aliases[key]);
-                }
+                }*/
 
                 switch (getExtension(filePath)) {
 
                     case '.csv':
-                        importCsvToDb(res, next);
+                        importCsvToTemporaryCollection(res, next);
                         break;
                     case '.xlsx':
                         importXlsxToDb(res, next);
@@ -81,6 +85,75 @@ module.exports = function (models) {
             }
         } else {
             res.status(401).send('Unauthorized');
+        }
+
+        function importCsvToTemporaryCollection(res, next) {
+            var headers;
+            var q = async.queue(function (data, callback) {
+                var tasksWaterflow;
+
+                function getData(callback) {
+                    callback(null, data);
+                }
+
+                tasksWaterflow = [getData, saveItemToTemporaryDb];
+
+                async.waterfall(tasksWaterflow, function (err) {
+                    if (err) {
+                        error = err;
+                    }
+                    callback();
+                });
+            }, 1000);
+
+            csv
+                .fromPath(filePath)/*
+                .validate(function (data) {
+
+                    if (!headers) {
+                        headers = data;
+
+                        if (headers.length != expertedKey.length) {
+                            error = new Error('Different lengths headers');
+                            error.status = 400;
+                            return next(error);
+                        }
+
+                        for (var i = expertedKey.length - 1; i >= 0; i--) {
+
+                            if (headers[i] !== expertedKey[i]) {
+                                error = new Error('Field \"' + headers[i] + '\" not valid. Need ' + expertedKey[i]);
+                                error.status = 400;
+                                logWriter.log("importFile.js importCsvToDb " + error);
+
+                                return next(error);
+                            }
+                        }
+                        return false;
+                    }
+
+                    rows++;
+                    return true;
+                })*/
+                .on("data", function (data) {
+                    q.push([data], function (err) {
+                        if (err) {
+                            error = err;
+                            logWriter.error(error);
+                        }
+                    });
+                });
+
+            q.drain = function () {
+                var obj = {};
+
+                if (!error) {
+                    obj.countRows = rows;
+                    res.status(200).send(obj);
+                } else {
+                    next(error);
+                }
+            };
         }
 
         function importCsvToDb(res, next) {
@@ -233,7 +306,7 @@ module.exports = function (models) {
                         var arr = [];
                         arr.push(val);
                         val = arr;
-                    }  else {
+                    } else {
                         val = val.split(',');
                     }
                 }
@@ -358,9 +431,20 @@ module.exports = function (models) {
                 });
             }
         }
+
+        function saveItemToTemporaryDb(objectToDb, callback) {
+            var ImportModel = models.get(req.session.lastDb, 'Imports', ImportSchema);
+            var importModel = new ImportModel({
+                user  : userId,
+                result: objectToDb
+            });
+
+            importModel.save(callback);
+        }
     }
 
     router.post('/', multipartMiddleware, importFileToDb);
+    router.get('/imported', imports.getImportMapObject);
 
     return router;
 };

@@ -339,10 +339,12 @@ module.exports = (function () {
             'editedBy.user'      : 'Edited By User',
             'editedBy.date'      : 'Edited By Date'
         },
+
         arrayKeys   : {
             'groups.users': true,
             'groups.group': true
         },
+
         objectIdList: {
             'supplier._id'   : 'Customers',
             'salesPerson._id': 'Employees',

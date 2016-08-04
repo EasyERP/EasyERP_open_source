@@ -1,5 +1,6 @@
 define([], function () {
     return {
+        IMPORT            : 'import',
         PERSONS           : 'Persons',
         COMPANIES         : 'Companies',
         LEADS             : 'Leads',
@@ -209,12 +210,12 @@ define([], function () {
 
         MIN_DATE: '2014-08-01',
 
-        INVOICE_JOURNAL : '565ef6ba270f53d02ee71d65',
-        INVOICE_PURCHASE: '5788b4572bfddc9a494cce0a',
-        PROFORMA_JOURNAL: '57035e4321f9b0c4313d4146',
-        PAYMENT_TERMS   : '55536e52475b7be475f335f6',
-        PAYMENT_METHOD  : '565f2e05ab70d49024242e07',
-        END_OF_PROJECT  : 'To end of project',
+        INVOICE_JOURNAL     : '565ef6ba270f53d02ee71d65',
+        INVOICE_PURCHASE    : '5788b4572bfddc9a494cce0a',
+        PROFORMA_JOURNAL    : '57035e4321f9b0c4313d4146',
+        PAYMENT_TERMS       : '55536e52475b7be475f335f6',
+        PAYMENT_METHOD      : '565f2e05ab70d49024242e07',
+        END_OF_PROJECT      : 'To end of project',
         NOT_STARTED_WORKFLOW: '5783b351df8b918c31af24a8',
 
         DEFAULT_SCREEN_WIDTH: 1349,
