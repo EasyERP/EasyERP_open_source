@@ -5,7 +5,7 @@
     <div class="task-content">
         <div class="info">
             <p id="<%=model._id%>" class="taskContentTitle"><%=model.description%></p>
-            <% if (new Date(model.dueDate) < moment().startOf('day') && (model.workflow.status !== 'Done')) { %>
+            <% if (new Date(model.dueDate) < moment().startOf('day')) { %>
             <h3 class="red dateLabel">Overdue : </h3>
             <% }else {%>
             <h3>Due : </h3>
