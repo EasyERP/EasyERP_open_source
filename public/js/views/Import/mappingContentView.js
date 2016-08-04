@@ -91,8 +91,8 @@ define([
                     var $draggable = ui.draggable;
 
                     //$draggable.addClass('draggableActive');
-                    console.log(self.X, self.Y);
-                    $draggable.css({'position':'fixed'});
+                    //console.log(self.X, self.Y);
+                    //$draggable.css({'position':'fixed'});
                 },
 
                 drop     : function (event, ui) {
