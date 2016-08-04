@@ -151,8 +151,7 @@ define([
                             Backbone.history.fragment = '';
                             Backbone.history.navigate(window.location.hash, {trigger: true});
                         } else if (self.import) {
-                            Backbone.history.fragment = '';
-                            Backbone.history.navigate(window.location.hash, {trigger: true});
+                            self.trigger('uploadCompleted');
                         } else {
                             attachments = currentModel.get('attachments') || [];
                             attachments.length = 0;

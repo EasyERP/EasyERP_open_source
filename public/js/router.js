@@ -74,7 +74,7 @@ define([
         routes: {
             home                                                                                            : 'login',
             'easyErp/Products/thumbnails(/c=:countPerPage)(/filter=:filter)'                                : 'goToProduct',
-            'easyErp/import'                                                                                : 'goToImport',
+            'easyErp/import(/stage=:stage)'                                                                 : 'goToImport',
             'login(?password=:password&dbId=:dbId&email=:email)'                                            : 'login',
             'easyErp/:contentType/kanban(/:parrentContentId)(/filter=:filter)'                              : 'goToKanban',
             'easyErp/:contentType/thumbnails(/c=:countPerPage)(/filter=:filter)'                            : 'goToThumbnails',
@@ -469,7 +469,7 @@ define([
             }
         },
 
-        goToImport: function () {
+        goToImport: function (stage) {
             var self = this;
 
             this.checkLogin(function (success) {
@@ -491,7 +491,7 @@ define([
                 var contentViewUrl = 'views/Import/ContentView';
 
                 require([contentViewUrl], function (contentView) {
-                    var contentview = new contentView({startTime: startTime});
+                    var contentview = new contentView({startTime: startTime, stage: stage});
                     var url = '#easyErp/import';
 
                     custom.setCurrentVT('list');

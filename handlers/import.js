@@ -16,8 +16,10 @@ var Module = function (models) {
     }
 
     function comparing(item1, item2) {
+        var changedItem1 = toOneCase(item1);
+        var changedItem2 = toOneCase(item2);
 
-        if (toOneCase(item1) === toOneCase(item2)) {
+        if (changedItem1.indexOf(changedItem2) > 0 || changedItem2.indexOf(changedItem1) > 0 || changedItem1 === changedItem2) {
             return true;
         }
 
@@ -32,6 +34,7 @@ var Module = function (models) {
             isChanged = false;
 
             for (var j = 0; j < firstArr.length; j++) {
+
                 if (comparing(secondArr[i], firstArr[j])) {
                     result[secondArr[i]] = firstArr[j];
                     isChanged = !isChanged;
