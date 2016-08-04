@@ -14,7 +14,8 @@
 ._contentBlock,
 ._tabsBlock {
   height: calc(100vh - 205px);
-  overflow-y: scroll;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 ._importListBody {
@@ -65,11 +66,14 @@
     }
 
     .fieldItem {
+      width: 100%;
+      max-width: 460px;
       padding: 10px 15px;
       border: 1px solid $importFieldItemBorderColor;
       margin-bottom: 10px;
       cursor: move;
       background: $white;
+
     }
   }
 }
@@ -99,6 +103,12 @@
     &:nth-child(n+2) {
       border-left: 1px solid #c2c8cd;
     }
+  }
+
+  ._movingItem {
+    min-height: 50px;
+    padding: 17px 15px;
+    cursor: move;
   }
 }
 

@@ -4,13 +4,13 @@
         <div class="content _contentBlockRow unmapped">
             <div data-name="<%= key %>" class="firstColumn _rowItem"><%= key %></div>
             <div class="_rowItem" >
-                <div data-name="<%= item %>" class="secondColumn dbFieldItem <% if (item) { %> dbFieldItemDrag <% } %>"><%= item %></div>
+                <div data-name="<%= item %>" class="secondColumn dbFieldItem <% if (item) { %> dbFieldItemDrag <% } %> _movingItem"><%= item %></div>
             </div>
         </div>
     <% }); %>
 </div>
 <div id="fieldsContainer" class="_tabsBlock">
-    <ul>
+    <ul class="_importListTabs">
         <% _.each(fields, function(item, key){%>
             <li class="active">
                 <%= key %>
