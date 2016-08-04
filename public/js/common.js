@@ -14,9 +14,16 @@
         Backbone.history.navigate(url, {trigger: true});
     };
 
-    var utcDateToLocaleDate = function (utcDateString) {
+    var utcDateToLocaleDate = function (utcDateString, hours) {
         utcDateString = new Date(utcDateString);
-        utcDateString = utcDateString ? moment(utcDateString).format("DD MMM, YYYY") : null;
+
+        if (hours){
+            utcDateString = utcDateString ? moment(utcDateString).format("DD MMM, YYYY HH:mm") : null;
+        } else {
+            utcDateString = utcDateString ? moment(utcDateString).format("DD MMM, YYYY") : null;
+        }
+
+
 
         return utcDateString;
     };

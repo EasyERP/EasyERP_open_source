@@ -120,7 +120,13 @@ define([
             this.$el.html(_.template(listTemplate));
 
             dataService.getData('dealTasks/getActivity', {filter : this.filter}, function(response){
-                self.$el.find('#activityHolder').html(_.template(activityTemplate, {response : response.data})) ;
+
+                response = response.data.map(function(el){
+                    el.date = el.date ? moment(el.date).format("HH:mm") : null;
+                    return el;
+                });
+
+                self.$el.find('#activityHolder').html(_.template(activityTemplate, {response : response})) ;
             });
 
             for (key in collection) {

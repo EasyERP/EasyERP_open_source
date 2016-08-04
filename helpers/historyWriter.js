@@ -189,6 +189,7 @@ var History = function (models) {
 
     this.getHistoryForTrackedObject = function (options, callback, forNote) {
         var id = options.id;
+        var filter = options.filter || {};
         var HistoryEntry = models.get(options.req.session.lastDb, 'History', HistoryEntrySchema);
 
         function getFunctionToGetForRefField(fieldDescription) {
@@ -203,6 +204,8 @@ var History = function (models) {
                         contentId   : id,
                         changedField: changedField
                     }
+                },{
+                    $match: filter
                 }, {
                     $lookup: {
                         from        : 'Users',
@@ -281,8 +284,10 @@ var History = function (models) {
             HistoryEntry.aggregate([{
                 $match: {
                     contentId: id,
-                    isRef    : {$ne: true}
+                    isRef    : {$ne: true},
                 }
+            },{
+                $match: filter
             }, {
                 $lookup: {
                     from        : 'Users',

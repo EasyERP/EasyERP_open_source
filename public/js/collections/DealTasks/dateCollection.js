@@ -32,7 +32,7 @@
             if (response.data) {
                 if (response.data.next7days) {
                     _.map(response.data.next7days, function (employee) {
-                        employee.dueDate = common.utcDateToLocaleDateTime(employee.dueDate);
+                        employee.dueDate = common.utcDateToLocaleDate(employee.dueDate, true);
                         return employee;
                     });
                 }

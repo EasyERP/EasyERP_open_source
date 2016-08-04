@@ -419,9 +419,16 @@ var Module = function (models, event) {
     }
 
     this.getActivity = function (req, res, next){
+        var data = req.query;
+        var filterMapper = new FilterMapper();
+        var obj = {};
+        if (data && data.filter) {
+            obj.$and = [];
+            obj.$and.push(filterMapper.mapFilter(data.filter, 'DealTasks'));
+        }
         var Task = models.get(req.session.lastDb, 'DealTasks', tasksSchema);
 
-        Task.find({}, {_id : 1, description : 1}, function (err, docs) {
+        Task.find(obj, {_id : 1, description : 1}, function (err, docs) {
             var ids;
             var historyOptions;
 
@@ -434,7 +441,11 @@ var Module = function (models, event) {
             });
             historyOptions = {
                 req: req,
-                id : {$in : ids}
+                id : {$in : ids},
+                filter : {
+                    date : {$gte : moment().subtract(1, 'days').toDate() }
+                }
+
             };
             historyWriter.getHistoryForTrackedObject(historyOptions, function (err, history) {
                 if (err){
@@ -449,6 +460,8 @@ var Module = function (models, event) {
                     elem.name = doc ? doc.description : '';
                     return elem;
                 });
+
+                history = history.reverse();
 
 
                 res.status(200).send({data : history});
