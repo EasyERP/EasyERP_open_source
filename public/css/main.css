@@ -4163,6 +4163,30 @@ table.kanban tbody td:nth-child(n+2) {
   float: left;
   clear: both;
 }
+.inputDateActionBlock {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  margin-top: 15px;
+}
+.inputDateActionBlock > .ui-spinner {
+  flex-grow: 1;
+}
+.inputDateActionBlock > .ui-spinner:nth-child(n+2) input {
+  border-left: 0;
+}
+.inputDateActionBlock > .ui-spinner .ui-spinner-up,
+.inputDateActionBlock > .ui-spinner .ui-spinner-down {
+  right: 5px;
+}
+.inputDateActionBlock > .ui-spinner .ui-spinner-down {
+  bottom: 2px;
+}
+.superCenter {
+  margin: auto;
+}
 .collapsed .sideMenu {
   width: 40px !important;
   margin-right: -100%;
@@ -6743,9 +6767,6 @@ dl dd span.ui-spinner {
   line-height: 26px;
   color: #000000;
 }
-.form input {
-  margin: 2px 2px 2px 0;
-}
 .form textarea {
   width: 99%;
   min-height: 60px;
@@ -7645,9 +7666,6 @@ dl dd span.ui-spinner {
   line-height: 26px;
   color: #000000;
 }
-.formLeftColumn .form input {
-  margin: 2px 2px 2px 0;
-}
 .formLeftColumn .form textarea {
   width: 99%;
   min-height: 60px;
@@ -8300,9 +8318,6 @@ dl dd span.ui-spinner {
   width: 90%;
   line-height: 26px;
   color: #000000;
-}
-.formRightColumn .form input {
-  margin: 2px 2px 2px 0;
 }
 .formRightColumn .form textarea {
   width: 99%;
@@ -11897,6 +11912,7 @@ ul.dialog-tabs li.right button {
 }
 .form-holder form input:not([type=checkbox]) {
   border: 1px solid #7f7f80;
+  width: 100%;
   max-width: 280px;
   background-color: transparent;
   font-family: Arial, Helvetica, sans-serif;
