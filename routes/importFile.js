@@ -445,6 +445,7 @@ module.exports = function (models) {
 
     router.post('/', multipartMiddleware, importFileToDb);
     router.get('/imported', imports.getImportMapObject);
+    router.post('/imported', imports.saveImportedData);
 
     return router;
 };

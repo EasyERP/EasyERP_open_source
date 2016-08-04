@@ -3,6 +3,7 @@ var Module = function (models) {
     'use strict';
 
     var ImportSchema = mongoose.Schemas.Imports;
+    var PersonSchema = mongoose.Schemas.Customer;
     var async = require('async');
     var mapObject = require('../public/js/constants/importMapping');
     var moment = require('../public/js/libs/moment/moment');
@@ -19,7 +20,7 @@ var Module = function (models) {
         var changedItem1 = toOneCase(item1);
         var changedItem2 = toOneCase(item2);
 
-        if (changedItem1.indexOf(changedItem2) > 0 || changedItem2.indexOf(changedItem1) > 0 || changedItem1 === changedItem2) {
+        if (changedItem1.indexOf(changedItem2) >= 0 || changedItem2.indexOf(changedItem1) >= 0 || changedItem1 === changedItem2) {
             return true;
         }
 
@@ -52,6 +53,29 @@ var Module = function (models) {
         };
     }
 
+    function mapImportFileds(importObj, fieldsArray) {
+        var mappedFields = {};
+
+        for (var i in importObj) {
+
+            if (importObj[i] !== '') {
+                mappedFields[importObj[i]] = fieldsArray.indexOf(i);
+            }
+        }
+
+        return mappedFields;
+    }
+
+    function prepareSaveObject(mappedFields, saveItemArray) {
+        var saveObj = {};
+
+        for (var i in mappedFields) {
+            saveObj[i] = saveItemArray[mappedFields[i]];
+        }
+
+        return saveObj;
+    }
+
     this.getImportMapObject = function (req, res, next) {
         var ImportModel = models.get(req.session.lastDb, 'Imports', ImportSchema);
         var userId = req.session.uId;
@@ -71,6 +95,50 @@ var Module = function (models) {
             }
 
             res.status(200).send(mappedObj || {});
+        });
+    };
+
+    this.saveImportedData = function (req, res, next) {
+        var data = req.body;
+        var userId = req.session.uId;
+        var ImportModel = models.get(req.session.lastDb, 'Imports', ImportSchema);
+        var PersonModel = models.get(req.session.lastDb, 'Customers', PersonSchema);
+        var titleArray;
+        var mappedFields;
+
+        ImportModel.find({user: userId}, function (err, importData) {
+            if (err) {
+                return next(err);
+            }
+
+
+            if (!importData.length) {
+                res.status(404).send({result: 'Imported data not found'});
+                return;
+            }
+
+            titleArray = importData.shift().result;
+
+            mappedFields = mapImportFileds(data, titleArray);
+
+            async.each(importData, function (importItem, cb) {
+                var saveModel;
+                var saveObj;
+                var importItemObj = importItem.toJSON().result;
+
+
+                saveObj = prepareSaveObject(mappedFields, importItemObj);
+
+                saveModel = new PersonModel(saveObj);
+
+                saveModel.save(cb);
+            }, function (err) {
+                if (err){
+                    return next(err);
+                }
+
+                res.status(200).send();
+            });
         });
     };
 
