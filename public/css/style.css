@@ -1660,7 +1660,7 @@ label._customCHeckbox input[type="checkbox"] {
   height: 19px;
   width: 19px;
   color: #fff;
-  background: red;
+  background: #c8c8d3;
   text-align: center;
   display: inline-block;
   border-radius: 50%;
@@ -1683,7 +1683,8 @@ label._customCHeckbox input[type="checkbox"] {
   display: -ms-flexbox;
   display: -webkit-flex;
   display: flex;
-  cursor: pointer; }
+  cursor: pointer;
+  margin: 15px 0; }
   .dateListItem .dateListCheckboxWrap {
     padding: 0 20px;
     -webkit-flex-shrink: 0;
@@ -1703,6 +1704,12 @@ label._customCHeckbox input[type="checkbox"] {
       color: #8c8e8f; }
     .dateListItem .dateListBody .dateListFooter .listFooterDate {
       color: #383b3c; }
+
+.taskListWrap {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex; }
 
 .dialog-tabs:before, .dialog-tabs:after {
   content: " ";

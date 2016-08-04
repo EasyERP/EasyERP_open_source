@@ -6,7 +6,7 @@
   height: 19px;
   width: 19px;
   color: #fff;
-  background: red;
+  background: #c8c8d3;
   text-align: center;
   display: inline-block;
   border-radius: 50%;
@@ -37,6 +37,7 @@
   display: -webkit-flex;
   display: flex;
   cursor: pointer;
+  margin: 15px 0;
 
   .dateListCheckboxWrap {
     padding: 0 20px;
@@ -68,4 +69,12 @@
       }
     }
   }
+}
+
+.taskListWrap {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
 }
