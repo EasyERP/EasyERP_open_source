@@ -1,5 +1,5 @@
 <div id="<%=type%>" class="dateListElement">
-    <span class="dateListElementTitle"><%=type %><span class="count"><%=data.length%></span></span>
+    <span class="dateListElementTitle"><%=type %><span class="countCircle"><%=data.length%></span></span>
     <% data.forEach(function(task, index){ %>
     <div data-index="<%=index%>" data-id="<%= task._id%>" class="stage-<%=(task.workflow) ? task.workflow.status.toLowerCase() : ''%> dateListItem">
         <div class="dateListCheckboxWrap">
@@ -13,14 +13,14 @@
                 <span data-color="<%=(task.category) ?task.category.color : ''%>" class="_tagSmall"><%=(task.category) ? task.category.name : ''%></span>
             </div>
 
-            <div class="dateListDescription"><%=task.description%></div>
+            <div class="dateListDescription textEllipsis"><%=task.description%></div>
 
             <div class="dateListFooter">
                 <!--<a href="<%=(task.contact) ? '/#easyErp/Persons/form/' + task.contact._id : (task.company) ?'/#easyErp/Companies/form/' + task.company._id : ''%>"><%=(task.contact && task.contact.name) ? task.contact.name.first + ' ' + task.contact.name.last : (task.company && task.company.name) ?  task.company.name.first : ''%></a>-->
-                <span><%=task.dueDate%></span>
+                <span class="listFooterDate"><%=task.dueDate%></span>
                 <% if (task.assignedTo){%>
-                <span class="grey">for</span>
-                <span><%=(task.assignedTo) ?  task.assignedTo.name.first + ' ' + task.assignedTo.name.last : ''%></span>
+                <span class="textLightGrey">for</span>
+                <span class="textBlue"><%=(task.assignedTo) ?  task.assignedTo.name.first + ' ' + task.assignedTo.name.last : ''%></span>
                 <% }%>
             </div>
         </div>

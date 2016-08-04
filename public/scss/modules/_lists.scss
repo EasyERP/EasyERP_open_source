@@ -2,10 +2,31 @@
   width: 400px;
 }
 
+.countCircle {
+  height: 19px;
+  width: 19px;
+  color: #fff;
+  background: red;
+  text-align: center;
+  display: inline-block;
+  border-radius: 50%;
+  font-size: 12px;
+  line-height: 19px;
+
+  &:empty {
+    display: none;
+  }
+}
+
 .dateListElementTitle {
+  display: inline-block;
+  margin: 20px;
+  font-size: 14px;
+  color: #8c8e8f;
+  text-transform: uppercase;
 
-  .count {
-
+  .countCircle {
+    margin-left: 8px;
   }
 }
 
@@ -15,6 +36,7 @@
   display: -ms-flexbox;
   display: -webkit-flex;
   display: flex;
+  cursor: pointer;
 
   .dateListCheckboxWrap {
     padding: 0 20px;
@@ -23,6 +45,7 @@
   }
 
   .dateListBody {
+    min-width: 1px;
     -webkit-flex-grow: 1;
     flex-grow: 1;
 
@@ -35,11 +58,14 @@
     }
 
     .dateListDescription {
-
+      color: #8c8e8f;
     }
 
     .dateListFooter {
 
+      .listFooterDate {
+        color: #383b3c;
+      }
     }
   }
 }

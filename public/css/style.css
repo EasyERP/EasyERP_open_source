@@ -1430,6 +1430,12 @@
     -ms-flex-order: -1;
     -webkit-order: -1;
     order: -1; } }
+.textLightGrey {
+  color: #c5c7c7; }
+
+.textBlue {
+  color: #27a0cd; }
+
 label._customCHeckbox input[type="checkbox"] {
   position: absolute;
   left: -9999px;
@@ -1650,17 +1656,41 @@ label._customCHeckbox input[type="checkbox"] {
 .dateListElement {
   width: 400px; }
 
+.countCircle {
+  height: 19px;
+  width: 19px;
+  color: #fff;
+  background: red;
+  text-align: center;
+  display: inline-block;
+  border-radius: 50%;
+  font-size: 12px;
+  line-height: 19px; }
+  .countCircle:empty {
+    display: none; }
+
+.dateListElementTitle {
+  display: inline-block;
+  margin: 20px;
+  font-size: 14px;
+  color: #8c8e8f;
+  text-transform: uppercase; }
+  .dateListElementTitle .countCircle {
+    margin-left: 8px; }
+
 .dateListItem {
   display: -webkit-box;
   display: -ms-flexbox;
   display: -webkit-flex;
-  display: flex; }
+  display: flex;
+  cursor: pointer; }
   .dateListItem .dateListCheckboxWrap {
     padding: 0 20px;
     -webkit-flex-shrink: 0;
     -ms-flex-negative: 0;
         flex-shrink: 0; }
   .dateListItem .dateListBody {
+    min-width: 1px;
     -webkit-flex-grow: 1;
     -webkit-box-flex: 1;
         -ms-flex-positive: 1;
@@ -1669,6 +1699,10 @@ label._customCHeckbox input[type="checkbox"] {
       content: '';
       display: table;
       clear: both; }
+    .dateListItem .dateListBody .dateListDescription {
+      color: #8c8e8f; }
+    .dateListItem .dateListBody .dateListFooter .listFooterDate {
+      color: #383b3c; }
 
 .dialog-tabs:before, .dialog-tabs:after {
   content: " ";
