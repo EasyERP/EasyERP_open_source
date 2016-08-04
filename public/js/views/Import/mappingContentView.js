@@ -11,8 +11,17 @@ define([
     'use strict';
 
     var mappingContentView = Backbone.View.extend({
-        el: '#contentBlock',
+        el                    : '#content-holder',
         contentTemplate       : _.template(ContentTemplate),
+
+        events: {
+            'click #clickToReset': 'resetForm',
+            'click .stageBtn': 'goToPreview'
+        },
+
+        resetForm: function() {
+            this.render(this.data);
+        },
 
         initialize: function () {
             var url = '/importFile/imported';
@@ -20,21 +29,56 @@ define([
 
             this.logFile = {};
 
+
             dataService.getData(url,{},function(data) {
-                self.render(data);
+                self.data = data;
+                self.render(self.data);
             });
             //this.render();
         },
 
         goToPreview: function () {
             var $thisEl = this.$el;
-            var $contentBlock = $thisEl.find('#contentBlock');
+            var url = 'BlaBlaBla';
+            var $dbContentBlock = $thisEl.find('#dbContentBlock');
+            var fieldsObject = {};
+            var $content = $dbContentBlock.find('.content');
 
-            $contentBlock.html();
+            //console.log($dbContentBlock.find('.content'));
+            //TODO chande to data attribute
+            for (var i = 0; i < $content.length; i++) {
+                var firstColumnVal = $($content[i]).find('.firstColumn').text();
+                var secondColumnVal = $($content[i]).find('.secondColumn').text();
+                if (secondColumnVal) {
+                    fieldsObject[firstColumnVal] = secondColumnVal;
+                }
+            }
+
+            console.log(fieldsObject);
+
+            dataService.postData(url, fieldsObject, function(data) {
+
+            });
+
+            //$contentBlock.html();
+        },
+
+        findKeyByValue: function(obj, value) {
+            var result;
+
+            _.each(obj, function(item, key) {
+                if (item === value) {
+                    result = key;
+                }
+            });
+
+
+            return result
         },
 
         draggableDBFields: function() {
             var self = this;
+            var fieldsBlock;
 
             $('.dbFieldItem').droppable({
                 accept   : '.dbFieldItemDrag, .fieldItem',
@@ -44,21 +88,19 @@ define([
                     var $draggable = ui.draggable;
                     var draggableName = $draggable.data('name');
                     var droppableName = $droppable.data('name');
+                    var draggableParentName = $draggable.data('parent');
+                    var droppableParentName = $droppable.data('parent');
 
+                    if (($draggable.attr('class').indexOf('dbFieldItem') === -1) && (_.values(self.logFile).indexOf(droppableName)) !== -1) {
 
-                    /*console.log('dropable ',$droppable);
-                    console.log('dropableName ',droppableName);
-                    console.log('dragable ',$draggable);
-                    console.log('dragableName ',draggableName);*/
-
-                    if (Object.keys(self.logFile).indexOf($droppable.data('name')) !== -1) {
-
+                        if (droppableParentName === 'customers' || droppableParentName === 'employees') {
+                            delete self.logFile[self.findKeyByValue(self.logFile, droppableName)];
+                            self.$el.find('.tabItem[data-tab=' + droppableParentName + ']').find('ul').append('<li class="fieldItem" data-parent="' + droppableParentName + '" style="color=green; cursor: pointer"  data-name="<%= itemOne %>">' + droppableName +'</li>');
+                        }
                     }
 
-                    self.logFile[droppableName] = draggableName;
 
-                    //console.log(Object.keys(self.logFile));
-                    //console.log($droppable.data('name'));
+                    self.logFile[droppableName] = draggableName;
 
                     if ($draggable.attr('class').indexOf('dbFieldItem') !== -1) {
                         if (!droppableName.length) {
@@ -71,22 +113,28 @@ define([
                                 disabled: false
                             });
                         }
-                        $droppable.html(draggableName);
+                        $droppable.text(draggableParentName);
+                        $droppable.data('parent', draggableParentName);
+                        $draggable.text(droppableParentName);
+                        $draggable.data('parent', droppableParentName);
+                        $droppable.text(draggableName);
                         $droppable.data('name', draggableName);
-                        $draggable.html(droppableName);
+                        $draggable.text(droppableName);
                         $draggable.data('name', droppableName);
                     } else {
                         if (!droppableName.length) {
                             $draggable.draggable({
                                 disabled: true
                             });
+                            $droppable.addClass('dbFieldItemDrag');
                             $droppable.draggable({
-                                revert: true,
+                                revert  : true,
                                 disabled: false
                             });
                         }
-                        $droppable.html(draggableName);
+                        $droppable.text(draggableName);
                         $droppable.data('name', draggableName);
+                        $droppable.data('parent', draggableParentName);
                         $draggable.remove();
                     }
                 },
@@ -108,7 +156,7 @@ define([
         render: function (data) {
             var $thisEl = this.$el;
 
-            $thisEl.html(this.contentTemplate({
+            $thisEl.find('#contentBlock').html(this.contentTemplate({
                 content: data.result,
                 fields: importMapping
             }));

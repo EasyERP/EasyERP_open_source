@@ -38,6 +38,7 @@ define([
         selectStage: function (e) {
             var stage;
 
+
             if (e.hasOwnProperty('target')) {
                 e.preventDefault();
 
