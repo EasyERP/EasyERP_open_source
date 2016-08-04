@@ -28,6 +28,12 @@ define([
             var url = '/importFile/imported';
             var self = this;
 
+            $(document).mousemove(function(e){
+                self.X = e.pageX; // положения по оси X
+                self.Y = e.pageY; // положения по оси Y
+                //console.log("X: " + self.X + " Y: " + self.Y); // вывод результата в консоль
+            });
+
             this.logFile = {};
 
 
@@ -81,6 +87,14 @@ define([
             $('.dbFieldItem').droppable({
                 accept   : '.dbFieldItemDrag, .fieldItem',
                 tolerance: 'pointer',
+                activate : function(event, ui) {
+                    var $draggable = ui.draggable;
+
+                    //$draggable.addClass('draggableActive');
+                    console.log(self.X, self.Y);
+                    $draggable.css({'position':'fixed'});
+                },
+
                 drop     : function (event, ui) {
                     var $droppable = $(this).closest('div');
                     var $draggable = ui.draggable;
@@ -93,7 +107,14 @@ define([
 
                         if (droppableParentName === 'customers' || droppableParentName === 'employees') {
                             delete self.logFile[self.findKeyByValue(self.logFile, droppableName)];
-                            self.$el.find('.tabItem[data-tab=' + droppableParentName + ']').find('ul').append('<li class="fieldItem" data-parent="' + droppableParentName + '" style="color=green; cursor: pointer"  data-name="<%= itemOne %>">' + droppableName +'</li>');
+                            self.$el.find('.tabItem[data-tab=' + droppableParentName + ']')
+                                .find('ul')
+                                .append('<li class="fieldItem" data-parent="' + droppableParentName + '" style="cursor: pointer"  data-name="' + droppableName + '">' + droppableName +'</li>')
+                                .find('li[data-name="' + droppableName +'"]')
+                                .draggable({
+                                    revert: true
+                                });
+
                         }
                     }
 
@@ -162,7 +183,13 @@ define([
             this.draggableDBFields();
 
             $thisEl.find('.dbFieldItemDrag').draggable({
-                revert: true
+                revert: true,
+                start: function(event, ui) {
+                    var $draggable = $(this);
+
+                    $draggable.addClass('draggableActive');
+                    //$draggable.css('position', 'fixed');
+                },
             });
 
             $thisEl.find('.fieldItem').draggable({
