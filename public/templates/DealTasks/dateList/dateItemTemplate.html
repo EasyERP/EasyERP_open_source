@@ -4,7 +4,7 @@
     <div data-index="<%=index%>" data-id="<%= task._id%>" class="stage-<%=(task.workflow) ? task.workflow.status.toLowerCase() : ''%> dateListItem">
         <div class="dateListCheckboxWrap">
             <label class="_customCHeckbox">
-                <input type="checkbox" <%=task.workflow.status === 'Done' ? 'checked' : ''%> value="<%=task._id%>" class="checkbox"/>
+                <input type="checkbox" data-sequence="<%= task.sequence%>" <%=task.workflow.status === 'Done' ? 'checked' : ''%> value="<%=task._id%>" class="checkbox"/>
                 <span></span>
             </label>
         </div>

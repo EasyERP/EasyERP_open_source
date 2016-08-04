@@ -32,10 +32,11 @@
         responseObj: {},
 
         events: {
-            'keypress #logged, #estimated': 'isNumberKey',
-            'click #projectTopName'       : 'useProjectFilter',
-            'click .removeSelect'         : 'removeSelect',
-            'keyup .time'                 : 'validateInput'
+            'keypress .time'           : 'keypress',
+            'click #projectTopName'    : 'useProjectFilter',
+            'click .removeSelect'      : 'removeSelect',
+            'keyup .time'              : 'validateInput',
+            'change .time'   : 'changeInput',
         },
 
         initialize: function (options) {
@@ -47,6 +48,19 @@
             this.render();
         },
 
+        keypress: function (e) {
+            return keyValidator(e);
+        },
+
+        changeInput : function(e) {
+            var $target = $(e.target);
+
+            e.preventDefault();
+
+            if ($target.val().length === 1) {
+                $target.val('0' + $target.val());
+            }
+        },
 
         validateInput : function(e) {
             var $target = $(e.target);
@@ -84,12 +98,6 @@
             $('.edit-dialog').remove();
 
             Backbone.history.navigate('#easyErp/Tasks/list/p=1/c=100/filter=' + encodeURIComponent(JSON.stringify(filter)), {trigger: true});
-        },
-
-        isNumberKey: function (evt) {
-            var charCode = (evt.which) ? evt.which : event.keyCode;
-
-            return !(charCode > 31 && (charCode < 48 || charCode > 57));
         },
 
         chooseOption: function (e) {
