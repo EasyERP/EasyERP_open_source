@@ -2054,3 +2054,18 @@ table {
   float: left;
   clear: both;
 }
+
+.inputDateActionBlock {
+  display: flex;
+
+  > .ui-spinner {
+    flex-grow: 1;
+
+    > input {
+
+      &:nth-child(n+2) {
+        border-right: 0;
+      }
+    }
+  }
+}
