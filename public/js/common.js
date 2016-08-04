@@ -45,7 +45,7 @@
     };
 
     var utcDateToLocaleHours = function (utcDateString, notHours) {
-        utcDateString = utcDateString ? moment(utcDateString).format('hh:mm') : null;
+        utcDateString = utcDateString ? moment(utcDateString).format('HH:mm') : null;
 
         return utcDateString;
     };
