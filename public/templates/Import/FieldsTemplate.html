@@ -1,0 +1,38 @@
+<div>
+    <table>
+        <tr>
+            <td><h3 style="font-size: 70px">First</h3></td>
+            <td><h3 style="font-size: 70px">Second</h3></td>
+        </tr>
+        <% _.each(content, function(item, key){%>
+            <tr>
+                <td style="font-size: 60px"><%= key %></td>
+                <td style="font-size: 60px"><%= item %></td>
+            </tr>
+        <% }); %>
+
+    </table>
+</div>
+<div id="fieldsContainer" style="float: right">
+    <ul>
+        <% _.each(fields, function(item, key){%>
+        <li>
+            <%= key %>
+        </li>
+        <% }); %>
+    </ul>
+    <br>
+    <% _.each(fields, function(item, key) {%>
+        <div class="tabItem">
+            <ul>
+                <% _.each(item, function(itemOne) { %>
+                <li>
+                    <%= itemOne %>
+                </li>
+                <% }); %>
+            </ul>
+        </div>
+        <br>
+    <% }); %>
+</div>
+

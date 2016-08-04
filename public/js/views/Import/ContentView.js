@@ -6,9 +6,10 @@ define([
     'text!templates/Import/importProgress.html',
     'text!templates/Notes/importTemplate.html',
     'views/Notes/AttachView',
+    'views/Import/mappingContentView',
     'constants',
     'common'
-], function (Backbone, $, _, ContentTemplate, ImportProgressTemplate, ImportTemplate, AttachView, CONSTANTS, common) {
+], function (Backbone, $, _, ContentTemplate, ImportProgressTemplate, ImportTemplate, AttachView, MappingContentView, CONSTANTS, common) {
     'use strict';
 
     var ContentView = Backbone.View.extend({
@@ -18,6 +19,7 @@ define([
         contentTemplate       : _.template(ContentTemplate),
         importTemplate        : _.template(ImportTemplate),
         importProgressTemplate: _.template(ImportProgressTemplate),
+        childView: null,
 
         events: {
             'click .importBtn'   : 'importFile',
@@ -39,6 +41,12 @@ define([
         importFiles: function (e) {
             var importFile = new AttachView({el: '#forImport'});
             importFile.sendToServer(e, null, this);
+        },
+
+        goToMapping: function () {
+            var $thisEl = this.$el;
+
+            this.childView = new MappingContentView();
         },
 
         render: function () {

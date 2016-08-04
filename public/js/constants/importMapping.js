@@ -1,5 +1,8 @@
-define(function(){
-    'use strict';
+'use strict';
+
+(function () {
+    var root;
+
     var importMapping = {
         customers: [
             'type', 'isOwn', 'name.first', 'name.last', 'dateBirth', 'imageSrc', 'email', 'company', 'department', 'timezone', 'address.street',
@@ -16,9 +19,27 @@ define(function(){
             'bankAccountNo', 'otherId', 'homeAddress.street', 'homeAddress.city', 'homeAddress.state', 'homeAddress.zip', 'homeAddress.country', 'dateBirth', 'age',
             'daysForBirth', 'nextAction', 'source', 'referredBy', 'workflow', 'whoCanRW', 'groups.owner', 'groups.users', 'groups.group', 'otherInfo', 'expectedSalary',
             'proposedSalary', 'color', 'creationDate', 'createdBy.user', 'createdBy.date', 'editedBy.user', 'editedBy.date', 'attachments', 'marital', 'gender', 'jobType',
-            'sequence', 'isLead', 'ID', 'social.FB', 'social.LI', 'social.GP', 'hire', 'fire', 'lastFire', 'transferred',
+            'sequence', 'isLead', 'ID', 'social.FB', 'social.LI', 'social.GP', 'hire', 'fire', 'lastFire', 'transferred'
         ]
     };
 
-    return importMapping;
-});
+    if (typeof window === 'object' && this === window) {
+        root = window;
+    } else if (typeof global === 'object' && this === global) {
+        root = global;
+    } else {
+        root = this;
+    }
+
+    if (typeof exports !== 'undefined') {
+        if (typeof module !== 'undefined' && module.exports) {
+            module.exports = importMapping;
+        }
+    } else if (typeof define !== 'undefined' && define.amd) {
+        define([], function () {
+            return importMapping;
+        });
+    } else {
+        root.importMapping = importMapping;
+    }
+})();
