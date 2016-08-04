@@ -1,0 +1,26 @@
+<div id="timeLineBody" class="noteMainContainer timeNote">
+    <h3>Recent Activities</h3>
+    <%_.each(response, function(val,key){ %>
+    <% var login = val.editedBy ? (App.currentUser._id === val.editedBy._id) ? 'You': val.editedBy.login : '' %>
+
+    <div id="<%=val._id%>" class="noteContainer">
+            <div class="noteBody">
+                <div class="history_body">
+                    <div class="history_changed singleNote clearfix">
+                        <span class="dateNote"><%=val.date%></span>
+                        <div class="changed_field">
+                            <%if (val.prevValue){%>
+                            <span class="changedFieldName"><b><%= login %></b> changed <%= val.name ? 'on "' + val.name +'" ' : '' %><b><%= val.changedField + ' : '%></b></span>
+                            <span>from <b><%= val.prevValue %></b></span>
+                            <span> to </span>
+                            <%} else {%>
+                            <span class="changedFieldName"><b><%= login %></b> added <%= val.name ? 'on "' + val.name +'" '  : '' %> <b><%= val.changedField+ ' : ' %></b></span>
+                            <%}%>
+                            <span><b><%= val.newValue %></b></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+    <%}) %>
+</div>

@@ -76,7 +76,7 @@ define([
             'easyErp/Products/thumbnails(/c=:countPerPage)(/filter=:filter)'                                : 'goToProduct',
             'login(?password=:password&dbId=:dbId&email=:email)'                                            : 'login',
             'easyErp/:contentType/kanban(/:parrentContentId)(/filter=:filter)'                              : 'goToKanban',
-            'easyErp/:contentType/datelist(/:parrentContentId)(/filter=:filter)'                            : 'goToDateList',
+            'easyErp/:contentType/datelist(/c=:countPerPage)(/filter=:filter)'          : 'goToDateList',
             'easyErp/:contentType/thumbnails(/c=:countPerPage)(/filter=:filter)'                            : 'goToThumbnails',
             'easyErp/:contentType/tform(/:modelId)(/p=:page)(/c=:countPerPage)(/filter=:filter)'            : 'goToTForm', // FixMe chenge to required Id after test
             'easyErp/:contentType/form(/:modelId)'                                                          : 'goToForm', // FixMe chenge to required Id after test
@@ -1071,7 +1071,7 @@ define([
             }
         },
 
-        goToDateList: function (contentType, filter) {
+        goToDateList: function (contentType, countPerPage, filter) {
             var self = this;
 
             if (filter && typeof filter === 'string') {
@@ -1109,9 +1109,15 @@ define([
                 require([contentViewUrl, topBarViewUrl, collectionUrl], function (ContentView, TopBarView, ContentCollection) {
                     var contentview;
                     var topbarView;
-                    var collection = new ContentCollection({
-                        viewType    : 'dateList',
-                        reset     : true
+                    var collection;
+
+
+                    App.filtersObject.filter = filter;
+
+                    collection = new ContentCollection({
+                        viewType    : 'datelist',
+                        reset     : true,
+                        filter : filter
                     });
 
 
@@ -1128,6 +1134,7 @@ define([
                             filter   : filter
                         });
                         eventsBinder.subscribeTopBarEvents(topbarView, contentview);
+                        eventsBinder.subscribeCollectionEvents(collection, contentview)
 
                         self.changeView(contentview);
                         self.changeTopBarView(topbarView);

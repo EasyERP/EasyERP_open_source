@@ -99,14 +99,27 @@ var History = function (models) {
                 value: data[key]
             };
 
+            if (data[key]) {
+                if (typeof data[key] === 'object' && !data[key]._bsontype) {
+                    arrayDataKey = Object.keys(data[key]);
+                    arrayDataKey.forEach(function (elem, index) {
+                        var name = arrayDataKey[index];
 
-            arrayDataKey = Object.keys(data[key]);
-            if (typeof data[key] === 'object' && arrayDataKey.length) {
-                arrayDataKey.forEach(function(elem, index){
-                    var name = arrayDataKey[index];
+                        keyValue.value = {};
+                        keyValue.value[name] = data[key][name];
+                        historyEntry = generateHistoryEntry(contentType, keyValue);
 
-                    keyValue.value = {};
-                    keyValue.value[name] = data[key][name];
+                        if (historyEntry) {
+
+                            historyEntry.editedBy = objectId(options.req.session.uId);
+                            historyEntry.contentId = objectId(options.contentId);
+                            historyEntry.date = date;
+
+                            historyRecords.push(historyEntry);
+                        }
+                        delete data[key][name];
+                    });
+                } else {
                     historyEntry = generateHistoryEntry(contentType, keyValue);
 
                     if (historyEntry) {
@@ -117,17 +130,6 @@ var History = function (models) {
 
                         historyRecords.push(historyEntry);
                     }
-                });
-            } else {
-                historyEntry = generateHistoryEntry(contentType, keyValue);
-
-                if (historyEntry) {
-
-                    historyEntry.editedBy = objectId(options.req.session.uId);
-                    historyEntry.contentId = objectId(options.contentId);
-                    historyEntry.date = date;
-
-                    historyRecords.push(historyEntry);
                 }
             }
 

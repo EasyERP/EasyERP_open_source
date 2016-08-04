@@ -3,6 +3,7 @@
 var mongoose = require('mongoose');
 var moment = require('../public/js/libs/moment/moment');
 var RESPONSES = require('../constants/responses');
+var HistoryWriter = require('../helpers/historyWriter');
 var tasksSchema = mongoose.Schemas.DealTasks;
 var department = mongoose.Schemas.Department;
 var projectSchema = mongoose.Schemas.Project;
@@ -22,6 +23,8 @@ var Module = function (models, event) {
     var path = require('path');
     var Uploader = require('../services/fileStorage/index');
     var uploader = new Uploader();
+
+    var historyWriter = new HistoryWriter(models);
     var FilterMapper = require('../helpers/filterMapper');
 
     this.createTask = function (req, res, next) {
@@ -50,11 +53,24 @@ var Module = function (models, event) {
                 event.emit('updateSequence', TasksModel, 'sequence', 0, 0, task.workflow, task.workflow, true, false, function (sequence) {
                     task.sequence = sequence;
                     task.save(function (err, result) {
+                        var historyOptions;
+
                         if (err) {
                             return next(err);
                         }
 
-                        res.status(201).send({success: 'New Task created success', id: result._id});
+                        historyOptions = {
+                            contentType: 'dealTask',
+                            data       : result.toJSON(),
+                            req        : req,
+                            contentId  : result._id
+                        };
+
+                        historyWriter.addEntry(historyOptions, function () {
+                            res.status(201).send({success: 'New Task created success', id: result._id});
+                        });
+
+
                     });
                 });
 
@@ -107,7 +123,7 @@ var Module = function (models, event) {
 
         function updateTask() {
             models.get(req.session.lastDb, 'DealTasks', tasksSchema).findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
-
+                var historyOptions;
                 var os = require('os');
                 var osType = (os.type().split('_')[0]);
                 var path;
@@ -118,7 +134,18 @@ var Module = function (models, event) {
                     return next(err);
                 }
 
-                res.send(200, {success: 'Tasks updated', sequence: result.sequence});
+                historyOptions = {
+                    contentType: 'dealtask',
+                    data       : data,
+                    req        : req,
+                    contentId  : result._id
+                };
+
+                historyWriter.addEntry(historyOptions, function () {
+                    res.send(200, {success: 'Tasks updated', sequence: result.sequence});
+                });
+
+
             });
         }
 
@@ -391,9 +418,49 @@ var Module = function (models, event) {
 
     }
 
+    this.getActivity = function (req, res, next){
+        var Task = models.get(req.session.lastDb, 'DealTasks', tasksSchema);
+
+        Task.find({}, {_id : 1, description : 1}, function (err, docs) {
+            var ids;
+            var historyOptions;
+
+            if (err){
+                return next(err);
+            }
+
+            ids = docs.map(function(elem){
+                return elem._id;
+            });
+            historyOptions = {
+                req: req,
+                id : {$in : ids}
+            };
+            historyWriter.getHistoryForTrackedObject(historyOptions, function (err, history) {
+                if (err){
+                    return next(err);
+                }
+
+                history = history.map(function (elem) {
+                    var doc = _.find(docs, function (opp) {
+                        return (opp._id.toJSON() === elem.contentId.toJSON());
+                    });
+
+                    elem.name = doc ? doc.description : '';
+                    return elem;
+                });
+
+
+                res.status(200).send({data : history});
+
+            }, true);
+        });
+
+
+    }
+
     function getTasksForDateList(req, res, next) {
         var data = req.query;
-        var limit = parseInt(data.count, 10);
         var obj = {};
         var addObj = {};
         var Task = models.get(req.session.lastDb, 'DealTasks', tasksSchema);
@@ -516,27 +583,7 @@ var Module = function (models, event) {
                                 }
                             }
                         }
-                    }  }/*,
-                {
-                    $project : {
-                        thisWeek : {
-                            count : {$sum: '$thisWeek'},
-                            data  : '$thisWeek'
-                        },
-                        tomorrow : {
-                            count : {$sum: '$tomorrow'},
-                            data  : '$tomorrow'
-                        },
-                        today : {
-                            count : {$sum: '$today'},
-                            data  : '$today'
-                        },
-                        overdue : {
-                            count : {$sum: '$overdue'},
-                            data  : '$overdue'
-                        }
-                    }
-                }*/
+                    }  }
 
 
             ], function (err, result) {
@@ -561,7 +608,7 @@ var Module = function (models, event) {
             case 'list':
                 getTasksForList(req, res, next);
                 break;
-            case 'dateList':
+            case 'datelist':
                 getTasksForDateList(req, res, next);
                 break;
             default :

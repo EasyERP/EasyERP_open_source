@@ -123,6 +123,7 @@
             var workflow;
             var data;
             var currentWorkflow;
+            var currentAssigned;
             var modelJSON = this.currentModel.toJSON();
             var deal = this.$el.find('#dealItem .showSelect').attr('data-id');
             var company = this.$el.find('#companyItem .showSelect').attr('data-id');
@@ -160,13 +161,11 @@
             workflow = holder.find('#workflowsDd').data('id');
 
             data = {
-                assignedTo   : assignedTo || null,
                 description  : description,
                 dueDate      : dueDate,
                 sequenceStart: modelJSON.sequence,
                 company      : company || null,
                 category     : category || null,
-                companyDate  : company ? new Date() : null,
                 contact      : contact || null,
                 contactDate  : contact ? new Date() : null,
                 deal         : deal || null,
@@ -174,6 +173,7 @@
             };
 
             currentWorkflow = modelJSON.workflow;
+            currentAssigned = modelJSON.assignedTo;
 
             if (currentWorkflow && currentWorkflow._id && (currentWorkflow._id !== workflow)) {
                 data.workflow = workflow;
@@ -181,7 +181,26 @@
                 data.workflowStart = modelJSON.workflow._id;
             }
 
-            this.currentModel.save(data, {
+            if (currentAssigned && currentAssigned._id && (currentAssigned._id !== assignedTo)) {
+                data.assignedTo = assignedTo;
+            }
+
+
+            this.currentModel.set(data);
+
+            if (this.currentModel.changed.company) {
+                data.companyDate = new Date();
+            }
+            if (this.currentModel.changed.contact) {
+                data.contactDate = new Date();
+            }
+            if (this.currentModel.changed.deal) {
+                data.dealDate = new Date();
+            }
+
+
+
+            this.currentModel.save(this.currentModel.changed, {
                 patch  : true,
                 success: function (model, res) {
                     var redirectUrl = window.location.hash;
@@ -224,18 +243,13 @@
                         var wId;
                         var newTotal;
                         var $totalCount;
+                        var redirectUrl = window.location.hash;
 
                         model = model.toJSON();
                         viewType = custom.getCurrentVT();
 
                         switch (viewType) {
-                            case 'list':
-                                var redirectUrl = window.location.hash;
-                                self.hideDialog();
 
-                                Backbone.history.fragment = '';
-                                Backbone.history.navigate(redirectUrl, {trigger: true});
-                                break;
                             case 'kanban':
                                 $('#' + model._id).remove();
                                 wId = model.workflow._id;
@@ -243,6 +257,15 @@
 
                                 newTotal = ($totalCount.html() - 1);
                                 $totalCount.html(newTotal);
+                                break;
+
+                            default:
+
+                                self.hideDialog();
+
+                                Backbone.history.fragment = '';
+                                Backbone.history.navigate(redirectUrl, {trigger: true});
+                                break;
                         }
                         self.hideDialog();
                     },
