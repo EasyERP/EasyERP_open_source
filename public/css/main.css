@@ -4187,6 +4187,12 @@ table.kanban tbody td:nth-child(n+2) {
 .superCenter {
   margin: auto;
 }
+.content-holder {
+  overflow: hidden;
+}
+._borderRight {
+  border-right: 1px solid #c8c8d3;
+}
 .collapsed .sideMenu {
   width: 40px !important;
   margin-right: -100%;

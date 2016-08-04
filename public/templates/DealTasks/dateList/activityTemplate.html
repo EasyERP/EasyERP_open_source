@@ -3,24 +3,24 @@
     <%_.each(response, function(val,key){ %>
     <% var login = val.editedBy ? (App.currentUser._id === val.editedBy._id) ? 'You': val.editedBy.login : '' %>
 
-    <div id="<%=val._id%>" class="noteContainer">
-            <div class="noteBody">
-                <div class="history_body">
-                    <div class="history_changed singleNote clearfix">
-                        <span class="dateNote"><%=val.date%></span>
-                        <div class="changed_field">
-                            <%if (val.prevValue){%>
-                            <span class="changedFieldName"><b><%= login %></b> changed <%= val.name ? 'on "' + val.name +'" ' : '' %><b><%= val.changedField + ' : '%></b></span>
-                            <span>from <b><%= val.prevValue %></b></span>
-                            <span> to </span>
-                            <%} else {%>
-                            <span class="changedFieldName"><b><%= login %></b> added <%= val.name ? 'on "' + val.name +'" '  : '' %> <b><%= val.changedField+ ' : ' %></b></span>
-                            <%}%>
-                            <span><b><%= val.newValue %></b></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div id="<%=val._id%>" class="_activitiesListItem">
+
+        <span class="_activityListTitle"><%= val.name%></span>
+        <div>
+            <span><b><%= val.changedField%></b></span>
+            <%if (val.prevValue){%>
+            <span class="changedFieldName"> changed  <span>from <b><%= val.prevValue %></b></span><span> to </span></span>
+            <%} else {%>
+            <span class="changedFieldName">added </span>
+            <%}%>
+
+            <span><b><%= val.newValue %></b></span>
+        </div>
+        <div class="_activitiesFooter">
+            <span>by <%= login %></span>
+            <span class="dateNote"><%=val.date%></span>
+        </div>
+
     </div>
     <%}) %>
 </div>

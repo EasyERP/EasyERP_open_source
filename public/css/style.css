@@ -3,7 +3,9 @@
   margin-left: auto;
   margin-right: auto;
   padding-left: 12px;
+  padding-left: 12px;
   padding-left: 0.75rem;
+  padding-right: 12px;
   padding-right: 12px;
   padding-right: 0.75rem; }
 
@@ -33,7 +35,9 @@
 
 .row {
   margin-left: -15px;
+  margin-left: -15px;
   margin-left: -0.9375rem;
+  margin-right: -15px;
   margin-right: -15px;
   margin-right: -0.9375rem; }
 
@@ -44,7 +48,9 @@
   position: relative;
   box-sizing: border-box;
   padding-left: 15px;
+  padding-left: 15px;
   padding-left: 0.9375rem;
+  padding-right: 15px;
   padding-right: 15px;
   padding-right: 0.9375rem; }
 
@@ -1666,6 +1672,8 @@ label._customCHeckbox input[type="checkbox"] {
   border-radius: 50%;
   font-size: 12px;
   line-height: 19px; }
+  .countCircle.red {
+    background: #ff0000; }
   .countCircle:empty {
     display: none; }
 
@@ -1705,11 +1713,66 @@ label._customCHeckbox input[type="checkbox"] {
     .dateListItem .dateListBody .dateListFooter .listFooterDate {
       color: #383b3c; }
 
-.taskListWrap {
+._taskListWrap {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
-  display: flex; }
+  display: flex;
+  height: calc(100vh - 96px); }
+  ._taskListWrap ._taskListDateBlock {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+            flex-direction: column;
+    width: calc(100% - 450px); }
+    ._taskListWrap ._taskListDateBlock ._dateListElement {
+      -webkit-flex-grow: 1;
+      -webkit-box-flex: 1;
+          -ms-flex-positive: 1;
+              flex-grow: 1;
+      height: 1px; }
+  ._taskListWrap ._taskListActivitiesBlock {
+    -webkit-flex-shrink: 0;
+    -ms-flex-negative: 0;
+        flex-shrink: 0;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+            flex-direction: column;
+    width: 450px; }
+    ._taskListWrap ._taskListActivitiesBlock ._activityHolderTitle {
+      -webkit-flex-shrink: 0;
+      -ms-flex-negative: 0;
+          flex-shrink: 0;
+      padding: 20px;
+      border-bottom: 1px solid #c8c8d3; }
+    ._taskListWrap ._taskListActivitiesBlock ._activityHolder {
+      -webkit-flex-grow: 1;
+      -webkit-box-flex: 1;
+          -ms-flex-positive: 1;
+              flex-grow: 1;
+      padding: 0 20px;
+      overflow: auto; }
+
+._activitiesListItem {
+  padding: 10px 0;
+  border-bottom: 1px solid #c8c8d3; }
+  ._activitiesListItem:last-child {
+    border-bottom: none; }
+
+._dateListScrollingBlock {
+  height: calc(100% - 60px);
+  overflow: auto; }
 
 .dialog-tabs:before, .dialog-tabs:after {
   content: " ";
