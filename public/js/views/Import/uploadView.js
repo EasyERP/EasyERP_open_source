@@ -52,15 +52,13 @@ define([
 
             $thisEl.html(this.contentTemplate);
             $thisEl.on('drop', function(e){
-                    var importFile = new AttachView({el: "#forImport"});
-                    if(e.originalEvent.dataTransfer && e.originalEvent.dataTransfer.files.length){
-                        e.preventDefault();
-                        e.stopPropagation();
-                        importFile.sendToServer(e, null, this, true, e.originalEvent.dataTransfer.files);
-                    }
-
+                var importFile = new AttachView({el: "#forImport"});
+                if(e.originalEvent.dataTransfer && e.originalEvent.dataTransfer.files.length){
+                    e.preventDefault();
+                    e.stopPropagation();
+                    importFile.sendToServer(e, null, this, true, e.originalEvent.dataTransfer.files);
                 }
-            );
+            });
 
             $thisEl.on('dragover', function(e){
                 //console.log('DRAG OVER');

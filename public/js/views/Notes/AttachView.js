@@ -65,8 +65,8 @@ define([
                         addInptAttach = $(this)[0].files[0];
                     } else {
                         addInptAttach = dropFile[0];
-
                     }
+
                     fileArr.push(addInptAttach);
 
                     if (!self.fileSizeIsAcceptable(addInptAttach)) {
