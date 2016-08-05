@@ -1704,8 +1704,10 @@
       margin-bottom: 10px;
       cursor: move;
       background: #ffffff; }
-    ._importListBody ._tabsBlock .fieldsItems.active {
-      display: block; }
+    ._importListBody ._tabsBlock .fieldsItems {
+      display: none; }
+      ._importListBody ._tabsBlock .fieldsItems.active {
+        display: block; }
 
 ._contentBlockRow {
   display: -webkit-box;
@@ -1771,6 +1773,9 @@
     min-height: 53px;
     padding: 17px 15px;
     cursor: move; }
+    ._contentBlockRow ._movingItem.borderField {
+      border: 1px solid #c2c8cd;
+      background: #ffffff; }
 
 ._importTabs .tabListItem span {
   display: inline-block !important;
@@ -1782,6 +1787,16 @@
 .ui-draggable.draggableActive {
   position: fixed !important;
   z-index: 10; }
+
+._importListFooter {
+  padding: 15px 20px;
+  margin-top: 10px;
+  border-top: 1px solid; }
+
+._importAttachContainer {
+  width: 100%;
+  padding: 20px 30px;
+  text-align: center; }
 
 .propertyContainer a:hover {
   text-decoration: none; }

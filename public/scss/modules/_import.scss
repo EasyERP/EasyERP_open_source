@@ -76,6 +76,8 @@
     }
 
     .fieldsItems {
+      display: none;
+
       &.active {
         display: block;
       }
@@ -180,6 +182,11 @@
     min-height: 53px;
     padding: 17px 15px;
     cursor: move;
+
+    &.borderField {
+      border: 1px solid #c2c8cd;
+      background: $white;
+    }
   }
 }
 
@@ -203,5 +210,17 @@
     position: fixed !important;
     z-index: 10;
   }
+}
+
+._importListFooter {
+  padding: 15px 20px;
+  margin-top: 10px;
+  border-top: 1px solid $importFooterBorder;
+}
+
+._importAttachContainer {
+  width: 100%;
+  padding: 20px 30px;
+  text-align: center;
 }
 
