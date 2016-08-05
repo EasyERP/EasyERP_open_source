@@ -2509,7 +2509,7 @@ body {
   float: left;
   margin-left: 15px;
   height: 100%;
-  width: 210px;
+  min-width: 210px;
 }
 .settings_modal .check_wrap {
   float: left;
