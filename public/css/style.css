@@ -1796,13 +1796,22 @@
 
 ._importAttachContainer {
   width: 100%;
-  padding: 20px 30px;
-  text-align: center; }
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 50px 30px 30px;
+  text-align: center;
+  border: 3px dashed;
+  background: #f2f2f2; }
+  ._importAttachContainer .attachFileName {
+    margin: 15px 0;
+    font-size: 16px; }
+    ._importAttachContainer .attachFileName span {
+      font-weight: bold; }
 
 ._progressBarContainer {
   height: 20px;
   border-radius: 30px;
-  margin-top: 20px;
+  margin-bottom: 20px;
   background: #f2f2f2; }
   ._progressBarContainer ._progressBar {
     height: 100%;
