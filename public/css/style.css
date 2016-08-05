@@ -1731,6 +1731,10 @@
               transform: translate(0, -50%);
       font-style: italic;
       color: #c2c8cd; }
+  ._contentBlockRow .hoverRow {
+    background: rgba(50, 145, 200, 0.7); }
+    ._contentBlockRow .hoverRow ._rowItem {
+      border-color: #3291c8; }
   ._contentBlockRow ._rowItem {
     position: relative;
     width: 1px;

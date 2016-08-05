@@ -117,6 +117,13 @@
       }
     }
   }
+
+  .hoverRow {
+    background: rgba($importHoverRowBg, .7);
+    ._rowItem {
+      border-color: $importHoverRowBg;
+    }
+  }
   
   ._rowItem {
     position: relative;
