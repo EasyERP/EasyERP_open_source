@@ -72,18 +72,34 @@ var Module = function (models) {
 
     function prepareSaveObject(mappedFields, saveItemArray) {
         var saveObj = {};
+        var val;
+        var arr;
 
         for (var i in mappedFields) {
-            if (saveItemArray[i] && arrayKeys && arrayKeys[mappedFields[i]] === true) {
-                if (typeof val == 'number') {
-                    var arr = [];
+            val = saveItemArray[mappedFields[i]];
+            arr = [];
+
+            if (val && arrayKeys && arrayKeys[mappedFields[i]] === true) {
+                if (typeof +val === 'number') {
                     arr.push(val);
                     val = arr;
                 } else {
                     val = val.split(',');
                 }
             }
-            saveObj[i] = saveItemArray[mappedFields[i]];
+
+            if (val) {
+                if (!isNaN(+val)) {
+                    saveObj[i] = +val;
+                } else if (val === 'false') {
+                    saveObj[i] = false;
+                } else if (val === 'true') {
+                    saveObj[i] = true;
+                } else {
+                    saveObj[i] = val;
+                }
+            }
+
         }
 
         return saveObj;
