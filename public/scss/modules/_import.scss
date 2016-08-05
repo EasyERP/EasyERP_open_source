@@ -73,7 +73,12 @@
       margin-bottom: 10px;
       cursor: move;
       background: $white;
+    }
 
+    .fieldsItems {
+      &.active {
+        display: block;
+      }
     }
   }
 }
@@ -85,28 +90,94 @@
   display: -webkit-flex;
   display: flex;
 
-  min-height: 52px;
-  border: 1px solid #c2c8cd;
+  min-height: 53px;
   border-radius: 3px;
-  background-color: #fff;
+  background-color: $white;
   margin-bottom: 10px;
+
+
   
-  &.unmapped {
+  &.emptyRow {
     background-color: #f3f5f6;
+
+    .secondBox {
+      border: 1px dashed #c2c8cd;
+    }
+
+    .empty {
+      &:after {
+        content: 'Drag and drop field here';
+        position: absolute;
+        left: 17px;
+        top: 50%;
+        transform: translate(0, -50%);
+        font-style: italic;
+        color: #c2c8cd;
+      }
+    }
+  }
+
+  &.hoverRow {
+    background: rgba($importHoverRowBg, .4);
+
+    ._rowItem {
+      border-color: $importHoverRowBg !important;
+    }
+
+    .secondBox {
+      border: 1px dashed #c2c8cd;
+    }
+
+    .empty {
+      &:after {
+        color: $white;
+      }
+    }
   }
   
   ._rowItem {
+    position: relative;
     width: 1px;
+    border: 1px solid #c2c8cd;
     -webkit-flex-grow: 1;
     flex-grow: 1;
+    font-size: 14px;
+
+    &:hover {
+     .cleanButton {
+       display: block !important;
+     }
+    }
 
     &:nth-child(n+2) {
-      border-left: 1px solid #c2c8cd;
+      border-left: none;
+    }
+
+    .importStatic {
+      min-height: 53px;
+      padding: 17px 15px;
+    }
+
+    .cleanButton {
+      position: absolute;
+      right: 5px;
+      top: 50%;
+      transform: translate(0,-50%);
+      padding: 8px;
+      cursor: pointer;
+      font-size: 18px;
+      display: none !important;
+    }
+
+    .empty {
+      + .cleanButton {
+        display: none !important;
+      }
     }
   }
 
   ._movingItem {
-    min-height: 50px;
+    min-height: 53px;
     padding: 17px 15px;
     cursor: move;
   }
@@ -133,3 +204,4 @@
     z-index: 10;
   }
 }
+

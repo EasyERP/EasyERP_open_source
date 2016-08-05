@@ -17,8 +17,8 @@ define([
 
         events: {
             'click #clickToReset': 'resetForm',
-            'click .sendObject': 'goToPreview',
-            'click .tabItem' : 'changeTab',
+            'click .stageBtn': 'goToPreview',
+            'click ._importListTabs' : 'changeTab',
             'click .cleanButton' : 'clean'
         },
 
@@ -40,17 +40,25 @@ define([
         },
 
         clean: function(e) {
-            var $button = $(e.target).closest('div').find('.secondColumn');
-            $button.text('');
-            $button.data('name', '');
-            //$button.data('parent', '');
-            //$button.removeAttr('data-name');
-            //$button.removeAttr('data-parent');
-            $button.removeClass('dbFieldItemDrag');
+            var $field = $(e.target).closest('div').find('.secondColumn');
+            var $cleanButton = $(e.target).closest('div').find('.cleanButton');
+            $field.text('');
+            $field.data('name', '');
+            $field.addClass('empty');
+            $field.closest('._contentBlockRow').addClass('emptyRow');
+            $field.removeClass('dbFieldItemDrag');
+            $cleanButton.hide();
         },
 
-        changeTab: function() {
-
+        changeTab: function(e, $tab) {
+            var $thisEl = this.$el;
+            if (e) {
+                $tab = $(e.target);
+            }
+            $thisEl.find('.tabItem').removeClass('active');
+            $thisEl.find('.fieldsItems').removeClass('active');
+            $thisEl.find('.fieldsItems[data-tab=' + $tab.data('tab') + ']').addClass('active');
+            $tab.addClass('active');
         },
 
         goToPreview: function () {
@@ -85,8 +93,7 @@ define([
                 }
             });
 
-
-            return result;
+            return result
         },
 
         draggableDBFields: function () {
@@ -105,13 +112,12 @@ define([
                     var draggableParentName = $draggable.data('parent');
                     var droppableParentName = $droppable.data('parent');
 
-
-
                     if (($draggable.attr('class').indexOf('dbFieldItem') === -1) && (_.values(self.logFile).indexOf(droppableName)) !== -1) {
 
                         if (droppableParentName === 'customers' || droppableParentName === 'employees') {
                             delete self.logFile[self.findKeyByValue(self.logFile, droppableName)];
-                            self.$el.find('.tabItem[data-tab=' + droppableParentName + ']')
+
+                            self.$el.find('.fieldsItems[data-tab=' + droppableParentName + ']')
                                 .find('ul')
                                 .append('<li><div class="fieldItem" data-parent="' + droppableParentName + '" style="cursor: pointer"  data-name="' + droppableName + '">' + droppableName +'</div></li>')
                                 .find('div[data-name="' + droppableName +'"]')
@@ -125,30 +131,39 @@ define([
                                         $(this).show()
                                     }
                                 });
-
                         }
                     }
 
-
                     self.logFile[droppableName] = draggableName;
+                    $droppable.removeClass('empty');
+                    $droppable.closest('._contentBlockRow').removeClass('emptyRow');
+                    $droppable.text(draggableName);
+                    $droppable.data('name', draggableName);
 
                     if ($draggable.attr('class').indexOf('dbFieldItem') !== -1) {
+
                         if (!droppableName.length) {
                             $droppable.addClass('dbFieldItemDrag');
+
                             $draggable.draggable({
                                 disabled: true
                             });
+
                             $droppable.draggable({
                                 revert  : true,
                                 disabled: false
                             });
+
+                            $droppable.siblings('.cleanButton').show();
+
+                            $draggable.siblings('.cleanButton').hide();
+                            $draggable.closest('._contentBlockRow').addClass('emptyRow');
+                            $draggable.addClass('empty');
                         }
-                        $droppable.text(draggableParentName);
+
                         $droppable.data('parent', draggableParentName);
-                        $draggable.text(droppableParentName);
                         $draggable.data('parent', droppableParentName);
-                        $droppable.text(draggableName);
-                        $droppable.data('name', draggableName);
+
                         $draggable.text(droppableName);
                         $draggable.data('name', droppableName);
                     } else {
@@ -164,24 +179,35 @@ define([
                                 revert  : true,
                                 disabled: false
                             });
+                            $droppable.siblings('.cleanButton').show();
                         }
-                        $droppable.text(draggableName);
-                        $droppable.data('name', draggableName);
+
                         $droppable.data('parent', draggableParentName);
                         $draggable.remove();
                     }
                 },
 
-                over: function () {
+                over: function (event, ui) {
+                    var $droppable = $(this).closest('div');
 
+                    $droppable.closest('._contentBlockRow').addClass('hoverRow');
+                },
+
+                deactivate: function (event, ui) {
+                    var $droppable = $(this).closest('div');
+
+                    $droppable.closest('._contentBlockRow').removeClass('hoverRow');
                 },
 
                 out: function (event, ui) {
                     var $draggable = ui.draggable;
+                    var $droppable = $(this).closest('div');
 
                     $draggable.draggable({
                         revert: true
                     });
+
+                    $droppable.closest('._contentBlockRow').removeClass('hoverRow');
                 }
             });
         },
@@ -210,8 +236,11 @@ define([
                 stop: function(){
                     $(this).show()
                 }
-
             });
+
+            $thisEl.find('.empty').siblings('.cleanButton').hide();
+            $thisEl.find('.empty').closest('._contentBlockRow').addClass('emptyRow');
+            this.changeTab(null, $thisEl.find('.tabItem[data-tab="customers"]'));
         }
     });
 

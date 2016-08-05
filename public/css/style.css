@@ -1704,29 +1704,71 @@
       margin-bottom: 10px;
       cursor: move;
       background: #ffffff; }
+    ._importListBody ._tabsBlock .fieldsItems.active {
+      display: block; }
 
 ._contentBlockRow {
   display: -webkit-box;
   display: -ms-flexbox;
   display: -webkit-flex;
   display: flex;
-  min-height: 52px;
-  border: 1px solid #c2c8cd;
+  min-height: 53px;
   border-radius: 3px;
-  background-color: #fff;
+  background-color: #ffffff;
   margin-bottom: 10px; }
-  ._contentBlockRow.unmapped {
+  ._contentBlockRow.emptyRow {
     background-color: #f3f5f6; }
+    ._contentBlockRow.emptyRow .secondBox {
+      border: 1px dashed #c2c8cd; }
+    ._contentBlockRow.emptyRow .empty:after {
+      content: 'Drag and drop field here';
+      position: absolute;
+      left: 17px;
+      top: 50%;
+      -webkit-transform: translate(0, -50%);
+          -ms-transform: translate(0, -50%);
+              transform: translate(0, -50%);
+      font-style: italic;
+      color: #c2c8cd; }
+  ._contentBlockRow.hoverRow {
+    background: rgba(50, 145, 200, 0.4); }
+    ._contentBlockRow.hoverRow ._rowItem {
+      border-color: #3291c8 !important; }
+    ._contentBlockRow.hoverRow .secondBox {
+      border: 1px dashed #c2c8cd; }
+    ._contentBlockRow.hoverRow .empty:after {
+      color: #ffffff; }
   ._contentBlockRow ._rowItem {
+    position: relative;
     width: 1px;
+    border: 1px solid #c2c8cd;
     -webkit-flex-grow: 1;
     -webkit-box-flex: 1;
         -ms-flex-positive: 1;
-            flex-grow: 1; }
+            flex-grow: 1;
+    font-size: 14px; }
+    ._contentBlockRow ._rowItem:hover .cleanButton {
+      display: block !important; }
     ._contentBlockRow ._rowItem:nth-child(n+2) {
-      border-left: 1px solid #c2c8cd; }
+      border-left: none; }
+    ._contentBlockRow ._rowItem .importStatic {
+      min-height: 53px;
+      padding: 17px 15px; }
+    ._contentBlockRow ._rowItem .cleanButton {
+      position: absolute;
+      right: 5px;
+      top: 50%;
+      -webkit-transform: translate(0, -50%);
+          -ms-transform: translate(0, -50%);
+              transform: translate(0, -50%);
+      padding: 8px;
+      cursor: pointer;
+      font-size: 18px;
+      display: none !important; }
+    ._contentBlockRow ._rowItem .empty + .cleanButton {
+      display: none !important; }
   ._contentBlockRow ._movingItem {
-    min-height: 50px;
+    min-height: 53px;
     padding: 17px 15px;
     cursor: move; }
 

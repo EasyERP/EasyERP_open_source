@@ -2,10 +2,12 @@
 <div class="_contentBlock" id="dbContentBlock">
     <% _.each(content, function(item, key){%>
         <div class="content _contentBlockRow unmapped">
-            <div data-name="<%= key %>" class="firstColumn _rowItem"><%= key %></div>
-            <div class="_rowItem" >
-                <div data-name="<%= item %>" class="secondColumn dbFieldItem <% if (item) { %> dbFieldItemDrag <% } %> _movingItem"><%= item %></div>
-                <span class="cleanButton">X</span>
+            <div data-name="<%= key %>" class="firstColumn _rowItem">
+                <div data-name="<%= key %>" class="importStatic"><%= key %></div>
+            </div>
+            <div class="_rowItem secondBox">
+                <div data-name="<%= item %>" class="secondColumn dbFieldItem <% if (item) { %> dbFieldItemDrag <% } else { %> empty <% } %> _movingItem"><%= item %></div>
+                <span class="cleanButton fa fa-times" aria-hidden="true"></span>
             </div>
         </div>
     <% }); %>
@@ -14,14 +16,14 @@
 <div id="fieldsContainer" class="_tabsBlock">
     <ul class="_importListTabs">
         <% _.each(fields, function(item, key){%>
-            <li class="active">
+            <li class="tabItem" data-tab="<%= key %>">
                 <%= key %>
             </li>
         <% }); %>
     </ul>
     <br>
-    <% _.each(fields, function(item, key) {%>
-        <div class="tabItem" data-tab="<%= key %>">
+    <% _.each(fields, function(item, key) { %>
+        <div class="fieldsItems" data-tab="<%= key %>">
             <ul>
                 <% _.each(item, function(itemOne) { %>
                     <li>
