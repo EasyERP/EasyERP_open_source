@@ -27,17 +27,29 @@ define([
             'click .stageBtn'    : 'selectStage'
         },
 
-        initialize: function (options) {
-            options = options || {};
+        initialize: function () {
+            if (App.import && App.import.stage) {
+                this.stage = App.import.stage;
+            } else {
+                if (App.import) {
+                    App.import.stage = 1;
+                } else {
+                    App.import = {
+                        stage: 1
+                    };
+                }
 
-            this.stage = options.stage || 1;
+                this.stage = 1;
+            }
+
             this.render();
             this.selectStage(this.stage);
         },
 
         selectStage: function (e) {
             var stage;
-
+            var $thisEl = this.$el;
+            var stageSelector;
 
             if (e.hasOwnProperty('target')) {
                 e.preventDefault();
@@ -59,11 +71,15 @@ define([
                 this.childView = new MappingContentView();
             }
 
+            stageSelector = 'stage' + this.stage;
+
+            $thisEl.find(stageSelector).addClass('active');
         },
 
         enabledNextBtn: function () {
             this.$el.find('.stageBtn').prop('disabled', false);
         },
+
 
         render: function () {
             var $thisEl = this.$el;
