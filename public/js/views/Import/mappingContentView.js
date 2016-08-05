@@ -12,15 +12,15 @@ define([
     'use strict';
 
     var mappingContentView = Backbone.View.extend({
-        el                    : '#content-holder',
-        contentTemplate       : _.template(ContentTemplate),
+        el             : '#content-holder',
+        contentTemplate: _.template(ContentTemplate),
 
         events: {
             'click #clickToReset': 'resetForm',
-            'click .stageBtn': 'goToPreview'
+            'click .stageBtn'    : 'goToPreview'
         },
 
-        resetForm: function() {
+        resetForm: function () {
             this.render(this.data);
         },
 
@@ -28,7 +28,7 @@ define([
             var url = '/importFile/imported';
             var self = this;
 
-            $(document).mousemove(function(e){
+            $(document).mousemove(function (e) {
                 self.X = e.pageX; // положения по оси X
                 self.Y = e.pageY; // положения по оси Y
                 //console.log("X: " + self.X + " Y: " + self.Y); // вывод результата в консоль
@@ -37,11 +37,10 @@ define([
             this.logFile = {};
 
 
-            dataService.getData(url,{},function(data) {
+            dataService.getData(url, {}, function (data) {
                 self.data = data;
                 self.render(self.data);
             });
-            //this.render();
         },
 
         goToPreview: function () {
@@ -59,43 +58,43 @@ define([
                 }
             }
 
-            dataService.postData(url, fieldsObject, function(err, data) {
+            dataService.postData(url, fieldsObject, function (err, data) {
                 if (err) {
-                    return alert(err.responseText)
+                    return alert(err.responseText);
                 }
                 alert('post is successfull');
             });
         },
 
-        findKeyByValue: function(obj, value) {
+        findKeyByValue: function (obj, value) {
             var result;
 
-            _.each(obj, function(item, key) {
+            _.each(obj, function (item, key) {
                 if (item === value) {
                     result = key;
                 }
             });
 
 
-            return result
+            return result;
         },
 
-        draggableDBFields: function() {
+        draggableDBFields: function () {
             var self = this;
             var fieldsBlock;
 
             $('.dbFieldItem').droppable({
                 accept   : '.dbFieldItemDrag, .fieldItem',
                 tolerance: 'pointer',
-                activate : function(event, ui) {
-                    var $draggable = ui.draggable;
+                /*activate : function(event, ui) {
+                 var $draggable = ui.draggable;
 
-                    //$draggable.addClass('draggableActive');
-                    //console.log(self.X, self.Y);
-                    //$draggable.css({'position':'fixed'});
-                },
+                 //$draggable.addClass('draggableActive');
+                 //console.log(self.X, self.Y);
+                 //$draggable.css({'position':'fixed'});
+                 },*/
 
-                drop     : function (event, ui) {
+                drop: function (event, ui) {
                     var $droppable = $(this).closest('div');
                     var $draggable = ui.draggable;
                     var draggableName = $draggable.data('name');
@@ -109,8 +108,8 @@ define([
                             delete self.logFile[self.findKeyByValue(self.logFile, droppableName)];
                             self.$el.find('.tabItem[data-tab=' + droppableParentName + ']')
                                 .find('ul')
-                                .append('<li class="fieldItem" data-parent="' + droppableParentName + '" style="cursor: pointer"  data-name="' + droppableName + '">' + droppableName +'</li>')
-                                .find('li[data-name="' + droppableName +'"]')
+                                .append('<li class="fieldItem" data-parent="' + droppableParentName + '" style="cursor: pointer"  data-name="' + droppableName + '">' + droppableName + '</li>')
+                                .find('li[data-name="' + droppableName + '"]')
                                 .draggable({
                                     revert: true
                                 });
@@ -128,7 +127,7 @@ define([
                                 disabled: true
                             });
                             $droppable.draggable({
-                                revert: true,
+                                revert  : true,
                                 disabled: false
                             });
                         }
@@ -160,10 +159,10 @@ define([
 
                 over: function () {
                     /*var $droppableEl = $(this);
-                    var $groupList = self.$el;
+                     var $groupList = self.$el;
 
-                    $groupList.find('.selected').removeClass('selected');
-                    $droppableEl.addClass('selected');*/
+                     $groupList.find('.selected').removeClass('selected');
+                     $droppableEl.addClass('selected');*/
                 },
 
                 out: function () {
@@ -174,26 +173,38 @@ define([
 
         render: function (data) {
             var $thisEl = this.$el;
+            var self = this;
 
             $thisEl.find('#contentBlock').html(this.contentTemplate({
                 content: data.result,
-                fields: importMapping
+                fields : importMapping
             }));
 
             this.draggableDBFields();
 
             $thisEl.find('.dbFieldItemDrag').draggable({
                 revert: true,
-                start: function(event, ui) {
+                start : function (event, ui) {
                     var $draggable = $(this);
 
                     $draggable.addClass('draggableActive');
                     //$draggable.css('position', 'fixed');
-                },
+                }
             });
 
             $thisEl.find('.fieldItem').draggable({
-                revert: true
+                revert: true,
+                start : function () {
+                    var $draggable = $(this);
+
+                    $draggable.addClass('draggableActive');
+                    //$draggable.css({top: self.y, left: self.x});
+                },
+
+                drag: function (event, ui) {
+                    ui.position.left = self.X - 20;
+                    ui.position.top = self.Y - 20;
+                }
             });
         }
     });
