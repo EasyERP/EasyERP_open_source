@@ -17,7 +17,7 @@ define([
 
         events: {
             'click #clickToReset': 'resetForm',
-            'click .stageBtn': 'goToPreview',
+            'click .sendObject': 'goToPreview',
             'click .tabItem' : 'changeTab',
             'click .cleanButton' : 'clean'
         },

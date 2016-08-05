@@ -98,6 +98,118 @@ var Module = function (models) {
         });
     };
 
+    function parse(data, callback) {
+        var insertObj = {};
+        var arrayKeys = task.arrayKeys;
+
+        Object.keys(data).forEach(function (key) {
+            var val = data[key];
+
+            if (val && arrayKeys && arrayKeys[keysAliases[key]] === true) {
+                if (typeof val == 'number') {
+                    var arr = [];
+                    arr.push(val);
+                    val = arr;
+                } else {
+                    val = val.split(',');
+                }
+            }
+
+            if (val) {
+                insertObj[keysAliases[key]] = val;
+            }
+        });
+        callback(null, insertObj);
+    }
+
+    function findAndReplaceObjectId(obj, callback) {
+        var findCollection;
+        var collection;
+        var schema;
+        var Model;
+        var replaceObj = obj;
+        var objectIdKeyList = task.objectIdList;
+
+        if (objectIdKeyList) {
+
+            async.each(Object.keys(objectIdKeyList), function (key, cb) {
+                    var val = obj[key];
+                    var objID = [];
+                    var length;
+
+                    findCollection = importMap[objectIdKeyList[key]];
+
+                    if (val && findCollection) {
+                        collection = findCollection.collection;
+                        schema = mongoose.Schemas[findCollection.schema];
+                        Model = models.get(req.session.lastDb, collection, schema);
+
+                        if (Array.isArray(val)) {
+                            length = val.length;
+
+                            if (length > 0) {
+                                async.each(Object.keys(val), function (index, calb) {
+                                        Model.findOne({'ID': val[index]}, function (err, mod) {
+
+                                            if (err) {
+                                                calb(err);
+                                            } else {
+                                                if (mod) {
+                                                    objID.push(mod._id);
+                                                    calb();
+                                                } else {
+                                                    error = new Error('ID = ' + val[index] + ' (' + key + ') not exist in BD');
+                                                    error.status = 400;
+                                                    calb(error);
+                                                }
+                                            }
+                                        });
+                                    },
+                                    function (err) {
+                                        if (!err) {
+                                            replaceObj[key] = objID;
+                                            cb();
+                                        } else {
+                                            cb(err);
+                                        }
+                                    });
+                            } else {
+                                cb();
+                            }
+                        } else {
+                            Model.findOne({'ID': val}, function (err, mod) {
+                                if (err) {
+                                    return cb(err);
+                                }
+
+                                if (!mod) {
+                                    error = new Error('ID = ' + val + ' (' + key + ') not exist in BD');
+                                    error.status = 400;
+
+                                    return cb(error);
+                                }
+
+                                replaceObj[key] = mod._id;
+                                cb();
+                            });
+                        }
+                    } else {
+                        cb();
+                    }
+                },
+
+                function (err) {
+                    if (!err) {
+                        callback(null, replaceObj);
+                    } else {
+                        callback(err);
+                    }
+                });
+        } else {
+            callback(null, replaceObj);
+        }
+    }
+
     this.saveImportedData = function (req, res, next) {
         var data = req.body;
         var userId = req.session.uId;
