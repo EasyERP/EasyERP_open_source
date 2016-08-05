@@ -95,7 +95,6 @@ module.exports = function (moduleId, models) {
             if (err || !_access) {
                 err = new Error();
                 err.status = 403;
-                next(err);
 
                 return next(err);
             }

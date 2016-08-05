@@ -27,42 +27,25 @@ var Module = function (models, event) {
 
     this.createTask = function (req, res, next) {
         var body = req.body;
-        var dealId = body.deal;
         var TasksModel = models.get(req.session.lastDb, 'DealTasks', tasksSchema);
+        var task;
 
         body.uId = req.session.uId;
 
-        TasksModel.find({deal: dealId})
-            .sort({taskCount: -1})
-            .exec(function (err, tasks) {
-                var n;
-                var task;
+        body = validator.parseTaskBody(body);
 
+        task = new TasksModel(body);
+
+        event.emit('updateSequence', TasksModel, 'sequence', 0, 0, task.workflow, task.workflow, true, false, function (sequence) {
+            task.sequence = sequence;
+            task.save(function (err, result) {
                 if (err) {
                     return next(err);
                 }
 
-                n = (tasks[0]) ? ++tasks[0].taskCount : 1;
-                body = validator.parseTaskBody(body);
-                body.taskCount = n;
-
-                task = new TasksModel(body);
-
-                event.emit('updateSequence', TasksModel, 'sequence', 0, 0, task.workflow, task.workflow, true, false, function (sequence) {
-                    task.sequence = sequence;
-                    task.save(function (err, result) {
-                        if (err) {
-                            return next(err);
-                        }
-
-                        res.status(201).send({success: 'New Task created success', id: result._id});
-                    });
-                });
-
-
-
+                res.status(201).send({success: 'New Task created success', id: result._id});
             });
-
+        });
     };
 
     this.uploadFile = function (req, res, next) {
@@ -437,12 +420,17 @@ var Module = function (models, event) {
 
     this.removeTask = function (req, res, next) {
         var _id = req.params._id;
+        var deleteHistory = req.query.deleteHistory;
         var DealTask = models.get(req.session.lastDb, 'DealTasks', tasksSchema);
 
         DealTask.findByIdAndRemove(_id, function (err, task) {
             if (err) {
                 return next(err);
             }
+
+           /* if (deleteHistory){
+                historyWriter.deleteHistoryById(req, _id);
+            }*/
 
             event.emit('updateContent', req, res, task.project, 'remove');
             event.emit('updateSequence', DealTask, 'sequence', task.sequence, 0, task.workflow, task.workflow, false, true);

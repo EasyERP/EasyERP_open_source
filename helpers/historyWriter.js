@@ -187,6 +187,16 @@ var History = function (models) {
         }
     };
 
+    this.deleteHistoryById = function(req, id){
+        var HistoryEntry = models.get(req.session.lastDb, 'History', HistoryEntrySchema);
+        HistoryEntry.remove(id, function(err, res){
+            if (err) {
+                console.log(err);
+            }
+            console.log('History was deleted success');
+        });
+    }
+
     this.getHistoryForTrackedObject = function (options, callback, forNote) {
         var id = options.id;
         var HistoryEntry = models.get(options.req.session.lastDb, 'History', HistoryEntrySchema);

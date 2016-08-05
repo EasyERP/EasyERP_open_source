@@ -5,10 +5,10 @@ var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var host = process.env.HOST;
 var aggent;
-var dbId = 'production';
+var dbId = 'pavlodb';
 var admin = {
-    login: 'admin',
-    pass : 'tm2016',
+    login: 'pavlo.demko',
+    pass : '111111',
     dbId : dbId
 };
 var bannedUser = {
@@ -156,11 +156,6 @@ describe('Leads Specs', function () {
                         .and.to.have.property('name')
                         .and.to.be.a('string');
                     expect(firstProject)
-                        .and.to.have.property('contactName');
-                    expect(firstProject)
-                        .to.have.property('address')
-                        .and.to.have.property('country');
-                    expect(firstProject)
                         .to.have.property('workflow')
                         .and.to.have.property('_id');
                     expect(firstProject.workflow)
@@ -189,7 +184,6 @@ describe('Leads Specs', function () {
                     }
 
                     expect(Object.keys(firstProject.createdBy).length).to.be.equal(2);
-                    expect(Object.keys(firstProject.address).length).to.be.equal(1);
                     expect(Object.keys(firstProject.workflow).length).to.be.equal(3);
                     expect(Object.keys(firstProject).length).to.be.lte(9);
                     done();
@@ -217,7 +211,7 @@ describe('Leads Specs', function () {
                         .to.be.instanceOf(Object)
                         .and.to.have.property('_id');
                     expect(body)
-                        .to.have.property('history')
+                        .to.have.property('notes')
                         .and.to.be.instanceOf(Object);
                     expect(body)
                         .to.have.property('name')

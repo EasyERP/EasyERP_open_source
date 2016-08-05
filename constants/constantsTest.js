@@ -4,6 +4,7 @@
 module.exports = {
     PROJECT      : "55b92ad621e4b7c40f00069c",
     SUPPLIER     : "55b92ad621e4b7c40f00064f",
+    OPPORTUNITY  : "57613e26995fc1bd20165998",
     PRODUCT      : "5540d528dacb551c24000003",
     JOB          : "564cfd8ba6e6390160c9edf7",
     DELIVERTO    : "55543831d51bdef79ea0d58c",
