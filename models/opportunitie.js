@@ -112,7 +112,7 @@ module.exports = (function () {
         customer        : {type: ObjectId, ref: 'Customers', default: null},
 
 
-        tags            : [{type: ObjectId, ref: 'tags', default: null}],
+        tags: [{type: ObjectId, ref: 'tags', default: null}],
 
         address: {
             street : {type: String, default: ''},
@@ -122,7 +122,7 @@ module.exports = (function () {
             country: {type: String, default: ''}
         },
 
-        contacts        : [{type: ObjectId, ref: 'Customers', default: null}],
+        contacts: [{type: ObjectId, ref: 'Customers', default: null}],
 
         contactName: {
             first: {type: String, default: ''},
@@ -185,14 +185,14 @@ module.exports = (function () {
         isConverted  : {type: Boolean, default: false},
         convertedDate: {type: Date, default: Date.now},
         notes        : [{
-            note        : String,
-            title       : String,
-            task        : {type: ObjectId, ref: 'DealTasks', default: null},
-            attachment  : {},
-            date        : {type: Date, default: Date.now},
-            user        : {
-                _id : {type: ObjectId, ref: 'Users', default: null},
-                login : String
+            note      : String,
+            title     : String,
+            task      : {type: ObjectId, ref: 'DealTasks', default: null},
+            attachment: {},
+            date      : {type: Date, default: Date.now},
+            user      : {
+                _id  : {type: ObjectId, ref: 'Users', default: null},
+                login: String
             }
         }],
         attachments  : {type: Array, default: []},
