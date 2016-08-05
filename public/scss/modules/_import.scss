@@ -225,3 +225,17 @@
   text-align: center;
 }
 
+._progressBarContainer {
+  height: 20px;
+  border-radius: 30px;
+  margin-top: 20px;
+  background: $importProgressBarContainerBg;
+
+  ._progressBar {
+    height: 100%;
+    border-radius: 30px;
+    background: $importProgressBarBg;
+    transition: (all .5s ease);
+  }
+}
+

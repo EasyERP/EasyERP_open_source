@@ -1799,6 +1799,18 @@
   padding: 20px 30px;
   text-align: center; }
 
+._progressBarContainer {
+  height: 20px;
+  border-radius: 30px;
+  margin-top: 20px;
+  background: #f2f2f2; }
+  ._progressBarContainer ._progressBar {
+    height: 100%;
+    border-radius: 30px;
+    background: #4BCB81;
+    -webkit-transition: all 0.5s ease;
+    transition: all 0.5s ease; }
+
 .propertyContainer a:hover {
   text-decoration: none; }
 
