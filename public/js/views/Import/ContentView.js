@@ -28,22 +28,8 @@ define([
         },
 
         initialize: function () {
-            if (App.import && App.import.stage) {
-                this.stage = App.import.stage;
-            } else {
-                if (App.import) {
-                    App.import.stage = 1;
-                } else {
-                    App.import = {
-                        stage: 1
-                    };
-                }
-
-                this.stage = 1;
-            }
-
             this.render();
-            this.selectStage(this.stage);
+            this.selectStage();
         },
 
         selectStage: function (e) {
@@ -51,27 +37,45 @@ define([
             var $thisEl = this.$el;
             var stageSelector;
 
-            if (e.hasOwnProperty('target')) {
+            if (App.import && App.import.stage) {
+                this.stage = App.import.stage;
+            } else {
+                this.stage = 1;
+            }
+
+            if (e) {
                 e.preventDefault();
 
-                stage = ++this.stage;
-            } else {
-                stage = e;
+                ++this.stage;
             }
 
             if (this.childView) {
                 this.childView.undelegateEvents();
             }
 
-            if (stage === 1) {
+            if (this.stage === 1) {
                 this.childView = new UploadView();
                 this.listenTo(this.childView, 'uploadCompleted', this.enabledNextBtn);
 
-            } else if (stage === 2) {
+            } else if (this.stage === 2) {
                 this.childView = new MappingContentView();
+            } else if (this.stage === 3) {
+                this.childView.goToPreview();
             }
 
-            stageSelector = 'stage' + this.stage;
+            if (App.import && App.import.stage) {
+                App.import.stage = this.stage;
+            } else {
+                if (App.import) {
+                    App.import.stage = this.stage;
+                } else {
+                    App.import = {
+                        stage: this.stage
+                    };
+                }
+            }
+
+            stageSelector = '.stage' + this.stage;
 
             $thisEl.find(stageSelector).addClass('active');
         },

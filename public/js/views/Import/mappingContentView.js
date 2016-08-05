@@ -16,10 +16,9 @@ define([
         contentTemplate: _.template(ContentTemplate),
 
         events: {
-            'click #clickToReset': 'resetForm',
-            'click .stageBtn': 'goToPreview',
-            'click ._importListTabs' : 'changeTab',
-            'click .cleanButton' : 'clean'
+            'click #clickToReset'   : 'resetForm',
+            'click ._importListTabs': 'changeTab',
+            'click .cleanButton'    : 'clean'
         },
 
         initialize: function () {
@@ -35,11 +34,11 @@ define([
             });
         },
 
-        resetForm: function() {
+        resetForm: function () {
             this.render(this.data);
         },
 
-        clean: function(e) {
+        clean: function (e) {
             var $field = $(e.target).closest('div').find('.secondColumn');
             var $cleanButton = $(e.target).closest('div').find('.cleanButton');
             $field.text('');
@@ -50,7 +49,7 @@ define([
             $cleanButton.hide();
         },
 
-        changeTab: function(e, $tab) {
+        changeTab: function (e, $tab) {
             var $thisEl = this.$el;
             if (e) {
                 $tab = $(e.target);
@@ -80,7 +79,6 @@ define([
                 if (err) {
                     return alert(err.responseText);
                 }
-                alert('post is successfull');
             });
         },
 
@@ -93,18 +91,17 @@ define([
                 }
             });
 
-            return result
+            return result;
         },
 
         draggableDBFields: function () {
             var self = this;
-            var fieldsBlock;
 
             $('.dbFieldItem').droppable({
                 accept   : '.dbFieldItemDrag, .fieldItem',
                 tolerance: 'pointer',
 
-                activate : function (event, ui) {
+                activate: function (event, ui) {
                     var $draggable = ui.draggable;
 
                     $draggable.addClass('borderField');
@@ -125,15 +122,15 @@ define([
 
                             self.$el.find('.fieldsItems[data-tab=' + droppableParentName + ']')
                                 .find('ul')
-                                .append('<li><div class="fieldItem" data-parent="' + droppableParentName + '" style="cursor: pointer"  data-name="' + droppableName + '">' + droppableName +'</div></li>')
-                                .find('div[data-name="' + droppableName +'"]')
+                                .append('<li><div class="fieldItem" data-parent="' + droppableParentName + '" style="cursor: pointer"  data-name="' + droppableName + '">' + droppableName + '</div></li>')
+                                .find('div[data-name="' + droppableName + '"]')
                                 .draggable({
                                     revert: true,
                                     helper: 'clone',
-                                    start: function(){
+                                    start : function () {
                                         $(this).hide();
                                     },
-                                    stop: function(){
+                                    stop  : function () {
                                         $(this).show()
                                     }
                                 });
@@ -239,10 +236,10 @@ define([
             $thisEl.find('.fieldItem').draggable({
                 revert: true,
                 helper: 'clone',
-                start: function(){
+                start : function () {
                     $(this).hide();
                 },
-                stop: function(){
+                stop  : function () {
                     $(this).show()
                 }
             });
