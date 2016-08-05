@@ -17,11 +17,8 @@ define([
 
         events: {
             'click #clickToReset': 'resetForm',
-            'click .stageBtn': 'goToPreview'
-        },
-
-        resetForm: function() {
-            this.render(this.data);
+            'click .stageBtn': 'goToPreview',
+            'click .tabItem' : 'changeTab'
         },
 
         initialize: function () {
@@ -42,6 +39,14 @@ define([
                 self.render(self.data);
             });
             //this.render();
+        },
+
+        resetForm: function() {
+            this.render(this.data);
+        },
+
+        changeTab: function() {
+
         },
 
         goToPreview: function () {
@@ -87,13 +92,13 @@ define([
             $('.dbFieldItem').droppable({
                 accept   : '.dbFieldItemDrag, .fieldItem',
                 tolerance: 'pointer',
-                activate : function(event, ui) {
+               /* activate : function(event, ui) {
                     var $draggable = ui.draggable;
 
                     //$draggable.addClass('draggableActive');
-                    //console.log(self.X, self.Y);
-                    //$draggable.css({'position':'fixed'});
-                },
+                    console.log(self.X, self.Y);
+                    $draggable.css({'position':'fixed','top': self.Y, 'left': self.X});
+                },*/
 
                 drop     : function (event, ui) {
                     var $droppable = $(this).closest('div');
@@ -103,14 +108,16 @@ define([
                     var draggableParentName = $draggable.data('parent');
                     var droppableParentName = $droppable.data('parent');
 
+
+
                     if (($draggable.attr('class').indexOf('dbFieldItem') === -1) && (_.values(self.logFile).indexOf(droppableName)) !== -1) {
 
                         if (droppableParentName === 'customers' || droppableParentName === 'employees') {
                             delete self.logFile[self.findKeyByValue(self.logFile, droppableName)];
                             self.$el.find('.tabItem[data-tab=' + droppableParentName + ']')
                                 .find('ul')
-                                .append('<li class="fieldItem" data-parent="' + droppableParentName + '" style="cursor: pointer"  data-name="' + droppableName + '">' + droppableName +'</li>')
-                                .find('li[data-name="' + droppableName +'"]')
+                                .append('<li><div class="fieldItem" data-parent="' + droppableParentName + '" style="cursor: pointer"  data-name="' + droppableName + '">' + droppableName +'</div></li>')
+                                .find('div[data-name="' + droppableName +'"]')
                                 .draggable({
                                     revert: true
                                 });
@@ -141,6 +148,9 @@ define([
                         $draggable.text(droppableName);
                         $draggable.data('name', droppableName);
                     } else {
+                        $draggable.draggable({
+                            revert: false
+                        });
                         if (!droppableName.length) {
                             $draggable.draggable({
                                 disabled: true
@@ -166,7 +176,12 @@ define([
                     $droppableEl.addClass('selected');*/
                 },
 
-                out: function () {
+                out: function (event, ui) {
+                    var $draggable = ui.draggable;
+
+                    $draggable.draggable({
+                        revert: true
+                    });
                     /*$(this).removeClass('selected');*/
                 }
             });
@@ -174,6 +189,7 @@ define([
 
         render: function (data) {
             var $thisEl = this.$el;
+            var self = this;
 
             $thisEl.find('#contentBlock').html(this.contentTemplate({
                 content: data.result,
@@ -183,17 +199,41 @@ define([
             this.draggableDBFields();
 
             $thisEl.find('.dbFieldItemDrag').draggable({
-                revert: true,
-                start: function(event, ui) {
-                    var $draggable = $(this);
-
-                    $draggable.addClass('draggableActive');
-                    //$draggable.css('position', 'fixed');
-                },
+                revert: true
             });
 
             $thisEl.find('.fieldItem').draggable({
-                revert: true
+                revert: true,
+                helper: 'clone',
+                start: function(){
+                    $(this).hide();
+                },
+                stop: function(){
+                    $(this).show()
+                }
+                /*start: function(event, ui) {
+                    var $draggable = $(this);
+
+                    $draggable.addClass('draggableActive');
+                },
+                drag: function(event, ui) {
+                    var $draggable = $(this);
+                    //var $draggable = ui.draggable;
+
+                    //$draggable.addClass('draggableActive');
+                    //console.log(self.X, self.Y);
+                    ui.position.left = self.X;
+                    ui.position.top = self.Y;
+
+                    //$draggable.offset({top: self.Y, left: self.X})
+                    //$draggable.css({'position':'fixed','top': self.Y, 'left': self.X});
+                },
+
+                stop: function(event, ui) {
+                    var $draggable = $(this);
+
+                    $draggable.removeClass('draggableActive');
+                }*/
             });
         }
     });
