@@ -45,6 +45,7 @@ define([
             $field.text('');
             $field.data('name', '');
             $field.addClass('empty');
+            $field.closest('._rowItem').addClass('emptyRow');
             $field.removeClass('dbFieldItemDrag');
             $cleanButton.hide();
         },
@@ -136,6 +137,7 @@ define([
 
                     self.logFile[droppableName] = draggableName;
                     $droppable.removeClass('empty');
+                    $droppable.closest('._rowItem').removeClass('emptyRow');
                     $droppable.text(draggableName);
                     $droppable.data('name', draggableName);
 
@@ -156,6 +158,7 @@ define([
                             $droppable.siblings('.cleanButton').show();
 
                             $draggable.siblings('.cleanButton').hide();
+                            $draggable.closest('._rowItem').addClass('emptyRow');
                             $draggable.addClass('empty');
                         }
 
@@ -185,16 +188,27 @@ define([
                     }
                 },
 
-                over: function () {
+                over: function (event, ui) {
+                    var $droppable = $(this).closest('div');
 
+                    $droppable.closest('._rowItem').addClass('hoverRow');
+                },
+
+                deactivate: function (event, ui) {
+                    var $droppable = $(this).closest('div');
+
+                    $droppable.closest('._rowItem').removeClass('hoverRow');
                 },
 
                 out: function (event, ui) {
                     var $draggable = ui.draggable;
+                    var $droppable = $(this).closest('div');
 
                     $draggable.draggable({
                         revert: true
                     });
+
+                    $droppable.closest('._rowItem').removeClass('hoverRow');
                 }
             });
         },
@@ -226,6 +240,7 @@ define([
             });
 
             $thisEl.find('.empty').siblings('.cleanButton').hide();
+            $thisEl.find('.empty').closest('._rowItem').addClass('emptyRow');
             this.changeTab(null, $thisEl.find('.tabItem[data-tab="customers"]'));
         }
     });
