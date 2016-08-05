@@ -13,7 +13,7 @@ describe("Tasks Specs", function () {
         var id;
         var assignedTo = CONSTANTS.EMPLOYEE;
         var workflow = "5783b351df8b918c31af24a8";
-        var workflowChanged = "5783b351df8b918c31af24a8";
+        var workflowChanged = "5783b351df8b918c31af24a9";
         var dueDate = Date.now();
 
         before(function (done) {
@@ -21,9 +21,9 @@ describe("Tasks Specs", function () {
             aggent
                 .post('users/login')
                 .send({
-                    login: 'admin',
-                    pass: 'tm2016',
-                    dbId: 'production'
+                    login: 'pavlo.demko',
+                    pass: '111111',
+                    dbId: 'pavlodb'
                 })
                 .expect(200, done);
         });
@@ -32,22 +32,16 @@ describe("Tasks Specs", function () {
 
             var body = {
                 "type": "Task",
-                "summary": summary,
                 "assignedTo": assignedTo,
                 "workflow": workflow,
-                "project": project,
-                "tags": [""],
-                "deadline": "",
                 "description": "someDescription",
                 "sequence": "",
-                "StartDate": startDate,
-                "estimated": estimated,
-                "logged": logged
+                "dueDate": dueDate
             };
 
 
             aggent
-                .post('tasks')
+                .post('dealTasks')
                 .send(body)
                 .expect(201)
                 .end(function (err, res) {
@@ -60,7 +54,7 @@ describe("Tasks Specs", function () {
 
                     expect(body)
                         .to.have.property('success')
-                        .and.to.be.valueOf('An new Task crate success');
+                        .and.to.be.valueOf('New Task created success');
 
                     if (err) {
                         return done(err);
@@ -71,60 +65,13 @@ describe("Tasks Specs", function () {
                 });
         });
 
-        it("should fail create task with empty summary", function (done) {
-
-            var body = {
-                "type": "Task",
-                "summary": "",
-                "assignedTo": "55b92ad221e4b7c40f000030",
-                "workflow": "528ce0cdf3f67bc40b00000c",
-                "project": "55cdc96d9b42266a4f000006",
-                "tags": [""],
-                "deadline": "",
-                "description": "lkmjiomlkm",
-                "priority": "P3",
-                "sequence": "",
-                "StartDate": "28 Feb, 2016",
-                "estimated": "17",
-                "logged": "7"
-            };
-
-            aggent
-                .post('tasks')
-                .send(body)
-                .expect(404, done);
-        });
-
-        it("should fail create task with empty project", function (done) {
-
-            var body = {
-                "type": "Task",
-                "summary": "123",
-                "assignedTo": "55b92ad221e4b7c40f000030",
-                "workflow": "528ce0cdf3f67bc40b00000c",
-                "project": "",
-                "tags": [""],
-                "deadline": "",
-                "description": "lkmjiomlkm",
-                "priority": "P3",
-                "sequence": "",
-                "StartDate": "28 Feb, 2016",
-                "estimated": "17",
-                "logged": "7"
-            };
-
-            aggent
-                .post('tasks')
-                .send(body)
-                .expect(500, done);
-        });
-
         it('should return all tasks with details', function (done) {
             aggent
-                .get('tasks/')
+                .get('dealTasks/')
                 .query({count: 100, viewType: 'list'})
                 .expect(200)
                 .end(function (err, res) {
+                    var task;
                     var body = res.body;
 
                     if (err) {
@@ -135,13 +82,15 @@ describe("Tasks Specs", function () {
                         .to.have.property('data')
                         .and.to.be.instanceOf(Array);
 
-                    var task = body.data[0];
+                    body.data.forEach(function (el) {
+                        if (el._id === id) {
+                            task = el;
+                        }
+                    });
 
                     expect(task)
-                        .to.have.property('EndDate');
-                    expect(task)
-                        .to.have.property('StartDate');
-                    expect(Date(task.startDate)).to.be.equal(Date(startDate));
+                        .to.have.property('dueDate');
+                    expect(Date(task.dueDate)).to.be.equal(Date(dueDate));
                     expect(task)
                         .to.have.property('_id')
                         .and.to.be.equal(id);
@@ -150,39 +99,8 @@ describe("Tasks Specs", function () {
                         .and.to.have.property('_id')
                         .and.to.be.equal(assignedTo);
                     expect(task)
-                        .to.have.property('createdBy')
-                        .and.to.have.property('user')
-                        .and.to.have.property('_id')
-                        .and.to.equal(adminId);
-                    expect(task)
-                        .to.have.property('estimated')
-                        .and.to.equal(estimated);
-                    expect(task)
-                        .to.have.property('logged')
-                        .and.to.equal(logged);
-                    expect(task)
-                        .to.have.property('progress')
-                        .and.to.equal(progress);
-
-                    expect(task)
-                        .to.have.property('project')
-                        .and.to.have.property('_id')
-                        .and.to.equal(project);
-                    expect(task)
-                        .to.have.property('sequence')
-                        .and.to.be.above(-1);
-                    expect(task)
-                        .to.have.property('summary')
-                        .and.to.equal(summary);
-                    expect(task)
-                        .to.have.property('tags')
-                        .and.to.be.instanceOf(Array);
-                    expect(task)
-                        .to.have.property('taskCount')
-                        .and.to.be.above(0);
-                    expect(task)
-                        .to.have.property('type')
-                        .and.to.be.equal('Task');
+                        .to.have.property('description')
+                        .and.to.equal('someDescription');
                     expect(task)
                         .to.have.property('workflow')
                         .to.have.property('_id')
@@ -195,7 +113,7 @@ describe("Tasks Specs", function () {
 
         it('should return one task with details', function (done) {
             aggent
-                .get('tasks')
+                .get('dealTasks')
                 .query({id: id, viewType : 'form'})
                 .expect(200)
                 .end(function (err, res) {
@@ -209,10 +127,8 @@ describe("Tasks Specs", function () {
                     var task = body;
 
                     expect(task)
-                        .to.have.property('EndDate');
-                    expect(task)
-                        .to.have.property('StartDate');
-                    expect(Date(task.startDate)).to.be.equal(Date(startDate));
+                        .to.have.property('dueDate');
+                    expect(Date(task.dueDate)).to.be.equal(Date(dueDate));
                     expect(task)
                         .to.have.property('_id')
                         .and.to.be.equal(id);
@@ -221,39 +137,14 @@ describe("Tasks Specs", function () {
                         .and.to.have.property('_id')
                         .and.to.be.equal(assignedTo);
                     expect(task)
-                        .to.have.property('createdBy')
+                        .to.have.property('editedBy')
                         .and.to.have.property('user')
-                        .and.to.have.property('_id')
-                        .and.to.equal(adminId);
-                    expect(task)
-                        .to.have.property('estimated')
-                        .and.to.equal(estimated);
-                    expect(task)
-                        .to.have.property('logged')
-                        .and.to.equal(logged);
-                    expect(task)
-                        .to.have.property('progress')
-                        .and.to.equal(progress);
-
-                    expect(task)
-                        .to.have.property('project')
-                        .and.to.have.property('_id')
-                        .and.to.equal(project);
                     expect(task)
                         .to.have.property('sequence')
                         .and.to.be.above(-1);
                     expect(task)
-                        .to.have.property('summary')
-                        .and.to.equal(summary);
-                    expect(task)
-                        .to.have.property('tags')
-                        .and.to.be.instanceOf(Array);
-                    expect(task)
-                        .to.have.property('taskCount')
-                        .and.to.be.above(0);
-                    expect(task)
-                        .to.have.property('type')
-                        .and.to.be.equal('Task');
+                        .to.have.property('description')
+                        .and.to.equal('someDescription');
                     expect(task)
                         .to.have.property('workflow')
                         .to.have.property('_id')
@@ -261,15 +152,15 @@ describe("Tasks Specs", function () {
 
                     done();
                 });
-
         });
 
         it('should return workflows list with task count and hours remain', function (done) {
             aggent
-                .get('tasks/getLengthByWorkflows')
+                .get('dealTasks/getLengthByWorkflows')
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
+                    var workflowNew;
 
                     if (err) {
                         return done(err);
@@ -279,17 +170,19 @@ describe("Tasks Specs", function () {
                         .to.have.property('arrayOfObjects')
                         .and.to.be.instanceOf(Array);
 
-                    var workflowNew = body.arrayOfObjects[0];
+                    body.arrayOfObjects.forEach(function (el) {
+                        if (el._id === workflow) {
+                            workflowNew = el;
+                        }
+                    });
 
                     expect(workflowNew)
                         .to.have.property('_id')
                         .and.to.be.equal(workflow);
                     expect(workflowNew)
                         .to.have.property('count')
-                        .and.to.be.above(0);
                     expect(workflowNew)
                         .to.have.property('totalRemaining')
-                        .and.to.be.above(0);
 
                     done();
                 });
@@ -298,11 +191,12 @@ describe("Tasks Specs", function () {
 
         it('should return tasks for kanban', function (done) {
             aggent
-                .get('tasks')
+                .get('dealTasks')
                 .query({workflowId: workflow})
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
+                    var task;
 
                     if (err) {
                         return done(err);
@@ -315,8 +209,6 @@ describe("Tasks Specs", function () {
                     expect(body)
                         .to.have.property('workflowId')
                         .and.to.be.equal(workflow);
-
-                    var task;
 
                     body.data.forEach(function (el) {
                         if (el._id === id) {
@@ -332,23 +224,14 @@ describe("Tasks Specs", function () {
                         .and.to.have.property('_id')
                         .and.to.be.equal(assignedTo);
                     expect(task)
-                        .to.have.property('project')
-                        .and.to.have.property('_id')
-                        .and.to.equal(project);
-                    expect(task)
                         .to.have.property('sequence')
                         .and.to.be.above(-1);
                     expect(task)
-                        .to.have.property('summary')
-                        .and.to.equal(summary);
-                    expect(task)
-                        .to.have.property('taskCount')
-                        .and.to.be.above(0);
-                    expect(task)
-                        .to.have.property('type')
-                        .and.to.be.equal('Task');
+                        .to.have.property('description')
+                        .and.to.equal('someDescription');
                     expect(task)
                         .to.have.property('workflow')
+                        .and.to.have.property('_id')
                         .and.to.be.equal(workflow);
 
                     done();
@@ -366,7 +249,7 @@ describe("Tasks Specs", function () {
             };
 
             aggent
-                .patch('tasks/' + id)
+                .patch('dealTasks/' + id)
                 .send(body)
                 .expect(200)
                 .end(function (err, res) {
@@ -386,7 +269,7 @@ describe("Tasks Specs", function () {
 
         it('check if workflow changed', function (done) {
             aggent
-                .get('tasks')
+                .get('dealTasks')
                 .query({id: id, viewType : 'form'})
                 .expect(200)
                 .end(function (err, res) {
@@ -400,10 +283,8 @@ describe("Tasks Specs", function () {
                     var task = body;
 
                     expect(task)
-                        .to.have.property('EndDate');
-                    expect(task)
-                        .to.have.property('StartDate');
-                    expect(Date(task.startDate)).to.be.equal(Date(startDate));
+                        .to.have.property('dueDate');
+                    expect(Date(task.dueDate)).to.be.equal(Date(dueDate));
                     expect(task)
                         .to.have.property('_id')
                         .and.to.be.equal(id);
@@ -412,39 +293,14 @@ describe("Tasks Specs", function () {
                         .and.to.have.property('_id')
                         .and.to.be.equal(assignedTo);
                     expect(task)
-                        .to.have.property('createdBy')
+                        .to.have.property('editedBy')
                         .and.to.have.property('user')
-                        .and.to.have.property('_id')
-                        .and.to.equal(adminId);
-                    expect(task)
-                        .to.have.property('estimated')
-                        .and.to.equal(estimated);
-                    expect(task)
-                        .to.have.property('logged')
-                        .and.to.equal(logged);
-                    expect(task)
-                        .to.have.property('progress')
-                        .and.to.equal(progress);
-
-                    expect(task)
-                        .to.have.property('project')
-                        .and.to.have.property('_id')
-                        .and.to.equal(project);
                     expect(task)
                         .to.have.property('sequence')
                         .and.to.be.above(-1);
                     expect(task)
-                        .to.have.property('summary')
-                        .and.to.equal(summary);
-                    expect(task)
-                        .to.have.property('tags')
-                        .and.to.be.instanceOf(Array);
-                    expect(task)
-                        .to.have.property('taskCount')
-                        .and.to.be.above(0);
-                    expect(task)
-                        .to.have.property('type')
-                        .and.to.be.equal('Task');
+                        .to.have.property('description')
+                        .and.to.equal('someDescription');
                     expect(task)
                         .to.have.property('workflow')
                         .to.have.property('_id')
@@ -458,20 +314,14 @@ describe("Tasks Specs", function () {
         it("should update task", function (done) {
 
             var body = {
-                "type": "Task",
-                "summary": "testTestModified",
                 "assignedTo": "55b92ad221e4b7c40f000030",
-                "tags": [""],
                 "description": "lkmjiomlkm",
-                "priority": "P3",
-                "StartDate": "28 Feb, 2016",
-                "estimated": 17,
-                "logged": 7,
+                "dueDate": "28 Feb, 2016",
                 "sequenceStart": 0
             };
 
             aggent
-                .patch('tasks/' + id)
+                .patch('dealTasks/' + id)
                 .send(body)
                 .expect(200)
                 .end(function (err, res) {
@@ -505,14 +355,14 @@ describe("Tasks Specs", function () {
             };
 
             aggent
-                .patch('tasks/' + id + '123')
+                .patch('dealTasks/' + id + '123')
                 .send(body)
                 .expect(500, done);
         });
 
         it("should remove task", function (done) {
             aggent
-                .delete('tasks/' + id)
+                .delete('dealTasks/' + id)
                 .expect(200)
                 .end(function (err, res) {
 
@@ -533,7 +383,7 @@ describe("Tasks Specs", function () {
 
         it('should return empty object when querying deleted task', function (done) {
             aggent
-                .get('tasks')
+                .get('dealTasks')
                 .query({id: id, viewType : 'form'})
                 .expect(200)
                 .end(function (err, res) {
@@ -550,29 +400,6 @@ describe("Tasks Specs", function () {
 
         });
 
-        it('should return priorities list', function (done) {
-            aggent
-                .get('tasks/priority')
-                .expect(200)
-                .end(function (err, res) {
-                    var body = res.body;
-
-                    if (err) {
-                        return done(err);
-                    }
-
-                    expect(body)
-                        .to.have.property('data')
-                        .and.to.be.instanceOf(Array);
-
-                    expect(body.data[0])
-                        .to.have.property('priority');
-
-                    done();
-                });
-
-        });
-
         after(function (done) {
             aggent = request.agent(url);
             aggent
@@ -583,19 +410,13 @@ describe("Tasks Specs", function () {
 
     });
 
-    describe("With baned user", function () {
+    describe("With banned user", function () {
 
         var id;
-        var assignedTo = "55b92ad221e4b7c40f000030";
-        var workflow = "528ce0cdf3f67bc40b00000c";
-        var workflowChanged = "528ce35af3f67bc40b000010";
-        var project = "55cdc96d9b42266a4f000006";
-        var startDate = Date.now();
-        var summary = "testTest";
-        var estimated = 170;
-        var logged = 12;
-        var progress = Number(((logged / estimated) * 100).toFixed(0));
-        var adminId = "52203e707d4dba8813000003";
+        var assignedTo = CONSTANTS.EMPLOYEE;
+        var workflow = "5783b351df8b918c31af24a8";
+        var workflowChanged = "5783b351df8b918c31af24a9";
+        var dueDate = Date.now();
 
         before(function (done) {
             aggent = request.agent(url);
@@ -604,7 +425,7 @@ describe("Tasks Specs", function () {
                 .send({
                     login: 'ArturMyhalko',
                     pass: 'thinkmobiles2015',
-                    dbId: 'production'
+                    dbId: 'pavlodb'
                 })
                 .expect(200, done);
         });
@@ -613,23 +434,16 @@ describe("Tasks Specs", function () {
 
             var body = {
                 "type": "Task",
-                "summary": summary,
                 "assignedTo": assignedTo,
                 "workflow": workflow,
-                "project": project,
-                "tags": [""],
-                "deadline": "",
                 "description": "someDescription",
-                "priority": "P3",
                 "sequence": "",
-                "StartDate": startDate,
-                "estimated": estimated,
-                "logged": logged
+                "dueDate": dueDate
             };
 
 
             aggent
-                .post('tasks')
+                .post('dealTasks')
                 .send(body)
                 .expect(403, done);
 
@@ -637,7 +451,7 @@ describe("Tasks Specs", function () {
 
         it('should fail return all tasks with details', function (done) {
             aggent
-                .get('tasks/')
+                .get('dealTasks/')
                 .query({count: 100, viewType: 'list'})
                 .expect(403, done);
 
@@ -645,7 +459,7 @@ describe("Tasks Specs", function () {
 
         it('should fail return one task with details', function (done) {
             aggent
-                .get('tasks/form')
+                .get('dealTasks/form')
                 .query({id: id})
                 .expect(403, done);
 
@@ -653,14 +467,14 @@ describe("Tasks Specs", function () {
 
         it('should fail return workflows list', function (done) {
             aggent
-                .get('tasks/getLengthByWorkflows')
+                .get('dealTasks/getLengthByWorkflows')
                 .expect(403, done);
 
         });
 
         it('should fail return tasks for kanban', function (done) {
             aggent
-                .get('tasks/kanban')
+                .get('dealTasks/kanban')
                 .query({workflowId: workflow})
                 .expect(403, done);
 
@@ -676,7 +490,7 @@ describe("Tasks Specs", function () {
             };
 
             aggent
-                .patch('tasks/' + id)
+                .patch('dealTasks/' + id)
                 .send(body)
                 .expect(403, done);
         });
@@ -697,22 +511,15 @@ describe("Tasks Specs", function () {
             };
 
             aggent
-                .patch('tasks/' + id)
+                .patch('dealTasks/' + id)
                 .send(body)
                 .expect(403, done);
         });
 
         it("should fail remove task", function (done) {
             aggent
-                .delete('tasks/' + id)
+                .delete('dealTasks/' + id)
                 .expect(403, done);
-        });
-
-        it('should fail return priorities list', function (done) {
-            aggent
-                .get('tasks/priority')
-                .expect(403, done);
-
         });
 
         after(function (done) {
