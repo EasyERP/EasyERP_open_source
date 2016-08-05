@@ -96,9 +96,17 @@
   }
   
   ._rowItem {
+    position: relative;
     width: 1px;
     -webkit-flex-grow: 1;
     flex-grow: 1;
+    font-size: 14px;
+
+    &:hover {
+     .cleanButton {
+       display: block;
+     }
+    }
 
     &:nth-child(n+2) {
       border-left: 1px solid #c2c8cd;
@@ -107,6 +115,17 @@
     .importStatic {
       min-height: 50px;
       padding: 17px 15px;
+    }
+
+    .cleanButton {
+      position: absolute;
+      right: 5px;
+      top: 50%;
+      transform: translate(0,-50%);
+      padding: 8px;
+      cursor: pointer;
+      font-size: 18px;
+      display: none;
     }
   }
 
