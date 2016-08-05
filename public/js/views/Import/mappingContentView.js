@@ -44,7 +44,7 @@ define([
             $field.text('');
             $field.data('name', '');
             $field.addClass('empty');
-            $field.closest('._contentBlockRow').addClass('emptyRow');
+            $field.closest('.contentBlockRow').addClass('emptyRow');
             $field.removeClass('dbFieldItemDrag');
             $cleanButton.hide();
         },
@@ -103,6 +103,12 @@ define([
                 accept   : '.dbFieldItemDrag, .fieldItem',
                 tolerance: 'pointer',
 
+                activate : function (event, ui) {
+                    var $draggable = ui.draggable;
+
+                    $draggable.addClass('borderField');
+                },
+
                 drop     : function (event, ui) {
                     var $droppable = $(this).closest('div');
                     var $draggable = ui.draggable;
@@ -135,9 +141,10 @@ define([
 
                     self.logFile[droppableName] = draggableName;
                     $droppable.removeClass('empty');
-                    $droppable.closest('._contentBlockRow').removeClass('emptyRow');
+                    $droppable.closest('.contentBlockRow').removeClass('emptyRow');
                     $droppable.text(draggableName);
                     $droppable.data('name', draggableName);
+                    //$draggable.removeClass('borderField');
 
                     if ($draggable.attr('class').indexOf('dbFieldItem') !== -1) {
 
@@ -156,7 +163,7 @@ define([
                             $droppable.siblings('.cleanButton').show();
 
                             $draggable.siblings('.cleanButton').hide();
-                            $draggable.closest('._contentBlockRow').addClass('emptyRow');
+                            $draggable.closest('.contentBlockRow').addClass('emptyRow');
                             $draggable.addClass('empty');
                         }
 
@@ -189,13 +196,15 @@ define([
                 over: function (event, ui) {
                     var $droppable = $(this).closest('div');
 
-                    $droppable.closest('._contentBlockRow').addClass('hoverRow');
+                    $droppable.closest('.contentBlockRow').addClass('hoverRow');
                 },
 
                 deactivate: function (event, ui) {
                     var $droppable = $(this).closest('div');
+                    var $draggable = ui.draggable;
 
-                    $droppable.closest('._contentBlockRow').removeClass('hoverRow');
+                    $draggable.removeClass('borderField');
+                    $droppable.closest('.contentBlockRow').removeClass('hoverRow');
                 },
 
                 out: function (event, ui) {
@@ -206,7 +215,7 @@ define([
                         revert: true
                     });
 
-                    $droppable.closest('._contentBlockRow').removeClass('hoverRow');
+                    $droppable.closest('.contentBlockRow').removeClass('hoverRow');
                 }
             });
         },
@@ -238,7 +247,7 @@ define([
             });
 
             $thisEl.find('.empty').siblings('.cleanButton').hide();
-            $thisEl.find('.empty').closest('._contentBlockRow').addClass('emptyRow');
+            $thisEl.find('.empty').closest('.contentBlockRow').addClass('emptyRow');
             this.changeTab(null, $thisEl.find('.tabItem[data-tab="customers"]'));
         }
     });
