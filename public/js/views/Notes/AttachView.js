@@ -44,7 +44,7 @@ define([
             $('.add-user-dialog').remove();
         },
 
-        sendToServer: function (event, model, self) {
+        sendToServer: function (event, model, self, isDrop, dropFile) {
             var currentModel = this.model;
             var elementId = this.elementId || 'addAttachments';
             var currentModelId = currentModel ? currentModel.id : null;
@@ -61,7 +61,12 @@ define([
                 currentModelId = currentModel.id || currentModel._id;
 
                 this.$el.find('li .inputAttach').each(function () {
-                    addInptAttach = $(this)[0].files[0];
+                    if (!isDrop) {
+                        addInptAttach = $(this)[0].files[0];
+                    } else {
+                        addInptAttach = dropFile[0];
+
+                    }
                     fileArr.push(addInptAttach);
 
                     if (!self.fileSizeIsAcceptable(addInptAttach)) {
@@ -85,7 +90,12 @@ define([
                 }
                 addInptAttach = fileArr;
             } else {
-                addInptAttach = addFrmAttach.find('#inputAttach')[0].files[0];
+                if (!isDrop) {
+                    addInptAttach = addFrmAttach.find('#inputAttach')[0].files[0];
+                } else {
+                    addInptAttach = dropFile[0];
+
+                }
 
                 if (!this.fileSizeIsAcceptable(addInptAttach)) {
                     this.$el.find('#inputAttach').val('');
