@@ -2,10 +2,12 @@
 <div class="_contentBlock" id="dbContentBlock">
     <% _.each(content, function(item, key){%>
         <div class="content _contentBlockRow unmapped">
-            <div data-name="<%= key %>" class="firstColumn _rowItem"><%= key %></div>
+            <div data-name="<%= key %>" class="firstColumn _rowItem">
+                <div data-name="<%= key %>" class="importStatic"><%= key %></div>
+            </div>
             <div class="_rowItem" >
-                <div data-name="<%= item %>" class="secondColumn dbFieldItem <% if (item) { %> dbFieldItemDrag <% } else { %> empty <% } %> _movingItem"><%= item %></div>
-                <span class="cleanButton">X</span>
+                <div data-name="<%= item %>" class="secondColumn dbFieldItem <% if (item) { %> dbFieldItemDrag <% } %> _movingItem"><%= item %></div>
+                <span class="cleanButton fa fa-times" aria-hidden="true">X</span>
             </div>
         </div>
     <% }); %>
