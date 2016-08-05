@@ -5,10 +5,10 @@ var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var host = process.env.HOST;
 var aggent;
-var dbId = 'production';
+var dbId = 'pavlodb';
 var admin = {
-    login: 'admin',
-    pass : 'tm2016',
+    login: 'pavlo.demko',
+    pass : '111111',
     dbId : dbId
 };
 var failUser = {
