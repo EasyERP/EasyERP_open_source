@@ -13478,6 +13478,13 @@ a.cancelled {
 .newSelectList .miniStylePagination span {
   padding: 0;
 }
+.newSelectList > input#selectInput {
+  width: 100% !important;
+  margin: 0;
+  float: left;
+  border: 0;
+  border-bottom: 1px solid #7f7f80;
+}
 .blue {
   color: #3e88b9;
 }
