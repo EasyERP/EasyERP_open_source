@@ -28,7 +28,6 @@ define([
 
             this.logFile = {};
 
-
             dataService.getData(url,{},function(data) {
                 self.data = data;
                 self.render(self.data);
@@ -45,7 +44,7 @@ define([
             $field.text('');
             $field.data('name', '');
             $field.addClass('empty');
-            $field.closest('._rowItem').addClass('emptyRow');
+            $field.closest('._contentBlockRow').addClass('emptyRow');
             $field.removeClass('dbFieldItemDrag');
             $cleanButton.hide();
         },
@@ -92,7 +91,6 @@ define([
                     result = key;
                 }
             });
-
 
             return result
         },
