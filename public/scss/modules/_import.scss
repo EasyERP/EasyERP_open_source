@@ -221,8 +221,21 @@
 
 ._importAttachContainer {
   width: 100%;
-  padding: 20px 30px;
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 50px 30px 30px;
   text-align: center;
+  border: 3px dashed $importAttachBorderColor;
+  background: $importAttachBg;
+
+  .attachFileName {
+    margin: 15px 0;
+    font-size: 16px;
+
+    span {
+      font-weight:bold;
+    }
+  }
 }
 
 ._progressBarContainer {
