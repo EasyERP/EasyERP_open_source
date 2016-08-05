@@ -135,7 +135,7 @@
 
     .empty {
       + .cleanButton {
-        display: none;
+        display: none !important;
       }
     }
   }

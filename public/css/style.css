@@ -1746,7 +1746,7 @@
       font-size: 18px;
       display: none !important; }
     ._contentBlockRow ._rowItem .empty + .cleanButton {
-      display: none; }
+      display: none !important; }
   ._contentBlockRow ._movingItem {
     min-height: 50px;
     padding: 17px 15px;
