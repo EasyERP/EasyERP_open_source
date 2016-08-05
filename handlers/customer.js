@@ -1205,6 +1205,7 @@ var Module = function (models, event) {
         var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
         var Opportunity = models.get(req.session.lastDb, 'Opportunities', OpportunitySchema);
         var _id = req.params.id;
+        var deleteHistory = req.query.deleteHistory;
 
         Model.findByIdAndRemove({_id: _id}, function (err, response) {
             var findObject = {};
@@ -1225,6 +1226,11 @@ var Module = function (models, event) {
                 if (err) {
                     return next(err);
                 }
+                if (deleteHistory){
+                    historyWriter.deleteHistoryById(req, {_id : _id});
+                }
+
+
                 res.status(200).send({success: 'customer removed'});
             });
 
@@ -1234,11 +1240,15 @@ var Module = function (models, event) {
     this.bulkRemove = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
         var body = req.body || {ids: []};
+        var deleteHistory = req.query.deleteHistory;
         var ids = body.ids;
 
         Model.remove({_id: {$in: ids}}, function (err, removed) {
             if (err) {
                 return next(err);
+            }
+            if (deleteHistory){
+                historyWriter.deleteHistoryById(req, {_id :  {$in: ids}});
             }
 
             res.status(200).send(removed);

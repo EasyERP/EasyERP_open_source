@@ -332,10 +332,14 @@ var Module = function (models, event) {
     this.remove = function (req, res, next) {
         var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
         var id = req.params.id;
+        var deleteHistory = req.query.deleteHistory;
 
         Opportunity.findByIdAndRemove(id, function (err, result) {
             if (err) {
                 return next(err);
+            }
+            if (deleteHistory){
+                historyWriter.deleteHistoryById(req, {_id :  {$in: ids}});
             }
 
             if (result && result.isOpportunitie) {
@@ -348,6 +352,7 @@ var Module = function (models, event) {
 
     this.bulkRemove = function (req, res, next) {
         var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
+        var deleteHistory = req.query.deleteHistory;
         var body = req.body || {ids: []};
         var ids = body.ids;
 
@@ -356,6 +361,11 @@ var Module = function (models, event) {
                 if (err) {
                     return err(err);
                 }
+
+                if (deleteHistory){
+                    historyWriter.deleteHistoryById(req, id);
+                }
+
 
                 if (result && result.isOpportunitie) {
                     event.emit('updateSequence', Opportunity, 'sequence', result.sequence, 0, result.workflow, result.workflow, false, true);

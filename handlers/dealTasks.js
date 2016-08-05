@@ -420,12 +420,17 @@ var Module = function (models, event) {
 
     this.removeTask = function (req, res, next) {
         var _id = req.params._id;
+        var deleteHistory = req.query.deleteHistory;
         var DealTask = models.get(req.session.lastDb, 'DealTasks', tasksSchema);
 
         DealTask.findByIdAndRemove(_id, function (err, task) {
             if (err) {
                 return next(err);
             }
+
+           /* if (deleteHistory){
+                historyWriter.deleteHistoryById(req, _id);
+            }*/
 
             event.emit('updateContent', req, res, task.project, 'remove');
             event.emit('updateSequence', DealTask, 'sequence', task.sequence, 0, task.workflow, task.workflow, false, true);
