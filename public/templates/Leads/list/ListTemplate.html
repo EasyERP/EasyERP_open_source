@@ -12,7 +12,6 @@
         <a href="javascript:;" class="stageSelect blue"><%= (lead.workflow ) ? lead.workflow.name : ''%></a>
     </td>
     <td><%=lead.salesPerson && lead.salesPerson.name ? lead.salesPerson.name.first + ' ' + lead.salesPerson.name.last: ''%></td>
-
     <td><%=(lead.editedBy&&lead.editedBy.date)?( lead.editedBy.date + ((lead.editedBy.user) ?(' (' +
         lead.editedBy.user + ')') : '')):''%>
     </td>

@@ -14,9 +14,16 @@
         Backbone.history.navigate(url, {trigger: true});
     };
 
-    var utcDateToLocaleDate = function (utcDateString) {
+    var utcDateToLocaleDate = function (utcDateString, hours) {
         utcDateString = new Date(utcDateString);
-        utcDateString = utcDateString ? moment(utcDateString).format("DD MMM, YYYY") : null;
+
+        if (hours){
+            utcDateString = utcDateString ? moment(utcDateString).format("DD MMM, YYYY HH:mm") : null;
+        } else {
+            utcDateString = utcDateString ? moment(utcDateString).format("DD MMM, YYYY") : null;
+        }
+
+
 
         return utcDateString;
     };
@@ -34,6 +41,12 @@
         } else {
             utcDateString = utcDateString ? moment(utcDateString).format('D/M/YYYY') : null;
         }
+        return utcDateString;
+    };
+
+    var utcDateToLocaleHours = function (utcDateString, notHours) {
+        utcDateString = utcDateString ? moment(utcDateString).format('HH:mm') : null;
+
         return utcDateString;
     };
 
@@ -1250,6 +1263,7 @@
         getSalesByCountry                 : getSalesByCountry,
         getSalary                         : getSalary,
         getSalaryByDepartment             : getSalaryByDepartment,
+        utcDateToLocaleHours              : utcDateToLocaleHours,
         getLeads                          : getLeads
     }
 });

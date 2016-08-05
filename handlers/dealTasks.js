@@ -1,7 +1,9 @@
 /*TODO remove caseFilter methid after testing filters*/
 
 var mongoose = require('mongoose');
+var moment = require('../public/js/libs/moment/moment');
 var RESPONSES = require('../constants/responses');
+var HistoryWriter = require('../helpers/historyWriter');
 var tasksSchema = mongoose.Schemas.DealTasks;
 var department = mongoose.Schemas.Department;
 var projectSchema = mongoose.Schemas.Project;
@@ -21,31 +23,59 @@ var Module = function (models, event) {
     var path = require('path');
     var Uploader = require('../services/fileStorage/index');
     var uploader = new Uploader();
+
+    var historyWriter = new HistoryWriter(models);
     var FilterMapper = require('../helpers/filterMapper');
-
-
 
     this.createTask = function (req, res, next) {
         var body = req.body;
+        var dealId = body.deal;
         var TasksModel = models.get(req.session.lastDb, 'DealTasks', tasksSchema);
-        var task;
 
         body.uId = req.session.uId;
 
-        body = validator.parseTaskBody(body);
+        TasksModel.find({deal: dealId})
+            .sort({taskCount: -1})
+            .exec(function (err, tasks) {
+                var n;
+                var task;
 
-        task = new TasksModel(body);
-
-        event.emit('updateSequence', TasksModel, 'sequence', 0, 0, task.workflow, task.workflow, true, false, function (sequence) {
-            task.sequence = sequence;
-            task.save(function (err, result) {
                 if (err) {
                     return next(err);
                 }
 
-                res.status(201).send({success: 'New Task created success', id: result._id});
+                n = (tasks[0]) ? ++tasks[0].taskCount : 1;
+                body = validator.parseTaskBody(body);
+                body.taskCount = n;
+
+                task = new TasksModel(body);
+
+                event.emit('updateSequence', TasksModel, 'sequence', 0, 0, task.workflow, task.workflow, true, false, function (sequence) {
+                    task.sequence = sequence;
+                    task.save(function (err, result) {
+                        var historyOptions;
+
+                        if (err) {
+                            return next(err);
+                        }
+
+                        historyOptions = {
+                            contentType: 'dealTask',
+                            data       : result.toJSON(),
+                            req        : req,
+                            contentId  : result._id
+                        };
+
+                        historyWriter.addEntry(historyOptions, function () {
+                            res.status(201).send({success: 'New Task created success', id: result._id});
+                        });
+
+
+                    });
+                });
+
             });
-        });
+
     };
 
     this.uploadFile = function (req, res, next) {
@@ -93,7 +123,7 @@ var Module = function (models, event) {
 
         function updateTask() {
             models.get(req.session.lastDb, 'DealTasks', tasksSchema).findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
-
+                var historyOptions;
                 var os = require('os');
                 var osType = (os.type().split('_')[0]);
                 var path;
@@ -104,7 +134,18 @@ var Module = function (models, event) {
                     return next(err);
                 }
 
-                res.send(200, {success: 'Tasks updated', sequence: result.sequence});
+                historyOptions = {
+                    contentType: 'dealtask',
+                    data       : data,
+                    req        : req,
+                    contentId  : result._id
+                };
+
+                historyWriter.addEntry(historyOptions, function () {
+                    res.send(200, {success: 'Tasks updated', sequence: result.sequence});
+                });
+
+
             });
         }
 
@@ -315,17 +356,17 @@ var Module = function (models, event) {
                 },
                 {
                     $project: {
-                        _id             : 1,
-                        workflow        : {$arrayElemAt: ['$workflow', 0]},
-                        category        : {$arrayElemAt: ['$category', 0]},
-                        assignedTo      : {$arrayElemAt: ['$assignedTo', 0]},
-                        description     : 1,
-                        deal            : {$arrayElemAt: ['$deal', 0]},
-                        contact         : {$arrayElemAt: ['$contact', 0]},
-                        company         : {$arrayElemAt: ['$company', 0]},
-                        dueDate         : 1,
-                        sequence        : 1,
-                        taskCount       : 1
+                        _id        : 1,
+                        workflow   : {$arrayElemAt: ['$workflow', 0]},
+                        category   : {$arrayElemAt: ['$category', 0]},
+                        assignedTo : {$arrayElemAt: ['$assignedTo', 0]},
+                        description: 1,
+                        deal       : {$arrayElemAt: ['$deal', 0]},
+                        contact    : {$arrayElemAt: ['$contact', 0]},
+                        company    : {$arrayElemAt: ['$company', 0]},
+                        dueDate    : 1,
+                        sequence   : 1,
+                        taskCount  : 1
                     }
                 },
                 {
@@ -340,17 +381,17 @@ var Module = function (models, event) {
                 },
                 {
                     $project: {
-                        _id             : '$root._id',
-                        workflow        : '$root.workflow',
-                        category        : '$root.category',
-                        assignedTo      : '$root.assignedTo',
-                        description     : '$root.description',
-                        dueDate         : '$root.dueDate',
-                        taskCount       : '$root.taskCount',
-                        company         : '$root.company',
-                        contact         : '$root.contact',
-                        deal            : '$root.deal',
-                        total           : 1
+                        _id        : '$root._id',
+                        workflow   : '$root.workflow',
+                        category   : '$root.category',
+                        assignedTo : '$root.assignedTo',
+                        description: '$root.description',
+                        dueDate    : '$root.dueDate',
+                        taskCount  : '$root.taskCount',
+                        company    : '$root.company',
+                        contact    : '$root.contact',
+                        deal       : '$root.deal',
+                        total      : 1
                     }
                 },
                 {
@@ -377,6 +418,199 @@ var Module = function (models, event) {
 
     }
 
+    this.getActivity = function (req, res, next){
+        var data = req.query;
+        var filterMapper = new FilterMapper();
+        var obj = {};
+        if (data && data.filter) {
+            obj.$and = [];
+            obj.$and.push(filterMapper.mapFilter(data.filter, 'DealTasks'));
+        }
+        var Task = models.get(req.session.lastDb, 'DealTasks', tasksSchema);
+
+        Task.find(obj, {_id : 1, description : 1}, function (err, docs) {
+            var ids;
+            var historyOptions;
+
+            if (err){
+                return next(err);
+            }
+
+            ids = docs.map(function(elem){
+                return elem._id;
+            });
+            historyOptions = {
+                req: req,
+                id : {$in : ids},
+                filter : {
+                    date : {$gte : moment().subtract(1, 'days').toDate() }
+                }
+
+            };
+            historyWriter.getHistoryForTrackedObject(historyOptions, function (err, history) {
+                if (err){
+                    return next(err);
+                }
+
+                history = history.map(function (elem) {
+                    var doc = _.find(docs, function (opp) {
+                        return (opp._id.toJSON() === elem.contentId.toJSON());
+                    });
+
+                    elem.name = doc ? doc.description : '';
+                    return elem;
+                });
+
+                history = history.reverse();
+
+
+                res.status(200).send({data : history});
+
+            }, true);
+        });
+
+
+    }
+
+    function getTasksForDateList(req, res, next) {
+        var data = req.query;
+        var obj = {};
+        var addObj = {};
+        var Task = models.get(req.session.lastDb, 'DealTasks', tasksSchema);
+        var filterMapper = new FilterMapper();
+
+        if (data.parrentContentId) {
+            addObj._id = objectId(data.parrentContentId);
+        }
+
+        if (data && data.filter) {
+            obj.$and = [];
+            obj.$and.push(filterMapper.mapFilter(data.filter, 'DealTasks'));
+        }
+
+        Task
+            .aggregate([{
+                $match: obj
+            },
+                {
+                    $lookup: {
+                        from        : 'Employees',
+                        localField  : 'assignedTo',
+                        foreignField: '_id',
+                        as          : 'assignedTo'
+                    }
+                },
+                {
+                    $lookup: {
+                        from        : 'Customers',
+                        localField  : 'contact',
+                        foreignField: '_id',
+                        as          : 'contact'
+                    }
+                },
+                {
+                    $lookup: {
+                        from        : 'Customers',
+                        localField  : 'company',
+                        foreignField: '_id',
+                        as          : 'company'
+                    }
+                },
+                {
+                    $lookup: {
+                        from        : 'Opportunities',
+                        localField  : 'deal',
+                        foreignField: '_id',
+                        as          : 'deal'
+                    }
+                },
+                {
+                    $lookup: {
+                        from        : 'workflows',
+                        localField  : 'workflow',
+                        foreignField: '_id',
+                        as          : 'workflow'
+                    }
+                },
+                {
+                    $lookup: {
+                        from        : 'tags',
+                        localField  : 'category',
+                        foreignField: '_id',
+                        as          : 'category'
+                    }
+                },
+                {
+                    $project: {
+                        _id        : 1,
+                        workflow   : {$arrayElemAt: ['$workflow', 0]},
+                        category   : {$arrayElemAt: ['$category', 0]},
+                        assignedTo : {$arrayElemAt: ['$assignedTo', 0]},
+                        description: 1,
+                        deal       : {$arrayElemAt: ['$deal', 0]},
+                        contact    : {$arrayElemAt: ['$contact', 0]},
+                        company    : {$arrayElemAt: ['$company', 0]},
+                        dueDate    : 1,
+                        sequence   : 1,
+                        taskCount  : 1
+                    }
+                }, {
+                    $group: {
+                        _id: null,
+                        doc: {$push : '$$ROOT'}
+                    }
+                }, {
+                    $project: {
+                        _id : 0,
+                        overdue : {
+                            $filter: {
+                                input: '$doc',
+                                as   : 'task',
+                                cond : { $and: [{
+                                    $lt: ['$$task.dueDate', moment().startOf('day').toDate()]
+                                }/*, {$ne : ['$$task.workflow.status', 'Done']}*/]
+
+                                }
+                            }
+                        },
+                        today   : {
+                            $filter: {
+                                input: '$doc',
+                                as   : 'task',
+                                cond : {
+                                    $and: [{$gte: ['$$task.dueDate', moment().startOf('day').toDate()]},
+                                        {$lte: ['$$task.dueDate', moment().endOf('day').toDate()]}
+                                    ]
+                                }
+                            }
+                        },
+                        next7days: {
+                            $filter: {
+                                input: '$doc',
+                                as   : 'task',
+                                cond : {
+                                    $and: [
+                                        {$gte: ['$$task.dueDate', moment().endOf('day').toDate()]},
+                                        {$lte: ['$$task.dueDate', moment().add(8, 'days').endOf('day').toDate()]}
+                                    ]
+                                }
+                            }
+                        }
+                    }  }
+
+
+            ], function (err, result) {
+                var count;
+
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send({data : result[0]});
+            });
+
+    }
+
     this.getTasks = function (req, res, next) {
         var viewType = req.query.viewType;
 
@@ -386,6 +620,9 @@ var Module = function (models, event) {
                 break;
             case 'list':
                 getTasksForList(req, res, next);
+                break;
+            case 'datelist':
+                getTasksForDateList(req, res, next);
                 break;
             default :
                 getTasksForKanban(req, res, next);
@@ -514,7 +751,6 @@ var Module = function (models, event) {
                 res.send(data);
             }
         );
-
 
     };
 

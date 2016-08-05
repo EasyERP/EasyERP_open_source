@@ -170,5 +170,31 @@ module.exports = {
                 isRef: false
             }
         }
+    },
+    DEALTASK : {
+        collectionName: 'DealTasks',
+
+        map: {
+            'description': {
+                name : 'Description',
+                isRef: false
+            },
+            assignedTo: {
+                name      : 'Assigned To',
+                isRef     : true,
+                collection: 'Employees',
+                project   : {$concat: ['$tmp.name.first', ' ', '$tmp.name.last']}
+            },
+            'workflow': {
+                name      : 'Stage',
+                isRef     : true,
+                collection: 'workflows',
+                project   : '$tmp.name'
+            },
+            'createdBy.date' : {
+                name : 'Creation Date',
+                isRef: false
+            }
+        }
     }
 };

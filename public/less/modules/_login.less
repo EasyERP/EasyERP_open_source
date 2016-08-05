@@ -845,7 +845,12 @@ input {
   height: 14px;
   line-height: 14px;
   font-size: 10px;
+  color: #fff;
   .defaultBorRad;
+
+  &:empty {
+    display: none;
+  }
 }
 
 .tags-container {
@@ -2061,3 +2066,44 @@ table {
   position: relative;
 }
 
+
+
+.inputDateActionBlock {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  margin-top: 15px;
+
+  > .ui-spinner {
+    flex-grow: 1;
+
+    &:nth-child(n+2) {
+
+      input {
+        border-left: 0;
+      }
+    }
+
+    .ui-spinner-up,
+    .ui-spinner-down {
+      right: 5px;
+    }
+    .ui-spinner-down {
+      bottom: 2px;
+    }
+  }
+}
+
+.superCenter {
+  margin: auto;
+}
+
+//.content-holder {
+//  overflow: hidden;
+//}
+
+._borderRight {
+  border-right: 1px solid #c8c8d3;
+}
