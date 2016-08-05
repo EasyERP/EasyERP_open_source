@@ -1775,7 +1775,8 @@
     cursor: move; }
     ._contentBlockRow ._movingItem.borderField {
       border: 1px solid #c2c8cd;
-      background: #ffffff; }
+      background: #ffffff;
+      z-index: 10; }
 
 ._importTabs .tabListItem span {
   display: inline-block !important;

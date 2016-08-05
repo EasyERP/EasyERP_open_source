@@ -186,6 +186,7 @@
     &.borderField {
       border: 1px solid #c2c8cd;
       background: $white;
+      z-index: 10;
     }
   }
 }
