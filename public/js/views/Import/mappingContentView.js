@@ -17,22 +17,14 @@ define([
 
         events: {
             'click #clickToReset': 'resetForm',
-            'click .stageBtn'    : 'goToPreview'
-        },
-
-        resetForm: function () {
-            this.render(this.data);
+            'click .stageBtn': 'goToPreview',
+            'click .tabItem' : 'changeTab',
+            'click .cleanButton' : 'clean'
         },
 
         initialize: function () {
             var url = '/importFile/imported';
             var self = this;
-
-            $(document).mousemove(function (e) {
-                self.X = e.pageX; // положения по оси X
-                self.Y = e.pageY; // положения по оси Y
-                //console.log("X: " + self.X + " Y: " + self.Y); // вывод результата в консоль
-            });
 
             this.logFile = {};
 
@@ -41,6 +33,24 @@ define([
                 self.data = data;
                 self.render(self.data);
             });
+        },
+
+        resetForm: function() {
+            this.render(this.data);
+        },
+
+        clean: function(e) {
+            var $button = $(e.target).closest('div').find('.secondColumn');
+            $button.text('');
+            $button.data('name', '');
+            //$button.data('parent', '');
+            //$button.removeAttr('data-name');
+            //$button.removeAttr('data-parent');
+            $button.removeClass('dbFieldItemDrag');
+        },
+
+        changeTab: function() {
+
         },
 
         goToPreview: function () {
@@ -86,13 +96,6 @@ define([
             $('.dbFieldItem').droppable({
                 accept   : '.dbFieldItemDrag, .fieldItem',
                 tolerance: 'pointer',
-                /*activate : function(event, ui) {
-                 var $draggable = ui.draggable;
-
-                 //$draggable.addClass('draggableActive');
-                 //console.log(self.X, self.Y);
-                 //$draggable.css({'position':'fixed'});
-                 },*/
 
                 drop: function (event, ui) {
                     var $droppable = $(this).closest('div');
@@ -102,16 +105,25 @@ define([
                     var draggableParentName = $draggable.data('parent');
                     var droppableParentName = $droppable.data('parent');
 
+
+
                     if (($draggable.attr('class').indexOf('dbFieldItem') === -1) && (_.values(self.logFile).indexOf(droppableName)) !== -1) {
 
                         if (droppableParentName === 'customers' || droppableParentName === 'employees') {
                             delete self.logFile[self.findKeyByValue(self.logFile, droppableName)];
                             self.$el.find('.tabItem[data-tab=' + droppableParentName + ']')
                                 .find('ul')
-                                .append('<li class="fieldItem" data-parent="' + droppableParentName + '" style="cursor: pointer"  data-name="' + droppableName + '">' + droppableName + '</li>')
-                                .find('li[data-name="' + droppableName + '"]')
+                                .append('<li><div class="fieldItem" data-parent="' + droppableParentName + '" style="cursor: pointer"  data-name="' + droppableName + '">' + droppableName +'</div></li>')
+                                .find('div[data-name="' + droppableName +'"]')
                                 .draggable({
-                                    revert: true
+                                    revert: true,
+                                    helper: 'clone',
+                                    start: function(){
+                                        $(this).hide();
+                                    },
+                                    stop: function(){
+                                        $(this).show()
+                                    }
                                 });
 
                         }
@@ -140,6 +152,9 @@ define([
                         $draggable.text(droppableName);
                         $draggable.data('name', droppableName);
                     } else {
+                        $draggable.draggable({
+                            revert: false
+                        });
                         if (!droppableName.length) {
                             $draggable.draggable({
                                 disabled: true
@@ -158,15 +173,15 @@ define([
                 },
 
                 over: function () {
-                    /*var $droppableEl = $(this);
-                     var $groupList = self.$el;
 
-                     $groupList.find('.selected').removeClass('selected');
-                     $droppableEl.addClass('selected');*/
                 },
 
-                out: function () {
-                    /*$(this).removeClass('selected');*/
+                out: function (event, ui) {
+                    var $draggable = ui.draggable;
+
+                    $draggable.draggable({
+                        revert: true
+                    });
                 }
             });
         },
@@ -183,28 +198,19 @@ define([
             this.draggableDBFields();
 
             $thisEl.find('.dbFieldItemDrag').draggable({
-                revert: true,
-                start : function (event, ui) {
-                    var $draggable = $(this);
-
-                    $draggable.addClass('draggableActive');
-                    //$draggable.css('position', 'fixed');
-                }
+                revert: true
             });
 
             $thisEl.find('.fieldItem').draggable({
                 revert: true,
-                start : function () {
-                    var $draggable = $(this);
-
-                    $draggable.addClass('draggableActive');
-                    //$draggable.css({top: self.y, left: self.x});
+                helper: 'clone',
+                start: function(){
+                    $(this).hide();
                 },
-
-                drag: function (event, ui) {
-                    ui.position.left = self.X - 20;
-                    ui.position.top = self.Y - 20;
+                stop: function(){
+                    $(this).show()
                 }
+
             });
         }
     });
