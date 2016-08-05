@@ -399,7 +399,7 @@ input::-ms-clear {
     }
     .left;
     width: 100%-@with-dt;
-    .text-overflow;
+    //.text-overflow;
     &:nth-child(2) {
       margin-top: 0;
     }
@@ -2454,7 +2454,7 @@ input, textarea, select {
 }
 
 .current-selected {
-  // color: @tilte-color !important;
+  position: relative;
   font-size: 13px;
   text-decoration: none;
   line-height: 26px !important;
@@ -6207,7 +6207,7 @@ textarea#editInput {
   min-width: 230px;
   top: ~"calc(100% - 1px)";
   right: 0;
-  z-index: 500;
+  z-index: 1;
 
   .filter-dialog-tabs {
     box-sizing: border-box;
@@ -6302,6 +6302,9 @@ textarea#editInput {
         &.miniStylePagination {
           list-style: none;
           border-top: 1px solid @border-color-main;
+          line-height: 12px;
+          padding: 5px 8px;
+
           .prev.disabled,
           .next.disabled {
             display: none;
@@ -6316,11 +6319,6 @@ textarea#editInput {
         &:not(.checkedValue):hover:before {
           color: @bg-hover-drop-down-color;
         }
-        //&:not(.checkedValue):before,
-        //&.checkedValue:before,
-        //&.checkedValue:hover:before {
-        //  color: @bg-main;
-        //}
         &.checkedValue {
           &:before {
             content: '\2713';

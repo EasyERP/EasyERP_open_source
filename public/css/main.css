@@ -3567,6 +3567,19 @@ dl.payrollDateBlock dt {
   height: 100%;
   border-bottom: 1px solid #ededed;
 }
+.listWrap.leadsList .name {
+  color: #508bbd;
+  font-size: 15px;
+  font-family: 'Open Sans Bold', sans-serif, Verdana;
+}
+.listWrap.opportunitiesList .opportunity {
+  color: #508bbd;
+  font-size: 15px;
+  font-family: 'Open Sans Bold', sans-serif, Verdana;
+}
+.listWrap.opportunitiesList .revenue {
+  font-size: 10px;
+}
 .listWrap.personList .firstName {
   color: #508bbd;
   font-size: 15px;
@@ -3589,13 +3602,13 @@ dl.payrollDateBlock dt {
 .listWrap.companiesList .compactRowWrap {
   min-height: 60px;
 }
-.listWrap.opportunitiesList .opportunity {
+.listWrap.quotationsList .firstName,
+.listWrap.ordersList .firstName,
+.listWrap.invoicesList .firstName,
+.listWrap.proformaList .firstName {
   color: #508bbd;
   font-size: 15px;
   font-family: 'Open Sans Bold', sans-serif, Verdana;
-}
-.listWrap.opportunitiesList .revenue {
-  font-size: 10px;
 }
 .listWrap .form-holder {
   padding: 10px;
@@ -3767,6 +3780,9 @@ td.checkboxRow {
   line-height: 26px !important;
   font-size: 13px;
   color: #fff;
+}
+#top-bar ._filterDropDownWrap {
+  margin-top: 7px;
 }
 .dropDown {
   position: relative;
@@ -5861,6 +5877,7 @@ select:not([type="checkbox"]) {
   color: #000000;
 }
 .current-selected {
+  position: relative;
   font-size: 13px;
   text-decoration: none;
   line-height: 26px !important;
@@ -5944,9 +5961,6 @@ dl dd {
   min-height: 18px;
   float: left;
   width: 65%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 dl dd p {
   word-wrap: break-word;
@@ -6682,9 +6696,6 @@ dl dd span.ui-spinner {
   min-height: 18px;
   float: left;
   width: 70%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form .job-info dd p {
   word-wrap: break-word;
@@ -6738,9 +6749,6 @@ dl dd span.ui-spinner {
   min-height: 18px;
   float: left;
   width: 60%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form .opp-info dd p {
   word-wrap: break-word;
@@ -6797,9 +6805,6 @@ dl dd span.ui-spinner {
   min-height: 18px;
   float: left;
   width: 80%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form .internal-info dd p {
   word-wrap: break-word;
@@ -6858,9 +6863,6 @@ dl dd span.ui-spinner {
   min-height: 18px;
   float: left;
   width: 80%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form .assignees-info dd p {
   word-wrap: break-word;
@@ -8468,9 +8470,6 @@ dl dd span.ui-spinner {
   min-height: 18px;
   float: left;
   width: 65%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .settings-info dd p {
   word-wrap: break-word;
@@ -8530,9 +8529,6 @@ dl dd span.ui-spinner {
   min-height: 18px;
   float: left;
   width: 60%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .project-edit-info dd p {
   word-wrap: break-word;
@@ -8586,9 +8582,6 @@ dl dd span.ui-spinner {
   min-height: 18px;
   float: left;
   width: 65%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .quotation-info dd p {
   word-wrap: break-word;
@@ -8645,9 +8638,6 @@ dl dd span.ui-spinner {
   min-height: 18px;
   float: left;
   width: 60%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .edit-employee-info dd p {
   word-wrap: break-word;
@@ -10913,9 +10903,6 @@ ul.dialog-tabs li.right button {
   min-height: 18px;
   float: left;
   width: 0%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .ui-dialog .app-empty-info dd p {
   word-wrap: break-word;
@@ -10980,9 +10967,6 @@ ul.dialog-tabs li.right button {
   min-height: 18px;
   float: left;
   width: 50%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .ui-dialog .person-info-h3 dd p {
   word-wrap: break-word;
@@ -11054,9 +11038,6 @@ ul.dialog-tabs li.right button {
   min-height: 18px;
   float: left;
   width: 70%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .ui-dialog .summary-info dd p {
   word-wrap: break-word;
@@ -11366,9 +11347,6 @@ ul.dialog-tabs li.right button {
   min-height: 18px;
   float: left;
   width: 0%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .ui-dialog .app-empty-info dd p {
   word-wrap: break-word;
@@ -11433,9 +11411,6 @@ ul.dialog-tabs li.right button {
   min-height: 18px;
   float: left;
   width: 50%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .ui-dialog .person-info-h3 dd p {
   word-wrap: break-word;
@@ -11507,9 +11482,6 @@ ul.dialog-tabs li.right button {
   min-height: 18px;
   float: left;
   width: 70%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .ui-dialog .summary-info dd p {
   word-wrap: break-word;
@@ -11697,9 +11669,6 @@ ul.dialog-tabs li.right button {
   min-height: 18px;
   float: left;
   width: 60%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form-holder form dd p {
   word-wrap: break-word;
@@ -12689,9 +12658,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 60%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form-holder form .task-info dd p {
   word-wrap: break-word;
@@ -12748,9 +12714,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 80%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form-holder form .task-summary-info dd p {
   word-wrap: break-word;
@@ -12807,9 +12770,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 50%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form-holder form .profile-create dd p {
   word-wrap: break-word;
@@ -12869,9 +12829,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 58%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form-holder form .project-edit-info dd p {
   word-wrap: break-word;
@@ -12934,9 +12891,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 58%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form-holder form .job-create-info dd p {
   word-wrap: break-word;
@@ -13010,9 +12964,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 90%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form-holder form .subject-info dd p {
   word-wrap: break-word;
@@ -13077,9 +13028,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 60%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form-holder form .opprtunitie-info dd p {
   word-wrap: break-word;
@@ -13143,9 +13091,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 80%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form-holder form .opprtunitie-lead-info dd p {
   word-wrap: break-word;
@@ -13298,9 +13243,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 70%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form .job-info dd p {
   word-wrap: break-word;
@@ -13354,9 +13296,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 60%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form .opp-info dd p {
   word-wrap: break-word;
@@ -13413,9 +13352,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 80%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form .internal-info dd p {
   word-wrap: break-word;
@@ -13474,9 +13410,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 80%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form .assignees-info dd p {
   word-wrap: break-word;
@@ -14611,7 +14544,7 @@ textarea#editInput {
   min-width: 230px;
   top: calc(100% - 1px);
   right: 0;
-  z-index: 500;
+  z-index: 1;
 }
 .search-options .filter-dialog-tabs {
   box-sizing: border-box;
@@ -14696,6 +14629,8 @@ textarea#editInput {
 .drop-down-filter #filtersContent .filterGroup li.miniStylePagination {
   list-style: none;
   border-top: 1px solid #7f7f80;
+  line-height: 12px;
+  padding: 5px 8px;
 }
 .drop-down-filter #filtersContent .filterGroup li.miniStylePagination .prev.disabled,
 .drop-down-filter #filtersContent .filterGroup li.miniStylePagination .next.disabled {
