@@ -39,6 +39,7 @@ define([
             importFile.sendToServer(e, null, this);
 
             this.listenTo(importFile, 'uploadCompleted', function (){
+                alert('file is loaded!!!');
                 this.trigger('uploadCompleted');
             });
         },
