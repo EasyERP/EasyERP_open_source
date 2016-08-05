@@ -50,7 +50,7 @@
                         }
 
                         response.notes.forEach(function(elem, index) {
-                            if (note.history && (note.history.changedField === 'Creation Date')){
+                            if (!note.name && note.history && (note.history.changedField === 'Creation Date')){
                                 response.notes.splice(index, 1);
                                 response.notes.unshift(note);
                                 return;

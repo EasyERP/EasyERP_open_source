@@ -670,7 +670,17 @@ var Module = function (models, event) {
                             return next(err);
                         }
 
-                        res.status(200).send({success: 'Opportunities updated'});
+                        historyOptions = {
+                            contentType: result.isOpportunitie ? 'opportunitie' : 'lead',
+                            data       : data,
+                            req        : req,
+                            contentId  : result._id
+                        };
+                        historyWriter.addEntry(historyOptions, function () {
+                            res.status(200).send({success: 'Opportunities updated'});
+                        })
+
+
                     });
                 });
             }

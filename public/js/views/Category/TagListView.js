@@ -71,7 +71,7 @@ define([
         events: {
             'click .editTag'                                                  : 'editTag',
             'click #newTag'                                                   : 'createTag',
-            'click li'                                                        : 'changeSelected'
+            'click li span:not(.editTag)'                                     : 'changeSelected'
         },
 
         changeSelected: function (e) {
@@ -151,7 +151,7 @@ define([
                 position     : {
                     at: "top+35%"
                 },
-                dialogClass  : 'tag-list-dialog ',
+                dialogClass  : 'tag-list-dialog',
                 title        : 'Tag List',
                 width        : '300px',
                 buttons      : [
