@@ -339,7 +339,7 @@ var Module = function (models, event) {
                 return next(err);
             }
             if (deleteHistory){
-                historyWriter.deleteHistoryById(req, {_id :  {$in: ids}});
+                historyWriter.deleteHistoryById(req, {_id : id});
             }
 
             if (result && result.isOpportunitie) {
@@ -363,7 +363,7 @@ var Module = function (models, event) {
                 }
 
                 if (deleteHistory){
-                    historyWriter.deleteHistoryById(req, id);
+                    historyWriter.deleteHistoryById(req,  {$in: ids});
                 }
 
 
@@ -2591,7 +2591,6 @@ var Module = function (models, event) {
                             sequence        : 1,
                             workflow        : {$arrayElemAt: ['$workflow', 0]},
                             salesPerson     : {$arrayElemAt: ['$salesPerson', 0]},
-                            'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]},
                             'editedBy.user' : {$arrayElemAt: ['$editedBy.user', 0]},
                             'editedBy.date' : 1,
                             isOpportunitie  : 1
@@ -2619,7 +2618,6 @@ var Module = function (models, event) {
                             expectedClosing   : '$root.expectedClosing',
                             'salesPerson._id' : '$root.salesPerson._id',
                             'salesPerson.name': '$root.salesPerson.name',
-                            'createdBy.user'  : '$root.createdBy.user.login',
                             'editedBy.user'   : '$root.editedBy.user.login',
                             'editedBy.date'   : '$root.editedBy.date',
                             total             : 1
@@ -2651,9 +2649,7 @@ var Module = function (models, event) {
                             company         : {$arrayElemAt: ['$company', 0]},
                             salesPerson     : {$arrayElemAt: ['$salesPerson', 0]},
                             workflow        : {$arrayElemAt: ['$workflow', 0]},
-                            'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]},
                             'editedBy.user' : {$arrayElemAt: ['$editedBy.user', 0]},
-                            'createdBy.date': 1,
                             expectedClosing : 1,
                             'editedBy.date' : 1,
                             source          : 1,
@@ -2683,8 +2679,6 @@ var Module = function (models, event) {
                             'workflow._id'    : '$root.workflow._id',
                             'workflow.name'   : '$root.workflow.name',
                             'workflow.status' : '$root.workflow.status',
-                            'createdBy.user'  : '$root.createdBy.user.login',
-                            'createdBy.date'  : '$root.createdBy.date',
                             'editedBy.user'   : '$root.editedBy.user.login',
                             expectedClosing   : '$root.expectedClosing',
                             'editedBy.date'   : '$root.editedBy.date',
