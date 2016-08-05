@@ -104,7 +104,7 @@
             var company = this.$el.find('#companyItem .showSelect').attr('data-id');
             var contact = this.$el.find('#contactItem .showSelect').attr('data-id');
             var description = $.trim(this.$el.find('#description').val());
-            var category = modelJSON.category._id;
+            var category = modelJSON.category ? modelJSON.category._id : null;
 
             event.preventDefault();
 
