@@ -339,7 +339,7 @@ var Module = function (models, event) {
                 return next(err);
             }
             if (deleteHistory){
-                historyWriter.deleteHistoryById(req, {_id : id});
+                historyWriter.deleteHistoryById(req, {contentId : id});
             }
 
             if (result && result.isOpportunitie) {
@@ -363,7 +363,7 @@ var Module = function (models, event) {
                 }
 
                 if (deleteHistory){
-                    historyWriter.deleteHistoryById(req,  {$in: ids});
+                    historyWriter.deleteHistoryById(req,  {contentId : {$in: ids}});
                 }
 
 

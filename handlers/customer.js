@@ -1227,7 +1227,7 @@ var Module = function (models, event) {
                     return next(err);
                 }
                 if (deleteHistory){
-                    historyWriter.deleteHistoryById(req, {_id : _id});
+                    historyWriter.deleteHistoryById(req, {contentId : _id});
                 }
 
 
@@ -1248,7 +1248,7 @@ var Module = function (models, event) {
                 return next(err);
             }
             if (deleteHistory){
-                historyWriter.deleteHistoryById(req, {_id :  {$in: ids}});
+                historyWriter.deleteHistoryById(req, {contentId :  {$in: ids}});
             }
 
             res.status(200).send(removed);
