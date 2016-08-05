@@ -8,6 +8,10 @@ var Module = function (models) {
     var mapObject = require('../public/js/constants/importMapping');
     var moment = require('../public/js/libs/moment/moment');
     var _ = require('lodash');
+    var arrayKeys = {
+        'groups.users': true,
+        'groups.group': true
+    };
 
     function toOneCase(item) {
         item = item.toLowerCase();
@@ -70,6 +74,15 @@ var Module = function (models) {
         var saveObj = {};
 
         for (var i in mappedFields) {
+            if (saveItemArray[i] && arrayKeys && arrayKeys[mappedFields[i]] === true) {
+                if (typeof val == 'number') {
+                    var arr = [];
+                    arr.push(val);
+                    val = arr;
+                } else {
+                    val = val.split(',');
+                }
+            }
             saveObj[i] = saveItemArray[mappedFields[i]];
         }
 
@@ -97,118 +110,6 @@ var Module = function (models) {
             res.status(200).send(mappedObj || {});
         });
     };
-
-    function parse(data, callback) {
-        var insertObj = {};
-        var arrayKeys = task.arrayKeys;
-
-        Object.keys(data).forEach(function (key) {
-            var val = data[key];
-
-            if (val && arrayKeys && arrayKeys[keysAliases[key]] === true) {
-                if (typeof val == 'number') {
-                    var arr = [];
-                    arr.push(val);
-                    val = arr;
-                } else {
-                    val = val.split(',');
-                }
-            }
-
-            if (val) {
-                insertObj[keysAliases[key]] = val;
-            }
-        });
-        callback(null, insertObj);
-    }
-
-    function findAndReplaceObjectId(obj, callback) {
-        var findCollection;
-        var collection;
-        var schema;
-        var Model;
-        var replaceObj = obj;
-        var objectIdKeyList = task.objectIdList;
-
-        if (objectIdKeyList) {
-
-            async.each(Object.keys(objectIdKeyList), function (key, cb) {
-                    var val = obj[key];
-                    var objID = [];
-                    var length;
-
-                    findCollection = importMap[objectIdKeyList[key]];
-
-                    if (val && findCollection) {
-                        collection = findCollection.collection;
-                        schema = mongoose.Schemas[findCollection.schema];
-                        Model = models.get(req.session.lastDb, collection, schema);
-
-                        if (Array.isArray(val)) {
-                            length = val.length;
-
-                            if (length > 0) {
-                                async.each(Object.keys(val), function (index, calb) {
-                                        Model.findOne({'ID': val[index]}, function (err, mod) {
-
-                                            if (err) {
-                                                calb(err);
-                                            } else {
-                                                if (mod) {
-                                                    objID.push(mod._id);
-                                                    calb();
-                                                } else {
-                                                    error = new Error('ID = ' + val[index] + ' (' + key + ') not exist in BD');
-                                                    error.status = 400;
-                                                    calb(error);
-                                                }
-                                            }
-                                        });
-                                    },
-                                    function (err) {
-                                        if (!err) {
-                                            replaceObj[key] = objID;
-                                            cb();
-                                        } else {
-                                            cb(err);
-                                        }
-                                    });
-                            } else {
-                                cb();
-                            }
-                        } else {
-                            Model.findOne({'ID': val}, function (err, mod) {
-                                if (err) {
-                                    return cb(err);
-                                }
-
-                                if (!mod) {
-                                    error = new Error('ID = ' + val + ' (' + key + ') not exist in BD');
-                                    error.status = 400;
-
-                                    return cb(error);
-                                }
-
-                                replaceObj[key] = mod._id;
-                                cb();
-                            });
-                        }
-                    } else {
-                        cb();
-                    }
-                },
-
-                function (err) {
-                    if (!err) {
-                        callback(null, replaceObj);
-                    } else {
-                        callback(err);
-                    }
-                });
-        } else {
-            callback(null, replaceObj);
-        }
-    }
 
     this.saveImportedData = function (req, res, next) {
         var data = req.body;
@@ -245,7 +146,7 @@ var Module = function (models) {
 
                 saveModel.save(cb);
             }, function (err) {
-                if (err){
+                if (err) {
                     return next(err);
                 }
 
