@@ -18,18 +18,13 @@ define([
         events: {
             'click #clickToReset': 'resetForm',
             'click .stageBtn': 'goToPreview',
-            'click .tabItem' : 'changeTab'
+            'click .tabItem' : 'changeTab',
+            'click .cleanButton' : 'clean'
         },
 
         initialize: function () {
             var url = '/importFile/imported';
             var self = this;
-
-            $(document).mousemove(function(e){
-                self.X = e.pageX; // положения по оси X
-                self.Y = e.pageY; // положения по оси Y
-                //console.log("X: " + self.X + " Y: " + self.Y); // вывод результата в консоль
-            });
 
             this.logFile = {};
 
@@ -38,11 +33,20 @@ define([
                 self.data = data;
                 self.render(self.data);
             });
-            //this.render();
         },
 
         resetForm: function() {
             this.render(this.data);
+        },
+
+        clean: function(e) {
+            var $button = $(e.target).closest('div').find('.secondColumn');
+            $button.text('');
+            $button.data('name', '');
+            //$button.data('parent', '');
+            //$button.removeAttr('data-name');
+            //$button.removeAttr('data-parent');
+            $button.removeClass('dbFieldItemDrag');
         },
 
         changeTab: function() {
@@ -92,13 +96,6 @@ define([
             $('.dbFieldItem').droppable({
                 accept   : '.dbFieldItemDrag, .fieldItem',
                 tolerance: 'pointer',
-               /* activate : function(event, ui) {
-                    var $draggable = ui.draggable;
-
-                    //$draggable.addClass('draggableActive');
-                    console.log(self.X, self.Y);
-                    $draggable.css({'position':'fixed','top': self.Y, 'left': self.X});
-                },*/
 
                 drop     : function (event, ui) {
                     var $droppable = $(this).closest('div');
@@ -119,7 +116,14 @@ define([
                                 .append('<li><div class="fieldItem" data-parent="' + droppableParentName + '" style="cursor: pointer"  data-name="' + droppableName + '">' + droppableName +'</div></li>')
                                 .find('div[data-name="' + droppableName +'"]')
                                 .draggable({
-                                    revert: true
+                                    revert: true,
+                                    helper: 'clone',
+                                    start: function(){
+                                        $(this).hide();
+                                    },
+                                    stop: function(){
+                                        $(this).show()
+                                    }
                                 });
 
                         }
@@ -169,11 +173,7 @@ define([
                 },
 
                 over: function () {
-                    /*var $droppableEl = $(this);
-                    var $groupList = self.$el;
 
-                    $groupList.find('.selected').removeClass('selected');
-                    $droppableEl.addClass('selected');*/
                 },
 
                 out: function (event, ui) {
@@ -211,29 +211,7 @@ define([
                 stop: function(){
                     $(this).show()
                 }
-                /*start: function(event, ui) {
-                    var $draggable = $(this);
 
-                    $draggable.addClass('draggableActive');
-                },
-                drag: function(event, ui) {
-                    var $draggable = $(this);
-                    //var $draggable = ui.draggable;
-
-                    //$draggable.addClass('draggableActive');
-                    //console.log(self.X, self.Y);
-                    ui.position.left = self.X;
-                    ui.position.top = self.Y;
-
-                    //$draggable.offset({top: self.Y, left: self.X})
-                    //$draggable.css({'position':'fixed','top': self.Y, 'left': self.X});
-                },
-
-                stop: function(event, ui) {
-                    var $draggable = $(this);
-
-                    $draggable.removeClass('draggableActive');
-                }*/
             });
         }
     });
