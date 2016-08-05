@@ -91,7 +91,6 @@
   display: flex;
 
   min-height: 53px;
-  border: 1px solid #c2c8cd;
   border-radius: 3px;
   background-color: $white;
   margin-bottom: 10px;
@@ -118,16 +117,28 @@
     }
   }
 
-  .hoverRow {
-    background: rgba($importHoverRowBg, .7);
+  &.hoverRow {
+    background: rgba($importHoverRowBg, .4);
+
     ._rowItem {
-      border-color: $importHoverRowBg;
+      border-color: $importHoverRowBg !important;
+    }
+
+    .secondBox {
+      border: 1px dashed #c2c8cd;
+    }
+
+    .empty {
+      &:after {
+        color: $white;
+      }
     }
   }
   
   ._rowItem {
     position: relative;
     width: 1px;
+    border: 1px solid #c2c8cd;
     -webkit-flex-grow: 1;
     flex-grow: 1;
     font-size: 14px;
@@ -139,7 +150,7 @@
     }
 
     &:nth-child(n+2) {
-      border-left: 1px solid #c2c8cd;
+      border-left: none;
     }
 
     .importStatic {

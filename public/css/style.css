@@ -1713,7 +1713,6 @@
   display: -webkit-flex;
   display: flex;
   min-height: 53px;
-  border: 1px solid #c2c8cd;
   border-radius: 3px;
   background-color: #ffffff;
   margin-bottom: 10px; }
@@ -1731,13 +1730,18 @@
               transform: translate(0, -50%);
       font-style: italic;
       color: #c2c8cd; }
-  ._contentBlockRow .hoverRow {
-    background: rgba(50, 145, 200, 0.7); }
-    ._contentBlockRow .hoverRow ._rowItem {
-      border-color: #3291c8; }
+  ._contentBlockRow.hoverRow {
+    background: rgba(50, 145, 200, 0.4); }
+    ._contentBlockRow.hoverRow ._rowItem {
+      border-color: #3291c8 !important; }
+    ._contentBlockRow.hoverRow .secondBox {
+      border: 1px dashed #c2c8cd; }
+    ._contentBlockRow.hoverRow .empty:after {
+      color: #ffffff; }
   ._contentBlockRow ._rowItem {
     position: relative;
     width: 1px;
+    border: 1px solid #c2c8cd;
     -webkit-flex-grow: 1;
     -webkit-box-flex: 1;
         -ms-flex-positive: 1;
@@ -1746,7 +1750,7 @@
     ._contentBlockRow ._rowItem:hover .cleanButton {
       display: block !important; }
     ._contentBlockRow ._rowItem:nth-child(n+2) {
-      border-left: 1px solid #c2c8cd; }
+      border-left: none; }
     ._contentBlockRow ._rowItem .importStatic {
       min-height: 53px;
       padding: 17px 15px; }
