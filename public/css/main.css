@@ -14839,7 +14839,7 @@ textarea#editInput {
   position: absolute;
   top: calc(100% - 3px);
   right: 0;
-  min-width: 178px;
+  min-width: 176px;
   width: calc(100% - 52px);
   padding: 5px 25px;
   background-color: #ffffff;
