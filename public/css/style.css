@@ -1725,6 +1725,9 @@
             flex-grow: 1; }
     ._contentBlockRow ._rowItem:nth-child(n+2) {
       border-left: 1px solid #c2c8cd; }
+    ._contentBlockRow ._rowItem .importStatic {
+      min-height: 50px;
+      padding: 17px 15px; }
   ._contentBlockRow ._movingItem {
     min-height: 50px;
     padding: 17px 15px;

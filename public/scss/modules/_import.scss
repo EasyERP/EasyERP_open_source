@@ -103,6 +103,11 @@
     &:nth-child(n+2) {
       border-left: 1px solid #c2c8cd;
     }
+
+    .importStatic {
+      min-height: 50px;
+      padding: 17px 15px;
+    }
   }
 
   ._movingItem {
