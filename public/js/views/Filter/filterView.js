@@ -212,7 +212,7 @@ define([
         showHideValues: function (e) {
             var filterGroupContainer = $(e.target).closest('.filterGroup');
 
-            if (this.previousGroupContainer && (this.previousGroupContainer.html() !== filterGroupContainer.html())) {
+            if (this.previousGroupContainer && (this.previousGroupContainer.html() !== filterGroupContainer.html()) && this.previousGroupContainer.find('.ulContent').is(':visible')) {
                 this.toggleGroup(this.previousGroupContainer);
             }
 
