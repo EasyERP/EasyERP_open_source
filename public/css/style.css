@@ -1712,13 +1712,29 @@
   display: -ms-flexbox;
   display: -webkit-flex;
   display: flex;
-  min-height: 52px;
+  min-height: 53px;
   border: 1px solid #c2c8cd;
   border-radius: 3px;
-  background-color: #fff;
+  background-color: #ffffff;
   margin-bottom: 10px; }
-  ._contentBlockRow.unmapped {
+  ._contentBlockRow.emptyRow {
     background-color: #f3f5f6; }
+    ._contentBlockRow.emptyRow .secondBox {
+      border: 1px dashed #c2c8cd; }
+    ._contentBlockRow.emptyRow .empty:after {
+      content: 'Drag and drop field here';
+      position: absolute;
+      left: 17px;
+      top: 50%;
+      -webkit-transform: translate(0, -50%);
+          -ms-transform: translate(0, -50%);
+              transform: translate(0, -50%);
+      font-style: italic;
+      color: #c2c8cd; }
+  ._contentBlockRow .hoverRow {
+    background: rgba(50, 145, 200, 0.7); }
+    ._contentBlockRow .hoverRow ._rowItem {
+      border-color: #3291c8; }
   ._contentBlockRow ._rowItem {
     position: relative;
     width: 1px;
@@ -1732,7 +1748,7 @@
     ._contentBlockRow ._rowItem:nth-child(n+2) {
       border-left: 1px solid #c2c8cd; }
     ._contentBlockRow ._rowItem .importStatic {
-      min-height: 50px;
+      min-height: 53px;
       padding: 17px 15px; }
     ._contentBlockRow ._rowItem .cleanButton {
       position: absolute;
@@ -1748,7 +1764,7 @@
     ._contentBlockRow ._rowItem .empty + .cleanButton {
       display: none !important; }
   ._contentBlockRow ._movingItem {
-    min-height: 50px;
+    min-height: 53px;
     padding: 17px 15px;
     cursor: move; }
 

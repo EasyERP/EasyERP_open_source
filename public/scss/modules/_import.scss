@@ -90,14 +90,39 @@
   display: -webkit-flex;
   display: flex;
 
-  min-height: 52px;
+  min-height: 53px;
   border: 1px solid #c2c8cd;
   border-radius: 3px;
-  background-color: #fff;
+  background-color: $white;
   margin-bottom: 10px;
+
+
   
-  &.unmapped {
+  &.emptyRow {
     background-color: #f3f5f6;
+
+    .secondBox {
+      border: 1px dashed #c2c8cd;
+    }
+
+    .empty {
+      &:after {
+        content: 'Drag and drop field here';
+        position: absolute;
+        left: 17px;
+        top: 50%;
+        transform: translate(0, -50%);
+        font-style: italic;
+        color: #c2c8cd;
+      }
+    }
+  }
+
+  .hoverRow {
+    background: rgba($importHoverRowBg, .7);
+    ._rowItem {
+      border-color: $importHoverRowBg;
+    }
   }
   
   ._rowItem {
@@ -118,7 +143,7 @@
     }
 
     .importStatic {
-      min-height: 50px;
+      min-height: 53px;
       padding: 17px 15px;
     }
 
@@ -141,7 +166,7 @@
   }
 
   ._movingItem {
-    min-height: 50px;
+    min-height: 53px;
     padding: 17px 15px;
     cursor: move;
   }
@@ -168,3 +193,4 @@
     z-index: 10;
   }
 }
+
