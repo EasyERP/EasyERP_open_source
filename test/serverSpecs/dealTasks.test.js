@@ -14,6 +14,8 @@ describe("Tasks Specs", function () {
         var assignedTo = CONSTANTS.EMPLOYEE;
         var workflow = "5783b351df8b918c31af24a8";
         var workflowChanged = "5783b351df8b918c31af24a9";
+        var company = CONSTANTS.SUPPLIER;
+        var opportunity = CONSTANTS.OPPORTUNITY;
         var dueDate = Date.now();
 
         before(function (done) {
@@ -36,7 +38,9 @@ describe("Tasks Specs", function () {
                 "workflow": workflow,
                 "description": "someDescription",
                 "sequence": "",
-                "dueDate": dueDate
+                "dueDate": dueDate,
+                "company" : company,
+                "deal"    : opportunity
             };
 
 
@@ -102,6 +106,14 @@ describe("Tasks Specs", function () {
                         .to.have.property('description')
                         .and.to.equal('someDescription');
                     expect(task)
+                        .to.have.property('company')
+                        .and.to.have.property('_id')
+                        .and.to.be.equal(company);
+                    expect(task)
+                        .to.have.property('deal')
+                        .and.to.have.property('_id')
+                        .and.to.be.equal(opportunity);
+                    expect(task)
                         .to.have.property('workflow')
                         .to.have.property('_id')
                         .and.to.be.equal(workflow);
@@ -145,6 +157,14 @@ describe("Tasks Specs", function () {
                     expect(task)
                         .to.have.property('description')
                         .and.to.equal('someDescription');
+                    expect(task)
+                        .to.have.property('company')
+                        .and.to.have.property('_id')
+                        .and.to.be.equal(company);
+                    expect(task)
+                        .to.have.property('deal')
+                        .and.to.have.property('_id')
+                        .and.to.be.equal(opportunity);
                     expect(task)
                         .to.have.property('workflow')
                         .to.have.property('_id')
@@ -229,6 +249,14 @@ describe("Tasks Specs", function () {
                     expect(task)
                         .to.have.property('description')
                         .and.to.equal('someDescription');
+                    expect(task)
+                        .to.have.property('company')
+                        .and.to.have.property('_id')
+                        .and.to.be.equal(company);
+                    expect(task)
+                        .to.have.property('deal')
+                        .and.to.have.property('_id')
+                        .and.to.be.equal(opportunity);
                     expect(task)
                         .to.have.property('workflow')
                         .and.to.have.property('_id')
