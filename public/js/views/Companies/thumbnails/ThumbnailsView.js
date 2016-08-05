@@ -58,7 +58,6 @@
             'click .gotoForm'          : 'gotoForm'
         },
 
-
         importFiles: function () {
             return new AttachView({
                 modelName: this.contentType,
@@ -75,13 +74,15 @@
 
         gotoForm: function (e) {
             var id = $(e.target).closest('a').data('id');
-            var url = '#easyErp/' + this.contentType + '/tform/' + id;
+            var count = this.collection.pageSize;
+            var page = this.collection.currentPage || 1;
+            var url = '#easyErp/' + this.contentType + '/tform/' + id + '/p=' + page + '/c=' + count;
 
             e.preventDefault();
             App.ownContentType = true;
 
             if (this.filter) {
-                url = '/filter=' + encodeURI(JSON.stringify(this.filter));
+                url += '/filter=' + encodeURI(JSON.stringify(this.filter));
             }
 
             window.location.hash = url;
@@ -93,7 +94,6 @@
             $currentEl
                 .find('#thumbnailContent')
                 .append(this.template({collection: this.collection.toJSON()}));
-
 
             return this;
         },
