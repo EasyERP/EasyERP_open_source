@@ -1704,6 +1704,8 @@
       margin-bottom: 10px;
       cursor: move;
       background: #ffffff; }
+    ._importListBody ._tabsBlock .fieldsItems.active {
+      display: block; }
 
 ._contentBlockRow {
   display: -webkit-box;
@@ -1726,7 +1728,7 @@
             flex-grow: 1;
     font-size: 14px; }
     ._contentBlockRow ._rowItem:hover .cleanButton {
-      display: block; }
+      display: block !important; }
     ._contentBlockRow ._rowItem:nth-child(n+2) {
       border-left: 1px solid #c2c8cd; }
     ._contentBlockRow ._rowItem .importStatic {
@@ -1742,6 +1744,8 @@
       padding: 8px;
       cursor: pointer;
       font-size: 18px;
+      display: none !important; }
+    ._contentBlockRow ._rowItem .empty + .cleanButton {
       display: none; }
   ._contentBlockRow ._movingItem {
     min-height: 50px;

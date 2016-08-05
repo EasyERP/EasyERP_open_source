@@ -73,7 +73,12 @@
       margin-bottom: 10px;
       cursor: move;
       background: $white;
+    }
 
+    .fieldsItems {
+      &.active {
+        display: block;
+      }
     }
   }
 }
@@ -104,7 +109,7 @@
 
     &:hover {
      .cleanButton {
-       display: block;
+       display: block !important;
      }
     }
 
@@ -125,7 +130,13 @@
       padding: 8px;
       cursor: pointer;
       font-size: 18px;
-      display: none;
+      display: none !important;
+    }
+
+    .empty {
+      + .cleanButton {
+        display: none;
+      }
     }
   }
 
