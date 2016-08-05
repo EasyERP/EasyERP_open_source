@@ -42,10 +42,10 @@ define([
         clean: function(e) {
             var $button = $(e.target).closest('div').find('.secondColumn');
             $button.text('');
-            //$button.data('name', '');
+            $button.data('name', '');
             //$button.data('parent', '');
-            $button.removeAttr('data-name');
-            $button.removeAttr('data-parent');
+            //$button.removeAttr('data-name');
+            //$button.removeAttr('data-parent');
             $button.removeClass('dbFieldItemDrag');
         },
 
