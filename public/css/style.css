@@ -3,7 +3,9 @@
   margin-left: auto;
   margin-right: auto;
   padding-left: 12px;
+  padding-left: 12px;
   padding-left: 0.75rem;
+  padding-right: 12px;
   padding-right: 12px;
   padding-right: 0.75rem; }
 
@@ -58,7 +60,9 @@
 
 .row {
   margin-left: -15px;
+  margin-left: -15px;
   margin-left: -0.9375rem;
+  margin-right: -15px;
   margin-right: -15px;
   margin-right: -0.9375rem; }
 
@@ -69,7 +73,9 @@
   position: relative;
   box-sizing: border-box;
   padding-left: 15px;
+  padding-left: 15px;
   padding-left: 0.9375rem;
+  padding-right: 15px;
   padding-right: 15px;
   padding-right: 0.9375rem; }
 
@@ -2659,10 +2665,14 @@ label._customCHeckbox input[type="checkbox"] {
         content: none; }
 
 ._filterDropDownWrap {
+  position: relative;
   height: 26px;
-  width: 200px; }
+  width: 195px;
+  float: left;
+  margin-left: 15px; }
   ._filterDropDownWrap > ul {
     position: absolute;
+    width: 100%;
     background-color: #fff;
     z-index: 1; }
   ._filterDropDownWrap li {

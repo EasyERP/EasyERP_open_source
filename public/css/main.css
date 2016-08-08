@@ -2504,13 +2504,6 @@ body {
 .subSalary-list tbody tr td:nth-child(2) {
   text-align: left;
 }
-.vocationFilter {
-  position: relative;
-  float: left;
-  margin-left: 15px;
-  height: 100%;
-  width: 210px;
-}
 .settings_modal .check_wrap {
   float: left;
   width: 20px;
