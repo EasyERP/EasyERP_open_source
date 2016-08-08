@@ -4141,6 +4141,9 @@ table.kanban tbody td:nth-child(n+2) {
 .superCenter {
   margin: auto;
 }
+.workflowProgress {
+  height: 44px;
+}
 ._borderRight {
   border-right: 1px solid #c8c8d3;
 }
@@ -4479,7 +4482,7 @@ table.kanban tbody td:nth-child(n+2) {
   text-overflow: ellipsis;
   box-sizing: border-box;
   color: #000000;
-  font-size: 10px;
+  font-size: 12px;
 }
 .list2 td {
   overflow: hidden;
@@ -4490,7 +4493,7 @@ table.kanban tbody td:nth-child(n+2) {
   vertical-align: middle;
 }
 .list2 thead th {
-  font-size: 10px;
+  font-size: 12px;
   font-family: 'Open Sans SemiBold', sans-serif, Verdana;
   text-align: right;
 }
@@ -4588,7 +4591,7 @@ table.kanban tbody td:nth-child(n+2) {
   text-overflow: ellipsis;
   box-sizing: border-box;
   color: #000000;
-  font-size: 10px;
+  font-size: 12px;
 }
 .list2 td {
   overflow: hidden;
@@ -4599,7 +4602,7 @@ table.kanban tbody td:nth-child(n+2) {
   vertical-align: middle;
 }
 .list2 thead th {
-  font-size: 10px;
+  font-size: 12px;
   font-family: 'Open Sans SemiBold', sans-serif, Verdana;
   text-align: right;
 }
@@ -10417,7 +10420,7 @@ ul.dialog-tabs li.right button {
   text-overflow: ellipsis;
   box-sizing: border-box;
   color: #000000;
-  font-size: 10px;
+  font-size: 12px;
 }
 .list td {
   overflow: hidden;
@@ -10428,7 +10431,7 @@ ul.dialog-tabs li.right button {
   vertical-align: middle;
 }
 .list thead th {
-  font-size: 10px;
+  font-size: 12px;
   font-family: 'Open Sans SemiBold', sans-serif, Verdana;
   text-align: right;
 }
@@ -14926,9 +14929,6 @@ textarea#editInput {
 }
 .content-holder {
   overflow: auto;
-}
-.content-holder #searchContainer {
-  top: -34px;
 }
 .removeValues {
   cursor: pointer;
