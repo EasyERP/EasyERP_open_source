@@ -2694,7 +2694,8 @@ label._customCHeckbox input[type="checkbox"] {
   ._filterDropDownBody .filterValues {
     font-size: 13px;
     padding: 0 25px;
-    text-align: left; }
+    text-align: left;
+    cursor: pointer; }
     ._filterDropDownBody .filterValues:hover {
       background-color: #f5f5f5; }
     ._filterDropDownBody .filterValues.checkedValue {
@@ -2711,11 +2712,12 @@ label._customCHeckbox input[type="checkbox"] {
     background-color: #e5e5e5; }
   ._filterDropDownBody .buttons {
     width: 100%;
+    margin-top: 7px;
     background-color: #fff;
     border: 0;
     text-align: center; }
   ._filterDropDownBody .customTime {
-    padding: 0 10px 10px;
+    padding: 0 10px;
     color: #4d4d4d; }
     ._filterDropDownBody .customTime .customTimeItem {
       position: relative; }
