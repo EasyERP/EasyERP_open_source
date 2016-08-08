@@ -5,10 +5,11 @@
 
     <div id="<%=val._id%>" class="_activitiesListItem">
 
-        <span class="_activityListTitle"><%= val.name%>
-            <span class="showDescription">Show More...</span>
-        <span class="hideDescription">Hide</span>
-        </span>
+        <div class="_activityListTitle _multiEllipsis showmoreDiv">
+            <p><%= val.name%></p>
+            <span class="_ellipsisShowMore showmore">... show more</span>
+            <span class="_ellipsisCloseBtn hideList">close</span>
+        </div>
         <div>
             <span><b><%= val.changedField%></b></span>
             <%if (val.prevValue){%>

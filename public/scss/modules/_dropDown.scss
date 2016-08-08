@@ -1,6 +1,9 @@
 ._filterDropDownWrap {
+  position: relative;
   height: 26px;
-  min-width: 200px;
+  width: 195px;
+  float: left;
+  margin-left: 15px;
 
   > ul {
     position: absolute;
