@@ -40,20 +40,25 @@ var Module = function (models) {
 
             for (var j = 0; j < firstArr.length; j++) {
 
-                if (comparing(secondArr[i], firstArr[j])) {
+                if (firstArr[j] && (comparing(secondArr[i], firstArr[j].value))) {
                     result[secondArr[i]] = firstArr[j];
+                    firstArr[j] = null;
+
                     isChanged = !isChanged;
                     break;
                 }
             }
 
             if (!isChanged) {
-                result[secondArr[i]] = '';
+                result[secondArr[i]] = {
+                    value: ''
+                };
             }
         }
 
         return {
-            result: result
+            result: result,
+            unMapped: firstArr
         };
     }
 
@@ -110,11 +115,12 @@ var Module = function (models) {
         var userId = req.session.uId;
         var query = req.query ;
         var importedKeyArray;
-        var personKeysArray = mapObject.customers;
+        var personKeysArray = mapObject.slice();
         var mappedObj;
         var findObj = {
             user: userId
         };
+        var keys;
 
         if (query.timeStamp) {
             findObj.timeStamp = query.timeStamp;
@@ -131,7 +137,16 @@ var Module = function (models) {
                 mappedObj = splitFields(personKeysArray, importedKeyArray);
             }
 
-            res.status(200).send(mappedObj || {});
+            //keys = _.unique(_.pluck(personKeysArray,'parent'));
+
+
+            mappedObj.unMapped = _.compact(mappedObj.unMapped);
+            mappedObj.unMapped = _.groupBy(mappedObj.unMapped, 'parent');
+
+            res.status(200).send({
+                mappedObj  : mappedObj.result,
+                unmappedObj: mappedObj.unMapped
+            });
         });
     };
 

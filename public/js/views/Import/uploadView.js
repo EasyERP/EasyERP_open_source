@@ -96,7 +96,7 @@ define([
                         $thisEl.find('#inputAttach')[0].files = e.originalEvent.dataTransfer.files;
                     }
                 }
-            );
+            });
 
             $thisEl.find('.importContainer').on('dragover', function (e) {
                 //console.log('DRAG OVER');
