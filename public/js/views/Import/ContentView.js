@@ -9,6 +9,7 @@ define([
     'views/Notes/AttachView',
     'views/Import/uploadView',
     'views/Import/mappingContentView',
+    'dataService',
     'constants'
 ], function (Backbone,
              $,
@@ -20,6 +21,7 @@ define([
              AttachView,
              UploadView,
              MappingContentView,
+             dataService,
              CONSTANTS) {
     'use strict';
 
@@ -49,11 +51,13 @@ define([
         },
 
         selectStage: function (e) {
-            var stage;
             var $thisEl = this.$el;
             var currentUser = App.currentUser;
             var stageSelector;
             var userModel;
+            var data;
+            var stage;
+
 
             if (App.import && App.import.stage) {
                 this.stage = App.import.stage;
@@ -86,7 +90,11 @@ define([
                     fileName : this.fileName
                 });
             } else if (this.stage === 3) {
-                this.childView.goToPreview();
+                data = this.childView.goToPreview();
+
+                dataService.postData(url, data, function (err, data) {
+
+                });
             }
 
             if (currentUser.imports) {

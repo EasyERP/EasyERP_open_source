@@ -26,7 +26,7 @@ define([
 
         initialize: function (options) {
             var $thisEl = this.$el;
-            this.fileName = options.fileName
+            this.fileName = options.fileName;
 
             this.render();
 
@@ -87,6 +87,7 @@ define([
         render: function () {
             var $thisEl = this.$el;
             $thisEl.html(this.contentTemplate({fileName: this.fileName}));
+
             $thisEl.find('.importContainer').on('drop', function (e) {
                     if (e.originalEvent.dataTransfer && e.originalEvent.dataTransfer.files.length) {
                         e.preventDefault();
@@ -95,7 +96,6 @@ define([
                         $thisEl.find('#inputAttach').empty();
                         $thisEl.find('#inputAttach')[0].files = e.originalEvent.dataTransfer.files;
                     }
-                }
             });
 
             $thisEl.find('.importContainer').on('dragover', function (e) {

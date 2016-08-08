@@ -25,13 +25,14 @@ define([
             var url = '/importFile/imported';
             var self = this;
 
-            this.timeStaqmp = options.timeStamp;
+            this.timeStamp = options.timeStamp;
             this.fileName = options.fileName;
 
             this.logFile = {};
 
             dataService.getData(url, {timeStamp: this.timeStamp}, function (data) {
-                self.data = data;
+                self.data = data.mappedObj;
+                self.unmappedData = data.unmappedObj;
                 self.render(self.data);
             });
         },
@@ -85,17 +86,7 @@ define([
                 }
             }
 
-            dataService.postData(url, fieldsObject, function(err, data) {
-                /*if (err) {
-                    return alert(err.responseText)
-                }
-
-                alert('post is successfull');*/
-
-                self.childView = new PreviewView({
-                    data: fieldsObject
-                });
-            });
+            return fieldsObject;
         },
 
         findKeyByValue: function (obj, value) {
@@ -110,7 +101,7 @@ define([
             return result;
         },
 
-        revertToTables: function(isItClass, isDropable, droppableName, droppableParentName) {
+        revertToTables: function (isItClass, isDropable, droppableName, droppableParentName) {
             var self = this;
 
             if ((isItClass) && (isDropable)) {
@@ -119,15 +110,15 @@ define([
 
                     self.$el.find('.fieldsItems[data-tab=' + droppableParentName + ']')
                         .find('ul')
-                        .append('<li><div class="fieldItem" data-parent="' + droppableParentName + '" style="cursor: pointer"  data-name="' + droppableName + '">' + droppableName +'</div></li>')
-                        .find('div[data-name="' + droppableName +'"]')
+                        .append('<li><div class="fieldItem" data-parent="' + droppableParentName + '" style="cursor: pointer"  data-name="' + droppableName + '">' + droppableName + '</div></li>')
+                        .find('div[data-name="' + droppableName + '"]')
                         .draggable({
                             revert: true,
                             helper: 'clone',
-                            start: function(){
+                            start : function () {
                                 $(this).hide();
                             },
-                            stop: function(){
+                            stop  : function () {
                                 $(this).show();
                             }
                         });
@@ -135,7 +126,7 @@ define([
             }
         },
 
-        draggableDBFields: function() {
+        draggableDBFields: function () {
             var self = this;
 
             $('.dbFieldItem').droppable({
@@ -156,7 +147,7 @@ define([
                     var draggableParentName = $draggable.data('parent');
                     var droppableParentName = $droppable.data('parent');
 
-                    self.revertToTables(($draggable.attr('class').indexOf('dbFieldItem') === -1), ((_.values(self.logFile).indexOf(droppableName)) !== -1),  droppableName, droppableParentName);
+                    self.revertToTables(($draggable.attr('class').indexOf('dbFieldItem') === -1), ((_.values(self.logFile).indexOf(droppableName)) !== -1), droppableName, droppableParentName);
 
                     self.logFile[droppableName] = draggableName;
                     $droppable.removeClass('empty');
@@ -246,7 +237,7 @@ define([
 
             $thisEl.find('#contentBlock').html(this.contentTemplate({
                 content: data,
-                fields: self.unmappedData
+                fields : self.unmappedData
             }));
 
             this.draggableDBFields();
