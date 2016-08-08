@@ -3,10 +3,11 @@ module.exports = (function () {
     var ObjectId = mongoose.Schema.Types.ObjectId;
 
     var importSchema = new mongoose.Schema({
-        user  : {type: ObjectId, default: null, ref: 'Users'},
-        date  : {type: Date, default: Date.now},
-        result: JSON
-
+        user     : {type: ObjectId, default: null, ref: 'Users'},
+        date     : {type: Date, default: Date.now},
+        result   : JSON,
+        fileName : {type: String, default: ''},
+        timeStamp: {type: Number}
     }, {collection: 'Imports'});
 
     mongoose.model('Import', importSchema);

@@ -28,10 +28,14 @@ module.exports = function (models) {
         var error;
         var task;
         var rows = 0;
-        var collection, schema, Model;
+        var collection;
+        var schema;
+        var Model;
         var keysAliases = [];
         var expertedKey = [];
         var userId = req.session.uId;
+        var fileName;
+        var timeStamp;
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
 
@@ -39,6 +43,8 @@ module.exports = function (models) {
 
                 filePath = files.attachfile.path;
                 modelName = headers.modelname;
+                fileName = files.attachfile.name;
+                timeStamp = headers.timestamp;
 
                 if (!modelName || !filePath) {
                     error = new Error((!modelName) ? 'Model name empty' : 'File path empty');
@@ -47,24 +53,24 @@ module.exports = function (models) {
 
                     return;
                 }
-              /*  task = importMap[modelName];
+                /*  task = importMap[modelName];
 
-                if (!task) {
-                    error = new Error('Model name\"' + modelName + '\" is not valid');
-                    error.status = 400;
-                    next(error);
+                 if (!task) {
+                 error = new Error('Model name\"' + modelName + '\" is not valid');
+                 error.status = 400;
+                 next(error);
 
-                    return;
-                }
-                aliases = task.aliases;
-                collection = task.collection;
-                schema = mongoose.Schemas[task.schema];
-                Model = models.get(req.session.lastDb, collection, schema);
+                 return;
+                 }
+                 aliases = task.aliases;
+                 collection = task.collection;
+                 schema = mongoose.Schemas[task.schema];
+                 Model = models.get(req.session.lastDb, collection, schema);
 
-                for (var key in aliases) {
-                    keysAliases.push(key);
-                    expertedKey.push(aliases[key]);
-                }*/
+                 for (var key in aliases) {
+                 keysAliases.push(key);
+                 expertedKey.push(aliases[key]);
+                 }*/
 
                 switch (getExtension(filePath)) {
 
@@ -107,34 +113,34 @@ module.exports = function (models) {
             }, 1000);
 
             csv
-                .fromPath(filePath)/*
-                .validate(function (data) {
+                .fromPath(filePath)
+                /*.validate(function (data) {
 
-                    if (!headers) {
-                        headers = data;
+                 if (!headers) {
+                 headers = data;
 
-                        if (headers.length != expertedKey.length) {
-                            error = new Error('Different lengths headers');
-                            error.status = 400;
-                            return next(error);
-                        }
+                 if (headers.length != expertedKey.length) {
+                 error = new Error('Different lengths headers');
+                 error.status = 400;
+                 return next(error);
+                 }
 
-                        for (var i = expertedKey.length - 1; i >= 0; i--) {
+                 for (var i = expertedKey.length - 1; i >= 0; i--) {
 
-                            if (headers[i] !== expertedKey[i]) {
-                                error = new Error('Field \"' + headers[i] + '\" not valid. Need ' + expertedKey[i]);
-                                error.status = 400;
-                                logWriter.log("importFile.js importCsvToDb " + error);
+                 if (headers[i] !== expertedKey[i]) {
+                 error = new Error('Field \"' + headers[i] + '\" not valid. Need ' + expertedKey[i]);
+                 error.status = 400;
+                 logWriter.log("importFile.js importCsvToDb " + error);
 
-                                return next(error);
-                            }
-                        }
-                        return false;
-                    }
+                 return next(error);
+                 }
+                 }
+                 return false;
+                 }
 
-                    rows++;
-                    return true;
-                })*/
+                 rows++;
+                 return true;
+                 })*/
                 .on("data", function (data) {
                     q.push([data], function (err) {
                         if (err) {
@@ -435,8 +441,10 @@ module.exports = function (models) {
         function saveItemToTemporaryDb(objectToDb, callback) {
             var ImportModel = models.get(req.session.lastDb, 'Imports', ImportSchema);
             var importModel = new ImportModel({
-                user  : userId,
-                result: objectToDb
+                user     : userId,
+                result   : objectToDb,
+                fileName : fileName,
+                timeStamp: +timeStamp
             });
 
             importModel.save(callback);
@@ -445,6 +453,7 @@ module.exports = function (models) {
 
     router.post('/', multipartMiddleware, importFileToDb);
     router.get('/imported', imports.getImportMapObject);
+    router.post('/imported', imports.saveImportedData);
 
     return router;
 };

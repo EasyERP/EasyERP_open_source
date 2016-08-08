@@ -13,6 +13,7 @@ define([
             this.contentType = options.contentType;
             this.isCreate = options.isCreate;
             this.elementId = options.elementId;
+            this.timeStamp = options.timeStamp;
         },
 
         events: {
@@ -44,7 +45,7 @@ define([
             $('.add-user-dialog').remove();
         },
 
-        sendToServer: function (event, model, self, isDrop, dropFile) {
+        sendToServer: function (event, model, self) {
             var currentModel = this.model;
             var elementId = this.elementId || 'addAttachments';
             var currentModelId = currentModel ? currentModel.id : null;
@@ -61,11 +62,8 @@ define([
                 currentModelId = currentModel.id || currentModel._id;
 
                 this.$el.find('li .inputAttach').each(function () {
-                    if (!isDrop) {
-                        addInptAttach = $(this)[0].files[0];
-                    } else {
-                        addInptAttach = dropFile[0];
-                    }
+
+                    addInptAttach = $(this)[0].files[0];
 
                     fileArr.push(addInptAttach);
 
@@ -90,12 +88,7 @@ define([
                 }
                 addInptAttach = fileArr;
             } else {
-                if (!isDrop) {
-                    addInptAttach = addFrmAttach.find('#inputAttach')[0].files[0];
-                } else {
-                    addInptAttach = dropFile[0];
-
-                }
+                addInptAttach = addFrmAttach.find('#inputAttach')[0].files[0];
 
                 if (!this.fileSizeIsAcceptable(addInptAttach)) {
                     this.$el.find('#inputAttach').val('');
@@ -134,6 +127,7 @@ define([
 
                         xhr.setRequestHeader('modelid', currentModelId);
                         xhr.setRequestHeader('modelname', self.contentType);
+                        xhr.setRequestHeader('timestamp', self.timeStamp);
                         status.show();
                         bar.width(statusVal);
                         status.html(statusVal);

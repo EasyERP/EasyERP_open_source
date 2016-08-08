@@ -92,8 +92,8 @@ module.exports = (function () {
          */
 
 
-        type : {type: String, default: ''},
-        isOwn: {type: Boolean, default: false},
+        type    : {type: String, default: ''},
+        isOwn   : {type: Boolean, default: false},
         isHidden: {type: Boolean, default: false},
 
         name: {
@@ -163,15 +163,16 @@ module.exports = (function () {
             group: [{type: ObjectId, ref: 'Department', default: null}]
         },
 
-        notes        : [{
-            note        : String,
-            title       : String,
-            task        : {type: ObjectId, ref: 'DealTasks', default: null},
-            attachment  : {},
-            date        : {type: Date, default: Date.now},
-            user        : {
-                _id : {type: ObjectId, ref: 'Users', default: null},
-                login : String
+        notes      : [{
+            note      : String,
+            title     : String,
+            task      : {type: ObjectId, ref: 'DealTasks', default: null},
+            attachment: {},
+            date      : {type: Date, default: Date.now},
+
+            user: {
+                _id  : {type: ObjectId, ref: 'Users', default: null},
+                login: String
             }
         }],
         attachments: {type: Array, default: []},
@@ -191,7 +192,7 @@ module.exports = (function () {
             size    : String,
             industry: {type: ObjectId, ref: 'Industries', default: null}
         },
-        isHidden : {type: Boolean, default: false},
+        isHidden   : {type: Boolean, default: false},
 
         ID: Number
     }, {collection: 'Customers'});

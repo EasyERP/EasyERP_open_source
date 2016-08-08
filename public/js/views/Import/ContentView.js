@@ -5,11 +5,24 @@ define([
     'text!templates/Import/ContentTemplate.html',
     'text!templates/Import/importProgress.html',
     'text!templates/Notes/importTemplate.html',
+    'models/UsersModel',
     'views/Notes/AttachView',
     'views/Import/uploadView',
     'views/Import/mappingContentView',
+    'dataService',
     'constants'
-], function (Backbone, $, _, ContentTemplate, ImportProgressTemplate, ImportTemplate, AttachView, UploadView, MappingContentView, CONSTANTS) {
+], function (Backbone,
+             $,
+             _,
+             ContentTemplate,
+             ImportProgressTemplate,
+             ImportTemplate,
+             UserModel,
+             AttachView,
+             UploadView,
+             MappingContentView,
+             dataService,
+             CONSTANTS) {
     'use strict';
 
     var ContentView = Backbone.View.extend({
@@ -27,43 +40,91 @@ define([
             'click .stageBtn'    : 'selectStage'
         },
 
-        initialize: function (options) {
-            options = options || {};
+        initialize: function () {
+            var usersImport = App.currentUser.imports || {};
 
-            this.stage = options.stage || 1;
+            this.timeStamp = usersImport.timeStamp;
+            this.fileName = usersImport.fileName;
+
             this.render();
-            this.selectStage(this.stage);
+            this.selectStage();
         },
 
         selectStage: function (e) {
+            var $thisEl = this.$el;
+            var currentUser = App.currentUser;
+            var stageSelector;
+            var userModel;
+            var data;
             var stage;
 
 
-            if (e.hasOwnProperty('target')) {
+            if (App.import && App.import.stage) {
+                this.stage = App.import.stage;
+            } else {
+                this.stage = 1;
+            }
+
+            if (e) {
                 e.preventDefault();
 
-                stage = ++this.stage;
-            } else {
-                stage = e;
+                ++this.stage;
             }
 
             if (this.childView) {
                 this.childView.undelegateEvents();
             }
 
-            if (stage === 1) {
-                this.childView = new UploadView();
+            if (this.stage === 1) {
+                this.childView = new UploadView({fileName: this.fileName});
+
+                if (this.timeStamp) {
+                    this.enabledNextBtn();
+                }
+
                 this.listenTo(this.childView, 'uploadCompleted', this.enabledNextBtn);
 
-            } else if (stage === 2) {
-                this.childView = new MappingContentView();
+            } else if (this.stage === 2) {
+                this.childView = new MappingContentView({
+                    timeStamp: this.timeStamp,
+                    fileName : this.fileName
+                });
+            } else if (this.stage === 3) {
+                data = this.childView.goToPreview();
+
+                dataService.postData(url, data, function (err, data) {
+
+                });
             }
 
+            if (currentUser.imports) {
+                App.currentUser.imports.stage = this.stage;
+            } else {
+                App.currentUser.imports = {
+                    stage    : this.stage,
+                    timeStamp: this.timeStamp,
+                    fileName : this.fileName
+                };
+            }
+
+            userModel = new UserModel(currentUser);
+
+            userModel.save({
+                imports: App.currentUser.imports
+            }, {
+                validate: false,
+                patch   : true
+            });
+
+            stageSelector = '.stage' + this.stage;
+
+            $thisEl.find(stageSelector).addClass('active');
         },
 
         enabledNextBtn: function () {
             this.$el.find('.stageBtn').prop('disabled', false);
         },
+
 
         render: function () {
             var $thisEl = this.$el;
