@@ -23,8 +23,9 @@ define([
 
         events: {
             'click div.dateListItem'    : 'goToEditDialog',
-            'click .stageSelectType'    : 'showNewSelectType',
             'click .newSelectList li'   : 'chooseOption',
+            'click ._dateListElement .showmore'   : 'showMore',
+            'click ._dateListElement .hideList'   : 'hideList',
             'mousedown ._customCHeckbox': 'checked'
         },
 
@@ -93,21 +94,14 @@ define([
 
         },
 
-        showNewSelectType: function (e) {
-            var targetElement;
-
-            if ($('.newSelectList').is(':visible')) {
-                this.hideNewSelect();
-            } else {
-                targetElement = $(e.target).parents('td');
-                targetElement.find('.newSelectList').show();
-            }
-
-            return false;
+        showMore: function (e) {
+            var $target = $(e.target).closest('._dateListElement');
+            $target.addClass('open');
         },
 
-        showMoreContent: function () {
-           this.render();
+        hideList: function (e) {
+            var $target = $(e.target).closest('._dateListElement');
+            $target.removeClass('open');
         },
 
         render: function () {
