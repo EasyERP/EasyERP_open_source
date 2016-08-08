@@ -3,9 +3,7 @@
   margin-left: auto;
   margin-right: auto;
   padding-left: 12px;
-  padding-left: 12px;
   padding-left: 0.75rem;
-  padding-right: 12px;
   padding-right: 12px;
   padding-right: 0.75rem; }
 
@@ -60,9 +58,7 @@
 
 .row {
   margin-left: -15px;
-  margin-left: -15px;
   margin-left: -0.9375rem;
-  margin-right: -15px;
   margin-right: -15px;
   margin-right: -0.9375rem; }
 
@@ -73,9 +69,7 @@
   position: relative;
   box-sizing: border-box;
   padding-left: 15px;
-  padding-left: 15px;
   padding-left: 0.9375rem;
-  padding-right: 15px;
   padding-right: 15px;
   padding-right: 0.9375rem; }
 
@@ -1504,8 +1498,8 @@
     -webkit-box-sizing: content-box;
     -moz-box-sizing: content-box;
     position: relative;
-    top: -13px;
-    height: 13px;
+    top: -14px;
+    height: 14px;
     left: 100%;
     float: right;
     width: 68px;
@@ -1516,7 +1510,8 @@
     line-height: 13px;
     font-size: 10px;
     text-align: center;
-    cursor: pointer; }
+    cursor: pointer;
+    border-radius: 3px; }
   ._multiEllipsis ._ellipsisCloseBtn {
     display: none; }
 
