@@ -78,7 +78,11 @@ module.exports = (function () {
         ],
 
         ID             : Number,
-        relatedEmployee: {type: ObjectId, ref: 'Employees', default: null}
+        relatedEmployee: {type: ObjectId, ref: 'Employees', default: null},
+        imports        : {
+            fileName : {type: String, default: ''},
+            timeStamp: {type: Number}
+        }
     }, {collection: 'Users'});
 
     mongoose.model('Users', userSchema);

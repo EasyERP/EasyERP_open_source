@@ -5,11 +5,22 @@ define([
     'text!templates/Import/ContentTemplate.html',
     'text!templates/Import/importProgress.html',
     'text!templates/Notes/importTemplate.html',
+    'models/UsersModel',
     'views/Notes/AttachView',
     'views/Import/uploadView',
     'views/Import/mappingContentView',
     'constants'
-], function (Backbone, $, _, ContentTemplate, ImportProgressTemplate, ImportTemplate, AttachView, UploadView, MappingContentView, CONSTANTS) {
+], function (Backbone,
+             $,
+             _,
+             ContentTemplate,
+             ImportProgressTemplate,
+             ImportTemplate,
+             UserModel,
+             AttachView,
+             UploadView,
+             MappingContentView,
+             CONSTANTS) {
     'use strict';
 
     var ContentView = Backbone.View.extend({
@@ -28,6 +39,11 @@ define([
         },
 
         initialize: function () {
+            var usersImport = App.currentUser.imports || {};
+
+            this.timeStamp = usersImport.timeStamp;
+            this.fileName = usersImport.fileName;
+
             this.render();
             this.selectStage();
         },
@@ -35,7 +51,9 @@ define([
         selectStage: function (e) {
             var stage;
             var $thisEl = this.$el;
+            var currentUser = App.currentUser;
             var stageSelector;
+            var userModel;
 
             if (App.import && App.import.stage) {
                 this.stage = App.import.stage;
@@ -54,26 +72,41 @@ define([
             }
 
             if (this.stage === 1) {
-                this.childView = new UploadView();
+                this.childView = new UploadView({fileName: this.fileName});
+
+                if (this.timeStamp) {
+                    this.enabledNextBtn();
+                }
+
                 this.listenTo(this.childView, 'uploadCompleted', this.enabledNextBtn);
 
             } else if (this.stage === 2) {
-                this.childView = new MappingContentView();
+                this.childView = new MappingContentView({
+                    timeStamp: this.timeStamp,
+                    fileName : this.fileName
+                });
             } else if (this.stage === 3) {
                 this.childView.goToPreview();
             }
 
-            if (App.import && App.import.stage) {
-                App.import.stage = this.stage;
+            if (currentUser.imports) {
+                App.currentUser.imports.stage = this.stage;
             } else {
-                if (App.import) {
-                    App.import.stage = this.stage;
-                } else {
-                    App.import = {
-                        stage: this.stage
-                    };
-                }
+                App.currentUser.imports = {
+                    stage    : this.stage,
+                    timeStamp: this.timeStamp,
+                    fileName : this.fileName
+                };
             }
+
+            userModel = new UserModel(currentUser);
+
+            userModel.save({
+                imports: App.currentUser.imports
+            }, {
+                validate: false,
+                patch   : true
+            });
 
             stageSelector = '.stage' + this.stage;
 

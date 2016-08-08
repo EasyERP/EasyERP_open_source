@@ -21,14 +21,16 @@ define([
             'click .cleanButton'    : 'clean'
         },
 
-        initialize: function () {
+        initialize: function (options) {
             var url = '/importFile/imported';
             var self = this;
 
+            this.timeStaqmp = options.timeStamp;
+            this.fileName = options.fileName;
+
             this.logFile = {};
 
-
-            dataService.getData(url, {}, function (data) {
+            dataService.getData(url, {timeStamp: this.timeStamp}, function (data) {
                 self.data = data;
                 self.render(self.data);
             });

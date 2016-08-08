@@ -108,11 +108,19 @@ var Module = function (models) {
     this.getImportMapObject = function (req, res, next) {
         var ImportModel = models.get(req.session.lastDb, 'Imports', ImportSchema);
         var userId = req.session.uId;
+        var query = req.query ;
         var importedKeyArray;
         var personKeysArray = mapObject.customers;
         var mappedObj;
+        var findObj = {
+            user: userId
+        };
 
-        ImportModel.findOne({user: userId}, function (err, importedData) {
+        if (query.timeStamp) {
+            findObj.timeStamp = query.timeStamp;
+        }
+
+        ImportModel.findOne(findObj, function (err, importedData) {
             if (err) {
                 return next(err);
             }
