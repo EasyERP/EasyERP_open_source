@@ -2238,13 +2238,10 @@ input::-ms-clear {
   }
 }
 
-.workflow-list-wrapper {
+.workflow-list-wrapper,
+.workflow-sub-list-wrapper {
   width: 170px;
 }
-.workflow-sub-list-wrapper {
-  width: 12%;
-}
-
 
 
 #details,
@@ -2290,7 +2287,7 @@ input::-ms-clear {
 }
 #workflowAccord,
 #workflowSubAccord {
-  width: 88%;
+  width: calc(~" 100% - 170px");
 }
 
 #profileTableWrapper table thead th:first-of-type {

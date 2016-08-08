@@ -5713,11 +5713,9 @@ input::-ms-clear {
   width: 180px;
   height: 200px;
 }
-.workflow-list-wrapper {
-  width: 170px;
-}
+.workflow-list-wrapper,
 .workflow-sub-list-wrapper {
-  width: 12%;
+  width: 170px;
 }
 #details > dl,
 #sub-details > dl {
@@ -5752,7 +5750,7 @@ input::-ms-clear {
 }
 #workflowAccord,
 #workflowSubAccord {
-  width: 88%;
+  width: calc( 100% - 170px);
 }
 #profileTableWrapper table thead th:first-of-type {
   width: auto;
