@@ -84,8 +84,6 @@ var Module = function (models, event) {
 
         function invoiceSaver(waterfallCb) {
 
-
-
             invoice = new Invoice(body);
 
             if (req.session.uId) {
@@ -659,10 +657,10 @@ var Module = function (models, event) {
                         _journalEntryHandler.changeDate(query, data.invoiceDate, req.session.lastDb, function () {
                         });
 
-                        journal = CONSTANTS.PROFORMA_JOURNAL;
+                        journal = invoice.journal; // CONSTANTS.PROFORMA_JOURNAL;
                     } else {
                         model = 'Invoice';
-                        journal = CONSTANTS.INVOICE_JOURNAL;
+                        journal = invoice.journal; // CONSTANTS.INVOICE_JOURNAL;
 
                         dateForJobs = moment(new Date(data.invoiceDate)).subtract(1, 'seconds');
                         dateForJobsFinished = moment(new Date(data.invoiceDate)).subtract(2, 'seconds');

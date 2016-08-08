@@ -91,7 +91,7 @@ define([
             var total = parseFloat($currentEl.find('#totalAmount').text()) * 100;
             var unTaxed = parseFloat($currentEl.find('#totalUntaxes').text()) * 100;
             var balance = total; // parseFloat($currentEl.find('#balance').text()) * 100;
-            var journal = this.forSales ? CONSTANTS.INVOICE_JOURNAL : CONSTANTS.INVOICE_PURCHASE;
+            var journal = $currentEl.find('#journal').attr('data-id') || null;
 
             var payments = {
                 total  : total,
@@ -182,7 +182,7 @@ define([
                 name                 : $.trim($('#supplier_invoice_num').val()),
                 salesPerson          : salesPersonId,
                 paymentTerms         : paymentTermId,
-                notes          : notes,
+                notes                : notes,
 
                 products   : products,
                 paymentInfo: payments,
@@ -205,7 +205,7 @@ define([
                     headers: {
                         mid: mid
                     },
-                    wait: true,
+                    wait   : true,
                     success: function (savedModel) {
                         //var redirectUrl = self.forSales ? 'easyErp/salesInvoices' : 'easyErp/Invoices';
 
@@ -307,6 +307,7 @@ define([
             populate.get2name('#supplier', CONSTANTS.URLS.SUPPLIER, {}, this, false, true);
             populate.get('#payment_terms', '/paymentTerm', {}, 'name', this, true, true);
             populate.get2name('#salesPerson', CONSTANTS.URLS.EMPLOYEES_RELATEDUSER, {}, this, true, true);
+            populate.get('#journal', '/journals/getForDd', {}, 'name', this, true);
             populate.fetchWorkflow({wId: 'Purchase Invoice'}, function (response) {
                 if (!response.error) {
                     self.defaultWorkflow = response._id;
