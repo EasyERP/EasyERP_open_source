@@ -1,7 +1,3 @@
-.dateListElement {
-  width: 400px;
-}
-
 .countCircle {
   height: 19px;
   width: 19px;
@@ -40,8 +36,10 @@
   display: -ms-flexbox;
   display: -webkit-flex;
   display: flex;
-  cursor: pointer;
+
+  height: 46px;
   margin: 15px 0;
+  cursor: pointer;
 
   .dateListCheckboxWrap {
     padding: 0 20px;
@@ -77,27 +75,23 @@
 
 ._taskListWrap {
   display: -webkit-box;
-  display: -moz-box;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  height: calc(100vh - 96px);
+
+  height: calc(100vh - 100px);
 
   ._taskListDateBlock {
-    display: -webkit-box;
-    display: -moz-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-flex-direction: column;
-    -ms-flex-direction: column;
-    flex-direction: column;
     width: calc(100% - 450px);
+    overflow: auto;
 
     ._dateListElement {
-      -webkit-flex-grow: 1;
-      flex-grow: 1;
-      height: 1px;
+      max-height: 380px;
+      overflow: hidden;
+
+      &.open {
+        max-height: auto;
+      }
     }
   }
 
@@ -140,9 +134,4 @@
   &:last-child {
     border-bottom: none;
   }
-}
-
-._dateListScrollingBlock {
-  height: calc(100% - 60px);
-  overflow: auto;
 }

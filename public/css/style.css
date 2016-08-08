@@ -14,39 +14,30 @@
   clear: both; }
 
 @font-face {
-    font-family: "OpenSans Light";
-    font-style: normal;
-    src: url("../font/opensans/opensans-light.woff2") format("woff2"), url("../font/opensans/opensans-light.woff") format("woff"), url("../font/opensans/opensans-light.ttf") format("truetype");
-    font-weight: 300;
-}
-
+  font-family: "OpenSans Light";
+  font-style: normal;
+  src: url("../font/opensans/opensans-light.woff2") format("woff2"), url("../font/opensans/opensans-light.woff") format("woff"), url("../font/opensans/opensans-light.ttf") format("truetype");
+  font-weight: 300; }
 @font-face {
-    font-family: "OpenSans Regular";
-    font-style: normal;
-    src: url("../font/opensans/opensans-regular.woff2") format("woff2"), url("../font/opensans/opensans-regular.woff") format("woff"), url("../font/opensans/opensans-regular.ttf") format("truetype");
-    font-weight: 400;
-}
-
+  font-family: "OpenSans Regular";
+  font-style: normal;
+  src: url("../font/opensans/opensans-regular.woff2") format("woff2"), url("../font/opensans/opensans-regular.woff") format("woff"), url("../font/opensans/opensans-regular.ttf") format("truetype");
+  font-weight: 400; }
 @font-face {
-    font-family: "OpenSans Bold";
-    font-style: normal;
-    src: url("../font/opensans/opensans-semibold.woff2") format("woff2"), url("../font/opensans/opensans-semibold.woff") format("woff"), url("../font/opensans/opensans-semibold.ttf") format("truetype");
-    font-weight: 600;
-}
-
+  font-family: "OpenSans Bold";
+  font-style: normal;
+  src: url("../font/opensans/opensans-semibold.woff2") format("woff2"), url("../font/opensans/opensans-semibold.woff") format("woff"), url("../font/opensans/opensans-semibold.ttf") format("truetype");
+  font-weight: 600; }
 @font-face {
-    font-family: "OpenSans SemiBold";
-    font-style: normal;
-    src: url("../font/opensans/opensans-bold.woff2") format("woff2"), url("../font/opensans/opensans-bold.woff") format("woff"), url("../font/opensans/opensans-bold.ttf") format("truetype");
-    font-weight: 700;
-}
-
+  font-family: "OpenSans SemiBold";
+  font-style: normal;
+  src: url("../font/opensans/opensans-bold.woff2") format("woff2"), url("../font/opensans/opensans-bold.woff") format("woff"), url("../font/opensans/opensans-bold.ttf") format("truetype");
+  font-weight: 700; }
 @font-face {
-    font-family: "OpenSans ExtraBold";
-    font-style: normal;
-    src: url("../font/opensans/opensans-extrabold.woff2") format("woff2"), url("../font/opensans/opensans-extrabold.woff") format("woff"), url("../font/opensans/opensans-extrabold.ttf") format("truetype");
-    font-weight: 800;
-}
+  font-family: "OpenSans ExtraBold";
+  font-style: normal;
+  src: url("../font/opensans/opensans-extrabold.woff2") format("woff2"), url("../font/opensans/opensans-extrabold.woff") format("woff"), url("../font/opensans/opensans-extrabold.ttf") format("truetype");
+  font-weight: 800; }
 * {
   box-sizing: border-box; }
   *:before, *:after {
@@ -1687,9 +1678,6 @@ label._customCHeckbox input[type="checkbox"] {
   margin-bottom: 5px;
   font-size: 13px;
   font-weight: 700; }
-.dateListElement {
-  width: 400px; }
-
 .countCircle {
   height: 19px;
   width: 19px;
@@ -1719,8 +1707,9 @@ label._customCHeckbox input[type="checkbox"] {
   display: -ms-flexbox;
   display: -webkit-flex;
   display: flex;
-  cursor: pointer;
-  margin: 15px 0; }
+  height: 46px;
+  margin: 15px 0;
+  cursor: pointer; }
   .dateListItem .dateListCheckboxWrap {
     padding: 0 20px;
     -webkit-flex-shrink: 0;
@@ -1746,24 +1735,15 @@ label._customCHeckbox input[type="checkbox"] {
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  height: calc(100vh - 96px); }
+  height: calc(100vh - 100px); }
   ._taskListWrap ._taskListDateBlock {
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-flex-direction: column;
-    -ms-flex-direction: column;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-            flex-direction: column;
-    width: calc(100% - 450px); }
+    width: calc(100% - 450px);
+    overflow: auto; }
     ._taskListWrap ._taskListDateBlock ._dateListElement {
-      -webkit-flex-grow: 1;
-      -webkit-box-flex: 1;
-          -ms-flex-positive: 1;
-              flex-grow: 1;
-      height: 1px; }
+      max-height: 380px;
+      overflow: hidden; }
+      ._taskListWrap ._taskListDateBlock ._dateListElement.open {
+        max-height: auto; }
   ._taskListWrap ._taskListActivitiesBlock {
     -webkit-flex-shrink: 0;
     -ms-flex-negative: 0;
@@ -1797,10 +1777,6 @@ label._customCHeckbox input[type="checkbox"] {
   border-bottom: 1px solid #c8c8d3; }
   ._activitiesListItem:last-child {
     border-bottom: none; }
-
-._dateListScrollingBlock {
-  height: calc(100% - 60px);
-  overflow: auto; }
 
 .dialog-tabs:before, .dialog-tabs:after {
   content: " ";
@@ -2292,13 +2268,12 @@ label._customCHeckbox input[type="checkbox"] {
     top: 0;
     left: 25px;
     width: 1px;
-      height: calc(100% + 32px);
+    height: calc(100% + 32px);
     background: #c8c8d3; }
   .timeNote .noteContainer:first-child {
     margin-top: 12px; }
     .timeNote .noteContainer:first-child:before {
-        top: -12px;
-    }
+      top: -12px; }
   .timeNote .noteContainer:last-child:before {
     height: 25px; }
   .timeNote .noteContainer .noteTopBox {
@@ -2597,13 +2572,11 @@ label._customCHeckbox input[type="checkbox"] {
 
 ._filterDropDownWrap {
   height: 26px;
-    width: 200px;
-}
+  width: 200px; }
   ._filterDropDownWrap > ul {
     position: absolute;
-      background-color: #fff;
-      z-index: 1;
-  }
+    background-color: #fff;
+    z-index: 1; }
   ._filterDropDownWrap li {
     position: relative;
     display: block;
@@ -2612,87 +2585,66 @@ label._customCHeckbox input[type="checkbox"] {
 ._filterDropDownWrap > ul > li:first-child {
   text-align: right;
   color: #333;
-    cursor: pointer;
-    line-height: 26px;
-}
+  cursor: pointer;
+  line-height: 26px; }
 
 ._filterDropDownBody {
-    padding: 7px 0;
-    border: 1px solid rgba(0, 0, 0, 0.15);
-    color: #4d4d4d;
+  padding: 7px 0;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  color: #4d4d4d;
   box-shadow: 5px 5px rgba(102, 102, 102, 0.1); }
   ._filterDropDownBody .filterValues {
     font-size: 13px;
-      padding: 0 25px;
+    padding: 0 25px;
     text-align: left; }
-
-._filterDropDownBody .filterValues:hover {
-    background-color: #f5f5f5;
-}
-
-._filterDropDownBody .filterValues.checkedValue {
-    position: relative;
-    font-family: "OpenSans SemiBold", sans-serif;
-}
-
-._filterDropDownBody .filterValues.checkedValue:before {
-    font-family: FontAwesome;
-    position: absolute;
-    left: 6px;
-    content: "\f00c";
-}
-
-._filterDropDownBody .listLine {
+    ._filterDropDownBody .filterValues:hover {
+      background-color: #f5f5f5; }
+    ._filterDropDownBody .filterValues.checkedValue {
+      position: relative;
+      font-family: "OpenSans SemiBold", sans-serif; }
+      ._filterDropDownBody .filterValues.checkedValue:before {
+        font-family: FontAwesome;
+        position: absolute;
+        left: 6px;
+        content: "\f00c"; }
+  ._filterDropDownBody .listLine {
     margin: 7px 0;
     height: 1px;
-    background-color: #e5e5e5;
-}
+    background-color: #e5e5e5; }
   ._filterDropDownBody .buttons {
     width: 100%;
     background-color: #fff;
     border: 0;
     text-align: center; }
-
-._filterDropDownBody .customTime {
+  ._filterDropDownBody .customTime {
     padding: 0 10px 10px;
-    color: #4d4d4d;
-}
-
-._filterDropDownBody .customTime .customTimeItem {
-    position: relative;
-}
-
-._filterDropDownBody .customTime .customTimeItem:after {
-    content: "";
-    position: absolute;
-    right: 10px;
-    bottom: 10px;
-    display: inline-block;
-    width: 0;
-    height: 0;
-    border-bottom: 0;
-    border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-top: 4px solid #4d4d4d;
-}
-
-._filterDropDownBody .customTime .customTimeItem > label {
-    float: left;
-    clear: both;
-    line-height: 26px;
-}
-
-._filterDropDownBody .customTime .customTimeItem > input {
-    height: 26px;
-    width: 100%;
-    cursor: pointer;
-}
-
-._filterDropDownBody .customTime .customTimeItem:after {
-    content: '';
-    display: table;
-    clear: both;
-}
+    color: #4d4d4d; }
+    ._filterDropDownBody .customTime .customTimeItem {
+      position: relative; }
+      ._filterDropDownBody .customTime .customTimeItem:after {
+        content: "";
+        position: absolute;
+        right: 10px;
+        bottom: 10px;
+        display: inline-block;
+        width: 0;
+        height: 0;
+        border-bottom: 0;
+        border-left: 4px solid transparent;
+        border-right: 4px solid transparent;
+        border-top: 4px solid #4d4d4d; }
+      ._filterDropDownBody .customTime .customTimeItem > label {
+        float: left;
+        clear: both;
+        line-height: 26px; }
+      ._filterDropDownBody .customTime .customTimeItem > input {
+        height: 26px;
+        width: 100%;
+        cursor: pointer; }
+      ._filterDropDownBody .customTime .customTimeItem:after {
+        content: '';
+        display: table;
+        clear: both; }
 
 .chartTopBox ._filterDropDownWrap {
   margin-top: 9px; }

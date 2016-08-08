@@ -3568,7 +3568,7 @@ dl.payrollDateBlock dt {
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  height: 100%;
+  height: calc(100vh - 90px);
   border-bottom: 1px solid #ededed;
 }
 .listWrap.personList .firstName {
@@ -4729,11 +4729,6 @@ table.kanban tbody td:nth-child(n+2) {
   margin-right: -100%;
 }
 .content_wrapper {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  height: calc(100% - 40px);
-  width: calc(100% - 200px);
   display: -webkit-box;
   display: -moz-box;
   display: -ms-flexbox;
@@ -4742,6 +4737,11 @@ table.kanban tbody td:nth-child(n+2) {
   -webkit-flex-direction: column;
   -ms-flex-direction: column;
   flex-direction: column;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  height: calc(100% - 40px);
+  width: calc(100% - 200px);
 }
 .template-switcher {
   margin-top: 6px;
@@ -8495,8 +8495,9 @@ dl dd span.ui-spinner {
 }
 #wrapper #content-holder {
   position: relative;
-  height: calc(100% - 41px);
+  height: calc(100% - 40px);
   width: 100%;
+  flex-grow: 1;
 }
 #startLetter {
   height: 20px;
@@ -14903,11 +14904,12 @@ textarea#editInput {
   display: list-item;
 }
 #searchContainer {
-  position: absolute;
-  top: -40px;
+  position: fixed;
+  top: 45px;
   right: 0;
   width: 35%;
   margin-right: 90px;
+  z-index: 1;
 }
 #searchContainer.dashBoardVocationSearch {
   position: static;
@@ -14921,6 +14923,9 @@ textarea#editInput {
 }
 #searchContainer .filter-check-list {
   margin-top: -1px;
+}
+.content-holder {
+  overflow: auto;
 }
 .content-holder #searchContainer {
   top: -34px;

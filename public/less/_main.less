@@ -2954,8 +2954,9 @@ dl {
 
   #content-holder {
     position: relative;
-    height: calc(~"100% - 41px");
+    height: calc(~"100% - 40px");
     width: 100%;
+    flex-grow: 1;
   }
 }
 
@@ -6448,11 +6449,12 @@ textarea#editInput {
 }
 
 #searchContainer {
-  position: absolute;
-  top: -40px;
+  position: fixed;
+  top: 45px;
   right: 0;
   width: 35%;
   margin-right: 90px;
+  z-index: 1;
 
   &.dashBoardVocationSearch {
     position: static;
@@ -6472,6 +6474,8 @@ textarea#editInput {
 }
 
 .content-holder {
+  overflow: auto;
+
   #searchContainer {
     top: -34px;
   }
