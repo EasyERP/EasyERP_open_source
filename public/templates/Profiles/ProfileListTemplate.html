@@ -1,4 +1,4 @@
-<div class="inner-holder">
+<div class="inner-holder _settingsHolder">
     <div class="workflow-list-wrapper left">
         <ul id="profilesList" class="workflow-list profile-list">
             <% profilesCollection.forEach(function(profile,index){ %>
@@ -11,6 +11,12 @@
     </div>
     <div id="profileTableWrapper" class="left">
         <table class="list" id="modulesAccessTable">
+            <colgroup>
+                <col width="55%">
+                <col width="15%">
+                <col width="15%">
+                <col width="15%">
+            </colgroup>
             <thead>
             <tr>
                 <th>Module Name

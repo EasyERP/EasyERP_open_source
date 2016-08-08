@@ -177,8 +177,8 @@ var Module = function (models, event) {
     }
 
     this.addNewLeadFromSite = function (req, res, next) {
-        var db = req.session.lastDb;
-        var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
+        var db = req.session.lastDb || req.body.lastDb;
+        var Opportunity = models.get(db, 'Opportunitie', opportunitiesSchema);
 
         var body = req.body;
         var name = body.name ? validator.escape(body.name) : '';
@@ -273,6 +273,7 @@ var Module = function (models, event) {
             var utmTermString = '\nutm_term: ' + utmTerm;
             var utmCampaignString = '\nutm_campaign: ' + utmCampaign;
 
+            var notes = [];
             var internalNotes = '';
 
             if (message) {
@@ -285,6 +286,13 @@ var Module = function (models, event) {
 
             if (utmCampaign) {
                 internalNotes += utmCampaignString;
+            }
+            if (messageString) {
+                notes.push({
+                    note: internalNotes,
+                    date: new Date()
+                });
+
             }
 
             if (result.campaign && result.campaign._id) {
@@ -300,7 +308,7 @@ var Module = function (models, event) {
                 contactName   : contactName,
                 campaign      : campaign,
                 source        : source,
-                internalNotes : internalNotes,
+                notes         : notes,
                 isOpportunitie: false,
                 workflow      : CONSTANTS.LEAD_DRAFT
             };

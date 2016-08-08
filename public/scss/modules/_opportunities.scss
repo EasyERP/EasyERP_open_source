@@ -481,8 +481,7 @@
     }
 
     ._modalSelect {
-      a,
-      input {
+      > a, > input {
         display: block;
         padding: 5px;
         width: 100% !important;

@@ -2509,7 +2509,7 @@ body {
   float: left;
   margin-left: 15px;
   height: 100%;
-  width: 210px;
+  min-width: 210px;
 }
 .vocationFilter .dateFilter,
 .vocationFilter .dateFilterLeadsByName {
@@ -3612,6 +3612,19 @@ dl.payrollDateBlock dt {
   height: 100%;
   border-bottom: 1px solid #ededed;
 }
+.listWrap.leadsList .name {
+  color: #508bbd;
+  font-size: 15px;
+  font-family: 'Open Sans Bold', sans-serif, Verdana;
+}
+.listWrap.opportunitiesList .opportunity {
+  color: #508bbd;
+  font-size: 15px;
+  font-family: 'Open Sans Bold', sans-serif, Verdana;
+}
+.listWrap.opportunitiesList .revenue {
+  font-size: 10px;
+}
 .listWrap.personList .firstName {
   color: #508bbd;
   font-size: 15px;
@@ -3634,13 +3647,13 @@ dl.payrollDateBlock dt {
 .listWrap.companiesList .compactRowWrap {
   min-height: 60px;
 }
-.listWrap.opportunitiesList .opportunity {
+.listWrap.quotationsList .firstName,
+.listWrap.ordersList .firstName,
+.listWrap.invoicesList .firstName,
+.listWrap.proformaList .firstName {
   color: #508bbd;
   font-size: 15px;
   font-family: 'Open Sans Bold', sans-serif, Verdana;
-}
-.listWrap.opportunitiesList .revenue {
-  font-size: 10px;
 }
 .listWrap .form-holder {
   padding: 10px;
@@ -3826,6 +3839,9 @@ td.checkboxRow {
   line-height: 26px !important;
   font-size: 13px;
   color: #fff;
+}
+#top-bar ._filterDropDownWrap {
+  margin-top: 7px;
 }
 .dropDown {
   position: relative;
@@ -4149,7 +4165,7 @@ table.kanban tbody td:nth-child(n+2) {
 .formContent .btn.positioned {
   position: absolute;
   top: 5px;
-  left: 411px;
+  left: 311px;
 }
 .dealTableDescription {
   max-width: 800px;
@@ -5374,7 +5390,7 @@ input::-ms-clear {
 .kanban .column {
   min-height: 100%;
   width: auto;
-  min-width: 160px;
+  min-width: 250px;
   max-width: 400px;
   height: auto;
   vertical-align: top;
@@ -5941,59 +5957,10 @@ select:not([type="checkbox"]) {
   color: #000000;
 }
 .current-selected {
+  position: relative;
   font-size: 13px;
   text-decoration: none;
   line-height: 26px !important;
-}
-.newSelectList {
-  position: absolute !important;
-  border: solid 1px #7f7f80;
-  background-color: #ffffff;
-  padding: 3px 0;
-  z-index: 100;
-}
-.newSelectList li {
-  margin: 0;
-  padding: 3px 16px 5px;
-  cursor: pointer;
-  font-size: 12px;
-  text-align: left;
-  color: #4d5a75;
-}
-.newSelectList li.testing,
-.newSelectList li.analysis {
-  background-color: #D9FFC8 !important;
-}
-.newSelectList li.merge {
-  color: #C00 !important;
-  background-color: #FFE3E3 !important;
-}
-.newSelectList li.design {
-  color: #000 !important;
-  background-color: #FFEA73 !important;
-}
-.newSelectList li.cancelled {
-  color: #FFF !important;
-  background-color: #C00 !important;
-}
-.newSelectList li.done {
-  color: #000 !important;
-  background-color: #BEF624 !important;
-}
-.newSelectList li.selected {
-  color: #f3f3f3;
-  background-color: #545454;
-}
-.newSelectList li:hover {
-  background-color: #ffffff !important;
-  border: 0 !important;
-  color: #FF5A00 !important;
-}
-.newSelectList.stage {
-  left: 0;
-}
-.newSelectList.taskPriority {
-  left: -15px;
 }
 .icon {
   font-size: 20px;
@@ -6074,9 +6041,6 @@ dl dd {
   min-height: 18px;
   float: left;
   width: 65%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 dl dd p {
   word-wrap: break-word;
@@ -6150,9 +6114,6 @@ dl dd span.ui-spinner {
   display: block;
   position: relative;
   border: 1px solid #7f7f80;
-}
-.form #internalNotes {
-  resize: none;
 }
 .form #differenceAmount {
   line-height: 26px;
@@ -6448,9 +6409,6 @@ dl dd span.ui-spinner {
   height: 30px;
   line-height: 26px;
   color: #000000;
-}
-.form input {
-  margin: 2px 2px 2px 0;
 }
 .form textarea {
   width: 99%;
@@ -6819,9 +6777,6 @@ dl dd span.ui-spinner {
   min-height: 18px;
   float: left;
   width: 70%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form .job-info dd p {
   word-wrap: break-word;
@@ -6875,9 +6830,6 @@ dl dd span.ui-spinner {
   min-height: 18px;
   float: left;
   width: 60%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form .opp-info dd p {
   word-wrap: break-word;
@@ -6934,9 +6886,6 @@ dl dd span.ui-spinner {
   min-height: 18px;
   float: left;
   width: 80%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form .internal-info dd p {
   word-wrap: break-word;
@@ -6995,9 +6944,6 @@ dl dd span.ui-spinner {
   min-height: 18px;
   float: left;
   width: 80%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form .assignees-info dd p {
   word-wrap: break-word;
@@ -7049,9 +6995,6 @@ dl dd span.ui-spinner {
   position: relative;
   border: 0 solid #7f7f80;
   margin-bottom: 10px;
-}
-.formLeftColumn .form #internalNotes {
-  resize: none;
 }
 .formLeftColumn .form #differenceAmount {
   line-height: 26px;
@@ -7347,9 +7290,6 @@ dl dd span.ui-spinner {
   height: 30px;
   line-height: 26px;
   color: #000000;
-}
-.formLeftColumn .form input {
-  margin: 2px 2px 2px 0;
 }
 .formLeftColumn .form textarea {
   width: 99%;
@@ -7703,9 +7643,6 @@ dl dd span.ui-spinner {
   border: 0 solid #7f7f80;
   margin-bottom: 10px;
 }
-.formRightColumn .form #internalNotes {
-  resize: none;
-}
 .formRightColumn .form #differenceAmount {
   line-height: 26px;
 }
@@ -8000,9 +7937,6 @@ dl dd span.ui-spinner {
   height: 30px;
   line-height: 26px;
   color: #000000;
-}
-.formRightColumn .form input {
-  margin: 2px 2px 2px 0;
 }
 .formRightColumn .form textarea {
   width: 99%;
@@ -8621,9 +8555,6 @@ dl dd span.ui-spinner {
   min-height: 18px;
   float: left;
   width: 65%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .settings-info dd p {
   word-wrap: break-word;
@@ -8683,9 +8614,6 @@ dl dd span.ui-spinner {
   min-height: 18px;
   float: left;
   width: 60%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .project-edit-info dd p {
   word-wrap: break-word;
@@ -8739,9 +8667,6 @@ dl dd span.ui-spinner {
   min-height: 18px;
   float: left;
   width: 65%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .quotation-info dd p {
   word-wrap: break-word;
@@ -8798,9 +8723,6 @@ dl dd span.ui-spinner {
   min-height: 18px;
   float: left;
   width: 60%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .edit-employee-info dd p {
   word-wrap: break-word;
@@ -11086,9 +11008,6 @@ ul.dialog-tabs li.right button {
   min-height: 18px;
   float: left;
   width: 0%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .ui-dialog .app-empty-info dd p {
   word-wrap: break-word;
@@ -11153,9 +11072,6 @@ ul.dialog-tabs li.right button {
   min-height: 18px;
   float: left;
   width: 50%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .ui-dialog .person-info-h3 dd p {
   word-wrap: break-word;
@@ -11227,9 +11143,6 @@ ul.dialog-tabs li.right button {
   min-height: 18px;
   float: left;
   width: 70%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .ui-dialog .summary-info dd p {
   word-wrap: break-word;
@@ -11539,9 +11452,6 @@ ul.dialog-tabs li.right button {
   min-height: 18px;
   float: left;
   width: 0%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .ui-dialog .app-empty-info dd p {
   word-wrap: break-word;
@@ -11606,9 +11516,6 @@ ul.dialog-tabs li.right button {
   min-height: 18px;
   float: left;
   width: 50%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .ui-dialog .person-info-h3 dd p {
   word-wrap: break-word;
@@ -11680,9 +11587,6 @@ ul.dialog-tabs li.right button {
   min-height: 18px;
   float: left;
   width: 70%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .ui-dialog .summary-info dd p {
   word-wrap: break-word;
@@ -11873,9 +11777,6 @@ ul.dialog-tabs li.right button {
   min-height: 18px;
   float: left;
   width: 60%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form-holder form dd p {
   word-wrap: break-word;
@@ -11921,8 +11822,6 @@ ul.dialog-tabs li.right button {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
   padding: 0 4px;
-  margin-top: 1px;
-  margin-bottom: 1px;
   box-sizing: border-box;
   color: #000000;
 }
@@ -12868,9 +12767,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 60%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form-holder form .task-info dd p {
   word-wrap: break-word;
@@ -12927,9 +12823,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 80%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form-holder form .task-summary-info dd p {
   word-wrap: break-word;
@@ -12986,9 +12879,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 50%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form-holder form .profile-create dd p {
   word-wrap: break-word;
@@ -13048,9 +12938,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 58%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form-holder form .project-edit-info dd p {
   word-wrap: break-word;
@@ -13113,9 +13000,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 58%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form-holder form .job-create-info dd p {
   word-wrap: break-word;
@@ -13189,9 +13073,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 90%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form-holder form .subject-info dd p {
   word-wrap: break-word;
@@ -13256,9 +13137,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 60%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form-holder form .opprtunitie-info dd p {
   word-wrap: break-word;
@@ -13322,9 +13200,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 80%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form-holder form .opprtunitie-lead-info dd p {
   word-wrap: break-word;
@@ -13477,9 +13352,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 70%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form .job-info dd p {
   word-wrap: break-word;
@@ -13533,9 +13405,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 60%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form .opp-info dd p {
   word-wrap: break-word;
@@ -13592,9 +13461,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 80%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form .internal-info dd p {
   word-wrap: break-word;
@@ -13653,9 +13519,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 80%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form .assignees-info dd p {
   word-wrap: break-word;
@@ -13723,6 +13586,13 @@ a.cancelled {
 }
 .newSelectList .miniStylePagination span {
   padding: 0;
+}
+.newSelectList > input#selectInput {
+  width: 100% !important;
+  margin: 0;
+  float: left;
+  border: 0;
+  border-bottom: 1px solid #7f7f80;
 }
 .blue {
   color: #3e88b9;
@@ -14790,7 +14660,7 @@ textarea#editInput {
   min-width: 230px;
   top: calc(100% - 1px);
   right: 0;
-  z-index: 500;
+  z-index: 1;
 }
 .search-options .filter-dialog-tabs {
   box-sizing: border-box;
@@ -14875,6 +14745,8 @@ textarea#editInput {
 .drop-down-filter #filtersContent .filterGroup li.miniStylePagination {
   list-style: none;
   border-top: 1px solid #7f7f80;
+  line-height: 12px;
+  padding: 5px 8px;
 }
 .drop-down-filter #filtersContent .filterGroup li.miniStylePagination .prev.disabled,
 .drop-down-filter #filtersContent .filterGroup li.miniStylePagination .next.disabled {

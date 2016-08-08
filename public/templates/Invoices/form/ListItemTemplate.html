@@ -13,7 +13,6 @@
                 <div class="compactRow">
                     <div class="firstName"><%=invoice.name%></div>
                     <div class="supplier"><%= invoice.supplier.name.first %> <%= invoice.supplier.name.last %></div>
-
                 </div>
                 <div class="compactRow">
                     <div class="balance <%=currencyClass(invoice.currency._id)%>"><%=currencySplitter(invoice.paymentInfo.balance)%></div>
