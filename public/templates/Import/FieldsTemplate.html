@@ -6,7 +6,7 @@
                 <div data-name="<%= key %>" class="importStatic"><%= key %></div>
             </div>
             <div class="_rowItem secondBox">
-                <div data-name="<%= item %>" class="secondColumn dbFieldItem <% if (item) { %> dbFieldItemDrag <% } else { %> empty <% } %> _movingItem"><%= item %></div>
+                <div data-name="<%= item.value %>" data-parent="<%= item.parent %>" class="secondColumn dbFieldItem <% if (item.value) { %> dbFieldItemDrag <% } else { %> empty <% } %> _movingItem"><%= item.value %></div>
                 <span class="cleanButton fa fa-times" aria-hidden="true"></span>
             </div>
         </div>
@@ -26,8 +26,8 @@
             <ul>
                 <% _.each(item, function(itemOne) { %>
                     <li>
-                        <div class="fieldItem" style="cursor: pointer" data-parent="<%= key %>" data-name="<%= itemOne %>">
-                            <%= itemOne %>
+                        <div class="fieldItem" style="cursor: pointer" data-parent="<%= key %>" data-name="<%= itemOne.value %>">
+                            <%= itemOne.value %>
                         </div>
                     </li>
                 <% }); %>

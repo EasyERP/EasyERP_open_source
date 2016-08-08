@@ -35,20 +35,25 @@ var Module = function (models) {
 
             for (var j = 0; j < firstArr.length; j++) {
 
-                if (comparing(secondArr[i], firstArr[j])) {
+                if (firstArr[j] && (comparing(secondArr[i], firstArr[j].value))) {
                     result[secondArr[i]] = firstArr[j];
+                    firstArr[j] = null;
+
                     isChanged = !isChanged;
                     break;
                 }
             }
 
             if (!isChanged) {
-                result[secondArr[i]] = '';
+                result[secondArr[i]] = {
+                    value: ''
+                };
             }
         }
 
         return {
-            result: result
+            result: result,
+            unMapped: firstArr
         };
     }
 
@@ -56,8 +61,9 @@ var Module = function (models) {
         var ImportModel = models.get(req.session.lastDb, 'Imports', ImportSchema);
         var userId = req.session.uId;
         var importedKeyArray;
-        var personKeysArray = mapObject.customers;
+        var personKeysArray = mapObject.slice();
         var mappedObj;
+        var keys;
 
         ImportModel.findOne({user: userId}, function (err, importedData) {
             if (err) {
@@ -68,7 +74,16 @@ var Module = function (models) {
 
             mappedObj = splitFields(personKeysArray, importedKeyArray);
 
-            res.status(200).send(mappedObj);
+            //keys = _.unique(_.pluck(personKeysArray,'parent'));
+
+
+            mappedObj.unMapped = _.compact(mappedObj.unMapped);
+            mappedObj.unMapped = _.groupBy(mappedObj.unMapped, 'parent');
+
+            res.status(200).send({
+                mappedObj  : mappedObj.result,
+                unmappedObj: mappedObj.unMapped
+            });
         });
     };
 

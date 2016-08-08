@@ -14,6 +14,7 @@ define([
     var mappingContentView = Backbone.View.extend({
         el                    : '#content-holder',
         contentTemplate       : _.template(ContentTemplate),
+        childView             : null,
 
         events: {
             'click #clickToReset': 'resetForm',
@@ -29,7 +30,8 @@ define([
             this.logFile = {};
 
             dataService.getData(url,{},function(data) {
-                self.data = data;
+                self.data = data.mappedObj;
+                self.unmappedData = data.unmappedObj;
                 self.render(self.data);
             });
         },
@@ -41,6 +43,9 @@ define([
         clean: function(e) {
             var $field = $(e.target).closest('div').find('.secondColumn');
             var $cleanButton = $(e.target).closest('div').find('.cleanButton');
+
+            this.revertToTables(true, true, $field.data('name'), $field.data('parent'));
+
             $field.text('');
             $field.data('name', '');
             $field.addClass('empty');
@@ -62,6 +67,7 @@ define([
 
         goToPreview: function () {
             var $thisEl = this.$el;
+            var self = this;
             var url = '/importFile/imported';
             var $dbContentBlock = $thisEl.find('#dbContentBlock');
             var fieldsObject = {};
@@ -70,16 +76,25 @@ define([
             for (var i = 0; i < $content.length; i++) {
                 var firstColumnVal = $($content[i]).find('.firstColumn').data('name');
                 var secondColumnVal = $($content[i]).find('.secondColumn').data('name');
+                var secondColumnPar = $($content[i]).find('.secondColumn').data('parent');
                 if (secondColumnVal) {
-                    fieldsObject[firstColumnVal] = secondColumnVal;
+                    fieldsObject[firstColumnVal] = {
+                        parent: secondColumnPar,
+                        value : secondColumnVal
+                    };
                 }
             }
 
             dataService.postData(url, fieldsObject, function(err, data) {
-                if (err) {
+                /*if (err) {
                     return alert(err.responseText)
                 }
-                alert('post is successfull');
+
+                alert('post is successfull');*/
+
+                self.childView = new PreviewView({
+                    data: fieldsObject
+                });
             });
         },
 
@@ -93,6 +108,31 @@ define([
             });
 
             return result
+        },
+
+        revertToTables: function(isItClass, isDropable, droppableName, droppableParentName) {
+            var self = this;
+
+            if ((isItClass) && (isDropable)) {
+                if (droppableParentName === 'customers' || droppableParentName === 'employees') {
+                    delete self.logFile[self.findKeyByValue(self.logFile, droppableName)];
+
+                    self.$el.find('.fieldsItems[data-tab=' + droppableParentName + ']')
+                        .find('ul')
+                        .append('<li><div class="fieldItem" data-parent="' + droppableParentName + '" style="cursor: pointer"  data-name="' + droppableName + '">' + droppableName +'</div></li>')
+                        .find('div[data-name="' + droppableName +'"]')
+                        .draggable({
+                            revert: true,
+                            helper: 'clone',
+                            start: function(){
+                                $(this).hide();
+                            },
+                            stop: function(){
+                                $(this).show();
+                            }
+                        });
+                }
+            }
         },
 
         draggableDBFields: function() {
@@ -117,27 +157,7 @@ define([
                     var draggableParentName = $draggable.data('parent');
                     var droppableParentName = $droppable.data('parent');
 
-                    if (($draggable.attr('class').indexOf('dbFieldItem') === -1) && (_.values(self.logFile).indexOf(droppableName)) !== -1) {
-
-                        if (droppableParentName === 'customers' || droppableParentName === 'employees') {
-                            delete self.logFile[self.findKeyByValue(self.logFile, droppableName)];
-
-                            self.$el.find('.fieldsItems[data-tab=' + droppableParentName + ']')
-                                .find('ul')
-                                .append('<li><div class="fieldItem" data-parent="' + droppableParentName + '" style="cursor: pointer"  data-name="' + droppableName + '">' + droppableName +'</div></li>')
-                                .find('div[data-name="' + droppableName +'"]')
-                                .draggable({
-                                    revert: true,
-                                    helper: 'clone',
-                                    start: function(){
-                                        $(this).hide();
-                                    },
-                                    stop: function(){
-                                        $(this).show()
-                                    }
-                                });
-                        }
-                    }
+                    self.revertToTables(($draggable.attr('class').indexOf('dbFieldItem') === -1), ((_.values(self.logFile).indexOf(droppableName)) !== -1),  droppableName, droppableParentName);
 
                     self.logFile[droppableName] = draggableName;
                     $droppable.removeClass('empty');
@@ -224,9 +244,10 @@ define([
             var $thisEl = this.$el;
             var self = this;
 
+
             $thisEl.find('#contentBlock').html(this.contentTemplate({
-                content: data.result,
-                fields: importMapping
+                content: data,
+                fields: self.unmappedData
             }));
 
             this.draggableDBFields();
