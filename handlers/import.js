@@ -60,8 +60,9 @@ var Module = function (models) {
     this.getImportMapObject = function (req, res, next) {
         var ImportModel = models.get(req.session.lastDb, 'Imports', ImportSchema);
         var userId = req.session.uId;
+        var type = req.query.data;
         var importedKeyArray;
-        var personKeysArray = mapObject.slice();
+        var personKeysArray = mapObject[type];
         var mappedObj;
         var keys;
 
