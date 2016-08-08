@@ -1670,6 +1670,10 @@ var Employee = function (event, models) {
                 data.age = getAge(data.dateBirth);
             }
 
+            if (data.workflow === 0) {
+                data.workflow = objectId('528ce682f3f67bc40b00001a');
+            }
+
             Model.update({_id: _id}, {$set: data}, function (err, result) {
                 var os = require('os');
                 var osType = (os.type().split('_')[0]);
