@@ -23,14 +23,15 @@ var TCard = function (event, models) {
     var FilterMapper = require('../helpers/filterMapper');
     var filterMapper = new FilterMapper();
 
-    // var exportDecorator = require('../helpers/exporter/exportDecorator');
+    var exporter = require('../helpers/exporter/exportDecorator');
+    var exportMap = require('../helpers/csvMap').wTrack;
+
     var overTimeHelper = require('../helpers/tCard');
-    // var exportMap = require('../helpers/csvMap').wTrack;
 
     var JournalEntryHandler = require('./journalEntry');
     var journalEntry = new JournalEntryHandler(models);
 
-    /* exportDecorator.addExportFunctionsToHandler(this, function (req) {
+    /* exporter.addExportFunctionsToHandler(this, function (req) {
      return models.get(req.session.lastDb, 'wTrack', wTrackSchema);
      }, exportMap, "wTrack");*/
 
@@ -1984,6 +1985,115 @@ var TCard = function (event, models) {
 
             res.status(200).send(result);
         });
+    };
+
+    this.exportToXlsx = function (req, res, next) {
+        var dbName = req.session.lastDb;
+        var WTrack = models.get(dbName, 'wTrack', wTrackSchema);
+
+        var filter = req.query.filter || JSON.stringify({});
+        var type = req.query.type || 'wTrack';
+        var filterObj = {};
+        var options;
+        var data = {};
+        var filterMapper = new FilterMapper();
+
+        filter = JSON.parse(filter);
+
+        data.filter = filter;
+
+        if (filter && typeof filter === 'object') {
+            filterObj = filterMapper.mapFilter(filter, type);
+        }
+
+
+        options = {
+            res: res,
+            next: next,
+            Model: WTrack,
+            map: exportMap,
+            returnResult: true,
+            fileName: type
+        };
+
+        function lookupForWTrack(cb) {
+            var query = [];
+
+            query.push({$match: filterObj});
+
+            options.query = query;
+            options.cb = cb;
+
+            exporter.exportToXlsx(options);
+        }
+
+        async.parallel([lookupForWTrack], function (err, result) {
+            var resultArray = result[0];
+
+            exporter.exportToXlsx({
+                res: res,
+                next: next,
+                Model: WTrack,
+                resultArray: resultArray,
+                map: exportMap,
+                fileName: type
+            });
+        });
+
+    };
+
+    this.exportToCsv = function (req, res, next) {
+        var dbName = req.session.lastDb;
+        var WTrack = models.get(dbName, 'wTrack', wTrackSchema);
+
+        var filter = req.query.filter || JSON.stringify({});
+        var type = req.query.type || 'wTrack';
+        var filterObj = {};
+        var options;
+        var data = {};
+        var filterMapper = new FilterMapper();
+
+        filter = JSON.parse(filter);
+
+        data.filter = filter;
+
+        if (filter && typeof filter === 'object') {
+            filterObj = filterMapper.mapFilter(filter, type);
+        }
+
+        options = {
+            res: res,
+            next: next,
+            Model: WTrack,
+            map: exportMap,
+            returnResult: true,
+            fileName: type
+        };
+
+        function lookupForWTrack(cb) {
+            var query = [];
+
+            query.push({$match: filterObj});
+
+            options.query = query;
+            options.cb = cb;
+
+            exporter.exportToCsv(options);
+        }
+
+        async.parallel([lookupForWTrack], function (err, result) {
+            var resultArray = result[0];
+
+            exporter.exportToCsv({
+                res: res,
+                next: next,
+                Model: WTrack,
+                resultArray: resultArray,
+                map: exportMap,
+                fileName: type
+            });
+        });
+
     };
 
 };

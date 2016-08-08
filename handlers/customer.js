@@ -1280,8 +1280,11 @@ var Module = function (models, event) {
                 }
             }
 
+            filterObj.type = type === 'Persons' ? 'Person' : 'Company';
+
             delete filterObj.services;
         }
+
 
         options = {
             res: res,
@@ -1343,6 +1346,8 @@ var Module = function (models, event) {
                     filterObj['salesPurchases.isSupplier'] = true;
                 }
             }
+
+            filterObj.type = type === 'Persons' ? 'Person' : 'Company';
 
             delete filterObj.services;
         }
