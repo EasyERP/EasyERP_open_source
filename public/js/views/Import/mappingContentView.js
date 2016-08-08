@@ -101,6 +101,7 @@ define([
 
         revertToTables: function (isItClass, isDropable, droppableName, droppableParentName) {
             var self = this;
+            console.log('revert');
 
             if ((isItClass) && (isDropable)) {
                 if (droppableParentName === 'customers' || droppableParentName === 'employees') {
@@ -145,7 +146,8 @@ define([
                     var draggableParentName = $draggable.data('parent');
                     var droppableParentName = $droppable.data('parent');
 
-                    self.revertToTables(($draggable.attr('class').indexOf('dbFieldItem') === -1), ((_.values(self.logFile).indexOf(droppableName)) !== -1), droppableName, droppableParentName);
+                    //self.revertToTables(($draggable.attr('class').indexOf('dbFieldItem') === -1), ((_.values(self.logFile).indexOf(droppableName)) !== -1), droppableName, droppableParentName);
+                    self.revertToTables(($draggable.attr('class').indexOf('dbFieldItem') === -1), (droppableName !== ''), droppableName, droppableParentName);
 
                     self.logFile[droppableName] = draggableName;
                     $droppable.removeClass('empty');
