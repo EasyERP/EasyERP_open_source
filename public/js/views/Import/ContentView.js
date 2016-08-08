@@ -45,6 +45,7 @@ define([
 
             this.timeStamp = usersImport.timeStamp;
             this.fileName = usersImport.fileName;
+            this.stage = usersImport.stage || 1;
 
             this.render();
             this.selectStage();
@@ -57,18 +58,18 @@ define([
             var userModel;
             var data;
             var stage;
-
-
-            if (App.import && App.import.stage) {
-                this.stage = App.import.stage;
-            } else {
-                this.stage = 1;
-            }
+            var $target;
 
             if (e) {
+                $target = $(e.target);
                 e.preventDefault();
 
-                ++this.stage;
+                if ($target.hasClass('left')) {
+                    --this.stage;
+
+                } else {
+                    ++this.stage;
+                }
             }
 
             if (this.childView) {
@@ -116,15 +117,24 @@ define([
                 patch   : true
             });
 
-            stageSelector = '.stage' + this.stage;
+            this.changeStage(this.stage);
+        },
 
-            $thisEl.find(stageSelector).addClass('active');
+        changeStage: function (stage) {
+            var $thisEl = this.$el;
+            var stageSelector;
+
+            $thisEl.find('.tabListItem').removeClass('active');
+
+            for (var i = 1; i <= stage; i++) {
+                stageSelector = '.stage' + i;
+                $thisEl.find(stageSelector).addClass('active');
+            }
         },
 
         enabledNextBtn: function () {
             this.$el.find('.stageBtn').prop('disabled', false);
         },
-
 
         render: function () {
             var $thisEl = this.$el;

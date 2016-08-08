@@ -57,7 +57,8 @@ define([
 
             importObj = {
                 fileName : fileName,
-                timeStamp: +timeStamp
+                timeStamp: +timeStamp,
+                stage: 1
             };
 
             this.timeStamp = +timeStamp;
