@@ -159,6 +159,10 @@ define([
             var countPerPage = this.collection.pageSize;
             var url = this.formUrl + id + '/p=' + page + '/c=' + countPerPage;
 
+            if (!id) {
+                return;
+            }
+
             if (this.filter) {
                 url += '/filter=' + encodeURI(JSON.stringify(this.filter));
             }

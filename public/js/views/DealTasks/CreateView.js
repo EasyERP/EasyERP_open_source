@@ -10,8 +10,10 @@ define([
     'populate',
     'views/Notes/AttachView',
     'views/Category/TagView',
-    'constants'
-], function (Backbone, $, _, ParentView, CreateTemplate, showSelectTemplate, TaskModel, common, populate, AttachView, CategoryView, CONSTANTS) {
+    'constants',
+    'moment',
+    'helpers/keyValidator'
+], function (Backbone, $, _, ParentView, CreateTemplate, showSelectTemplate, TaskModel, common, populate, AttachView, CategoryView, CONSTANTS, moment, keyValidator) {
 
     var CreateView = ParentView.extend({
         el         : '#content-holder',
@@ -20,7 +22,10 @@ define([
         responseObj: {},
 
         events: {
-            'click .removeSelect': 'removeSelect'
+            'click .removeSelect': 'removeSelect',
+            'keyup .time'      : 'validateInput',
+            'keypress .time'                            : 'keypress',
+            'change .time'   : 'changeInput',
         },
 
         initialize: function () {
@@ -29,6 +34,31 @@ define([
             this.render();
             this.responseObj = {};
             this.model.on('change:category', this.renderCategory, this);
+        },
+
+        validateInput : function(e) {
+            var $target = $(e.target);
+            var maxVal = ($target.attr('id') === 'dueDateHours') ? 23 : 59;
+
+            e.preventDefault();
+
+            if ($target.val() > maxVal) {
+                $target.val('' + maxVal);
+            }
+        },
+
+        keypress: function (e) {
+            return keyValidator(e);
+        },
+
+        changeInput : function(e) {
+            var $target = $(e.target);
+
+            e.preventDefault();
+
+            if ($target.val().length === 1) {
+                $target.val('0' + $target.val());
+            }
         },
 
         removeSelect: function (e) {
@@ -47,8 +77,15 @@ define([
             var contact = this.$el.find('#contactItem .showSelect').attr('data-id');
             var description = $.trim(this.$el.find('#description').val());
             var dueDate = $.trim(this.$el.find('#dueDate').val());
+            var hours = $.trim(this.$el.find('#dueDateHours').val()) || 0;
+            var minutes = $.trim(this.$el.find('#dueDateMinutes').val()) || 0;
+            var seconds = $.trim(this.$el.find('#dueDateSeconds').val()) || 0;
             var category = this.model.get('category');
             var saveObject;
+
+            if (dueDate) {
+                dueDate = moment(dueDate).hours(hours).minutes(minutes).seconds(seconds).toDate();
+            }
 
             if (!description) {
                 return App.render({
@@ -167,6 +204,16 @@ define([
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true
+            });
+            this.$el.find('#dueDateHours').spinner({
+                min:'0',
+                max:'23',
+                numberFormat: "d2"
+            });
+            this.$el.find('#dueDateMinutes, #dueDateSeconds').spinner({
+                min: '0',
+                max:'59',
+                numberFormat: "d2"
             });
 
             this.delegateEvents(this.events);

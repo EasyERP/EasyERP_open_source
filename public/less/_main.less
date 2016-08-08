@@ -732,10 +732,6 @@ input::-ms-clear {
     color: @mainText-color;
   }
 
-  input {
-    margin: 2px 2px 2px 0;
-  }
-
   textarea {
     resize: none;
   }
@@ -2124,8 +2120,8 @@ input::-ms-clear {
   }
   input:not([type=checkbox]) {
     border: @thin-border @border-color-main;
+    width: 100%;
     max-width: 280px;
-    //line-height: 16px;
     background-color: transparent;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 12px;
@@ -6265,7 +6261,7 @@ textarea#editInput {
   position: absolute;
   top: ~"calc(100% - 3px)";
   right: 0;
-  min-width: 178px;
+  min-width: 176px;
   width: ~"calc(100% - 52px)";
   padding: 5px 25px;
   background-color: @bg-drop-down-color;

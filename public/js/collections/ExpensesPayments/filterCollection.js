@@ -6,7 +6,7 @@ define([
 ], function (Backbone, Parent, PaymentModel, CONSTANTS) {
     var PaymentCollection = Parent.extend({
         model   : PaymentModel,
-        url     : '/payment/',
+        url     : '/payments/',
         pageSize: CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE,
 
         initialize: function (options) {

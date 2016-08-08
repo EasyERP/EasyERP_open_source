@@ -1027,11 +1027,16 @@ define([
             $('.monthPicker').val($.datepicker.formatDate('MM yy', new Date()));
 
             $('.monthPicker').datepicker({
-                dateFormat     : 'MM yy',
-                changeMonth    : true,
-                changeYear     : true,
-                showButtonPanel: true,
-                onClose        : function (dateText, inst) {
+                dateFormat       : 'MM yy',
+                changeMonth      : true,
+                changeYear       : true,
+                showButtonPanel  : true,
+                onChangeMonthYear: function (year, month, inst) {
+                    self.month = $('#ui-datepicker-div .ui-datepicker-month :selected').val();
+                    self.year = $('#ui-datepicker-div .ui-datepicker-year :selected').val();
+                    $(this).val($.datepicker.formatDate('MM yy', new Date(self.year, self.month, 1)));
+                },
+                onClose          : function (dateText, inst) {
                     self.month = $('#ui-datepicker-div .ui-datepicker-month :selected').val();
                     self.year = $('#ui-datepicker-div .ui-datepicker-year :selected').val();
                     self.renderEmployeesDashbord();

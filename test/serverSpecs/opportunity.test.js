@@ -5,10 +5,10 @@ var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var host = process.env.HOST;
 var aggent;
-var dbId = 'production';
+var dbId = 'pavlodb';
 var admin = {
-    login: 'admin',
-    pass : 'tm2016',
+    login: 'pavlo.demko',
+    pass : '111111',
     dbId : dbId
 };
 var failUser = {
@@ -188,7 +188,6 @@ describe('Opportunity Specs', function () {
                         .to.be.instanceOf(Array);
 
                     first = body.data[3];
-                    console.log(first);
 
                     expect(first)
                         .and.to.have.property('_id')
@@ -207,11 +206,6 @@ describe('Opportunity Specs', function () {
                         .to.have.property('status');
                     expect(first.workflow.name)
                         .to.be.a('string');
-                    expect(first)
-                        .and.to.have.property('createdBy')
-                        .and.to.have.property('date');
-                    expect(first)
-                        .and.to.have.property('createdBy');
                     expect(first)
                         .and.to.have.property('editedBy')
                         .and.to.have.property('date');
@@ -238,7 +232,6 @@ describe('Opportunity Specs', function () {
                     }
 
                     expect(Object.keys(first.editedBy).length).to.be.equal(2);
-                    expect(Object.keys(first.createdBy).length).to.be.gte(1);
                     expect(Object.keys(first).length).to.be.lte(11);
 
                     done();
@@ -352,6 +345,7 @@ describe('Opportunity Specs', function () {
         it('should remove opportunity', function (done) {
             aggent
                 .delete('opportunities/' + id)
+                .query({deleteHistory : true})
                 .expect(200, done);
         });
 
@@ -394,6 +388,7 @@ describe('Opportunity Specs', function () {
         it('should remove opportunity after createLeadFromSite', function (done) {
             aggent
                 .delete('opportunities/' + id)
+                .query({deleteHistory : true})
                 .expect(200, done);
         });
     });

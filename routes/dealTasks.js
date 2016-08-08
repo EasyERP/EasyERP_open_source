@@ -17,6 +17,7 @@ module.exports = function (models, event) {
 
   
     router.get('/priority', handler.getTasksPriority);
+    router.get('/getActivity', handler.getActivity);
     router.get('/getLengthByWorkflows', handler.getLengthByWorkflows);
     router.get('/getFilterValues', handler.getFilterValues);
     router.get('/:id', handler.getById);

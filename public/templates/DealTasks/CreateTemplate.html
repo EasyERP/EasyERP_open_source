@@ -3,7 +3,7 @@
     <form method="post" action="" id="createTaskForm" class="form notDialog">
         <div>
             <div class="taskTop">
-                <div class="topCell col1-4" id="categoryHolder"></div>
+                <div class="topCell col1-4 superCenter" id="categoryHolder"></div>
 
                 <div class="topCell col1-4">
                     <label for="workflowsDd">Stage</label>
@@ -18,6 +18,11 @@
                     </div>
                     <div class="dataField">
                         <input class="extrainfo" type="text" name="dueDate" id="dueDate" value="" readonly placeholder="Date"/>
+                        <div class="inputDateActionBlock">
+                            <input class="time" maxlength="2" name="Hours" id="dueDateHours" value="00"/>
+                            <input class="time" maxlength="2" name="Minutes" id="dueDateMinutes"  value="00"/>
+                            <input class="time" maxlength="2" name="Seconds" id="dueDateSeconds"  value="00"/>
+                        </div>
                     </div>
                 </div>
 

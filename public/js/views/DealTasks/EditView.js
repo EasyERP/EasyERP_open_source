@@ -10,7 +10,8 @@
     'common',
     'populate',
     'custom',
-    'constants'
+    'constants',
+    'moment'
 ], function (Backbone,
              _,
              $,
@@ -22,7 +23,8 @@
              common,
              populate,
              custom,
-             CONSTANTS) {
+             CONSTANTS,
+             moment) {
 
     var EditView = ParentView.extend({
         contentType: 'DealTasks',
@@ -30,9 +32,11 @@
         responseObj: {},
 
         events: {
-            'keypress #logged, #estimated': 'isNumberKey',
-            'click #projectTopName'       : 'useProjectFilter',
-            'click .removeSelect'         : 'removeSelect'
+            'keypress .time'           : 'keypress',
+            'click #projectTopName'    : 'useProjectFilter',
+            'click .removeSelect'      : 'removeSelect',
+            'keyup .time'              : 'validateInput',
+            'change .time'   : 'changeInput',
         },
 
         initialize: function (options) {
@@ -42,6 +46,32 @@
             this.currentModel.on('change:category', this.renderCategory, this);
 
             this.render();
+        },
+
+        keypress: function (e) {
+            return keyValidator(e);
+        },
+
+        changeInput : function(e) {
+            var $target = $(e.target);
+
+            e.preventDefault();
+
+            if ($target.val().length === 1) {
+                $target.val('0' + $target.val());
+            }
+        },
+
+        validateInput : function(e) {
+            var $target = $(e.target);
+            var maxVal = ($target.attr('id') === 'dueDateHours') ? 23 : 59;
+
+            e.preventDefault();
+
+            if ($target.val() > maxVal) {
+                $target.val('' + maxVal);
+            }
+
         },
 
         removeSelect: function (e) {
@@ -70,12 +100,6 @@
             Backbone.history.navigate('#easyErp/Tasks/list/p=1/c=100/filter=' + encodeURIComponent(JSON.stringify(filter)), {trigger: true});
         },
 
-        isNumberKey: function (evt) {
-            var charCode = (evt.which) ? evt.which : event.keyCode;
-
-            return !(charCode > 31 && (charCode < 48 || charCode > 57));
-        },
-
         chooseOption: function (e) {
             var $target = $(e.target);
             var $div =  $target.closest('div.selectType');
@@ -99,12 +123,17 @@
             var workflow;
             var data;
             var currentWorkflow;
+            var currentAssigned;
             var modelJSON = this.currentModel.toJSON();
             var deal = this.$el.find('#dealItem .showSelect').attr('data-id');
             var company = this.$el.find('#companyItem .showSelect').attr('data-id');
             var contact = this.$el.find('#contactItem .showSelect').attr('data-id');
             var description = $.trim(this.$el.find('#description').val());
-            var category = modelJSON.category._id;
+            var dueDate = $.trim(this.$el.find('#dueDate').val());
+            var hours = $.trim(this.$el.find('#dueDateHours').val()) || 0;
+            var minutes = $.trim(this.$el.find('#dueDateMinutes').val()) || 0;
+            var seconds = $.trim(this.$el.find('#dueDateSeconds').val()) || 0;
+            var category = modelJSON.category ? modelJSON.category._id : null;
 
             event.preventDefault();
 
@@ -118,7 +147,11 @@
                 sequence = null;
             }
 
-            if (!description){
+            if (dueDate) {
+                dueDate = moment(dueDate).hours(hours).minutes(minutes).seconds(seconds).toDate();
+            }
+
+            if (!description) {
                 return App.render({
                     type   : 'error',
                     message: 'Please add Description'
@@ -128,13 +161,11 @@
             workflow = holder.find('#workflowsDd').data('id');
 
             data = {
-                assignedTo   : assignedTo || null,
                 description  : description,
-                dueDate      : $.trim(holder.find('#dueDate').val()),
+                dueDate      : dueDate,
                 sequenceStart: modelJSON.sequence,
                 company      : company || null,
                 category     : category || null,
-                companyDate  : company ? new Date() : null,
                 contact      : contact || null,
                 contactDate  : contact ? new Date() : null,
                 deal         : deal || null,
@@ -142,6 +173,7 @@
             };
 
             currentWorkflow = modelJSON.workflow;
+            currentAssigned = modelJSON.assignedTo;
 
             if (currentWorkflow && currentWorkflow._id && (currentWorkflow._id !== workflow)) {
                 data.workflow = workflow;
@@ -149,7 +181,26 @@
                 data.workflowStart = modelJSON.workflow._id;
             }
 
-            this.currentModel.save(data, {
+            if (currentAssigned && currentAssigned._id && (currentAssigned._id !== assignedTo)) {
+                data.assignedTo = assignedTo;
+            }
+
+
+            this.currentModel.set(data);
+
+            if (this.currentModel.changed.company) {
+                data.companyDate = new Date();
+            }
+            if (this.currentModel.changed.contact) {
+                data.contactDate = new Date();
+            }
+            if (this.currentModel.changed.deal) {
+                data.dealDate = new Date();
+            }
+
+
+
+            this.currentModel.save(this.currentModel.changed, {
                 patch  : true,
                 success: function (model, res) {
                     var redirectUrl = window.location.hash;
@@ -192,18 +243,13 @@
                         var wId;
                         var newTotal;
                         var $totalCount;
+                        var redirectUrl = window.location.hash;
 
                         model = model.toJSON();
                         viewType = custom.getCurrentVT();
 
                         switch (viewType) {
-                            case 'list':
-                                var redirectUrl = window.location.hash;
-                                self.hideDialog();
 
-                                Backbone.history.fragment = '';
-                                Backbone.history.navigate(redirectUrl, {trigger: true});
-                                break;
                             case 'kanban':
                                 $('#' + model._id).remove();
                                 wId = model.workflow._id;
@@ -211,6 +257,15 @@
 
                                 newTotal = ($totalCount.html() - 1);
                                 $totalCount.html(newTotal);
+                                break;
+
+                            default:
+
+                                self.hideDialog();
+
+                                Backbone.history.fragment = '';
+                                Backbone.history.navigate(redirectUrl, {trigger: true});
+                                break;
                         }
                         self.hideDialog();
                     },
@@ -224,7 +279,8 @@
 
         render: function () {
             var formString = this.template({
-                model: this.currentModel.toJSON()
+                model: this.currentModel.toJSON(),
+                moment : moment
             });
             var self = this;
             var notDiv;
@@ -273,6 +329,16 @@
             this.delegateEvents(this.events);
 
             this.$el.find('#dueDate').datepicker({dateFormat: 'd M, yy', minDate: new Date()});
+            this.$el.find('#dueDateHours').spinner({
+                min: 0,
+                max: 23,
+                numberFormat: 'd2'
+            });
+            this.$el.find('#dueDateMinutes, #dueDateSeconds').spinner({
+                min: 0,
+                max: 59,
+                numberFormat: 'd2'
+            });
 
             return this;
         }

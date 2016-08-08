@@ -2,9 +2,8 @@ var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var aggent;
-var db = 'production';
+var db = 'pavlodb';
 
-require('../../config/development');
 
 describe('Company Specs', function () {
     'use strict';
@@ -18,8 +17,8 @@ describe('Company Specs', function () {
             aggent
                 .post('users/login')
                 .send({
-                    login: 'admin',
-                    pass : 'tm2016',
+                    login: 'pavlo.demko',
+                    pass : '111111',
                     dbId : db
                 })
                 .expect(200, done);
@@ -36,7 +35,8 @@ describe('Company Specs', function () {
                 name: {
                     first: 'test11',
                     last : 'testCompany'
-                }
+                },
+                type : 'company'
             };
 
             aggent
@@ -336,7 +336,7 @@ describe('Company Specs', function () {
                     expect(body)
                         .to.be.instanceOf(Object);
                     expect(body)
-                        .to.have.property('success');
+                        .to.have.property('_id');
                     expect(body)
                         .to.have.property('notes');
 
@@ -409,6 +409,7 @@ describe('Company Specs', function () {
         it('should delete company', function (done) {
             aggent
                 .delete('customers/' + id)
+                .query({deleteHistory : true})
                 .expect(200, done);
         });
 
