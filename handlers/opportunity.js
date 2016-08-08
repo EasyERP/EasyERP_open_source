@@ -677,7 +677,7 @@ var Module = function (models, event) {
                         };
                         historyWriter.addEntry(historyOptions, function () {
                             res.status(200).send({success: 'Opportunities updated'});
-                        })
+                        });
 
                     });
                 });

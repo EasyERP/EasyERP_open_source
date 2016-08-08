@@ -113,10 +113,10 @@ define([
             var $company = this.$el.find('#company');
             var mid = 24;
             var name = $.trim(this.$el.find('#name').val());
-            var company = $company.data('id');
+            var company = $company.attr('data-id');
             var idCustomer = this.$('#customerDd').data('id');
             var address = {};
-            var salesPersonId = this.$('#salesPerson').data('id');
+            var salesPersonId = this.$('#salesPerson').attr('data-id');
             var salesTeamId = this.$('#salesTeam option:selected').val();
             var first = $.trim(this.$el.find('#first').val());
             var last = $.trim(this.$el.find('#last').val());
@@ -135,7 +135,7 @@ define([
                 mobile: mobile,
                 fax   : fax
             };
-            var workflow = this.$('#workflowsDd').data('id');
+            var workflow = this.$('#workflowsDd').attr('data-id');
             var priority = $('#priorityDd').data('id');
             var internalNotes = $.trim(this.$el.find('#internalNotes').val());
             var active = (this.$el.find('#active').is(':checked'));
