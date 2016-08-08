@@ -110,13 +110,10 @@ define([
             var location = window.location.hash;
             var pageSplited = location.split('/p=')[1];
             var self = this;
-            var $company = this.$('#company');
+            var $company = this.$el.find('#company');
             var mid = 24;
             var name = $.trim(this.$el.find('#name').val());
-            var company = {
-                name: $company.val(),
-                id  : $company.data('id')
-            };
+            var company = $company.data('id');
             var idCustomer = this.$('#customerDd').data('id');
             var address = {};
             var salesPersonId = this.$('#salesPerson').data('id');
