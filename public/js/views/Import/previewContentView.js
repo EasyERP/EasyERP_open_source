@@ -27,8 +27,6 @@ define([
             var $thisEl = this.$el;
             var self = this;
 
-            console.log(self.fields);
-
             $thisEl.find('#contentBlock').html(this.previewTemplate({
                 fields: self.fields
             }));

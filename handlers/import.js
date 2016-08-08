@@ -40,7 +40,7 @@ var Module = function (models) {
 
             for (var j = 0; j < firstArr.length; j++) {
 
-                if (firstArr[j] && (comparing(secondArr[i], firstArr[j].value))) {
+                if (firstArr[j] && (comparing(secondArr[i], firstArr[j]))) {
                     result[secondArr[i]] = firstArr[j];
                     firstArr[j] = null;
 
@@ -50,9 +50,7 @@ var Module = function (models) {
             }
 
             if (!isChanged) {
-                result[secondArr[i]] = {
-                    value: ''
-                };
+                result[secondArr[i]] = '';
             }
         }
 
@@ -113,14 +111,15 @@ var Module = function (models) {
     this.getImportMapObject = function (req, res, next) {
         var ImportModel = models.get(req.session.lastDb, 'Imports', ImportSchema);
         var userId = req.session.uId;
-        var type = req.query.data;
-        var importedKeyArray;
-        var personKeysArray = mapObject[type];
+        var query = req.query;
+        var type = query.type || 'customers';
+        var personKeysArray = mapObject[type].slice();
         var mappedObj;
+        var unmappedResult = {};
+        var mappedResult = {};
         var findObj = {
             user: userId
         };
-        var keys;
 
         if (query.timeStamp) {
             findObj.timeStamp = query.timeStamp;
@@ -131,21 +130,22 @@ var Module = function (models) {
                 return next(err);
             }
 
+
             if (importedData) {
-                importedKeyArray = _.values(importedData.result);
-
-                mappedObj = splitFields(personKeysArray, importedKeyArray);
+                mappedObj = splitFields(personKeysArray, importedData.result);
             }
-
-            //keys = _.unique(_.pluck(personKeysArray,'parent'));
 
 
             mappedObj.unMapped = _.compact(mappedObj.unMapped);
-            mappedObj.unMapped = _.groupBy(mappedObj.unMapped, 'parent');
+            //mappedObj.unMapped = _.groupBy(mappedObj.unMapped, 'parent');
+            unmappedResult[type] = mappedObj.unMapped;
+            //mappedObj.unMapped[type] = mappedObj.unMapped;
+
+            mappedResult[type] = mappedObj.result;
 
             res.status(200).send({
-                mappedObj  : mappedObj.result,
-                unmappedObj: mappedObj.unMapped
+                mappedObj  : mappedResult,
+                unmappedObj: unmappedResult
             });
         });
     };

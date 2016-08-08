@@ -49,6 +49,7 @@ define([
 
             $field.text('');
             $field.data('name', '');
+            $field.data('parent', '');
             $field.addClass('empty');
             $field.closest('.contentBlockRow').addClass('emptyRow');
             $field.removeClass('dbFieldItemDrag');
@@ -79,10 +80,7 @@ define([
                 var secondColumnVal = $($content[i]).find('.secondColumn').data('name');
                 var secondColumnPar = $($content[i]).find('.secondColumn').data('parent');
                 if (secondColumnVal) {
-                    fieldsObject[firstColumnVal] = {
-                        parent: secondColumnPar,
-                        value : secondColumnVal
-                    };
+                    fieldsObject[firstColumnVal] = secondColumnVal;
                 }
             }
 
