@@ -17,12 +17,21 @@
     height: 38px;
   }
   &.open {
-    max-height: 100%;
+    height: auto;
     ._ellipsisShowMore {
       display: none;
     }
     ._ellipsisCloseBtn {
       display: block;
+      float: right;
+      background-color: #7eadcc;
+      color: #fff;
+      font-size: 12px;
+      height: 20px;
+      line-height: 20px;
+      padding: 0 10px;
+      border-radius: 3px;
+      cursor: pointer;
     }
   }
 
@@ -38,6 +47,7 @@
   }
 
   ._ellipsisShowMore {
+    display: block;
     box-sizing: content-box;
     -webkit-box-sizing: content-box;
     -moz-box-sizing: content-box;
@@ -49,7 +59,8 @@
     width: 68px;
     padding-right: 5px;
     margin-left: -68px;
-    background-color: #e2e0e0;
+    background-color: #7eadcc;
+    color: #fff;
     line-height: 13px;
     font-size: 10px;
     text-align: center;

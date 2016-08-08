@@ -24,8 +24,8 @@ define([
         events: {
             'click div.dateListItem'    : 'goToEditDialog',
             'click .newSelectList li'   : 'chooseOption',
-            'click ._dateListElement .showmore'   : 'showMore',
-            'click ._dateListElement .hideList'   : 'hideList',
+            'click .showmoreDiv .showmore'   : 'showMore',
+            'click .showmoreDiv .hideList'   : 'hideList',
             'mousedown ._customCHeckbox': 'checked'
         },
 
@@ -95,12 +95,12 @@ define([
         },
 
         showMore: function (e) {
-            var $target = $(e.target).closest('._dateListElement');
+            var $target = $(e.target).closest('.showmoreDiv');
             $target.addClass('open');
         },
 
         hideList: function (e) {
-            var $target = $(e.target).closest('._dateListElement');
+            var $target = $(e.target).closest('.showmoreDiv');
             $target.removeClass('open');
         },
 
