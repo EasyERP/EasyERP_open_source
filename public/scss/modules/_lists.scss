@@ -86,11 +86,34 @@
     overflow: auto;
 
     ._dateListElement {
+      position: relative;
       max-height: 380px;
       overflow: hidden;
 
+      .hideList {
+        display: none;
+        position: absolute;
+        right: 10px;
+        bottom: 0;
+        background-color: #7eadcc;
+        color: #fff;
+        font-size: 12px;
+        height: 20px;
+        line-height: 20px;
+        padding: 0 10px;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+
       &.open {
-        max-height: auto;
+        max-height: none;
+
+        .showmore {
+          display: none !important;
+        }
+        .hideList {
+          display: block;
+        }
       }
     }
   }
@@ -124,6 +147,25 @@
       padding: 0 20px;
       overflow: auto;
     }
+  }
+}
+.showmore {
+  display: none;
+}
+._dateListElement {
+
+  .showmore {
+    position: absolute;
+    right: 10px;
+    bottom: 0;
+    background-color: #7eadcc;
+    color: #fff;
+    font-size: 12px;
+    height: 20px;
+    line-height: 20px;
+    padding: 0 10px;
+    border-radius: 3px;
+    cursor: pointer;
   }
 }
 

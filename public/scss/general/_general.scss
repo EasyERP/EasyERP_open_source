@@ -4,3 +4,58 @@
 .textBlue {
   color: #27a0cd;
 }
+
+._multiEllipsis {
+  overflow: hidden;
+  height: 37px;
+  line-height: 25px;
+
+  &:before {
+    content: "";
+    float: left;
+    width: 5px;
+    height: 38px;
+  }
+  &.open {
+    max-height: 100%;
+    ._ellipsisShowMore {
+      display: none;
+    }
+    ._ellipsisCloseBtn {
+      display: block;
+    }
+  }
+
+  > *:first-child {
+    float: right;
+    width: 100%;
+    margin-left: -5px;
+  }
+
+  > p {
+    -ms-word-break: break-all;
+    word-break: break-all;
+  }
+
+  ._ellipsisShowMore {
+    box-sizing: content-box;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    position: relative;
+    top: -13px;
+    height: 13px;
+    left: 100%;
+    float: right;
+    width: 68px;
+    padding-right: 5px;
+    margin-left: -68px;
+    background-color: #e2e0e0;
+    line-height: 13px;
+    font-size: 10px;
+    text-align: center;
+    cursor: pointer;
+  }
+  ._ellipsisCloseBtn {
+    display: none;
+  }
+}

@@ -1461,6 +1461,48 @@
 .textBlue {
   color: #27a0cd; }
 
+._multiEllipsis {
+  overflow: hidden;
+  height: 37px;
+  line-height: 25px; }
+  ._multiEllipsis:before {
+    content: "";
+    float: left;
+    width: 5px;
+    height: 38px; }
+  ._multiEllipsis.open {
+    max-height: 100%; }
+    ._multiEllipsis.open ._ellipsisShowMore {
+      display: none; }
+    ._multiEllipsis.open ._ellipsisCloseBtn {
+      display: block; }
+  ._multiEllipsis > *:first-child {
+    float: right;
+    width: 100%;
+    margin-left: -5px; }
+  ._multiEllipsis > p {
+    -ms-word-break: break-all;
+    word-break: break-all; }
+  ._multiEllipsis ._ellipsisShowMore {
+    box-sizing: content-box;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    position: relative;
+    top: -13px;
+    height: 13px;
+    left: 100%;
+    float: right;
+    width: 68px;
+    padding-right: 5px;
+    margin-left: -68px;
+    background-color: #e2e0e0;
+    line-height: 13px;
+    font-size: 10px;
+    text-align: center;
+    cursor: pointer; }
+  ._multiEllipsis ._ellipsisCloseBtn {
+    display: none; }
+
 label._customCHeckbox input[type="checkbox"] {
   position: absolute;
   left: -9999px;
@@ -1740,10 +1782,28 @@ label._customCHeckbox input[type="checkbox"] {
     width: calc(100% - 450px);
     overflow: auto; }
     ._taskListWrap ._taskListDateBlock ._dateListElement {
+      position: relative;
       max-height: 380px;
       overflow: hidden; }
+      ._taskListWrap ._taskListDateBlock ._dateListElement .hideList {
+        display: none;
+        position: absolute;
+        right: 10px;
+        bottom: 0;
+        background-color: #7eadcc;
+        color: #fff;
+        font-size: 12px;
+        height: 20px;
+        line-height: 20px;
+        padding: 0 10px;
+        border-radius: 3px;
+        cursor: pointer; }
       ._taskListWrap ._taskListDateBlock ._dateListElement.open {
-        max-height: auto; }
+        max-height: none; }
+        ._taskListWrap ._taskListDateBlock ._dateListElement.open .showmore {
+          display: none !important; }
+        ._taskListWrap ._taskListDateBlock ._dateListElement.open .hideList {
+          display: block; }
   ._taskListWrap ._taskListActivitiesBlock {
     -webkit-flex-shrink: 0;
     -ms-flex-negative: 0;
@@ -1771,6 +1831,22 @@ label._customCHeckbox input[type="checkbox"] {
               flex-grow: 1;
       padding: 0 20px;
       overflow: auto; }
+
+.showmore {
+  display: none; }
+
+._dateListElement .showmore {
+  position: absolute;
+  right: 10px;
+  bottom: 0;
+  background-color: #7eadcc;
+  color: #fff;
+  font-size: 12px;
+  height: 20px;
+  line-height: 20px;
+  padding: 0 10px;
+  border-radius: 3px;
+  cursor: pointer; }
 
 ._activitiesListItem {
   padding: 10px 0;
