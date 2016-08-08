@@ -2238,10 +2238,14 @@ input::-ms-clear {
   }
 }
 
-.workflow-list-wrapper,
+.workflow-list-wrapper {
+  width: 170px;
+}
 .workflow-sub-list-wrapper {
   width: 12%;
 }
+
+
 
 #details,
 #sub-details {
@@ -2274,7 +2278,16 @@ input::-ms-clear {
   }
 }
 
-#profileTableWrapper,
+#profileTableWrapper {
+  width: calc(~" 100% - 170px");
+  .list {
+    thead {
+      tr {
+        border-top: 1px solid #7f7f80;
+      }
+    }
+  }
+}
 #workflowAccord,
 #workflowSubAccord {
   width: 88%;
@@ -2286,12 +2299,22 @@ input::-ms-clear {
 
 #content-holder .inner-holder {
   margin: 20px;
-
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
 }
 
 #profileTableWrapper table {
-  width: 95%;
-  margin: auto;
+  width: calc(~"100% - 20px");
+  margin: 0 0 0 20px;
+}
+
+.workflow-sub-list {
+  li {
+    .text-overflow;
+  }
 }
 
 .workflow-list,
@@ -2301,11 +2324,10 @@ input::-ms-clear {
   font-size: 13px;
 
   li {
-    .text-overflow;
-    border: @thin-border rgba(0, 0, 0, 0);
-    border-right-color: @border-color-main;
+    position: relative;
     height: 40px;
     line-height: 40px;
+    border: @thin-border transparent;
 
     &:hover:not(.quickEdit) {
       background-color: lighten(@bg-main, 15%);;
@@ -2324,8 +2346,8 @@ input::-ms-clear {
       }
     }
     &.active {
-      border: @thin-border @border-color-main;
-      border-right: none;
+      border-color: @border-color-main;
+      border-right-color: transparent;
       display: list-item;
 
       &.first {
@@ -2335,10 +2357,23 @@ input::-ms-clear {
       &:hover {
         background-color: @defaultBgHover-color;
       }
+      &:after {
+        display: none;
+      }
 
       a {
         text-decoration: none;
       }
+    }
+
+    &:after {
+      content: '';
+      position: absolute;
+      right: -1px;
+      top: -1px;
+      width: 1px;
+      height: 40px;
+      background-color: @border-color-main;
     }
 
     a {
@@ -2368,20 +2403,22 @@ input::-ms-clear {
   }
 }
 
+.workflow-list {
+  li.active {
+    line-height: 38px;
+    font-family: @fontSemiBold;
+    &:hover {
+      background-color: #fff;
+    }
+  }
+}
+
 /*-----------------------------Styles--------------------------------*/
 /*-----------------------------All--------------------------------*/
 @-moz-document url-prefix() {
   body {
     font-size: 10px;
   }
-
-  //.form {
-  //  p {
-  //    label {
-  //      line-height: 30px;
-  //    }
-  //  }
-  //}
 }
 
 #modulesAccessTable {
@@ -2397,11 +2434,12 @@ input::-ms-clear {
     }
 
     &.parent {
-      //background-color: #36A9E1;
-      color: @mainText-color;
-      //border: 2px solid #1E8FC6;
+      background-color: #7eadcc;
+      border-color: #fff;
 
       td {
+        color: #fff;
+        font-family: @fontSemiBold;
       }
     }
   }
@@ -3957,7 +3995,7 @@ ul.dialog-tabs {
 
     &.mname {
       text-align: left;
-      border-left: 1px solid @border-color-main;
+      //border-left: 1px solid @border-color-main;
     }
   }
 }
@@ -4356,6 +4394,12 @@ h3.dashboard {
   tr {
     th {
       text-align: center;
+      vertical-align: top;
+      padding: 8px 0;
+
+      input[type="checkbox"] {
+        margin-top: 5px;
+      }
     }
   }
 }

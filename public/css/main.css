@@ -5713,7 +5713,9 @@ input::-ms-clear {
   width: 180px;
   height: 200px;
 }
-.workflow-list-wrapper,
+.workflow-list-wrapper {
+  width: 170px;
+}
 .workflow-sub-list-wrapper {
   width: 12%;
 }
@@ -5742,7 +5744,12 @@ input::-ms-clear {
 #sub-details .listWorkflow {
   margin-left: 20px;
 }
-#profileTableWrapper,
+#profileTableWrapper {
+  width: calc( 100% - 170px);
+}
+#profileTableWrapper .list thead tr {
+  border-top: 1px solid #7f7f80;
+}
 #workflowAccord,
 #workflowSubAccord {
   width: 88%;
@@ -5753,9 +5760,19 @@ input::-ms-clear {
 #content-holder .inner-holder {
   margin: 20px;
 }
+#content-holder .inner-holder:after {
+  content: '';
+  display: table;
+  clear: both;
+}
 #profileTableWrapper table {
-  width: 95%;
-  margin: auto;
+  width: calc(100% - 20px);
+  margin: 0 0 0 20px;
+}
+.workflow-sub-list li {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .workflow-list,
 .workflow-sub-list {
@@ -5765,13 +5782,10 @@ input::-ms-clear {
 }
 .workflow-list li,
 .workflow-sub-list li {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  border: 1px solid rgba(0, 0, 0, 0);
-  border-right-color: #7f7f80;
+  position: relative;
   height: 40px;
   line-height: 40px;
+  border: 1px solid transparent;
 }
 .workflow-list li:hover:not(.quickEdit),
 .workflow-sub-list li:hover:not(.quickEdit) {
@@ -5793,8 +5807,8 @@ input::-ms-clear {
 }
 .workflow-list li.active,
 .workflow-sub-list li.active {
-  border: 1px solid #7f7f80;
-  border-right: none;
+  border-color: #7f7f80;
+  border-right-color: transparent;
   display: list-item;
 }
 .workflow-list li.active.first,
@@ -5805,9 +5819,23 @@ input::-ms-clear {
 .workflow-sub-list li.active:hover {
   background-color: #d9d9d9;
 }
+.workflow-list li.active:after,
+.workflow-sub-list li.active:after {
+  display: none;
+}
 .workflow-list li.active a,
 .workflow-sub-list li.active a {
   text-decoration: none;
+}
+.workflow-list li:after,
+.workflow-sub-list li:after {
+  content: '';
+  position: absolute;
+  right: -1px;
+  top: -1px;
+  width: 1px;
+  height: 40px;
+  background-color: #7f7f80;
 }
 .workflow-list li a,
 .workflow-sub-list li a {
@@ -5834,6 +5862,13 @@ input::-ms-clear {
   position: relative;
   top: -30px;
 }
+.workflow-list li.active {
+  line-height: 38px;
+  font-family: 'Open Sans SemiBold', sans-serif, Verdana;
+}
+.workflow-list li.active:hover {
+  background-color: #fff;
+}
 /*-----------------------------Styles--------------------------------*/
 /*-----------------------------All--------------------------------*/
 @-moz-document url-prefix() {
@@ -5851,7 +5886,12 @@ input::-ms-clear {
   display: table-row;
 }
 #modulesAccessTable tr.parent {
-  color: #000000;
+  background-color: #7eadcc;
+  border-color: #fff;
+}
+#modulesAccessTable tr.parent td {
+  color: #fff;
+  font-family: 'Open Sans SemiBold', sans-serif, Verdana;
 }
 *:focus {
   outline: 0 !important;
@@ -10689,7 +10729,6 @@ ul.dialog-tabs li.right button {
 }
 #modulesAccessTable td.mname {
   text-align: left;
-  border-left: 1px solid #7f7f80;
 }
 #ui-datepicker-div {
   border-radius: 0 !important;
@@ -12510,6 +12549,11 @@ h3.dashboard {
 }
 #modulesAccessTable tr th {
   text-align: center;
+  vertical-align: top;
+  padding: 8px 0;
+}
+#modulesAccessTable tr th input[type="checkbox"] {
+  margin-top: 5px;
 }
 #timeRecivingDataFromServer,
 #timeBuildingDataFromServer {
