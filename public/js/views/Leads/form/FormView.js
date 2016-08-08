@@ -38,7 +38,7 @@ define([
             'click .tabListItem'                               : 'changeWorkflow',
             'click .current-selected:not(.jobs)'               : 'showNewSelect',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
-            'click #convertToOpportunity'                      : 'convertToOpp'
+            'click #convertToOpportunity'                      : 'openDialog'
         },
 
         hideNewSelect: function () {
@@ -49,14 +49,19 @@ define([
             }
         },
 
-        convertToOpp : function (e){
+        openDialog: function (e) {
+            e.preventDefault();
+            $('#convert-dialog-form').dialog('open');
+        },
+
+     /*   convertToOpp : function (e){
             e.preventDefault();
             this.saveDeal({
                 isOpportunitie : true,
                 isConverted    : true,
                 convertedDate  : new Date()
             }, 'converted');
-        },
+        },*/
 
         setChangeValueToModel: function (e) {
             var $target = $(e.target);
@@ -228,7 +233,7 @@ define([
         renderAbout : function (){
             var self = this;
             var $thisEl = this.$el;
-            $thisEl.find('.aboutHolder').html(_.template(aboutTemplate, this.formModel.toJSON()));
+            $thisEl.find('.aboutHolder').html(_.template(aboutTemplate, { model : self.formModel.toJSON()}));
             this.renderTags();
             $thisEl.find('#expectedClosing').datepicker({
                 dateFormat : 'd M, yy',
@@ -238,16 +243,16 @@ define([
                     self.modelChanged['expectedClosing'] = new Date(dateText);
                     self.showButtons();
                 }
-
             });
         },
 
         render: function () {
             var formModel = this.formModel.toJSON();
             var self = this;
+            var that = this;
             var $thisEl = this.$el;
 
-            $thisEl.html(_.template(OpportunitiesFormTemplate, formModel));
+            $thisEl.html(_.template(OpportunitiesFormTemplate, {model : formModel}));
 
             dataService.getData('/workflows/', {id: 'Leads'}, function (response) {
                 self.responseObj = {workflows: response.data};
@@ -266,26 +271,17 @@ define([
 
                 self.responseObj['#salesPersonDd'] = employees;
             });
+            dataService.getData('/customers', {type: 'Company'}, function (employees) {
+                employees = _.map(employees.data, function (employee) {
+                    employee.name = employee.fullName;
 
-            this.formProperty = new CompanyFormProperty({
-                data       : formModel.company,
-                saveDeal   : self.saveDeal,
-                isLead     : true
+                    return employee;
+                });
+
+                self.responseObj['#companyDd'] = employees;
             });
 
             this.renderTags();
-
-            $thisEl.find('#companyHolder').html(
-                this.formProperty.render().el
-            );
-
-            $thisEl.find('#contactHolder').html(
-                new ContactFormProperty({
-                    data       : formModel.customer,
-                    saveDeal   : self.saveDeal,
-                    isLead     : true
-                }).render().el
-            );
 
             this.editorView = new EditorView({
                 model      : this.formModel,
@@ -295,6 +291,35 @@ define([
             $thisEl.find('.notes').append(
                 this.editorView.render().el
             );
+
+            $('#convert-dialog-form').dialog({
+                autoOpen: false,
+                height  : 150,
+                width   : 350,
+                modal   : true,
+                title   : 'Convert to opportunity',
+                buttons : {
+                    'Create opportunity': function () {
+                        var createCustomer = ($('select#createCustomerOrNot option:selected').val()) ? true : false;
+
+                        that.saveDeal({
+                            isOpportunitie : true,
+                            isConverted    : true,
+                            convertedDate  : new Date(),
+                            createCustomer : createCustomer
+                        }, 'converted');
+
+                    },
+
+                    Cancel: function () {
+                        $(this).dialog('close');
+                    }
+                },
+
+                close: function () {
+                    $(this).dialog('close');
+                }
+            }, this);
 
             $thisEl.find('#expectedClosing').datepicker({
                 dateFormat : 'd M, yy',
