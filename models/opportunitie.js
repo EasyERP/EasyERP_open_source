@@ -195,8 +195,9 @@ module.exports = (function () {
                 login: String
             }
         }],
-        attachments  : {type: Array, default: []},
-        projectType  : {type: String, default: 'fixed'},
+
+        attachments: {type: Array, default: []},
+        projectType: {type: String, default: 'fixed'},
 
         social: {
             FB: {type: String, default: ''},

@@ -656,7 +656,11 @@ var Module = function (models, event) {
                     if (err) {
                         return next(err);
                     }
-                    res.status(201).send({success: 'A new Person crate success', id: customer._id});
+                    res.status(201).send({
+                        success: 'A new Person crate success',
+                        id     : customer._id,
+                        type   : customer.type
+                    });
                 });
             });
 

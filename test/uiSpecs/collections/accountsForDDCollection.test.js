@@ -41,7 +41,7 @@ define([
                 }
             ]
         };
-        var accountsForDDUrl = new RegExp('\/employees\/getPersonsForDd', 'i');
+        var accountsForDDUrl = new RegExp('\/employees\/getForDd', 'i');
 
         before(function () {
             server = sinon.fakeServer.create();

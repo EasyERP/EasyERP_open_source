@@ -200,7 +200,7 @@ HTTP/1.1 200 OK
       ]
 }
      */
-    router.get('/getForDd', accessStackMiddleWare, handler.getForDd);
+    router.get('/getForDd', handler.getForDd);
     // router.get('/getForDashboard', handler.getForDashboard);
 
     /**

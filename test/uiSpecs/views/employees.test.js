@@ -4771,7 +4771,7 @@ define([
                     var $dialogEl;
                     var $needEl = listView.$el.find('[data-id="560264bb8dc408c632000005"] > td:nth-child(3)');
                     var employeeUrl = new RegExp('\/employees\/', 'i');
-                    var employeePersonsForDDUrl = new RegExp('\/employees\/getPersonsForDd', 'i');
+                    var employeePersonsForDDUrl = new RegExp('\/employees\/getForDd', 'i');
                     var depsForDDurl = new RegExp('\/departments\/getForDD', 'i');
 
                     this.timeout(4000);
@@ -5147,7 +5147,7 @@ define([
                 var editForm;
                 var $needEl = thumbnailView.$el.find('#55b92ad221e4b7c40f00004e');
                 var employeeUrl = new RegExp('\/employees\/', 'i');
-                var employeePersonsForDDUrl = new RegExp('\/employees\/getPersonsForDd', 'i');
+                var employeePersonsForDDUrl = new RegExp('\/employees\/getForDd', 'i');
                 var depsForDDurl = new RegExp('\/departments\/getForDD', 'i');
                 this.timeout(3000);
                 server.respondWith('GET', employeeUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmpWithId)]);
@@ -5281,7 +5281,7 @@ define([
 
                 var $needEl = thumbnailView.$el.find('#55b92ad221e4b7c40f00004e');
                 var employeeUrl = new RegExp('\/employees\/', 'i');
-                var employeePersonsForDDUrl = new RegExp('\/employees\/getPersonsForDd', 'i');
+                var employeePersonsForDDUrl = new RegExp('\/employees\/getForDd', 'i');
                 var depsForDDurl = new RegExp('\/departments\/getForDD', 'i');
 
                 server.respondWith('GET', employeeUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmpWithId)]);
@@ -5374,7 +5374,7 @@ define([
                 var jobPositionUrl = new RegExp('\/jobPositions\/getForDd', 'i');
                 var usersForDDUrl = '/users/forDd';
                 var depsForDDUrl = new RegExp('\/departments\/getForDD', 'i');
-                var managersUrl = new RegExp('\/employees\/getPersonsForDd', 'i');
+                var managersUrl = new RegExp('\/employees\/getForDd', 'i');
                 var jobTypesUrl = new RegExp('\/jobPositions\/jobType', 'i');
 
                 server.respondWith('GET', jobPositionUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeJobPosForDD)]);

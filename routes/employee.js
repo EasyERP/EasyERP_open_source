@@ -188,7 +188,7 @@ HTTP/1.1 304 Not Modified
     router.get('/byDepartment', accessStackMiddleware, handler.byDepartment);
     router.get('/exportToXlsx', accessStackMiddleware, handler.exportToXlsx);
     // router.get('/exportToCsv', accessStackMiddleware, handler.exportToCsv);
-    router.get('/getForDdByRelatedUser', accessStackMiddleware, handler.getForDdByRelatedUser);
+    router.get('/getForDdByRelatedUser', handler.getForDdByRelatedUser);
 
     /**
      *@api {get} /employees/getPersonsForDd/ Request Persons for dropDown
@@ -224,7 +224,7 @@ HTTP/1.1 304 Not Modified
     ]
 }
      */
-    router.get('/getPersonsForDd', accessStackMiddleware, handler.getSalesPerson);
+    router.get('/getForDd', handler.getSalesPerson);
 
     /**
      *@api {get} /employees/getEmployeesAlphabet Request for Employees dropDown
@@ -448,7 +448,7 @@ HTTP/1.1 200 OK
     ]
 }
      */
-    router.get('/languages', accessStackMiddleware, handler.getLanguages);
+    router.get('/languages', handler.getLanguages);
 
     /**
      *@api {get} /employees/sources/ Request Employees sources

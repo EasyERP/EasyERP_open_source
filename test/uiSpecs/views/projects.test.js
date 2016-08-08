@@ -2283,7 +2283,7 @@ define([
                 it('Try to open CreateView', function () {
                     var $createBtn = topBarView.$el.find('#top-bar-createBtn');
                     var usersUrl = '/users/forDd';
-                    var employeesUrl = '/employees/getPersonsForDd';
+                    var employeesUrl = '/employees/getForDd';
                     var customerUrl = '/customers/';
                     var $dialog;
 
@@ -2393,7 +2393,7 @@ define([
                     var $needItem = $thisEl.find('#55b92ad621e4b7c40f00065f');
                     var projectFormUrl = new RegExp('\/projects\/', 'i');
                     var usersUrl = '/users/forDd';
-                    var employeesUrl = '/employees/getPersonsForDd';
+                    var employeesUrl = '/employees/getForDd';
                     var customerUrl = '/customers/';
 
                     server.respondWith('GET', projectFormUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeProjectById)]);

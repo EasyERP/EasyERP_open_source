@@ -2894,7 +2894,7 @@ define([
 
                 it('Try to create AttendanceView', function (done) {
                     var $thisEl;
-                    var employeesUrl = '/employees/getPersonsForDd';
+ var employeesUrl = '/employees/getForDd';
                     var attendanceUrl = new RegExp('\/vacation\/attendance', 'i');
 
                     server.respondWith('GET', attendanceUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeAttendance)]);

@@ -6485,7 +6485,7 @@ define([
                 it('Try to open EditForm', function () {
                     var $needTd = listView.$el.find('#listTable > tr:nth-child(1) > td:nth-child(3)');
                     var taskFormUrl = new RegExp('\/Tasks\/', 'i');
-                    var employeeUrl = '/employees/getPersonsForDd';
+                    var employeeUrl = '/employees/getForDd';
 
                     server.respondWith('GET', taskFormUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeTaskForm)]);
                     server.respondWith('GET', employeeUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmployee)]);
@@ -6560,7 +6560,7 @@ define([
 
                 it('Try to open CreateView', function (done) {
                     var $createBtn = topBarView.$el.find('#top-bar-createBtn');
-                    var employeeUrl = '/employees/getPersonsForDd';
+                    var employeeUrl = '/employees/getForDd';
                     var projectForDDUrl = '/getProjectsForDd';
 
                     server.respondWith('GET', employeeUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmployee)]);
@@ -6950,7 +6950,7 @@ define([
                 it('Try to open edit form', function () {
                     var $needTaskEl = $thisEl.find('.item').first();
                     var taskFormUrl = new RegExp('\/Tasks\/', 'i');
-                    var employeeUrl = '/employees/getPersonsForDd';
+                    var employeeUrl = '/employees/getForDd';
                     var $dialog;
 
                     server.respondWith('GET', taskFormUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeTaskForm)]);

@@ -36,7 +36,7 @@ var Module = function (models, event) {
 
     function validBody(body) {
 
-        return body.name ? true : false;
+        return !!body.name;
     }
 
     this.getForDd = function (req, res, next) {
@@ -97,7 +97,7 @@ var Module = function (models, event) {
         }
 
         function getTask(parallelCb) {
-            TasksSchema.find({'deal': model._id})
+            TasksSchema.find({deal: model._id})
                 .populate('deal', '_id name')
                 .populate('company', '_id name')
                 .populate('contact', '_id name')
@@ -114,7 +114,7 @@ var Module = function (models, event) {
                             task: elem,
                             _id : elem._id,
                             user: elem.editedBy.user
-                        }
+                        };
                     });
                     parallelCb(null, res);
                 });
@@ -338,8 +338,8 @@ var Module = function (models, event) {
             if (err) {
                 return next(err);
             }
-            if (deleteHistory){
-                historyWriter.deleteHistoryById(req, {contentId : id});
+            if (deleteHistory) {
+                historyWriter.deleteHistoryById(req, {contentId: id});
             }
 
             if (result && result.isOpportunitie) {
@@ -362,8 +362,8 @@ var Module = function (models, event) {
                     return err(err);
                 }
 
-                if (deleteHistory){
-                    historyWriter.deleteHistoryById(req,  {contentId : {$in: ids}});
+                if (deleteHistory) {
+                    historyWriter.deleteHistoryById(req, {contentId: {$in: ids}});
                 }
 
 
@@ -759,253 +759,242 @@ var Module = function (models, event) {
     };
 
     this.create = function (req, res, next) {
-        try {
-            var data = req.body;
+        var data = req.body;
+        var err;
+
+        var savetoDb = function (data) {
+            var _opportunitie = new models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema)();
             var err;
+            var noteObj;
 
-            var savetoDb = function (data) {
-                var err;
-                var noteObj;
+            _opportunitie.isOpportunitie = data.isOpportunitie || false;
 
-                try {
-                    var _opportunitie = new models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema)();
-
-                    _opportunitie.isOpportunitie = data.isOpportunitie || false;
-
-                    if (data.name) {
-                        _opportunitie.name = data.name;
-                    }
-                    if (data.jobkey) {
-                        _opportunitie.jobkey = data.jobkey;
-                    }
-                    if (data.color) {
-                        _opportunitie.color = data.color;
-                    }
-                    if (data.expectedRevenue) {
-                        if (data.expectedRevenue.value) {
-                            _opportunitie.expectedRevenue.value = data.expectedRevenue.value;
-                        }
-                        if (data.expectedRevenue.progress) {
-                            _opportunitie.expectedRevenue.progress = data.expectedRevenue.progress;
-                        }
-                        if (data.expectedRevenue.currency) {
-                            _opportunitie.expectedRevenue.currency = data.expectedRevenue.currency;
-                        }
-                    }
-                    if (data.creationDate) {
-                        _opportunitie.creationDate = data.creationDate;
-                    }
-                    if (data.notes && data.notes.length) {
-                        noteObj = data.notes[0];
-
-                        noteObj._id = mongoose.Types.ObjectId();
-                        noteObj.date = new Date();
-                        noteObj.author = req.session.uName;
-                        _opportunitie.notes = data.notes;
-                    }
-                    if (data.company) {
-                        _opportunitie.company = data.company;
-                    }
-                    if (data.customer) {
-                        _opportunitie.customer = data.customer;
-                    }
-                    if (data.address) {
-                        if (data.address.street) {
-                            _opportunitie.address.street = data.address.street;
-                        }
-                        if (data.address.city) {
-                            _opportunitie.address.city = data.address.city;
-                        }
-                        if (data.address.state) {
-                            _opportunitie.address.state = data.address.state;
-                        }
-                        if (data.address.zip) {
-                            _opportunitie.address.zip = data.address.zip;
-                        }
-                        if (data.address.country) {
-                            _opportunitie.address.country = data.address.country;
-                        }
-                    }
-                    if (data.contactName) {
-                        if (data.contactName.first) {
-                            _opportunitie.contactName.first = data.contactName.first;
-                        }
-                        if (data.contactName.last) {
-                            _opportunitie.contactName.last = data.contactName.last;
-                        }
-                    }
-                    if (data.email) {
-                        _opportunitie.email = data.email;
-                    }
-                    if (data.phones) {
-                        if (data.phones.phone) {
-                            _opportunitie.phones.phone = data.phones.phone;
-                        }
-                        if (data.phones.mobile) {
-                            _opportunitie.phones.mobile = data.phones.mobile;
-                        }
-                        if (data.fax) {
-                            _opportunitie.phones.fax = data.phones.fax;
-                        }
-                    }
-                    if (data.func) {
-                        _opportunitie.func = data.func;
-                    }
-                    if (data.salesPerson) {
-                        _opportunitie.salesPerson = data.salesPerson;
-                    }
-                    if (data.salesTeam) {
-                        _opportunitie.salesTeam = data.salesTeam;
-                    }
-                    if (data.internalNotes) {
-
-                        _opportunitie.notes = [{
-                            _id : mongoose.Types.ObjectId(),
-                            date: new Date(),
-                            user: {
-                                _id  : req.session.uId,
-                                login: req.session.uName
-                            },
-                            note: data.internalNotes
-                        }];
-
-                    }
-                    if (data.nextAction) {
-                        if (data.nextAction.desc) {
-                            _opportunitie.nextAction.desc = data.nextAction.desc;
-                        }
-                        if (data.nextAction.date) {
-                            _opportunitie.nextAction.date = new Date(data.nextAction.date);
-                        }
-                    }
-                    if (data.expectedClosing) {
-                        _opportunitie.expectedClosing = new Date(data.expectedClosing);
-                    }
-                    if (data.priority) {
-                        if (data.priority) {
-                            _opportunitie.priority = data.priority;
-                        }
-                    }
-                    if (data.categories) {
-                        if (data.categories._id) {
-                            _opportunitie.categories.id = data.categories._id;
-                        }
-                        if (data.categories.name) {
-                            _opportunitie.categories.name = data.categories.name;
-                        }
-                    }
-                    if (data.groups) {
-                        _opportunitie.groups = data.groups;
-                    }
-                    if (data.whoCanRW) {
-                        _opportunitie.whoCanRW = data.whoCanRW;
-                    }
-                    if (data.info) {
-                        if (data.StartDate) {
-                            _opportunitie.StartDate = data.StartDate;
-                        }
-                        if (data.EndDate) {
-                            _opportunitie.EndDate = data.EndDate;
-                        }
-                        if (data.sequence) {
-                            _opportunitie.sequence = data.sequence;
-                        }
-                        if (data.parent) {
-                            _opportunitie.parent = data.parent;
-                        }
-
-                    }
-                    if (data.workflow) {
-                        _opportunitie.workflow = data.workflow;
-                    }
-                    if (data.active) {
-                        _opportunitie.active = data.active;
-                    }
-                    if (data.optout) {
-                        _opportunitie.optout = data.optout;
-                    }
-                    if (data.reffered) {
-                        _opportunitie.reffered = data.reffered;
-                    }
-
-                    if (data.campaign) {
-                        _opportunitie.campaign = data.campaign;
-                    }
-                    if (data.source) {
-                        _opportunitie.source = data.source;
-                    }
-                    if (data.skype) {
-                        _opportunitie.skype = data.skype;
-                    }
-                    if (data.social && data.social.LI) {
-                        if (!_opportunitie.social) {
-                            _opportunitie.social = {};
-                        }
-                        _opportunitie.social.LI = data.social.LI;
-                    }
-                    if (data.social && data.social.FB) {
-                        if (!_opportunitie.social) {
-                            _opportunitie.social = {};
-                        }
-                        _opportunitie.social.FB = data.social.FB;
-                    }
-
-                    _opportunitie.createdBy.user = req.session.uId;
-                    //uId for edited by field on creation
-                    _opportunitie.editedBy.user = req.session.uId;
-
-                    event.emit('updateSequence', models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema), 'sequence', 0, 0, _opportunitie.workflow, _opportunitie.workflow, true, false, function (sequence) {
-                        _opportunitie.sequence = sequence;
-                        _opportunitie.save(function (err, result) {
-                            var historyOptions;
-                            if (err) {
-                                return next(err);
-                            }
-
-                            historyOptions = {
-                                contentType: result.isOpportunitie ? 'opportunitie' : 'lead',
-                                data       : result.toJSON(),
-                                req        : req,
-                                contentId  : result._id
-                            };
-
-                            historyWriter.addEntry(historyOptions);
-
-                            res.status(201).send({
-                                success: 'A new Opportunities create success',
-                                id     : result._id
-                            });
-
-                            // send email to _opportunitie.salesPerson
-                            if (_opportunitie.salesPerson) {
-                                sendEmailToAssigned(req, _opportunitie);
-                            }
-
-                        });
-                    });
-                } catch (error) {
-                    return next(err);
+            if (data.name) {
+                _opportunitie.name = data.name;
+            }
+            if (data.jobkey) {
+                _opportunitie.jobkey = data.jobkey;
+            }
+            if (data.color) {
+                _opportunitie.color = data.color;
+            }
+            if (data.expectedRevenue) {
+                if (data.expectedRevenue.value) {
+                    _opportunitie.expectedRevenue.value = data.expectedRevenue.value;
                 }
-            };
+                if (data.expectedRevenue.progress) {
+                    _opportunitie.expectedRevenue.progress = data.expectedRevenue.progress;
+                }
+                if (data.expectedRevenue.currency) {
+                    _opportunitie.expectedRevenue.currency = data.expectedRevenue.currency;
+                }
+            }
+            if (data.creationDate) {
+                _opportunitie.creationDate = data.creationDate;
+            }
+            if (data.notes && data.notes.length) {
+                noteObj = data.notes[0];
 
-            if (!validBody(data)) {
-                err = new Error();
-                err.status = 404;
+                noteObj._id = mongoose.Types.ObjectId();
+                noteObj.date = new Date();
+                noteObj.author = req.session.uName;
+                _opportunitie.notes = data.notes;
+            }
+            if (data.company) {
+                _opportunitie.company = data.company;
+            }
+            if (data.customer) {
+                _opportunitie.customer = data.customer;
+            }
+            if (data.address) {
+                if (data.address.street) {
+                    _opportunitie.address.street = data.address.street;
+                }
+                if (data.address.city) {
+                    _opportunitie.address.city = data.address.city;
+                }
+                if (data.address.state) {
+                    _opportunitie.address.state = data.address.state;
+                }
+                if (data.address.zip) {
+                    _opportunitie.address.zip = data.address.zip;
+                }
+                if (data.address.country) {
+                    _opportunitie.address.country = data.address.country;
+                }
+            }
+            if (data.contactName) {
+                if (data.contactName.first) {
+                    _opportunitie.contactName.first = data.contactName.first;
+                }
+                if (data.contactName.last) {
+                    _opportunitie.contactName.last = data.contactName.last;
+                }
+            }
+            if (data.email) {
+                _opportunitie.email = data.email;
+            }
+            if (data.phones) {
+                if (data.phones.phone) {
+                    _opportunitie.phones.phone = data.phones.phone;
+                }
+                if (data.phones.mobile) {
+                    _opportunitie.phones.mobile = data.phones.mobile;
+                }
+                if (data.fax) {
+                    _opportunitie.phones.fax = data.phones.fax;
+                }
+            }
+            if (data.func) {
+                _opportunitie.func = data.func;
+            }
+            if (data.salesPerson) {
+                _opportunitie.salesPerson = data.salesPerson;
+            }
+            if (data.salesTeam) {
+                _opportunitie.salesTeam = data.salesTeam;
+            }
+            if (data.internalNotes) {
 
-                return next(err);
+                _opportunitie.notes = [{
+                    _id : mongoose.Types.ObjectId(),
+                    date: new Date(),
+                    user: {
+                        _id  : req.session.uId,
+                        login: req.session.uName
+                    },
+                    note: data.internalNotes
+                }];
+
+            }
+            if (data.nextAction) {
+                if (data.nextAction.desc) {
+                    _opportunitie.nextAction.desc = data.nextAction.desc;
+                }
+                if (data.nextAction.date) {
+                    _opportunitie.nextAction.date = new Date(data.nextAction.date);
+                }
+            }
+            if (data.expectedClosing) {
+                _opportunitie.expectedClosing = new Date(data.expectedClosing);
+            }
+            if (data.priority) {
+                if (data.priority) {
+                    _opportunitie.priority = data.priority;
+                }
+            }
+            if (data.categories) {
+                if (data.categories._id) {
+                    _opportunitie.categories.id = data.categories._id;
+                }
+                if (data.categories.name) {
+                    _opportunitie.categories.name = data.categories.name;
+                }
+            }
+            if (data.groups) {
+                _opportunitie.groups = data.groups;
+            }
+            if (data.whoCanRW) {
+                _opportunitie.whoCanRW = data.whoCanRW;
+            }
+            if (data.info) {
+                if (data.StartDate) {
+                    _opportunitie.StartDate = data.StartDate;
+                }
+                if (data.EndDate) {
+                    _opportunitie.EndDate = data.EndDate;
+                }
+                if (data.sequence) {
+                    _opportunitie.sequence = data.sequence;
+                }
+                if (data.parent) {
+                    _opportunitie.parent = data.parent;
+                }
+
+            }
+            if (data.workflow) {
+                _opportunitie.workflow = data.workflow;
+            }
+            if (data.active) {
+                _opportunitie.active = data.active;
+            }
+            if (data.optout) {
+                _opportunitie.optout = data.optout;
+            }
+            if (data.reffered) {
+                _opportunitie.reffered = data.reffered;
             }
 
-            if (!data) {
-                err = new Error('Opprtunities.create Incorrect Incoming Data');
-                err.status = 400;
-
-                return next(err);
+            if (data.campaign) {
+                _opportunitie.campaign = data.campaign;
             }
-            savetoDb(data);
+            if (data.source) {
+                _opportunitie.source = data.source;
+            }
+            if (data.skype) {
+                _opportunitie.skype = data.skype;
+            }
+            if (data.social && data.social.LI) {
+                if (!_opportunitie.social) {
+                    _opportunitie.social = {};
+                }
+                _opportunitie.social.LI = data.social.LI;
+            }
+            if (data.social && data.social.FB) {
+                if (!_opportunitie.social) {
+                    _opportunitie.social = {};
+                }
+                _opportunitie.social.FB = data.social.FB;
+            }
 
-        } catch (exception) {
-            return next(exception);
+            _opportunitie.createdBy.user = req.session.uId;
+            _opportunitie.editedBy.user = req.session.uId;
+
+            event.emit('updateSequence', models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema), 'sequence', 0, 0, _opportunitie.workflow, _opportunitie.workflow, true, false, function (sequence) {
+                _opportunitie.sequence = sequence;
+                _opportunitie.save(function (err, result) {
+                    var historyOptions;
+                    if (err) {
+                        return next(err);
+                    }
+
+                    historyOptions = {
+                        contentType: result.isOpportunitie ? 'opportunitie' : 'lead',
+                        data       : result.toJSON(),
+                        req        : req,
+                        contentId  : result._id
+                    };
+
+                    historyWriter.addEntry(historyOptions);
+
+                    res.status(201).send({
+                        success: 'A new Opportunities create success',
+                        id     : result._id
+                    });
+
+                    // send email to _opportunitie.salesPerson
+                    if (_opportunitie.salesPerson) {
+                        sendEmailToAssigned(req, _opportunitie);
+                    }
+
+                });
+            });
+        };
+
+        if (!validBody(data)) {
+            err = new Error();
+            err.status = 404;
+
+            return next(err);
         }
+
+        if (!data) {
+            err = new Error('Opprtunities.create Incorrect Incoming Data');
+            err.status = 400;
+
+            return next(err);
+        }
+        savetoDb(data);
 
     };
 
@@ -2592,18 +2581,18 @@ var Module = function (models, event) {
                         }
                     }, {
                         $project: {
-                            creationDate    : 1,
-                            name            : 1,
-                            expectedRevenue : 1,
-                            customer        : {$arrayElemAt: ['$customer', 0]},
-                            nextAction      : 1,
-                            expectedClosing : 1,
-                            sequence        : 1,
-                            workflow        : {$arrayElemAt: ['$workflow', 0]},
-                            salesPerson     : {$arrayElemAt: ['$salesPerson', 0]},
-                            'editedBy.user' : {$arrayElemAt: ['$editedBy.user', 0]},
-                            'editedBy.date' : 1,
-                            isOpportunitie  : 1
+                            creationDate   : 1,
+                            name           : 1,
+                            expectedRevenue: 1,
+                            customer       : {$arrayElemAt: ['$customer', 0]},
+                            nextAction     : 1,
+                            expectedClosing: 1,
+                            sequence       : 1,
+                            workflow       : {$arrayElemAt: ['$workflow', 0]},
+                            salesPerson    : {$arrayElemAt: ['$salesPerson', 0]},
+                            'editedBy.user': {$arrayElemAt: ['$editedBy.user', 0]},
+                            'editedBy.date': 1,
+                            isOpportunitie : 1
                         }
                     }, {
                         $group: {
@@ -2654,19 +2643,19 @@ var Module = function (models, event) {
                         }
                     }, {
                         $project: {
-                            name            : 1,
-                            customer        : {$arrayElemAt: ['$customer', 0]},
-                            company         : {$arrayElemAt: ['$company', 0]},
-                            salesPerson     : {$arrayElemAt: ['$salesPerson', 0]},
-                            workflow        : {$arrayElemAt: ['$workflow', 0]},
-                            'editedBy.user' : {$arrayElemAt: ['$editedBy.user', 0]},
-                            expectedClosing : 1,
-                            'editedBy.date' : 1,
-                            source          : 1,
-                            address         : 1,
-                            skype           : 1,
-                            social          : 1,
-                            isOpportunitie  : 1
+                            name           : 1,
+                            customer       : {$arrayElemAt: ['$customer', 0]},
+                            company        : {$arrayElemAt: ['$company', 0]},
+                            salesPerson    : {$arrayElemAt: ['$salesPerson', 0]},
+                            workflow       : {$arrayElemAt: ['$workflow', 0]},
+                            'editedBy.user': {$arrayElemAt: ['$editedBy.user', 0]},
+                            expectedClosing: 1,
+                            'editedBy.date': 1,
+                            source         : 1,
+                            address        : 1,
+                            skype          : 1,
+                            social         : 1,
+                            isOpportunitie : 1
                         }
                     }, {
                         $match: {
