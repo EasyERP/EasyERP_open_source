@@ -1289,6 +1289,27 @@ dl.payrollDateBlock {
   height: 100%;
   border-bottom: 1px solid #ededed;
 
+  &.leadsList {
+    .name {
+      color: #508bbd;
+      font-size: 15px;
+      font-family: @fontBold;
+    }
+  }
+
+  &.opportunitiesList {
+
+    .opportunity {
+      color: #508bbd;
+      font-size: 15px;
+      font-family: @fontBold;
+    }
+
+    .revenue {
+      font-size: 10px;
+    }
+  }
+
   &.personList {
 
     .firstName {
@@ -1322,16 +1343,14 @@ dl.payrollDateBlock {
     }
   }
 
-  &.opportunitiesList {
-
-    .opportunity {
+  &.quotationsList,
+  &.ordersList,
+  &.invoicesList,
+  &.proformaList {
+    .firstName {
       color: #508bbd;
       font-size: 15px;
       font-family: @fontBold;
-    }
-
-    .revenue {
-      font-size: 10px;
     }
   }
 
@@ -1619,6 +1638,10 @@ td.checkboxRow {
       font-size: 13px;
       color: #fff;
     }
+  }
+
+  ._filterDropDownWrap {
+    margin-top: 7px;
   }
 }
 
@@ -2044,7 +2067,7 @@ table {
   .btn.positioned {
     position: absolute;
     top: 5px;
-    left: 411px;
+    left: 311px;
   }
 }
 
