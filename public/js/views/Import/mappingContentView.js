@@ -3,12 +3,11 @@ define([
     'jQuery',
     'Underscore',
     'text!templates/Import/FieldsTemplate.html',
-    'views/Import/previewContentView',
     'constants/importMapping',
     'constants',
     'dataService',
     'common'
-], function (Backbone, $, _, ContentTemplate, PreviewView, importMapping, CONSTANTS, dataService, common) {
+], function (Backbone, $, _, ContentTemplate, importMapping, CONSTANTS, dataService, common) {
     'use strict';
 
     var mappingContentView = Backbone.View.extend({
@@ -67,20 +66,22 @@ define([
             $tab.addClass('active');
         },
 
-        goToPreview: function () {
+        getDataWithFields: function () {
             var $thisEl = this.$el;
             var self = this;
-            var url = '/importFile/imported';
             var $dbContentBlock = $thisEl.find('#dbContentBlock');
             var fieldsObject = {};
             var $content = $dbContentBlock.find('.content');
+            var parentTable = $thisEl.find('.tabItem').data('tab');
+
+            fieldsObject[parentTable] = {};
 
             for (var i = 0; i < $content.length; i++) {
                 var firstColumnVal = $($content[i]).find('.firstColumn').data('name');
                 var secondColumnVal = $($content[i]).find('.secondColumn').data('name');
-                var secondColumnPar = $($content[i]).find('.secondColumn').data('parent');
+
                 if (secondColumnVal) {
-                    fieldsObject[firstColumnVal] = secondColumnVal;
+                    fieldsObject[parentTable][firstColumnVal] = secondColumnVal;
                 }
             }
 

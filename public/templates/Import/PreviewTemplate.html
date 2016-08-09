@@ -9,12 +9,12 @@
     <div>
         <% _.each(fields, function(item, key) { %>
             <div style="font-size: 30px">
-                <%= item.parent %>
+                <%= key %>
             </div>
             <div>
                 <% _.each(item, function(item, key){ %>
                     <div style="font-size: 20px; border: 2px solid; display: inline-block">
-                        <%= item.value %>
+                        <%= item %>
                     </div>
                 <% }) %>
             </div>
