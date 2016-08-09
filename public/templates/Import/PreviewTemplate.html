@@ -1,66 +1,83 @@
-<div style="width: 100%; height: 100%">
-    <div style="text-align: center" id="checkedButtons">
-        <div class="mrgBut" style="display: inline-block; background-color: white; width: 500px; height: 250px">
-            <img src="images/illustration-merge.png">
-            <p style="font-size: 40px">
-                Merge data
-            </p>
-            <p style="font-size: 20px">
-                One record for the duplicated data
-            </p>
-            <input style="width:20px; height: 20px" name="checked" type="radio" checked="checked">
+<div class="_importStep3">
+    <div id="checkedButtons" class="_importCheckboxContainer">
+        <div class="mrgBut _importCheckboxItem">
+            <input name="checked" type="radio" checked="checked" class="_radioContainer" id="firstItem"/>
+            <label for="firstItem">
+                <img src="images/illustration-merge.png">
+                <div class="_cellContainer">
+                    <div class="_bodyContainer">
+                        <p class="_importItemTitle">
+                            Merge data
+                        </p>
+                        <p class="_importItemDesk">
+                            One record for the duplicated data
+                        </p>
+                    </div>
+                </div>
+            </label>
         </div>
-        <div class="mrgBut" style="display: inline-block; background-color: white; width: 500px; height: 250px">
-            <img src="images/illustration-multiple.png">
-            <p style="font-size: 40px">
-                Create multiple records
-            </p>
-            <p style="font-size: 20px">
-                Multiple record for the duplicated data
-            </p>
-            <input style="width:20px; height: 20px" name="checked" type="radio">
+        <div class="mrgBut _importCheckboxItem">
+            <input name="checked" type="radio" id="secondItem" class="_radioContainer" />
+            <label for="secondItem">
+                <img src="images/illustration-multiple.png">
+                <div class="_cellContainer">
+                    <div class="_bodyContainer">
+                        <p class="_importItemTitle">
+                            Create multiple records
+                        </p>
+                        <p class="_importItemDesk">
+                            Multiple record for the duplicated data
+                        </p>
+                    </div>
+                </div>
+            </label>
         </div>
     </div>
-    <p style="font-size: 40px; font-style: inherit">
-        Preview Import data
-    </p>
-    <p style="font-size: 15px; font-style: inherit">
-        Please validate the data based on the first 3 rows of the upload file.
-    </p>
 
-    <table>
-        <tr>
-            <td style="font-size: 30px">
-                <%= fields.type %>
-            </td>
-        </tr>
-        <tr>
-            <% _.each(fields.keys, function(item, key) { %>
-                <td style="font-size: 20px; font-style: inherit; background-color: #00a2d0; border: 2px solid;">
-                    <%= item %>
-                </td>
-            <% }) %>
-        </tr>
+    <div class="_step3Desk">
+        <h2>
+            Preview Import data
+        </h2>
+        <p>
+            Please validate the data based on the first 3 rows of the upload file.
+        </p>
+    </div>
 
-        <% _.each(fields.result, function(obj, key) { %>
-            <tr>
-                <% _.each(fields.keys, function(arr, key) { %>
+    <h2 class="_importTitle"><%= fields.type %></h2>
+
+    <div class="tableResponsive">
+        <table class="list task-list _importTable">
+            <thead>
+                <tr>
+                    <% _.each(fields.keys, function(item, key) { %>
+                    <th>
+                        <%= item %>
+                    </th>
+                    <% }) %>
+                </tr>
+            </thead>
+
+            <tbody>
+                <% _.each(fields.result, function(obj, key) { %>
+                <tr>
+                    <% _.each(fields.keys, function(arr, key) { %>
                     <% if (obj[arr]) { %>
-                        <td style="font-size: 20px; border: 2px solid;">
-                            <% if ((obj[arr]).toString().indexOf('data:image/') === -1) { %>
-                                <%= obj[arr] %>
-                            <% } else { %>
-                                <img src="<%= obj[arr] %>">
-                            <% } %>
-                        </td>
+                    <td>
+                        <% if ((obj[arr]).toString().indexOf('data:image/') === -1) { %>
+                            <%= obj[arr] %>
+                        <% } else { %>
+                            <img src="<%= obj[arr] %>">
+                        <% } %>
+                    </td>
                     <% } else { %>
-                        <td style="font-size: 20px; border: 2px solid;">
+                        <td>
                             <%= "" %>
                         </td>
-                    <% } %>
+                <% } %>
                 <% }) %>
             </tr>
-        <% }) %>
+            <% }) %>
+            </tbody>
     </table>
 </div>
 

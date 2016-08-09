@@ -1820,6 +1820,62 @@
     -webkit-transition: all 0.5s ease;
     transition: all 0.5s ease; }
 
+._importTitle {
+  font-size: 30px;
+  margin: 15px 0; }
+
+._importStep3 {
+  width: 100%;
+  padding: 0 15px; }
+  ._importStep3 ._step3Desk {
+    margin: 25px 0; }
+    ._importStep3 ._step3Desk h2 {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 10px; }
+    ._importStep3 ._step3Desk p {
+      font-size: 13px; }
+
+._importTable thead th {
+  text-align: right; }
+
+._importCheckboxContainer {
+  text-align: center;
+  font-size: 0; }
+  ._importCheckboxContainer ._importItemTitle {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px; }
+  ._importCheckboxContainer ._importItemDesk {
+    font-size: 13px; }
+  ._importCheckboxContainer ._importCheckboxItem {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    width: 50%;
+    min-height: 290px;
+    border: 1px solid #c8c8d3; }
+    ._importCheckboxContainer ._importCheckboxItem:last-child {
+      border-left: none; }
+    ._importCheckboxContainer ._importCheckboxItem label {
+      display: block;
+      padding: 25px;
+      cursor: pointer;
+      background: #f2f2f2; }
+  ._importCheckboxContainer ._cellContainer {
+    position: relative;
+    padding: 20px;
+    border: 1px solid #c8c8d3;
+    margin-top: 25px; }
+  ._importCheckboxContainer ._radioContainer {
+    position: absolute;
+    left: 70px;
+    bottom: 55px;
+    width: 20px;
+    height: 20px; }
+    ._importCheckboxContainer ._radioContainer:checked + label {
+      background: #ffffff; }
+
 .propertyContainer a:hover {
   text-decoration: none; }
 
