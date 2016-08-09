@@ -773,6 +773,12 @@ var Module = function (models, event) {
                     if (data.name) {
                         _opportunitie.name = data.name;
                     }
+                    if (data.name) {
+                        _opportunitie.name = data.name;
+                    }
+                    if (data.tempCompanyField) {
+                        _opportunitie.tempCompanyField = data.tempCompanyField;
+                    }
                     if (data.jobkey) {
                         _opportunitie.jobkey = data.jobkey;
                     }
@@ -800,9 +806,6 @@ var Module = function (models, event) {
                         noteObj.date = new Date();
                         noteObj.author = req.session.uName;
                         _opportunitie.notes = data.notes;
-                    }
-                    if (data.company) {
-                        _opportunitie.company = data.company;
                     }
                     if (data.customer) {
                         _opportunitie.customer = data.customer;
@@ -2112,50 +2115,7 @@ var Module = function (models, event) {
         }
 
         function updateOpp() {
-            var createPersonCustomer = function (company) {
-                var _person;
-                if (data.contactName && (data.contactName.first || data.contactName.last)) {
-                    _person = {
-                        name   : data.contactName,
-                        email  : data.email,
-                        phones : data.phones,
-                        company: company._id,
 
-                        salesPurchases: {
-                            isCustomer : true,
-                            salesPerson: data.salesPerson
-                        },
-
-                        type     : 'Person',
-                        createdBy: {user: req.session.uId}
-                    };
-                    Opportunity.find({$and: [{'name.first': data.contactName.first}, {'name.last': data.contactName.last}]}, function (err, _persons) {
-                        var _Person;
-
-                        if (err) {
-                            return next(err);
-                        }
-
-                        if (_persons.length > 0) {
-                            if (_persons[0].salesPurchases && !_persons[0].salesPurchases.isCustomer) {
-                                Customer.update({_id: _persons[0]._id}, {$set: {'salesPurchases.isCustomer': true}}, function (err) {
-                                    if (err) {
-                                        return next(err);
-                                    }
-                                });
-                            }
-                        } else {
-                            _Person = new Customer(_person);
-
-                            _Person.save(function (err) {
-                                if (err) {
-                                    return next(err);
-                                }
-                            });
-                        }
-                    });
-                }
-            };
             if (data.company) {
                 data.company = data.company;
             }
@@ -2183,7 +2143,7 @@ var Module = function (models, event) {
                     }
 
                     Opportunity.findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
-                        var updateCustomerArr = [];
+                        var lead = result.toJSON();
 
                         if (err) {
                             return next(err);
@@ -2194,86 +2154,140 @@ var Module = function (models, event) {
                                 var _company;
                                 var _Company;
 
-                                if (data.isOpportunitie && data.isConverted) {
-                                    if (result.company) {
-                                        updateCustomerArr.push(result.company);
-                                    }
-                                    if (result.customer) {
-                                        updateCustomerArr.push(result.customer);
-                                    }
-
-                                    if (updateCustomerArr.length) {
-                                        Customer.update({
-                                            _id: {$in: updateCustomerArr}
-                                        }, {
-                                            $set: {
-                                                isHidden                   : false,
-                                                'salesPurchases.isCustomer': true
-                                            }
-                                        }, {multi: true}, function (err, res) {
-                                            if (err) {
-                                                console.log(err);
-                                            }
-                                        });
-                                    }
-
-                                    if (data.tempCompanyField) {
-                                        _company = {
-                                            name: {
-                                                first: data.tempCompanyField,
-                                                last : ''
-                                            },
-
-                                            address: data.address,
+                                var createPersonCustomer = function (company) {
+                                    var _person;
+                                    if (lead.contactName && (lead.contactName.first || lead.contactName.last)) {
+                                        _person = {
+                                            name   : lead.contactName,
+                                            email  : lead.email,
+                                            phones : lead.phones,
+                                            company: company._id,
 
                                             salesPurchases: {
                                                 isCustomer : true,
-                                                salesPerson: data.salesPerson
+                                                salesPerson: lead.salesPerson
                                             },
 
-                                            type     : 'Company',
+                                            type     : 'Person',
                                             createdBy: {user: req.session.uId}
                                         };
+                                        Opportunity.find({$and: [{'name.first': lead.contactName.first}, {'name.last': lead.contactName.last}]}, function (err, _persons) {
+                                            var _Person;
 
-                                        Customer.find({'name.first': data.tempCompanyField}, function (err, companies) {
                                             if (err) {
                                                 return next(err);
                                             }
 
-                                            if (companies.length > 0) {
-                                                if (companies[0].salesPurchases && !companies[0].salesPurchases.isCustomer) {
-                                                    Customer.update({_id: companies[0]._id}, {$set: {'salesPurchases.isCustomer': true}}, function (err, success) {
-                                                        if (success) {
-                                                            createPersonCustomer(companies[0]);
+                                            if (_persons.length > 0) {
+                                                if (_persons[0].salesPurchases && !_persons[0].salesPurchases.isCustomer) {
+                                                    Customer.update({_id: _persons[0]._id}, {$set: {'salesPurchases.isCustomer': true}}, function (err) {
+                                                        if (err) {
+                                                            return next(err);
                                                         }
                                                     });
                                                 }
-                                            } else {
-                                                _Company = new Customer(_company);
-                                                _Company.save(function (err, _res) {
+                                            } else if (data.createCustomer) {
+                                                _Person = new Customer(_person);
+
+                                                _Person.save(function (err, doc) {
                                                     if (err) {
                                                         return next(err);
                                                     }
 
-                                                    Opportunity.update({_id: _id}, {
-                                                        $set: {
-                                                            company : _res._id,
-                                                            customer: _res._id
-                                                        }
-                                                    }, function (err) {
+                                                    Opportunity.findByIdAndUpdate(lead._id, {customer : doc._id}, function (err){
                                                         if (err) {
-                                                            console.log(err);
+                                                            return next(err);
                                                         }
                                                     });
-                                                    createPersonCustomer(_res);
                                                 });
                                             }
                                         });
-
-                                    } else {
-                                        createPersonCustomer({});
                                     }
+                                };
+                                if (data.isConverted && data.isOpportunitie){
+
+
+                                        if (lead.tempCompanyField) {
+                                            _company = {
+                                                name: {
+                                                    first: lead.tempCompanyField,
+                                                    last : ''
+                                                },
+
+                                                address: lead.address,
+
+                                                salesPurchases: {
+                                                    isCustomer : true,
+                                                    salesPerson: lead.salesPerson
+                                                },
+
+                                                type     : 'Company',
+                                                createdBy: {user: req.session.uId}
+                                            };
+
+                                            Customer.find({'name.first': lead.tempCompanyField}, function (err, companies) {
+                                                if (err) {
+                                                    return next(err);
+                                                }
+
+                                                if (companies.length > 0) {
+                                                    Opportunity.update({_id: _id}, {
+                                                        $set: {
+                                                            company: lead.customer,
+                                                            customer : null
+                                                        }
+                                                    }, function (err) {
+                                                        if (err) {
+                                                            return console.log(err);
+                                                        }
+                                                        if (companies[0].salesPurchases && !companies[0].salesPurchases.isCustomer) {
+                                                            Customer.update({_id: companies[0]._id}, {$set: {'salesPurchases.isCustomer': true}}, function (err, success) {
+                                                                if (err) {
+                                                                    console.log(err);
+                                                                }
+
+                                                                createPersonCustomer(companies[0]);
+
+
+                                                            });
+                                                        } else {
+                                                            createPersonCustomer(companies[0]);
+                                                        }
+
+                                                    });
+
+                                                } else if (data.createCustomer) {
+                                                    _Company = new Customer(_company);
+                                                    _Company.save(function (err, _res) {
+                                                        if (err) {
+                                                            return next(err);
+                                                        }
+
+                                                        Opportunity.update({_id: _id}, {
+                                                            $set: {
+                                                                company: _res._id
+                                                            }
+                                                        }, function (err) {
+                                                            if (err) {
+                                                                console.log(err);
+                                                            }
+                                                        });
+                                                        createPersonCustomer(_res);
+                                                    });
+                                                } else {
+                                                createPersonCustomer({});
+                                            }
+                                            });
+
+                                        } else {
+                                            createPersonCustomer({});
+                                        }
+
+
                                 }
+
+
+
 
                                 // send email to assigned when update Lead
                                 if (result.salesPerson) {

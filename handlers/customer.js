@@ -490,7 +490,7 @@ var Module = function (models, event) {
         var Customers = models.get(req.session.lastDb, 'Customers', CustomerSchema);
         var query = req.query;
         var type = query.type;
-        var queryObject = {isHidden: false};
+        var queryObject = {};
 
         if (type) {
             queryObject.type = type;
@@ -668,8 +668,7 @@ var Module = function (models, event) {
         var Customers = models.get(req.session.lastDb, 'Customers', CustomerSchema);
 
         Customers.find({
-            type    : 'Company',
-            isHidden: false
+            type    : 'Company'
         }, {'name.first': 1}).sort({'name.first': 1}).exec(function (err, result) {
             if (err) {
                 return next(err);
@@ -772,9 +771,10 @@ var Module = function (models, event) {
         contentSearcher = function (ids, cb) {
             var queryObject = {};
 
-            queryObject.$and = [{isHidden: false}];
+
 
             if (optionsObject) {
+                queryObject.$and = [];
                 queryObject.$and.push(optionsObject);
             }
 

@@ -43,6 +43,15 @@ define([
                     if (customer.type === 'Person') {
                         context.$el.find('#first').val(customer.name.first);
                         context.$el.find('#last').val(customer.name.last);
+                        context.$el.find('#email').val(customer.email);
+                        context.$el.find('#phone').val(customer.phones.phone);
+                        context.$el.find('#mobile').val(customer.phones.mobile);
+
+                        context.$el.find('#street').val('');
+                        context.$el.find('#city').val('');
+                        context.$el.find('#state').val('');
+                        context.$el.find('#zip').val('');
+                        context.$el.find('#country').val('');
 
                         context.$el.find('#company').val('');
                     } else {
@@ -50,16 +59,18 @@ define([
 
                         context.$el.find('#first').val('');
                         context.$el.find('#last').val('');
+                        context.$el.find('#email').val('');
+                        context.$el.find('#phone').val('');
+                        context.$el.find('#mobile').val('');
+                        context.$el.find('#street').val(customer.address.street);
+                        context.$el.find('#city').val(customer.address.city);
+                        context.$el.find('#state').val(customer.address.state);
+                        context.$el.find('#zip').val(customer.address.zip);
+                        context.$el.find('#country').val(customer.address.country);
 
                     }
-                    context.$el.find('#email').val(customer.email);
-                    context.$el.find('#phone').val(customer.phones.phone);
-                    context.$el.find('#mobile').val(customer.phones.mobile);
-                    context.$el.find('#street').val(customer.address.street);
-                    context.$el.find('#city').val(customer.address.city);
-                    context.$el.find('#state').val(customer.address.state);
-                    context.$el.find('#zip').val(customer.address.zip);
-                    context.$el.find('#country').val(customer.address.country);
+
+
 
                 }, this);
             } else {
@@ -110,16 +121,15 @@ define([
             var location = window.location.hash;
             var pageSplited = location.split('/p=')[1];
             var self = this;
-            var $company = this.$el.find('#company');
             var mid = 24;
             var name = $.trim(this.$el.find('#name').val());
-            var company = $company.attr('data-id');
-            var idCustomer = this.$('#customerDd').data('id');
+            var idCustomer = this.$el.find('#customerDd').attr('data-id');
             var address = {};
-            var salesPersonId = this.$('#salesPerson').attr('data-id');
-            var salesTeamId = this.$('#salesTeam option:selected').val();
+            var salesPersonId = this.$el.find('#salesPerson').attr('data-id');
+            var salesTeamId = this.$el.find('#salesTeam option:selected').val();
             var first = $.trim(this.$el.find('#first').val());
             var last = $.trim(this.$el.find('#last').val());
+            var tempCompany = $.trim(this.$el.find('#company').val())
             var contactName = {
                 first: first,
                 last : last
@@ -135,8 +145,8 @@ define([
                 mobile: mobile,
                 fax   : fax
             };
-            var workflow = this.$('#workflowsDd').attr('data-id');
-            var priority = $('#priorityDd').data('id');
+            var workflow =this.$el.find('#workflowsDd').attr('data-id');
+            var priority = this.$el.find('#priorityDd').attr('data-id');
             var internalNotes = $.trim(this.$el.find('#internalNotes').val());
             var active = (this.$el.find('#active').is(':checked'));
             var optout = (this.$el.find('#optout').is(':checked'));
@@ -146,7 +156,7 @@ define([
             var FB = $.trim(this.$el.find('#FB').val());
 
 
-            var source = $('#sourceDd').data('id');
+            var source = this.$el.find('#sourceDd').attr('data-id');
 
             var usersId = [];
             var groupsId = [];
@@ -172,10 +182,10 @@ define([
             });
             $('.groupsAndUser tr').each(function () {
                 if ($(this).data('type') === 'targetUsers') {
-                    usersId.push($(this).data('id'));
+                    usersId.push($(this).attr('data-id'));
                 }
                 if ($(this).data('type') === 'targetGroups') {
-                    groupsId.push($(this).data('id'));
+                    groupsId.push($(this).attr('data-id'));
                 }
 
             });
@@ -186,9 +196,8 @@ define([
                     LI: LI,
                     FB: FB
                 },
-
-                company      : company || null,
-                campaign     : $('#campaignDd').data('id'),
+                tempCompanyField  : tempCompany,
+                campaign     : $('#campaignDd').attr('data-id'),
                 source       : source,
                 customer     : idCustomer || null,
                 address      : address,

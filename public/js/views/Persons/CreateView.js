@@ -21,8 +21,6 @@ define([
         initialize: function (options) {
             this.mId = CONSTANTS.MID[this.contentType];
 
-            this.saveDeal = options.saveDeal;
-
             _.bindAll(this, 'saveItem', 'render');
             this.model = new PersonModel();
             this.models = (options && options.model) ? options.model : null;
@@ -122,8 +120,6 @@ define([
                 whoCanRW: whoCanRW
             };
 
-            data.isHidden = this.saveDeal ? true : false;
-
             model = new PersonModel();
             model.save(data, {
                 headers: {
@@ -135,15 +131,10 @@ define([
                     var navigateUrl;
                     self.hideDialog();
 
-                    if (self.saveDeal && (typeof self.saveDeal === 'function')) {
-                        self.saveDeal({customer : res.id}, 'formProperty');
-                    } else {
-                        Backbone.history.fragment = '';
+                    Backbone.history.fragment = '';
 
-                        navigateUrl = (viewType === 'form') ? '#easyErp/Persons/form/' + res.id : window.location.hash;
-                        Backbone.history.navigate(navigateUrl, {trigger: true});
-                    }
-
+                    navigateUrl = (viewType === 'form') ? '#easyErp/Persons/form/' + res.id : window.location.hash;
+                    Backbone.history.navigate(navigateUrl, {trigger: true});
                 },
 
                 error: function (model, xhr) {

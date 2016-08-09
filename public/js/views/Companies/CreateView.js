@@ -22,7 +22,6 @@ define([
             _.bindAll(this, 'saveItem', 'render');
             this.model = new CompanyModel();
             this.responseObj = {};
-            this.saveDeal = options.saveDeal;
 
             this.render();
         },
@@ -89,8 +88,6 @@ define([
                 name    : name,
                 imageSrc: this.imageSrc,
                 email   : email,
-                isHidden : this.saveDeal ? true : false,
-
                 social: {
                     LI: LI,
                     FB: FB
@@ -135,15 +132,9 @@ define([
                     var navigateUrl;
                     self.hideDialog();
 
-                    if (self.saveDeal && (typeof self.saveDeal === 'function')) {
-                        self.saveDeal({company : res.id}, 'formProperty');
-                    } else {
-                        navigateUrl = (viewType === 'form') ? '#easyErp/Companies/form/' + res.id : window.location.hash;
-                        Backbone.history.fragment = '';
-                        Backbone.history.navigate(navigateUrl, {trigger: true});
-                    }
-
-
+                    navigateUrl = (viewType === 'form') ? '#easyErp/Companies/form/' + res.id : window.location.hash;
+                    Backbone.history.fragment = '';
+                    Backbone.history.navigate(navigateUrl, {trigger: true});
                 },
 
                 error: function (models, xhr) {
