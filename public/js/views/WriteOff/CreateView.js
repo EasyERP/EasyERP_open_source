@@ -6,7 +6,7 @@ define([
     'text!templates/WriteOff/CreateTemplate.html',
     'models/InvoiceModel',
     'populate',
-    'views/Product/InvoiceOrder/ProductItems',
+    'views/Products/InvoiceOrder/ProductItems',
     'constants',
     'helpers'
 ], function (Backbone, $, _, ParentView, CreateTemplate, InvoiceModel, populate, ProductItemView, CONSTANTS, helpers) {

@@ -1,7 +1,7 @@
 ﻿﻿define([
-        "text!templates/Product/thumbnails/ThumbnailsItemTemplate.html",
-        'views/Product/EditView',
-        'views/Product/CreateView',
+        "text!templates/Products/thumbnails/ThumbnailsItemTemplate.html",
+        'views/Products/EditView',
+        'views/Products/CreateView',
         'dataService',
         'models/ProductModel',
         'views/Filter/filterView',
@@ -50,7 +50,7 @@
 
             //modified for filter Vasya
             getTotalLength: function (currentNumber, filter, newCollection) {
-                dataService.getData('/product/totalCollectionLength', {
+                dataService.getData('/products/totalCollectionLength', {
                     currentNumber: currentNumber,
                     filter       : filter,
                     newCollection: newCollection
@@ -73,7 +73,7 @@
                 var ids = _.map(collection.toJSON(), function (item) {
                     return item._id;
                 });
-                common.getImages(ids, "/product/getProductsImages");
+                common.getImages(ids, "/products/getProductsImages");
             },
 
             //modified for filter Vasya
@@ -190,7 +190,7 @@
                 e.preventDefault();
                 App.ownContentType = true;
                 var id = $(e.target).closest('.thumbnailwithavatar').attr("id");
-                window.location.hash = "#easyErp/product/form/" + id;
+                window.location.hash = "#easyErp/products/form/" + id;
             },
 
             gotoEditForm: function (e) {
@@ -204,7 +204,7 @@
                     e.preventDefault();
                     var id = $(e.target).closest('.thumbnailwithavatar').attr("id");
                     var model = new currentModel({validate: false});
-                    model.urlRoot = '/product/form/';
+                    model.urlRoot = '/products/form/';
                     model.fetch({
                         data   : {id: id},
                         success: function (model) {
@@ -274,12 +274,12 @@
 
             exportToCsv: function () {
                 //todo change after routes refactoring
-                window.location = '/Product/exportToCsv'
+                window.location = '/Products/exportToCsv'
             },
 
             exportToXlsx: function () {
                 //todo change after routes refactoring
-                window.location = '/Product/exportToXlsx'
+                window.location = '/Products/exportToXlsx'
             }
         });
 

@@ -2,7 +2,7 @@
     'Backbone',
     'jQuery',
     'Underscore',
-    'text!templates/Product/thumbnails/ThumbnailsItemTemplate.html',
+    'text!templates/Products/thumbnails/ThumbnailsItemTemplate.html',
     'views/thumbnailsViewBase',
     'views/Products/EditView',
     'views/Products/CreateView',
@@ -102,12 +102,12 @@
 
         exportToCsv: function () {
             //todo change after routes refactoring
-            window.location = '/Product/exportToCsv';
+            window.location = '/Products/exportToCsv';
         },
 
         exportToXlsx: function () {
             //todo change after routes refactoring
-            window.location = '/Product/exportToXlsx';
+            window.location = '/Products/exportToXlsx';
         }
 
     });

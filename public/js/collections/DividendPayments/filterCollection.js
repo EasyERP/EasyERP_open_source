@@ -8,7 +8,7 @@ define([
 
     var PaymentCollection = Parent.extend({
         model   : PaymentModel,
-        url     : '/payment/',
+        url     : '/payments/',
         pageSize: CONSTANTS.DEFAULT_THUMBNAILS_PER_PAGE,
 
         initialize: function (options) {

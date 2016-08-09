@@ -1,9 +1,9 @@
 define([
     'views/listViewBase',
-    'text!templates/Product/list/ListHeader.html',
-    'views/Product/CreateView',
+    'text!templates/Products/list/ListHeader.html',
+    'views/Products/CreateView',
     'views/salesProduct/list/ListItemView',
-    'views/Product/EditView',
+    'views/Products/EditView',
     'models/ProductModel',
     'text!templates/Alpabet/AphabeticTemplate.html',
     'collections/salesProduct/filterCollection',
@@ -18,11 +18,11 @@ define([
         listItemView            : listItemView,
         contentCollection       : contentCollection,
         FilterView              : FilterView,
-        totalCollectionLengthUrl: '/product/totalCollectionLength',
+        totalCollectionLengthUrl: '/products/totalCollectionLength',
         page                    : null, // if reload page, and in url is valid page
         contentType             : CONSTANT.SALESPRODUCT, // needs in view.prototype.changeLocationHash
-        exportToXlsxUrl         : '/Product/exportToXlsx',
-        exportToCsvUrl          : '/Product/exportToCsv',
+        exportToXlsxUrl         : '/Products/exportToXlsx',
+        exportToCsvUrl          : '/Products/exportToCsv',
 
         initialize: function (options) {
             this.startTime = options.startTime;
@@ -74,7 +74,7 @@ define([
             var model = new productModel({validate: false});
 
             e.preventDefault();
-            model.urlRoot = '/product/form';
+            model.urlRoot = '/products/form';
             model.fetch({
                 data   : {id: id},
                 success: function (model) {
