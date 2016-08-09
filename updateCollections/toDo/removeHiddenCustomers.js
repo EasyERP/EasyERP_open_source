@@ -21,9 +21,9 @@ dbObject.once('open', function callback() {
     var Opportunitie;
 
     console.log("Connection to db is success");
-    opportunitySchema = mongoose.Schemas.Opportunitie;
+    customerSchema = mongoose.Schemas.Customer;
 
-    Customer = dbObject.model('Opportunities', opportunitySchema);
+    Customer = dbObject.model('Customer', customerSchema);
 
     Customer.remove({
         isHidden: true
