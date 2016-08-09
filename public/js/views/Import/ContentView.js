@@ -54,19 +54,16 @@ define([
             this.selectStage();
         },
 
-        updateCurrentUser: function () {
+        updateCurrentUser: function (callback) {
             var userModel;
             var currentUser = App.currentUser;
 
-            if (currentUser.imports) {
-                App.currentUser.imports.stage = this.stage;
-            } else {
-                App.currentUser.imports = {
-                    stage    : this.stage,
-                    timeStamp: this.timeStamp,
-                    fileName : this.fileName
-                };
-            }
+            App.currentUser.imports = {
+                stage    : this.stage,
+                timeStamp: this.timeStamp,
+                fileName : this.fileName,
+                map      : this.map
+            };
 
             userModel = new UserModel(currentUser);
 
@@ -74,7 +71,13 @@ define([
                 imports: App.currentUser.imports
             }, {
                 validate: false,
-                patch   : true
+                patch   : true,
+                success : function () {
+
+                    if (callback && typeof callback === 'function') {
+                        callback();
+                    }
+                }
             });
         },
 
@@ -82,6 +85,7 @@ define([
             var data;
             var $target;
             var url = '/importFile/preview';
+            var self = this;
 
             if (e) {
                 $target = $(e.target);
@@ -127,12 +131,17 @@ define([
                     data.timeStamp = this.timeStamp;
                     this.map = data;
 
-                    this.updateCurrentUser();
+                    this.updateCurrentUser(function () {
+                        dataService.getData(url, {timeStamp: self.timeStamp}, function (err, data) {
+                            self.childView = new PreviewView({data: data});
+                        });
+                    });
+                } else {
+                    dataService.getData(url, {timeStamp: this.timeStamp}, function (err, data) {
+                        this.childView = new PreviewView({data: data});
+                    });
                 }
 
-                dataService.getData(url, {timeStamp: this.timeStamp}, function (err, data) {
-                    this.childView = new PreviewView({data: data});
-                });
             }
 
             this.changeStage(this.stage);

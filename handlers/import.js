@@ -137,7 +137,6 @@ var Module = function (models) {
                 return next(err);
             }
 
-
             if (importedData) {
                 mappedObj = splitFields(personKeysArray, importedData.result);
             }
@@ -157,17 +156,18 @@ var Module = function (models) {
     };
 
     this.getForPreview = function (req, res, next) {
-        var body = req.body;
-        var result = body.result || {};
-        var timeStamp = +body.timeStamp;
+        var query = req.query;
+        var timeStamp = +query.timeStamp;
         var userId = req.session.uId;
         var ImportModel = models.get(req.session.lastDb, 'Imports', ImportSchema);
-        var UserModel = models.get(req.session.lastDb, 'Users', ImportSchema)
+        var UserModel = models.get(req.session.lastDb, 'Users', UserSchema);
         var criteria = {user: userId};
         var titleArray;
         var mappedFields;
         var resultArray = [];
         var map;
+        var type;
+        var result;
 
         if (timeStamp) {
             criteria.timeStamp = timeStamp;
@@ -179,6 +179,8 @@ var Module = function (models) {
             }
 
             map = userModel.imports && userModel.imports.map;
+            type = map.type;
+            result = map.result;
 
             ImportModel
                 .find(criteria)
@@ -195,7 +197,7 @@ var Module = function (models) {
 
                     titleArray = importData.shift().result;
 
-                    mappedFields = mapImportFileds(map, titleArray);
+                    mappedFields = mapImportFileds(result, titleArray);
 
                     async.each(importData, function (importItem, cb) {
                         var saveObj;
@@ -213,7 +215,8 @@ var Module = function (models) {
 
                         res.status(200).send({
                             result: resultArray,
-                            keys  : _.values(map)
+                            keys  : _.values(result),
+                            type  : type
                         });
                     });
 
