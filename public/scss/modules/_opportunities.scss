@@ -459,7 +459,7 @@
 }
 
 .ui-dialog {
-  ._salesModal {
+  ._listModal {
     padding: 10px 20px;
 
     .modal_title {
@@ -481,7 +481,7 @@
     }
 
     ._modalSelect {
-      a,
+      > a,
       input {
         display: block;
         padding: 5px;

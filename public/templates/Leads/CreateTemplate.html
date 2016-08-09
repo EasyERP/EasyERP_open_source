@@ -1,121 +1,137 @@
-<div class="form-holder">
+<div class="form-holder _listModalWrap">
     <form method="post" action="" class="form" id="leadForm">
-        <fieldset>
-            <div class="inner">
-                <div class="dialog-tabs-items">
-                    <div class="dialog-tabs-item active">
-                        <div class="half-block left">
-                            <dl class="opp-info">
-                                <dt><label for="name">Subject</label></dt>
-                                <dd><input type="text" class="title-input blueback" id="name"
-                                           placeholder="Describe the lead..." required maxlength="48"/></dd>
-                                <dt><label for="company">Company Name</label></dt>
-                                <dd><input type="text" id="company" data-id="" placeholder="Company name"
-                                           maxlength="32"/></dd>
-                                <dt><label for="customerDd">Customer</label></dt>
-                                <dd>
-                                    <a id="customerDd" class="current-selected" href="javascript:;">Select</a>
-                                </dd>
-                                <dt><label for="first">First Name </label></dt>
-                                <dd><input type="text" class="name" id="first" placeholder="First Name" maxlength="32"/>
-                                </dd>
-                                <dt><label for="last">Last Name </label></dt>
-                                <dd><input type="text" class="name" id="last" placeholder="Last Name" maxlength="32"/>
-                                </dd>
-                                <dt><label for="email">Email </label></dt>
-                                <dd><input type="text" id="email" placeholder="e.g. email@site.com" maxlength="48"/>
-                                </dd>
-                                <!--                    <dt><label for="jobPos">Job Position</label></dt><dd><input type="text" id="jobPos" placeholder="Job Position" maxlength="32"/></dd>-->
-                                <dt><label for="phone">Phone </label></dt>
-                                <dd><input type="text" id="phone" placeholder="Phone number" maxlength="32"/></dd>
-                                <dt><label for="mobile">Mobile </label></dt>
-                                <dd><input type="text" id="mobile" placeholder="Mobile number" maxlength="32"/></dd>
-                                <!--                    <dt><label for="workflowNamesDd">Workflow Name </label></dt><dd>
-                                                        <a id="workflowNamesDd" class="current-selected" href="javascript:;"></a>
-                                </dd>-->
-                                <dt><label for="skype">Skype</label></dt>
-                                <dd><input type="text" id="skype" value="" placeholder="Skype"
-                                           maxlength="256"/></dd>
-                                <dt><label for="LI">LinkedIn</label></dt>
-                                <dd><input type="text" id="LI" placeholder="LinkedIn"
-                                           maxlength="256"/></dd>
-                                <dt><label for="FB">Facebook</label></dt>
-                                <dd><input type="text" id="FB" placeholder="Facebook"
-                                           maxlength="256"/></dd>
-                                </dl>
+        <div class="dialog-tabs-items">
+            <div class="dialog-tabs-item active">
+                <div class="_listModal">
+                    <div class="_listModalColumn">
+                        <div class="_listModalTitle"><label><b>Lead</b></label></div>
+                        <div class="_modalList">
+                            <div class="_modalLabel"><label for="name">Subject</label></div>
+                            <div class="_modalSelect"><input type="text" class="title-input blueback" id="name" placeholder="Describe the lead..." required maxlength="48"/></div>
                         </div>
-                        <div class="half-block left">
-                            <dl class="opp-info">
-                                <dt><label for="street">Street</label></dt>
-                                <dd><input type="text" class="address" id="street" name="street" placeholder="Street..."
-                                           maxlength="32"/></dd>
-                                <dt><label for="city">City</label></dt>
-                                <dd><input type="text" class="address" id="city" name="city" placeholder="City"
-                                           maxlength="32"/></dd>
-                                <dt><label for="state">State</label></dt>
-                                <dd><input type="text" class="address" id="state" name="state" placeholder="State"
-                                           maxlength="32"/></dd>
-                                <dt><label for="zip">Zip</label></dt>
-                                <dd><input type="text" class="address" id="zip" name="zip" placeholder="ZIP"
-                                           maxlength="32"/></dd>
-                                <dt><label for="country">Country</label></dt>
-                                <dd><input type="text" class="address" id="country" name="country" placeholder="Country"
-                                           maxlength="32"/></dd>
-                                <dt><label for="sourceDd">Source</label></dt>
-                                <dd>
-                                    <a id="sourceDd" class="current-selected" href="javascript:;">Select</a>
-                                </dd>
-                                <dt><label for="salesPerson">Assigned to</label></dt>
-                                <dd>
-                                    <a id="salesPerson" class="current-selected" href="javascript:;">Select</a>
-                                </dd>
-                            </dl>
+                        <div class="_modalList">
+                            <div class="_modalLabel"><label for="company">Company Name</label></div>
+                            <div class="_modalSelect"><input type="text" id="company" data-id="" placeholder="Company name" maxlength="32"/></div>
                         </div>
-                        <dl class="internal-info">
-                            <dt><label for="internalNotes">Internal Notes</label></dt>
-                            <div class="area_holder">
-                                <textarea id="internalNotes" placeholder="Internal notes" maxlength="2500"/>
-                                <a href="javascript:;" class="attach_file">
-                                    <i class="fa fa-paperclip" aria-hidden="true"></i>
-                                </a>
-                            </div>
-                        </dl>
-                        <div class="clearfix"></div>
-                        <div class="half-block left withPaddingLeft">
-                            <!--<div class="formTitle">
-                                <h3 class="left">Extra Info</h3>
-                                <div class="clearfix"></div>
-                            </div>
-                            <dl class="opp-info">
-                              <dt><h4>Categorization</h4></dt><dd>&nbsp;</dd>
-                              <dt><label>Status </label></dt><dd>&nbsp;</dd>
-                              <dt><h4>Mailings</h4></dt><dd>&nbsp;</dd>
-                              <dt><label>Opt-Out </label></dt><dd><input type="checkbox" id="optout" /></dd>
-                              <dt><h4>Misc</h4></dt><dd>&nbsp;</dd>
-                              <dt><label>Active </label></dt><dd><input type="checkbox" checked="checked" id="active" /></dd>
-                              <dt><label>Referred By </label></dt><dd><input type="text" id="reffered" /></dd>
-                              <dt></dt><dd></dd>
-                            </dl>-->
+                        <div class="_modalList">
+                            <div class="_modalLabel"><label for="customerdiv">Customer</label></div>
+                            <div class="_modalSelect"><a id="customerdiv" class="current-selected" href="javascript:;">Select</a></div>
                         </div>
-
-                        <div class="half-block left withPaddingLeft">
-                            <!--<div class="formTitle">
-                                <h3 class="left">Internal Notes</h3>
-                                <div class="clearfix"></div>
-                            </div>
-                            <textarea id="internalNotes"></textarea>-->
+                        <div class="_modalList">
+                            <div class="_modalLabel"><label for="sourcediv">Source</label></div>
+                            <div class="_modalSelect"><a id="sourcediv" class="current-selected" href="javascript:;">Select</a></div>
                         </div>
-                        <div class="clearfix"></div>
-                        <div class="attach-container"></div>
-                        <div class="clearfix"></div>
+                        <div class="_modalList">
+                            <div class="_modalLabel"><label for="salesPerson">Assigned to</label></div>
+                            <div class="_modalSelect"><a id="salesPerson" class="current-selected" href="javascript:;">Select</a></div>
+                        </div>
                     </div>
-                    <div class="dialog-tabs-item">
-                        <div class="assignees-container"></div>
+                    <div class="_listModalColumn">
+                        <div class="_listModalTitle"><label><b>Contacts</b></label></div>
+                        <div class="_modalList">
+                            <div class="_modalLabel"><label for="first">First Name </label></div>
+                            <div class="_modalSelect"><input type="text" class="name" id="first" placeholder="First Name" maxlength="32"/></div>
+                        </div>
+                        <div class="_modalList">
+                            <div class="_modalLabel"><label for="last">Last Name </label></div>
+                            <div class="_modalSelect"><input type="text" class="name" id="last" placeholder="Last Name" maxlength="32"/></div>
+                        </div>
+                        <div class="_modalList">
+                            <div class="_modalLabel"><label for="email">Email </label></div>
+                            <div class="_modalSelect"><input type="text" id="email" placeholder="e.g. email@site.com" maxlength="48"/></div>
+                        </div>
+                        <!--                    <div><label for="jobPos">Job Position</label></div><div><input type="text" id="jobPos" placeholder="Job Position" maxlength="32"/></div>-->
+                        <div class="_modalList">
+                            <div class="_modalLabel"><label for="phone">Phone </label></div>
+                            <div class="_modalSelect"><input type="text" id="phone" placeholder="Phone number" maxlength="32"/></div>
+                        </div>
+                        <!--<div class="_modalList">-->
+                        <!--<div class="_modalLabel"><label for="mobile">Mobile </label></div>-->
+                        <!--<div class="_modalSelect"><input type="text" id="mobile" placeholder="Mobile number" maxlength="32"/></div>-->
+                        <!--</div>-->
+                        <!--                    <div><label for="workflowNamesdiv">Workflow Name </label></div><div>
+                                                <a id="workflowNamesdiv" class="current-selected" href="javascript:;"></a>
+                        </div>-->
+                        <div class="_modalList">
+                            <div class="_modalLabel"><label for="skype">Skype</label></div>
+                            <div class="_modalSelect"><input type="text" id="skype" value="" placeholder="Skype" maxlength="256"/></div>
+                        </div>
+                        <div class="_modalList">
+                            <div class="_modalLabel"><label for="LI">LinkedIn</label></div>
+                            <div class="_modalSelect"><input type="text" id="LI" placeholder="LinkedIn" maxlength="256"/></div>
+                        </div>
+                        <!--<div class="_modalList">-->
+                        <!--<div class="_modalLabel"><label for="FB">Facebook</label></div>-->
+                        <!--<div class="_modalSelect"><input type="text" id="FB" placeholder="Facebook" maxlength="256"/></div>-->
+                        <!--</div>-->
+                    </div>
+                    <div class="_listModalColumn">
+                        <div class="_listModalTitle"><label><b>Company</b></label></div>
+
+                        <div class="_modalList">
+                            <div class="_modalLabel"><label for="street">Street</label></div>
+                            <div class="_modalSelect"><input type="text" class="adivress" id="street" name="street" placeholder="Street..." maxlength="32"/></div>
+                        </div>
+                        <div class="_modalList">
+                            <div class="_modalLabel"><label for="city">City</label></div>
+                            <div class="_modalSelect"><input type="text" class="adivress" id="city" name="city" placeholder="City" maxlength="32"/></div>
+                        </div>
+                        <div class="_modalList">
+                            <div class="_modalLabel"><label for="state">State</label></div>
+                            <div class="_modalSelect"><input type="text" class="adivress" id="state" name="state" placeholder="State" maxlength="32"/></div>
+                        </div>
+                        <div class="_modalList">
+                            <div class="_modalLabel"><label for="zip">Zip</label></div>
+                            <div class="_modalSelect"><input type="text" class="adivress" id="zip" name="zip" placeholder="ZIP" maxlength="32"/></div>
+                        </div>
+                        <div class="_modalList">
+                            <div class="_modalLabel"><label for="country">Country</label></div>
+                            <div class="_modalSelect"><input type="text" class="adivress" id="country" name="country" placeholder="Country" maxlength="32"/></div>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="_modalList">
+                        <div class="area_holder">
+                            <div class="_modalLabel"><label for="internalNotes">Internal Notes</label></div>
+                            <div class="_modalSelect">
+                                <textarea id="internalNotes" placeholder="Internal notes" maxlength="2500"/>
+                                <span class="attach_file fa fa-paperclip"></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="clearfix"></div>
+                <div class="half-block left withPadivingLeft">
+                    <!--<div class="formTitle">
+                        <h3 class="left">Extra Info</h3>
+                        <div class="clearfix"></div>
+                    </div>
+                    <dl class="opp-info">
+                      <div><h4>Categorization</h4></div><div>&nbsp;</div>
+                      <div><label>Status </label></div><div>&nbsp;</div>
+                      <div><h4>Mailings</h4></div><div>&nbsp;</div>
+                      <div><label>Opt-Out </label></div><div><input type="checkbox" id="optout" /></div>
+                      <div><h4>Misc</h4></div><div>&nbsp;</div>
+                      <div><label>Active </label></div><div><input type="checkbox" checked="checked" id="active" /></div>
+                      <div><label>Referred By </label></div><div><input type="text" id="reffered" /></div>
+                      <div></div><div></div>
+                    </dl>-->
+                </div>
 
+                <div class="half-block left withPadivingLeft">
+                    <!--<div class="formTitle">
+                        <h3 class="left">Internal Notes</h3>
+                        <div class="clearfix"></div>
+                    </div>
+                    <textarea id="internalNotes"></textarea>-->
+                </div>
+                <div class="clearfix"></div>
+                <div class="attach-container"></div>
+                <div class="clearfix"></div>
             </div>
-        </fieldset>
+            <div class="dialog-tabs-item">
+                <div class="assignees-container"></div>
+            </div>
+        </div>
     </form>
 </div>

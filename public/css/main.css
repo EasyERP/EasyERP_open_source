@@ -4144,6 +4144,38 @@ table.kanban tbody td:nth-child(n+2) {
 ._borderRight {
   border-right: 1px solid #c8c8d3;
 }
+.separateBlock {
+  margin-top: 5px;
+  font-family: 'Open Sans SemiBold', sans-serif, Verdana;
+}
+._listModalColumn {
+  width: 33.333%;
+  padding: 0 10px;
+  float: left;
+}
+._listModal:after {
+  content: '';
+  display: table;
+  clear: both;
+}
+._modalSelect {
+  position: relative;
+}
+.ui-dialog ._listModalWrap ._listModal {
+  padding: 0;
+}
+.ui-dialog ._listModalWrap ._listModal ._modalSelect a,
+.ui-dialog ._listModalWrap ._listModal ._modalSelect input {
+  padding: 0;
+  min-height: 30px;
+}
+.ui-dialog .form-holder._listModalWrap {
+  padding: 10px;
+}
+.attach_file {
+  cursor: pointer;
+  color: #7eadcc;
+}
 .collapsed .sideMenu {
   width: 40px !important;
   margin-right: -100%;
