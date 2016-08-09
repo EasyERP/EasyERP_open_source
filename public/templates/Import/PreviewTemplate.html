@@ -1,4 +1,4 @@
-<div style="width: 100%; height: 100%">
+<div style="width: 100%; height: 100%; overflow-x: scroll" >
     <p style="font-size: 40px; font-style: inherit">
         Preview Import data
     </p>
@@ -7,19 +7,14 @@
     </p>
     <br>
     <div>
-        <% _.each(fields, function(item, key) { %>
-            <div style="font-size: 30px">
-                <%= key %>
-            </div>
-            <div>
-                <% _.each(item, function(item, key){ %>
-                    <div style="font-size: 20px; border: 2px solid; display: inline-block">
-                        <%= item %>
-                    </div>
-                <% }) %>
+        <div style="font-size: 30px">
+            <%= fields.type %>
+        </div>
+        <% _.each(fields.result, function(item, key) { %>
+            <div style="font-size: 20px; border: 2px solid; display: inline-block">
+                <%= item %>
             </div>
         <% }) %>
     </div>
-
 </div>
 
