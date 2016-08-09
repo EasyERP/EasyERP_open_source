@@ -5582,7 +5582,7 @@ var Module = function (models, event) {
 
                     newAccounts.forEach(function (acc) {
                         var balance = _.find(result[3], function (el) {
-                            return el._id.toString() === acc._id.toString();
+                            return el && el._id ? el._id.toString() === acc._id.toString() : null;
                         });
 
                         balance = balance || {};
