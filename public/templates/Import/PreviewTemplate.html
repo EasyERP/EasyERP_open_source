@@ -63,21 +63,22 @@
                     <% _.each(fields.keys, function(arr, key) { %>
                     <% if (obj[arr]) { %>
                     <td>
-                        <%= obj[arr] %>
+                        <% if ((obj[arr]).toString().indexOf('data:image/') === -1) { %>
+                            <%= obj[arr] %>
+                        <% } else { %>
+                            <img src="<%= obj[arr] %>">
+                        <% } %>
                     </td>
                     <% } else { %>
-                    <td>
-                        <%= "" %>
-                    </td>
-                    <% } %>
-                    <% }) %>
-                </tr>
+                        <td>
+                            <%= "" %>
+                        </td>
+                <% } %>
                 <% }) %>
+            </tr>
+            <% }) %>
             </tbody>
-        </table>
-    </div>
-
-
+    </table>
 </div>
 
 

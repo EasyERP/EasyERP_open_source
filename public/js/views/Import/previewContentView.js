@@ -20,8 +20,6 @@ define([
             options = options || {};
 
             this.fields = options.data;
-
-
             this.render();
         },
 

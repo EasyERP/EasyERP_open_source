@@ -100,13 +100,11 @@ define([
             });
 
             $thisEl.find('.importContainer').on('dragover', function (e) {
-                //console.log('DRAG OVER');
                 e.preventDefault();
                 e.stopPropagation();
             });
 
             $thisEl.find('.importContainer').on('dragenter', function (e) {
-                //console.log('DRAG ENTER');
                 e.preventDefault();
                 e.stopPropagation();
             });
