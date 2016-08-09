@@ -329,12 +329,12 @@ define([
             if (this.exportToCsvUrl) {
                 tempExportToCsvUrl = this.exportToCsvUrl;
                 if (this.filter) {
-                    tempExportToCsvUrl += '/' + encodeURIComponent(JSON.stringify(this.filter));
+                    tempExportToCsvUrl += '/?filter=' + encodeURIComponent(JSON.stringify(this.filter));
                 }
                 window.location = tempExportToCsvUrl;
             } else {
                 if (this.collection) {
-                    filterString += '/' + encodeURIComponent(JSON.stringify(this.filter));
+                    filterString += '/?filter=' + encodeURIComponent(JSON.stringify(this.filter));
                 }
                 window.location = this.collection.url + '/exportToCsv' + filterString;
             }

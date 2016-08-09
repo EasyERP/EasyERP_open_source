@@ -1257,16 +1257,11 @@ var Module = function (models, event) {
     this.exportToXlsx = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
 
-        var filter = req.query.filter || JSON.stringify({});
+        var filter = req.query.filter ? JSON.parse(req.query.filter) : JSON.stringify({});
         var type = req.query.type;
         var filterObj = {};
         var options;
-        var data = {};
         var filterMapper = new FilterMapper();
-
-        filter = JSON.parse(filter);
-
-        data.filter = filter;
 
         if (filter && typeof filter === 'object') {
             filterObj = filterMapper.mapFilter(filter, type);
@@ -1324,16 +1319,11 @@ var Module = function (models, event) {
     this.exportToCsv = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
 
-        var filter = req.query.filter || JSON.stringify({});
+        var filter = req.query.filter ? JSON.parse(req.query.filter) : JSON.stringify({});
         var type = req.query.type;
         var filterObj = {};
         var options;
-        var data = {};
         var filterMapper = new FilterMapper();
-
-        filter = JSON.parse(filter);
-
-        data.filter = filter;
 
         if (filter && typeof filter === 'object') {
             filterObj = filterMapper.mapFilter(filter, type);

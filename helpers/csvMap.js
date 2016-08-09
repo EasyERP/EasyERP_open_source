@@ -60,7 +60,6 @@ module.exports = (function () {
         collection: 'Department',
         schema    : 'Department',
         aliases   : {
-            ID               : 'ID',
             name             : 'Department Name',
             parentDepartment : 'Parent Department',
             departmentManager: 'Department Manager',
@@ -110,11 +109,8 @@ module.exports = (function () {
             relatedUser          : 'Related User',
             visibility           : 'Visibility',
             'department.name'    : 'Department Name',
-            'department._id'     : 'Department Id',
-            'jobPosition._id'    : 'Job Position Id',
             'jobPosition.name'   : 'Job Position Name',
             'manager.name'       : 'Manager Name',
-            'manager._id'        : 'Manager Id',
             coach                : 'Coach',
             nationality          : 'Nationality',
             identNo              : 'Ident No',
@@ -152,7 +148,6 @@ module.exports = (function () {
             jobType              : 'JobType',
             sequence             : 'Sequence',
             isLead               : 'Is Lead',
-            ID                   : 'ID',
             'social.FB'          : 'Facebook',
             'social.LI'          : 'Linkedin',
             'social.GP'          : 'Google+',
@@ -248,7 +243,6 @@ module.exports = (function () {
         collection: 'Profile',
         schema    : 'Profile',
         aliases   : {
-            _id                             : '_id',
             profileName                     : 'Profile Name',
             profileDescription              : 'Profile Description',
             'profileAccess.module'          : 'Profile Access Module',
@@ -262,7 +256,6 @@ module.exports = (function () {
         collection: 'modules',
         schema    : 'module',
         aliases   : {
-            _id      : 'id',
             mname    : 'Name',
             href     : 'Href',
             ancestors: 'ancestors',
@@ -277,7 +270,6 @@ module.exports = (function () {
         collection: 'workflows',
         schema    : 'workflow',
         aliases   : {
-            wId     : 'wId',
             wName   : 'wName',
             status  : 'Status',
             name    : 'Name',
@@ -292,7 +284,6 @@ module.exports = (function () {
         aliases   : {
             name                    : 'Name',
             expectedRecruitment     : 'Expected Recruitment',
-            'interviewForm.id'      : 'Interview Form Id',
             'interviewForm.name'    : 'Interview Form Name',
             department              : 'Department',
             description             : 'Description',
@@ -307,8 +298,7 @@ module.exports = (function () {
             'createdBy.user'        : 'Created By User',
             'createdBy.date'        : 'Created By Date',
             'editedBy.user'         : 'Edited By User',
-            'editedBy.date'         : 'Edited By Date',
-            ID                      : 'ID'
+            'editedBy.date'         : 'Edited By Date'
         },
         arrayKeys : {
             'groups.users': true,
@@ -328,7 +318,6 @@ module.exports = (function () {
         collection: 'wTrack',
         schema    : 'wTrack',
         aliases   : {
-            _id                          : 'ID',
             1                            : 'Mon',
             2                            : 'Tue',
             3                            : 'Wed',
@@ -338,18 +327,12 @@ module.exports = (function () {
             7                            : 'Sun',
             dateByWeek                   : 'Date By Week',
             dateByMonth                  : 'Date By Month',
-            'project.id'                 : 'Project ID',
             'project.projectName'        : 'Project Name',
-            'project.projectmanager._id' : 'Project Manager Id',
             'project.projectmanager.name': 'Project Manager Name',
-            'project.workflow._id'       : 'Workflow Id',
             'project.workflow.name'      : 'Workflow Name',
             'project.workflow.status'    : 'Workflow Status',
-            'project.customer._id'       : 'Customer Id',
             'project.customer.Name'      : 'Customer Name',
-            'employee._id'               : 'Employee Id',
             'employee.name'              : 'Employee Name',
-            'department._id'             : 'Department Id',
             'department.name'            : 'Department Name',
             year                         : 'Year',
             month                        : 'Month',
@@ -360,16 +343,10 @@ module.exports = (function () {
             cost                         : 'Cost',
             amount                       : 'Amount',
             isPaid                       : 'isPaid',
-            invoice                      : 'Invoice Id',
             'info.productType'           : 'Info Product Type',
             'info.salePrice'             : 'Info Sale Price',
             whoCanRW                     : 'Who Can RW',
-            'groups.owner'               : 'Groups Owner',
-            'groups.users'               : 'Groups Users',
-            'groups.group'               : 'Groups Group',
-            'editedBy.user'              : 'Edited By User',
             'editedBy.date'              : 'Edited By Date',
-            'createdBy.user'             : 'Created By User',
             'createdBy.date'             : 'Created By Date'
         },
         arrayKeys : {
@@ -391,7 +368,6 @@ module.exports = (function () {
         schema    : 'Invoice',
         aliases   : {
             forSales             : 'ForSales',
-            'supplier._id'       : 'Supplier ID',
             'supplier.name'      : 'Supplier Name',
             sourceDocument       : 'Source Document',
             supplierInvoiceNumber: 'Supplier Invoice Number',
@@ -401,13 +377,11 @@ module.exports = (function () {
             paymentDate          : 'Payment Date',
             account              : 'Account',
             journal              : 'Journal',
-            'salesPerson._id'    : 'Sales Person ID',
             'salesPerson.name'   : 'Sales Person Name',
             paymentTerms         : 'Payment Term',
             paymentInfo          : 'Payment Info',
             payments             : 'Payment',
             products             : 'Products',
-            'workflow._id'       : 'Workflow Id',
             'workflow.name'      : 'Workflow Name',
             'workflow.status'    : 'Workflow Status',
             whoCanRW             : 'Who Can RW',
@@ -491,8 +465,7 @@ module.exports = (function () {
             'editedBy.user'                 : 'Edited By User',
             'editedBy.date'                 : 'Edited By Date',
             'companyInfo.size'              : 'Company Size',
-            'companyInfo.industry'          : 'Company Industry',
-            ID                              : 'Id'
+            'companyInfo.industry'          : 'Company Industry'
         },
         formatters: {
             'Date Birthday': function (date) {
@@ -514,9 +487,7 @@ module.exports = (function () {
             projectShortDesc     : 'Project Short Desc',
             projectName          : 'Project Name',
             task                 : 'Task',
-            'customer_id'        : 'Customers Id',
             'customername'       : 'Customer Name',
-            'projectmanager._id' : 'Project Manager Id',
             'projectmanager.name': 'Project Manager Name',
             description          : 'Description',
             whoCanRW             : 'Who Can RW',
@@ -528,7 +499,6 @@ module.exports = (function () {
             TargetEndDate        : 'Target End Date',
             sequence             : 'Sequence',
             parent               : 'Parent',
-            'workflow._id'       : 'Workflow Id',
             'workflow.name'      : 'Workflow Name',
             estimated            : 'Estimated',
             logged               : 'Logged',
@@ -542,9 +512,6 @@ module.exports = (function () {
             'editedBy.user'      : 'Edited By User',
             'editedBy.date'      : 'Edited By Date',
             health               : 'Health',
-            ID                   : 'Id',
-            'bonus.employeeId'   : 'Bonus Employee Id',
-            'bonus.bonusId'      : 'Bonus Id',
             'bonus.startDate'    : 'Bonus Start Date',
             'bonus.startWeek'    : 'Bonus Start Week',
             'bonus.startYear'    : 'Bonus Start Year',
@@ -574,8 +541,7 @@ module.exports = (function () {
         collection: 'Industry',
         schema    : 'Industry',
         aliases   : {
-            name: 'Name',
-            ID  : 'Id'
+            name: 'Name'
         }
     };
 
@@ -637,7 +603,6 @@ module.exports = (function () {
             'info.isActive'           : 'Info Is Active',
             'info.barcode'            : 'Info Barcode',
             'info.description'        : 'Info Description',
-            'accounting.category._id' : 'Accounting Category Id',
             'accounting.category.name': 'Accounting Category Name',
             workflow                  : 'Workflow',
             whoCanRW                  : 'Who Can RW',
@@ -648,8 +613,7 @@ module.exports = (function () {
             'createdBy.user'          : 'Created By User',
             'createdBy.date'          : 'Created By Date',
             'editedBy.user'           : 'Edited By User',
-            'editedBy.date'           : 'Edited By Date',
-            ID                        : 'Id'
+            'editedBy.date'           : 'Edited By Date'
         },
         arrayKeys  : {
             'groups.users': true,

@@ -472,8 +472,8 @@ HTTP/1.1 200 OK
      * */
     router.get('/getExpenses', _journalEntryHandler.getExpenses);
     router.get('/getBalanceForAccount', _journalEntryHandler.getBalanceForAccount);
-    router.get('/exportToXlsx/:filter', _journalEntryHandler.exportToXlsx);
-    router.get('/exportToCsv/:filter', _journalEntryHandler.exportToCsv);
+    router.get('/exportToXlsx', _journalEntryHandler.exportToXlsx);
+    router.get('/exportToCsv', _journalEntryHandler.exportToCsv);
 
     /**
      *@api {get} /journalEntries/ Request JournalEntries

@@ -32,7 +32,7 @@ function exportToCsv(options) {
     var res = options.res;
     var next = options.next;
     var Model = options.Model;
-    var query = options.query ||[];
+    var query = options.query || [];
     var map = options.map;
     var fileName = options.fileName;
     var resultArray = options.resultArray;
@@ -72,14 +72,13 @@ function exportToCsv(options) {
 
     };
 
-    if (!resultArray){
+    if (!resultArray) {
         resultAggregate.exec(function (err, response) {
-
             if (err) {
                 return next(err);
             }
 
-            if (returnResult){
+            if (returnResult) {
                 return cb(null, response);
             }
 
@@ -138,8 +137,8 @@ function exportToXlsx(options) {
 
     var writeXlsx = function (array) {
         arrayToXlsx.writeFile(nameOfFile + '.xlsx', array, {
-            sheetName : "data",
-            headers   : headersArray,
+            sheetName: "data",
+            headers: headersArray,
             attributes: headersArray
         });
 
@@ -159,14 +158,14 @@ function exportToXlsx(options) {
 
     };
 
-    if (!resultArray){
+    if (!resultArray) {
         resultAggregate.exec(function (err, response) {
 
             if (err) {
                 return next(err);
             }
 
-            if (returnResult){
+            if (returnResult) {
                 return cb(null, response);
             }
 
