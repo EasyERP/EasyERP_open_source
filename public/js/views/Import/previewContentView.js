@@ -3,29 +3,33 @@ define([
     'jQuery',
     'Underscore',
     'text!templates/Import/PreviewTemplate.html',
-    'constants'
-], function (Backbone, $, _, PreviewTemplate,  CONSTANTS) {
+    'constants',
+    'dataService'
+], function (Backbone, $, _, PreviewTemplate, CONSTANTS, dataService) {
     'use strict';
 
     var PreviewView = Backbone.View.extend({
-        el                    : '#content-holder',
-        previewTemplate       : _.template(PreviewTemplate),
-        childView             : null,
+        el             : '#contentBlock',
+        previewTemplate: _.template(PreviewTemplate),
+        childView      : null,
 
         events: {
-            'click .mrgBut' : 'checkRadio'
+            'click .mrgBut': 'checkRadio'
         },
 
         initialize: function (options) {
+            var self = this
+
             options = options || {};
+            this.timeStamp = options.timeStamp;
 
-            this.fields = options.data;
-
-
-            this.render();
+            dataService.getData(url, {timeStamp: this.timeStamp}, function (err, data) {
+                self.data = data;
+                this.render();
+            });
         },
 
-        checkRadio: function(e) {
+        checkRadio: function (e) {
             var $target = $(e.target).find('input');
 
             $target[0].checked = true;
@@ -33,10 +37,9 @@ define([
 
         render: function () {
             var $thisEl = this.$el;
-            var self = this;
 
             $thisEl.find('#contentBlock').html(this.previewTemplate({
-                fields: self.fields
+                fields: this.fields
             }));
         }
     });

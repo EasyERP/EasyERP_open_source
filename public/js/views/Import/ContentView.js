@@ -54,16 +54,18 @@ define([
             this.selectStage();
         },
 
-        updateCurrentUser: function (callback) {
+        updateCurrentUser: function (options, callback) {
             var userModel;
             var currentUser = App.currentUser;
 
-            App.currentUser.imports = {
-                stage    : this.stage,
-                timeStamp: this.timeStamp,
-                fileName : this.fileName,
-                map      : this.map
-            };
+            if (App.currentUser.imports) {
+                for (var i in options) {
+                    App.currentUser.imports[i] = options[i];
+                }
+            } else {
+                App.currentUser.imports = options;
+            }
+
 
             userModel = new UserModel(currentUser);
 
@@ -113,7 +115,10 @@ define([
                     this.enabledNextBtn();
                 }
 
-                this.updateCurrentUser();
+                this.updateCurrentUser({
+                    fileName: this.fileName,
+                    stage   : this.stage
+                });
 
                 this.listenTo(this.childView, 'uploadCompleted', this.enabledNextBtn);
 
@@ -123,7 +128,9 @@ define([
                     fileName : this.fileName
                 });
 
-                this.updateCurrentUser();
+                this.updateCurrentUser({
+                    stage: this.stage
+                });
             } else if (this.stage === 3) {
 
                 if (this.childView) {
@@ -131,15 +138,16 @@ define([
                     data.timeStamp = this.timeStamp;
                     this.map = data;
 
-                    this.updateCurrentUser(function () {
-                        dataService.getData(url, {timeStamp: self.timeStamp}, function (err, data) {
+                    this.updateCurrentUser({
+                        stage: this.stage,
+                        map  : this.map
+                    }, function () {
+
                             self.childView = new PreviewView({data: data});
-                        });
                     });
                 } else {
-                    dataService.getData(url, {timeStamp: this.timeStamp}, function (err, data) {
                         this.childView = new PreviewView({data: data});
-                    });
+
                 }
 
             }

@@ -11,7 +11,7 @@ define([
     'use strict';
 
     var mappingContentView = Backbone.View.extend({
-        el             : '#content-holder',
+        el             : '#contentBlock',
         contentTemplate: _.template(ContentTemplate),
 
         events: {
