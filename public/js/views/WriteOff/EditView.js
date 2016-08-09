@@ -5,7 +5,7 @@ define([
     'views/dialogViewBase',
     'text!templates/WriteOff/EditTemplate.html',
     'views/Notes/NoteView',
-    'views/Product/InvoiceOrder/ProductItems',
+    'views/Products/InvoiceOrder/ProductItems',
     'views/salesInvoices/wTrack/wTrackRows',
     'views/Payment/CreateView',
     'views/salesInvoices/EmailView',

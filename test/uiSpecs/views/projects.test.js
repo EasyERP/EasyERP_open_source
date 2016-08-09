@@ -1691,7 +1691,7 @@ define([
                     server.respond();
                     expect($('.ui-dialog').find('#createPaymentForm')).to.exist;
 
-                    server.respondWith('POST', '/payment/', [200, {"Content-Type": "application/json"},  JSON.stringify({})]);
+                    server.respondWith('POST', '/payments/', [200, {"Content-Type": "application/json"},  JSON.stringify({})]);
                     server.respondWith('GET', paymentsUrl, [200, {"Content-Type": "application/json"},  JSON.stringify(PROJECTS.fakePayments)]);
                     server.respondWith('GET', ordersUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeOrders)]);
                     server.respondWith('GET', invoiceUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeProformas)]);

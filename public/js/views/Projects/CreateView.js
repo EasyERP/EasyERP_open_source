@@ -84,6 +84,12 @@ define([
                     type   : 'error',
                     message: 'Please, choose ' + value + ' first.'
                 });
+            } else if (!paymentMethod) {
+                value = 'Bank Account in Other Info tab';
+                return App.render({
+                    type   : 'error',
+                    message: 'Please, choose ' + value + ' first.'
+                });
             }
 
             bonusRow.each(function () {
