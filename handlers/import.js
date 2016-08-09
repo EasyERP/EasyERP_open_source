@@ -142,9 +142,7 @@ var Module = function (models) {
             }
 
             mappedObj.unMapped = _.compact(mappedObj.unMapped);
-            //mappedObj.unMapped = _.groupBy(mappedObj.unMapped, 'parent');
             unmappedResult[type] = mappedObj.unMapped;
-            //mappedObj.unMapped[type] = mappedObj.unMapped;
 
             mappedResult[type] = mappedObj.result;
 

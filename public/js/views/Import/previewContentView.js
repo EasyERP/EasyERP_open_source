@@ -39,7 +39,7 @@ define([
             var $thisEl = this.$el;
 
             $thisEl.find('#contentBlock').html(this.previewTemplate({
-                fields: this.fields
+                fields: this.data
             }));
         }
     });

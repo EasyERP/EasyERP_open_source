@@ -252,3 +252,125 @@
   }
 }
 
+._importTitle {
+  font-size: 30px;
+  margin: 15px 0;
+}
+
+._importStep3 {
+  width: 100%;
+  padding: 0 15px;
+
+
+  ._step3Desk {
+    margin: 25px 0;
+
+    h2 {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 13px;
+    }
+  }
+}
+
+._importTable {
+  th,
+  td {
+    border: 1px solid $importCellContainerBorder;
+    padding: 0 10px;
+  }
+
+  thead {
+    th {
+      text-align: right;
+    }
+  }
+
+  tbody {
+    tr {
+      &:nth-child(2n) {
+        background: $importTableTrBg;
+      }
+    }
+  }
+
+  ._importTableImg {
+    width: 50px;
+    height: 50px;
+    margin: 5px auto;
+
+    img {
+      max-width: 100%;
+    }
+  }
+
+}
+
+._importCheckboxContainer {
+  text-align: center;
+  font-size: 0;
+
+  ._importItemTitle {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  ._importItemDesk {
+    font-size: 13px;
+  }
+
+  ._importCheckboxItem {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    width: 50%;
+    min-height: 290px;
+    border: 1px solid $importCellContainerBorder;
+
+    &:last-child {
+      border-left: none;
+    }
+
+    label {
+      display: block;
+      padding: 25px;
+      cursor: pointer;
+      background: $importCellContainerBg;
+
+      &:hover {
+        ._cellContainer {
+          border-color: $importCellContainer;
+        }
+      }
+    }
+  }
+
+  ._cellContainer {
+    position: relative;
+    padding: 20px;
+    border: 1px solid $importCellContainerBorder;
+    margin-top: 25px;
+  }
+
+  ._radioContainer {
+    position: absolute;
+    left: 70px;
+    bottom: 55px;
+    width: 20px;
+    height: 20px;
+
+    &:checked + label {
+      background: $white;
+
+      ._cellContainer {
+        background: rgba($importCellContainer, .1);
+        border-color: $importCellContainer;
+      }
+    }
+  }
+}
