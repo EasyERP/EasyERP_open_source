@@ -22,8 +22,10 @@ $base-link   : $white;
 $base-border : $white;
 // -----------------------
 
-// General ---------------
-
+// Buttons ---------------
+$btnBorderColor: map-get($erp-colors, 'light-gray');
+$btnTextColor: map-get($erp-colors, 'lighter-gray');
+$btnBgColor: map-get($erp-colors, 'darker-gray');
 // -----------------------
 
 // Header ---------------
