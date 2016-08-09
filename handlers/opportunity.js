@@ -2668,6 +2668,7 @@ var Module = function (models, event) {
                     }, {
                         $project: {
                             name           : 1,
+                            contactName    : {$concat: ['$contactName.first', ' ', '$contactName.last']},
                             customer       : {$arrayElemAt: ['$customer', 0]},
                             company        : {$arrayElemAt: ['$company', 0]},
                             salesPerson    : {$arrayElemAt: ['$salesPerson', 0]},
@@ -2696,7 +2697,6 @@ var Module = function (models, event) {
                     }, {
                         $project: {
                             _id               : '$root._id',
-                            contactName       : {$concat: ['$root.customer.name.first', ' ', '$root.customer.name.last']},
                             'salesPerson._id' : '$root.salesPerson._id',
                             'salesPerson.name': '$root.salesPerson.name',
                             'workflow._id'    : '$root.workflow._id',

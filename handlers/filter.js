@@ -1828,13 +1828,6 @@ var Filters = function (models) {
             }
         }, {
             $lookup: {
-                from        : 'Customers',
-                localField  : 'customer',
-                foreignField: '_id',
-                as          : 'customer'
-            }
-        }, {
-            $lookup: {
                 from        : 'Users',
                 localField  : 'createdBy.user',
                 foreignField: '_id',
@@ -1844,22 +1837,20 @@ var Filters = function (models) {
             $project: {
                 workflow        : {$arrayElemAt: ['$workflow', 0]},
                 source          : 1,
+                contactName     : {$concat: ['$contactName.first', ' ', '$contactName.last']},
                 salesPerson     : {$arrayElemAt: ['$salesPerson', 0]},
-                customer        : {$arrayElemAt: ['$customer', 0]},
                 'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]}
             }
         }, {
             $project: {
                 workflow   : 1,
                 source     : 1,
-                contactName: {
-                    _id : '$customer._id',
-                    name: {$concat: ['$customer.name.first', ' ', '$customer.name.last']}
-                },
+                contactName: 1,
                 salesPerson: {
                     _id : '$salesPerson._id',
                     name: {$concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']}
                 },
+
                 createdBy: {
                     _id : {$ifNull: ['$createdBy.user._id', 'None']},
                     name: {$ifNull: ['$createdBy.user.login', 'None']}
@@ -1870,15 +1861,15 @@ var Filters = function (models) {
                 _id: null,
                 contactName: {
                     $addToSet: {
-                        _id : '$contactName._id',
+                        _id : '$contactName',
                         name: {
                             $cond: {
                                 if: {
-                                    $eq: ['$contactName.name', ' ']
+                                    $eq: ['$contactName', ' ']
                                 },
 
                                 then: 'None',
-                                else: '$contactName.name'
+                                else: '$contactName'
                             }
                         }
                     }
