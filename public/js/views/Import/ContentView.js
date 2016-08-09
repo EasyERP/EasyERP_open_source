@@ -61,7 +61,7 @@ define([
             var data;
             var stage;
             var $target;
-            var url = '/importFile/imported';
+            var url = '/importFile/preview';
             var fields;
 
 
@@ -104,7 +104,7 @@ define([
                     data = this.childView.getDataWithFields();
                 }
 
-                fields = data;
+                data.timeStamp = this.timeStamp;
 
                 dataService.postData(url, data, function (err, data) {
                    /* if (err) {
@@ -116,7 +116,7 @@ define([
                         return;
                     }*/
 
-                    new PreviewView({data: fields});
+                    new PreviewView({data: data});
                 });
             }
 
