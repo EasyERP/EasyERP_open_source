@@ -112,7 +112,7 @@ var Module = function (models) {
         var ImportModel = models.get(req.session.lastDb, 'Imports', ImportSchema);
         var userId = req.session.uId;
         var query = req.query;
-        var type = query.type || 'customers';
+        var type = query.type || 'Customers';
         var personKeysArray = mapObject[type].slice();
         var mappedObj;
         var unmappedResult = {};

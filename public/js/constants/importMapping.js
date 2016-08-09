@@ -4,7 +4,7 @@
     var root;
 
     var importMapping = {
-        customers: [
+        Customers: [
             'type',
             'isOwn',
             'name.first',
@@ -57,7 +57,7 @@
             'companyInfo.industry',
             'ID'
         ],
-        employees: ['isEmployee',
+        Employees: ['isEmployee',
             'imageSrc',
             'subject',
             'name.first',

@@ -74,14 +74,15 @@ define([
             var $content = $dbContentBlock.find('.content');
             var parentTable = $thisEl.find('.tabItem').data('tab');
 
-            fieldsObject[parentTable] = {};
+            fieldsObject.type = parentTable;
+            fieldsObject.result = {};
 
             for (var i = 0; i < $content.length; i++) {
                 var firstColumnVal = $($content[i]).find('.firstColumn').data('name');
                 var secondColumnVal = $($content[i]).find('.secondColumn').data('name');
 
                 if (secondColumnVal) {
-                    fieldsObject[parentTable][firstColumnVal] = secondColumnVal;
+                    fieldsObject.result[firstColumnVal] = secondColumnVal;
                 }
             }
 
@@ -105,7 +106,7 @@ define([
             console.log('revert');
 
             if ((isItClass) && (isDropable)) {
-                if (droppableParentName === 'customers' || droppableParentName === 'employees') {
+                if (droppableParentName === 'Customers' || droppableParentName === 'Employees') {
                     delete self.logFile[self.findKeyByValue(self.logFile, droppableName)];
 
                     self.$el.find('.fieldsItems[data-tab=' + droppableParentName + ']')
@@ -260,7 +261,7 @@ define([
 
             $thisEl.find('.empty').siblings('.cleanButton').hide();
             $thisEl.find('.empty').closest('.contentBlockRow').addClass('emptyRow');
-            this.changeTab(null, $thisEl.find('.tabItem[data-tab="customers"]'));
+            this.changeTab(null, $thisEl.find('.tabItem[data-tab="Customers"]'));
         }
     });
 
