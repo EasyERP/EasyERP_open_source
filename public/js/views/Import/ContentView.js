@@ -48,22 +48,40 @@ define([
             this.timeStamp = usersImport.timeStamp;
             this.fileName = usersImport.fileName;
             this.stage = usersImport.stage || 1;
+            this.map = {};
 
             this.render();
             this.selectStage();
         },
 
-        selectStage: function (e) {
-            var $thisEl = this.$el;
-            var currentUser = App.currentUser;
-            var stageSelector;
+        updateCurrentUser: function () {
             var userModel;
+            var currentUser = App.currentUser;
+
+            if (currentUser.imports) {
+                App.currentUser.imports.stage = this.stage;
+            } else {
+                App.currentUser.imports = {
+                    stage    : this.stage,
+                    timeStamp: this.timeStamp,
+                    fileName : this.fileName
+                };
+            }
+
+            userModel = new UserModel(currentUser);
+
+            userModel.save({
+                imports: App.currentUser.imports
+            }, {
+                validate: false,
+                patch   : true
+            });
+        },
+
+        selectStage: function (e) {
             var data;
-            var stage;
             var $target;
             var url = '/importFile/preview';
-            var fields;
-
 
             if (e) {
                 $target = $(e.target);
@@ -91,6 +109,8 @@ define([
                     this.enabledNextBtn();
                 }
 
+                this.updateCurrentUser();
+
                 this.listenTo(this.childView, 'uploadCompleted', this.enabledNextBtn);
 
             } else if (this.stage === 2) {
@@ -98,46 +118,22 @@ define([
                     timeStamp: this.timeStamp,
                     fileName : this.fileName
                 });
+
+                this.updateCurrentUser();
             } else if (this.stage === 3) {
 
                 if (this.childView) {
                     data = this.childView.getDataWithFields();
+                    data.timeStamp = this.timeStamp;
+                    this.map = data;
+
+                    this.updateCurrentUser();
                 }
 
-                data.timeStamp = this.timeStamp;
-
-                dataService.postData(url, data, function (err, data) {
-                   /* if (err) {
-                        App.render({
-                            type   : 'error',
-                            message: err
-                        });
-
-                        return;
-                    }*/
-
-                    new PreviewView({data: data});
+                dataService.getData(url, {timeStamp: this.timeStamp}, function (err, data) {
+                    this.childView = new PreviewView({data: data});
                 });
             }
-
-            if (currentUser.imports) {
-                App.currentUser.imports.stage = this.stage;
-            } else {
-                App.currentUser.imports = {
-                    stage    : this.stage,
-                    timeStamp: this.timeStamp,
-                    fileName : this.fileName
-                };
-            }
-
-            userModel = new UserModel(currentUser);
-
-            userModel.save({
-                imports: App.currentUser.imports
-            }, {
-                validate: false,
-                patch   : true
-            });
 
             this.changeStage(this.stage);
         },

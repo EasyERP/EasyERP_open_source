@@ -3,6 +3,7 @@ var Module = function (models) {
     'use strict';
 
     var ImportSchema = mongoose.Schemas.Imports;
+    var UserSchema = mongoose.Schemas.User;
     var PersonSchema = mongoose.Schemas.Customer;
 
     var schemaObj = {
@@ -161,53 +162,63 @@ var Module = function (models) {
         var timeStamp = +body.timeStamp;
         var userId = req.session.uId;
         var ImportModel = models.get(req.session.lastDb, 'Imports', ImportSchema);
+        var UserModel = models.get(req.session.lastDb, 'Users', ImportSchema)
         var criteria = {user: userId};
         var titleArray;
         var mappedFields;
         var resultArray = [];
+        var map;
 
         if (timeStamp) {
             criteria.timeStamp = timeStamp;
         }
 
-        ImportModel
-            .find(criteria)
-            .limit(6)
-            .exec(function (err, importData) {
-                if (err) {
-                    return next(err);
-                }
+        UserModel.findOne({_id: userId}, {imports: 1}, function (err, userModel) {
+            if (err) {
+                return next(err);
+            }
 
-                if (!importData.length) {
-                    res.status(404).send({result: 'Imported data not found'});
-                    return;
-                }
+            map = userModel.imports && userModel.imports.map;
 
-                titleArray = importData.shift().result;
-
-                mappedFields = mapImportFileds(result, titleArray);
-
-                async.each(importData, function (importItem, cb) {
-                    var saveObj;
-                    var importItemObj = importItem.toJSON().result;
-
-
-                    saveObj = prepareSaveObject(mappedFields, importItemObj);
-                    resultArray.push(saveObj);
-                    cb();
-
-                }, function (err) {
+            ImportModel
+                .find(criteria)
+                .limit(6)
+                .exec(function (err, importData) {
                     if (err) {
                         return next(err);
                     }
 
-                    res.status(200).send({
-                        result: resultArray,
-                        keys: _.values(result)
-                    });
-                });
+                    if (!importData.length) {
+                        res.status(404).send({result: 'Imported data not found'});
+                        return;
+                    }
 
-            });
+                    titleArray = importData.shift().result;
+
+                    mappedFields = mapImportFileds(map, titleArray);
+
+                    async.each(importData, function (importItem, cb) {
+                        var saveObj;
+                        var importItemObj = importItem.toJSON().result;
+
+
+                        saveObj = prepareSaveObject(mappedFields, importItemObj);
+                        resultArray.push(saveObj);
+                        cb();
+
+                    }, function (err) {
+                        if (err) {
+                            return next(err);
+                        }
+
+                        res.status(200).send({
+                            result: resultArray,
+                            keys  : _.values(map)
+                        });
+                    });
+
+                });
+        });
 
     };
 
