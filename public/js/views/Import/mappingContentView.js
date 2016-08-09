@@ -11,7 +11,7 @@ define([
     'use strict';
 
     var mappingContentView = Backbone.View.extend({
-        el             : '#content-holder',
+        el             : '#contentBlock',
         contentTemplate: _.template(ContentTemplate),
 
         events: {
@@ -237,7 +237,7 @@ define([
             var self = this;
 
 
-            $thisEl.find('#contentBlock').html(this.contentTemplate({
+            $thisEl.html(this.contentTemplate({
                 content: data,
                 fields : self.unmappedData
             }));
@@ -251,11 +251,13 @@ define([
             $thisEl.find('.fieldItem').draggable({
                 revert: true,
                 helper: 'clone',
-                start : function () {
+
+                start: function () {
                     $(this).hide();
                 },
-                stop  : function () {
-                    $(this).show()
+
+                stop: function () {
+                    $(this).show();
                 }
             });
 
