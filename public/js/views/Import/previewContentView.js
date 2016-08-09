@@ -20,6 +20,7 @@ define([
 
             this.fields = options.data;
 
+
             this.render();
         },
 
