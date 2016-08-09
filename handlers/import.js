@@ -202,6 +202,7 @@ var Module = function (models) {
                     }
 
                     res.status(200).send({
+                        type: body.type,
                         result: resultArray,
                         keys: _.values(result)
                     });

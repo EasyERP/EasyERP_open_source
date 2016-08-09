@@ -102,9 +102,9 @@ define([
 
                 if (this.childView) {
                     data = this.childView.getDataWithFields();
+                    data.timeStamp = this.timeStamp;
                 }
 
-                data.timeStamp = this.timeStamp;
 
                 dataService.postData(url, data, function (err, data) {
                    /* if (err) {
