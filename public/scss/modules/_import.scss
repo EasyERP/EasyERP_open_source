@@ -278,11 +278,26 @@
 }
 
 ._importTable {
+  th,
+  td {
+    border: 1px solid $importCellContainerBorder;
+    padding: 0 10px;
+  }
+
   thead {
     th {
       text-align: right;
     }
   }
+
+  tbody {
+    tr {
+      &:nth-child(2n) {
+        background: $importTableTrBg;
+      }
+    }
+  }
+
 }
 
 ._importCheckboxContainer {

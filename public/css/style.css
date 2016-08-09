@@ -1836,8 +1836,14 @@
     ._importStep3 ._step3Desk p {
       font-size: 13px; }
 
+._importTable th,
+._importTable td {
+  border: 1px solid #c8c8d3;
+  padding: 0 10px; }
 ._importTable thead th {
   text-align: right; }
+._importTable tbody tr:nth-child(2n) {
+  background: #f2f2f2; }
 
 ._importCheckboxContainer {
   text-align: center;
