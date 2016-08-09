@@ -9,6 +9,7 @@ define([
     'views/Notes/AttachView',
     'views/Import/uploadView',
     'views/Import/mappingContentView',
+    'views/Import/previewContentView',
     'dataService',
     'constants'
 ], function (Backbone,
@@ -21,6 +22,7 @@ define([
              AttachView,
              UploadView,
              MappingContentView,
+             PreviewView,
              dataService,
              CONSTANTS) {
     'use strict';
@@ -59,6 +61,9 @@ define([
             var data;
             var stage;
             var $target;
+            var url = '/importFile/imported';
+            var fields;
+
 
             if (e) {
                 $target = $(e.target);
@@ -94,10 +99,24 @@ define([
                     fileName : this.fileName
                 });
             } else if (this.stage === 3) {
-                data = this.childView.goToPreview();
+
+                if (this.childView) {
+                    data = this.childView.getDataWithFields();
+                }
+
+                fields = data;
 
                 dataService.postData(url, data, function (err, data) {
+                   /* if (err) {
+                        App.render({
+                            type   : 'error',
+                            message: err
+                        });
 
+                        return;
+                    }*/
+
+                    new PreviewView({data: fields});
                 });
             }
 
