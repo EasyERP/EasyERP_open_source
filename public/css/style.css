@@ -1844,6 +1844,12 @@
   text-align: right; }
 ._importTable tbody tr:nth-child(2n) {
   background: #f2f2f2; }
+._importTable ._importTableImg {
+  width: 50px;
+  height: 50px;
+  margin: 5px auto; }
+  ._importTable ._importTableImg img {
+    max-width: 100%; }
 
 ._importCheckboxContainer {
   text-align: center;
@@ -1868,6 +1874,8 @@
       padding: 25px;
       cursor: pointer;
       background: #f2f2f2; }
+      ._importCheckboxContainer ._importCheckboxItem label:hover ._cellContainer {
+        border-color: #3291c8; }
   ._importCheckboxContainer ._cellContainer {
     position: relative;
     padding: 20px;
@@ -1881,6 +1889,9 @@
     height: 20px; }
     ._importCheckboxContainer ._radioContainer:checked + label {
       background: #ffffff; }
+      ._importCheckboxContainer ._radioContainer:checked + label ._cellContainer {
+        background: rgba(50, 145, 200, 0.1);
+        border-color: #3291c8; }
 
 .propertyContainer a:hover {
   text-decoration: none; }
