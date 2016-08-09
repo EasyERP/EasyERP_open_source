@@ -13,6 +13,7 @@ define([
         childView             : null,
 
         events: {
+            'click .mrgBut' : 'checkRadio'
         },
 
         initialize: function (options) {
@@ -22,6 +23,12 @@ define([
 
 
             this.render();
+        },
+
+        checkRadio: function(e) {
+            var $target = $(e.target).find('input');
+
+            $target[0].checked = true;
         },
 
         render: function () {
