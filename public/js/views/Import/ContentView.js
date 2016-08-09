@@ -72,6 +72,9 @@ define([
                 }
             }
 
+            this.fileName = App.currentUser && App.currentUser.imports && App.currentUser.imports.fileName;
+            this.timeStamp = App.currentUser && App.currentUser.imports && App.currentUser.imports.timeStamp;
+
             if (this.childView) {
                 this.childView.undelegateEvents();
             }
