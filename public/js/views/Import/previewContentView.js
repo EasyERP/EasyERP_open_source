@@ -18,14 +18,15 @@ define([
         },
 
         initialize: function (options) {
-            var self = this
+            var self = this;
+            var url = '/importFile/preview';
 
             options = options || {};
             this.timeStamp = options.timeStamp;
 
-            dataService.getData(url, {timeStamp: this.timeStamp}, function (err, data) {
+            dataService.getData(url, {timeStamp: this.timeStamp}, function (data) {
                 self.data = data;
-                this.render();
+                self.render();
             });
         },
 
@@ -38,7 +39,7 @@ define([
         render: function () {
             var $thisEl = this.$el;
 
-            $thisEl.find('#contentBlock').html(this.previewTemplate({
+            $thisEl.html(this.previewTemplate({
                 fields: this.data
             }));
         }

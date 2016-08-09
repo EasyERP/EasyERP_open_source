@@ -142,11 +142,10 @@ define([
                         stage: this.stage,
                         map  : this.map
                     }, function () {
-
-                            self.childView = new PreviewView({data: data});
+                        self.childView = new PreviewView({timeStamp: self.timeStamp});
                     });
                 } else {
-                        this.childView = new PreviewView({data: data});
+                    this.childView = new PreviewView({timeStamp: this.timeStamp});
 
                 }
 
