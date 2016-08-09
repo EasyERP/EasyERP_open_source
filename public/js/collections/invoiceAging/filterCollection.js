@@ -24,6 +24,19 @@ define([
             options.error = options.error || _errHandler;
             page = options.page;
 
+            if (options && options.contentType) {
+
+                options.filter = options.filter || {};
+
+                options.filter.forSales = {
+                    key  : 'forSales',
+                    type : 'boolean',
+                    value: ['true']
+                };
+            }
+
+            this.filter = options.filter;
+
             this.startTime = new Date();
 
             if (page) {
