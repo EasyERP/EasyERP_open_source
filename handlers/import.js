@@ -172,7 +172,7 @@ var Module = function (models) {
 
         ImportModel
             .find(criteria)
-            .limit(5)
+            .limit(6)
             .exec(function (err, importData) {
                 if (err) {
                     return next(err);
