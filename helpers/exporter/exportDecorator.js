@@ -205,13 +205,10 @@ function reportToXlsx(options) {
     var map = options.map;
     var fileName = options.fileName;
     var resultArray = options.resultArray;
-    var headersArray = [];
-    var project = createProjection(map.aliases, {putHeadersTo: headersArray});
+    var headersArray = Object.keys(map.aliases);
+
     var formatters = map.formatters;
     var nameOfFile = fileName ? fileName : type ? type : 'data';
-    var resultAggregate;
-    var returnResult = options.returnResult;
-    var cb = options.cb;
 
     console.log(options);
 
@@ -231,12 +228,12 @@ function reportToXlsx(options) {
             console.log('file is created');
             //next();
             /*fs.unlink(nameOfFile + '.xlsx', function (err) {
-                if (err) {
-                    console.log(err);
-                } else {
-                    console.log('done');
-                }
-            });*/
+             if (err) {
+             console.log(err);
+             } else {
+             console.log('done');
+             }
+             });*/
         });
     };
 
@@ -261,8 +258,6 @@ function reportToXlsx(options) {
     } else {
         writeXlsx(resultArray);
     }
-
-    writeXlsx(resultArray);
 }
 
 exports.exportToCsv = exportToCsv;

@@ -442,6 +442,7 @@ module.exports = (function () {
         collection: 'Customers',
         schema    : 'Customers',
         aliases   : {
+            reason                          : 'Reason',
             type                            : 'Type',
             isOwn                           : 'Is Owner',
             'name.first'                    : 'First Name',

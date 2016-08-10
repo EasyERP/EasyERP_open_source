@@ -55,7 +55,8 @@
             'editedBy.date',
             'companyInfo.size',
             'companyInfo.industry',
-            'ID'
+            'ID',
+            ''
         ],
         Employees: ['isEmployee',
             'imageSrc',
