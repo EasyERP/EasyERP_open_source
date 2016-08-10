@@ -73,13 +73,15 @@ define([
             var fieldsObject = {};
             var $content = $dbContentBlock.find('.content');
             var parentTable = $thisEl.find('.tabItem').data('tab');
+            var firstColumnVal;
+            var secondColumnVal;
 
             fieldsObject.type = parentTable;
             fieldsObject.result = {};
 
             for (var i = 0; i < $content.length; i++) {
-                var firstColumnVal = $($content[i]).find('.firstColumn').data('name');
-                var secondColumnVal = $($content[i]).find('.secondColumn').data('name');
+                firstColumnVal = $($content[i]).find('.firstColumn').data('name');
+                secondColumnVal = $($content[i]).find('.secondColumn').data('name');
 
                 if (secondColumnVal) {
                     fieldsObject.result[firstColumnVal] = secondColumnVal;

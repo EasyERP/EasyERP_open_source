@@ -148,10 +148,22 @@ define([
                     this.childView = new PreviewView({timeStamp: this.timeStamp});
 
                 }
-
+            } else if (this.stage === 4) {
+                this.startImport();
             }
 
             this.changeStage(this.stage);
+        },
+
+        startImport: function () {
+            var currentUser = App.currentUser;
+            var importData = currentUser.imports;
+            var url = '/importFile/imported';
+
+            dataService.postData(url, importData, function () {
+                alert('Good');
+            });
+
         },
 
         changeStage: function (stage) {

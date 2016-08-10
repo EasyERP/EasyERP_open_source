@@ -220,18 +220,28 @@ var Module = function (models) {
 
                 });
         });
-
     };
 
     this.saveImportedData = function (req, res, next) {
         var data = req.body;
         var userId = req.session.uId;
+        var map = data.map || {};
+        var type = map.type;
+        var timeStamp = map.timeStamp;
+        var mapResult = map.result || {};
         var ImportModel = models.get(req.session.lastDb, 'Imports', ImportSchema);
-        var PersonModel = models.get(req.session.lastDb, 'Customers', PersonSchema);
+        var Model = models.get(req.session.lastDb, type, schemaObj[type]);
         var titleArray;
         var mappedFields;
+        var skippedArray = [];
+        var importedIds = [];
+        var criteria = {user: userId};
 
-        ImportModel.find({user: userId}, function (err, importData) {
+        if (timeStamp) {
+            criteria.timeStamp = timeStamp;
+        }
+
+        ImportModel.find(criteria, function (err, importData) {
             if (err) {
                 return next(err);
             }
@@ -243,23 +253,35 @@ var Module = function (models) {
 
             titleArray = importData.shift().result;
 
-            mappedFields = mapImportFileds(data, titleArray);
+            mappedFields = mapImportFileds(mapResult, titleArray);
 
             async.each(importData, function (importItem, cb) {
                 var saveModel;
                 var saveObj;
                 var importItemObj = importItem.toJSON().result;
 
-
                 saveObj = prepareSaveObject(mappedFields, importItemObj);
+                saveModel = new Model(saveObj);
+                saveModel.save(function (err) {
+                    if (err) {
+                        saveObj.reason = err.message;
+                        skippedArray.push(
+                            saveObj
+                        );
+                    } else {
+                        importedIds.push(importItem._id);
+                    }
 
-                saveModel = new PersonModel(saveObj);
-
-                saveModel.save(cb);
+                    cb(null);
+                });
             }, function (err) {
                 if (err) {
                     return next(err);
                 }
+
+                ImportModel.remove({_id: {$in: importedIds}}, function () {
+
+                });
 
                 res.status(200).send();
             });
