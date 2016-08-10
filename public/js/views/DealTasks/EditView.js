@@ -11,7 +11,8 @@
     'populate',
     'custom',
     'constants',
-    'moment'
+    'moment',
+    'helpers/keyValidator'
 ], function (Backbone,
              _,
              $,
@@ -24,7 +25,8 @@
              populate,
              custom,
              CONSTANTS,
-             moment) {
+             moment,
+             keyValidator) {
 
     var EditView = ParentView.extend({
         contentType: 'DealTasks',

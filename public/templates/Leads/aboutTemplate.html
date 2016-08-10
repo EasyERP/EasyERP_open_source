@@ -7,119 +7,129 @@
 <div class="person-info">
     <div class="propertyFormList">
         <label>Name</label>
-        <div  class="inputBox">
-            <input class="editable"  data-id="name" value="<%=model.name%>"/>
+        <div class="inputBox">
+            <input class="editable" data-id="name" value="<%=model.name%>"/>
         </div>
     </div>
     <div class="propertyFormList">
         <label>Close Date</label>
-        <div  class="inputBox">
-            <input class="extrainfo" type="text" name="Close Date" id="expectedClosing" value="<%=model.expectedClosing || ''%>"
+        <div class="inputBox">
+            <input class="extrainfo" type="text" name="Close Date" id="expectedClosing"
+                   value="<%=model.expectedClosing || ''%>"
                    readonly="">
         </div>
     </div>
     <div class="propertyFormList">
         <label>Assigned To</label>
-        <div class="inputBox _newSelectListWrap">
-            <a class="current-selected assignName"  href="javascript:;" id="salesPersonDd"  data-id="salesPerson"><%= model.salesPerson && model.salesPerson.name ? model.salesPerson.name.first + ' ' + model.salesPerson.name.last : 'Select'%></a>
+        <div class="inputBox  _newSelectListWrap">
+            <a class="current-selected assignName" href="javascript:;" id="salesPersonDd" data-id="salesPerson"><%=
+                model.salesPerson && model.salesPerson.name ? model.salesPerson.name.first + ' ' +
+                model.salesPerson.name.last : 'Select'%></a>
         </div>
     </div>
     <div class="propertyFormList">
         <label>Source</label>
-        <div class="inputBox _newSelectListWrap">
-            <a class="current-selected assignName"  href="javascript:;" id="sourceDd"  data-id="source"><%=model.source || 'Select'%></a>
+        <div class="inputBox  _newSelectListWrap">
+            <a class="current-selected assignName" href="javascript:;" id="sourceDd" data-id="source"><%=model.source ||
+                'Select'%></a>
         </div>
     </div>
     <div class="propertyFormList">
-        <label>Existed Company</label>
-        <div class="inputBox _newSelectListWrap">
-            <a class="current-selected assignName"  href="javascript:;" id="companyDd"  data-id="company"><%=model.company ? model.company.fullName : 'Select'%></a>
+        <label>Customer</label>
+        <div class="inputBox  _newSelectListWrap">
+            <a class="current-selected assignName" href="javascript:;" id="customerDd" data-id="customer"><%=model.customer
+                ? model.customer.fullName : 'Select'%></a>
         </div>
     </div>
 
-    <div class="propertyFormList">
-        <label>Company Name</label>
-        <div  class="inputBox">
-            <input class="editable"  data-id="tempCompanyField" value="<%=model.tempCompanyField%>"/>
-        </div>
-    </div>
-    Contact
+    <div class="separateBlock">Contact</div>
+
     <div class="propertyFormList">
         <label>First Name</label>
-        <div  class="inputBox">
-            <input class="editable"  data-id="name" value="<%=model.name.first%>"/>
+        <div class="inputBox">
+            <input class="editable" id="contactName_first" value="<%=model.contactName.first%>"/>
         </div>
     </div>
     <div class="propertyFormList">
         <label>Last Name</label>
-        <div  class="inputBox">
-            <input class="editable"  data-id="name" value="<%=model.name.last%>"/>
+        <div class="inputBox">
+            <input class="editable" id="contactName_last" value="<%=model.contactName.last%>"/>
         </div>
     </div>
     <div class="propertyFormList">
         <label>Email</label>
-        <div  class="inputBox">
-            <input class="editable"  data-id="name" value="<%=model.email%>"/>
+        <div class="inputBox">
+            <input class="editable" id="email" value="<%=model.email%>"/>
         </div>
     </div>
     <div class="propertyFormList">
         <label>Phone</label>
-        <div  class="inputBox">
-            <input class="editable"  data-id="phones_phone" value="<%=model.phones.phone%>"/>
+        <div class="inputBox">
+            <input class="editable" id="phones_phone" value="<%=model.phones.phone%>"/>
         </div>
     </div>
-    <div class="propertyFormList">
+    <!--<div class="propertyFormList">
         <label>Mobile</label>
         <div  class="inputBox">
-            <input class="editable"  data-id="phones_mobile" value="<%=model.phones.mobile%>"/>
+            <input class="editable"  id="phones_mobile" value="<%=model.phones.mobile%>"/>
         </div>
-    </div>
+    </div>-->
     <div class="propertyFormList">
         <label>Skype</label>
-        <div  class="inputBox">
-            <input class="editable"  data-id="skype" value="<%=model.skype%>"/>
+        <div class="inputBox">
+            <input class="editable" id="skype" value="<%=model.skype%>"/>
         </div>
     </div>
     <div class="propertyFormList">
         <label>LinkedIn</label>
-        <div  class="inputBox">
-            <input class="editable"  data-id="social_LI" value="<%=model.social.LI%>"/>
+        <div class="inputBox">
+            <input class="editable" id="social_LI" value="<%=model.social.LI%>"/>
         </div>
     </div>
+    <!-- <div class="propertyFormList">
+         <label>Facebook</label>
+         <div  class="inputBox">
+             <input class="editable"  id="social_FB" value="<%=model.social.FB%>"/>
+         </div>
+     </div>-->
+
+    <div class="separateBlock">Company</div>
+
     <div class="propertyFormList">
-        <label>Facebook</label>
-        <div  class="inputBox">
-            <input class="editable"  data-id="social_FB" value="<%=model.social.FB%>"/>
+        <label>Name</label>
+        <div class="inputBox">
+            <input class="editable" id="tempCompanyField" value="<%=model.tempCompanyField%>"/>
         </div>
     </div>
+
     <div class="propertyFormList">
         <label>Street</label>
-        <div  class="inputBox">
-            <input class="editable"  data-id="address_street" value="<%=model.address.street%>"/>
+        <div class="inputBox">
+            <input class="editable" id="address_street" value="<%=model.address.street%>"/>
         </div>
     </div>
     <div class="propertyFormList">
         <label>City</label>
-        <div  class="inputBox">
-            <input class="editable"  data-id="social_FB" value="<%=model.address.city%>"/>
+        <div class="inputBox">
+            <input class="editable" id="address_city" value="<%=model.address.city%>"/>
         </div>
     </div>
     <div class="propertyFormList">
         <label>State</label>
-        <div  class="inputBox">
-            <input class="editable"  data-id="social_FB" value="<%=model.address.state%>"/>
+        <div class="inputBox">
+            <input class="editable" id="address_state" value="<%=model.address.state%>"/>
         </div>
     </div>
     <div class="propertyFormList">
         <label>Zip</label>
-        <div  class="inputBox">
-            <input class="editable"  data-id="social_FB" value="<%=model.address.zip%>"/>
+        <div class="inputBox">
+            <input class="editable" id="address_zip" value="<%=model.address.zip%>"/>
         </div>
     </div>
     <div class="propertyFormList">
         <label>Country</label>
-        <div  class="inputBox">
-            <input class="editable"  data-id="social_FB" value="<%=model.address.country%>"/>
+        <div class="inputBox">
+            <input class="editable" id="address_country" value="<%=model.address.country%>"/>
         </div>
     </div>
 
@@ -131,5 +141,4 @@
     <a href="javascript:;" id="saveBtn" class=" btn btnRounded btnSave">Save</a>
 
     <a href="javascript:;" id="cancelBtn" class=" btn btnRounded">Cancel</a>
-</div>
 </div>

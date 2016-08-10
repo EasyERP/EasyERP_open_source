@@ -31,6 +31,7 @@ define([
             'click #addNote, .saveNote'                        : 'saveNote',
             'click .contentHolder'                             : 'showButtons',
             'click #addTask'                                   : 'saveTask',
+            'click .fa-circle-o'                               : 'completeTask',
             'click .editDelNote'                               : 'editDelNote',
             'click .fa-paperclip'                              : 'clickInput',
             'click .chart-tabs'                                : 'changeTab',
@@ -39,9 +40,17 @@ define([
         },
 
         showButtons: function (e) {
-            var $target = $(e.target).closest('.contentHolder');
+
+            var target = $(e.target);
+            var $target = target.closest('.contentHolder');
             var hasClass = $target.hasClass('showButtons');
             var $thisEl = this.$el;
+
+            if (target.closest('.itemCircle').length ){
+                return false;
+            }
+
+
 
             if ($thisEl.find('.editedNote').length || $thisEl.find('.createHolder').hasClass('active')) {
                 return false;
@@ -63,6 +72,39 @@ define([
             if (!createHolder.hasClass('active')) {
                 createHolder.addClass('active');
             }
+        },
+
+        completeTask: function (e) {
+            var $target = $(e.target);
+            var self = this;
+            var $thisEl = this.$el;
+            var id = $target.closest('.noteContainer').attr('id');
+            var model = new TaskModel({_id : id});
+            model.fetch();
+            model.on('sync', function(success){
+
+                model.save({
+                    workflow : CONSTANTS.DONE_WORKFLOW,
+                    sequence : -1,
+                    workflowStart: model.get('workflow')._id,
+                    sequenceStart: model.get('sequence')
+                }, {
+                    wait   : true,
+                    patch : true,
+                    validate : false,
+                    success: function () {
+                        $target.switchClass('fa-circle-o', 'fa-check-circle-o');
+                        model.unbind();
+
+                    },
+
+                    error: function (model, xhr) {
+                        self.errorNotification(xhr);
+                    }
+
+                });
+            });
+
         },
 
         saveTask: function () {
