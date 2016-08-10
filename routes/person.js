@@ -64,7 +64,7 @@ module.exports = function (models, event) {
          ]
      }
      */
-    router.get('/', handler.getByViewType);
+    router.get('/', accessStackMiddleware, handler.getByViewType);
 
     /**
      *@api {get} /persons/getPersonAlphabet/ Request PersonAlphabet
