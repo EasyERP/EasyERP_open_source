@@ -13553,7 +13553,7 @@ a.cancelled {
 .newSelectList .miniStylePagination .next,
 .newSelectList .miniStylePagination .prev {
   position: absolute;
-  top: 4px;
+  top: 6px;
   line-height: normal;
 }
 .newSelectList .miniStylePagination .next.disabled,
