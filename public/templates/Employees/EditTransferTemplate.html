@@ -6,14 +6,14 @@
     </td>
     <td data-content="status"><%= transfer.status %></td>
     <td class="date editable" data-content="date"><%= transfer.date %></td>
-    <td>
+    <td class="_newSelectListWrap">
         <a id="jobPositionDd" class="current-selected" data-content="jobPosition"
            data-id="<%= transfer.jobPosition ?  transfer.jobPosition._id : ''%>"
            href="javascript:;">
             <%=transfer.jobPosition ? transfer.jobPosition.name : 'Select'%>
         </a>
     </td>
-    <td>
+    <td class="_newSelectListWrap">
         <a id="departmentsDd" class="current-selected" data-content="department"
            data-id="<%=transfer.department ? transfer.department._id : ''%>"
            href="javascript:;">
@@ -21,7 +21,7 @@
             "Select" %>
         </a>
     </td>
-    <td>
+    <td class="_newSelectListWrap">
         <a id="projectManagerDD" class="current-selected" data-content="manager"
            data-id="<%= transfer.manager ?  transfer.manager._id : ''%>"
            href="javascript:;">
@@ -29,28 +29,28 @@
             transfer.manager.name.last : "Select"%>
         </a>
     </td>
-    <td>
+    <td class="_newSelectListWrap">
         <a id="jobTypeDd" class="current-selected" data-content="jobType"
            data-id="<%= transfer.jobType ? transfer.jobType :''%>"
            href="javascript:;">
             <%=transfer.jobType ? transfer.jobType : "Select"%>
         </a>
     </td>
-    <td>
+    <td class="_newSelectListWrap">
         <a id="weeklySchedulerDd" class="current-selected" data-content="weeklyScheduler"
            data-id="<%= transfer.weeklyScheduler ? transfer.weeklyScheduler._id :''%>"
            href="javascript:;">
             <%=transfer.weeklyScheduler ? transfer.weeklyScheduler.name : "Select"%>
         </a>
     </td>
-    <td>
+    <td class="_newSelectListWrap">
         <a id="payrollStructureTypeDd" class="current-selected" data-content="payrollStructureType"
            data-id="<%= transfer.payrollStructureType ? transfer.payrollStructureType._id :''%>"
            href="javascript:;">
             <%=transfer.payrollStructureType ? transfer.payrollStructureType.name : "Select"%>
         </a>
     </td>
-    <td>
+    <td class="_newSelectListWrap">
         <a id="scheduledPayDd" class="current-selected" data-content="scheduledPay"
            data-id="<%= transfer.scheduledPay ? transfer.scheduledPay._id :''%>"
            href="javascript:;">

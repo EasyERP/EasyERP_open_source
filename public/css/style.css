@@ -3,7 +3,9 @@
   margin-left: auto;
   margin-right: auto;
   padding-left: 12px;
+  padding-left: 12px;
   padding-left: 0.75rem;
+  padding-right: 12px;
   padding-right: 12px;
   padding-right: 0.75rem; }
 
@@ -61,7 +63,9 @@ b, strong {
 
 .row {
   margin-left: -15px;
+  margin-left: -15px;
   margin-left: -0.9375rem;
+  margin-right: -15px;
   margin-right: -15px;
   margin-right: -0.9375rem; }
 
@@ -72,7 +76,9 @@ b, strong {
   position: relative;
   box-sizing: border-box;
   padding-left: 15px;
+  padding-left: 15px;
   padding-left: 0.9375rem;
+  padding-right: 15px;
   padding-right: 15px;
   padding-right: 0.9375rem; }
 
@@ -2221,19 +2227,19 @@ label._customCHeckbox input[type="checkbox"] {
 .ui-dialog .ui-dialog-buttonpane {
   border-top: none; }
 
-.ui-dialog ._modalList {
+.ui-dialog ._listModal {
   padding: 10px 20px; }
-  .ui-dialog ._modalList .modal_title {
+  .ui-dialog ._listModal .modal_title {
     margin-bottom: 20px;
     color: #7f7f80; }
-  .ui-dialog ._modalList ._modalList {
+  .ui-dialog ._listModal ._modalList {
     margin-bottom: 15px; }
-  .ui-dialog ._modalList ._modalLabel {
+  .ui-dialog ._listModal ._modalLabel {
     margin-bottom: 10px; }
-    .ui-dialog ._modalList ._modalLabel label {
+    .ui-dialog ._listModal ._modalLabel label {
       color: #7f7f80;
       font-weight: bold; }
-  .ui-dialog ._modalList ._modalSelect > a, .ui-dialog ._modalList ._modalSelect > input {
+  .ui-dialog ._listModal ._modalSelect > a, .ui-dialog ._listModal ._modalSelect > input {
     display: block;
     padding: 5px;
     width: 100% !important;
@@ -2242,7 +2248,7 @@ label._customCHeckbox input[type="checkbox"] {
     border: 1px solid #c8c8d3;
     border-radius: 3px;
     cursor: pointer; }
-    .ui-dialog ._modalList ._modalSelect > a:hover, .ui-dialog ._modalList ._modalSelect > input:hover {
+    .ui-dialog ._listModal ._modalSelect > a:hover, .ui-dialog ._listModal ._modalSelect > input:hover {
       text-decoration: none; }
 
 .dropDownDateRangeContainer {
@@ -2328,7 +2334,7 @@ label._customCHeckbox input[type="checkbox"] {
   margin-right: 70px !important; }
 
 .list tbody td.errorContent {
-  border: 1px double; }
+  border: 1px double red; }
 
 .deleteTasks span {
   margin-left: 5px; }
@@ -2756,17 +2762,23 @@ label._customCHeckbox input[type="checkbox"] {
 ._modalList {
   position: relative; }
 
+._newSelectListWrap {
+  position: relative; }
+
 .newSelectList {
   position: absolute;
   top: 100%;
   left: 0;
   border: solid 1px #7f7f80;
   background-color: #fff;
+  box-shadow: 5px 5px rgba(102, 102, 102, 0.1);
   z-index: 100; }
   .newSelectList li {
+    width: 100%;
     margin: 0;
-    padding: 3px 16px 5px;
+    padding: 0 16px;
     cursor: pointer;
+    line-height: 2;
     font-size: 12px;
     text-align: left;
     color: #4d5a75; }
@@ -2788,8 +2800,7 @@ label._customCHeckbox input[type="checkbox"] {
       color: #f3f3f3;
       background-color: #545454; }
     .newSelectList li:hover {
-      border: 0 !important;
-      color: #7eadcc !important; }
+      color: #000 !important; }
   .newSelectList.stage {
     left: 0; }
   .newSelectList.taskPriority {

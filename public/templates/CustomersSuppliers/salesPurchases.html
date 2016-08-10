@@ -13,17 +13,17 @@
             model.salesPurchases.isCustomer) ? 'checked' : ''%>>
         </dd>
         <dt><label for="departmentDd">Sales Team</label></dt>
-        <dd>
+        <dd class="_newSelectListWrap">
             <a id="departmentDd" class="current-selected" href="javascript:;"><%=(model && model.salesPurchases &&
                 model.salesPurchases.salesTeam) ? model.salesPurchases.salesTeam.departmentName : 'Select'%></a>
         </dd>
         <dt><label for="employeesDd">Sales Person</label></dt>
-        <dd>
+        <dd class="_newSelectListWrap">
             <a id="employeesDd" class="current-selected" href="javascript:;"><%=(model && model.salesPurchases &&
                 model.salesPurchases.salesPerson) ? model.salesPurchases.salesPerson.fullName : 'Select'%></a>
         </dd>
         <dt><label for="implementedBy">Implemented By</label></dt>
-        <dd>
+        <dd class="_newSelectListWrap">
             <a id="implementedBy" class="current-selected" href="javascript:;"><%=(model && model.salesPurchases &&
                 model.salesPurchases.implementedBy) ? model.salesPurchases.implementedBy.fullName : 'Select'%></a>
         </dd>
@@ -47,7 +47,7 @@
                value="<%=model.salesPurchases.reference%>"/>
     </dd>
     <dt><label for="language">Language</label></dt>
-    <dd>
+    <dd class="_newSelectListWrap">
         <a id="language" class="current-selected" href="javascript:;"><%=model.salesPurchases.language%></a>
     </dd>
     <!--<dt><label for="salesPriceList">Sale Pricelist</label></dt>

@@ -4686,20 +4686,16 @@ h3.dashboard {
   }
 
   .create-employee-info {
-    //.dl-auto(200px, 40%);
-    dt {
-      // margin-top: 10px;
-    }
-    input {
+    > input {
       max-width: 117px !important;
     }
-    select {
+    > select {
       max-width: 130px !important;
     }
   }
   .subject-info {
     .dl-auto(200px, 10%);
-    input {
+    > input {
       max-width: inherit !important;
       width: 99% !important;
       margin-right: 1%;
@@ -4714,10 +4710,10 @@ h3.dashboard {
   }
   .opprtunitie-info {
     .dl-auto(250px, 40%);
-    input {
+    > input {
       max-width: 250px !important;
     }
-    select {
+    > select {
       width: 95% !important;
       max-width: 240px !important;
     }
@@ -4727,10 +4723,10 @@ h3.dashboard {
   }
   .opprtunitie-lead-info {
     .dl-auto(250px, 20%);
-    input {
+    > input {
       max-width: 231px !important;
     }
-    select {
+    > select {
       width: 95% !important;
       max-width: 240px !important;
     }
@@ -4752,7 +4748,7 @@ h3.dashboard {
 
   .startDate, .endDate {
     .disable_input_style;
-    input {
+    > input {
       display: none;
     }
   }
@@ -4865,14 +4861,18 @@ h3.dashboard {
   }
   .miniStylePagination {
     position: relative;
-    text-align: center;
+    line-height: 28px;
     min-width: 160px;
+    text-align: center;
+
     &:hover {
       background-color: white;
     }
-    .next, .prev {
+    .next,
+    .prev {
       position: absolute;
-      top: 4px;
+      top: 6px;
+      line-height: normal;
       &.disabled {
         display: none;
       }
