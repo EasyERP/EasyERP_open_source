@@ -4550,6 +4550,7 @@ var Module = function (models, event) {
 
                     newElement.project = project ? project._id : null;
                     newElement.projectName = project ? project.name : '-----';
+                    newElement.projecttype = project ? project.projecttype : '-----';
 
                     newElement.openingBalance = opening ? opening.debit / 100 : 0;
                     newElement.inwards = inwards ? inwards.debit / 100 : 0;
