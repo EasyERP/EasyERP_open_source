@@ -190,6 +190,7 @@ var TCard = function (event, models) {
                 }
             }];
 
+
         var lookupForWTrackArrayAfterFilter = [
             {
                 $lookup: {

@@ -5,10 +5,10 @@ module.exports = (function () {
 
     var journalEntry = {
         collection: 'journalentries',
-        schema: 'journalEntry',
-        aliases: {
-            'journal.name': 'Journal',
-            date: 'Accounting date',
+        schema    : 'journalEntry',
+        aliases   : {
+            'journal.name'               : 'Journal',
+            date                         : 'Accounting date',
             'sourceDocument.subject.name': 'Subject',
             'sourceDocument.name'        : 'Source Document',
             'journal.debitAccount.name'  : 'Debit Account',
@@ -517,38 +517,38 @@ module.exports = (function () {
         aliases    : {
             projectShortDesc     : 'Project Short Desc',
             projectName          : 'Project Name',
-            'customername'       : 'Customer Name',
+            customername         : 'Customer Name',
             'projectmanager.name': 'Project Manager Name',
-            'salesmanager.name': 'Sales Manager Name',
-            description: 'Description',
-            StartDate: 'Start Date',
-            EndDate: 'End Date',
-            TargetEndDate: 'Target End Date',
-            'workflow.name': 'Workflow Name',
-            'createdBy.user': 'Created By User',
-            'createdBy.date': 'Created By Date',
-            projecttype: 'Project Type',
-            'editedBy.user': 'Edited By User',
-            'editedBy.date': 'Edited By Date'
+            'salesmanager.name'  : 'Sales Manager Name',
+            description          : 'Description',
+            StartDate            : 'Start Date',
+            EndDate              : 'End Date',
+            TargetEndDate        : 'Target End Date',
+            'workflow.name'      : 'Workflow Name',
+            'createdBy.user'     : 'Created By User',
+            'createdBy.date'     : 'Created By Date',
+            projecttype          : 'Project Type',
+            'editedBy.user'      : 'Edited By User',
+            'editedBy.date'      : 'Edited By Date'
         },
-        arrayKeys: {
+        arrayKeys  : {
             'groups.users': true,
             'groups.group': true
         },
-        formatters: {
+        formatters : {
             'Target End Date': function (date) {
                 return moment(date).utc().format(dateFormat);
             },
-            'Start Date': function (date) {
+            'Start Date'     : function (date) {
                 return moment(date).utc().format(dateFormat);
             },
-            'End Date': function (date) {
+            'End Date'       : function (date) {
                 return moment(date).utc().format(dateFormat);
             },
             'Created By Date': function (date) {
                 return moment(date).utc().format(dateFormat);
             },
-            'Edited By Date': function (date) {
+            'Edited By Date' : function (date) {
                 return moment(date).utc().format(dateFormat);
             }
         }
