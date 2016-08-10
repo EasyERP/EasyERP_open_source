@@ -49,6 +49,10 @@ define([
             }
         },
 
+        keypress: function (e) {
+            return keyValidator(e);
+        },
+
         openDialog: function (e) {
             e.preventDefault();
             $('#convert-dialog-form').dialog('open');

@@ -445,7 +445,18 @@ var Module = function (models, event) {
             }
 
             function getTask(parallelCb) {
-                TasksSchema.find({'contact': customer._id})
+
+                var findObject = {};
+                var resDate;
+
+                if (customer.type ==='Company') {
+                    findObject.company = customer._id;
+                    resDate = 'companyDate';
+                } else {
+                    findObject.contact = customer._id;
+                    resDate = 'contactDate';
+                }
+                TasksSchema.find(findObject)
                     .populate('deal', '_id name')
                     .populate('company', '_id name imageSrc')
                     .populate('contact', '_id name imageSrc')
@@ -458,7 +469,7 @@ var Module = function (models, event) {
                         }
                         res = res.map(function (elem) {
                             return {
-                                date: elem.contactDate,
+                                date: elem[resDate],
                                 task: elem,
                                 _id : elem._id,
                                 user: elem.editedBy.user

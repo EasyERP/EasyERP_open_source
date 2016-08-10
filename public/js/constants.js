@@ -215,7 +215,9 @@ define([], function () {
         PAYMENT_TERMS   : '55536e52475b7be475f335f6',
         PAYMENT_METHOD  : '565f2e05ab70d49024242e07',
         END_OF_PROJECT  : 'To end of project',
+
         NOT_STARTED_WORKFLOW: '5783b351df8b918c31af24a8',
+        DONE_WORKFLOW       : '5783b351df8b918c31af24ab',
 
         DEFAULT_SCREEN_WIDTH: 1349,
         PAGINATION_ARRAY    : [25, 50, 100, 200]
