@@ -29,11 +29,18 @@ define([
 
             this.logFile = {};
 
-            dataService.getData(url, {timeStamp: this.timeStamp}, function (data) {
-                self.data = data.mappedObj;
-                self.unmappedData = data.unmappedObj;
+            /*if (App.currentUser.imports && App.currentUser.imports.map) {
+                self.data = {};
+                self.data[App.currentUser.imports.map.type] = App.currentUser.imports.map.result;
                 self.render(self.data);
-            });
+            } else {*/
+                dataService.getData(url, {timeStamp: this.timeStamp}, function (data) {
+                    self.data = data.mappedObj;
+                    self.unmappedData = data.unmappedObj;
+                    self.render(self.data);
+                });
+            //}
+
         },
 
         resetForm: function () {
@@ -105,7 +112,6 @@ define([
 
         revertToTables: function (isItClass, isDropable, droppableName, droppableParentName) {
             var self = this;
-            console.log('revert');
 
             if ((isItClass) && (isDropable)) {
                 if (droppableParentName === 'Customers' || droppableParentName === 'Employees') {

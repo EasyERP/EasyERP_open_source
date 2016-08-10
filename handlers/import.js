@@ -5,12 +5,15 @@ var Module = function (models) {
     var ImportSchema = mongoose.Schemas.Imports;
     var UserSchema = mongoose.Schemas.User;
     var PersonSchema = mongoose.Schemas.Customer;
+    var ImportHistorySchema = mongoose.Schemas.importHistorySchema;
 
     var schemaObj = {
         Customers    : mongoose.Schemas.Customer,
         Opportunities: mongoose.Schemas.Opportunitie
     };
 
+    var exportMap = require('../helpers/csvMap');
+    var exporter = require('../helpers/exporter/exportDecorator');
     var async = require('async');
     var mapObject = require('../public/js/constants/importMapping');
     var moment = require('../public/js/libs/moment/moment');
@@ -67,6 +70,22 @@ var Module = function (models) {
         };
     }
 
+    function createXlsxReport(res, next, resultArray, fileName) {
+        var exportMapImport = exportMap[type];
+        var options;
+
+        options = {
+            res         : res,
+            next        : next,
+            resultArray : resultArray,
+            map         : exportMapImport,
+            returnResult: true,
+            fileName    : fileName|| 'Customer'
+        };
+
+        return exporter.exportToXlsx(options);
+    }
+
     function mapImportFileds(importObj, fieldsArray) {
         var mappedFields = {};
 
@@ -113,6 +132,31 @@ var Module = function (models) {
         }
 
         return saveObj;
+    }
+
+    function writeHistory(options, next) {
+        var ImportHistoryModel = models.get(req.session.lastDb, 'ImportHistory', ImportHistorySchema);
+        var importHistoryObj = {
+            dateHistory: options.dateHistory,
+            fileName: options.fileName,
+            userName: options.userName,
+            type: options.type,
+            status: options.status,
+            reportFile: options.reportFile
+        };
+
+        var importHistory = new ImportHistoryModel(importHistoryObj);
+
+        importHistory.save(function(err, result){
+            if (err) {
+                return next(err)
+            }
+
+            return {
+                success: 'creating history for import is success',
+                result: result
+            }
+        });
     }
 
     this.getImportMapObject = function (req, res, next) {
