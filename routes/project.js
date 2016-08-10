@@ -290,7 +290,7 @@ HTTP/1.1 200 OK
         ]
 }
      */
-    router.get('/getForWtrack', accessStackMiddleWare, handler.getForWtrack);
+    router.get('/getForWtrack', /*accessStackMiddleWare,*/ handler.getForWtrack);
 
     /**
      *@api {get} /projects/getFilterValues/ Request FilterValues
