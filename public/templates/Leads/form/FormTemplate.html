@@ -38,20 +38,20 @@
                         </div>
                         <div class="propertyFormList">
                             <label>Assigned To</label>
-                            <div  class="inputBox">
-                                <a  class="current-selected assignName"  href="javascript:;" id="salesPersonDd"  data-id="salesPerson"><%= model.salesPerson && model.salesPerson.name ? model.salesPerson.name.first + ' ' + model.salesPerson.name.last : 'Select'%></a>
+                            <div class="inputBox _newSelectListWrap">
+                                <a class="current-selected assignName"  href="javascript:;" id="salesPersonDd"  data-id="salesPerson"><%= model.salesPerson && model.salesPerson.name ? model.salesPerson.name.first + ' ' + model.salesPerson.name.last : 'Select'%></a>
                             </div>
                         </div>
                         <div class="propertyFormList">
                             <label>Source</label>
-                            <div  class="inputBox">
-                                <a  class="current-selected assignName"  href="javascript:;" id="sourceDd"  data-id="source"><%=model.source || 'Select'%></a>
+                            <div class="inputBox _newSelectListWrap">
+                                <a class="current-selected assignName"  href="javascript:;" id="sourceDd"  data-id="source"><%=model.source || 'Select'%></a>
                             </div>
                         </div>
                         <div class="propertyFormList">
                             <label>Customer</label>
-                            <div  class="inputBox">
-                                <a  class="current-selected assignName"  href="javascript:;" id="customerDd"  data-id="customer"><%=model.customer ? model.customer.fullName : 'Select'%></a>
+                            <div class="inputBox _newSelectListWrap">
+                                <a class="current-selected assignName"  href="javascript:;" id="customerDd"  data-id="customer"><%=model.customer ? model.customer.fullName : 'Select'%></a>
                             </div>
                         </div>
 

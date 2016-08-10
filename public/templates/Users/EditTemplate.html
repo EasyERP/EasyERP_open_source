@@ -17,7 +17,7 @@
                     <dt><label for="email">Email </label></dt>
                     <dd><input type="text" name="email" id="email" value="<%= email %>" required maxlength="48"/></dd>
                     <dt><label for="profilesDd">Profile</label></dt>
-                    <dd>
+                    <dd class="_newSelectListWrap">
                         <a id="profilesDd" data-id="<%=(profile) ? profile._id : ''%>" class="current-selected"
                            href="javascript:;"><%=(profile)?profile.profileName:'Select'%></a>
                 </dl>
