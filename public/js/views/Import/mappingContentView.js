@@ -90,7 +90,7 @@ define([
                 firstColumnVal = $($content[i]).find('.firstColumn').data('name');
                 secondColumnVal = $($content[i]).find('.secondColumn').data('name');
 
-                if (secondColumnVal) {
+                if (secondColumnVal && !Array.isArray(secondColumnVal)) {
                     fieldsObject.result[firstColumnVal] = secondColumnVal;
                 }
             }

@@ -5,7 +5,7 @@ var Module = function (models) {
     var ImportSchema = mongoose.Schemas.Imports;
     var UserSchema = mongoose.Schemas.User;
     var PersonSchema = mongoose.Schemas.Customer;
-    var ImportHistorySchema = mongoose.Schemas.importHistorySchema;
+    var ImportHistorySchema = mongoose.Schemas.ImportHistories;
 
     var schemaObj = {
         Customers    : mongoose.Schemas.Customer,
@@ -138,12 +138,12 @@ var Module = function (models) {
         return saveObj;
     }
 
-    function writeHistory(options, next) {
-        var ImportHistoryModel = models.get(req.session.lastDb, 'ImportHistory', ImportHistorySchema);
+    function writeHistory(options, ImportHistoryModel, callback) {
+        //var ImportHistoryModel = models.get(req.session.lastDb, 'ImportHistory', ImportHistorySchema);
         var importHistoryObj = {
             dateHistory: options.dateHistory,
             fileName   : options.fileName,
-            userName   : options.userName,
+            user       : options.userId,
             type       : options.type,
             status     : options.status,
             reportFile : options.reportFile
@@ -153,10 +153,10 @@ var Module = function (models) {
 
         importHistory.save(function (err, result) {
             if (err) {
-                return next(err);
+                return callback(err);
             }
 
-            return {
+            callback(null, {
                 success: 'creating history for import is success',
                 result : result
             }
@@ -276,8 +276,10 @@ var Module = function (models) {
         var type = map.type;
         var timeStamp = map.timeStamp;
         var mapResult = map.result || {};
+        var mapFileName = map.fileName;
         var ImportModel = models.get(req.session.lastDb, 'Imports', ImportSchema);
         var Model = models.get(req.session.lastDb, type, schemaObj[type]);
+        var ImportHistoryModel = models.get(req.session.lastDb, 'ImportHistories', ImportHistorySchema);
         var titleArray;
         var mappedFields;
         var skippedArray = [];
@@ -326,25 +328,36 @@ var Module = function (models) {
                     return next(err);
                 }
 
-                async.parallel([
+                async.waterfall([
                     function (cb) {
-                        createXlsxReport(res, cb, skippedArray, type);
-                    },
 
-                    function (cb) {
+                        createXlsxReport(res, cb, skippedArray, type);
+
+                    },
+                    function (fileName, cb) {
+                        var option = {
+                            fileName   : mapFileName,
+                            userId     : userId,
+                            type       : type,
+                            status     : 'Finished',
+                            reportFile : fileName
+                        };
+
+                        writeHistory(option, ImportHistoryModel, cb);
+                    },
+                    function (obj, cb) {
                         ImportModel.remove({_id: {$in: importedIds}}, function () {
 
                         });
+                        cb(null);
                     }
                 ], function (err) {
                     if (err) {
                         return next(err);
                     }
 
-
                     res.status(200).send();
                 });
-
             });
         });
     };

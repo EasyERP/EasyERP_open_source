@@ -185,8 +185,6 @@
             attributes: options.attributes
         };
 
-        console.log('-------------OPTIONS------------',opts);
-
         wb = new Workbook();
         ws = sheetFromJson(data, opts);
         wb.SheetNames.push(options.sheetName);
