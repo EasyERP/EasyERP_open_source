@@ -71,7 +71,7 @@ var Module = function (models) {
     }
 
     function createXlsxReport(res, next, resultArray, fileName) {
-        var exportMapImport = exportMap[type];
+        var exportMapImport = exportMap[fileName];
         var options;
 
         options = {
@@ -80,10 +80,10 @@ var Module = function (models) {
             resultArray : resultArray,
             map         : exportMapImport,
             returnResult: true,
-            fileName    : fileName|| 'Customer'
+            fileName    : fileName || 'Customer'
         };
 
-        return exporter.exportToXlsx(options);
+        return exporter.reportToXlsx(options);
     }
 
     function mapImportFileds(importObj, fieldsArray) {
@@ -138,24 +138,24 @@ var Module = function (models) {
         var ImportHistoryModel = models.get(req.session.lastDb, 'ImportHistory', ImportHistorySchema);
         var importHistoryObj = {
             dateHistory: options.dateHistory,
-            fileName: options.fileName,
-            userName: options.userName,
-            type: options.type,
-            status: options.status,
-            reportFile: options.reportFile
+            fileName   : options.fileName,
+            userName   : options.userName,
+            type       : options.type,
+            status     : options.status,
+            reportFile : options.reportFile
         };
 
         var importHistory = new ImportHistoryModel(importHistoryObj);
 
-        importHistory.save(function(err, result){
+        importHistory.save(function (err, result) {
             if (err) {
-                return next(err)
+                return next(err);
             }
 
             return {
                 success: 'creating history for import is success',
-                result: result
-            }
+                result : result
+            };
         });
     }
 
@@ -323,11 +323,25 @@ var Module = function (models) {
                     return next(err);
                 }
 
-                ImportModel.remove({_id: {$in: importedIds}}, function () {
+                async.parallel([
+                    function (cb) {
+                        createXlsxReport(res, cb, skippedArray, type);
+                    },
 
+                    function (cb) {
+                        ImportModel.remove({_id: {$in: importedIds}}, function () {
+
+                        });
+                    }
+                ], function (err) {
+                    if (err) {
+                        return next(err);
+                    }
+
+
+                    res.status(200).send();
                 });
 
-                res.status(200).send();
             });
         });
     };
