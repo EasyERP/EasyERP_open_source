@@ -1925,6 +1925,9 @@ label._customCHeckbox input[type="checkbox"] {
   .propertyBox a {
     color: #3291c8; }
 
+.separateBlock {
+  text-align: center; }
+
 .propertyFormList {
   display: table !important;
   width: 100%;
@@ -2192,19 +2195,19 @@ label._customCHeckbox input[type="checkbox"] {
 .ui-dialog .ui-dialog-buttonpane {
   border-top: none; }
 
-.ui-dialog ._salesModal {
+.ui-dialog ._modalList {
   padding: 10px 20px; }
-  .ui-dialog ._salesModal .modal_title {
+  .ui-dialog ._modalList .modal_title {
     margin-bottom: 20px;
     color: #7f7f80; }
-  .ui-dialog ._salesModal ._modalList {
+  .ui-dialog ._modalList ._modalList {
     margin-bottom: 15px; }
-  .ui-dialog ._salesModal ._modalLabel {
+  .ui-dialog ._modalList ._modalLabel {
     margin-bottom: 10px; }
-    .ui-dialog ._salesModal ._modalLabel label {
+    .ui-dialog ._modalList ._modalLabel label {
       color: #7f7f80;
       font-weight: bold; }
-  .ui-dialog ._salesModal ._modalSelect > a, .ui-dialog ._salesModal ._modalSelect > input {
+  .ui-dialog ._modalList ._modalSelect > a, .ui-dialog ._modalList ._modalSelect > input {
     display: block;
     padding: 5px;
     width: 100% !important;
@@ -2213,7 +2216,7 @@ label._customCHeckbox input[type="checkbox"] {
     border: 1px solid #c8c8d3;
     border-radius: 3px;
     cursor: pointer; }
-    .ui-dialog ._salesModal ._modalSelect > a:hover, .ui-dialog ._salesModal ._modalSelect > input:hover {
+    .ui-dialog ._modalList ._modalSelect > a:hover, .ui-dialog ._modalList ._modalSelect > input:hover {
       text-decoration: none; }
 
 .dropDownDateRangeContainer {
