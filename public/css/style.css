@@ -2753,11 +2753,13 @@ label._customCHeckbox input[type="checkbox"] {
   left: 0;
   border: solid 1px #7f7f80;
   background-color: #fff;
+  box-shadow: 5px 5px rgba(102, 102, 102, 0.1);
   z-index: 100; }
   .newSelectList li {
     margin: 0;
-    padding: 3px 16px 5px;
+    padding: 0 16px;
     cursor: pointer;
+    line-height: 2;
     font-size: 12px;
     text-align: left;
     color: #4d5a75; }
@@ -2779,8 +2781,7 @@ label._customCHeckbox input[type="checkbox"] {
       color: #f3f3f3;
       background-color: #545454; }
     .newSelectList li:hover {
-      border: 0 !important;
-      color: #7eadcc !important; }
+      color: #000 !important; }
   .newSelectList.stage {
     left: 0; }
   .newSelectList.taskPriority {

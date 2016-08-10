@@ -4157,8 +4157,9 @@ table.kanban tbody td:nth-child(n+2) {
   border-right: 1px solid #c8c8d3;
 }
 .separateBlock {
-  margin-top: 5px;
+  margin-top: 10px;
   font-family: 'Open Sans SemiBold', sans-serif, Verdana;
+  text-align: center;
 }
 ._listModalColumn {
   width: 33.333%;
@@ -4187,6 +4188,9 @@ table.kanban tbody td:nth-child(n+2) {
 .attach_file {
   cursor: pointer;
   color: #7eadcc;
+}
+td.editable {
+  position: relative;
 }
 .collapsed .sideMenu {
   width: 40px !important;
@@ -4525,9 +4529,6 @@ table.kanban tbody td:nth-child(n+2) {
   color: #000000;
   font-size: 12px;
 }
-.list2 td {
-  overflow: hidden;
-}
 .list2 thead tr {
   border: none;
   height: 30px;
@@ -4633,9 +4634,6 @@ table.kanban tbody td:nth-child(n+2) {
   box-sizing: border-box;
   color: #000000;
   font-size: 12px;
-}
-.list2 td {
-  overflow: hidden;
 }
 .list2 thead tr {
   border: none;
@@ -10407,9 +10405,6 @@ ul.dialog-tabs li.right button {
   color: #000000;
   font-size: 12px;
 }
-.list td {
-  overflow: hidden;
-}
 .list thead tr {
   border: none;
   height: 30px;
@@ -13548,8 +13543,9 @@ a.cancelled {
 }
 .newSelectList .miniStylePagination {
   position: relative;
-  text-align: center;
+  line-height: 28px;
   min-width: 160px;
+  text-align: center;
 }
 .newSelectList .miniStylePagination:hover {
   background-color: white;
@@ -15181,6 +15177,7 @@ textarea#editInput {
 }
 .fired {
   background-color: rgba(235, 0, 4, 0.73) !important;
+  color: #fff !important;
 }
 .text-left {
   text-align: left !important;
