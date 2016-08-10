@@ -8,7 +8,7 @@
 
                 <div class="topCell col1-4">
                     <label for="workflowsDd">Stage</label>
-                    <div id="selectWorkflow" class="dataField">
+                    <div id="selectWorkflow" class="dataField _newSelectListWrap">
                         <a id="workflowsDd" data-id="<%=(model.workflow) ? model.workflow._id : ''%>" class="current-selected" href="javascript:;"><%=(model.workflow)?model.workflow.name:'Undefined'%></a>
                     </div>
                 </div>
@@ -29,7 +29,7 @@
 
                 <div class="topCell col1-4">
                     <label>Assigned to</label>
-                    <div class="dataField">
+                    <div class="dataField _newSelectListWrap">
                         <a id="assignedToDd" data-id="<%=(model.assignedTo) ? model.assignedTo._id : ''%>" class="current-selected" href="javascript:;"><%=(model.assignedTo)?(model.assignedTo.name.first+' '+model.assignedTo.name.last):'Select'%></a>
                     </div>
                 </div>
@@ -48,7 +48,7 @@
                     <div class="taskBottom">
                         <div class="topCell selectType col1-3" id="contactItem">
                             <label>Contact</label>
-                            <div>
+                            <div class="_newSelectListWrap">
 
                                 <%if (model.contact) {%>
                                 <a id="contactDd" class="current-selected" href="javascript:;" style="display: none">Add Contact</a>
@@ -72,7 +72,7 @@
 
                         <div class="topCell selectType col1-3" id="companyItem">
                             <label>Company</label>
-                            <div>
+                            <div class="_newSelectListWrap">
                                 <%if (model.company) {%>
                                 <a id="companyDd" class="current-selected" href="javascript:;"  style="display: none">Add Company</a>
                                 <div class="showSelect" data-id="<%=model.company._id%>">
@@ -95,7 +95,7 @@
 
                         <div class="topCell selectType col1-3" id="dealItem">
                             <label>Lead/Opportunity</label>
-                            <div>
+                            <div class="_newSelectListWrap">
 
                                 <%if (model.deal) {%>
                                 <a id="dealDd" class="current-selected" href="javascript:;" style="display: none">Add Lead/Opportunity</a>

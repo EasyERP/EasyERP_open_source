@@ -1,7 +1,7 @@
 <% products.forEach(function(product){ %>
 <tr class="productItem" data-id="<%=product.product._id%>">
     <td></td>
-    <td data-name="productName" class="width20">
+    <td data-name="productName" class="width20 _newSelectListWrap">
         <%if(editable) {%>
         <a class="current-selected productsDd" href="javascript:;" data-id="<%= product ? product.product._id : null%>"><%=product.product.name%></a>
         <%} else {%>
@@ -10,7 +10,7 @@
     </td>
     <% if (forSales) {%>
         <% if (product.jobs) { %>
-            <td data-name="jobs" data-content="<%=product.jobs._id%>" class="text-overflow jobs selectJobTd">
+            <td data-name="jobs" data-content="<%=product.jobs._id%>" class="text-overflow jobs selectJobTd _newSelectListWrap">
                 <a class="<%=editable ? 'current-selected jobs' : ''%>" id="jobs" data-id="<%=product.jobs._id%>" href="javascript:;"><%=product.jobs.name%></a>
             </td>
         <% } %>
