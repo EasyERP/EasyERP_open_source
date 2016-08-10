@@ -4454,20 +4454,18 @@ var Module = function (models, event) {
                         debit       : 1,
                         salesmanager: {$arrayElemAt: ['$salesManager', 0]}
                     }
-                },
-                    {
-                        $match: filterObject
-                    },
-                    {
-                        $project: {
-                            _id         : 1,
-                            name        : 1,
-                            project     : 1,
-                            debit       : 1,
-                            salesmanager: {$concat: ['$salesmanager.name.first', ' ', '$salesmanager.name.last']}
-                        }
-
+                }, {
+                    $match: filterObject
+                }, {
+                    $project: {
+                        _id         : 1,
+                        name        : 1,
+                        project     : 1,
+                        debit       : 1,
+                        salesmanager: {$concat: ['$salesmanager.name.first', ' ', '$salesmanager.name.last']}
                     }
+
+                }
                 ], function (err, result) {
                     if (err) {
                         return pCb(err);
@@ -4493,18 +4491,69 @@ var Module = function (models, event) {
                         as          : 'sourceDocument'
                     }
                 }, {
+                    $lookup: {
+                        from        : 'Project',
+                        localField  : 'project',
+                        foreignField: '_id',
+                        as          : 'project'
+                    }
+                }, {
                     $project: {
                         sourceDocument: {$arrayElemAt: ['$sourceDocument', 0]},
+                        project       : {$arrayElemAt: ['$project', 0]},
                         debit         : 1,
                         date          : 1
                     }
                 }, {
-                    $project: {
-                        _id  : '$sourceDocument._id',
-                        name : '$sourceDocument.name',
-                        debit: 1,
-                        date : 1
+                    $lookup: {
+                        from        : 'projectMembers',
+                        localField  : 'project._id',
+                        foreignField: 'projectId',
+                        as          : 'projectMembers'
                     }
+                }, {
+                    $project: {
+                        _id    : '$sourceDocument._id',
+                        name   : '$sourceDocument.name',
+                        project: 1,
+                        debit  : 1,
+                        date   : 1,
+
+                        salesManagers: {
+                            $filter: {
+                                input: '$projectMembers',
+                                as   : 'projectMember',
+                                cond : {
+                                    $and: [{
+                                        $eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALESMANAGER)]
+                                    }, {
+                                        $eq: ['$$projectMember.endDate', null]
+                                    }]
+                                }
+                            }
+                        }
+                    }
+                }, {
+                    $project: {
+                        _id         : 1,
+                        name        : 1,
+                        project     : 1,
+                        debit       : 1,
+                        date        : 1,
+                        salesmanager: {$arrayElemAt: ['$salesManager', 0]}
+                    }
+                }, {
+                    $match: filterObject
+                }, {
+                    $project: {
+                        _id         : 1,
+                        name        : 1,
+                        project     : 1,
+                        debit       : 1,
+                        date        : 1,
+                        salesmanager: {$concat: ['$salesmanager.name.first', ' ', '$salesmanager.name.last']}
+                    }
+
                 }], function (err, result) {
                     if (err) {
                         return pCb(err);
