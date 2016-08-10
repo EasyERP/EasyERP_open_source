@@ -13,9 +13,9 @@ module.exports = (function () {
             'sourceDocument.name'        : 'Source Document',
             'journal.debitAccount.name'  : 'Debit Account',
             'journal.creditAccount.name' : 'Credit Account',
-            'debit'                      : 'Summ'
+            debit                        : 'Summ'
         },
-        formatters : {
+        formatters: {
             'Accounting date': function (date) {
                 return moment(date).utc().format(dateFormat);
             }
@@ -76,14 +76,17 @@ module.exports = (function () {
             nestingLevel     : 'Nesting Level',
             sequence         : 'Sequence'
         },
-        arrayKeys : {
+
+        arrayKeys: {
             users: true
         },
+
         formatters: {
             'Created Date': function (date) {
                 return moment(date).format(dateFormat);
             },
-            'Edited Date' : function (date) {
+
+            'Edited Date': function (date) {
                 return moment(date).format(dateFormat);
             }
         }
@@ -161,50 +164,60 @@ module.exports = (function () {
             lastFire             : 'LastFire',
             transferred          : 'Transferred'
         },
-        arrayKeys : {
+
+        arrayKeys: {
             'groups.users': true,
             'groups.group': true,
             hire          : true,
             fire          : true,
             attachments   : true
         },
+
         formatters: {
-            'Date Birth'       : function (date) {
+            'Date Birth': function (date) {
                 return moment(date).utc().format(dateFormat);
             },
-            'Created Date'     : function (date) {
+
+            'Created Date': function (date) {
                 return moment(date).utc().format(dateFormat);
             },
-            'Creation Date'    : function (date) {
+
+            'Creation Date': function (date) {
                 return moment(date).utc().format(dateFormat);
             },
-            'Edited By Date'   : function (date) {
+
+            'Edited By Date': function (date) {
                 return moment(date).utc().format(dateFormat);
             },
+
             'Contract End Date': function (date) {
                 return moment(date).utc().format(dateFormat);
             },
-            'Is Lead'          : function (number) {
+
+            'Is Lead': function (number) {
                 switch (number) {
                     case 0:
-                        return "Low";
+                        return 'Low';
                     case 1:
-                        return "Medium";
+                        return 'Medium';
                     case 2:
-                        return "High";
+                        return 'High';
+                    // skip default;
                 }
             },
-            'Hire'             : function (array) {
+
+            Hire: function (array) {
                 var result = [];
                 array.forEach(function (item) {
-                    result.push(moment(item).utc().format(dateFormat))
+                    result.push(moment(item).utc().format(dateFormat));
                 });
                 return result;
             },
-            'Fire'             : function (array) {
+
+            Fire: function (array) {
                 var result = [];
                 array.forEach(function (item) {
-                    result.push(moment(item).utc().format(dateFormat))
+                    result.push(moment(item).utc().format(dateFormat));
                 });
                 return result;
             }
@@ -305,15 +318,18 @@ module.exports = (function () {
             'editedBy.user'         : 'Edited By User',
             'editedBy.date'         : 'Edited By Date'
         },
-        arrayKeys : {
+
+        arrayKeys: {
             'groups.users': true,
             'groups.group': true
         },
+
         formatters: {
             'Created Date': function (date) {
                 return moment(date).utc().format(dateFormat);
             },
-            'Edited Date' : function (date) {
+
+            'Edited Date': function (date) {
                 return moment(date).utc().format(dateFormat);
             }
         }
@@ -354,15 +370,18 @@ module.exports = (function () {
             'editedBy.date'              : 'Edited By Date',
             'createdBy.date'             : 'Created By Date'
         },
-        arrayKeys : {
+
+        arrayKeys: {
             'groups.users': true,
             'groups.group': true
         },
+
         formatters: {
             'Created Date': function (date) {
                 return moment(date).utc().format(dateFormat);
             },
-            'Edited Date' : function (date) {
+
+            'Edited Date': function (date) {
                 return moment(date).utc().format(dateFormat);
             }
         }
@@ -399,18 +418,22 @@ module.exports = (function () {
             'editedBy.user'      : 'Edited By User',
             'editedBy.date'      : 'Edited By Date'
         },
-        arrayKeys : {
+
+        arrayKeys: {
             'groups.users': true,
             'groups.group': true
         },
+
         formatters: {
             'Invoice Date': function (date) {
                 return moment(date).utc().format(dateFormat);
             },
+
             'Created Date': function (date) {
                 return moment(date).utc().format(dateFormat);
             },
-            'Edited Date' : function (date) {
+
+            'Edited Date': function (date) {
                 return moment(date).utc().format(dateFormat);
             }
         }
@@ -426,7 +449,7 @@ module.exports = (function () {
             'name.first'                    : 'First Name',
             'name.last'                     : 'Last Name',
             dateBirth                       : 'Date Birthday',
-            //imageSrc                        : 'Photo',
+            // imageSrc                        : 'Photo',
             email                           : 'Email',
             company                         : 'Company',
             department                      : 'Department',
@@ -443,7 +466,7 @@ module.exports = (function () {
             'phones.mobile'                 : 'Mobile',
             'phones.fax'                    : 'Fax',
             contacts                        : 'Contacts',
-            internalNotes                   : 'Internal Notes',
+            // internalNotes                   : 'Internal Notes',
             title                           : 'Title',
             'salesPurchases.isCustomer'     : 'Sales Purchases Is Customer',
             'salesPurchases.isSupplier'     : 'Sales Purchases Is Supplier',
@@ -455,31 +478,34 @@ module.exports = (function () {
             'salesPurchases.language'       : 'Sales Purchases Language',
             'salesPurchases.receiveMessages': 'Sales Purchases Receive Messages',
             relatedUser                     : 'Related User',
-            //color                           : 'Color',
+            // color                           : 'Color',
             'social.FB'                     : 'Facebook',
             'social.LI'                     : 'Linkedin',
-            whoCanRW                        : 'Who Can RW',
-            'groups.owner'                  : 'Groups Owner',
-            'groups.users'                  : 'Groups Users',
-            'groups.group'                  : 'Groups Group',
-            notes                           : 'Notes',
-            attachments                     : 'Attachments',
-            history                         : 'History',
+            /* whoCanRW                        : 'Who Can RW',
+             'groups.owner'                  : 'Groups Owner',
+             'groups.users'                  : 'Groups Users',
+             'groups.group'                  : 'Groups Group',
+             notes                           : 'Notes',
+             attachments                     : 'Attachments',
+             history                         : 'History',*/
             'createdBy.user'                : 'Created By User',
             'createdBy.date'                : 'Created By Date',
             'editedBy.user'                 : 'Edited By User',
-            'editedBy.date'                 : 'Edited By Date',
-            'companyInfo.size'              : 'Company Size',
-            'companyInfo.industry'          : 'Company Industry'
+            'editedBy.date'                 : 'Edited By Date'
+            /* 'companyInfo.size'              : 'Company Size',
+             'companyInfo.industry'          : 'Company Industry'*/
         },
+
         formatters: {
             'Date Birthday': function (date) {
                 return moment(date).utc().format(dateFormat);
             },
-            'Created Date' : function (date) {
+
+            'Created Date': function (date) {
                 return moment(date).utc().format(dateFormat);
             },
-            'Edited Date'  : function (date) {
+
+            'Edited Date': function (date) {
                 return moment(date).utc().format(dateFormat);
             }
         }
@@ -492,7 +518,7 @@ module.exports = (function () {
             projectShortDesc     : 'Project Short Desc',
             projectName          : 'Project Name',
             task                 : 'Task',
-            'customername'       : 'Customer Name',
+            customername         : 'Customer Name',
             'projectmanager.name': 'Project Manager Name',
             description          : 'Description',
             whoCanRW             : 'Who Can RW',
@@ -524,18 +550,22 @@ module.exports = (function () {
             'bonus.endWeek'      : 'Bonus End Week',
             'bonus.endYear'      : 'Bonus End Year'
         },
-        arrayKeys  : {
+
+        arrayKeys: {
             'groups.users': true,
             'groups.group': true
         },
-        formatters : {
+
+        formatters: {
             'Target End Date': function (date) {
                 return moment(date).utc().format(dateFormat);
             },
-            'Created Date'   : function (date) {
+
+            'Created Date': function (date) {
                 return moment(date).utc().format(dateFormat);
             },
-            'Edited Date'    : function (date) {
+
+            'Edited Date': function (date) {
                 return moment(date).utc().format(dateFormat);
             }
         }
@@ -578,14 +608,17 @@ module.exports = (function () {
             'editedBy.user' : 'Edited By User',
             'editedBy.date' : 'Edited By Date'
         },
-        formatters : {
-            'Start Date'  : function (date) {
+
+        formatters: {
+            'Start Date': function (date) {
                 return moment(date).utc().format(dateFormat);
             },
+
             'Created Date': function (date) {
                 return moment(date).utc().format(dateFormat);
             },
-            'Edited Date' : function (date) {
+
+            'Edited Date': function (date) {
                 return moment(date).utc().format(dateFormat);
             }
         }
@@ -619,15 +652,18 @@ module.exports = (function () {
             'editedBy.user'           : 'Edited By User',
             'editedBy.date'           : 'Edited By Date'
         },
-        arrayKeys  : {
+
+        arrayKeys: {
             'groups.users': true,
             'groups.group': true
         },
-        formatters : {
+
+        formatters: {
             'Created Date': function (date) {
                 return moment(date).utc().format(dateFormat);
             },
-            'Edited Date' : function (date) {
+
+            'Edited Date': function (date) {
                 return moment(date).utc().format(dateFormat);
             }
         }

@@ -27,55 +27,86 @@ var Module = function (models, event) {
     var Uploader = require('../services/fileStorage/index');
     var uploader = new Uploader();
 
-    var projectCustomer = {
-        type: 1,
-        isOwn: 1,
-        'name.first': 1,
-        'name.last': 1,
-        dateBirth: 1,
-        email: 1,
-        company: 1,
-        department: 1,
-        timezone: 1,
-        'address.street': 1,
-        'address.city': 1,
-        'address.state': 1,
-        'address.zip': 1,
-        'address.country': 1,
-        website: 1,
-        jobPosition: 1,
-        skype: 1,
-        'phones.phone': 1,
-        'phones.mobile': 1,
-        'phones.fax': 1,
-        contacts: 1,
-        internalNotes: 1,
-        title: 1,
-        'salesPurchases.isCustomer': 1,
-        'salesPurchases.isSupplier': 1,
-        'salesPurchases.salesPerson': 1,
-        'salesPurchases.salesTeam': 1,
-        'salesPurchases.implementedBy': 1,
-        'salesPurchases.active': 1,
-        'salesPurchases.reference': 1,
-        'salesPurchases.language': 1,
+    var projectAfterLookup = {
+        type                            : 1,
+        isOwn                           : 1,
+        'name.first'                    : 1,
+        'name.last'                     : 1,
+        dateBirth                       : 1,
+        email                           : 1,
+        company                         : 1,
+        department                      : 1,
+        timezone                        : 1,
+        'address.street'                : 1,
+        'address.city'                  : 1,
+        'address.state'                 : 1,
+        'address.zip'                   : 1,
+        'address.country'               : 1,
+        website                         : 1,
+        jobPosition                     : 1,
+        skype                           : 1,
+        'phones.phone'                  : 1,
+        'phones.mobile'                 : 1,
+        'phones.fax'                    : 1,
+        contacts                        : 1,
+        title                           : 1,
+        'salesPurchases.isCustomer'     : 1,
+        'salesPurchases.isSupplier'     : 1,
+        'salesPurchases.salesPerson'    : 1,
+        'salesPurchases.salesTeam'      : 1,
+        'salesPurchases.implementedBy'  : 1,
+        'salesPurchases.active'         : 1,
+        'salesPurchases.reference'      : 1,
+        'salesPurchases.language'       : 1,
         'salesPurchases.receiveMessages': 1,
-        relatedUser: 1,
-        'social.FB': 1,
-        'social.LI': 1,
-        whoCanRW: 1,
-        'groups.owner': 1,
-        'groups.users': 1,
-        'groups.group': 1,
-        notes: 1,
-        attachments: 1,
-        history: 1,
-        'createdBy.user': 1,
-        'createdBy.date': 1,
-        'editedBy.user': 1,
-        'editedBy.date': 1,
-        'companyInfo.info': 1,
-        'companyInfo.industry': 1
+        relatedUser                     : 1,
+        'social.FB'                     : 1,
+        'social.LI'                     : 1,
+        'createdBy.user'                : {$arrayElemAt: ['$createdBy.user', 0]},
+        'createdBy.date'                : 1,
+        'editedBy.user'                 : {$arrayElemAt: ['$editedBy.user', 0]},
+        'editedBy.date'                 : 1
+    };
+
+    var projectCustomer = {
+        type                            : 1,
+        isOwn                           : 1,
+        'name.first'                    : 1,
+        'name.last'                     : 1,
+        dateBirth                       : 1,
+        email                           : 1,
+        company                         : 1,
+        department                      : 1,
+        timezone                        : 1,
+        'address.street'                : 1,
+        'address.city'                  : 1,
+        'address.state'                 : 1,
+        'address.zip'                   : 1,
+        'address.country'               : 1,
+        website                         : 1,
+        jobPosition                     : 1,
+        skype                           : 1,
+        'phones.phone'                  : 1,
+        'phones.mobile'                 : 1,
+        'phones.fax'                    : 1,
+        contacts                        : 1,
+        title                           : 1,
+        'salesPurchases.isCustomer'     : 1,
+        'salesPurchases.isSupplier'     : 1,
+        'salesPurchases.salesPerson'    : 1,
+        'salesPurchases.salesTeam'      : 1,
+        'salesPurchases.implementedBy'  : 1,
+        'salesPurchases.active'         : 1,
+        'salesPurchases.reference'      : 1,
+        'salesPurchases.language'       : 1,
+        'salesPurchases.receiveMessages': 1,
+        relatedUser                     : 1,
+        'social.FB'                     : 1,
+        'social.LI'                     : 1,
+        'createdBy.user'                : '$createdBy.user.login',
+        'createdBy.date'                : 1,
+        'editedBy.user'                 : '$editedBy.user.login',
+        'editedBy.date'                 : 1
     };
 
     /*TODO remove after filters check*/
@@ -156,11 +187,11 @@ var Module = function (models, event) {
         Customers.aggregate([
             {
                 $group: {
-                    _id: null,
+                    _id : null,
                     name: {
                         $addToSet: {
                             name: '$name.first',
-                            _id: '$_id'
+                            _id : '$_id'
                         }
                     },
 
@@ -178,13 +209,13 @@ var Module = function (models, event) {
                     case 'name':
                         result[0][key] = {
                             displayName: 'Name',
-                            values: _.sortBy(value, 'name')
+                            values     : _.sortBy(value, 'name')
                         };
                         break;
                     case 'country':
                         result[0][key] = {
                             displayName: 'Country',
-                            values: _.sortBy(value, function (num) {
+                            values     : _.sortBy(value, function (num) {
                                 return num;
                             })
                         };
@@ -195,9 +226,9 @@ var Module = function (models, event) {
 
             result[0].services = {
                 displayName: 'Services',
-                values: [{displayName: 'Supplier', _id: 'isSupplier'}, {
+                values     : [{displayName: 'Supplier', _id: 'isSupplier'}, {
                     displayName: 'Customer',
-                    _id: 'isCustomer'
+                    _id        : 'isCustomer'
                 }]
             };
 
@@ -400,7 +431,7 @@ var Module = function (models, event) {
 
             var historyOptions = {
                 req: req,
-                id: {$in: ids}
+                id : {$in: ids}
             };
 
             function getHistoryNotes(parallelCb) {
@@ -432,10 +463,10 @@ var Module = function (models, event) {
                         }
 
                         return {
-                            date: elem.date,
+                            date   : elem.date,
                             history: elem,
-                            user: elem.editedBy,
-                            name: name
+                            user   : elem.editedBy,
+                            name   : name
                         };
                     });
 
@@ -460,7 +491,7 @@ var Module = function (models, event) {
                             return {
                                 date: elem.contactDate,
                                 task: elem,
-                                _id: elem._id,
+                                _id : elem._id,
                                 user: elem.editedBy.user
                             }
                         });
@@ -483,7 +514,6 @@ var Module = function (models, event) {
 
         });
     }
-
 
     function getCustomers(req, res, next) {
         var Customers = models.get(req.session.lastDb, 'Customers', CustomerSchema);
@@ -645,9 +675,9 @@ var Module = function (models, event) {
 
             historyOptions = {
                 contentType: result.type,
-                data: result.toJSON(),
-                req: req,
-                contentId: result._id
+                data       : result.toJSON(),
+                req        : req,
+                contentId  : result._id
             };
 
             historyWriter.addEntry(historyOptions, function () {
@@ -659,7 +689,6 @@ var Module = function (models, event) {
                 });
             });
 
-
         });
     };
 
@@ -667,7 +696,7 @@ var Module = function (models, event) {
         var Customers = models.get(req.session.lastDb, 'Customers', CustomerSchema);
 
         Customers.find({
-            type: 'Company',
+            type    : 'Company',
             isHidden: false
         }, {'name.first': 1}).sort({'name.first': 1}).exec(function (err, result) {
             if (err) {
@@ -1000,16 +1029,16 @@ var Module = function (models, event) {
             if (addNote) {
                 notes = file.map(function (elem) {
                     return {
-                        _id: mongoose.Types.ObjectId(),
+                        _id       : mongoose.Types.ObjectId(),
                         attachment: {
-                            name: elem.name,
+                            name    : elem.name,
                             shortPas: elem.shortPas
                         },
-                        user: {
-                            _id: req.session.uId,
+                        user      : {
+                            _id  : req.session.uId,
                             login: req.session.uName
                         },
-                        date: new Date()
+                        date      : new Date()
                     }
                 });
             }
@@ -1017,7 +1046,7 @@ var Module = function (models, event) {
             Model.findByIdAndUpdate(id, {
                 $push: {
                     attachments: {$each: file},
-                    notes: {$each: notes}
+                    notes      : {$each: notes}
                 }
             }, {new: true}, function (err, response) {
                 if (err) {
@@ -1113,9 +1142,9 @@ var Module = function (models, event) {
 
                 historyOptions = {
                     contentType: result.type,
-                    data: data,
-                    req: req,
-                    contentId: result._id
+                    data       : data,
+                    req        : req,
+                    contentId  : result._id
                 };
 
                 historyWriter.addEntry(historyOptions, function () {
@@ -1179,7 +1208,7 @@ var Module = function (models, event) {
                         $match: queryObject
                     }, {
                         $project: {
-                            _id: 1,
+                            _id  : 1,
                             later: {$substr: [searchName, 0, 1]}
                         }
                     },
@@ -1228,7 +1257,6 @@ var Module = function (models, event) {
                 if (deleteHistory) {
                     historyWriter.deleteHistoryById(req, {contentId: _id});
                 }
-
 
                 res.status(200).send({success: 'customer removed'});
             });
@@ -1280,20 +1308,37 @@ var Module = function (models, event) {
             delete filterObj.services;
         }
 
-
         options = {
-            res: res,
-            next: next,
-            Model: Model,
-            map: exportMap,
+            res         : res,
+            next        : next,
+            Model       : Model,
+            map         : exportMap,
             returnResult: true,
-            fileName: type || 'Customer'
+            fileName    : type || 'Customer'
         };
 
         function lookupForCustomers(cb) {
             var query = [];
 
-            query.push({$match: filterObj}, {$project: projectCustomer});
+            query.push({$match: filterObj}, {
+                $lookup: {
+                    from        : 'Users',
+                    localField  : 'createdBy.user',
+                    foreignField: '_id',
+                    as          : 'createdBy.user'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Users',
+                    localField  : 'editedBy.user',
+                    foreignField: '_id',
+                    as          : 'editedBy.user'
+                }
+            }, {
+                $project: projectAfterLookup
+            }, {
+                $project: projectCustomer
+            });
 
             options.query = query;
             options.cb = cb;
@@ -1305,12 +1350,12 @@ var Module = function (models, event) {
             var resultArray = result[0];
 
             exporter.exportToXlsx({
-                res: res,
-                next: next,
-                Model: Model,
+                res        : res,
+                next       : next,
+                Model      : Model,
                 resultArray: resultArray,
-                map: exportMap,
-                fileName: type || 'Customer'
+                map        : exportMap,
+                fileName   : type || 'Customer'
             });
         });
 
@@ -1343,12 +1388,12 @@ var Module = function (models, event) {
         }
 
         options = {
-            res: res,
-            next: next,
-            Model: Model,
-            map: exportMap,
+            res         : res,
+            next        : next,
+            Model       : Model,
+            map         : exportMap,
             returnResult: true,
-            fileName: type || 'Customer'
+            fileName    : type || 'Customer'
         };
 
         function lookupForCustomers(cb) {
@@ -1366,12 +1411,12 @@ var Module = function (models, event) {
             var resultArray = result[0];
 
             exporter.exportToCsv({
-                res: res,
-                next: next,
-                Model: Model,
+                res        : res,
+                next       : next,
+                Model      : Model,
                 resultArray: resultArray,
-                map: exportMap,
-                fileName: type || 'Customer'
+                map        : exportMap,
+                fileName   : type || 'Customer'
             });
         });
 
