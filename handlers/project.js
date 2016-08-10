@@ -2057,10 +2057,10 @@ module.exports = function (models, event) {
 
     this.exportToCsv = function (req, res, next) {
         var dbName = req.session.lastDb;
-        var WTrack = models.get(dbName, 'wTrack', wTrackSchema);
+        var Project = models.get(dbName, 'Project', ProjectSchema);
 
         var filter = req.query.filter ? JSON.parse(req.query.filter) : JSON.stringify({});
-        var type = req.query.type || 'wTrack';
+        var type = req.query.type || 'Project';
         var filterObj = {};
         var options;
         var filterMapper = new FilterMapper();
@@ -2072,7 +2072,7 @@ module.exports = function (models, event) {
         options = {
             res         : res,
             next        : next,
-            Model       : WTrack,
+            Model       : Project,
             map         : exportMap,
             returnResult: true,
             fileName    : type
@@ -2100,7 +2100,7 @@ module.exports = function (models, event) {
             exporter.exportToCsv({
                 res        : res,
                 next       : next,
-                Model      : WTrack,
+                Model      : Project,
                 resultArray: resultArray,
                 map        : exportMap,
                 fileName   : type

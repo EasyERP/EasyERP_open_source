@@ -9,10 +9,10 @@
         viewType: 'thumbnails', // needs in view.prototype.changeLocationHash
 
         events: {
-            'click #showMore': 'showMore',
-            'click .thumbnailElement': 'gotoEditForm',
-            'click .dropDown': 'dropDown',
-            'click .filterButton': 'showfilter',
+            'click #showMore'            : 'showMore',
+            'click .thumbnailElement'    : 'gotoEditForm',
+            'click .dropDown'            : 'dropDown',
+            'click .filterButton'        : 'showfilter',
             'click .filter-check-list li': 'checkCheckbox'
         },
 

@@ -93,7 +93,6 @@ module.exports = function (event, models) {
      */
     router.get('/', accessStackMiddleware, handler.getByViewType);
 
-
     router.get('/exportToXlsx', handler.exportToXlsx);
     router.get('/exportToCsv', handler.exportToCsv);
 

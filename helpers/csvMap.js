@@ -448,7 +448,7 @@ module.exports = (function () {
             isOwn                           : 'Is Owner',
             'name.first'                    : 'First Name',
             'name.last'                     : 'Last Name',
-            dateBirth                       : 'Date Birthday',
+            dateBirth                       : 'Date of Birthday',
             // imageSrc                        : 'Photo',
             email                           : 'Email',
             company                         : 'Company',
@@ -497,7 +497,7 @@ module.exports = (function () {
         },
 
         formatters: {
-            'Date Birthday': function (date) {
+            'Date of Birthday': function (date) {
                 return moment(date).utc().format(dateFormat);
             },
 

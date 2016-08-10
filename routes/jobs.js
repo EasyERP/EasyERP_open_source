@@ -92,7 +92,6 @@ module.exports = function (models, event) {
      * */
     router.get('/getForDD', handler.getForDD);
 
-
     router.get('/exportToCsv/', handler.exportToCsv);
     router.get('/exportToXlsx/', handler.exportToXlsx);
 
