@@ -523,7 +523,6 @@ module.exports = (function () {
             'bonus.endDate'      : 'Bonus End Date',
             'bonus.endWeek'      : 'Bonus End Week',
             'bonus.endYear'      : 'Bonus End Year'
-
         },
         arrayKeys  : {
             'groups.users': true,

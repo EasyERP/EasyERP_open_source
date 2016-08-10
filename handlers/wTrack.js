@@ -117,7 +117,7 @@ var TCard = function (event, models) {
                 dateByWeek: 1,
                 dateByMonth: 1,
                 'project.projectName': '$project.name',
-                'projectMember': {
+                projectMember: {
                     $filter: {
                         input: '$projectMembers',
                         as: 'projectMember',
@@ -161,7 +161,7 @@ var TCard = function (event, models) {
                     dateByWeek: 1,
                     dateByMonth: 1,
                     'project.projectName': 1,
-                    'projectMember': {$arrayElemAt: ['$projectMember', 0]},
+                    projectMember: {$arrayElemAt: ['$projectMember', 0]},
                     'project.workflow.name': '$project.workflow.name',
                     'project.workflow.status': '$project.workflow.status',
                     'project.customer.Name': {$concat: ['$project.customer.name.first', ' ', '$project.customer.name.last']},
@@ -2346,7 +2346,6 @@ var TCard = function (event, models) {
 
         };
 
-    }
-    ;
+    };
 
 module.exports = TCard;

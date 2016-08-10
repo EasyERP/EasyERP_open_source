@@ -9,10 +9,10 @@
         viewType: 'thumbnails', // needs in view.prototype.changeLocationHash
 
         events: {
-            'click #showMore'            : 'showMore',
-            'click .thumbnailElement'    : 'gotoEditForm',
-            'click .dropDown'            : 'dropDown',
-            'click .filterButton'        : 'showfilter',
+            'click #showMore': 'showMore',
+            'click .thumbnailElement': 'gotoEditForm',
+            'click .dropDown': 'dropDown',
+            'click .filterButton': 'showfilter',
             'click .filter-check-list li': 'checkCheckbox'
         },
 
@@ -27,6 +27,45 @@
             this.makeRender(options);
 
             this.render();
+        },
+
+        exportToCsv: function () {
+            // todo change after routes refactoring
+            var filterString = '';
+            var tempExportToCsvUrl = '';
+
+            if (this.exportToCsvUrl) {
+                tempExportToCsvUrl = this.exportToCsvUrl;
+                if (this.filter) {
+                    tempExportToCsvUrl += '/?filter=' + encodeURIComponent(JSON.stringify(this.filter));
+                }
+                window.location = tempExportToCsvUrl;
+            } else {
+                if (this.collection) {
+                    filterString += '/?filter=' + encodeURIComponent(JSON.stringify(this.filter));
+                }
+                window.location = this.collection.url + '/exportToCsv' + filterString;
+            }
+        },
+
+        exportToXlsx: function () {
+            var filterString = '';
+            var tempExportToXlsxUrl = '';
+            // todo change after routes refactoring
+            if (this.exportToXlsxUrl) {
+                tempExportToXlsxUrl = this.exportToXlsxUrl;
+                if (this.filter) {
+                    tempExportToXlsxUrl += '/?filter=' + encodeURIComponent(JSON.stringify(this.filter));
+                }
+                window.location = tempExportToXlsxUrl;
+            } else {
+                if (this.collection) {
+                    if (this.filter) {
+                        filterString += '/?filter=' + encodeURIComponent(JSON.stringify(this.filter));
+                    }
+                    window.location = this.collection.url + '/exportToXlsx' + filterString;
+                }
+            }
         },
 
         dropDown: function (e) {
