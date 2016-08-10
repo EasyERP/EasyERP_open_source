@@ -2318,11 +2318,17 @@ label._customCHeckbox input[type="checkbox"] {
   float: none;
   margin: -30px auto 20px;
   width: 415px !important; }
+  .holidays.projectTimeCardCustomList._timeCardLegend {
+    margin-top: 20px; }
+    .holidays.projectTimeCardCustomList._timeCardLegend thead tr {
+      border-top: none; }
 
 #searchContainer.projectTimeCardCustomSearch {
   top: -32px;
   margin-right: 23px;
   width: 20%; }
+  #searchContainer.projectTimeCardCustomSearch._timeCardSearch {
+    top: 50px; }
 
 .kanban .column h2 span.text {
   margin-right: 70px !important; }
