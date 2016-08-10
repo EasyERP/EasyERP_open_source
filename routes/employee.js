@@ -7,8 +7,10 @@ var MODULES = require('../constants/modules');
 module.exports = function (event, models) {
     'use strict';
     var moduleId = MODULES.EMPLOYEES;
+    var bitthdaysModule = MODULES.BIRTHDAYS;
     var handler = new EmployeeHandler(event, models);
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
+    var bitthdaysStackMiddleware = require('../helpers/access')(bitthdaysModule, models);
     var multipart = require('connect-multiparty');
     var multipartMiddleware = multipart();
 
@@ -361,7 +363,7 @@ HTTP/1.1 200 OK
         ]
     }
      */
-    router.get('/getEmployeesImages', accessStackMiddleware, handler.getEmployeesImages);
+    router.get('/getEmployeesImages', handler.getEmployeesImages);
 
     /**
      *@api {get} /employees/nationality/ Request Employees nationality
@@ -577,7 +579,7 @@ HTTP/1.1 200 OK
     }
 }
      */
-    router.get('/birthdays', accessStackMiddleware, handler.getBirthdays);
+    router.get('/birthdays', bitthdaysStackMiddleware, handler.getBirthdays);
 
     /**
      *@api {get} /employees/getYears/ Request Years

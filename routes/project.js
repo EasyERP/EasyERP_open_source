@@ -172,7 +172,7 @@ HTTP/1.1 200 OK
       ]
 }
      */
-    router.get('/projectType', accessStackMiddleWare, handler.getProjectType);
+    router.get('/projectType', handler.getProjectType);
 
     /**
      *@api {get} /projects/forDD Request ProjectsForDD
@@ -290,7 +290,7 @@ HTTP/1.1 200 OK
         ]
 }
      */
-    router.get('/getForWtrack', accessStackMiddleWare, handler.getForWtrack);
+    router.get('/getForWtrack', /*accessStackMiddleWare,*/ handler.getForWtrack);
 
     /**
      *@api {get} /projects/getFilterValues/ Request FilterValues

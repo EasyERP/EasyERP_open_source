@@ -74,6 +74,12 @@
                                     placeholder="Due Date" readonly />
                                 </dd>
 
+                                <dt><label for="journal">Journal</label></dt>
+                                <dd>
+                                    <a id="journal" class="<%= model.approved ? '' : 'current-selected'%>" href="javascript:;"><%= model.journal && model.journal._id ?
+                                        model.journal.name : 'Select'%></a>
+                                </dd>
+
                                 <dt><label for="currencyDd">Currency</label></dt>
                                 <dd>
                                     <a id="currencyDd" class="current-selected"
@@ -118,6 +124,12 @@
                                 <dt><label for="d_date">Due Date </label></dt>
                                 <dd>
                                     <span id="d_date"><%=(model.dueDate) ? model.dueDate : ''%></span>
+                                </dd>
+
+                                <dt><label for="journal">Journal</label></dt>
+                                <dd>
+                                    <a id="journal" class="<%= model.approved ? '' : 'current-selected'%>" href="javascript:;"><%= model.journal && model.journal._id ?
+                                        model.journal.name : 'Select'%></a>
                                 </dd>
 
                                 <dt><label for="currencyDd">Currency</label></dt>

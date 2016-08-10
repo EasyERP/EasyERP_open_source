@@ -4157,9 +4157,8 @@ table.kanban tbody td:nth-child(n+2) {
   border-right: 1px solid #c8c8d3;
 }
 .separateBlock {
-  margin-top: 10px;
+  margin-top: 5px;
   font-family: 'Open Sans SemiBold', sans-serif, Verdana;
-  text-align: center;
 }
 ._listModalColumn {
   width: 33.333%;
@@ -13014,10 +13013,10 @@ a.cancelled {
   border: 1px solid transparent;
   box-shadow: none;
 }
-.form-holder form .create-employee-info > input {
+.form-holder form .create-employee-info input {
   max-width: 117px !important;
 }
-.form-holder form .create-employee-info > select {
+.form-holder form .create-employee-info select {
   max-width: 130px !important;
 }
 .form-holder form .subject-info {
@@ -13073,7 +13072,7 @@ a.cancelled {
 .form-holder form .subject-info dd span.ui-spinner {
   width: 100%;
 }
-.form-holder form .subject-info > input {
+.form-holder form .subject-info input {
   max-width: inherit !important;
   width: 99% !important;
   margin-right: 1%;
@@ -13137,10 +13136,10 @@ a.cancelled {
 .form-holder form .opprtunitie-info dd span.ui-spinner {
   width: 100%;
 }
-.form-holder form .opprtunitie-info > input {
+.form-holder form .opprtunitie-info input {
   max-width: 250px !important;
 }
-.form-holder form .opprtunitie-info > select {
+.form-holder form .opprtunitie-info select {
   width: 95% !important;
   max-width: 240px !important;
 }
@@ -13200,10 +13199,10 @@ a.cancelled {
 .form-holder form .opprtunitie-lead-info dd span.ui-spinner {
   width: 100%;
 }
-.form-holder form .opprtunitie-lead-info > input {
+.form-holder form .opprtunitie-lead-info input {
   max-width: 231px !important;
 }
-.form-holder form .opprtunitie-lead-info > select {
+.form-holder form .opprtunitie-lead-info select {
   width: 95% !important;
   max-width: 240px !important;
 }
@@ -13237,8 +13236,8 @@ a.cancelled {
   box-shadow: none !important;
   border: none !important;
 }
-.form-holder form .startDate > input,
-.form-holder form .endDate > input {
+.form-holder form .startDate input,
+.form-holder form .endDate input {
   display: none;
 }
 #workflows {
@@ -13543,9 +13542,8 @@ a.cancelled {
 }
 .newSelectList .miniStylePagination {
   position: relative;
-  line-height: 28px;
-  min-width: 160px;
   text-align: center;
+  min-width: 160px;
 }
 .newSelectList .miniStylePagination:hover {
   background-color: white;
@@ -13553,8 +13551,7 @@ a.cancelled {
 .newSelectList .miniStylePagination .next,
 .newSelectList .miniStylePagination .prev {
   position: absolute;
-  top: 6px;
-  line-height: normal;
+  top: 4px;
 }
 .newSelectList .miniStylePagination .next.disabled,
 .newSelectList .miniStylePagination .prev.disabled {
@@ -15178,7 +15175,7 @@ textarea#editInput {
 }
 .fired {
   background-color: rgba(235, 0, 4, 0.73) !important;
-  color: #fff !important;
+  color: #fff!important;
 }
 .text-left {
   text-align: left !important;
