@@ -140,6 +140,9 @@ define([
             }, {
                 _id : 'Accrual',
                 name: 'Accrual'
+            }, {
+                _id : 'WriteOff',
+                name: 'WriteOff'
             }];
 
             this.delegateEvents(this.events);
