@@ -34,7 +34,7 @@
                                 <dd><input type="text" id="company" value="<%= model.tempCompanyField %>" placeholder="Company name" maxlength="32"/></dd>
                                 <dt><label for="customerDd">Customer</label></dt>
                                 <dd>
-                                    <a id="customerDd" data-id="<%=model.customer?model.customer._id:''%>" class="current-selected" href="javascript:;"><%=model.customer?(model.customer.name.first+' '+model.customer.name.last):'Select'%></a>
+                                    <a id="customerDd" data-id="<%=model.customer ? model.customer._id : ''%>" class="current-selected" href="javascript:;"><%=model.customer ? (model.customer.name.first+' '+model.customer.name.last) : 'Select'%></a>
                                 </dd>
                                 <dt><label for="first">First Name</label></dt>
                                 <dd><input type="text" class="name" id="first" placeholder="First Name" value="<%=(model.contactName) ? model.contactName.first : ''%>" maxlength="32"/></dd>
@@ -42,9 +42,9 @@
                                 <dd><input type="text" class="name" id="last" placeholder="Last Name" value="<%=(model.contactName) ? model.contactName.last : ''%>" maxlength="32"/></dd>
                                 <dt><label for="email_person">Email</label></dt>
                                 <dd><input type="text" id="email_person" value="<%=model.email%>" placeholder="e.g. email@site.com" maxlength="48"/></dd>
-                                <dt><label for="phone">Phone </label></dt>
+                                <dt><label for="phone">Phone</label></dt>
                                 <dd><input type="text" id="phone" value="<%=model.phones.phone%>" placeholder="Phone number" maxlength="32"/></dd>
-                                <dt><label for="mobile">Mobile </label></dt>
+                                <dt><label for="mobile">Mobile</label></dt>
                                 <dd><input type="text" id="mobile" value="<%=model.phones.mobile%>" placeholder="Mobile number" maxlength="32"/></dd>
                                 <dt><label for="skype">Skype</label></dt>
                                 <dd><input type="text" id="skype" placeholder="Skype" value="<%=model.skype%>"

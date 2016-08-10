@@ -38,7 +38,7 @@ define([
             'click .tabListItem'                               : 'changeWorkflow',
             'click .current-selected:not(.jobs)'               : 'showNewSelect',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
-            'click #convertToOpportunity'                      : 'convertToOpp'
+            'click #convertToOpportunity'                      : 'openDialog'
         },
 
         hideNewSelect: function () {
@@ -49,18 +49,23 @@ define([
             }
         },
 
-        convertToOpp : function (e){
+        openDialog: function (e) {
+            e.preventDefault();
+            $('#convert-dialog-form').dialog('open');
+        },
+
+     /*   convertToOpp : function (e){
             e.preventDefault();
             this.saveDeal({
                 isOpportunitie : true,
                 isConverted    : true,
                 convertedDate  : new Date()
             }, 'converted');
-        },
+        },*/
 
         setChangeValueToModel: function (e) {
             var $target = $(e.target);
-            var property = $target.attr('data-id').replace('_', '.');
+            var property = $target.attr('id').replace('_', '.');
             var value = $target.val();
 
             this.modelChanged[property] = value;
@@ -140,6 +145,10 @@ define([
             if (type === 'salesPerson') {
                 this.$el.find('#assignedToDd').text(text).attr('data-id', id);
             }
+
+            if (type === 'customer') {
+                this.selectCustomer(id);
+            }
             this.showButtons();
         },
 
@@ -211,6 +220,88 @@ define([
             );
         },
 
+        selectCustomer: function (id) {
+
+            if (id !== '') {
+                dataService.getData(constants.URLS.CUSTOMERS, {
+                    id: id
+                }, function (response, context) {
+                    var customer = response;
+                    if (customer.type === 'Person') {
+                        context.modelChanged.contactName = {
+                            first: customer.name.first,
+                            last : customer.name.last
+                        };
+                        context.modelChanged.email = customer.email;
+                        context.modelChanged.phones = {
+                            phone : customer.phones.phone,
+                            last : customer.phones.mobile
+                        };
+                        delete context.modelChanged.address;
+                        context.modelChanged.tempCompanyField = '';
+
+                        context.$el.find('#contactName_first').val(customer.name.first);
+                        context.$el.find('#contactName_last').val(customer.name.last);
+                        context.$el.find('#email').val(customer.email);
+                        context.$el.find('#phones_phone').val(customer.phones.phone);
+                        context.$el.find('#phones_mobile').val(customer.phones.mobile);
+
+                        context.$el.find('#address_street').val('');
+                        context.$el.find('#address_city').val('');
+                        context.$el.find('#address_state').val('');
+                        context.$el.find('#address_zip').val('');
+                        context.$el.find('#address_country').val('');
+                        context.$el.find('#tempCompanyField').val('');
+
+                    } else {
+                        context.$el.find('#company').val(customer.name.first);
+
+                        context.$el.find('#contactName_first').val('');
+                        context.$el.find('#contactName_last').val('');
+                        context.$el.find('#phones_phone').val('');
+                        context.$el.find('#phones_mobile').val('');
+                        context.$el.find('#email').val('');
+                        context.modelChanged.email = '';
+                        delete context.modelChanged.contactName;
+                        delete context.modelChanged.phones;
+
+
+                        context.$el.find('#address_street').val(customer.address.street);
+                        context.$el.find('#address_city').val(customer.address.city);
+                        context.$el.find('#address_state').val(customer.address.state);
+                        context.$el.find('#address_zip').val(customer.address.zip);
+                        context.$el.find('#address_country').val(customer.address.country);
+                        context.$el.find('#tempCompanyField').val(customer.name.first);
+                        context.modelChanged.address = {
+                            street : customer.address.street,
+                            city : customer.address.city,
+                            state : customer.address.state,
+                            zip : customer.address.zip,
+                            country : customer.address.country
+                        };
+                        context.modelChanged.tempCompanyField = customer.name.first;
+
+                    }
+
+
+
+                }, this);
+            } else {
+                this.$el.find('#email').val('');
+                this.$el.find('#phone').val('');
+                this.$el.find('#mobile').val('');
+                this.$el.find('#street').val('');
+                this.$el.find('#city').val('');
+                this.$el.find('#state').val('');
+                this.$el.find('#zip').val('');
+                this.$el.find('#country').val('');
+                this.$el.find('#company').val('');
+                this.$el.find('#first').val('');
+                this.$el.find('#last').val('');
+            }
+
+        },
+
         deleteItems: function () {
             var mid = 39;
 
@@ -228,7 +319,7 @@ define([
         renderAbout : function (){
             var self = this;
             var $thisEl = this.$el;
-            $thisEl.find('.aboutHolder').html(_.template(aboutTemplate, this.formModel.toJSON()));
+            $thisEl.find('.aboutHolder').html(_.template(aboutTemplate, { model : self.formModel.toJSON()}));
             this.renderTags();
             $thisEl.find('#expectedClosing').datepicker({
                 dateFormat : 'd M, yy',
@@ -238,16 +329,16 @@ define([
                     self.modelChanged['expectedClosing'] = new Date(dateText);
                     self.showButtons();
                 }
-
             });
         },
 
         render: function () {
             var formModel = this.formModel.toJSON();
             var self = this;
+            var that = this;
             var $thisEl = this.$el;
 
-            $thisEl.html(_.template(OpportunitiesFormTemplate, formModel));
+            $thisEl.html(_.template(OpportunitiesFormTemplate, {model : formModel}));
 
             dataService.getData('/workflows/', {id: 'Leads'}, function (response) {
                 self.responseObj = {workflows: response.data};
@@ -266,35 +357,55 @@ define([
 
                 self.responseObj['#salesPersonDd'] = employees;
             });
+            dataService.getData('/customers', {}, function (employees) {
+                employees = _.map(employees.data, function (employee) {
+                    employee.name = employee.fullName;
 
-            this.formProperty = new CompanyFormProperty({
-                data       : formModel.company,
-                saveDeal   : self.saveDeal,
-                isLead     : true
+                    return employee;
+                });
+
+                self.responseObj['#customerDd'] = employees;
             });
 
             this.renderTags();
 
-            $thisEl.find('#companyHolder').html(
-                this.formProperty.render().el
-            );
-
-            $thisEl.find('#contactHolder').html(
-                new ContactFormProperty({
-                    data       : formModel.customer,
-                    saveDeal   : self.saveDeal,
-                    isLead     : true
-                }).render().el
-            );
-
             this.editorView = new EditorView({
                 model      : this.formModel,
-                contentType: 'opportunities'
+                contentType: 'Opportunities'
             });
 
             $thisEl.find('.notes').append(
                 this.editorView.render().el
             );
+
+            $('#convert-dialog-form').dialog({
+                autoOpen: false,
+                height  : 150,
+                width   : 350,
+                modal   : true,
+                title   : 'Convert to opportunity',
+                buttons : {
+                    'Create opportunity': function () {
+                        var createCustomer = ($('select#createCustomerOrNot option:selected').val()) ? true : false;
+
+                        that.saveDeal({
+                            isOpportunitie : true,
+                            isConverted    : true,
+                            convertedDate  : new Date(),
+                            createCustomer : createCustomer
+                        }, 'converted');
+
+                    },
+
+                    Cancel: function () {
+                        $(this).dialog('close');
+                    }
+                },
+
+                close: function () {
+                    $(this).dialog('close');
+                }
+            }, this);
 
             $thisEl.find('#expectedClosing').datepicker({
                 dateFormat : 'd M, yy',
@@ -311,7 +422,7 @@ define([
             $thisEl.find('.attachments').append(
                 new AttachView({
                     model      : this.formModel,
-                    contentType: 'opportunities'
+                    contentType: 'Opportunities'
                 }).render().el
             );
 

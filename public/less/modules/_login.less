@@ -2134,3 +2134,50 @@ table {
 ._settingsHolder {
 
 }
+
+.separateBlock {
+  margin-top: 5px;
+  font-family: @fontSemiBold;
+}
+
+._listModalColumn {
+  width: 33.333%;
+  padding: 0 10px;
+  float: left;
+}
+
+._listModal {
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+._modalSelect {
+  position: relative;
+}
+
+.ui-dialog {
+
+  ._listModalWrap {
+
+    ._listModal {
+      padding: 0;
+
+      ._modalSelect {
+        a, input {
+          padding: 0;
+          min-height: 30px;
+        }
+      }
+    }
+  }
+  .form-holder._listModalWrap {
+    padding: 10px;
+  }
+}
+
+.attach_file {
+  cursor: pointer;
+  color: #7eadcc;
+}

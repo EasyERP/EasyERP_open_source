@@ -352,9 +352,9 @@
         Leads: {
             contactName: {
                 displayName: 'Contact Name',
-                backend    : 'customer._id'
+                backend    : 'contactName',
+                type       : 'string'
             },
-
             source: {
                 displayName: 'Source',
                 backend    : 'source',
