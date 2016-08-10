@@ -804,7 +804,9 @@ var Module = function (models, event) {
 
                         noteObj._id = mongoose.Types.ObjectId();
                         noteObj.date = new Date();
-                        noteObj.author = req.session.uName;
+                        noteObj.user = {
+                            _id : req.session.uId,
+                             login : req.session.uName};
                         _opportunitie.notes = data.notes;
                     }
                     if (data.customer) {

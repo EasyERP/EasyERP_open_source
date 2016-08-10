@@ -233,7 +233,7 @@ define([
                             last : customer.name.last
                         };
                         context.modelChanged.email = customer.email;
-                        context.modelChanged.phones.phone = {
+                        context.modelChanged.phones = {
                             phone : customer.phones.phone,
                             last : customer.phones.mobile
                         };

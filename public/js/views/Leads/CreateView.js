@@ -27,7 +27,7 @@ define([
 
         events: {
             'change #workflowNames': 'changeWorkflows',
-            'click .fa-paperclip': 'clickInput'
+            'click .fa-paperclip'  : 'clickInput'
         },
 
         clickInput: function () {
@@ -70,8 +70,6 @@ define([
 
                     }
 
-
-
                 }, this);
             } else {
                 this.$el.find('#email').val('');
@@ -90,7 +88,7 @@ define([
         },
 
         chooseOption: function (e) {
-            var holder = $(e.target).parents('dd').find('.current-selected');
+            var holder = $(e.target).parents('._modalSelect').find('.current-selected');
             holder.text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
             if (holder.attr('id') === 'customerDd') {
                 this.selectCustomer($(e.target).attr('id'));
@@ -126,6 +124,7 @@ define([
             var idCustomer = this.$el.find('#customerDd').attr('data-id');
             var address = {};
             var salesPersonId = this.$el.find('#salesPerson').attr('data-id');
+            var expectedClosing = this.$el.find('#expectedClosingDate').val();
             var salesTeamId = this.$el.find('#salesTeam option:selected').val();
             var first = $.trim(this.$el.find('#first').val());
             var last = $.trim(this.$el.find('#last').val());
@@ -134,7 +133,7 @@ define([
                 first: first,
                 last : last
             };
-            var email = $.trim(this.$el.find('#e-mail').val());
+            var email = $.trim(this.$el.find('#email').val());
             var func = $.trim(this.$el.find('#func').val());
             var phone = $.trim(this.$el.find('#phone').val());
             var mobile = $.trim(this.$el.find('#mobile').val());
@@ -145,7 +144,7 @@ define([
                 mobile: mobile,
                 fax   : fax
             };
-            var workflow =this.$el.find('#workflowsDd').attr('data-id');
+            var workflow = this.$el.find('#workflowsDd').attr('data-id');
             var priority = this.$el.find('#priorityDd').attr('data-id');
             var internalNotes = $.trim(this.$el.find('#internalNotes').val());
             var active = (this.$el.find('#active').is(':checked'));
@@ -155,16 +154,15 @@ define([
             var LI = $.trim(this.$el.find('#LI').val());
             var FB = $.trim(this.$el.find('#FB').val());
 
-
             var source = this.$el.find('#sourceDd').attr('data-id');
 
             var usersId = [];
             var groupsId = [];
-            var notes =[];
+            var notes = [];
             var note;
 
             var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
-            if (internalNotes){
+            if (internalNotes) {
                 note = {
                     title: '',
                     note : internalNotes
@@ -176,11 +174,11 @@ define([
                 afterPage = pageSplited.split('/')[1];
                 location = location.split('/p=')[0] + '/p=1' + '/' + afterPage;
             }
-            $('dd').find('.address').each(function () {
+            this.$el.find('._modalSelect').find('.address').each(function () {
                 var el = $(this);
                 address[el.attr('name')] = $.trim(el.val());
             });
-            $('.groupsAndUser tr').each(function () {
+            this.$el.find('.groupsAndUser tr').each(function () {
                 if ($(this).data('type') === 'targetUsers') {
                     usersId.push($(this).attr('data-id'));
                 }
@@ -190,31 +188,32 @@ define([
 
             });
             this.model.save({
-                name  : name,
-                skype : skype,
-                social: {
+                name            : name,
+                skype           : skype,
+                social          : {
                     LI: LI,
                     FB: FB
                 },
-                tempCompanyField  : tempCompany,
-                campaign     : $('#campaignDd').attr('data-id'),
-                source       : source,
-                customer     : idCustomer || null,
-                address      : address,
-                salesPerson  : salesPersonId || null,
-                salesTeam    : salesTeamId,
-                contactName  : contactName,
-                email        : email,
-                func         : func,
-                phones       : phones,
-                fax          : fax,
-                priority     : priority,
-                notes        : notes,
-                active       : active,
-                optout       : optout,
-                reffered     : reffered,
-                workflow     : workflow,
-                groups       : {
+                tempCompanyField: tempCompany,
+                campaign        : $('#campaignDd').attr('data-id'),
+                source          : source,
+                customer        : idCustomer || null,
+                address         : address,
+                salesPerson     : salesPersonId || null,
+                expectedClosing : expectedClosing,
+                salesTeam       : salesTeamId,
+                contactName     : contactName,
+                email           : email,
+                func            : func,
+                phones          : phones,
+                fax             : fax,
+                priority        : priority,
+                notes           : notes,
+                active          : active,
+                optout          : optout,
+                reffered        : reffered,
+                workflow        : workflow,
+                groups          : {
                     owner: self.$el.find('#allUsersSelect').attr('data-id') || null,
                     users: usersId,
                     group: groupsId
@@ -231,8 +230,8 @@ define([
 
                     self.attachView.sendToServer(null, currentModel);
                     /*self.hideDialog();
-                    Backbone.history.fragment = '';
-                    Backbone.history.navigate(location, {trigger: true});*/
+                     Backbone.history.fragment = '';
+                     Backbone.history.navigate(location, {trigger: true});*/
                     // Backbone.history.navigate('easyErp/users', { trigger: true });
                 },
 
@@ -275,7 +274,6 @@ define([
 
             this.renderAssignees(this.model);
 
-
             notDiv = this.$el.find('.attach-container');
 
             this.attachView = new AttachView({
@@ -305,6 +303,11 @@ define([
                 });
 
                 self.responseObj['#salesPerson'] = employees;
+            });
+            this.$el.find('#expectedClosingDate').datepicker({
+                dateFormat : 'd M, yy',
+                changeMonth: true,
+                changeYear : true
             });
             this.delegateEvents(this.events);
 
