@@ -154,8 +154,8 @@ var Module = function (models) {
 
             return {
                 success: 'creating history for import is success',
-                result : result
-            };
+                result: result
+            }
         });
     }
 
@@ -244,7 +244,6 @@ var Module = function (models) {
                     async.each(importData, function (importItem, cb) {
                         var saveObj;
                         var importItemObj = importItem.toJSON().result;
-
 
                         saveObj = prepareSaveObject(mappedFields, importItemObj);
                         resultArray.push(saveObj);
