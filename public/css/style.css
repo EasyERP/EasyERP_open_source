@@ -2319,7 +2319,7 @@ label._customCHeckbox input[type="checkbox"] {
   margin-right: 70px !important; }
 
 .list tbody td.errorContent {
-  border: 1px double; }
+  border: 1px double red; }
 
 .deleteTasks span {
   margin-left: 5px; }
@@ -2756,6 +2756,7 @@ label._customCHeckbox input[type="checkbox"] {
   box-shadow: 5px 5px rgba(102, 102, 102, 0.1);
   z-index: 100; }
   .newSelectList li {
+    width: 100%;
     margin: 0;
     padding: 0 16px;
     cursor: pointer;
