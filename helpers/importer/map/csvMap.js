@@ -415,8 +415,7 @@ module.exports = (function () {
             'editedBy.date'                 : 'Edited By Date',
             'companyInfo.size'              : 'Company Size',
             'companyInfo.industry'          : 'Company Industry',
-            ID                              : 'Id',
-            'reason'                        : 'Reason'
+            ID                              : 'Id'
         },
         arrayKeys   : {
             'groups.users': true,

@@ -205,9 +205,13 @@ function reportToXlsx(options) {
     var map = options.map;
     var fileName = options.fileName;
     var resultArray = options.resultArray;
+    var headersArray = Object.keys(map.aliases);
+
     var headersArray = Object.keys(map.aliases)
     var formatters = map.formatters;
     var nameOfFile = fileName ? fileName : type ? type : 'data';
+
+    console.log(options);
 
     var writeXlsx = function (array) {
         arrayToXlsx.writeFile(nameOfFile + '.xlsx', array, {
