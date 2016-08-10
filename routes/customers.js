@@ -102,7 +102,7 @@ module.exports = function (models, event) {
         ]
       }
      */
-    router.get('/', accessStackMiddleware, handler.getByViewType);
+    router.get('/', handler.getByViewType);
 
     /**
      *@api {get} /customers/getCustomersImages/ Request CustomersImages
