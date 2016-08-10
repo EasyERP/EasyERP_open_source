@@ -1,0 +1,16 @@
+<table>
+    <tr>
+        <% _.each(Head, function(item) { %>
+            item
+        <% }) %>
+    </tr>
+    <% _.each(History, function(historyItem) { %>
+        <tr>
+            <% _.each(Head, function(headItem) { %>
+                <td>
+                    historyItem[headItem]
+                </td>
+            <% }) %>
+        </tr>
+    <% }) %>
+</table>
