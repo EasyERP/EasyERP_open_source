@@ -172,7 +172,7 @@ HTTP/1.1 200 OK
       ]
 }
      */
-    router.get('/projectType', accessStackMiddleWare, handler.getProjectType);
+    router.get('/projectType', handler.getProjectType);
 
     /**
      *@api {get} /projects/forDD Request ProjectsForDD
