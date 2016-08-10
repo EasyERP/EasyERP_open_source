@@ -1,14 +1,14 @@
 <table>
     <tr>
-        <% _.each(Head, function(item) { %>
-            item
+        <% _.each(history[0], function(item, key){ %>
+            <td><%= key %></td>
         <% }) %>
     </tr>
-    <% _.each(History, function(historyItem) { %>
+    <% _.each(history, function(historyItem, key) { %>
         <tr>
-            <% _.each(Head, function(headItem) { %>
+            <% _.each(historyItem, function(headItem) { %>
                 <td>
-                    historyItem[headItem]
+                    <%= headItem %>
                 </td>
             <% }) %>
         </tr>

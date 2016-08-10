@@ -135,7 +135,6 @@ var Module = function (models) {
     }
 
     function writeHistory(options, ImportHistoryModel, callback) {
-        //var ImportHistoryModel = models.get(req.session.lastDb, 'ImportHistory', ImportHistorySchema);
         var importHistoryObj = {
             dateHistory: options.dateHistory,
             fileName   : options.fileName,
@@ -195,6 +194,18 @@ var Module = function (models) {
                 unmappedObj: unmappedResult
             });
         });
+    };
+
+    this.getImportHistory = function(req, res, next) {
+        var ImportHistoryModel = models.get(req.session.lastDb, 'ImportHistories', ImportHistorySchema);
+
+        ImportHistoryModel.find({}, function(err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(result);
+        })
     };
 
     this.getForPreview = function (req, res, next) {

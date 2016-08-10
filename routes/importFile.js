@@ -455,6 +455,8 @@ module.exports = function (models) {
     router.get('/imported', imports.getImportMapObject);
     router.post('/imported', imports.saveImportedData);
     router.get('/preview', imports.getForPreview);
+    router.get('/history', imports.getImportHistory);
+
 
     return router;
 };
