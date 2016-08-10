@@ -202,63 +202,71 @@ define([
             var $currencyDd;
             var invoiceDate;
             var redirectUrl;
+            var journal = this.$el.find('#journal').attr('data-id') || null;
 
             e.preventDefault();
 
             this.saveItem(function (err) {
-                if (!err) {
+                if (journal) {
+                    if (!err) {
 
-                    proformaId = self.currentModel.get('_id');
-                    $li = $('button.approve').parent('li');
-                    $tr = $('tr[data-id=' + proformaId + ']');
-                    $priceInputs = self.$el.find('td[data-name="price"]');
-                    $currencyDd = self.$el.find('#currencyDd');
-                    invoiceDate = self.$el.find('#invoice_date').val();
+                        proformaId = self.currentModel.get('_id');
+                        $li = $('button.approve').parent('li');
+                        $tr = $('tr[data-id=' + proformaId + ']');
+                        $priceInputs = self.$el.find('td[data-name="price"]');
+                        $currencyDd = self.$el.find('#currencyDd');
+                        invoiceDate = self.$el.find('#invoice_date').val();
 
-                    App.startPreload();
+                        App.startPreload();
 
-                    payBtnHtml = '<button class="btn newPayment"><span>Pay</span></button>';
-                    url = '/invoices/approve';
-                    data = {
-                        invoiceId  : proformaId,
-                        invoiceDate: helpers.setTimeToDate(invoiceDate)
-                    };
+                        payBtnHtml = '<button class="btn newPayment"><span>Pay</span></button>';
+                        url = '/invoices/approve';
+                        data = {
+                            invoiceId  : proformaId,
+                            invoiceDate: helpers.setTimeToDate(invoiceDate)
+                        };
 
-                    dataService.patchData(url, data, function (err, response) {
-                        if (!err) {
+                        dataService.patchData(url, data, function (err, response) {
+                            if (!err) {
 
-                            self.currentModel.set({approved: true});
-                            $li.html(payBtnHtml);
-                            $currencyDd.removeClass('current-selected');
-                            $priceInputs.each(function () {
-                                var $td = $(this);
-                                var price = $td.find('input').val();
+                                self.currentModel.set({approved: true});
+                                $li.html(payBtnHtml);
+                                $currencyDd.removeClass('current-selected');
+                                $priceInputs.each(function () {
+                                    var $td = $(this);
+                                    var price = $td.find('input').val();
 
-                                $td.html('<span>' + price + '</span>');
-                            });
+                                    $td.html('<span>' + price + '</span>');
+                                });
 
-                            self.$el.find('.input-file').remove();
-                            self.$el.find('a.deleteAttach').remove();
+                                self.$el.find('.input-file').remove();
+                                self.$el.find('a.deleteAttach').remove();
 
-                            App.stopPreload();
+                                App.stopPreload();
 
-                            if (self.eventChannel) {
-                                $('.edit-dialog').remove();
-                                self.eventChannel.trigger('savedProforma');
+                                if (self.eventChannel) {
+                                    $('.edit-dialog').remove();
+                                    self.eventChannel.trigger('savedProforma');
+                                } else {
+                                    redirectUrl = window.location.hash;
+
+                                    Backbone.history.fragment = '';
+                                    Backbone.history.navigate(redirectUrl, {trigger: true});
+
+                                }
+
                             } else {
-                                redirectUrl = window.location.hash;
-
-                                Backbone.history.fragment = '';
-                                Backbone.history.navigate(redirectUrl, {trigger: true});
-
+                                App.render({
+                                    type   : 'error',
+                                    message: 'Approve fail'
+                                });
                             }
-
-                        } else {
-                            App.render({
-                                type   : 'error',
-                                message: 'Approve fail'
-                            });
-                        }
+                        });
+                    }
+                } else {
+                    App.render({
+                        type   : 'error',
+                        message: 'Please, choose journal first.'
                     });
                 }
             });
@@ -301,7 +309,7 @@ define([
             var taxes = helpers.spaceReplacer($thisEl.find('#taxes').text());
 
             var paymentTermId = $thisEl.find('#payment_terms').attr('data-id') || null;
-            var journalId = this.$el.find('#journal').attr('data-id') || null;
+            var journalId = $thisEl.find('#journal').attr('data-id') || null;
             var usersId = [];
 
             var groupsId = [];
@@ -600,6 +608,10 @@ define([
             populate.get2name('#salesPerson', CONSTANTS.EMPLOYEES_RELATEDUSER, {}, this, true, true);
             populate.get('#paymentTerm', '/paymentTerm', {}, 'name', this, true, true);
             populate.get('#currencyDd', '/currency/getForDd', {}, 'name', this, true);
+            
+            if (!this.currentModel.toJSON().approved) {
+                populate.get('#journal', '/journals/getForDd', {}, 'name', this, true, true, this.currentModel.toJSON().journal._id);
+            }
 
             this.$el.find('#invoice_date').datepicker({
                 dateFormat : 'd M, yy',
@@ -638,7 +650,12 @@ define([
             if (!model.approved) {
                 productItemContainer = this.$el.find('#productItemsHolder');
                 productItemContainer.append(
-                    new ProductItemView({editable: true, canBeSold: true, service: service, forSales: self.forSales}).render({model: model}).el
+                    new ProductItemView({
+                        editable: true,
+                        canBeSold: true,
+                        service: service,
+                        forSales: self.forSales
+                    }).render({model: model}).el
                 );
             }
 

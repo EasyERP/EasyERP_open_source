@@ -121,50 +121,58 @@ define([
             var $selfEl = self.$el;
             var invoiceDate;
             var redirectUrl;
+            var journal = this.$el.find('#journal').attr('data-id') || null;
 
             e.preventDefault();
 
             this.saveItem(function (err) {
-                if (!err) {
-                    $selfEl.find('button.approve').hide();
+                if (journal) {
+                    if (!err) {
+                        $selfEl.find('button.approve').hide();
 
-                    invoiceId = self.currentModel.get('_id');
-                    invoiceDate = self.$el.find('#invoice_date').val();
-                    $tr = $('tr[data-id=' + invoiceId + ']');
-                    $span = $tr.find('td').eq(10).find('span');
+                        invoiceId = self.currentModel.get('_id');
+                        invoiceDate = self.$el.find('#invoice_date').val();
+                        $tr = $('tr[data-id=' + invoiceId + ']');
+                        $span = $tr.find('td').eq(10).find('span');
 
-                    App.startPreload();
+                        App.startPreload();
 
-                    url = '/invoices/approve';
-                    data = {
-                        invoiceId  : invoiceId,
-                        invoiceDate: helpers.setTimeToDate(invoiceDate)
-                    };
+                        url = '/invoices/approve';
+                        data = {
+                            invoiceId  : invoiceId,
+                            invoiceDate: helpers.setTimeToDate(invoiceDate)
+                        };
 
-                    dataService.patchData(url, data, function (err) {
-                        if (!err) {
-                            self.currentModel.set({approved: true});
-                            // $buttons.show();
+                        dataService.patchData(url, data, function (err) {
+                            if (!err) {
+                                self.currentModel.set({approved: true});
+                                // $buttons.show();
 
-                            App.stopPreload();
+                                App.stopPreload();
 
-                            if (self.eventChannel) {
-                                self.eventChannel.trigger('invoiceUpdated');
+                                if (self.eventChannel) {
+                                    self.eventChannel.trigger('invoiceUpdated');
+                                } else {
+                                    redirectUrl = window.location.hash;
+
+                                    Backbone.history.fragment = '';
+                                    Backbone.history.navigate(redirectUrl, {trigger: true});
+                                }
+
+                                self.$el.find('.input-file').remove();
+                                self.$el.find('a.deleteAttach').remove();
                             } else {
-                                redirectUrl = window.location.hash;
-
-                                Backbone.history.fragment = '';
-                                Backbone.history.navigate(redirectUrl, {trigger: true});
+                                App.render({
+                                    type   : 'error',
+                                    message: 'Approve fail'
+                                });
                             }
-
-                            self.$el.find('.input-file').remove();
-                            self.$el.find('a.deleteAttach').remove();
-                        } else {
-                            App.render({
-                                type   : 'error',
-                                message: 'Approve fail'
-                            });
-                        }
+                        });
+                    }
+                } else {
+                    App.render({
+                        type   : 'error',
+                        message: 'Please, choose journal first.'
                     });
                 }
             });
@@ -293,7 +301,7 @@ define([
 
             var salesPersonId = $thisEl.find('#salesPerson').attr('data-id') || null;
             var paymentTermId = $thisEl.find('#payment_terms').attr('data-id') || null;
-            var journalId = this.$el.find('#journal').attr('data-id') || null;
+            var journalId = $thisEl.find('#journal').attr('data-id') || null;
 
             var usersId = [];
             var groupsId = [];
@@ -587,7 +595,9 @@ define([
                 populate.get('#paymentTerm', '/paymentTerm', {}, 'name', this, false, true);
             }
 
-            populate.get('#journal', '/journals/getForDd', {}, 'name', this, true);
+            if (!this.currentModel.toJSON().approved) {
+                populate.get('#journal', '/journals/getForDd', {}, 'name', this, true, true, this.currentModel.toJSON().journal._id);
+            }
 
             this.$el.find('#invoice_date').datepicker({
                 dateFormat : 'd M, yy',

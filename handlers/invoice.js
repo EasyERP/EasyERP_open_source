@@ -84,8 +84,6 @@ var Module = function (models, event) {
 
         function invoiceSaver(waterfallCb) {
 
-
-
             invoice = new Invoice(body);
 
             if (req.session.uId) {
@@ -527,7 +525,6 @@ var Module = function (models, event) {
         var db = req.session.lastDb;
         var id = req.params.id;
         var data = req.body;
-        var journalId = data.journal;
         var Invoice = models.get(db, 'wTrackInvoice', wTrackInvoiceSchema);
         var date;
         var Customer = models.get(db, 'Customers', CustomerSchema);
@@ -558,8 +555,6 @@ var Module = function (models, event) {
         date = date.format('YYYY-MM-DD');
 
         Invoice = models.get(db, 'wTrackInvoice', wTrackInvoiceSchema);
-
-        delete data.journal;
 
         if (data.notes && data.notes.length !== 0) {
             obj = data.notes[data.notes.length - 1];
@@ -659,10 +654,10 @@ var Module = function (models, event) {
                         _journalEntryHandler.changeDate(query, data.invoiceDate, req.session.lastDb, function () {
                         });
 
-                        journal = CONSTANTS.PROFORMA_JOURNAL;
+                        journal = invoice.journal; // CONSTANTS.PROFORMA_JOURNAL;
                     } else {
                         model = 'Invoice';
-                        journal = CONSTANTS.INVOICE_JOURNAL;
+                        journal = invoice.journal; // CONSTANTS.INVOICE_JOURNAL;
 
                         dateForJobs = moment(new Date(data.invoiceDate)).subtract(1, 'seconds');
                         dateForJobsFinished = moment(new Date(data.invoiceDate)).subtract(2, 'seconds');
@@ -696,35 +691,17 @@ var Module = function (models, event) {
                         });
                     }
 
-                    if (!invoice.journal && journalId) { // todo in case of purchase invoice hasn't journalId
-                        Invoice.findByIdAndUpdate(id, {$set: {journal: journalId}}, {new: true}, function (err, invoice) {
-                            if (err) {
-                                return next(err);
-                            }
+                    Customer.populate(invoice, {
+                        path  : 'supplier',
+                        select: '_id name fullName'
+                    }, function (err) {
+                        if (err) {
+                            return next(err);
+                        }
 
-                            Customer.populate(invoice, {
-                                path  : 'supplier',
-                                select: '_id name fullName'
-                            }, function (err) {
-                                if (err) {
-                                    return next(err);
-                                }
+                        res.status(200).send(invoice);
+                    });
 
-                                res.status(200).send(invoice);
-                            });
-                        });
-                    } else {
-                        Customer.populate(invoice, {
-                            path  : 'supplier',
-                            select: '_id name fullName'
-                        }, function (err) {
-                            if (err) {
-                                return next(err);
-                            }
-
-                            res.status(200).send(invoice);
-                        });
-                    }
                 });
             });
         }
