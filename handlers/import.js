@@ -24,8 +24,8 @@ var Module = function (models) {
     };
 
     function toOneCase(item) {
-        item = item.toLowerCase();
-        item = item.replace(/[-+=_() !@#$%^&*`{}\[\]:;.,|\\]/g, '');
+        item = item ? item.toString().toLowerCase() : null;
+        item = item ? item.toString().replace(/[-+=_() !@#$%^&*`{}\[\]:;.,|\\]/g, '') : null;
 
         return item;
     }
@@ -33,6 +33,10 @@ var Module = function (models) {
     function comparing(item1, item2) {
         var changedItem1 = toOneCase(item1);
         var changedItem2 = toOneCase(item2);
+
+        if (!changedItem1 || !changedItem2) {
+            return false;
+        }
 
         if (changedItem1.indexOf(changedItem2) >= 0 || changedItem2.indexOf(changedItem1) >= 0 || changedItem1 === changedItem2) {
             return true;
@@ -154,7 +158,7 @@ var Module = function (models) {
 
             return {
                 success: 'creating history for import is success',
-                result: result
+                result : result
             }
         });
     }

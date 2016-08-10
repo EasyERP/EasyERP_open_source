@@ -78,7 +78,7 @@ module.exports = function (models) {
                         importCsvToTemporaryCollection(res, next);
                         break;
                     case '.xlsx':
-                        importXlsxToDb(res, next);
+                        importXlsxToTemporaryDb(res, next);
                         break;
                     default:
                         error = new Error('Extension file \"' + getExtension(filePath) + '\" not support');
@@ -113,8 +113,8 @@ module.exports = function (models) {
             }, 1000);
 
             csv
-                .fromPath(filePath)
-                /*.validate(function (data) {
+                .fromPath(filePath)/*   //todo check validation later
+                 .validate(function (data) {
 
                  if (!headers) {
                  headers = data;
@@ -160,6 +160,71 @@ module.exports = function (models) {
                     next(error);
                 }
             };
+        }
+
+        function importXlsxToTemporaryDb(res, next) {
+            var obj = xlsx.parse(filePath);
+            var sheet;
+            var headers;
+
+            if (!obj) {
+                error = new Error('Parse Error');
+                return next(error);
+            }
+            sheet = obj[0];
+
+            if (sheet && sheet.data) {
+                async.eachLimit(sheet.data, 100, function (data, cb) {
+                        var error;
+                        var tasksWaterflow;
+
+                        if (data.length) {
+                             /*if (!headers) {
+                                headers = data;
+
+                                for (var i = expertedKey.length - 1; i >= 0; i--) {
+
+                                    if (headers[i] !== expertedKey[i]) {
+                                        error = new Error('Field \"' + headers[i] + '\" not valid. Need \"' + expertedKey[i] + '\"');
+                                        error.status = 400;
+                                        cb(error);
+                                    }
+                                }
+                                cb();
+                            } else {*/
+
+                                rows++;
+
+                                function getData(callback) {
+                                    callback(null, data);
+                                }
+
+                                tasksWaterflow = [getData, saveItemToTemporaryDb];
+
+                                async.waterfall(tasksWaterflow, function (err) {
+
+                                    if (err) {
+                                        cb(err);
+                                    } else {
+                                        cb();
+                                    }
+                                });
+                            }
+                        /*}*/
+                    },
+                    function (err) {
+                        var obj = {};
+                        if (err) {
+                            next(err);
+                        } else {
+                            obj.countRows = rows;
+                            res.status(200).send(obj);
+                        }
+                    }
+                );
+            } else {
+                res.status(400).send('Bad request');
+            }
         }
 
         function importCsvToDb(res, next) {
