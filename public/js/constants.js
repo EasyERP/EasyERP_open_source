@@ -197,7 +197,7 @@ define([], function () {
             SCHEDULEDPAY_FORDD         : '/scheduledPay/forDd',
             PAYROLLSTRUCTURETYPES_FORDD: '/payrollStructureTypes/forDd',
             PAYMENT_METHOD_DD          : 'paymentMethod/',
-            DEALTASKS                  : '/dealTasks/',
+            DEALTASKS                  : '/DealTasks/',
         },
 
         MID: {
