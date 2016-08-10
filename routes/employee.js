@@ -363,7 +363,7 @@ HTTP/1.1 200 OK
         ]
     }
      */
-    router.get('/getEmployeesImages', accessStackMiddleware, handler.getEmployeesImages);
+    router.get('/getEmployeesImages', handler.getEmployeesImages);
 
     /**
      *@api {get} /employees/nationality/ Request Employees nationality
