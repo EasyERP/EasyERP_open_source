@@ -38,7 +38,7 @@
                                     <dd><input type="text" name="mobile" id="mobile" value="<%=model.phones.mobile%>" placeholder="Mobile Number" maxlength="20" /></dd>
                                 </dl>
                                 <dt><label for="employeesDd">Assigned to</label></dt>
-                                <dd>
+                                <dd class="_newSelectListWrap">
                                     <a id="employeesDd" data-id="<%=(model.salesPurchases.salesPerson)?model.salesPurchases.salesPerson._id:''%>" class="current-selected" href="javascript:;"><%=(model.salesPurchases.salesPerson)?(model.salesPurchases.salesPerson.name.first+" "+model.salesPurchases.salesPerson.name.last):"Select"%></a>
                                 </dd>
                             </div>

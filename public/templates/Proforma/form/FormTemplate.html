@@ -75,13 +75,13 @@
                                 </dd>
 
                                 <dt><label for="journal">Journal</label></dt>
-                                <dd>
+                                <dd class="_newSelectListWrap">
                                     <a id="journal" class="<%= model.approved ? '' : 'current-selected'%>" href="javascript:;"><%= model.journal && model.journal._id ?
                                         model.journal.name : 'Select'%></a>
                                 </dd>
 
                                 <dt><label for="currencyDd">Currency</label></dt>
-                                <dd>
+                                <dd class="_newSelectListWrap">
                                     <a id="currencyDd" class="current-selected"
                                        data-id="<%= model.currency && model.currency._id ? model.currency._id._id : null%>"
                                        href="javascript:;"><%= model.currency && model.currency._id ?
@@ -127,7 +127,7 @@
                                 </dd>
 
                                 <dt><label for="journal">Journal</label></dt>
-                                <dd>
+                                <dd class="_newSelectListWrap">
                                     <a id="journal" class="<%= model.approved ? '' : 'current-selected'%>" href="javascript:;"><%= model.journal && model.journal._id ?
                                         model.journal.name : 'Select'%></a>
                                 </dd>

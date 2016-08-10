@@ -33,7 +33,7 @@
                                 <dt><label for="company">Company Name</label></dt>
                                 <dd><input type="text" id="company" value="<%= model.tempCompanyField %>" placeholder="Company name" maxlength="32"/></dd>
                                 <dt><label for="customerDd">Customer</label></dt>
-                                <dd>
+                                <dd class="_newSelectListWrap">
                                     <a id="customerDd" data-id="<%=model.customer ? model.customer._id : ''%>" class="current-selected" href="javascript:;"><%=model.customer ? (model.customer.name.first+' '+model.customer.name.last) : 'Select'%></a>
                                 </dd>
                                 <dt><label for="first">First Name</label></dt>
@@ -71,16 +71,16 @@
                                 <dt><label for="country">Country</label></dt>
                                 <dd><input type="text" id="country" class="address" name="country" placeholder="Country" value="<%=model.address.country%>" maxlength="32"/></dd>
                                 <dt><label for="selectWorkflow">Stage </label></dt>
-                                <dd id="selectWorkflow">
+                                <dd id="selectWorkflow" class="_newSelectListWrap">
                                     <a id="workflowsDd" data-id="<%=model.workflow?model.workflow._id:''%>" class="current-selected" href="javascript:;"><%=model.workflow?model.workflow.name:'Undefinded'%></a>
                                 </dd>
 
                                 <dt><label for="priorityDd">Priority </label></dt>
-                                <dd>
+                                <dd class="_newSelectListWrap">
                                     <a id="priorityDd" data-id="<%=model.priority%>" class="current-selected" href="javascript:;"><%=model.priority%></a>
                                 </dd>
                                 <dt><label for="campaignDd">Campaign</label></dt>
-                                <dd>
+                                <dd class="_newSelectListWrap _newSelectListWrap">
                                     <a id="campaignDd" data-id="<%=model.campaign?model.campaign:''%>" class="current-selected" href="javascript:;"><%=model.campaign?model.campaign:"Select"%></a>
                                     <ul class="newSelectList hidden">
                                         <li class="telesales" id="telesales">Telesales</li>
@@ -91,12 +91,12 @@
                                     </ul>
                                 </dd>
                                 <dt><label for="sourceDd">Source</label></dt>
-                                <dd>
+                                <dd class="_newSelectListWrap">
                                     <a id="sourceDd" data-id="<%=model.source?model.source:''%>" class="current-selected" href="javascript:;"><%=model.source?model.source:"Select"%></a>
                                 </dd>
 
                                 <dt><label for="salesPerson">Assigned to</label></dt>
-                                <dd>
+                                <dd class="_newSelectListWrap">
                                     <a id="salesPerson" data-id="<%=model.salesPerson?model.salesPerson._id:''%>" class="current-selected" href="javascript:;"><%=model.salesPerson?(model.salesPerson.name.first+' '+model.salesPerson.name.last):'Select'%></a>
                                 </dd>
                             </dl>

@@ -128,7 +128,7 @@
                                 </dd>
 
                                 <dt><label for="journal">Journal</label></dt>
-                                <dd>
+                                <dd class="_newSelectListWrap">
                                     <a id="journal" class="<%= model.approved ? '' : 'current-selected'%>" href="javascript:;"><%= model.journal && model.journal._id ?
                                         model.journal.name : 'Select'%></a>
                                 </dd>
@@ -179,7 +179,7 @@
                                 </dd>
 
                                 <dt><label for="journal">Journal</label></dt>
-                                <dd>
+                                <dd class="_newSelectListWrap">
                                     <a id="journal" class="<%= model.approved ? '' : 'current-selected'%>" href="javascript:;"><%= model.journal && model.journal._id ?
                                         model.journal.name : 'Select'%></a>
                                 </dd>
@@ -339,7 +339,7 @@
                                     <div class="half-block left">
                                         <dl class="opp-info">
                                             <dt><label for="paymentMethod">Bank Account</label></dt>
-                                            <dd>
+                                            <dd class="_newSelectListWrap">
                                                 <a id="paymentMethod" class="current-selected" href="javascript:;"><%=model.paymentMethod || 'Select'%></a>
                                             </dd>
 
@@ -351,7 +351,7 @@
                                             </dd>-->
 
                                             <dt><label for="paymentTerm">Payment Terms</label></dt>
-                                            <dd>
+                                            <dd class="_newSelectListWrap">
                                                 <a id="paymentTerm" class="current-selected" href="javascript:;"><% if (model.paymentTerms) { %>
                                                         <%=model.paymentTerms.name || 'Select'%>
                                                     <% } else { %>

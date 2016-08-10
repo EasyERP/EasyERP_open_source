@@ -64,7 +64,6 @@
     color: $property-link-color;
   }
 }
-
 .separateBlock {
   text-align: center;
 }
@@ -463,7 +462,8 @@
 }
 
 .ui-dialog {
-  ._modalList {
+
+  ._listModal {
     padding: 10px 20px;
 
     .modal_title {
