@@ -14,6 +14,7 @@ module.exports = (function () {
     require('./journalEntry.js');
     require('./incoterm.js');
     require('./industry.js');
+    require('./importHistory.js');
     require('./invoicingControl.js');
     require('./language.js');
     require('./module.js');

@@ -206,12 +206,9 @@ function reportToXlsx(options) {
     var fileName = options.fileName;
     var resultArray = options.resultArray;
     var headersArray = Object.keys(map.aliases);
-
-    var headersArray = Object.keys(map.aliases)
     var formatters = map.formatters;
     var nameOfFile = fileName ? fileName : type ? type : 'data';
 
-    console.log(options);
 
     var writeXlsx = function (array) {
         arrayToXlsx.writeFile(nameOfFile + '.xlsx', array, {
@@ -221,11 +218,14 @@ function reportToXlsx(options) {
         });
 
 
-        res.download(nameOfFile + '.xlsx', nameOfFile + '.xlsx', function (err) {
+       /* res.download(nameOfFile + '.xlsx', nameOfFile + '.xlsx', function (err) {
             if (err) {
                 return next(err);
             }
-        });
+        });*/
+        next(null, nameOfFile + '.xlsx');
+
+        //return nameOfFile + '.xlsx'
     };
 
 
@@ -245,10 +245,11 @@ function reportToXlsx(options) {
             if (err) {
                 return next(err);
             }
+
             writeXlsx(resultArray);
         });
     } else {
-        writeXlsx(resultArray);
+        return writeXlsx(resultArray);
     }
 }
 

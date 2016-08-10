@@ -1,5 +1,6 @@
 module.exports = (function () {
     var mongoose = require('mongoose');
+    var ObjectId = mongoose.Schema.Types.ObjectId;
 
     var importHistorySchema = mongoose.Schema({
         date: {
@@ -12,9 +13,10 @@ module.exports = (function () {
             default: ''
         },
 
-        userName: {
-            type: String,
-            default: ''
+        user: {
+            type: ObjectId,
+            ref: 'Users',
+            default: null
         },
 
         type: {
@@ -31,13 +33,13 @@ module.exports = (function () {
             type: String,
             default: ''
         }
-    }, {collection: 'importHistory'});
+    }, {collection: 'ImportHistories'});
 
-    mongoose.model('importHistory', importHistorySchema);
+    mongoose.model('ImportHistory', importHistorySchema);
 
     if (!mongoose.Schemas) {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas.importHistorySchema = importHistorySchema;
+    mongoose.Schemas.ImportHistories = importHistorySchema;
 })();
