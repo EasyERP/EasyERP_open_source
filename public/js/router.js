@@ -72,7 +72,7 @@ define([
         view       : null,
 
         routes: {
-            home                                                                                            : 'login',
+            home                                                                                            : 'any',
             'easyErp/Products/thumbnails(/c=:countPerPage)(/filter=:filter)'                                : 'goToProduct',
             'login(?password=:password&dbId=:dbId&email=:email)'                                            : 'login',
             'easyErp/:contentType/kanban(/:parrentContentId)(/filter=:filter)'                              : 'goToKanban',
