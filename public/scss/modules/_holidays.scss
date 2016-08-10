@@ -2,6 +2,14 @@
   float: none;
   margin: -30px auto 20px;
   width: 415px !important;
+
+  &._timeCardLegend {
+    margin-top: 20px;
+
+    thead tr {
+      border-top: none;
+    }
+  }
 }
 
 #searchContainer.projectTimeCardCustomSearch {
