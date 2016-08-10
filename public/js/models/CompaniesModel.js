@@ -49,15 +49,25 @@
                             note.history.prevValue = note.history.prevValue ? moment(new Date(note.history.prevValue)).format('DD MMM, YYYY') : '';
                         }
 
-                        response.notes.forEach(function(elem, index) {
-                            if (!note.name && note.history && (note.history.changedField === 'Creation Date')){
-                                response.notes.splice(index, 1);
-                                response.notes.unshift(note);
-                                return;
-                            }
-                        });
+
 
                         return note;
+                    });
+
+                    response.notes.forEach(function(note, index) {
+                        if (!note.name && note.history && (note.history.changedField === 'Creation Date')){
+                            response.notes.splice(index, 1);
+                            response.notes.unshift(note);
+                            return;
+                        }
+                    });
+
+                    response.notes.forEach(function(note, index) {
+                        if (note.task && (note.task.workflow.status !== 'Done') && (note.task.workflow.status !== 'Cancelled')){
+                            response.notes.splice(index, 1);
+                            response.notes.push(note);
+                            return;
+                        }
                     });
                 }
 

@@ -10,7 +10,7 @@
             <div class="noteBody">
                 <%if (val.task){%>
                 <div class="itemCircle">
-                    <span class="fa fa-circle-o" aria-hidden="true"></span>
+                    <span class="fa <%=val.task.workflow.status === 'Done' ? 'fa-check' : ''  %>" aria-hidden="true"></span>
                 </div>
                 <div class="noteType task noteTopBox clearfix" id="<%= val.task._id%>">
                     <span class="noteUserTitle"><b><%= login %></b> created task</span>

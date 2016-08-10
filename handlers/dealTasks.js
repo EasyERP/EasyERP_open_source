@@ -568,7 +568,7 @@ var Module = function (models, event) {
                                 as   : 'task',
                                 cond : { $and: [{
                                     $lt: ['$$task.dueDate', moment().startOf('day').toDate()]
-                                }/*, {$ne : ['$$task.workflow.status', 'Done']}*/]
+                                }, {$ne : ['$$task.workflow.status', 'Done']}, {$ne : ['$$task.workflow.status', 'Cancelled']}]
 
                                 }
                             }

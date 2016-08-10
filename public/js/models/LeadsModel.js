@@ -75,6 +75,14 @@
                             return;
                         }
                     });
+
+                    response.notes.forEach(function(note, index) {
+                        if (note.task && (note.task.workflow.status !== 'Done') && (note.task.workflow.status !== 'Cancelled')){
+                            response.notes.splice(index, 1);
+                            response.notes.push(note);
+                            return;
+                        }
+                    });
                 }
 
                 if (response.attachments) {
