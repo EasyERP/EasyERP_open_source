@@ -74,6 +74,7 @@ function exportToCsv(options) {
 
     if (!resultArray) {
         resultAggregate.exec(function (err, response) {
+
             if (err) {
                 return next(err);
             }

@@ -20,8 +20,8 @@ module.exports = function (models, event) {
      *
      * @apiSuccess {Object} JobsForDD
      * @apiSuccessExample Success-Response:
-HTTP/1.1 200 OK
-[
+     HTTP/1.1 200 OK
+     [
      {
        "_id": "56e6f1ae0d773c634e918b68",
        "budget": {
@@ -87,10 +87,13 @@ HTTP/1.1 200 OK
        },
        "name": "March"
      }
-]
+     ]
      *
      * */
     router.get('/getForDD', handler.getForDD);
+
+
+    router.get('/exportToCsv/', handler.exportToCsv);
     router.get('/exportToXlsx/', handler.exportToXlsx);
 
     /**
@@ -101,49 +104,49 @@ HTTP/1.1 200 OK
      * @apiGroup Jobs
      *
      * @apiParamExample {json} Request-Example:
-{
-    "project": "56e689c75ec71b00429745a9",
-    "name": "New Sprint"
-}
+     {
+         "project": "56e689c75ec71b00429745a9",
+         "name": "New Sprint"
+     }
      *
      * @apiSuccess {Object} JobsForDD
      * @apiSuccessExample Success-Response:
-HTTP/1.1 200 OK
-{
-      "success": {
-        "__v": 0,
-        "_id": "5784b7c3fa7fb9d626a694d0",
-        "reconcile": true,
-        "createdBy": {
-          "date": "2016-07-12T09:26:27.480Z",
-          "user": "52203e707d4dba8813000003"
-        },
-        "editedBy": {
-          "date": "2016-07-12T09:26:27.481Z",
-          "user": null
-        },
-        "invoice": null,
-        "quotation": null,
-        "budget": {
-          "budget": [
-    
-          ],
-          "projectValues": [
-    
-          ],
-          "projectTeam": [
-    
-          ]
-        },
-        "project": "566d4bc3abccac87642cb523",
-        "wTracks": [
-    
-        ],
-        "type": "Not Quoted",
-        "workflow": "56337c705d49d8d6537832eb",
-        "name": "New Sprint"
-      }
-}
+     HTTP/1.1 200 OK
+     {
+           "success": {
+             "__v": 0,
+             "_id": "5784b7c3fa7fb9d626a694d0",
+             "reconcile": true,
+             "createdBy": {
+               "date": "2016-07-12T09:26:27.480Z",
+               "user": "52203e707d4dba8813000003"
+             },
+             "editedBy": {
+               "date": "2016-07-12T09:26:27.481Z",
+               "user": null
+             },
+             "invoice": null,
+             "quotation": null,
+             "budget": {
+               "budget": [
+
+               ],
+               "projectValues": [
+
+               ],
+               "projectTeam": [
+
+               ]
+             },
+             "project": "566d4bc3abccac87642cb523",
+             "wTracks": [
+
+             ],
+             "type": "Not Quoted",
+             "workflow": "56337c705d49d8d6537832eb",
+             "name": "New Sprint"
+           }
+     }
      **/
     router.post('/', handler.create);
     router.post('/update', handler.update);

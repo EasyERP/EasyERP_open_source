@@ -14,6 +14,11 @@ module.exports = (function () {
             'journal.debitAccount.name'  : 'Debit Account',
             'journal.creditAccount.name' : 'Credit Account',
             'debit'                      : 'Summ'
+        },
+        formatters : {
+            'Accounting date': function (date) {
+                return moment(date).utc().format(dateFormat);
+            }
         }
     };
 
