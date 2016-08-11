@@ -247,7 +247,7 @@ define([
                             phone : customer.phones.phone
                         };
                         context.modelChanged.social = {
-                            LI : customer.social.LI.replace('[]', 'linkedin')
+                            LI : customer.social.LI.replace('linkedin', '[]')
                         };
 
                         delete context.modelChanged.address;

@@ -47,9 +47,9 @@ var History = function (models) {
 
                 if (mappedValue.isRef) {
                     if (objectId.isValid(val)) {
-                        historyEntry.newValue = val; // toDo need to be investigated, sometimes an error occurs
+                        historyEntry.newValue = objectId(val);  // toDo need to be investigated, sometimes an error occurs
                     } else {
-                        historyEntry.newValue = objectId(val); // toDo need to be investigated, sometimes an error occurs
+                        historyEntry.newValue = val; // toDo need to be investigated, sometimes an error occurs
                     }
                 }
             } else {
