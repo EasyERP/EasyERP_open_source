@@ -34,8 +34,7 @@ var Module = function (models, event) {
         'name.last'                     : 1,
         dateBirth                       : 1,
         email                           : 1,
-        company                         : 1,
-        department                      : 1,
+        company                         : {$arrayElemAt: ['$company', 0]},
         timezone                        : 1,
         'address.street'                : 1,
         'address.city'                  : 1,
@@ -48,7 +47,6 @@ var Module = function (models, event) {
         'phones.phone'                  : 1,
         'phones.mobile'                 : 1,
         'phones.fax'                    : 1,
-        contacts                        : 1,
         title                           : 1,
         'salesPurchases.isCustomer'     : 1,
         'salesPurchases.isSupplier'     : 1,
@@ -59,7 +57,6 @@ var Module = function (models, event) {
         'salesPurchases.reference'      : 1,
         'salesPurchases.language'       : 1,
         'salesPurchases.receiveMessages': 1,
-        relatedUser                     : 1,
         'social.FB'                     : 1,
         'social.LI'                     : 1,
         'createdBy.user'                : {$arrayElemAt: ['$createdBy.user', 0]},
@@ -69,44 +66,26 @@ var Module = function (models, event) {
     };
 
     var projectCustomer = {
-        type                            : 1,
-        isOwn                           : 1,
-        'name.first'                    : 1,
-        'name.last'                     : 1,
-        dateBirth                       : 1,
-        email                           : 1,
-        company                         : 1,
-        department                      : 1,
-        timezone                        : 1,
-        'address.street'                : 1,
-        'address.city'                  : 1,
-        'address.state'                 : 1,
-        'address.zip'                   : 1,
-        'address.country'               : 1,
-        website                         : 1,
-        jobPosition                     : 1,
-        skype                           : 1,
-        'phones.phone'                  : 1,
-        'phones.mobile'                 : 1,
-        'phones.fax'                    : 1,
-        contacts                        : 1,
-        title                           : 1,
-        'salesPurchases.isCustomer'     : 1,
-        'salesPurchases.isSupplier'     : 1,
-        'salesPurchases.salesPerson'    : 1,
-        'salesPurchases.salesTeam'      : 1,
-        'salesPurchases.implementedBy'  : 1,
-        'salesPurchases.active'         : 1,
-        'salesPurchases.reference'      : 1,
-        'salesPurchases.language'       : 1,
-        'salesPurchases.receiveMessages': 1,
-        relatedUser                     : 1,
-        'social.FB'                     : 1,
-        'social.LI'                     : 1,
-        'createdBy.user'                : '$createdBy.user.login',
-        'createdBy.date'                : 1,
-        'editedBy.user'                 : '$editedBy.user.login',
-        'editedBy.date'                 : 1
+        type            : 1,
+        isOwn           : 1,
+        'name.first'    : 1,
+        'name.last'     : 1,
+        dateBirth       : 1,
+        email           : 1,
+        company         : '$company.name.first',
+        timezone        : 1,
+        address         : 1,
+        website         : 1,
+        jobPosition     : 1,
+        skype           : 1,
+        phones          : 1,
+        title           : 1,
+        salesPurchases  : 1,
+        social          : 1,
+        'createdBy.user': '$createdBy.user.login',
+        'createdBy.date': 1,
+        'editedBy.user' : '$editedBy.user.login',
+        'editedBy.date' : 1
     };
 
     /*TODO remove after filters check*/
@@ -1292,7 +1271,7 @@ var Module = function (models, event) {
         var filterMapper = new FilterMapper();
 
         if (filter && typeof filter === 'object') {
-            filterObj = filterMapper.mapFilter(filter, type);
+            filterObj = filterMapper.mapFilter(filter, 'Customers');
 
             if (filter && filter.services) {
                 if (filter.services.value.indexOf('isCustomer') !== -1) {
@@ -1303,10 +1282,10 @@ var Module = function (models, event) {
                 }
             }
 
-            filterObj.type = type === 'Persons' ? 'Person' : 'Company';
-
             delete filterObj.services;
         }
+
+        filterObj.type = type === 'Persons' ? 'Person' : 'Company';
 
         options = {
             res         : res,
@@ -1333,6 +1312,13 @@ var Module = function (models, event) {
                     localField  : 'editedBy.user',
                     foreignField: '_id',
                     as          : 'editedBy.user'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Customers',
+                    localField  : 'company',
+                    foreignField: '_id',
+                    as          : 'company'
                 }
             }, {
                 $project: projectAfterLookup
@@ -1371,7 +1357,7 @@ var Module = function (models, event) {
         var filterMapper = new FilterMapper();
 
         if (filter && typeof filter === 'object') {
-            filterObj = filterMapper.mapFilter(filter, type);
+            filterObj = filterMapper.mapFilter(filter, 'Customers');
 
             if (filter && filter.services) {
                 if (filter.services.value.indexOf('isCustomer') !== -1) {
@@ -1382,10 +1368,10 @@ var Module = function (models, event) {
                 }
             }
 
-            filterObj.type = type === 'Persons' ? 'Person' : 'Company';
-
             delete filterObj.services;
         }
+
+        filterObj.type = type === 'Persons' ? 'Person' : 'Company';
 
         options = {
             res         : res,
@@ -1399,7 +1385,32 @@ var Module = function (models, event) {
         function lookupForCustomers(cb) {
             var query = [];
 
-            query.push({$match: filterObj}, {$project: projectCustomer});
+            query.push({$match: filterObj}, {
+                $lookup: {
+                    from        : 'Users',
+                    localField  : 'createdBy.user',
+                    foreignField: '_id',
+                    as          : 'createdBy.user'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Users',
+                    localField  : 'editedBy.user',
+                    foreignField: '_id',
+                    as          : 'editedBy.user'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Customers',
+                    localField  : 'company',
+                    foreignField: '_id',
+                    as          : 'company'
+                }
+            }, {
+                $project: projectAfterLookup
+            }, {
+                $project: projectCustomer
+            });
 
             options.query = query;
             options.cb = cb;

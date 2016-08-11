@@ -91,16 +91,6 @@
                     }
                 });
             }
-        },
-
-        exportToCsv: function () {
-            // todo change after routes refactoring
-            window.location = '/employees/exportToCsv';
-        },
-
-        exportToXlsx: function () {
-            // todo change after routes refactoring
-            window.location = '/employees/exportToXlsx';
         }
     });
 

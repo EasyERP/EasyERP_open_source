@@ -20,8 +20,6 @@ define([
         hasPagination    : true,
         contentType      : 'Employees',
         formUrl          : '#easyErp/Employees/',
-        exportToXlsxUrl  : '/employees/exportToXlsx',
-        exportToCsvUrl   : '/employees/exportToCsv',
         letterKey        : 'name.last',
 
         initialize: function (options) {

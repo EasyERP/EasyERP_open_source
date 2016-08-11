@@ -1,6 +1,28 @@
 define([
     'Underscore'
 ], function (_) {
+    function makeFilterString(filter, contentType) {
+        var filterString;
+
+        if (filter && contentType) {
+            filterString = '/?type=' + contentType + '&filter=' + encodeURIComponent(JSON.stringify(filter));
+
+            return filterString;
+        }
+
+        if (filter && !contentType) {
+            filterString = '/?filter=' + encodeURIComponent(JSON.stringify(filter));
+
+            return filterString;
+        }
+
+        if (!filter && contentType) {
+            filterString = '/?type=' + contentType;
+
+            return filterString;
+        }
+    }
+
     function minFromDates(arrayOfDates) {
         arrayOfDates = _.map(arrayOfDates, function (date) {
             return new Date(date).valueOf();
@@ -64,6 +86,7 @@ define([
         currencyClass   : currencyClass,
         weekSplitter    : weekSplitter,
         spaceReplacer   : spaceReplacer,
-        setTimeToDate   : setTimeToDate
+        setTimeToDate   : setTimeToDate,
+        makeFilterString: makeFilterString
     };
 });

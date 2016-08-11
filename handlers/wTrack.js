@@ -112,7 +112,7 @@ var TCard = function (event, models) {
             'project.workflow'   : {$arrayElemAt: ['$workflow', 0]},
             'project.customer'   : {$arrayElemAt: ['$customer', 0]},
             'employee.name'      : {$concat: ['$employee.name.first', ' ', '$employee.name.last']},
-            'department.name'    : '$department.name',
+            department           : 1,
             _type                : 1,
             year                 : 1,
             month                : 1,
@@ -130,7 +130,6 @@ var TCard = function (event, models) {
             'editedBy.date'      : 1,
             'createdBy.date'     : 1,
             'employee._id'       : '$employee._id',
-            'department._id'     : '$department._id',
             'project._id'        : '$project._id'
         }
     }, {
@@ -149,7 +148,7 @@ var TCard = function (event, models) {
             'project.workflow.status': '$project.workflow.status',
             'project.customer.Name'  : {$concat: ['$project.customer.name.first', ' ', '$project.customer.name.last']},
             'employee.name'          : 1,
-            'department.name'        : 1,
+            department               : 1,
             _type                    : 1,
             year                     : 1,
             month                    : 1,
@@ -167,7 +166,6 @@ var TCard = function (event, models) {
             'editedBy.date'          : 1,
             'createdBy.date'         : 1,
             'employee._id'           : 1,
-            'department._id'         : 1,
             'customer._id'           : '$project.customer._id',
             'project._id'            : 1
         }
@@ -189,7 +187,7 @@ var TCard = function (event, models) {
             'project.workflow.status': 1,
             'project.customer.Name'  : 1,
             'employee.name'          : 1,
-            'department.name'        : 1,
+            'department.name'        : '$department.name',
             year                     : 1,
             month                    : 1,
             week                     : 1,

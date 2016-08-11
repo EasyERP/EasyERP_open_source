@@ -31,69 +31,6 @@ module.exports = function (models, event) {
     var exporter = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Project;
 
-    function pageHelper(data) {
-        var count = data.count;
-        var page = data.page || 1;
-        var skip;
-
-        count = parseInt(count, 10);
-        count = !isNaN(count) ? count : CONSTANTS.COUNT_PER_PAGE;
-        page = parseInt(page, 10);
-        page = !isNaN(page) && page ? page : 1;
-        skip = (page - 1) * count;
-
-        return {
-            skip : skip,
-            limit: count
-        };
-    }
-
-    /*function caseFilter(filter) {
-     var condition = [];
-     var keys = Object.keys(filter);
-     var key;
-     var i;
-
-     for (i = keys.length - 1; i >= 0; i--) {
-     key = keys[i]; // added correct fields for Tasks and one new field Summary
-
-     switch (key) {
-     case 'workflow':
-     condition.push({'workflow._id': {$in: filter.workflow.value.objectID()}});
-     break;
-     case 'project':
-     condition.push({'project._id': {$in: filter.project.value.objectID()}});
-     break;
-     case 'customer':
-     condition.push({'customer._id': {$in: filter.customer.value.objectID()}});
-     break;
-     case 'projectManager':
-     if (filter.projectmanager && filter.projectmanager.value) {
-     condition.push({'projectManager._id': {$in: filter.projectManager.value.objectID()}});
-     }
-     break;
-     case 'salesManager':
-     condition.push({'salesManager._id': {$in: filter.salesManager.value.objectID()}});
-     break;
-     case 'name':
-     condition.push({_id: {$in: filter.name.value.objectID()}});
-     break;
-     case 'summary':
-     condition.push({_id: {$in: filter.summary.value.objectID()}});
-     break;
-     case 'type':
-     condition.push({type: {$in: filter.type.value}});
-     break;
-     case 'assignedTo':
-     condition.push({'assignedTo._id': {$in: filter.assignedTo.value.objectID()}});
-     break;
-     // skip default case
-     }
-     }
-
-     return condition;
-     }*/
-
     var lookupForProjectArray = [
         {
             $lookup: {
@@ -192,14 +129,13 @@ module.exports = function (models, event) {
                 StartDate       : 1,
                 EndDate         : 1,
                 TargetEndDate   : 1,
-                'workflow.name' : '$workflow.name',
+                workflow        : 1,
                 'createdBy.user': 1,
                 'createdBy.date': 1,
                 projecttype     : 1,
                 'editedBy.user' : 1,
                 'editedBy.date' : 1,
-                'customer._id'  : '$customer._id',
-                'workflow._id'  : '$workflow._id'
+                'customer._id'  : '$customer._id'
             }
         }, {
             $lookup: {
@@ -226,14 +162,13 @@ module.exports = function (models, event) {
                 StartDate             : 1,
                 EndDate               : 1,
                 TargetEndDate         : 1,
-                'workflow.name'       : 1,
+                workflow              : 1,
                 'createdBy.user'      : 1,
                 'createdBy.date'      : 1,
                 projecttype           : 1,
                 'editedBy.user'       : 1,
                 'editedBy.date'       : 1,
-                'customer._id'        : 1,
-                'workflow._id'        : 1
+                'customer._id'        : 1
             }
         }, {
             $project: {
@@ -248,17 +183,79 @@ module.exports = function (models, event) {
                 StartDate            : 1,
                 EndDate              : 1,
                 TargetEndDate        : 1,
-                'workflow.name'      : 1,
+                workflow             : 1,
                 'createdBy.user'     : 1,
                 'createdBy.date'     : 1,
                 projecttype          : 1,
                 'editedBy.user'      : 1,
                 'editedBy.date'      : 1,
-                'customer._id'       : 1,
-                'workflow._id'       : 1
+                'customer._id'       : 1
             }
         }
     ];
+
+    function pageHelper(data) {
+        var count = data.count;
+        var page = data.page || 1;
+        var skip;
+
+        count = parseInt(count, 10);
+        count = !isNaN(count) ? count : CONSTANTS.COUNT_PER_PAGE;
+        page = parseInt(page, 10);
+        page = !isNaN(page) && page ? page : 1;
+        skip = (page - 1) * count;
+
+        return {
+            skip : skip,
+            limit: count
+        };
+    }
+
+    /*function caseFilter(filter) {
+     var condition = [];
+     var keys = Object.keys(filter);
+     var key;
+     var i;
+
+     for (i = keys.length - 1; i >= 0; i--) {
+     key = keys[i]; // added correct fields for Tasks and one new field Summary
+
+     switch (key) {
+     case 'workflow':
+     condition.push({'workflow._id': {$in: filter.workflow.value.objectID()}});
+     break;
+     case 'project':
+     condition.push({'project._id': {$in: filter.project.value.objectID()}});
+     break;
+     case 'customer':
+     condition.push({'customer._id': {$in: filter.customer.value.objectID()}});
+     break;
+     case 'projectManager':
+     if (filter.projectmanager && filter.projectmanager.value) {
+     condition.push({'projectManager._id': {$in: filter.projectManager.value.objectID()}});
+     }
+     break;
+     case 'salesManager':
+     condition.push({'salesManager._id': {$in: filter.salesManager.value.objectID()}});
+     break;
+     case 'name':
+     condition.push({_id: {$in: filter.name.value.objectID()}});
+     break;
+     case 'summary':
+     condition.push({_id: {$in: filter.summary.value.objectID()}});
+     break;
+     case 'type':
+     condition.push({type: {$in: filter.type.value}});
+     break;
+     case 'assignedTo':
+     condition.push({'assignedTo._id': {$in: filter.assignedTo.value.objectID()}});
+     break;
+     // skip default case
+     }
+     }
+
+     return condition;
+     }*/
 
     this.create = function (req, res, next) {
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);

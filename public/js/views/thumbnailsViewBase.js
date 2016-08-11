@@ -2,8 +2,9 @@
     'Backbone',
     'jQuery',
     'Underscore',
-    'views/pagination'
-], function (Backbone, $, _, Pagination) {
+    'views/pagination',
+    'helpers'
+], function (Backbone, $, _, Pagination, helpers) {
     'use strict';
     var View = Pagination.extend({
         viewType: 'thumbnails', // needs in view.prototype.changeLocationHash
@@ -26,44 +27,69 @@
             options.contentType = this.contentType;
             this.makeRender(options);
 
+            this.makeFilterString = function (filter, contentType) {
+                var filterString;
+
+                if (filter && contentType) {
+                    filterString = '/?type=' + contentType + '&filter=' + encodeURIComponent(JSON.stringify(filter));
+                }
+
+                if (filter && !contentType) {
+                    filterString = '/?filter=' + encodeURIComponent(JSON.stringify(filter));
+                }
+
+                if (!filter && contentType) {
+                    filterString = '/?type=' + contentType;
+                }
+
+                return filterString;
+            };
+
             this.render();
         },
 
         exportToCsv: function () {
-            // todo change after routes refactoring
-            var filterString = '';
             var tempExportToCsvUrl = '';
+            var hasSlash;
 
             if (this.exportToCsvUrl) {
                 tempExportToCsvUrl = this.exportToCsvUrl;
-                if (this.filter) {
-                    tempExportToCsvUrl += '/?filter=' + encodeURIComponent(JSON.stringify(this.filter));
-                }
+
+                tempExportToCsvUrl += helpers.makeFilterString(this.filter, this.contentType);
+
                 window.location = tempExportToCsvUrl;
             } else {
                 if (this.collection) {
-                    filterString += '/?filter=' + encodeURIComponent(JSON.stringify(this.filter));
+                    hasSlash = this.collection.url.substr(-1) === '/';
+
+                    if (hasSlash) {
+                        window.location = this.collection.url + 'exportToCsv' + helpers.makeFilterString(this.filter, this.contentType);
+                    } else {
+                        window.location = this.collection.url + '/exportToCsv' + helpers.makeFilterString(this.filter, this.contentType);
+                    }
                 }
-                window.location = this.collection.url + '/exportToCsv' + filterString;
             }
         },
 
         exportToXlsx: function () {
-            var filterString = '';
             var tempExportToXlsxUrl = '';
-            // todo change after routes refactoring
+            var hasSlash;
+
             if (this.exportToXlsxUrl) {
                 tempExportToXlsxUrl = this.exportToXlsxUrl;
-                if (this.filter) {
-                    tempExportToXlsxUrl += '/?filter=' + encodeURIComponent(JSON.stringify(this.filter));
-                }
+
+                tempExportToXlsxUrl += helpers.makeFilterString(this.filter, this.contentType);
+
                 window.location = tempExportToXlsxUrl;
             } else {
                 if (this.collection) {
-                    if (this.filter) {
-                        filterString += '/?filter=' + encodeURIComponent(JSON.stringify(this.filter));
+                    hasSlash = this.collection.url.substr(-1) === '/';
+
+                    if (hasSlash) {
+                        window.location = this.collection.url + 'exportToXlsx' + helpers.makeFilterString(this.filter, this.contentType);
+                    } else {
+                        window.location = this.collection.url + '/exportToXlsx' + helpers.makeFilterString(this.filter, this.contentType);
                     }
-                    window.location = this.collection.url + '/exportToXlsx' + filterString;
                 }
             }
         },
