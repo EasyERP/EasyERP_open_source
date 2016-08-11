@@ -3,9 +3,7 @@
   margin-left: auto;
   margin-right: auto;
   padding-left: 12px;
-  padding-left: 12px;
   padding-left: 0.75rem;
-  padding-right: 12px;
   padding-right: 12px;
   padding-right: 0.75rem; }
 
@@ -63,9 +61,7 @@ b, strong {
 
 .row {
   margin-left: -15px;
-  margin-left: -15px;
   margin-left: -0.9375rem;
-  margin-right: -15px;
   margin-right: -15px;
   margin-right: -0.9375rem; }
 
@@ -76,9 +72,7 @@ b, strong {
   position: relative;
   box-sizing: border-box;
   padding-left: 15px;
-  padding-left: 15px;
   padding-left: 0.9375rem;
-  padding-right: 15px;
   padding-right: 15px;
   padding-right: 0.9375rem; }
 
@@ -2394,8 +2388,8 @@ label._customCHeckbox input[type="checkbox"] {
     border: 1px solid #c8c8d3;
     border-radius: 50%;
     background: #ffffff;
-    font-size: 10px;
-    line-height: 28px;
+    font-size: 14px;
+    line-height: 27px;
     text-align: center;
     color: #c8c8d3;
     z-index: 10; }
