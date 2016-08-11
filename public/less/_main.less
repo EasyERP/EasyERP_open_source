@@ -2488,7 +2488,6 @@ input, textarea, select {
   position: relative;
   font-size: 13px;
   text-decoration: none;
-  line-height: 26px !important;
 }
 
 //.newSelectList {
@@ -3873,7 +3872,6 @@ table#workflows {
 #top-bar {
   -webkit-flex-shrink: 0;
   flex-shrink: 0;
-
   .top-bar;
 }
 
@@ -4056,15 +4054,16 @@ ul.dialog-tabs {
     position: relative;
     .newSelectList {
       display: none;
-      width: 112px;
-      margin-top: 22px;
+      width: 115px;
       right: 0;
+      left: auto;
       li {
         padding-left: 10px;
         float: none;
       }
     }
-    .endContractReasonList, .arrow {
+    .endContractReasonList,
+    .arrow {
       float: right;
       width: 80px;
       .btn;
@@ -4889,6 +4888,7 @@ h3.dashboard {
   }
 
   > input#selectInput {
+    height: 24px;
     width: 100% !important;
     margin: 0;
     float: left;
@@ -5619,10 +5619,10 @@ textarea#editInput {
     }
 
     &.stick {
-      position: fixed;
-      bottom: 0;
-      right: 0;
-      width: calc(~"100% - 200px");
+      //position: fixed;
+      //bottom: 0;
+      //right: 0;
+      //width: calc(~"100% - 200px");
       background-color: @bg-main;
       padding-top: 10px;
     }
@@ -6668,6 +6668,7 @@ textarea#editInput {
   display: inline-block;
   padding-right: 17px;
   margin-right: 3px;
+  margin-top: 2px;
   border: 1px solid @border-color-main;
   border-radius: 3px;
   line-height: 18px;
