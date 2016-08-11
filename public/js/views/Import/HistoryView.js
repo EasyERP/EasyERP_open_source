@@ -16,28 +16,20 @@ define([
         historyTemplate: _.template(HistoryTemplate),
         childView      : null,
 
-        initialize: function (options) {
-            var self = this;
-
-            this.importHistoryCollection = new ImportHistoryCollection();
-
-            this.importHistoryCollection.fetch({
-                success: function(err, result) {
-                    self.render();
-                },
-                error: function(xhr){
-                    console.log(xhr);
-                }
+        initialize: function () {
+            this.importHistoryCollection = new ImportHistoryCollection({
+                reset: true
             });
+
+            this.importHistoryCollection.bind('reset', this.render, this);
         },
 
         render: function () {
             var $thisEl = this.$el;
 
 
-
             $thisEl.html(this.historyTemplate({
-                history: this.importHistoryCollection.toJSON(),
+                history: this.importHistoryCollection.toJSON()
             }));
         }
     });

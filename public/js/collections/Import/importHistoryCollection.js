@@ -2,15 +2,15 @@ define([
     'Backbone',
     'collections/parent',
     'Underscore',
-    'models/importHistoryModel',
+    'models/ImportHistoryModel',
     'common',
     'constants'
 ], function (Backbone, Parent, _, ImportHistoryModel, common, CONSTANTS) {
     'use strict';
 
     var ImportHistoryCollection = Parent.extend({
-        model   : ImportHistoryModel,
-        url     : CONSTANTS.URLS.IMPORT_HISTORY,
+        model: ImportHistoryModel,
+        url  : CONSTANTS.URLS.IMPORT_HISTORY,
 
         initialize: function (options) {
             function _errHandler(models, xhr) {
@@ -22,9 +22,9 @@ define([
             options = options || {};
             options.error = options.error || _errHandler;
 
-            //this.startTime = new Date();
+            this.startTime = new Date();
 
-            //this.getFirstPage(options);
+            this.getFirstPage(options);
         }
     });
 

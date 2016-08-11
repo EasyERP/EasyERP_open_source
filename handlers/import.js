@@ -155,10 +155,7 @@ var Module = function (models) {
                 return callback(err);
             }
 
-            callback(null, {
-                success: 'creating history for import is success',
-                result : result
-            });
+            callback(null);
         });
     }
 
@@ -200,48 +197,40 @@ var Module = function (models) {
         });
     };
 
-    this.getImportHistory = function(req, res, next) {
+    this.getImportHistory = function (req, res, next) {
         var ImportHistoryModel = models.get(req.session.lastDb, 'ImportHistories', ImportHistorySchema);
 
         ImportHistoryModel.aggregate([
             {
                 $match: {}
-            },{
+            }, {
                 $lookup: {
-                    from: 'Users',
-                    localField: 'user',
+                    from        : 'Users',
+                    localField  : 'user',
                     foreignField: '_id',
-                    as: 'user'
+                    as          : 'user'
                 }
-            },{
+            }, {
                 $unwind: {
                     path: '$user'
                 }
             }, {
                 $project: {
-                    date: '$date',
-                    fileName: '$fileName',
-                    user: '$user.login',
-                    type: '$type',
-                    status: '$status',
+                    date      : '$date',
+                    fileName  : '$fileName',
+                    user      : '$user.login',
+                    type      : '$type',
+                    status    : '$status',
                     reportFile: '$reportFile'
                 }
             }
-        ], function(err, result){
+        ], function (err, result) {
             if (err) {
                 return next(err);
             }
 
             res.status(200).send(result);
         });
-
-        /*ImportHistoryModel.find({}, function(err, result) {
-            if (err) {
-                return next(err);
-            }
-
-            res.status(200).send(result);
-        })*/
     };
 
     this.getForPreview = function (req, res, next) {
@@ -323,6 +312,7 @@ var Module = function (models) {
         var ImportModel = models.get(req.session.lastDb, 'Imports', ImportSchema);
         var Model = models.get(req.session.lastDb, type, schemaObj[type]);
         var ImportHistoryModel = models.get(req.session.lastDb, 'ImportHistories', ImportHistorySchema);
+        var UserModel = models.get(req.session.lastDb, 'Users', UserSchema);
         var titleArray;
         var mappedFields;
         var skippedArray = [];
@@ -375,24 +365,29 @@ var Module = function (models) {
 
                 async.waterfall([
                     function (cb) {
-
                         createXlsxReport(res, cb, skippedArray, type);
-
                     },
+
                     function (fileName, cb) {
                         var option = {
-                            fileName   : mapFileName,
-                            userId     : userId,
-                            type       : type,
-                            status     : 'Finished',
-                            reportFile : fileName
+                            fileName  : mapFileName,
+                            userId    : userId,
+                            type      : type,
+                            status    : 'Finished',
+                            reportFile: fileName
                         };
 
                         writeHistory(option, ImportHistoryModel, cb);
                     },
-                    function (obj, cb) {
-                        ImportModel.remove({_id: {$in: importedIds}}, function () {
 
+                    function (cb) {
+                        ImportModel.remove({_id: {$in: importedIds}}, function () {
+                        });
+                        cb(null);
+                    },
+
+                    function (cb) {
+                        UserModel.update({_id: userId}, {$set: {imports: {}}}, function () {
                         });
                         cb(null);
                     }
