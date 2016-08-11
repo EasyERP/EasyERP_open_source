@@ -167,9 +167,12 @@ define([
             var importData = currentUser.imports;
             var url = '/importFile/imported';
 
-            dataService.postData(url, importData, function () {
-                alert('Good');
+            dataService.postData(url, importData, function (result) {
+                alert('Imported: ' + result.imported + ' Skipped: ' + result.skipped);
+
+                this.historyView.collection.getFirstPage();
             });
+
 
         },
 
@@ -197,15 +200,14 @@ define([
             importHistoryCollection.bind('reset', _.bind(createView, this));
 
             function createView() {
-                var historyView;
 
                 importHistoryCollection.unbind('reset');
 
-                historyView = new ImportHistoryView({
+                this.historyView = new ImportHistoryView({
                     collection: importHistoryCollection
                 });
 
-                eventsBinder.subscribeCollectionEvents(importHistoryCollection, historyView);
+                eventsBinder.subscribeCollectionEvents(importHistoryCollection, this.historyView);
 
                 importHistoryCollection.trigger('fetchFinished', {
                     totalRecords: importHistoryCollection.totalRecords,

@@ -397,11 +397,17 @@ var Module = function (models) {
                         cb(null);
                     }
                 ], function (err) {
+                    var imported = importedIds.length - 1;
+                    var skipped = skippedArray.length;
+
                     if (err) {
                         return next(err);
                     }
 
-                    res.status(200).send();
+                    res.status(200).send({
+                        imported: imported,
+                        skipped : skipped
+                    });
                 });
             });
         });
