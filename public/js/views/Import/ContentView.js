@@ -12,7 +12,7 @@ define([
     'views/Import/mappingContentView',
     'views/Import/previewContentView',
     'dataService',
-    'constants',
+    'constants'
 ], function (Backbone,
              $,
              _,

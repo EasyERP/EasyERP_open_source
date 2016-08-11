@@ -24,9 +24,16 @@ define([
         },
 
         parse: function(res) {
+            var temp;
+
             if (!res.data) {
                 if (res.date) {
                     res.date = moment(res.date).format('DD MMM, YYYY, H:mm:ss');
+                }
+                if (res.fileName) {
+                    temp = res.date;
+                    res.date = res.fileName;
+                    res.fileName = temp;
                 }
             }
             return res;

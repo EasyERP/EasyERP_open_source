@@ -3,11 +3,13 @@
         <thead>
         <tr>
             <% if (history.length) { %>
-            <% _.each(history[0], function(item, key){ %>
-            <% if (key !== '_id') { %>
-            <td><%= key %></td>
-            <% } %>
-            <% }) %>
+                <% _.each(history[0], function(item, key){ %>
+                    <% if (key !== '_id') { %>
+                        <td>
+                            <%= key %>
+                        </td>
+                    <% } %>
+                <% }) %>
             <% } %>
         </tr>
         </thead>

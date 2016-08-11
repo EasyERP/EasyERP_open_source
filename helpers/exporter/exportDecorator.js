@@ -211,7 +211,9 @@ function reportToXlsx(options) {
 
 
     var writeXlsx = function (array) {
-        arrayToXlsx.writeFile(nameOfFile + '.xlsx', array, {
+        var randomNumber = Number(Date.now());
+
+        arrayToXlsx.writeFile('exportFiles/' + randomNumber.toString() + nameOfFile + '.xlsx', array, {
             sheetName : 'report',
             headers   : headersArray,
             attributes: headersArray
@@ -223,7 +225,7 @@ function reportToXlsx(options) {
                 return next(err);
             }
         });*/
-        next(null, nameOfFile + '.xlsx');
+        next(null, 'exportFiles/' + randomNumber.toString() + nameOfFile + '.xlsx');
 
         //return nameOfFile + '.xlsx'
     };
