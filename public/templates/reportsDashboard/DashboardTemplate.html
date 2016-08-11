@@ -70,57 +70,6 @@
     </div>
     <svg class="chart salesChart"></svg>
 </div>
-<div class="chart-tabs-item">
-    <h3>Sales by country</h3>
-    <div class="filterWrap salesTab">
-        <div class="vocationFilter _filterDropDownWrap small">
-
-            <ul class="dateFilter">
-                <li class="dateRange">
-                    <span class="icon-calendar"></span>
-                    <span id="startTime"><%= startDate%></span> - <span id="endTime"><%= endDate%></span>
-                    <span class="fa fa-angle-down"></span>
-                </li>
-                <li>
-                    <ul class="frameDetail _filterDropDownBody hidden">
-                        <li id="thisMonth" class="filterValues checked checkedValue" data-type="">This Month</li>
-                        <li id="thisYear" class="filterValues checked" data-type="">This Financial Year</li>
-                        <li class="listLine"></li>
-                        <li id="lastMonth" class="filterValues checked" data-type="">Last Month</li>
-                        <li id="lastQuarter" class="filterValues checked" data-type="">Last Quarter</li>
-                        <li id="lastYear" class="filterValues checked" data-type="">Last Financial Year</li>
-                        <li class="listLine"></li>
-                        <li id="custom" class="_filterArrow filterValues checked" data-type="">Custom Dates</li>
-                        <li class="customTime customTime hidden">
-                            <div class="customTimeItem">
-                                <label for="startDate">Start Date: </label>
-                                <input readonly type="text" id="startDate">
-                            </div>
-                            <div class="customTimeItem">
-                                <label for="endDate">End Date: </label>
-                                <input readonly type="text" id="endDate">
-                            </div>
-                        </li>
-                        <li class="buttons">
-                            <button id="updateDate" class="btn">
-                                <span>Update</span>
-                            </button>
-                            <button id="cancelBtn" class="btn">
-                                <span>Cancel</span>
-                            </button>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-    </div>
-    <div class="clearfix"></div>
-    <div class="dashboardGraphicsWrap">
-        <div class="halfWidth">
-            <svg class="salesByCountryBarChart"></svg>
-        </div>
-    </div>
-</div>
 <div class="chart-tabs-item leadsTab">
     <h3>Leads</h3>
     <div class="leadsTop align-left clearfix">
@@ -281,4 +230,56 @@
     <svg class="leadsByNameBarChart"></svg>
 
 </div>
+<div class="chart-tabs-item">
+    <h3>Sales by country</h3>
+    <div class="filterWrap salesTab">
+        <div class="vocationFilter _filterDropDownWrap small">
+
+            <ul class="dateFilter">
+                <li class="dateRange">
+                    <span class="icon-calendar"></span>
+                    <span id="startTime"><%= startDate%></span> - <span id="endTime"><%= endDate%></span>
+                    <span class="fa fa-angle-down"></span>
+                </li>
+                <li>
+                    <ul class="frameDetail _filterDropDownBody hidden">
+                        <li id="thisMonth" class="filterValues checked checkedValue" data-type="">This Month</li>
+                        <li id="thisYear" class="filterValues checked" data-type="">This Financial Year</li>
+                        <li class="listLine"></li>
+                        <li id="lastMonth" class="filterValues checked" data-type="">Last Month</li>
+                        <li id="lastQuarter" class="filterValues checked" data-type="">Last Quarter</li>
+                        <li id="lastYear" class="filterValues checked" data-type="">Last Financial Year</li>
+                        <li class="listLine"></li>
+                        <li id="custom" class="_filterArrow filterValues checked" data-type="">Custom Dates</li>
+                        <li class="customTime customTime hidden">
+                            <div class="customTimeItem">
+                                <label for="startDate">Start Date: </label>
+                                <input readonly type="text" id="startDate">
+                            </div>
+                            <div class="customTimeItem">
+                                <label for="endDate">End Date: </label>
+                                <input readonly type="text" id="endDate">
+                            </div>
+                        </li>
+                        <li class="buttons">
+                            <button id="updateDate" class="btn">
+                                <span>Update</span>
+                            </button>
+                            <button id="cancelBtn" class="btn">
+                                <span>Cancel</span>
+                            </button>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="dashboardGraphicsWrap">
+        <div class="halfWidth">
+            <svg class="salesByCountryBarChart"></svg>
+        </div>
+    </div>
+</div>
+
 
