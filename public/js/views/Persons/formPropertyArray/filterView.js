@@ -24,7 +24,6 @@ define([
                 self.renderContent(self.e);
             }
 
-            this.attribute = options.attribute;
             this.company = options.company;
             this.saveDeal = options.saveDeal;
 
@@ -82,13 +81,9 @@ define([
 
         createCustomer: function () {
             $('.tag-list-dialog').remove();
-            var optionsObject = {};
 
-            if (this.isLead) {
-                optionsObject.lead = this.model;
-            }
 
-            new CreateView(optionsObject);
+            new CreateView({company : this.company});
         },
 
         changeSelected: function (e) {

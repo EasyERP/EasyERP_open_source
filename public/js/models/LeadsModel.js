@@ -28,13 +28,13 @@
 
             Validation.checkGroupsNameField(errors, true, attrs.name, 'Subject');
             // Validation.checkGroupsNameField(errors, false, attrs.company.name, 'Company'); // commented in hotFix By Liliya
-            Validation.checkPhoneField(errors, false, attrs.phones.phone, 'Phone');
-            Validation.checkPhoneField(errors, false, attrs.phones.mobile, 'Mobile');
-            Validation.checkCountryCityStateField(errors, false, attrs.address.country, 'Country');
-            Validation.checkCountryCityStateField(errors, false, attrs.address.state, 'State');
-            Validation.checkCountryCityStateField(errors, false, attrs.address.city, 'City');
-            Validation.checkZipField(errors, false, attrs.address.zip, 'Zip');
-            Validation.checkStreetField(errors, false, attrs.address.street, 'Street');
+            Validation.checkPhoneField(errors, false, attrs['phones.phone'] ||  attrs.phones.phone , 'Phone');
+            Validation.checkPhoneField(errors, false,attrs['phones.mobile'] || attrs.phones.mobile, 'Mobile');
+            Validation.checkCountryCityStateField(errors, false, attrs['address.country'] || attrs.address.country , 'Country');
+            Validation.checkCountryCityStateField(errors, false, attrs['address.state'] ||  attrs.address.state, 'State');
+            Validation.checkCountryCityStateField(errors, false,  attrs['address.city'] || attrs.address.city, 'City');
+            Validation.checkZipField(errors, false, attrs['address.zip'] || attrs.address.zip  , 'Zip');
+            Validation.checkStreetField(errors, false,attrs['address.street'] ||  attrs.address.street  , 'Street');
             Validation.checkEmailField(errors, false, attrs.email, 'Email');
             Validation.checkNotesField(errors, false, attrs.internalNotes, 'Notes');
             if (errors.length > 0) {
@@ -46,6 +46,9 @@
             if (!response.data) {
                 if (response.createdBy) {
                     response.createdBy.date = moment(response.createdBy.date).format('DD MMM, YYYY, H:mm:ss');
+                }
+                if (response.social && response.social.LI) {
+                    response.social.LI = response.social.LI.replace('[]', 'linkedin');
                 }
                 if (response.editedBy) {
                     response.editedBy.date = moment(response.editedBy.date).format('DD MMM, YYYY, H:mm:ss');
