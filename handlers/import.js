@@ -140,12 +140,13 @@ var Module = function (models) {
 
     function writeHistory(options, ImportHistoryModel, callback) {
         var importHistoryObj = {
-            dateHistory: options.dateHistory,
-            fileName   : options.fileName,
-            user       : options.userId,
-            type       : options.type,
-            status     : options.status,
-            reportFile : options.reportFile
+            dateHistory   : options.dateHistory,
+            fileName      : options.fileName,
+            user          : options.userId,
+            type          : options.type,
+            status        : options.status,
+            reportFile    : options.reportFile,
+            reportFileName: options.reportFileName
         };
 
         var importHistory = new ImportHistoryModel(importHistoryObj);
@@ -200,34 +201,35 @@ var Module = function (models) {
         });
     };
 
-    this.getImportHistory = function(req, res, next) {
+    this.getImportHistory = function (req, res, next) {
         var ImportHistoryModel = models.get(req.session.lastDb, 'ImportHistories', ImportHistorySchema);
 
         ImportHistoryModel.aggregate([
             {
                 $match: {}
-            },{
+            }, {
                 $lookup: {
-                    from: 'Users',
-                    localField: 'user',
+                    from        : 'Users',
+                    localField  : 'user',
                     foreignField: '_id',
-                    as: 'user'
+                    as          : 'user'
                 }
-            },{
+            }, {
                 $unwind: {
                     path: '$user'
                 }
             }, {
                 $project: {
-                    date: '$date',
-                    fileName: '$fileName',
-                    user: '$user.login',
-                    type: '$type',
-                    status: '$status',
-                    reportFile: '$reportFile'
+                    date          : '$date',
+                    fileName      : '$fileName',
+                    user          : '$user.login',
+                    type          : '$type',
+                    status        : '$status',
+                    reportFileName: '$reportFile',
+                    reportFile    : '$reportFileName'
                 }
             }
-        ], function(err, result){
+        ], function (err, result) {
             if (err) {
                 return next(err);
             }
@@ -236,12 +238,12 @@ var Module = function (models) {
         });
 
         /*ImportHistoryModel.find({}, function(err, result) {
-            if (err) {
-                return next(err);
-            }
+         if (err) {
+         return next(err);
+         }
 
-            res.status(200).send(result);
-        })*/
+         res.status(200).send(result);
+         })*/
     };
 
     this.getForPreview = function (req, res, next) {
@@ -378,13 +380,14 @@ var Module = function (models) {
                         createXlsxReport(res, cb, skippedArray, type);
 
                     },
-                    function (fileName, cb) {
+                    function (file, cb) {
                         var option = {
-                            fileName   : mapFileName,
-                            userId     : userId,
-                            type       : type,
-                            status     : 'Finished',
-                            reportFile : fileName
+                            fileName      : mapFileName,
+                            userId        : userId,
+                            type          : type,
+                            status        : 'Finished',
+                            reportFile    : file.pathName,
+                            reportFileName: file.fileName
                         };
 
                         writeHistory(option, ImportHistoryModel, cb);

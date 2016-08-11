@@ -2,6 +2,7 @@ var csv = require('fast-csv');
 var fs = require('fs');
 var arrayToXlsx = require('../exporter/arrayToXlsx');
 var async = require('async');
+var path = require('path');
 
 function createProjection(map, options) {
     var project = {};
@@ -136,7 +137,6 @@ function exportToXlsx(options) {
     query.push({$project: project});
     resultAggregate = Model.aggregate(query);
 
-
     var writeXlsx = function (array) {
         arrayToXlsx.writeFile(nameOfFile + '.xlsx', array, {
             sheetName : "data",
@@ -209,27 +209,28 @@ function reportToXlsx(options) {
     var formatters = map.formatters;
     var nameOfFile = fileName ? fileName : type ? type : 'data';
 
-
     var writeXlsx = function (array) {
         var randomNumber = Number(Date.now());
+        var pathToFile = path.join('exportFiles', nameOfFile + '_' + randomNumber.toString() + '.xlsx');
 
-        arrayToXlsx.writeFile('exportFiles/'  + nameOfFile + randomNumber.toString() + '.xlsx', array, {
+        arrayToXlsx.writeFile(pathToFile, array, {
             sheetName : 'report',
             headers   : headersArray,
             attributes: headersArray
         });
 
-
-       /* res.download(nameOfFile + '.xlsx', nameOfFile + '.xlsx', function (err) {
-            if (err) {
-                return next(err);
-            }
-        });*/
-        next(null, 'exportFiles/'  + nameOfFile + randomNumber.toString() + '.xlsx');
+        /* res.download(nameOfFile + '.xlsx', nameOfFile + '.xlsx', function (err) {
+         if (err) {
+         return next(err);
+         }
+         });*/
+        next(null, {
+            fileName: nameOfFile + '.xlsx',
+            pathName: pathToFile
+        });
 
         //return nameOfFile + '.xlsx'
     };
-
 
     if (formatters) {
         async.each(resultArray, function (item, callback) {

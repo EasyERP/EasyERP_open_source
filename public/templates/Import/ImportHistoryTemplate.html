@@ -4,7 +4,7 @@
         <tr>
             <% if (history.length) { %>
                 <% _.each(history[0], function(item, key){ %>
-                    <% if (key !== '_id') { %>
+                    <% if (key !== '_id' && key !== 'reportFileName') { %>
                         <td>
                             <%= key %>
                         </td>
@@ -18,10 +18,16 @@
         <% _.each(history, function(historyItem, key1) { %>
             <tr>
                 <% _.each(historyItem, function(headItem, key2) { %>
-                    <% if (key2 !== '_id') { %>
-                        <td>
-                            <%= historyItem[key2] %>
-                        </td>
+                    <% if (key2 !== '_id' && key2 !== 'reportFile') { %>
+                        <% if (key2 === 'reportFileName') { %>
+                            <td>
+                                <a href="<%= historyItem[key2] %>"><%= historyItem['reportFile'] %></a>
+                            </td>
+                        <% } else { %>
+                            <td>
+                                <%= historyItem[key2] %>
+                            </td>
+                        <% } %>
                     <% } %>
                 <% }) %>
             </tr>
