@@ -541,13 +541,13 @@ define([
             d3.selectAll('svg.leadsByNameBarChart > *').remove();
 
             data = this.dataForLeadsChart[this.dateItem.leadsByName];
-            margin = {top: 50, right: 150, bottom: 30, left: 140};
-            width = ($wrapper.width() - margin.right /*- margin.left*/)/2;
+            margin = {top: 50, right: 150, bottom: 80, left: 150};
+            width = ($wrapper.width())/2;
             height = data.length * 20;
 
             barChart = d3.select('svg.leadsByNameBarChart')
                 .attr({
-                    'width' : width + margin.left / 2,
+                    'width' : width - margin.left - margin.right,
                     'height': height + margin.bottom + margin.top
                 })
                 .append('g')
@@ -719,12 +719,12 @@ define([
                     left  : 80
                 };
 
-                width = ($wrapper.width() - margin.left - margin.right)/2;
+                width = ($wrapper.width())/2;
                 height = $wrapper.width() / 4;
 
                 barChart = d3.select('svg.leadsBarChart')
                     .attr({
-                        'width' : width + margin.left + margin.right,
+                        'width' : width  - margin.left - margin.right,
                         'height': height + margin.top + margin.bottom
                     })
                     .append('g')
@@ -963,10 +963,10 @@ define([
             var chartClass = '.' + type + 'sChart';
             var self = this;
             var margin = {
-                top   : 20,
-                right : 160,
-                bottom: 30,
-                left  : 160
+                top   : 50,
+                right : 50,
+                bottom: 80,
+                left  : 150
             };
             var maxOpportunities;
             var uniqueNames;
@@ -1019,7 +1019,7 @@ define([
                 });
 
                 uniqueNames = scaleArray.slice().filter(uniqueVal);
-                width = ($('#content-holder').width() - margin.left - margin.right)/2;
+                width = ($('#content-holder').width())/2;
                 height = uniqueNames.length * 20;
 
                 y = d3.scale.ordinal()
@@ -1041,7 +1041,7 @@ define([
                     .orient('left');
 
                 chart = d3.select(chartClass)
-                    .attr('width', width + margin.left + margin.right)
+                    .attr('width', width  - margin.left - margin.right)
                     .attr('height', height + margin.top + margin.bottom)
                     .append('g')
                     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
@@ -1188,17 +1188,17 @@ define([
             }, function (data) {
 
                 margin = {
-                    top: 20,
-                    right: 130,
-                    bottom: 30,
-                    left: 130
+                    top: 50,
+                    right: 150,
+                    bottom: 80,
+                    left: 80
                 };
-                width = ($wrapper.width() - margin.right) / 2.1;
+                width = ($wrapper.width()) / 2;
                 height1 = data.length * 20;
 
                 barChart = d3.select('svg.salesByCountryBarChart')
                     .attr({
-                        'width' : width - 30 + margin.left + margin.right,
+                        'width' : width - margin.left - margin.right,
                         'height': height1 + margin.top + margin.bottom
                     })
                     .append('g')
