@@ -1850,6 +1850,8 @@ var Module = function (models, event) {
                 }
             }, {
                 $project: {
+                    /* 'workflow.name': '$workflow.name',
+                     'workflow._id': '$workflow._id',*/
                     workflow: '$workflow.name',
                     date    : 1,
                     revenue : 1
