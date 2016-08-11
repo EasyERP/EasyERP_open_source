@@ -3,26 +3,28 @@
         <thead>
         <tr>
             <% if (history.length) { %>
-            <% _.each(history[0], function(item, key){ %>
-            <% if (key !== '_id') { %>
-            <td><%= key %></td>
-            <% } %>
-            <% }) %>
+                <% _.each(history[0], function(item, key){ %>
+                    <% if (key !== '_id') { %>
+                        <td>
+                            <%= key %>
+                        </td>
+                    <% } %>
+                <% }) %>
             <% } %>
         </tr>
         </thead>
 
         <tbody>
         <% _.each(history, function(historyItem, key1) { %>
-        <tr>
-            <% _.each(historyItem, function(headItem, key2) { %>
-            <% if (key2 !== '_id') { %>
-            <td>
-                <%= historyItem[key2] %>
-            </td>
-            <% } %>
-            <% }) %>
-        </tr>
+            <tr>
+                <% _.each(historyItem, function(headItem, key2) { %>
+                    <% if (key2 !== '_id') { %>
+                        <td>
+                            <%= historyItem[key2] %>
+                        </td>
+                    <% } %>
+                <% }) %>
+            </tr>
         <% }) %>
         </tbody>
     </table>

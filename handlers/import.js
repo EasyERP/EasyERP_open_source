@@ -296,7 +296,6 @@ var Module = function (models) {
                             type  : type
                         });
                     });
-
                 });
         });
     };

@@ -683,7 +683,9 @@ var Employee = function (event, models) {
         }, {
             $project: {
                 employees: {
-                    name: {$concat: ['$employees.name.first', ' ', '$employees.name.last']},
+                    name: {
+                        $concat: ['$employees.name.first', ' ', '$employees.name.last']
+                    },
                     _id : '$employees._id'
                 },
 
@@ -709,7 +711,12 @@ var Employee = function (event, models) {
             $group: {
                 _id        : '$parentDepartment',
                 departments: {
-                    $push: {_id: '$_id', name: '$name', employees: '$employees', parentDepartment: '$parentDepartment'}
+                    $push: {
+                        _id: '$_id',
+                        name: '$name',
+                        employees: '$employees',
+                        parentDepartment: '$parentDepartment'
+                    }
                 }
             }
         }, {
@@ -723,7 +730,9 @@ var Employee = function (event, models) {
             $project: {
                 _id        : 1,
                 departments: 1,
-                selfData   : {$arrayElemAt: ['$parent', 0]}
+                selfData   : {
+                    $arrayElemAt: ['$parent', 0]
+                }
             }
         }, {
             $lookup: {
