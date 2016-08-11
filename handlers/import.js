@@ -316,6 +316,7 @@ var Module = function (models) {
         var mappedFields;
         var skippedArray = [];
         var importedIds = [];
+        var headerItem;
         var criteria = {
             user: userId
         };
@@ -334,7 +335,10 @@ var Module = function (models) {
                 return;
             }
 
-            titleArray = importData.shift().result;
+            headerItem = importData.shift();
+            titleArray = headerItem.result;
+
+            importedIds.push(headerItem._id);
 
             mappedFields = mapImportFileds(mapResult, titleArray);
 

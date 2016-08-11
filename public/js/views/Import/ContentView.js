@@ -6,12 +6,14 @@ define([
     'text!templates/Import/importProgress.html',
     'text!templates/Notes/importTemplate.html',
     'models/UsersModel',
+    'collections/Import/importHistoryCollection',
     'views/Import/HistoryView',
     'views/Notes/AttachView',
     'views/Import/uploadView',
     'views/Import/mappingContentView',
     'views/Import/previewContentView',
     'dataService',
+    'helpers/eventsBinder',
     'constants'
 ], function (Backbone,
              $,
@@ -20,12 +22,14 @@ define([
              ImportProgressTemplate,
              ImportTemplate,
              UserModel,
+             HistoryCollection,
              ImportHistoryView,
              AttachView,
              UploadView,
              MappingContentView,
              PreviewView,
              dataService,
+             eventsBinder,
              CONSTANTS) {
     'use strict';
 
@@ -37,6 +41,7 @@ define([
         importTemplate        : _.template(ImportTemplate),
         importProgressTemplate: _.template(ImportProgressTemplate),
         childView             : null,
+        historyView           : null,
 
         events: {
             'click .importBtn'   : 'importFile',
@@ -184,6 +189,33 @@ define([
             this.$el.find('.stageBtn').prop('disabled', false);
         },
 
+        insertHistoryView: function () {
+            var importHistoryCollection = new HistoryCollection({
+                reset: true
+            });
+
+            importHistoryCollection.bind('reset', _.bind(createView, this));
+
+            function createView() {
+                var historyView;
+
+                importHistoryCollection.unbind('reset');
+
+                historyView = new ImportHistoryView({
+                    collection: importHistoryCollection
+                });
+
+                eventsBinder.subscribeCollectionEvents(importHistoryCollection, historyView);
+
+                importHistoryCollection.trigger('fetchFinished', {
+                    totalRecords: importHistoryCollection.totalRecords,
+                    currentPage : importHistoryCollection.currentPage,
+                    pageSize    : importHistoryCollection.pageSize
+                });
+            }
+
+        },
+
         render: function () {
             var $thisEl = this.$el;
             var $importProgress;
@@ -193,7 +225,8 @@ define([
             $thisEl.html(this.contentTemplate);
             $importProgress = $thisEl.find('#importProgress');
             $importProgress.html(this.importProgressTemplate);
-            new ImportHistoryView();
+
+            this.insertHistoryView();
         }
     });
 
