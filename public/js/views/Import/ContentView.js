@@ -163,14 +163,15 @@ define([
         },
 
         startImport: function () {
+            var self = this;
             var currentUser = App.currentUser;
             var importData = currentUser.imports;
             var url = '/importFile/imported';
 
             dataService.postData(url, importData, function (result) {
-                alert('Imported: ' + result.imported + ' Skipped: ' + result.skipped);
+                //alert('Imported: ' + result.imported + ' Skipped: ' + result.skipped);
 
-                this.historyView.collection.getFirstPage();
+                self.historyView.collection.getFirstPage();
             });
 
 
