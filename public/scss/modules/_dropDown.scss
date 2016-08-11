@@ -103,6 +103,8 @@
       > input {
         height: 26px;
         width: 100%;
+        border: 0;
+        border-bottom: 1px solid #c8c8d3;
         cursor: pointer;
       }
       &:after {
@@ -143,7 +145,7 @@
     margin: 0;
     padding: 0 16px;
     cursor: pointer;
-    line-height: 2;
+    line-height: 20px;
     font-size: 12px;
     text-align: left;
     color: #4d5a75;
