@@ -143,11 +143,16 @@ module.exports = function (models, event) {
                             $and: [{
                                 $eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.PROJECTSMANAGER)]
                             }, {
-                                $max: '$$projectMember.startDate'
+                                $or: [{
+                                    $max: '$$projectMember.startDate'
+                                }, {
+                                    $eq: ['$$projectMember.startDate', null]
+                                }]
                             }]
                         }
                     }
                 },
+
                 salesManager    : {
                     $filter: {
                         input: '$projectMembers',
@@ -156,7 +161,11 @@ module.exports = function (models, event) {
                             $and: [{
                                 $eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALESMANAGER)]
                             }, {
-                                $max: '$$projectMember.startDate'
+                                $or: [{
+                                    $max: '$$projectMember.startDate'
+                                }, {
+                                    $eq: ['$$projectMember.startDate', null]
+                                }]
                             }]
                         }
                     }
