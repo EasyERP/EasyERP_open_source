@@ -212,24 +212,20 @@ function reportToXlsx(options) {
     var writeXlsx = function (array) {
         var randomNumber = Number(Date.now());
         var pathToFile = path.join('exportFiles', nameOfFile + '_' + randomNumber.toString() + '.xlsx');
-
         arrayToXlsx.writeFile(pathToFile, array, {
             sheetName : 'report',
             headers   : headersArray,
             attributes: headersArray
         });
 
-        /* res.download(nameOfFile + '.xlsx', nameOfFile + '.xlsx', function (err) {
-         if (err) {
-         return next(err);
-         }
-         });*/
+        pathToFile = encodeURIComponent(pathToFile);
+
+        pathToFile = path.join('download', pathToFile);
+
         next(null, {
             fileName: nameOfFile + '.xlsx',
             pathName: pathToFile
         });
-
-        //return nameOfFile + '.xlsx'
     };
 
     if (formatters) {

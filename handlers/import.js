@@ -156,10 +156,7 @@ var Module = function (models) {
                 return callback(err);
             }
 
-            callback(null, {
-                success: 'creating history for import is success',
-                result : result
-            });
+            callback(null);
         });
     }
 
@@ -274,14 +271,6 @@ var Module = function (models) {
 
             res.status(200).send(result);
         });
-
-        /*ImportHistoryModel.find({}, function(err, result) {
-         if (err) {
-         return next(err);
-         }
-
-         res.status(200).send(result);
-         })*/
     };
 
     this.getForPreview = function (req, res, next) {
@@ -362,10 +351,12 @@ var Module = function (models) {
         var ImportModel = models.get(req.session.lastDb, 'Imports', ImportSchema);
         var Model = models.get(req.session.lastDb, type, schemaObj[type]);
         var ImportHistoryModel = models.get(req.session.lastDb, 'ImportHistories', ImportHistorySchema);
+        var UserModel = models.get(req.session.lastDb, 'Users', UserSchema);
         var titleArray;
         var mappedFields;
         var skippedArray = [];
         var importedIds = [];
+        var headerItem;
         var criteria = {
             user: userId
         };
@@ -384,7 +375,10 @@ var Module = function (models) {
                 return;
             }
 
-            titleArray = importData.shift().result;
+            headerItem = importData.shift();
+            titleArray = headerItem.result;
+
+            importedIds.push(headerItem._id);
 
             mappedFields = mapImportFileds(mapResult, titleArray);
 
@@ -414,9 +408,7 @@ var Module = function (models) {
 
                 async.waterfall([
                     function (cb) {
-
                         createXlsxReport(res, cb, skippedArray, type);
-
                     },
                     function (file, cb) {
                         var option = {
@@ -430,18 +422,30 @@ var Module = function (models) {
 
                         writeHistory(option, ImportHistoryModel, cb);
                     },
-                    function (obj, cb) {
-                        ImportModel.remove({_id: {$in: importedIds}}, function () {
 
+                    function (cb) {
+                        ImportModel.remove({_id: {$in: importedIds}}, function () {
+                        });
+                        cb(null);
+                    },
+
+                    function (cb) {
+                        UserModel.update({_id: userId}, {$set: {imports: {}}}, function () {
                         });
                         cb(null);
                     }
                 ], function (err) {
+                    var imported = importedIds.length - 1;
+                    var skipped = skippedArray.length;
+
                     if (err) {
                         return next(err);
                     }
 
-                    res.status(200).send();
+                    res.status(200).send({
+                        imported: imported,
+                        skipped : skipped
+                    });
                 });
             });
         });

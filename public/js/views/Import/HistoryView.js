@@ -3,13 +3,11 @@ define([
     'jQuery',
     'Underscore',
     'views/listViewBase',
-    'text!templates/Import/ImportHistoryTemplate.html',
-    'collections/Import/importHistoryCollection',
-    'helpers/eventsBinder',
+    'text!templates/Import/ImportHistoryTemplate.html', ,
     'constants',
     'dataService',
     'moment'
-], function (Backbone, $, _, ListBaseView, HistoryTemplate, ImportHistoryCollection, eventsBinder, CONSTANTS, dataService, moment) {
+], function (Backbone, $, _, ListBaseView, HistoryTemplate, CONSTANTS, dataService, moment) {
     'use strict';
 
     var HistoryView = ListBaseView.extend({
@@ -20,30 +18,18 @@ define([
 
 
         initialize: function (options) {
-            var self = this;
+            this.collection = options.collection;
 
-            this.importHistoryCollection = new ImportHistoryCollection();
+            ListBaseView.prototype.initialize.call(this, options);
 
-            ListBaseView.prototype.initialize.call(this, {
-                startTime: this.importHistoryCollection.startTime
-            });
-
-            this.importHistoryCollection.fetch({
-                success: function(err, result) {
-                    self.render();
-                },
-                error: function(xhr){
-                    console.log(xhr);
-                }
-            });
+            this.collection.bind('showMore', this.render, this);
         },
 
         render: function () {
             var $thisEl = this.$el;
 
-
             $thisEl.html(this.historyTemplate({
-                history: this.importHistoryCollection.toJSON().data
+                history: this.collection.toJSON()
             }));
         }
     });
