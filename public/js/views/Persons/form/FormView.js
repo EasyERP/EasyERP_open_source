@@ -85,6 +85,10 @@ define([
 
             $target.closest('.propertyFormList').addClass('active');
 
+            if (property === 'social.LI'){
+                value = value.replace('linkedin', '[]');
+            }
+
             this.modelChanged[property] = value;
             this.showButtons();
         },

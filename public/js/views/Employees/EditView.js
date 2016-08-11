@@ -671,7 +671,7 @@ define([
                 },
 
                 social: {
-                    LI: $.trim($thisEl.find('#LI').val()),
+                    LI: $.trim($thisEl.find('#LI').val()).replace('linkedin', '[]'),
                     FB: $.trim($thisEl.find('#FB').val())
                 },
 

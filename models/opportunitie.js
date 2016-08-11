@@ -145,7 +145,7 @@ module.exports = (function () {
         },
 
         expectedClosing: {type: Date, default: null},
-        priority       : {type: String, default: 'Trivial'},
+        priority       : {type: String, default: 'Cold'},
 
         categories: {
             id  : {type: String, default: ''},

@@ -34,6 +34,11 @@ define([
                 if (response.dateBirth) {
                     response.dateBirth = moment(response.dateBirth).format('DD MMM, YYYY');
                 }
+
+                if (response.social && response.social.LI) {
+                    response.social.LI = response.social.LI.replace('[]', 'linkedin');
+                }
+
                 if (response.notes) {
                     _.map(response.notes, function (note) {
                         note.date = moment(note.date).format('DD MMM, YYYY, H:mm:ss');
@@ -42,6 +47,12 @@ define([
                             note.history.changedValue = note.history.changedValue ? moment(new Date(note.history.changedValue)).format('DD MMM, YYYY') : '';
                             note.history.newValue = note.history.newValue ? moment(new Date(note.history.newValue)).format('DD MMM, YYYY') : '';
                             note.history.prevValue = note.history.prevValue ? moment(new Date(note.history.prevValue)).format('DD MMM, YYYY') : '';
+                        }
+
+                        if (note.history && note.history.changedField === 'LinkedIn'){
+                            note.history.changedValue = note.history.changedValue ? note.history.changedValue.replace('[]', 'linkedin') : '';
+                            note.history.newValue = note.history.newValue ? note.history.newValue.replace('[]', 'linkedin') : '';
+                            note.history.prevValue = note.history.prevValue ? note.history.prevValue.replace('[]', 'linkedin') : '';
                         }
 
                         return note;
@@ -76,19 +87,20 @@ define([
 
         validate: function (attrs) {
             var errors = [];
-            Validation.checkNameField(errors, true, attrs['name.first'] || attrs.name.first , 'First name');
-            Validation.checkNameField(errors, true, attrs['name.last'] || attrs.name.last  , 'Last name');
-            Validation.checkPhoneField(errors, false, attrs['phones.phone']  || attrs.phones.phone, 'Phone');
+            Validation.checkNameField(errors, true, attrs['name.first'] || attrs.name.first, 'First name');
+            Validation.checkNameField(errors, true, attrs['name.last'] || attrs.name.last, 'Last name');
+            Validation.checkPhoneField(errors, false, attrs['phones.phone'] || attrs.phones.phone, 'Phone');
             Validation.checkPhoneField(errors, false, attrs['phones.mobile'] || attrs.phones.mobile, 'Mobile');
             Validation.checkPhoneField(errors, false, attrs['phones.fax'] || attrs.phones.fax, 'Fax');
-            Validation.checkCountryCityStateField(errors, false,  attrs['address.country'] || attrs.address.country, 'Country');
-            Validation.checkCountryCityStateField(errors, false,  attrs['address.state'] || attrs.address.state, 'State');
-            Validation.checkCountryCityStateField(errors, false,  attrs['address.city'] || attrs.address.city, 'City');
-            Validation.checkCountryCityStateField(errors, false,  attrs['address.jobPosition'] || attrs.jobPosition, 'Job position');
-            Validation.checkSkypeField(errors, false, attrs.skype, 'Skype');
+            Validation.checkCountryCityStateField(errors, false, attrs['address.country'] || attrs.address.country, 'Country');
+            Validation.checkCountryCityStateField(errors, false, attrs['address.state'] || attrs.address.state, 'State');
+            Validation.checkCountryCityStateField(errors, false, attrs['address.city'] || attrs.address.city, 'City');
             Validation.checkZipField(errors, false, attrs['address.zip'] || attrs.address.zip, 'Zip');
             Validation.checkStreetField(errors, false, attrs['address.street'] || attrs.address.street, 'Street');
-            Validation.checkEmailField(errors, false,  attrs.email, 'Email');
+
+            Validation.checkNameField(errors, false, attrs.jobPosition, 'Job position');
+            Validation.checkSkypeField(errors, false, attrs.skype, 'Skype');
+            Validation.checkEmailField(errors, false, attrs.email, 'Email');
 
             if (errors.length > 0) {
                 return errors;
