@@ -234,7 +234,7 @@ var Module = function (models) {
                     data          : {
                         date          : '$root.date',
                         fileName      : '$root.fileName',
-                        user          : '$user.login',
+                        user          : '$root.user.login',
                         type          : '$root.type',
                         status        : '$root.status',
                         reportFileName: '$root.reportFile',
@@ -263,13 +263,17 @@ var Module = function (models) {
                 }
             }
         ], function (err, result) {
+            var data = {};
+
             if (err) {
                 return next(err);
             }
 
-            console.dir(result);
+            if (result.length) {
+                data = result[0];
+            }
 
-            res.status(200).send(result);
+            res.status(200).send(data);
         });
     };
 

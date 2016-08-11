@@ -61,7 +61,6 @@ define([
             $('.loginPanel').removeClass('open');
         });
 
-
     };
 
     var appRouter = Backbone.Router.extend({
@@ -74,7 +73,7 @@ define([
         routes: {
             home                                                                                            : 'login',
             'easyErp/Products/thumbnails(/c=:countPerPage)(/filter=:filter)'                                : 'goToProduct',
-            'easyErp/import(/stage=:stage)'                                                                 : 'goToImport',
+            'easyErp/import/list(/p=:page)(/c=:countPerPage)'                                               : 'goToImport',
             'login(?password=:password&dbId=:dbId&email=:email)'                                            : 'login',
             'easyErp/:contentType/kanban(/:parrentContentId)(/filter=:filter)'                              : 'goToKanban',
             'easyErp/:contentType/thumbnails(/c=:countPerPage)(/filter=:filter)'                            : 'goToThumbnails',
@@ -469,7 +468,7 @@ define([
             }
         },
 
-        goToImport: function (stage) {
+        goToImport: function (page, count) {
             var self = this;
 
             this.checkLogin(function (success) {
@@ -491,8 +490,17 @@ define([
                 var contentViewUrl = 'views/Import/ContentView';
 
                 require([contentViewUrl], function (contentView) {
-                    var contentview = new contentView({startTime: startTime, stage: stage});
-                    var url = '#easyErp/import';
+                    var contentview = new contentView({startTime: startTime, page: page, count: count});
+                    var url = '#easyErp/import/list';
+
+                    if (page) {
+                        url += '/p=' + page;
+                    }
+
+                    if (count) {
+                        url += '/c=' + count;
+                    }
+
 
                     custom.setCurrentVT('list');
 

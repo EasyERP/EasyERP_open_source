@@ -1,6 +1,7 @@
 define([], function () {
     return {
         IMPORT            : 'import',
+        IMPORT_HISTORY    : 'importHistory',
         PERSONS           : 'Persons',
         COMPANIES         : 'Companies',
         LEADS             : 'Leads',
