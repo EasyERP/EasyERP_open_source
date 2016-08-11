@@ -5,10 +5,11 @@ define([
     'views/listViewBase',
     'text!templates/Import/ImportHistoryTemplate.html',
     'collections/Import/importHistoryCollection',
+    'helpers/eventsBinder',
     'constants',
     'dataService',
     'moment'
-], function (Backbone, $, _, ListBaseView, HistoryTemplate, ImportHistoryCollection, CONSTANTS, dataService, moment) {
+], function (Backbone, $, _, ListBaseView, HistoryTemplate, ImportHistoryCollection, eventsBinder, CONSTANTS, dataService, moment) {
     'use strict';
 
     var HistoryView = ListBaseView.extend({
@@ -24,7 +25,7 @@ define([
             this.importHistoryCollection = new ImportHistoryCollection();
 
             ListBaseView.prototype.initialize.call(this, {
-                startTime: Date.now()
+                startTime: this.importHistoryCollection.startTime
             });
 
             this.importHistoryCollection.fetch({
@@ -39,7 +40,6 @@ define([
 
         render: function () {
             var $thisEl = this.$el;
-
 
 
             $thisEl.html(this.historyTemplate({

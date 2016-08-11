@@ -22,9 +22,9 @@ define([
             options = options || {};
             options.error = options.error || _errHandler;
 
-            //this.startTime = new Date();
+            this.startTime = new Date();
 
-            //this.getFirstPage(options);
+            this.getFirstPage(options);
         }
     });
 
