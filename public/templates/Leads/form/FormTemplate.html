@@ -26,7 +26,7 @@
                         <div class="propertyFormList">
                             <label>Name</label>
                             <div  class="inputBox">
-                                <input class="editable"  data-id="name" value="<%=model.name%>"/>
+                                <input class="editable"  id="name" value="<%=model.name%>"/>
                             </div>
                         </div>
                         <div class="propertyFormList">
@@ -40,6 +40,12 @@
                             <label>Assigned To</label>
                             <div class="inputBox _newSelectListWrap">
                                 <a class="current-selected assignName"  href="javascript:;" id="salesPersonDd"  data-id="salesPerson"><%= model.salesPerson && model.salesPerson.name ? model.salesPerson.name.first + ' ' + model.salesPerson.name.last : 'Select'%></a>
+                            </div>
+                        </div>
+                        <div class="propertyFormList">
+                            <label>Priority</label>
+                            <div class="inputBox _newSelectListWrap">
+                                <a class="current-selected assignName"  href="javascript:;" id="priorityDd"  data-id="priority"><%= model.priority%></a>
                             </div>
                         </div>
                         <div class="propertyFormList">
@@ -92,13 +98,28 @@
                             <div  class="inputBox">
                                 <input class="editable"  id="skype" value="<%=model.skype%>"/>
                             </div>
+
+                            <div class="social">
+                            <% if (model.skype){%>
+
+                                <a class="skype" href="skype:<%=model.skype%>?call"></a>
+
+                            <%}%>
+                            </div>
                         </div>
                         <div class="propertyFormList">
                             <label>LinkedIn</label>
                             <div  class="inputBox">
-                                <input class="editable"  id="social_LI" value="<%=model.social.LI%>"/>
+                                <input class="editable urlValue"  id="social_LI" value="<%=model.social.LI%>"/>
                             </div>
+                                <div class="social">
+                                <% if (model.social.LI){%><a class="linkedin" href="<%=model.social.LI%>"></a><%}%>
+                                </div>
+
                         </div>
+
+
+
                        <!-- <div class="propertyFormList">
                             <label>Facebook</label>
                             <div  class="inputBox">

@@ -21,6 +21,9 @@ define([
         initialize: function (options) {
             this.mId = CONSTANTS.MID[this.contentType];
 
+            this.saveDeal = options.saveDeal;
+            this.company = options.company;
+
             _.bindAll(this, 'saveItem', 'render');
             this.model = new PersonModel();
             this.models = (options && options.model) ? options.model : null;
@@ -131,10 +134,15 @@ define([
                     var navigateUrl;
                     self.hideDialog();
 
-                    Backbone.history.fragment = '';
+                    if (self.saveDeal && (typeof self.saveDeal === 'function')) {
+                        self.saveDeal({customer : res.id}, 'formProperty');
+                    } else {
+                        Backbone.history.fragment = '';
 
-                    navigateUrl = (viewType === 'form') ? '#easyErp/Persons/form/' + res.id : window.location.hash;
-                    Backbone.history.navigate(navigateUrl, {trigger: true});
+                        navigateUrl = (viewType === 'form') ? '#easyErp/Persons/form/' + res.id : window.location.hash;
+                        Backbone.history.navigate(navigateUrl, {trigger: true});
+                    }
+
                 },
 
                 error: function (model, xhr) {
@@ -186,7 +194,7 @@ define([
                 }).render().el
             );
 
-            populate.getCompanies('#companiesDd', '/customers/getCompaniesForDd', {}, this, false, true, (this.models) ? this.models._id : null);
+            populate.getCompanies('#companiesDd', '/customers/getCompaniesForDd', {}, this, false, true, this.company);
             common.canvasDraw({model: personModel.toJSON()}, this);
             this.$el.find('.dateBirth').datepicker({
                 dateFormat : 'd M, yy',

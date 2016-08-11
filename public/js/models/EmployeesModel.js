@@ -47,10 +47,14 @@
                         return note;
                     });
                 }
+
                 if (response.hire) {
                     response.hire = _.map(response.hire, function (hire) {
                         return moment(hire).format('DD MMM, YYYY');
                     });
+                }
+                if (response.social && response.social.LI) {
+                    response.social.LI = response.social.LI.replace('[]', 'linkedin');
                 }
                 if (response.fire) {
                     response.fire = _.map(response.fire, function (fire) {

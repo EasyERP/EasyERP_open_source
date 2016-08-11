@@ -49,10 +49,6 @@ define([
             }
         },
 
-        keypress: function (e) {
-            return keyValidator(e);
-        },
-
         openDialog: function (e) {
             e.preventDefault();
             $('#convert-dialog-form').dialog('open');
@@ -71,6 +67,12 @@ define([
             var $target = $(e.target);
             var property = $target.attr('id').replace('_', '.');
             var value = $target.val();
+
+            $target.closest('.propertyFormList').addClass('active');
+
+            if (property === 'social.LI') {
+                value = value.replace('linkedin', '[]');
+            }
 
             this.modelChanged[property] = value;
             this.showButtons();
@@ -153,6 +155,8 @@ define([
             if (type === 'customer') {
                 this.selectCustomer(id);
             }
+
+            holder.closest('.propertyFormList').addClass('active');
             this.showButtons();
         },
 
@@ -165,6 +169,7 @@ define([
 
             this.formModel.save(changedAttrs, {
                 patch  : true,
+                wait : true,
                 success: function () {
                     if (type === 'formProperty') {
                         Backbone.history.fragment = '';
@@ -176,6 +181,7 @@ define([
                         Backbone.history.navigate('easyErp/Opportunities', {trigger: true});
                     } else {
                         self.editorView.renderTimeline();
+                        self.renderAbout();
                         self.modelChanged = {};
                         self.hideButtons();
 
@@ -238,9 +244,12 @@ define([
                         };
                         context.modelChanged.email = customer.email;
                         context.modelChanged.phones = {
-                            phone : customer.phones.phone,
-                            last : customer.phones.mobile
+                            phone : customer.phones.phone
                         };
+                        context.modelChanged.social = {
+                            LI : customer.social.LI.replace('[]', 'linkedin')
+                        };
+
                         delete context.modelChanged.address;
                         context.modelChanged.tempCompanyField = '';
 
@@ -248,7 +257,7 @@ define([
                         context.$el.find('#contactName_last').val(customer.name.last);
                         context.$el.find('#email').val(customer.email);
                         context.$el.find('#phones_phone').val(customer.phones.phone);
-                        context.$el.find('#phones_mobile').val(customer.phones.mobile);
+                        context.$el.find('#social_LI').val(customer.social.LI.replace('[]', 'linkedin'));
 
                         context.$el.find('#address_street').val('');
                         context.$el.find('#address_city').val('');
@@ -263,11 +272,12 @@ define([
                         context.$el.find('#contactName_first').val('');
                         context.$el.find('#contactName_last').val('');
                         context.$el.find('#phones_phone').val('');
-                        context.$el.find('#phones_mobile').val('');
+                        context.$el.find('#social_LI').val('');
                         context.$el.find('#email').val('');
                         context.modelChanged.email = '';
                         delete context.modelChanged.contactName;
                         delete context.modelChanged.phones;
+                        delete context.modelChanged.social;
 
 
                         context.$el.find('#address_street').val(customer.address.street);
@@ -417,9 +427,19 @@ define([
                 changeYear : true,
                 onSelect   : function (dateText) {
                     self.modelChanged['expectedClosing'] = new Date(dateText);
+                    $(this).closest('.propertyFormList').addClass('active');
                     self.showButtons();
                 }
 
+            });
+
+            dataService.getData('/leads/priority', {}, function (priorities) {
+                priorities = _.map(priorities.data, function (priority) {
+                    priority.name = priority.priority;
+
+                    return priority;
+                });
+                self.responseObj['#priorityDd'] = priorities;
             });
             populate.get('#sourceDd', '/employees/sources', {}, 'name', this);
 

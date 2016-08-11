@@ -45,7 +45,7 @@ define([
                         context.$el.find('#last').val(customer.name.last);
                         context.$el.find('#email').val(customer.email);
                         context.$el.find('#phone').val(customer.phones.phone);
-                        context.$el.find('#mobile').val(customer.phones.mobile);
+                        context.$el.find('#LI').val(customer.social.LI.replace('[]', 'linkedin'))
 
                         context.$el.find('#street').val('');
                         context.$el.find('#city').val('');
@@ -62,6 +62,7 @@ define([
                         context.$el.find('#email').val('');
                         context.$el.find('#phone').val('');
                         context.$el.find('#mobile').val('');
+                        context.$el.find('#LI').val('');
                         context.$el.find('#street').val(customer.address.street);
                         context.$el.find('#city').val(customer.address.city);
                         context.$el.find('#state').val(customer.address.state);
@@ -191,7 +192,7 @@ define([
                 name            : name,
                 skype           : skype,
                 social          : {
-                    LI: LI,
+                    LI: LI.replace('linkedin', '[]'),
                     FB: FB
                 },
                 tempCompanyField: tempCompany,

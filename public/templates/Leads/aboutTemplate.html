@@ -79,11 +79,21 @@
         <div class="inputBox">
             <input class="editable" id="skype" value="<%=model.skype%>"/>
         </div>
+        <div class="social">
+            <% if (model.skype){%>
+
+            <a class="skype" href="skype:<%=model.skype%>?call"></a>
+
+            <%}%>
+        </div>
     </div>
     <div class="propertyFormList">
         <label>LinkedIn</label>
         <div class="inputBox">
             <input class="editable" id="social_LI" value="<%=model.social.LI%>"/>
+        </div>
+        <div class="social">
+            <% if (model.social.LI){%><a class="linkedin" href="<%=model.social.LI%>"></a><%}%>
         </div>
     </div>
     <!-- <div class="propertyFormList">

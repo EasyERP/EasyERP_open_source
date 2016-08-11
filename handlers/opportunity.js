@@ -2295,11 +2295,7 @@ var Module = function (models, event) {
                                     }
                                 }
 
-                                res.status(200).send({
-                                    success: 'Opportunities updated success',
-                                    result : result,
-                                    notes  : model.notes
-                                });
+                                res.status(200).send(result);
                             });
                         });
 
