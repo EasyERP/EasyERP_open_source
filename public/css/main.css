@@ -4192,6 +4192,14 @@ table.kanban tbody td:nth-child(n+2) {
 td.editable {
   position: relative;
 }
+.grid-conatiner {
+  height: calc(100% - 35px);
+}
+._gridTableWrap {
+  position: relative;
+  height: calc(100% - 100px);
+  overflow: auto;
+}
 .collapsed .sideMenu {
   width: 40px !important;
   margin-right: -100%;
@@ -14159,10 +14167,6 @@ textarea#editInput {
   color: #eb759e;
 }
 .grid-conatiner .statisticsAtten.stick {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  width: calc(100% - 200px);
   background-color: #ffffff;
   padding-top: 10px;
 }
