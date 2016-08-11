@@ -1814,13 +1814,13 @@ body {
   display: block;
   position: relative;
   border: 1px solid #7f7f80;
-  padding: 2px 0 2px 26px;
+  padding-left: 26px;
   border-radius: 3px;
 }
 #searchFilterContainer {
   float: left;
   width: auto;
-  height: 20px;
+  height: 24px;
   overflow: hidden;
 }
 .ui-autocomplete {
@@ -1850,52 +1850,52 @@ body {
   display: block;
   padding: .2em .4em;
 }
-.ui-menu .ui-autocomplete-category {
-  margin: .3em 0 0;
+.ui-menu > .ui-autocomplete-category {
+  margin: 0;
   padding: 0;
   line-height: 1.5;
   float: left;
   width: 100%;
+  border: 1px solid #7f7f80;
 }
-.ui-menu .ui-autocomplete-category:last-child {
-  padding-bottom: .3em;
+.ui-menu > .ui-autocomplete-category:nth-child(n+2) {
+  border-top: none;
 }
-.ui-menu .ui-autocomplete-category .searchGroupDropDown {
+.ui-menu > .ui-autocomplete-category .searchGroupDropDown {
   float: left;
   width: 14px;
   height: 14px;
-  padding: 3px 0px 3px 6px;
+  padding: 3px 0 3px 6px;
   line-height: 1;
   cursor: pointer;
   top: 0;
   left: 0;
 }
-.ui-menu .ui-autocomplete-category .searchGroupDropDown:before {
+.ui-menu > .ui-autocomplete-category .searchGroupDropDown:before {
   content: '\f0d7';
   font-family: 'FontAwesome';
 }
-.ui-menu .ui-autocomplete-category .searchGroupResult {
+.ui-menu > .ui-autocomplete-category .searchGroupResult {
   display: block;
   line-height: 20px;
   width: 100%;
 }
-.ui-menu .ui-autocomplete-category .ui-widget-content {
+.ui-menu > .ui-autocomplete-category .ui-widget-content {
   float: left;
-  margin: .3em 0 0;
-  padding: .3em 0;
   display: block;
   width: 100%;
   border: none;
   border-top: 1px solid #7f7f80;
-  border-bottom: 1px solid #7f7f80;
   overflow: auto;
   max-height: 143px;
 }
-.ui-menu .ui-autocomplete-category .ui-widget-content li {
+.ui-menu > .ui-autocomplete-category .ui-widget-content > li {
   padding-left: 25px;
+  line-height: 20px;
 }
 .ui-autocomplete-input {
-  height: 20px;
+  height: 24px;
+  line-height: 24;
   overflow: hidden;
   display: block;
 }
@@ -4549,7 +4549,7 @@ td.editable {
 }
 .list2 tbody td {
   text-align: right;
-  height: 50px;
+  height: 45px;
 }
 .list2 tbody td.changeContent {
   border-top: 2px solid #5cb85c;
@@ -4655,7 +4655,7 @@ td.editable {
 }
 .list2 tbody td {
   text-align: right;
-  height: 50px;
+  height: 45px;
 }
 .list2 tbody td.changeContent {
   border-top: 2px solid #5cb85c;
@@ -10424,7 +10424,7 @@ ul.dialog-tabs li.right button {
 }
 .list tbody td {
   text-align: right;
-  height: 50px;
+  height: 45px;
 }
 .list tbody td.changeContent {
   border-top: 2px solid #5cb85c;
@@ -15000,6 +15000,7 @@ textarea#editInput {
   display: inline-block;
   padding-right: 17px;
   margin-right: 3px;
+  margin-top: 2px;
   border: 1px solid #7f7f80;
   border-radius: 3px;
   line-height: 18px;
