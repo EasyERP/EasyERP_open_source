@@ -1306,26 +1306,26 @@ define([
                     if (element.quotation && element.quotation.currency._id) {
                         classCurrency = element.quotation.currency._id;
                     }
-                    tempSum += parseFloat(element.revenueTotal);
-                    tempSum /= 100;
+                    sum += parseFloat(element.revenueTotal);
+                    sum /= 100;
                 } else if (element.type === 'Ordered') {
                     tempSum = parseFloat(element.revenueTotal);
                     if (element.quotation && element.quotation.currency._id) {
                         classCurrency = element.quotation.currency._id;
                     }
-                    orderSum += tempSum / 100;
+                    orderSum = tempSum / 100;
                 } else if (element.type === 'Invoiced') {
                     tempSum = parseFloat(element.revenueTotal);
                     if (element.quotation && element.quotation.currency._id) {
                         classCurrency = element.quotation.currency._id;
                     }
-                    orderSum += tempSum / 100;
+                    orderSum = tempSum / 100;
                 }
             });
 
             this.proformValues.quotations = {
                 count: qCollectionJSON.length,
-                sum  : tempSum
+                sum  : sum
             };
 
             this.proformValues.orders = {
