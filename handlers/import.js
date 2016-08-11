@@ -319,7 +319,7 @@ var Module = function (models) {
         var type = map.type;
         var timeStamp = map.timeStamp;
         var mapResult = map.result || {};
-        var mapFileName = map.fileName;
+        var mapFileName = data.fileName;
         var ImportModel = models.get(req.session.lastDb, 'Imports', ImportSchema);
         var Model = models.get(req.session.lastDb, type, schemaObj[type]);
         var ImportHistoryModel = models.get(req.session.lastDb, 'ImportHistories', ImportHistorySchema);
@@ -327,7 +327,9 @@ var Module = function (models) {
         var mappedFields;
         var skippedArray = [];
         var importedIds = [];
-        var criteria = {user: userId};
+        var criteria = {
+            user: userId
+        };
 
         if (timeStamp) {
             criteria.timeStamp = timeStamp;
