@@ -5983,7 +5983,6 @@ select:not([type="checkbox"]) {
   position: relative;
   font-size: 13px;
   text-decoration: none;
-  line-height: 26px !important;
 }
 .icon {
   font-size: 20px;
@@ -11907,9 +11906,9 @@ ul.dialog-tabs .withEndContract {
 }
 ul.dialog-tabs .withEndContract .newSelectList {
   display: none;
-  width: 112px;
-  margin-top: 22px;
+  width: 115px;
   right: 0;
+  left: auto;
 }
 ul.dialog-tabs .withEndContract .newSelectList li {
   padding-left: 10px;
@@ -13578,6 +13577,7 @@ a.cancelled {
   padding: 0;
 }
 .newSelectList > input#selectInput {
+  height: 24px;
   width: 100% !important;
   margin: 0;
   float: left;
