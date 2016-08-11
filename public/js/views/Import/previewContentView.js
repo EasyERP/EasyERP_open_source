@@ -13,10 +13,6 @@ define([
         previewTemplate: _.template(PreviewTemplate),
         childView      : null,
 
-        events: {
-            'click .mrgBut': 'checkRadio'
-        },
-
         initialize: function (options) {
             var self = this;
             var url = '/importFile/preview';
@@ -28,12 +24,6 @@ define([
                 self.data = data;
                 self.render();
             });
-        },
-
-        checkRadio: function (e) {
-            var $target = $(e.target).find('input');
-
-            $target[0].checked = true;
         },
 
         render: function () {

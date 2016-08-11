@@ -29,11 +29,18 @@ define([
 
             this.logFile = {};
 
-            dataService.getData(url, {timeStamp: this.timeStamp}, function (data) {
-                self.data = data.mappedObj;
-                self.unmappedData = data.unmappedObj;
+            /*if (App.currentUser.imports && App.currentUser.imports.map) {
+                self.data = {};
+                self.data[App.currentUser.imports.map.type] = App.currentUser.imports.map.result;
                 self.render(self.data);
-            });
+            } else {*/
+                dataService.getData(url, {timeStamp: this.timeStamp}, function (data) {
+                    self.data = data.mappedObj;
+                    self.unmappedData = data.unmappedObj;
+                    self.render(self.data);
+                });
+            //}
+
         },
 
         resetForm: function () {
@@ -73,15 +80,17 @@ define([
             var fieldsObject = {};
             var $content = $dbContentBlock.find('.content');
             var parentTable = $thisEl.find('.tabItem').data('tab');
+            var firstColumnVal;
+            var secondColumnVal;
 
             fieldsObject.type = parentTable;
             fieldsObject.result = {};
 
             for (var i = 0; i < $content.length; i++) {
-                var firstColumnVal = $($content[i]).find('.firstColumn').data('name');
-                var secondColumnVal = $($content[i]).find('.secondColumn').data('name');
+                firstColumnVal = $($content[i]).find('.firstColumn').data('name');
+                secondColumnVal = $($content[i]).find('.secondColumn').data('name');
 
-                if (secondColumnVal) {
+                if (secondColumnVal && !Array.isArray(secondColumnVal)) {
                     fieldsObject.result[firstColumnVal] = secondColumnVal;
                 }
             }
@@ -103,7 +112,6 @@ define([
 
         revertToTables: function (isItClass, isDropable, droppableName, droppableParentName) {
             var self = this;
-            console.log('revert');
 
             if ((isItClass) && (isDropable)) {
                 if (droppableParentName === 'Customers' || droppableParentName === 'Employees') {

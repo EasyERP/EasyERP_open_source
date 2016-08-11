@@ -32,7 +32,7 @@ function exportToCsv(options) {
     var res = options.res;
     var next = options.next;
     var Model = options.Model;
-    var query = options.query ||[];
+    var query = options.query || [];
     var map = options.map;
     var fileName = options.fileName;
     var resultArray = options.resultArray;
@@ -72,14 +72,14 @@ function exportToCsv(options) {
 
     };
 
-    if (!resultArray){
+    if (!resultArray) {
         resultAggregate.exec(function (err, response) {
 
             if (err) {
                 return next(err);
             }
 
-            if (returnResult){
+            if (returnResult) {
                 return cb(null, response);
             }
 
@@ -136,6 +136,7 @@ function exportToXlsx(options) {
     query.push({$project: project});
     resultAggregate = Model.aggregate(query);
 
+
     var writeXlsx = function (array) {
         arrayToXlsx.writeFile(nameOfFile + '.xlsx', array, {
             sheetName : "data",
@@ -159,14 +160,14 @@ function exportToXlsx(options) {
 
     };
 
-    if (!resultArray){
+    if (!resultArray) {
         resultAggregate.exec(function (err, response) {
 
             if (err) {
                 return next(err);
             }
 
-            if (returnResult){
+            if (returnResult) {
                 return cb(null, response);
             }
 
@@ -196,11 +197,65 @@ function exportToXlsx(options) {
     } else {
         writeXlsx(resultArray);
     }
+}
 
-};
+function reportToXlsx(options) {
+    var res = options.res;
+    var next = options.next;
+    var map = options.map;
+    var fileName = options.fileName;
+    var resultArray = options.resultArray;
+    var headersArray = Object.keys(map.aliases);
+    var formatters = map.formatters;
+    var nameOfFile = fileName ? fileName : type ? type : 'data';
+
+
+    var writeXlsx = function (array) {
+        arrayToXlsx.writeFile(nameOfFile + '.xlsx', array, {
+            sheetName : 'report',
+            headers   : headersArray,
+            attributes: headersArray
+        });
+
+
+       /* res.download(nameOfFile + '.xlsx', nameOfFile + '.xlsx', function (err) {
+            if (err) {
+                return next(err);
+            }
+        });*/
+        next(null, nameOfFile + '.xlsx');
+
+        //return nameOfFile + '.xlsx'
+    };
+
+
+    if (formatters) {
+        async.each(resultArray, function (item, callback) {
+
+            var keys = Object.keys(formatters);
+
+            for (var i = keys.length - 1; i >= 0; i--) {
+                var key = keys[i];
+                item[key] = formatters[key](item[key]);
+            }
+
+            callback();
+
+        }, function (err) {
+            if (err) {
+                return next(err);
+            }
+
+            writeXlsx(resultArray);
+        });
+    } else {
+        return writeXlsx(resultArray);
+    }
+}
 
 exports.exportToCsv = exportToCsv;
 exports.exportToXlsx = exportToXlsx;
+exports.reportToXlsx = reportToXlsx;
 //
 ///**
 // *

@@ -5,12 +5,15 @@ var Module = function (models) {
     var ImportSchema = mongoose.Schemas.Imports;
     var UserSchema = mongoose.Schemas.User;
     var PersonSchema = mongoose.Schemas.Customer;
+    var ImportHistorySchema = mongoose.Schemas.ImportHistories;
 
     var schemaObj = {
         Customers    : mongoose.Schemas.Customer,
         Opportunities: mongoose.Schemas.Opportunitie
     };
 
+    var exportMap = require('../helpers/csvMap');
+    var exporter = require('../helpers/exporter/exportDecorator');
     var async = require('async');
     var mapObject = require('../public/js/constants/importMapping');
     var moment = require('../public/js/libs/moment/moment');
@@ -67,6 +70,22 @@ var Module = function (models) {
         };
     }
 
+    function createXlsxReport(res, next, resultArray, fileName) {
+        var exportMapImport = exportMap[fileName];
+        var options;
+
+        options = {
+            res         : res,
+            next        : next,
+            resultArray : resultArray,
+            map         : exportMapImport,
+            returnResult: true,
+            fileName    : fileName || 'Customer'
+        };
+
+        return exporter.reportToXlsx(options);
+    }
+
     function mapImportFileds(importObj, fieldsArray) {
         var mappedFields = {};
 
@@ -115,6 +134,30 @@ var Module = function (models) {
         return saveObj;
     }
 
+    function writeHistory(options, ImportHistoryModel, callback) {
+        var importHistoryObj = {
+            dateHistory: options.dateHistory,
+            fileName   : options.fileName,
+            user       : options.userId,
+            type       : options.type,
+            status     : options.status,
+            reportFile : options.reportFile
+        };
+
+        var importHistory = new ImportHistoryModel(importHistoryObj);
+
+        importHistory.save(function (err, result) {
+            if (err) {
+                return callback(err);
+            }
+
+            callback(null, {
+                success: 'creating history for import is success',
+                result: result
+            });
+        });
+    }
+
     this.getImportMapObject = function (req, res, next) {
         var ImportModel = models.get(req.session.lastDb, 'Imports', ImportSchema);
         var userId = req.session.uId;
@@ -151,6 +194,50 @@ var Module = function (models) {
                 unmappedObj: unmappedResult
             });
         });
+    };
+
+    this.getImportHistory = function(req, res, next) {
+        var ImportHistoryModel = models.get(req.session.lastDb, 'ImportHistories', ImportHistorySchema);
+
+        ImportHistoryModel.aggregate([
+            {
+                $match: {}
+            },{
+                $lookup: {
+                    from: 'Users',
+                    localField: 'user',
+                    foreignField: '_id',
+                    as: 'user'
+                }
+            },{
+                $unwind: {
+                    path: '$user'
+                }
+            }, {
+                $project: {
+                    date: '$date',
+                    fileName: '$fileName',
+                    user: '$user.login',
+                    type: '$type',
+                    status: '$status',
+                    reportFile: '$reportFile'
+                }
+            }
+        ], function(err, result){
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(result);
+        });
+
+        /*ImportHistoryModel.find({}, function(err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(result);
+        })*/
     };
 
     this.getForPreview = function (req, res, next) {
@@ -201,7 +288,6 @@ var Module = function (models) {
                         var saveObj;
                         var importItemObj = importItem.toJSON().result;
 
-
                         saveObj = prepareSaveObject(mappedFields, importItemObj);
                         resultArray.push(saveObj);
                         cb();
@@ -220,18 +306,30 @@ var Module = function (models) {
 
                 });
         });
-
     };
 
     this.saveImportedData = function (req, res, next) {
         var data = req.body;
         var userId = req.session.uId;
+        var map = data.map || {};
+        var type = map.type;
+        var timeStamp = map.timeStamp;
+        var mapResult = map.result || {};
+        var mapFileName = map.fileName;
         var ImportModel = models.get(req.session.lastDb, 'Imports', ImportSchema);
-        var PersonModel = models.get(req.session.lastDb, 'Customers', PersonSchema);
+        var Model = models.get(req.session.lastDb, type, schemaObj[type]);
+        var ImportHistoryModel = models.get(req.session.lastDb, 'ImportHistories', ImportHistorySchema);
         var titleArray;
         var mappedFields;
+        var skippedArray = [];
+        var importedIds = [];
+        var criteria = {user: userId};
 
-        ImportModel.find({user: userId}, function (err, importData) {
+        if (timeStamp) {
+            criteria.timeStamp = timeStamp;
+        }
+
+        ImportModel.find(criteria, function (err, importData) {
             if (err) {
                 return next(err);
             }
@@ -243,25 +341,62 @@ var Module = function (models) {
 
             titleArray = importData.shift().result;
 
-            mappedFields = mapImportFileds(data, titleArray);
+            mappedFields = mapImportFileds(mapResult, titleArray);
 
             async.each(importData, function (importItem, cb) {
                 var saveModel;
                 var saveObj;
                 var importItemObj = importItem.toJSON().result;
 
-
                 saveObj = prepareSaveObject(mappedFields, importItemObj);
+                saveModel = new Model(saveObj);
+                saveModel.save(function (err) {
+                    if (err) {
+                        saveObj.reason = err.message;
+                        skippedArray.push(
+                            saveObj
+                        );
+                    } else {
+                        importedIds.push(importItem._id);
+                    }
 
-                saveModel = new PersonModel(saveObj);
-
-                saveModel.save(cb);
+                    cb(null);
+                });
             }, function (err) {
                 if (err) {
                     return next(err);
                 }
 
-                res.status(200).send();
+                async.waterfall([
+                    function (cb) {
+
+                        createXlsxReport(res, cb, skippedArray, type);
+
+                    },
+                    function (fileName, cb) {
+                        var option = {
+                            fileName   : mapFileName,
+                            userId     : userId,
+                            type       : type,
+                            status     : 'Finished',
+                            reportFile : fileName
+                        };
+
+                        writeHistory(option, ImportHistoryModel, cb);
+                    },
+                    function (obj, cb) {
+                        ImportModel.remove({_id: {$in: importedIds}}, function () {
+
+                        });
+                        cb(null);
+                    }
+                ], function (err) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    res.status(200).send();
+                });
             });
         });
     };

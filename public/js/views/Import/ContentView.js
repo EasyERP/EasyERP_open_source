@@ -6,12 +6,13 @@ define([
     'text!templates/Import/importProgress.html',
     'text!templates/Notes/importTemplate.html',
     'models/UsersModel',
+    'views/Import/HistoryView',
     'views/Notes/AttachView',
     'views/Import/uploadView',
     'views/Import/mappingContentView',
     'views/Import/previewContentView',
     'dataService',
-    'constants'
+    'constants',
 ], function (Backbone,
              $,
              _,
@@ -19,6 +20,7 @@ define([
              ImportProgressTemplate,
              ImportTemplate,
              UserModel,
+             ImportHistoryView,
              AttachView,
              UploadView,
              MappingContentView,
@@ -148,10 +150,22 @@ define([
                     this.childView = new PreviewView({timeStamp: this.timeStamp});
 
                 }
-
+            } else if (this.stage === 4) {
+                this.startImport();
             }
 
             this.changeStage(this.stage);
+        },
+
+        startImport: function () {
+            var currentUser = App.currentUser;
+            var importData = currentUser.imports;
+            var url = '/importFile/imported';
+
+            dataService.postData(url, importData, function () {
+                alert('Good');
+            });
+
         },
 
         changeStage: function (stage) {
@@ -179,6 +193,7 @@ define([
             $thisEl.html(this.contentTemplate);
             $importProgress = $thisEl.find('#importProgress');
             $importProgress.html(this.importProgressTemplate);
+            new ImportHistoryView();
         }
     });
 

@@ -83,7 +83,8 @@ module.exports = (function () {
             fileName : {type: String, default: ''},
             timeStamp: {type: Number},
             stage    : {type: Number, default: 1},
-            map      : {type: JSON}
+            map      : {type: JSON},
+            unMap    : {type: JSON}
         }
     }, {collection: 'Users'});
 
