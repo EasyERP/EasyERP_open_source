@@ -32,6 +32,11 @@ module.exports = (function () {
         reportFile: {
             type: String,
             default: ''
+        },
+
+        reportFileName: {
+            type: String,
+            default: ''
         }
     }, {collection: 'ImportHistories'});
 

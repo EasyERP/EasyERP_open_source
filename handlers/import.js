@@ -140,12 +140,13 @@ var Module = function (models) {
 
     function writeHistory(options, ImportHistoryModel, callback) {
         var importHistoryObj = {
-            dateHistory: options.dateHistory,
-            fileName   : options.fileName,
-            user       : options.userId,
-            type       : options.type,
-            status     : options.status,
-            reportFile : options.reportFile
+            dateHistory   : options.dateHistory,
+            fileName      : options.fileName,
+            user          : options.userId,
+            type          : options.type,
+            status        : options.status,
+            reportFile    : options.reportFile,
+            reportFileName: options.reportFileName
         };
 
         var importHistory = new ImportHistoryModel(importHistoryObj);
@@ -216,12 +217,13 @@ var Module = function (models) {
                 }
             }, {
                 $project: {
-                    date      : '$date',
-                    fileName  : '$fileName',
-                    user      : '$user.login',
-                    type      : '$type',
-                    status    : '$status',
-                    reportFile: '$reportFile'
+                    date          : '$date',
+                    fileName      : '$fileName',
+                    user          : '$user.login',
+                    type          : '$type',
+                    status        : '$status',
+                    reportFileName: '$reportFile',
+                    reportFile    : '$reportFileName'
                 }
             }
         ], function (err, result) {
@@ -370,14 +372,14 @@ var Module = function (models) {
                     function (cb) {
                         createXlsxReport(res, cb, skippedArray, type);
                     },
-
-                    function (fileName, cb) {
+                    function (file, cb) {
                         var option = {
-                            fileName  : mapFileName,
-                            userId    : userId,
-                            type      : type,
-                            status    : 'Finished',
-                            reportFile: fileName
+                            fileName      : mapFileName,
+                            userId        : userId,
+                            type          : type,
+                            status        : 'Finished',
+                            reportFile    : file.pathName,
+                            reportFileName: file.fileName
                         };
 
                         writeHistory(option, ImportHistoryModel, cb);

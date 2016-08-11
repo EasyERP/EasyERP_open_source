@@ -30,11 +30,11 @@ define([
                 if (res.date) {
                     res.date = moment(res.date).format('DD MMM, YYYY, H:mm:ss');
                 }
-                if (res.fileName) {
+                /*if (res.fileName) {
                     temp = res.date;
                     res.date = res.fileName;
                     res.fileName = temp;
-                }
+                }*/
             }
             return res;
         },
@@ -44,7 +44,8 @@ define([
             fileName: '',
             user: '',
             status: '',
-            reportFile: ''
+            reportFile: '',
+            reportFileName: ''
         },
 
         urlRoot: function () {
