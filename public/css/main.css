@@ -1825,9 +1825,10 @@ body {
 }
 .ui-autocomplete {
   position: absolute;
-  cursor: default;
-  left: -1px !important;
+  top: 28px !important;
+  left: 0 !important;
   width: 100% !important;
+  cursor: default;
 }
 .ui-menu {
   list-style: none;
@@ -3224,9 +3225,9 @@ input:not([type="checkbox"]).inputBordered:focus {
   display: inline-block;
   float: left;
   padding: 0 5px;
-  height: 14px;
-  line-height: 14px;
-  font-size: 10px;
+  height: 18px;
+  line-height: 18px;
+  font-size: 14px;
   color: #fff;
   border-radius: 3px;
 }
@@ -15190,6 +15191,12 @@ textarea#editInput {
 }
 .text-right {
   text-align: right !important;
+}
+.blueText {
+  color: #3e88b9;
+}
+.textGrey {
+  color: #9a9a9e;
 }
 .bgRed {
   background-color: #eb5a46 !important;
