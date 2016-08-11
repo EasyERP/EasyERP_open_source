@@ -159,7 +159,7 @@ var Module = function (models) {
             callback(null, {
                 success: 'creating history for import is success',
                 result : result
-            }
+            });
         });
     }
 

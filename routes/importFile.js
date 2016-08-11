@@ -165,63 +165,49 @@ module.exports = function (models) {
         function importXlsxToTemporaryDb(res, next) {
             var obj = xlsx.parse(filePath);
             var sheet;
-            var headers;
+            var rows;
 
             if (!obj) {
                 error = new Error('Parse Error');
                 return next(error);
             }
+
             sheet = obj[0];
 
             if (sheet && sheet.data) {
-                async.eachLimit(sheet.data, 100, function (data, cb) {
-                        var error;
-                        var tasksWaterflow;
+                async.eachLimit(sheet.data, 25, function (data, cb) {
+                    var tasksWaterflow;
 
-                        if (data.length) {
-                             /*if (!headers) {
-                                headers = data;
+                    if (data.length) {
+                        rows++;
 
-                                for (var i = expertedKey.length - 1; i >= 0; i--) {
-
-                                    if (headers[i] !== expertedKey[i]) {
-                                        error = new Error('Field \"' + headers[i] + '\" not valid. Need \"' + expertedKey[i] + '\"');
-                                        error.status = 400;
-                                        cb(error);
-                                    }
-                                }
-                                cb();
-                            } else {*/
-
-                                rows++;
-
-                                function getData(callback) {
-                                    callback(null, data);
-                                }
-
-                                tasksWaterflow = [getData, saveItemToTemporaryDb];
-
-                                async.waterfall(tasksWaterflow, function (err) {
-
-                                    if (err) {
-                                        cb(err);
-                                    } else {
-                                        cb();
-                                    }
-                                });
-                            }
-                        /*}*/
-                    },
-                    function (err) {
-                        var obj = {};
-                        if (err) {
-                            next(err);
-                        } else {
-                            obj.countRows = rows;
-                            res.status(200).send(obj);
+                        function getData(callback) {
+                            callback(null, data);
                         }
+
+                        tasksWaterflow = [getData, saveItemToTemporaryDb];
+
+                        async.waterfall(tasksWaterflow, function (err) {
+
+                            if (err) {
+                                cb(err);
+                            } else {
+                                cb(null);
+                            }
+                        });
+                    } else {
+                        return cb(1);  // todo remake
                     }
-                );
+                }, function (err) {
+                    var obj = {};
+
+                    if (err && err !== 1) {
+                        next(err);
+                    } else {
+                        obj.countRows = rows;
+                        res.status(200).send(obj);
+                    }
+                });
             } else {
                 res.status(400).send('Bad request');
             }
