@@ -1308,7 +1308,6 @@ define([
                     }
                     tempSum += parseFloat(element.revenueTotal);
                     tempSum /= 100;
-                    sum++;
                 } else if (element.type === 'Ordered') {
                     tempSum = parseFloat(element.revenueTotal);
                     if (element.quotation && element.quotation.currency._id) {
@@ -1326,7 +1325,7 @@ define([
 
             this.proformValues.quotations = {
                 count: qCollectionJSON.length,
-                sum  : sum
+                sum  : tempSum
             };
 
             this.proformValues.orders = {
