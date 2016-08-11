@@ -1,15 +1,21 @@
 <table>
     <tr>
-        <% _.each(history[0], function(item, key){ %>
-            <td><%= key %></td>
-        <% }) %>
+        <% if (history.length) { %>
+            <% _.each(history[0], function(item, key){ %>
+                <% if (key !== '_id') { %>
+                    <td><%= key %></td>
+                <% } %>
+            <% }) %>
+        <% } %>
     </tr>
-    <% _.each(history, function(historyItem, key) { %>
+    <% _.each(history, function(historyItem, key1) { %>
         <tr>
-            <% _.each(historyItem, function(headItem) { %>
-                <td>
-                    <%= headItem %>
-                </td>
+            <% _.each(historyItem, function(headItem, key2) { %>
+                <% if (key2 !== '_id') { %>
+                    <td>
+                        <%= historyItem[key2] %>
+                    </td>
+                <% } %>
             <% }) %>
         </tr>
     <% }) %>

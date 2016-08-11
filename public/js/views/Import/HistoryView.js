@@ -6,8 +6,9 @@ define([
     'text!templates/Import/ImportHistoryTemplate.html',
     'collections/Import/importHistoryCollection',
     'constants',
-    'dataService'
-], function (Backbone, $, _, ListBaseView, HistoryTemplate, ImportHistoryCollection, CONSTANTS, dataService) {
+    'dataService',
+    'moment'
+], function (Backbone, $, _, ListBaseView, HistoryTemplate, ImportHistoryCollection, CONSTANTS, dataService, moment) {
     'use strict';
 
     var HistoryView = ListBaseView.extend({
@@ -33,8 +34,10 @@ define([
         render: function () {
             var $thisEl = this.$el;
 
+
+
             $thisEl.html(this.historyTemplate({
-                history: this.importHistoryCollection.toJSON()
+                history: this.importHistoryCollection.toJSON(),
             }));
         }
     });

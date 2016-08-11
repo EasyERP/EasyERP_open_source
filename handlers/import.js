@@ -199,13 +199,45 @@ var Module = function (models) {
     this.getImportHistory = function(req, res, next) {
         var ImportHistoryModel = models.get(req.session.lastDb, 'ImportHistories', ImportHistorySchema);
 
-        ImportHistoryModel.find({}, function(err, result) {
+        ImportHistoryModel.aggregate([
+            {
+                $match: {}
+            },{
+                $lookup: {
+                    from: 'Users',
+                    localField: 'user',
+                    foreignField: '_id',
+                    as: 'user'
+                }
+            },{
+                $unwind: {
+                    path: '$user'
+                }
+            }, {
+                $project: {
+                    date: '$date',
+                    fileName: '$fileName',
+                    user: '$user.login',
+                    type: '$type',
+                    status: '$status',
+                    reportFile: '$reportFile'
+                }
+            }
+        ], function(err, result){
             if (err) {
                 return next(err);
             }
 
             res.status(200).send(result);
-        })
+        });
+
+        /*ImportHistoryModel.find({}, function(err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(result);
+        })*/
     };
 
     this.getForPreview = function (req, res, next) {

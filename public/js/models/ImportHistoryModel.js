@@ -1,8 +1,9 @@
 define([
     'Backbone',
     'Underscore',
-    'constants'
-], function (Backbone, _, CONSTANTS) {
+    'constants',
+    'moment'
+], function (Backbone, _, CONSTANTS, moment) {
     'use strict';
 
     var ImportHistoryModel = Backbone.Model.extend({
@@ -22,12 +23,21 @@ define([
             });
         },
 
+        parse: function(res) {
+            if (!res.data) {
+                if (res.date) {
+                    res.date = moment(res.date).format('DD MMM, YYYY, H:mm:ss');
+                }
+            }
+            return res;
+        },
+
         defaults: {
             date: '',
             fileName: '',
             user: '',
             status: '',
-            filePath: ''
+            reportFile: ''
         },
 
         urlRoot: function () {
