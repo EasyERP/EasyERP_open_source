@@ -1325,7 +1325,7 @@ define([
 
             this.proformValues.quotations = {
                 count: qCollectionJSON.length,
-                sum  : sum
+                sum  : qCollectionJSON.length ? sum : 0
             };
 
             this.proformValues.orders = {
