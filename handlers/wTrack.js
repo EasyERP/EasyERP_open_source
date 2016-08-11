@@ -85,13 +85,6 @@ var TCard = function (event, models) {
         }
     }, {
         $lookup: {
-            from        : 'projectMembers',
-            localField  : 'project._id',
-            foreignField: 'projectId',
-            as          : 'projectMembers'
-        }
-    }, {
-        $lookup: {
             from        : 'workflows',
             localField  : 'project.workflow',
             foreignField: '_id',
@@ -116,13 +109,6 @@ var TCard = function (event, models) {
             dateByWeek           : 1,
             dateByMonth          : 1,
             'project.projectName': '$project.name',
-            projectMember        : {
-                $filter: {
-                    input: '$projectMembers',
-                    as   : 'projectMember',
-                    cond : {$max: '$$projectMember.startDate'}
-                }
-            },
             'project.workflow'   : {$arrayElemAt: ['$workflow', 0]},
             'project.customer'   : {$arrayElemAt: ['$customer', 0]},
             'employee.name'      : {$concat: ['$employee.name.first', ' ', '$employee.name.last']},
@@ -159,7 +145,6 @@ var TCard = function (event, models) {
             dateByWeek               : 1,
             dateByMonth              : 1,
             'project.projectName'    : 1,
-            projectMember            : {$arrayElemAt: ['$projectMember', 0]},
             'project.workflow.name'  : '$project.workflow.name',
             'project.workflow.status': '$project.workflow.status',
             'project.customer.Name'  : {$concat: ['$project.customer.name.first', ' ', '$project.customer.name.last']},
@@ -189,13 +174,6 @@ var TCard = function (event, models) {
     }];
 
     var lookupForWTrackArrayAfterFilter = [{
-        $lookup: {
-            from        : 'Employees',
-            localField  : 'projectMember.employeeId',
-            foreignField: '_id',
-            as          : 'projectMemberEmployee'
-        }
-    }, {
         $project: {
             1                        : 1,
             2                        : 1,
@@ -207,7 +185,6 @@ var TCard = function (event, models) {
             dateByWeek               : 1,
             dateByMonth              : 1,
             'project.projectName'    : 1,
-            projectMemberEmployee    : {$arrayElemAt: ['$projectMemberEmployee', 0]},
             'project.workflow.name'  : 1,
             'project.workflow.status': 1,
             'project.customer.Name'  : 1,
@@ -231,37 +208,36 @@ var TCard = function (event, models) {
         }
     }, {
         $project: {
-            1                            : 1,
-            2                            : 1,
-            3                            : 1,
-            4                            : 1,
-            5                            : 1,
-            6                            : 1,
-            7                            : 1,
-            dateByWeek                   : 1,
-            dateByMonth                  : 1,
-            'project.projectName'        : 1,
-            'project.projectmanager.name': {$concat: ['$projectMemberEmployee.name.first', ' ', '$projectMemberEmployee.name.last']},
-            'project.workflow.name'      : 1,
-            'project.workflow.status'    : 1,
-            'project.customer.Name'      : 1,
-            'employee.name'              : 1,
-            'department.name'            : 1,
-            year                         : 1,
-            month                        : 1,
-            week                         : 1,
-            worked                       : 1,
-            rate                         : 1,
-            revenue                      : 1,
-            cost                         : 1,
-            amount                       : 1,
-            isPaid                       : 1,
-            invoice                      : 1,
-            'info.productType'           : 1,
-            'info.salePrice'             : 1,
-            whoCanRW                     : 1,
-            'editedBy.date'              : 1,
-            'createdBy.date'             : 1
+            1                        : 1,
+            2                        : 1,
+            3                        : 1,
+            4                        : 1,
+            5                        : 1,
+            6                        : 1,
+            7                        : 1,
+            dateByWeek               : 1,
+            dateByMonth              : 1,
+            'project.projectName'    : 1,
+            'project.workflow.name'  : 1,
+            'project.workflow.status': 1,
+            'project.customer.Name'  : 1,
+            'employee.name'          : 1,
+            'department.name'        : 1,
+            year                     : 1,
+            month                    : 1,
+            week                     : 1,
+            worked                   : 1,
+            rate                     : 1,
+            revenue                  : 1,
+            cost                     : 1,
+            amount                   : 1,
+            isPaid                   : 1,
+            invoice                  : 1,
+            'info.productType'       : 1,
+            'info.salePrice'         : 1,
+            whoCanRW                 : 1,
+            'editedBy.date'          : 1,
+            'createdBy.date'         : 1
         }
     }
     ];
