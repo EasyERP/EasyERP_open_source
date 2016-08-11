@@ -1465,6 +1465,7 @@ define([
             var yAxis;
             var baseX;
             var chart;
+            var keys;
             var tip1;
             var tip;
             var x;
@@ -1494,6 +1495,15 @@ define([
                     '61-120': 0,
                     '>120'  : 0
                 };
+
+                keys = [
+                    {range: '0-7_', value: 0, count: 0},
+                    {range: '8-15_', value: 0, count: 0},
+                    {range: '16-30_', value: 0, count: 0},
+                    {range: '31-60_', value: 0, count: 0},
+                    {range: '61-120_', value: 0, count: 0},
+                    {range: '>120_', value: 0, count: 0}
+                ];
 
                 barsMap = {
                     'New'             : 'bar8',
@@ -1536,10 +1546,19 @@ define([
 
                 $('svg.opportunitieAgingSum').empty();
 
+                for(var i = data.length; i--;){
+
+                    for(var j = keys.length; j--;){
+
+                        keys[j].value += data[i][keys[j].range + 'Sum'];
+                        keys[j].count += data[i][keys[j].range + 'Count'];
+                    }
+                }
+                
                 x = d3.scale.linear()
                     .range([0, (innerWidth / 2 - margin.right)])
-                    .domain([0, d3.max(data, function (d) {
-                        return d['0-7_Sum'] + d['8-15_Sum'] + d['16-30_Sum'] + d['31-60_Sum'] + d['61-120_Sum'] + d['>120_Sum'];
+                    .domain([0, d3.max(keys, function (d) {
+                        return d.value;
                     })]);
 
                 y = d3.scale.ordinal()
@@ -1672,8 +1691,8 @@ define([
 
                 x = d3.scale.linear()
                     .range([0, innerWidth / 2 - 1.5 * margin.left])
-                    .domain([0, d3.max(data, function (d) {
-                        return d['0-7_Count'] + d['8-15_Count'] + d['16-30_Count'] + d['31-60_Count'] + d['61-120_Count'] + d['>120_Count'];
+                    .domain([0, d3.max(keys, function (d) {
+                        return d.count;
                     })]);
 
                 xAxis = d3.svg.axis()
