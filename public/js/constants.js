@@ -116,6 +116,7 @@ define([], function () {
         DEFAULT_THUMBNAILS_PER_PAGE: 50,
 
         URLS: {
+            IMPORT_HISTORY             : '/importFile/history',
             PROFILES_FOR_DD            : '/profiles/forDd',
             CURRENT_USER               : '/users/current',
             USERS                      : '/users/',

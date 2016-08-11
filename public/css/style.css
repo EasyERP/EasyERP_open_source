@@ -2009,6 +2009,14 @@
         background: rgba(50, 145, 200, 0.1);
         border-color: #3291c8; }
 
+.list._importLoadHistory {
+  margin: 15px 0 25px; }
+  .list._importLoadHistory th,
+  .list._importLoadHistory td {
+    padding: 0 10px; }
+  .list._importLoadHistory tbody td {
+    text-align: left; }
+
 .propertyContainer a:hover {
   text-decoration: none; }
 

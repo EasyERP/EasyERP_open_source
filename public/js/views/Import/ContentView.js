@@ -6,12 +6,13 @@ define([
     'text!templates/Import/importProgress.html',
     'text!templates/Notes/importTemplate.html',
     'models/UsersModel',
+    'views/Import/HistoryView',
     'views/Notes/AttachView',
     'views/Import/uploadView',
     'views/Import/mappingContentView',
     'views/Import/previewContentView',
     'dataService',
-    'constants'
+    'constants',
 ], function (Backbone,
              $,
              _,
@@ -19,6 +20,7 @@ define([
              ImportProgressTemplate,
              ImportTemplate,
              UserModel,
+             ImportHistoryView,
              AttachView,
              UploadView,
              MappingContentView,
@@ -191,6 +193,7 @@ define([
             $thisEl.html(this.contentTemplate);
             $importProgress = $thisEl.find('#importProgress');
             $importProgress.html(this.importProgressTemplate);
+            new ImportHistoryView();
         }
     });
 
