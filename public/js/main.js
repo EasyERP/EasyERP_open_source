@@ -134,22 +134,46 @@ require(['Backbone', 'jQuery', 'Underscore', 'app'], function (Backbone, $, _, a
         }
     };
 
-    if (!window.Globalize) { // todo
-        window.Globalize = {
-            format: function(number, format) {
-                var m;
-                var i;
-                number = String(this.parseFloat(number, 10) * 1);
-                format = (m = String(format).match(/^[nd](\d+)$/)) ? m[1] : 2;
-                for (i = 0; i < format - number.length; i++)
-                    number = '0'+number;
-                return number;
-            },
-            parseFloat: function(number, radix) {
-                return parseFloat(number, radix || 10);
+    $.widget( "ui.paddedspinner", $.ui.spinner, {
+        widgetEventPrefix: "spin",
+        options: {
+            padCount: 2,
+            padString: '0'
+        },
+
+        _parse: function( value ) {
+            return +value;
+        },
+
+        _format: function( value ) {
+            var str = value+'';
+            while ( str.length < this.options.padCount )
+                str = this.options.padString + str;
+            return str;
+        },
+
+    });
+    $.widget( "ui.ampmspinner", $.ui.spinner, {
+        widgetEventPrefix: "spin",
+        options: {
+            max: 1,
+            min: 0,
+            alignment: 'vertical'
+        },
+
+        _parse: function( value ) {
+
+            if ( typeof value === "string" ) {
+                return value == 'AM' ? 0 : 1;
             }
-        };
-    }
+            return value;
+        },
+
+        _format: function( value ) {
+            return value === 0 ? 'AM' : 'PM';
+        },
+
+    });
 
     Date.prototype.getWeek = function () {
         // Create a copy of this date object

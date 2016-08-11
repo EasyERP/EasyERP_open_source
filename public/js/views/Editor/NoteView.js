@@ -8,10 +8,11 @@ define([
     'models/DealTasksModel',
     'views/DealTasks/EditView',
     'views/selectView/selectView',
+    'views/Category/TagView',
     'moment',
     'populate',
     'constants'
-], function (Backbone, $, _, NoteTemplate, timelineTemplate, editNote, TaskModel, EditView, SelectView, moment, populate, CONSTANTS) {
+], function (Backbone, $, _, NoteTemplate, timelineTemplate, editNote, TaskModel, EditView, SelectView, CategoryView, moment, populate, CONSTANTS) {
     'use strict';
 
     var NoteView = Backbone.View.extend({
@@ -23,6 +24,8 @@ define([
             this.contentType = options.contentType;
             this.needNotes = options.hasOwnProperty('needNotes') ? options.needNotes : true;
             this.responseObj = {};
+            this.taskModel = new TaskModel();
+            this.taskModel.on('change:category', this.renderCategory, this);
         },
 
         events: {
@@ -114,12 +117,12 @@ define([
             var $description = $thisEl.find('#taskArea');
             var description = $.trim($description.val());
             var dueDate = $.trim($thisEl.find('#taskDueDate').val());
-            var model = new TaskModel();
             var saveObject = {
                 assignedTo : assignedTo || '',
                 description: description,
                 dueDate    : dueDate,
-                workflow   : CONSTANTS.NOT_STARTED_WORKFLOW
+                workflow   : CONSTANTS.NOT_STARTED_WORKFLOW,
+                category   : this.taskModel.get('category')
             };
 
             switch (this.contentType) {
@@ -144,7 +147,7 @@ define([
                 });
             }
 
-            model.save(saveObject, {
+            this.taskModel.save(saveObject, {
                 wait   : true,
                 success: function () {
                     self.model.fetch({
@@ -412,24 +415,54 @@ define([
             this.$el.find('#timeline').html(_.template(timelineTemplate, {notes: notes}));
         },
 
-        render: function () {
-            var modelObj = this.model.toJSON();
-            var date = moment().format("DD MMM, YYYY");
-            var assignedTo = modelObj.salesPerson;
-            var $thisEl = this.$el;
+        renderCategory: function () {
+            var arrType = ['AM', 'PM'];
+            var notDiv = this.$el.find('#categoryHolder');
 
-            modelObj.needNotes = this.needNotes;
-
-            $thisEl.html(this.template({date: date, assignedTo: assignedTo}));
-
-            $thisEl.find('#taskDueDate').datepicker({
+            notDiv.html(
+                new CategoryView({
+                    model      : this.taskModel,
+                    contentType: 'DealTasks'
+                }).render().el
+            );
+            this.$el.find('#taskDueDate').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true
             });
 
+            this.$el.find('#taskTime').ampmspinner();
+            this.$el.find('#taskTime').on('keypress', function(){
+                $(this).val(arrType[$(this).val()]);
+            })
+            this.$el.find('#dueDateHours').paddedspinner({
+                alignment: 'vertical',
+                min: 1,
+                max: 12
+            });
+            this.$el.find('#dueDateMinutes, #dueDateSeconds').paddedspinner({
+                alignment: 'vertical',
+                min: 0,
+                max: 59
+            });
+        },
+
+        render: function () {
+            var modelObj = this.model.toJSON();
+            var date = moment().format("DD MMM, YYYY");
+            var assignedTo = modelObj.salesPerson;
+            var $thisEl = this.$el;
+            var relatedEmployeeId = App.currentUser.relatedEmployee ? App.currentUser.relatedEmployee._id : null;
+
+            modelObj.needNotes = this.needNotes;
+
+            $thisEl.html(this.template({date: date, assignedTo: assignedTo}));
+
             this.renderTimeline();
-            populate.get2name('#assignedToDd', CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this, false);
+
+            this.renderCategory();
+
+            populate.get2name('#assignedToDd', CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this, false, false, relatedEmployeeId);
 
             return this;
         }

@@ -40,6 +40,13 @@
                 <div class="addTaskTitle _newSelectListWrap">
                     <label>Assigned To</label>
                     <a  href="javascript:;"  class="current-selected" data-id="<%= assignedTo ? assignedTo._id : '' %>" id="assignedToDd"><%= assignedTo ? assignedTo.fullName : 'Select' %></a>
+                    <div id="categoryHolder"></div>
+                    <div class="inputDateActionBlock">
+                        <input class="time" maxlength="2" name="Hours" id="dueDateHours" value="00"/>
+                        <input class="time" maxlength="2" name="Minutes" id="dueDateMinutes"  value="00"/>
+                        <input class="time" maxlength="2" name="Seconds" id="dueDateSeconds"  value="00"/>
+                        <input class="time" maxlength="2" name="Time" id="taskTime"  value="AM" readonly/>
+                    </div>
                     <input type="text" class="date" id="taskDueDate"
                            value="<%= date %>" maxlength="32"
                            placeholder="Date"readonly/>
