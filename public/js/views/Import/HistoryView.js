@@ -43,7 +43,7 @@ define([
 
 
             $thisEl.html(this.historyTemplate({
-                history: this.importHistoryCollection.toJSON(),
+                history: this.importHistoryCollection.toJSON().data
             }));
         }
     });
