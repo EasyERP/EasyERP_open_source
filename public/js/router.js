@@ -61,7 +61,6 @@ define([
             $('.loginPanel').removeClass('open');
         });
 
-
     };
 
     var appRouter = Backbone.Router.extend({
@@ -76,7 +75,7 @@ define([
             'easyErp/Products/thumbnails(/c=:countPerPage)(/filter=:filter)'                                : 'goToProduct',
             'login(?password=:password&dbId=:dbId&email=:email)'                                            : 'login',
             'easyErp/:contentType/kanban(/:parrentContentId)(/filter=:filter)'                              : 'goToKanban',
-            'easyErp/:contentType/datelist(/c=:countPerPage)(/filter=:filter)'          : 'goToDateList',
+            'easyErp/:contentType/datelist(/c=:countPerPage)(/filter=:filter)'                              : 'goToDateList',
             'easyErp/:contentType/thumbnails(/c=:countPerPage)(/filter=:filter)'                            : 'goToThumbnails',
             'easyErp/:contentType/tform(/:modelId)(/p=:page)(/c=:countPerPage)(/filter=:filter)'            : 'goToTForm', // FixMe chenge to required Id after test
             'easyErp/:contentType/form(/:modelId)'                                                          : 'goToForm', // FixMe chenge to required Id after test
@@ -91,6 +90,7 @@ define([
             'easyErp/Workflows'                                                                             : 'goToWorkflows',
             'easyErp/Accounts'                                                                              : 'goToAccounts',
             'easyErp/Dashboard'                                                                             : 'goToDashboard',
+            'easyErp/reportsDashboard'                                                                      : 'goToReportsDashboard',
             'easyErp/DashBoardVacation(/filter=:filter)'                                                    : 'dashBoardVacation',
             'easyErp/invoiceCharts(/filter=:filter)'                                                        : 'invoiceCharts',
             'easyErp/HrDashboard'                                                                           : 'hrDashboard',
@@ -732,6 +732,40 @@ define([
             }
         },
 
+        goToReportsDashboard: function () {
+            var self = this;
+            this.checkLogin(function (success) {
+                if (success) {
+                    goDashboard(self);
+                } else {
+                    self.redirectTo();
+                }
+            });
+
+            function goDashboard(context) {
+                var startTime = new Date();
+                var contentViewUrl = "views/reportsDashboard/ContentView";
+                var topBarViewUrl = "views/reportsDashboard/TopBarView";
+                var self = context;
+
+                if (context.mainView === null) {
+                    context.main("reportsDashboard");
+                } else {
+                    context.mainView.updateMenu("reportsDashboard");
+                }
+
+                require([contentViewUrl, topBarViewUrl], function (contentView, topBarView) {
+
+                    custom.setCurrentVT('list');
+
+                    var contentview = new contentView({startTime: startTime});
+                    var topbarView = new topBarView({actionType: "Content"});
+                    self.changeView(contentview);
+                    self.changeTopBarView(topbarView);
+                });
+            }
+        },
+
         goToDashboard: function () {
             var self = this;
             this.checkLogin(function (success) {
@@ -1098,28 +1132,24 @@ define([
                 var topBarViewUrl = "views/" + contentType + "/TopBarView";
                 var collectionUrl = "collections/DealTasks/dateCollection";
 
-
                 if (self.mainView === null) {
                     self.main(contentType);
                 } else {
                     self.mainView.updateMenu(contentType);
                 }
 
-
                 require([contentViewUrl, topBarViewUrl, collectionUrl], function (ContentView, TopBarView, ContentCollection) {
                     var contentview;
                     var topbarView;
                     var collection;
 
-
                     App.filtersObject.filter = filter;
 
                     collection = new ContentCollection({
-                        viewType    : 'datelist',
-                        reset     : true,
-                        filter : filter
+                        viewType: 'datelist',
+                        reset   : true,
+                        filter  : filter
                     });
-
 
                     collection.bind('reset', _.bind(createViews, self));
 
@@ -1127,11 +1157,11 @@ define([
 
                     function createViews() {
                         collection.unbind('reset');
-                        topbarView = new TopBarView({actionType : 'Content'});
+                        topbarView = new TopBarView({actionType: 'Content'});
                         contentview = new ContentView({
-                            startTime: startTime,
-                            collection : collection,
-                            filter   : filter
+                            startTime : startTime,
+                            collection: collection,
+                            filter    : filter
                         });
                         eventsBinder.subscribeTopBarEvents(topbarView, contentview);
                         eventsBinder.subscribeCollectionEvents(collection, contentview)
@@ -1139,9 +1169,6 @@ define([
                         self.changeView(contentview);
                         self.changeTopBarView(topbarView);
                     }
-
-
-
 
                 });
             }

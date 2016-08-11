@@ -5,8 +5,8 @@
     <td data-content="month"><%=model.month%></td>
     <td data-content="year"><%=model.year%></td>
     <td data-content="hours" data-type="input" class="editable"><%=model.hours%></td>
-    <td data-type="input" data-content="expenseCoefficient" class="editable"><%=model.expenseCoefficient%></td>
-    <td data-type="input" data-content="fixedExpense" class="editable"><%=model.fixedExpense%></td>
+<!--    <td data-type="input" data-content="expenseCoefficient" class="editable"><%=model.expenseCoefficient%></td>
+    <td data-type="input" data-content="fixedExpense" class="editable"><%=model.fixedExpense%></td>-->
     <td data-type="input" class="editable" data-content="estimatedHours"><%=currencySplitter(model.estimatedHours ? model.estimatedHours.toFixed() : '0') || 0%></td>
     <td data-type="input" class="" data-content="actualHours"><%=currencySplitter(model.actualHours ? model.actualHours.toFixed() : '0') || 0%></td>
     <td data-type="input" class="money" data-content="adminBudget"><%=currencySplitter(model.adminBudget ? model.adminBudget.toFixed(2) : '0') || 0%></td>

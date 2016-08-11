@@ -1850,6 +1850,8 @@ var Module = function (models, event) {
                 }
             }, {
                 $project: {
+                    /* 'workflow.name': '$workflow.name',
+                     'workflow._id': '$workflow._id',*/
                     workflow: '$workflow.name',
                     date    : 1,
                     revenue : 1
@@ -2948,13 +2950,19 @@ var Module = function (models, event) {
             if (err) {
                 return next(err);
             }
-            getTimeLine(req, result.toJSON(), function (err, model) {
-                if (err) {
-                    return next(err);
-                }
 
-                res.status(200).send(model);
-            });
+            if (result) {
+                getTimeLine(req, result.toJSON(), function (err, model) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    res.status(200).send(model);
+                });
+            } else {
+                res.status(200).send(result);
+            }
+
         });
     }
 

@@ -181,6 +181,7 @@ define([
                     case CONTENT_TYPES.PROFORMA:
                     case CONTENT_TYPES.CASHBOOK:
                     case CONTENT_TYPES.CASHTRANSFER:
+                    case CONTENT_TYPES.REPORTSDASHBOARD:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:
@@ -251,6 +252,7 @@ define([
                     case CONTENT_TYPES.PROFORMA:
                     case CONTENT_TYPES.CASHBOOK:
                     case CONTENT_TYPES.CASHTRANSFER:
+                    case CONTENT_TYPES.REPORTSDASHBOARD:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.DEALTASKS:
