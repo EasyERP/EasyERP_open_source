@@ -1814,20 +1814,21 @@ body {
   display: block;
   position: relative;
   border: 1px solid #7f7f80;
-  padding: 2px 0 2px 26px;
+  padding-left: 26px;
   border-radius: 3px;
 }
 #searchFilterContainer {
   float: left;
   width: auto;
-  height: 20px;
+  height: 24px;
   overflow: hidden;
 }
 .ui-autocomplete {
   position: absolute;
-  cursor: default;
-  left: -1px !important;
+  top: 28px !important;
+  left: 0 !important;
   width: 100% !important;
+  cursor: default;
 }
 .ui-menu {
   list-style: none;
@@ -1850,52 +1851,52 @@ body {
   display: block;
   padding: .2em .4em;
 }
-.ui-menu .ui-autocomplete-category {
-  margin: .3em 0 0;
+.ui-menu > .ui-autocomplete-category {
+  margin: 0;
   padding: 0;
   line-height: 1.5;
   float: left;
   width: 100%;
+  border: 1px solid #7f7f80;
 }
-.ui-menu .ui-autocomplete-category:last-child {
-  padding-bottom: .3em;
+.ui-menu > .ui-autocomplete-category:nth-child(n+2) {
+  border-top: none;
 }
-.ui-menu .ui-autocomplete-category .searchGroupDropDown {
+.ui-menu > .ui-autocomplete-category .searchGroupDropDown {
   float: left;
   width: 14px;
   height: 14px;
-  padding: 3px 0px 3px 6px;
+  padding: 3px 0 3px 6px;
   line-height: 1;
   cursor: pointer;
   top: 0;
   left: 0;
 }
-.ui-menu .ui-autocomplete-category .searchGroupDropDown:before {
+.ui-menu > .ui-autocomplete-category .searchGroupDropDown:before {
   content: '\f0d7';
   font-family: 'FontAwesome';
 }
-.ui-menu .ui-autocomplete-category .searchGroupResult {
+.ui-menu > .ui-autocomplete-category .searchGroupResult {
   display: block;
   line-height: 20px;
   width: 100%;
 }
-.ui-menu .ui-autocomplete-category .ui-widget-content {
+.ui-menu > .ui-autocomplete-category .ui-widget-content {
   float: left;
-  margin: .3em 0 0;
-  padding: .3em 0;
   display: block;
   width: 100%;
   border: none;
   border-top: 1px solid #7f7f80;
-  border-bottom: 1px solid #7f7f80;
   overflow: auto;
   max-height: 143px;
 }
-.ui-menu .ui-autocomplete-category .ui-widget-content li {
+.ui-menu > .ui-autocomplete-category .ui-widget-content > li {
   padding-left: 25px;
+  line-height: 20px;
 }
 .ui-autocomplete-input {
-  height: 20px;
+  height: 24px;
+  line-height: 24;
   overflow: hidden;
   display: block;
 }
@@ -3224,9 +3225,9 @@ input:not([type="checkbox"]).inputBordered:focus {
   display: inline-block;
   float: left;
   padding: 0 5px;
-  height: 14px;
-  line-height: 14px;
-  font-size: 10px;
+  height: 18px;
+  line-height: 18px;
+  font-size: 14px;
   color: #fff;
   border-radius: 3px;
 }
@@ -4192,6 +4193,14 @@ table.kanban tbody td:nth-child(n+2) {
 td.editable {
   position: relative;
 }
+.grid-conatiner {
+  height: calc(100% - 35px);
+}
+._gridTableWrap {
+  position: relative;
+  height: calc(100% - 100px);
+  overflow: auto;
+}
 .collapsed .sideMenu {
   width: 40px !important;
   margin-right: -100%;
@@ -4541,7 +4550,7 @@ td.editable {
 }
 .list2 tbody td {
   text-align: right;
-  height: 50px;
+  height: 45px;
 }
 .list2 tbody td.changeContent {
   border-top: 2px solid #5cb85c;
@@ -4647,7 +4656,7 @@ td.editable {
 }
 .list2 tbody td {
   text-align: right;
-  height: 50px;
+  height: 45px;
 }
 .list2 tbody td.changeContent {
   border-top: 2px solid #5cb85c;
@@ -5975,7 +5984,6 @@ select:not([type="checkbox"]) {
   position: relative;
   font-size: 13px;
   text-decoration: none;
-  line-height: 26px !important;
 }
 .icon {
   font-size: 20px;
@@ -10417,7 +10425,7 @@ ul.dialog-tabs li.right button {
 }
 .list tbody td {
   text-align: right;
-  height: 50px;
+  height: 45px;
 }
 .list tbody td.changeContent {
   border-top: 2px solid #5cb85c;
@@ -11899,9 +11907,9 @@ ul.dialog-tabs .withEndContract {
 }
 ul.dialog-tabs .withEndContract .newSelectList {
   display: none;
-  width: 112px;
-  margin-top: 22px;
+  width: 115px;
   right: 0;
+  left: auto;
 }
 ul.dialog-tabs .withEndContract .newSelectList li {
   padding-left: 10px;
@@ -13570,6 +13578,7 @@ a.cancelled {
   padding: 0;
 }
 .newSelectList > input#selectInput {
+  height: 24px;
   width: 100% !important;
   margin: 0;
   float: left;
@@ -14159,10 +14168,6 @@ textarea#editInput {
   color: #eb759e;
 }
 .grid-conatiner .statisticsAtten.stick {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  width: calc(100% - 200px);
   background-color: #ffffff;
   padding-top: 10px;
 }
@@ -14996,6 +15001,7 @@ textarea#editInput {
   display: inline-block;
   padding-right: 17px;
   margin-right: 3px;
+  margin-top: 2px;
   border: 1px solid #7f7f80;
   border-radius: 3px;
   line-height: 18px;
@@ -15185,6 +15191,12 @@ textarea#editInput {
 }
 .text-right {
   text-align: right !important;
+}
+.blueText {
+  color: #3e88b9;
+}
+.textGrey {
+  color: #9a9a9e;
 }
 .bgRed {
   background-color: #eb5a46 !important;

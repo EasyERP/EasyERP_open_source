@@ -11,19 +11,21 @@
             <span class="_ellipsisCloseBtn hideList">close</span>
         </div>
         <div>
-            <span><b><%= val.changedField%></b></span>
+            <span><b class="blueText"><%= val.changedField%></b></span>
             <%if (val.prevValue){%>
-            <span class="changedFieldName"> changed  <span>from <b><%= val.prevValue %></b></span><span> to </span></span>
+            <span class="changedFieldName"> changed  <span>from <b class="blueText"><%= val.prevValue %></b></span><span> to </span></span>
             <%} else {%>
             <span class="changedFieldName">added </span>
             <%}%>
 
-            <span><b><%= val.newValue %></b></span>
-        </div>
-        <div class="_activitiesFooter">
-            <span>by <%= login %></span>
+            <span><b class="blueText"><%= val.newValue %></b></span>
+            <span class="textGrey">by <%= login %></span>
             <span class="dateNote"><%=val.date%></span>
         </div>
+        <!--<div class="_activitiesFooter">-->
+            <!--<span>by <%= login %></span>-->
+            <!--<span class="dateNote"><%=val.date%></span>-->
+        <!--</div>-->
 
     </div>
     <%}) %>
