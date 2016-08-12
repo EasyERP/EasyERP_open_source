@@ -117,6 +117,12 @@ define([
             var $description = $thisEl.find('#taskArea');
             var description = $.trim($description.val());
             var dueDate = $.trim($thisEl.find('#taskDueDate').val());
+            var time = moment($.trim($thisEl.find('#timepickerOne').wickedpicker('time')).split(' '), 'hh:mm:ss A');
+            var category = this.model.get('category');
+
+            if (dueDate) {
+                dueDate = moment(dueDate).hours(time.get('hours')).minutes(time.get('minutes')).seconds(time.get('seconds')).toDate();
+            }
             var saveObject = {
                 assignedTo : assignedTo || '',
                 description: description,
@@ -462,7 +468,7 @@ define([
             this.renderTimeline();
 
             this.renderCategory();
-            this.$el.find('#timepicker-one').wickedpicker({
+            this.$el.find('#timepickerOne').wickedpicker({
                 showSeconds: true, //Whether or not to show seconds,
                 secondsInterval: 1, //Change interval for seconds, defaults to 1,
                 minutesInterval: 1

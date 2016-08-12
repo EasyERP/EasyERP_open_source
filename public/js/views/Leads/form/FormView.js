@@ -432,7 +432,6 @@ define([
                 }
 
             });
-            this.$el.find('#timePicker').wickedpicker();
 
             dataService.getData('/leads/priority', {}, function (priorities) {
                 priorities = _.map(priorities.data, function (priority) {
