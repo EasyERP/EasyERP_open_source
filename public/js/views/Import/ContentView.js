@@ -61,6 +61,7 @@ define([
             this.stage = usersImport.stage || 1;
             this.map = {};
 
+
             this.render();
             this.selectStage();
         },
@@ -85,7 +86,6 @@ define([
                 validate: false,
                 patch   : true,
                 success : function () {
-
                     if (callback && typeof callback === 'function') {
                         callback();
                     }
@@ -165,6 +165,7 @@ define([
                         imported : data.imported,
                         timeStamp: self.timeStamp
                     };
+
                     self.childView = new ComparingView(options);
                 });
             }

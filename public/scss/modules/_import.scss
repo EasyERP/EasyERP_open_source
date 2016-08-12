@@ -11,6 +11,15 @@
   }
 }
 
+._loadHistoryTopTable {
+  height: 450px;
+  margin-bottom: 20px;
+}
+
+._loadHistoryTopTableContainer {
+  width: 100%;
+}
+
 ._contentBlock,
 ._tabsBlock {
   height: calc(100vh - 205px);
@@ -18,12 +27,14 @@
   overflow-x: hidden;
 }
 
+
 ._importListBody {
   display: -webkit-box;
   display: -moz-box;
   display: -ms-flexbox;
   display: -webkit-flex;
   display: flex;
+
 
   ._contentBlock {
     -webkit-flex-grow: 1;
@@ -83,6 +94,8 @@
       }
     }
   }
+
+  
 }
 
 ._contentBlockRow {
@@ -235,6 +248,28 @@
     span {
       font-weight:bold;
     }
+  }
+  
+  label,
+  .dropDownDateRangeContainer {
+    display: inline-block;
+    vertical-align: middle;
+    text-align: center;
+    margin-right: 15px;
+    cursor: pointer;
+
+    span {
+      display: block;
+    }
+  }
+
+  .dropDownDateRangeContainer {
+    float: none;
+    height: 11px;
+  }
+
+  .importBtn {
+    margin-top: 7px;
   }
 }
 

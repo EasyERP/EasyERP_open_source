@@ -84,7 +84,9 @@ module.exports = (function () {
             timeStamp: {type: Number},
             stage    : {type: Number, default: 1},
             map      : {type: JSON},
-            unMap    : {type: JSON}
+            unMap    : {type: JSON},
+            type     : {type: String, default: ''},
+            comparingField: {type: String, default: ''}
         }
     }, {collection: 'Users'});
 
