@@ -20,10 +20,8 @@
                     <div class="dataField">
                         <input class="extrainfo blueback" type="text" name="dueDate" id="dueDate" value="<%= model.dueDate ? moment(model.dueDate).format('DD MMM, YYYY') : null%>" readonly/>
                         <div class="inputDateActionBlock">
-                            <input class="time" maxlength="2" name="Hours" id="dueDateHours" value="<%= model.dueDate ? moment(model.dueDate).hours() : null%>" placeholder="Hours"/>
-                            <input class="time" maxlength="2" name="Minutes" id="dueDateMinutes" value="<%= model.dueDate ? moment(model.dueDate).minutes() : null%>"  placeholder="Minutes"/>
-                            <input class="time" maxlength="2" name="Seconds" id="dueDateSeconds" value="<%= model.dueDate ? moment(model.dueDate).seconds() : null%>" placeholder="Seconds"/>
-                        </div>
+                            <input class="time" maxlength="2" name="Hours" id="timepickerOne" value="<%= model.dueDate ? moment(model.dueDate).hours() : null%>" placeholder="Hours"/>
+                         </div>
                     </div>
                 </div>
 

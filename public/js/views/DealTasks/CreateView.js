@@ -205,11 +205,10 @@ define([
                 changeMonth: true,
                 changeYear : true
             });
-            this.$el.find('#timePicker').wickedpicker();
-            this.$el.find('#dueDateMinutes, #dueDateSeconds').spinner({
-                min: '0',
-                max:'59',
-                numberFormat: "d2"
+            this.$el.find('#timePicker').wickedpicker({
+                showSeconds: true,
+                secondsInterval: 1,
+                minutesInterval: 1
             });
 
             this.delegateEvents(this.events);
