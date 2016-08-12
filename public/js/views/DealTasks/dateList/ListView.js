@@ -104,6 +104,11 @@ define([
             $target.removeClass('open');
         },
 
+        showMoreContent: function () {
+            this.render();
+        },
+
+
         render: function () {
             var collection = this.collection.toJSON()[0];
             var key;

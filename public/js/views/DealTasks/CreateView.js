@@ -23,9 +23,6 @@ define([
 
         events: {
             'click .removeSelect': 'removeSelect',
-            'keyup .time'      : 'validateInput',
-            'keypress .time'                            : 'keypress',
-            'change .time'   : 'changeInput',
         },
 
         initialize: function () {
@@ -34,31 +31,6 @@ define([
             this.render();
             this.responseObj = {};
             this.model.on('change:category', this.renderCategory, this);
-        },
-
-        validateInput : function(e) {
-            var $target = $(e.target);
-            var maxVal = ($target.attr('id') === 'dueDateHours') ? 23 : 59;
-
-            e.preventDefault();
-
-            if ($target.val() > maxVal) {
-                $target.val('' + maxVal);
-            }
-        },
-
-        keypress: function (e) {
-            return keyValidator(e);
-        },
-
-        changeInput : function(e) {
-            var $target = $(e.target);
-
-            e.preventDefault();
-
-            if ($target.val().length === 1) {
-                $target.val('0' + $target.val());
-            }
         },
 
         removeSelect: function (e) {

@@ -156,6 +156,11 @@ define([
                 this.selectCustomer(id);
             }
 
+            if (type === 'company') {
+                this.selectCompany(id);
+            }
+
+
             holder.closest('.propertyFormList').addClass('active');
             this.showButtons();
         },
@@ -230,89 +235,58 @@ define([
             );
         },
 
+        selectCompany: function (id) {
+            dataService.getData(constants.URLS.CUSTOMERS, {
+                id: id
+            }, function (response, context) {
+                var customer = response;
+
+                context.$el.find('#company').val(customer.name.first);
+
+                context.$el.find('#address_street').val(customer.address.street);
+                context.$el.find('#address_city').val(customer.address.city);
+                context.$el.find('#address_state').val(customer.address.state);
+                context.$el.find('#address_zip').val(customer.address.zip);
+                context.$el.find('#address_country').val(customer.address.country);
+                context.$el.find('#tempCompanyField').val(customer.name.first);
+                context.modelChanged.address = {
+                    street : customer.address.street,
+                    city   : customer.address.city,
+                    state  : customer.address.state,
+                    zip    : customer.address.zip,
+                    country: customer.address.country
+                };
+                context.modelChanged.tempCompanyField = customer.name.first;
+
+            }, this);
+
+        },
+
         selectCustomer: function (id) {
 
-            if (id !== '') {
-                dataService.getData(constants.URLS.CUSTOMERS, {
-                    id: id
-                }, function (response, context) {
-                    var customer = response;
-                    if (customer.type === 'Person') {
-                        context.modelChanged.contactName = {
-                            first: customer.name.first,
-                            last : customer.name.last
-                        };
-                        context.modelChanged.email = customer.email;
-                        context.modelChanged.phones = {
-                            phone : customer.phones.phone
-                        };
-                        context.modelChanged.social = {
-                            LI : customer.social.LI.replace('linkedin', '[]')
-                        };
+            dataService.getData(constants.URLS.CUSTOMERS, {
+                id: id
+            }, function (response, context) {
+                var customer = response;
 
-                        delete context.modelChanged.address;
-                        context.modelChanged.tempCompanyField = '';
+                context.modelChanged.contactName = {
+                    first: customer.name.first,
+                    last : customer.name.last
+                };
+                context.modelChanged.email = customer.email;
+                context.modelChanged.phones = {
+                    phone: customer.phones.phone
+                };
+                context.modelChanged.social = {
+                    LI: customer.social.LI.replace('linkedin', '[]')
+                };
 
-                        context.$el.find('#contactName_first').val(customer.name.first);
-                        context.$el.find('#contactName_last').val(customer.name.last);
-                        context.$el.find('#email').val(customer.email);
-                        context.$el.find('#phones_phone').val(customer.phones.phone);
-                        context.$el.find('#social_LI').val(customer.social.LI.replace('[]', 'linkedin'));
-
-                        context.$el.find('#address_street').val('');
-                        context.$el.find('#address_city').val('');
-                        context.$el.find('#address_state').val('');
-                        context.$el.find('#address_zip').val('');
-                        context.$el.find('#address_country').val('');
-                        context.$el.find('#tempCompanyField').val('');
-
-                    } else {
-                        context.$el.find('#company').val(customer.name.first);
-
-                        context.$el.find('#contactName_first').val('');
-                        context.$el.find('#contactName_last').val('');
-                        context.$el.find('#phones_phone').val('');
-                        context.$el.find('#social_LI').val('');
-                        context.$el.find('#email').val('');
-                        context.modelChanged.email = '';
-                        delete context.modelChanged.contactName;
-                        delete context.modelChanged.phones;
-                        delete context.modelChanged.social;
-
-
-                        context.$el.find('#address_street').val(customer.address.street);
-                        context.$el.find('#address_city').val(customer.address.city);
-                        context.$el.find('#address_state').val(customer.address.state);
-                        context.$el.find('#address_zip').val(customer.address.zip);
-                        context.$el.find('#address_country').val(customer.address.country);
-                        context.$el.find('#tempCompanyField').val(customer.name.first);
-                        context.modelChanged.address = {
-                            street : customer.address.street,
-                            city : customer.address.city,
-                            state : customer.address.state,
-                            zip : customer.address.zip,
-                            country : customer.address.country
-                        };
-                        context.modelChanged.tempCompanyField = customer.name.first;
-
-                    }
-
-
-
-                }, this);
-            } else {
-                this.$el.find('#email').val('');
-                this.$el.find('#phone').val('');
-                this.$el.find('#mobile').val('');
-                this.$el.find('#street').val('');
-                this.$el.find('#city').val('');
-                this.$el.find('#state').val('');
-                this.$el.find('#zip').val('');
-                this.$el.find('#country').val('');
-                this.$el.find('#company').val('');
-                this.$el.find('#first').val('');
-                this.$el.find('#last').val('');
-            }
+                context.$el.find('#contactName_first').val(customer.name.first);
+                context.$el.find('#contactName_last').val(customer.name.last);
+                context.$el.find('#email').val(customer.email);
+                context.$el.find('#phones_phone').val(customer.phones.phone);
+                context.$el.find('#social_LI').val(customer.social.LI.replace('[]', 'linkedin'));
+            }, this);
 
         },
 
@@ -371,7 +345,7 @@ define([
 
                 self.responseObj['#salesPersonDd'] = employees;
             });
-            dataService.getData('/customers', {}, function (employees) {
+            dataService.getData('/customers', {type : 'Person'}, function (employees) {
                 employees = _.map(employees.data, function (employee) {
                     employee.name = employee.fullName;
 
@@ -379,6 +353,15 @@ define([
                 });
 
                 self.responseObj['#customerDd'] = employees;
+            });
+            dataService.getData('/customers', {type : 'Company'}, function (employees) {
+                employees = _.map(employees.data, function (employee) {
+                    employee.name = employee.fullName;
+
+                    return employee;
+                });
+
+                self.responseObj['#companyDd'] = employees;
             });
 
             this.renderTags();
