@@ -1772,8 +1772,12 @@
 .mainTabs .avatarInfoContainer {
   margin-left: 160px; }
 
-._importListWrap ._importListBody {
-  height: 450px; }
+._loadHistoryTopTable {
+  height: 450px;
+  margin-bottom: 20px; }
+
+._loadHistoryTopTableContainer {
+  width: 100%; }
 
 ._contentBlock,
 ._tabsBlock {
@@ -1926,6 +1930,21 @@
     font-size: 16px; }
     ._importAttachContainer .attachFileName span {
       font-weight: bold; }
+  ._importAttachContainer label,
+  ._importAttachContainer .dropDownDateRangeContainer {
+    display: inline-block;
+    vertical-align: middle;
+    text-align: center;
+    margin-right: 15px;
+    cursor: pointer; }
+    ._importAttachContainer label span,
+    ._importAttachContainer .dropDownDateRangeContainer span {
+      display: block; }
+  ._importAttachContainer .dropDownDateRangeContainer {
+    float: none;
+    height: 11px; }
+  ._importAttachContainer .importBtn {
+    margin-top: 7px; }
 
 ._progressBarContainer {
   height: 20px;
