@@ -413,6 +413,20 @@ module.exports = function (models, event) {
                             }]
                         }
                     }
+                },
+
+                projectManagers: {
+                    $filter: {
+                        input: '$projectMembers',
+                        as   : 'projectMember',
+                        cond : {
+                            $and: [{
+                                $eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.PROJECTSMANAGER)]
+                            }, {
+                                $eq: ['$$projectMember.endDate', null]
+                            }]
+                        }
+                    }
                 }
             }
         }, {
@@ -422,6 +436,7 @@ module.exports = function (models, event) {
                 task           : 1,
                 workflow       : 1,
                 salesManager   : {$arrayElemAt: ['$salesManagers', 0]},
+                projectManager : {$arrayElemAt: ['$projectManagers', 0]},
                 customer       : 1,
                 health         : 1,
                 projecttype    : 1,
@@ -435,12 +450,20 @@ module.exports = function (models, event) {
                 as          : 'salesManager'
             }
         }, {
+            $lookup: {
+                from        : 'Employees',
+                localField  : 'projectManager.employeeId',
+                foreignField: '_id',
+                as          : 'projectManager'
+            }
+        }, {
             $project: {
                 _id            : 1,
                 name           : 1,
                 task           : 1,
                 workflow       : 1,
                 salesManager   : {$arrayElemAt: ['$salesManager', 0]},
+                projectManager : {$arrayElemAt: ['$projectManager', 0]},
                 customer       : 1,
                 health         : 1,
                 projecttype    : 1,
@@ -481,6 +504,20 @@ module.exports = function (models, event) {
                             }]
                         }
                     }
+                },
+
+                projectManagers: {
+                    $filter: {
+                        input: '$projectMembers',
+                        as   : 'projectMember',
+                        cond : {
+                            $and: [{
+                                $eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.PROJECTSMANAGER)]
+                            }, {
+                                $eq: ['$$projectMember.endDate', null]
+                            }]
+                        }
+                    }
                 }
             }
         }, {
@@ -498,6 +535,7 @@ module.exports = function (models, event) {
                 name            : 1,
                 workflow        : 1,
                 salesManager    : {$arrayElemAt: ['$salesManagers', 0]},
+                projectManager  : {$arrayElemAt: ['$projectManagers', 0]},
                 customer        : 1,
                 health          : 1,
                 projecttype     : 1
@@ -510,21 +548,29 @@ module.exports = function (models, event) {
                 as          : 'salesManager'
             }
         }, {
+            $lookup: {
+                from        : 'Employees',
+                localField  : 'projectManager.employeeId',
+                foreignField: '_id',
+                as          : 'projectManager'
+            }
+        }, {
             $project: {
-                _id          : 1,
-                name         : 1,
-                createdBy    : 1,
-                editedBy     : 1,
-                notRemovable : 1,
-                progress     : 1,
-                workflow     : 1,
-                StartDate    : 1,
-                EndDate      : 1,
-                TargetEndDate: 1,
-                salesManager : {$arrayElemAt: ['$salesManager', 0]},
-                customer     : 1,
-                health       : 1,
-                projecttype  : 1
+                _id           : 1,
+                name          : 1,
+                createdBy     : 1,
+                editedBy      : 1,
+                notRemovable  : 1,
+                progress      : 1,
+                workflow      : 1,
+                StartDate     : 1,
+                EndDate       : 1,
+                TargetEndDate : 1,
+                salesManager  : {$arrayElemAt: ['$salesManager', 0]},
+                projectManager: {$arrayElemAt: ['$projectManager', 0]},
+                customer      : 1,
+                health        : 1,
+                projecttype   : 1
             }
         }];
 

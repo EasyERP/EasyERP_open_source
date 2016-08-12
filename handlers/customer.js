@@ -802,13 +802,13 @@ var Module = function (models, event) {
                             case ('list'):
                                 query.sort(sort);
                                 query
-                                    .select('_id createdBy editedBy address.country email name fullName phones.phone')
+                                    .select('_id createdBy editedBy salesPurchases address.country email name fullName phones.phone')
                                     .populate('createdBy.user', 'login')
                                     .populate('editedBy.user', 'login');
                                 break;
                             case ('thumbnails'):
                                 query
-                                    .select('_id name fullName company')
+                                    .select('_id name address.country salesPurchases fullName company')
                                     .populate('company', '_id name');
                                 break;
                             // skip default
@@ -828,7 +828,7 @@ var Module = function (models, event) {
                                 break;
                             case ('thumbnails'):
                                 query
-                                    .select('_id name fullName company')
+                                    .select('_id name fullName company address.country salesPurchases')
                                     .populate('company', '_id name address');
                                 break;
                             // skip default

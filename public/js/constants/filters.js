@@ -64,7 +64,8 @@
 
             country: {
                 displayName: 'Country',
-                backend    : 'address.country'
+                backend    : 'address.country',
+                type       : 'string'
             },
 
             services: {
@@ -102,11 +103,11 @@
         },
 
         DealTasks: {
-            name: {
+            name      : {
                 displayName: 'Name',
                 backend    : '_id'
             },
-            category: {
+            category  : {
                 displayName: 'Category',
                 backend    : 'category'
             },
@@ -114,17 +115,16 @@
                 displayName: 'Assigned To',
                 backend    : 'assignedTo'
             },
-            workflow: {
+            workflow  : {
                 displayName: 'Status',
                 backend    : 'workflow'
             },
-            deal : {
+            deal      : {
                 displayName: 'Deal',
                 backend    : 'deal'
             },
 
-
-            array: ['name', 'assignedTo', 'workflow', 'deal', 'category' ]
+            array: ['name', 'assignedTo', 'workflow', 'deal', 'category']
         },
 
         Companies: {
@@ -135,7 +135,8 @@
 
             country: {
                 displayName: 'Country',
-                backend    : 'address.country'
+                backend    : 'address.country',
+                type       : 'string'
             },
 
             services: {
@@ -523,10 +524,10 @@
             },
 
             /*productType: {
-                displayName: 'Product Type',
-                backend    : 'info.productType',
-                type       : 'string'
-            },*/
+             displayName: 'Product Type',
+             backend    : 'info.productType',
+             type       : 'string'
+             },*/
 
             canBeSold: {
                 displayName: 'Can be Sold',
