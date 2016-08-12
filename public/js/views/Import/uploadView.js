@@ -23,12 +23,15 @@ define([
             'click .importBtn'   : 'importFile',
             'change .inputAttach': 'importFiles',
             'change .changeTableBtn' : 'changeCombobox',
-            'click #changeTableCombobox': 'changeTableCombobox'
+            'click #changeTableCombobox': 'changeTableCombobox',
+            'click .item': 'checkItem'
         },
 
         initialize: function (options) {
             var $thisEl = this.$el;
             this.fileName = options.fileName;
+            this.entity = 'customers';
+            this.comparingField = 'email';
 
             this.mergeFields = {
                 opportunities: [
@@ -51,6 +54,16 @@ define([
             this.render();
 
             $thisEl.find('#forImport').html(this.importTemplate);
+        },
+
+        checkItem: function (e) {
+            var thisEl = this.$el;
+            var $target = $(e.target);
+
+            this.comparingField = $target.text();
+
+            thisEl.find('.item').removeClass('active');
+            $target.addClass('active');
         },
 
         changeCombobox: function (e) {
@@ -98,7 +111,9 @@ define([
             importObj = {
                 fileName : fileName,
                 timeStamp: +timeStamp,
-                stage: 1
+                stage: 1,
+                type: this.entity,
+                comparingField: this.comparingField
             };
 
             this.timeStamp = +timeStamp;
@@ -112,6 +127,7 @@ define([
             });
 
             App.currentUser.imports = importObj;
+
             this.importView = new AttachView({el: '#forImport', timeStamp: timeStamp});
 
             this.importView.sendToServer(e, null, this);
