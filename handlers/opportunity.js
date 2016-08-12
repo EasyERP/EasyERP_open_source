@@ -101,6 +101,7 @@ var Module = function (models, event) {
                 .populate('deal', '_id name')
                 .populate('company', '_id name')
                 .populate('contact', '_id name')
+                .populate('category')
                 .populate('editedBy.user', '_id login')
                 .populate('assignedTo', '_id name fullName imageSrc')
                 .populate('workflow')
