@@ -1772,6 +1772,9 @@
 .mainTabs .avatarInfoContainer {
   margin-left: 160px; }
 
+._importListWrap ._importListBody {
+  height: 450px; }
+
 ._contentBlock,
 ._tabsBlock {
   height: calc(100vh - 205px);
