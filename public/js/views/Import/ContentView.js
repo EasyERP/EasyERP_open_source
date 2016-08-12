@@ -173,7 +173,6 @@ define([
         },
 
         startImport: function (callback) {
-            var self = this;
             var currentUser = App.currentUser;
             var importData = currentUser.imports;
             var url = '/importFile/imported';
@@ -226,7 +225,6 @@ define([
                     pageSize    : importHistoryCollection.pageSize
                 });
             }
-
         },
 
         render: function () {

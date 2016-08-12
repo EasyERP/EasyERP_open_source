@@ -344,27 +344,90 @@ var Module = function (models) {
         });
     };
 
-    function compearingForMerge(importedItems, compareFiled, callback) {
-        var conflictItems = [];
+    function nestedToFlat(into, target, currentKey) {
+        var newKey;
+        var newVal;
+
+        if (!currentKey) {
+            currentKey = '';
+        }
+
+        for (var i in into) {
+            if (into.hasOwnProperty(i)) {
+                newKey = i;
+                newVal = into[i];
+
+                if (currentKey.length > 0) {
+                    newKey = currentKey + '.' + i;
+                }
+
+                if (typeof newVal === 'object') {
+                    nestedToFlat(newVal, target, newKey);
+                } else {
+                    target[newKey] = newVal;
+                }
+            }
+        }
+    }
+
+    function flatten(obj) {
+        var newObj = {};
+        nestedToFlat(obj, newObj);
+        return newObj;
+    }
+
+    function compearingForMerge(savedItems, importedItems, compareFiled, callback) {
+        var conflictItemsIndex = [];
         var itemsToSave = [];
+        var conflictSavedItems = [];
+        var conflictItems = [];
+        var savedItem;
+        var importedItem;
+        var resultConflictedItems;
+        var jsonSavedItem;
+        var uniqSavedItems;
+        var conflictItemsIndex = [];
 
         for (var i = 0; i <= importedItems.length - 1; i++) {
             for (var j = i + 1; j <= importedItems.length - 1; j++) {
 
                 if (importedItems[i][compareFiled] && importedItems[j][compareFiled] && importedItems[i][compareFiled] === importedItems[j][compareFiled]) {
-                    conflictItems.push(i);
-                    conflictItems.push(j);
+                    conflictItemsIndex.push(i);
+                    conflictItemsIndex.push(j);
                 }
             }
         }
 
         for (var i = 0; i <= importedItems.length - 1; i++) {
-            if (conflictItems.indexOf(i) === -1) {
-                itemsToSave.push(importedItems[i]);
+            for (var j = 0; j <= savedItems.length - 1; j++) {
+                savedItem = savedItems[j].toJSON();
+                savedItem._id = savedItem._id.toString();
+                jsonSavedItem = flatten(savedItem);
+
+                if (importedItems[i][compareFiled] && jsonSavedItem[compareFiled] && importedItems[i][compareFiled] === jsonSavedItem[compareFiled]) {
+                    conflictItemsIndex.push(i);
+                    jsonSavedItem.isExists = true;
+                    if (conflictItemsIndex.indexOf(jsonSavedItem.id.toString()) === -1) {
+                        conflictItemsIndex.push(jsonSavedItem.id.toString());
+                        conflictSavedItems.push(jsonSavedItem);
+                    }
+                }
             }
         }
 
-        callback(null, itemsToSave);
+        for (var i = 0; i <= importedItems.length - 1; i++) {
+            if (conflictItemsIndex.indexOf(i) === -1) {
+                itemsToSave.push(importedItems[i]);
+            } else {
+                importedItem = importedItems[i];
+                importedItem.isExist = false;
+                conflictItems.push(importedItem);
+            }
+        }
+
+        resultConflictedItems = _.union(conflictItems, conflictItems);
+
+        callback(null, itemsToSave, resultConflictedItems);
     }
 
     this.getConflictedItems = function (req, res, next) {
@@ -437,8 +500,9 @@ var Module = function (models) {
         });
     };
 
-    this.saveImportedData = function (req, res, next) {
+    this.saveMergedData = function (req, res, next) {
         var data = req.body;
+        var importIds = body.ids;
         var userId = req.session.uId;
         var map = data.map || {};
         var type = map.type;
@@ -451,14 +515,13 @@ var Module = function (models) {
         var UserModel = models.get(req.session.lastDb, 'Users', UserSchema);
         var titleArray;
         var mappedFields;
-        var skippedArray = [];
-        var importedCount = 0;
+        var skippedArray = body.skippedArray || [];
+        var importedCount = body.importedCount;
         var headerItem;
         var criteria = {
             user: userId
         };
         var saveItems = [];
-        var idsForRemove = [];
 
         if (timeStamp) {
             criteria.timeStamp = timeStamp;
@@ -482,15 +545,17 @@ var Module = function (models) {
             async.waterfall([
                 function (wCb) {
                     async.each(importData, function (importItem, cb) {
-                        var saveObj;
-                        var importItemObj = importItem.toJSON().result;
 
-                        saveObj = prepareSaveObject(mappedFields, importItemObj);
-                        saveObj.importId = importItem._id;
-                        saveItems.push(saveObj);
+                        if (importIds.indexOf(importItem._id) !== -1) {
+                            var saveObj;
+                            var importItemObj = importItem.toJSON().result;
 
-                        cb(null);
+                            saveObj = prepareSaveObject(mappedFields, importItemObj);
+                            saveObj.importId = importItem._id;
+                            saveItems.push(saveObj);
 
+                            cb(null);
+                        }
                     }, function (err) {
                         if (err) {
                             return wCb(err);
@@ -498,10 +563,6 @@ var Module = function (models) {
 
                         wCb(null, saveItems);
                     });
-                },
-
-                function (saveItems, wCb) {
-                    compearingForMerge(saveItems, 'name.last', wCb);
                 },
 
                 function (itemsToSave, wCb) {
@@ -519,7 +580,6 @@ var Module = function (models) {
                                 importedCount++;
                             }
 
-                            idsForRemove.push(item.importId);
                             eachCb(null);
                         });
                     }, function (err) {
@@ -532,7 +592,7 @@ var Module = function (models) {
                 },
 
                 function (wCb) {
-                    ImportModel.remove({_id: {$in: idsForRemove}}, function () {
+                    ImportModel.remove({}, function () {
                     });
                     wCb(null);
                 },
@@ -565,6 +625,124 @@ var Module = function (models) {
                 res.status(200).send({
                     imported: imported,
                     skipped : skipped
+                });
+            });
+        });
+    };
+
+    this.saveImportedData = function (req, res, next) {
+        var data = req.body;
+        var userId = req.session.uId;
+        var map = data.map || {};
+        var type = map.type;
+        var timeStamp = map.timeStamp;
+        var mapResult = map.result || {};
+        var mapFileName = data.fileName;
+        var ImportModel = models.get(req.session.lastDb, 'Imports', ImportSchema);
+        var Model = models.get(req.session.lastDb, type, schemaObj[type]);
+        var ImportHistoryModel = models.get(req.session.lastDb, 'ImportHistories', ImportHistorySchema);
+        var UserModel = models.get(req.session.lastDb, 'Users', UserSchema);
+        var titleArray;
+        var mappedFields;
+        var skippedArray = [];
+        var importedCount = 0;
+        var headerItem;
+        var criteria = {
+            user: userId
+        };
+        var importItems = [];
+        var idsForRemove = [];
+
+        if (timeStamp) {
+            criteria.timeStamp = timeStamp;
+        }
+
+        ImportModel.find(criteria, function (err, importData) {
+            if (err) {
+                return next(err);
+            }
+
+            if (!importData.length) {
+                res.status(404).send({result: 'Imported data not found'});
+                return;
+            }
+
+            headerItem = importData.shift();
+            titleArray = headerItem.result;
+
+            mappedFields = mapImportFileds(mapResult, titleArray);
+
+            async.waterfall([
+                function (wCb) {
+                    async.each(importData, function (importItem, cb) {
+                        var saveObj;
+                        var importItemObj = importItem.toJSON().result;
+
+                        saveObj = prepareSaveObject(mappedFields, importItemObj);
+                        saveObj.importId = importItem._id;
+                        importItems.push(saveObj);
+
+                        cb(null);
+
+                    }, function (err) {
+                        if (err) {
+                            return wCb(err);
+                        }
+
+                        wCb(null);
+                    });
+                },
+
+                function (wCb) {
+                    Model.find({}, wCb);
+                },
+
+                function (savedItems, wCb) {
+                    compearingForMerge(savedItems, importItems, 'name.last', wCb);
+                },
+
+                function (itemsToSave, conflictedItems, wCb) {
+                    var saveModel;
+                    async.each(itemsToSave, function (item, eachCb) {
+
+                        saveModel = new Model(item);
+                        saveModel.save(function (err) {
+                            if (err) {
+                                item.reason = err.message;
+                                skippedArray.push(
+                                    item
+                                );
+                            } else {
+                                importedCount++;
+                            }
+
+                            idsForRemove.push(item.importId);
+                            eachCb(null);
+                        });
+                    }, function (err) {
+                        if (err) {
+                            return wCb(err);
+                        }
+
+                        wCb(null, conflictedItems);
+                    });
+                },
+
+                function (conflictedItems, wCb) {
+                    ImportModel.remove({_id: {$in: idsForRemove}}, function () {
+                    });
+                    wCb(null, conflictedItems);
+                }
+            ], function (err, conflictedItems) {
+
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send({
+                    imported       : importedCount,
+                    skippedArray   : skippedArray,
+                    conflictedItems: conflictedItems
                 });
             });
         });
