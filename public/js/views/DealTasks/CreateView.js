@@ -49,9 +49,10 @@ define([
             var contact = this.$el.find('#contactItem .showSelect').attr('data-id');
             var description = $.trim(this.$el.find('#description').val());
             var dueDate = $.trim(this.$el.find('#dueDate').val());
-            var hours = $.trim(this.$el.find('#dueDateHours').val()) || 0;
-            var minutes = $.trim(this.$el.find('#dueDateMinutes').val()) || 0;
-            var seconds = $.trim(this.$el.find('#dueDateSeconds').val()) || 0;
+            var time = moment($.trim(this.$el.find('#timepickerOne').wickedpicker('time')).split(' '), 'hh:mm:ss A');
+            var hours = time.get('hours');
+            var minutes = time.get('minutes');
+            var seconds = time.get('seconds');
             var category = this.model.get('category');
             var saveObject;
 
