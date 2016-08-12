@@ -1,37 +1,27 @@
 <table class="list _importLoadHistory">
     <thead>
         <tr>
-            <% if (data.length) { %>
-                <% _.each(history[0], function(item, key){ %>
-                    <% if (key !== '_id' && key !== 'reportFileName') { %>
-                        <td>
-                            <%= key %>
-                        </td>
-                    <% } %>
+            <% if (data.length && data[0].length) { %>
+                <% _.each(data[0][0], function(item, key){ %>
+                    <td>
+                        <%= key %>
+                    </td>
                 <% }) %>
             <% } %>
         </tr>
     </thead>
 
-    <tbody id="contentList">
-        <% _.each(data, function(historyItem, key1) { %>
-            <tr>
-                <% _.each(dataItem, function(headItem, key2) { %>
-                    <% if (key2 !== '_id' && key2 !== 'reportFile') { %>
-                        <% if (key2 === 'reportFileName') { %>
-                            <td>
-                                <a href="<%= historyItem[key2] %>">
-                                    <%= historyItem['reportFile'] %>
-                                </a>
-                            </td>
-                        <% } else { %>
-                            <td>
-                                <%= historyItem[key2] %>
-                            </td>
-                        <% } %>
-                    <% } %>
-                <% }) %>
-            </tr>
-        <% }) %>
-    </tbody>
+    <% _.each(data, function(comparingData, comparingDataKey) { %>
+        <tbody data-group="<%= comparingDataKey %>" >
+            <% _.each(comparingData, function(comparingDataObj, comparingDataObjKey) { %>
+                <tr data-id="<%= comparingDataObj['importId'] %>">
+                    <% _.each(comparingDataObj, function(comparingDataItem, comparingDataItemKey) { %>
+                        <td>
+                            <%= comparingDataItem %>
+                        </td>
+                    <% }) %>
+                </tr>
+            <% }) %>
+        </tbody>
+    <% }) %>
 </table>

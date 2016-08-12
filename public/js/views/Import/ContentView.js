@@ -160,7 +160,6 @@ define([
                 }
             } else if (this.stage === 4) {
                 this.startImport(function (err, data) {
-                    console.log(data);
                     self.childView = new ComparingView({timeStamp: self.timeStamp});
                 });
             }
