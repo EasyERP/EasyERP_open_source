@@ -17,7 +17,13 @@
                 <tr data-id="<%= comparingDataObj['importId'] %>">
                     <% _.each(comparingDataObj, function(comparingDataItem, comparingDataItemKey) { %>
                         <td>
-                            <%= comparingDataItem %>
+                            <% if ((comparingDataItem).toString().indexOf('data:image/') === -1) { %>
+                                <%= comparingDataItem] %>
+                            <% } else { %>
+                                <div class="_importTableImg">
+                                    <img src="<%= comparingDataItem] %>">
+                                </div>
+                            <% } %>
                         </td>
                     <% }) %>
                 </tr>
