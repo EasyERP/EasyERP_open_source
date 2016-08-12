@@ -130,7 +130,7 @@
             var deal = this.$el.find('#dealItem .showSelect').attr('data-id');
             var company = this.$el.find('#companyItem .showSelect').attr('data-id');
             var contact = this.$el.find('#contactItem .showSelect').attr('data-id');
-            var time = moment($.trim($thisEl.find('#timepickerOne').wickedpicker('time')).split(' '), 'hh:mm:ss A');
+            var time = moment($.trim(this.$el.find('#timepickerOne').wickedpicker('time')).split(' '), 'hh:mm:ss A');
             var description = $.trim(this.$el.find('#description').val());
             var dueDate = $.trim(this.$el.find('#dueDate').val());
             var hours = time.get('hours');
