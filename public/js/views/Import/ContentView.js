@@ -49,11 +49,13 @@ define([
             'click .stageBtn'    : 'selectStage'
         },
 
-        initialize: function () {
+        initialize: function (options) {
             var usersImport = App.currentUser.imports || {};
 
             this.timeStamp = usersImport.timeStamp;
             this.fileName = usersImport.fileName;
+            this.page = options.page;
+            this.count = options.count;
             this.stage = usersImport.stage || 1;
             this.map = {};
 
@@ -72,7 +74,6 @@ define([
             } else {
                 App.currentUser.imports = options;
             }
-
 
             userModel = new UserModel(currentUser);
 
@@ -174,7 +175,6 @@ define([
                 self.historyView.collection.getFirstPage();
             });
 
-
         },
 
         changeStage: function (stage) {
@@ -195,8 +195,11 @@ define([
 
         insertHistoryView: function () {
             var importHistoryCollection = new HistoryCollection({
-                reset: true
-            });
+                    viewType   : 'list',
+                    reset      : true,
+                    contentType: CONSTANTS.IMPORT,
+                    showMore   : false
+                });
 
             importHistoryCollection.bind('reset', _.bind(createView, this));
 

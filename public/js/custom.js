@@ -131,6 +131,7 @@ define([
         if (App.currentViewType === null) {
             if (option) {
                 switch (option.contentType) {
+                    case CONTENT_TYPES.IMPORT:
                     case CONTENT_TYPES.DASHBOARD:
                     case CONTENT_TYPES.TASKS:
                     case CONTENT_TYPES.DEALTASKS:
@@ -199,6 +200,7 @@ define([
         } else {
             if (option && !App.ownContentType) {
                 switch (option.contentType) {
+                    case CONTENT_TYPES.IMPORT:
                     case CONTENT_TYPES.DASHBOARD:
                     case CONTENT_TYPES.TASKS:
                     case CONTENT_TYPES.DEALTASKS:

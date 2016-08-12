@@ -200,6 +200,10 @@ var Module = function (models) {
 
     this.getImportHistory = function (req, res, next) {
         var ImportHistoryModel = models.get(req.session.lastDb, 'ImportHistories', ImportHistorySchema);
+        var query = req.query;
+        var limit = parseInt(query.count);
+        var page = parseInt(query.page);
+        var skip = limit * (page - 1);
 
         ImportHistoryModel.aggregate([
             {
@@ -216,22 +220,60 @@ var Module = function (models) {
                     path: '$user'
                 }
             }, {
+                $group: {
+                    _id  : null,
+                    total: {$sum: 1},
+                    root : {$push: '$$ROOT'}
+                }
+            }, {
+                $unwind: '$root'
+            }, {
                 $project: {
-                    date          : '$date',
-                    fileName      : '$fileName',
-                    user          : '$user.login',
-                    type          : '$type',
-                    status        : '$status',
-                    reportFileName: '$reportFile',
-                    reportFile    : '$reportFileName'
+                    _id           : 0,
+                    total         : 1,
+                    data          : {
+                        date          : '$root.date',
+                        fileName      : '$root.fileName',
+                        user          : '$root.user.login',
+                        type          : '$root.type',
+                        status        : '$root.status',
+                        reportFileName: '$root.reportFile',
+                        reportFile    : '$root.reportFileName'
+                    }
+                }
+            }, {
+                $sort: {
+                    'data.date': -1
+                }
+            }, {
+                $skip: skip
+            }, {
+                $limit: limit
+            }, {
+                $group: {
+                    _id  : null,
+                    total: {$first: '$total'},
+                    data : {$push: '$data'}
+                }
+            }, {
+                $project: {
+                    _id  : 0,
+                    total: '$total',
+                    data: '$data'
                 }
             }
         ], function (err, result) {
+            var data = {};
+
             if (err) {
                 return next(err);
             }
 
-            res.status(200).send(result);
+            if (result.length) {
+                data = result[0];
+            }
+
+            res.status(200).send(data);
         });
     };
 
