@@ -21,16 +21,43 @@ define([
 
         events: {
             'click .importBtn'   : 'importFile',
-            'change .inputAttach': 'importFiles'
+            'change .inputAttach': 'importFiles',
+            'change .changeTableBtn' : 'changeCombobox'
         },
 
         initialize: function (options) {
             var $thisEl = this.$el;
             this.fileName = options.fileName;
 
+            this.mergeFields = {
+                opportunities: [
+                    'campaign',
+                    'email',
+                    'name'
+                ],
+                customers: [
+                    'email',
+                    'color',
+                    'type'
+                ],
+                employees: [
+                    'age',
+                    'nationality',
+                    'visibility'
+                ]
+            };
+
             this.render();
 
             $thisEl.find('#forImport').html(this.importTemplate);
+        },
+
+        changeCombobox: function (e) {
+            var thisEl = this.$el;
+            var $target = $(e.target);
+            var $combobox = $('#changeTableCombobox')
+
+            $combobox.append(this.mergeFields);
         },
 
         importFile: function (e) {
