@@ -159,8 +159,8 @@ define([
 
                 }
             } else if (this.stage === 4) {
-
-                this.startImport(function() {
+                this.startImport(function (err, data) {
+                    console.log(data);
                     self.childView = new ComparingView({timeStamp: self.timeStamp});
                 });
             }
@@ -200,11 +200,11 @@ define([
 
         insertHistoryView: function () {
             var importHistoryCollection = new HistoryCollection({
-                    viewType   : 'list',
-                    reset      : true,
-                    contentType: CONSTANTS.IMPORT,
-                    showMore   : false
-                });
+                viewType   : 'list',
+                reset      : true,
+                contentType: CONSTANTS.IMPORT,
+                showMore   : false
+            });
 
             importHistoryCollection.bind('reset', _.bind(createView, this));
 
@@ -226,7 +226,6 @@ define([
             }
 
         },
-
 
         render: function () {
             var $thisEl = this.$el;
