@@ -1295,6 +1295,30 @@ dl.payrollDateBlock {
       font-size: 15px;
       font-family: @fontBold;
     }
+    .compactRow {
+      &:first-child {
+        display: -webkit-box;
+        display: -moz-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+
+        .name {
+          -webkit-flex-grow: 1;
+          flex-grow: 1;
+
+          width: 1px;
+          padding-right: 10px;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+        }
+        .stage {
+          -webkit-flex-shrink: 0;
+          flex-shrink: 0;
+        }
+      }
+    }
   }
 
   &.opportunitiesList {
