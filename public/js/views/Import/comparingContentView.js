@@ -17,7 +17,7 @@ define([
         events: {},
 
         initialize: function (options) {
-            var url = 'importFiles/merge';
+            var url = 'importFile/merge';
             var self = this;
 
             this.timeStamp = options.timeStamp;
