@@ -507,6 +507,7 @@ module.exports = function (models) {
     router.post('/imported', imports.saveImportedData);
     router.get('/preview', imports.getForPreview);
     router.get('/history', imports.getImportHistory);
+    router.get('/merge', imports.getConflictedItems);
 
 
     return router;

@@ -344,6 +344,95 @@ var Module = function (models) {
         });
     };
 
+    function compearingForMerge(importedItems, compareFiled, callback) {
+        var conflictItems = [];
+        var itemsToSave = [];
+
+        for (var i = 0; i <= importedItems.length - 1; i++) {
+            for (var j = i + 1; j <= importedItems.length - 1; j++) {
+
+                if (importedItems[i][compareFiled] && importedItems[j][compareFiled] && importedItems[i][compareFiled] === importedItems[j][compareFiled]) {
+                    conflictItems.push(i);
+                    conflictItems.push(j);
+                }
+            }
+        }
+
+        for (var i = 0; i <= importedItems.length - 1; i++) {
+            if (conflictItems.indexOf(i) === -1) {
+                itemsToSave.push(importedItems[i]);
+            }
+        }
+
+        callback(null, itemsToSave);
+    }
+
+    this.getConflictedItems = function (req, res, next) {
+        var query = req.query;
+        var timeStamp = +query.timeStamp;
+        var userId = req.session.uId;
+        var ImportModel = models.get(req.session.lastDb, 'Imports', ImportSchema);
+        var UserModel = models.get(req.session.lastDb, 'Users', UserSchema);
+        var criteria = {user: userId};
+        var titleArray;
+        var mappedFields;
+        var resultArray = [];
+        var map;
+        var type;
+        var result;
+        var conflictedData;
+
+        if (timeStamp) {
+            criteria.timeStamp = timeStamp;
+        }
+
+        UserModel.findOne({_id: userId}, {imports: 1}, function (err, userModel) {
+            if (err) {
+                return next(err);
+            }
+
+            map = userModel.imports && userModel.imports.map;
+            type = map.type;
+            result = map.result;
+
+            ImportModel
+                .find(criteria)
+                .exec(function (err, importData) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    if (!importData.length) {
+                        res.status(404).send({result: 'Imported data not found'});
+                        return;
+                    }
+
+                    titleArray = importData.shift().result;
+
+                    mappedFields = mapImportFileds(result, titleArray);
+
+                    async.each(importData, function (importItem, cb) {
+                        var conflictItem;
+                        var importItemObj = importItem.toJSON().result;
+
+                        conflictItem = prepareSaveObject(mappedFields, importItemObj);
+                        conflictItem.importId = importItem._id;
+                        resultArray.push(conflictItem);
+                        cb(null);
+
+                    }, function (err) {
+                        if (err) {
+                            return next(err);
+                        }
+
+                        conflictedData = _.groupBy(resultArray, 'name.last');
+
+                        res.status(200).send(conflictedData);
+                    });
+                });
+        });
+    };
+
     this.saveImportedData = function (req, res, next) {
         var data = req.body;
         var userId = req.session.uId;
@@ -364,6 +453,8 @@ var Module = function (models) {
         var criteria = {
             user: userId
         };
+        var saveItems = [];
+        var idsForRemove = [];
 
         if (timeStamp) {
             criteria.timeStamp = timeStamp;
@@ -382,74 +473,92 @@ var Module = function (models) {
             headerItem = importData.shift();
             titleArray = headerItem.result;
 
-            importedIds.push(headerItem._id);
-
             mappedFields = mapImportFileds(mapResult, titleArray);
 
-            async.each(importData, function (importItem, cb) {
-                var saveModel;
-                var saveObj;
-                var importItemObj = importItem.toJSON().result;
+            async.waterfall([
+                function (wCb) {
+                    async.each(importData, function (importItem, cb) {
+                        var saveObj;
+                        var importItemObj = importItem.toJSON().result;
 
-                saveObj = prepareSaveObject(mappedFields, importItemObj);
-                saveModel = new Model(saveObj);
-                saveModel.save(function (err) {
-                    if (err) {
-                        saveObj.reason = err.message;
-                        skippedArray.push(
-                            saveObj
-                        );
-                    } else {
-                        importedIds.push(importItem._id);
-                    }
+                        saveObj = prepareSaveObject(mappedFields, importItemObj);
+                        saveObj.importId = importItem._id;
+                        saveItems.push(saveObj);
 
-                    cb(null);
-                });
-            }, function (err) {
+                        cb(null);
+
+                    }, function (err) {
+                        if (err) {
+                            return wCb(err);
+                        }
+
+                        wCb(null, saveItems);
+                    });
+                },
+
+                function (saveItems, wCb) {
+                    compearingForMerge(saveItems, 'name.last', wCb);
+                },
+
+                function (itemsToSave, wCb) {
+                    var saveModel;
+                    async.each(itemsToSave, function (item, eachCb) {
+
+                        saveModel = new Model(item);
+                        saveModel.save(function (err) {
+                            if (err) {
+                                item.reason = err.message;
+                                skippedArray.push(
+                                    item
+                                );
+                            }
+
+                            idsForRemove.push(item.importId);
+                            eachCb(null);
+                        });
+                    }, function (err) {
+                        if (err) {
+                            return wCb(err);
+                        }
+
+                        wCb(null);
+                    });
+                },
+
+                function (wCb) {
+                    ImportModel.remove({_id: {$in: idsForRemove}}, function () {
+                    });
+                    wCb(null);
+                },
+
+                function (wCb) {
+                    createXlsxReport(res, wCb, skippedArray, type);
+                },
+
+                function (fileOptions, wCb) {
+                    var option = {
+                        fileName      : mapFileName,
+                        userId        : userId,
+                        type          : type,
+                        status        : 'Finished',
+                        reportFile    : fileOptions.pathName,
+                        reportFileName: fileOptions.fileName
+                    };
+
+                    writeHistory(option, ImportHistoryModel, wCb);
+                }
+
+            ], function (err) {
+                var imported = importedIds.length;
+                var skipped = skippedArray.length;
+
                 if (err) {
                     return next(err);
                 }
 
-                async.waterfall([
-                    function (cb) {
-                        createXlsxReport(res, cb, skippedArray, type);
-                    },
-                    function (file, cb) {
-                        var option = {
-                            fileName      : mapFileName,
-                            userId        : userId,
-                            type          : type,
-                            status        : 'Finished',
-                            reportFile    : file.pathName,
-                            reportFileName: file.fileName
-                        };
-
-                        writeHistory(option, ImportHistoryModel, cb);
-                    },
-
-                    function (cb) {
-                        ImportModel.remove({_id: {$in: importedIds}}, function () {
-                        });
-                        cb(null);
-                    },
-
-                    function (cb) {
-                        UserModel.update({_id: userId}, {$set: {imports: {}}}, function () {
-                        });
-                        cb(null);
-                    }
-                ], function (err) {
-                    var imported = importedIds.length - 1;
-                    var skipped = skippedArray.length;
-
-                    if (err) {
-                        return next(err);
-                    }
-
-                    res.status(200).send({
-                        imported: imported,
-                        skipped : skipped
-                    });
+                res.status(200).send({
+                    imported: imported,
+                    skipped : skipped
                 });
             });
         });
