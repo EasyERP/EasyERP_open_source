@@ -719,12 +719,12 @@ define([
                     left  : 80
                 };
 
-                width = ($wrapper.width())/2;
+                width = ($wrapper.width())/2  - margin.left - margin.right;
                 height = $wrapper.width() / 4;
 
                 barChart = d3.select('svg.leadsBarChart')
                     .attr({
-                        'width' : width  - margin.left - margin.right,
+                        'width' : width,
                         'height': height + margin.top + margin.bottom
                     })
                     .append('g')
@@ -732,7 +732,7 @@ define([
 
                 xScale = d3.time.scale()
                     .domain([new Date(self.startDateLeads), new Date(self.endDateLeads)])
-                    .range([0, width - margin.left - margin.right]);
+                    .range([0, width - margin.left]);
 
                 yScale = d3.scale.linear()
                     .domain([0, max])
@@ -940,7 +940,7 @@ define([
                 barChart.append('g')
                     .attr({
                         'class': 'y2 axis2',
-                        'transform': 'translate(' + (width) + ',0)'
+                        'transform': 'translate(' + (width - margin.right) + ',0)'
                     })
                     .call(yAxis2)
                     .select('path.domain')
@@ -951,7 +951,7 @@ define([
                 barChart.selectAll('.y .tick line')
                     .attr({
                         'x2'       : function (d) {
-                            return width + 1.4 * padding;
+                            return width - margin.right + 1.4 * padding;
                         },
                         'stroke'   : '#f2f2f2',
                         'transform': 'translate(' + (-0.7 * padding) + ',0)'
