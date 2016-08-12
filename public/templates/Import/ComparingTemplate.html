@@ -1,28 +1,29 @@
 <table class="list _importLoadHistory">
     <thead>
         <tr>
-            <% if (data.length && data[0].length) { %>
-                <% _.each(data[0][0], function(item, key){ %>
+            <% if (data.keys.length) { %>
+                <% _.each(data.keys, function(item){ %>
                     <td>
-                        <%= key %>
+                        <%= item %>
                     </td>
                 <% }) %>
             <% } %>
         </tr>
     </thead>
-
-    <% _.each(data, function(comparingData, comparingDataKey) { %>
-        <tbody data-group="<%= comparingDataKey %>" >
+    <% _.each(data.result, function(comparingData, comparingDataKey) { %>
+        <tbody data-group="<%= comparingDataKey %>" style="background-color: hsl( <%= Math.floor(Math.random() * (360 - 1)) + 1 %> , 50%, 80%)">
             <% _.each(comparingData, function(comparingDataObj, comparingDataObjKey) { %>
                 <tr data-id="<%= comparingDataObj['importId'] %>">
-                    <% _.each(comparingDataObj, function(comparingDataItem, comparingDataItemKey) { %>
+                    <% _.each(data.keys, function(key) { %>
                         <td>
-                            <% if ((comparingDataItem).toString().indexOf('data:image/') === -1) { %>
-                                <%= comparingDataItem] %>
-                            <% } else { %>
-                                <div class="_importTableImg">
-                                    <img src="<%= comparingDataItem] %>">
-                                </div>
+                            <% if (comparingDataObj[key]) { %>
+                                <% if ((comparingDataObj[key]).toString().indexOf('data:image/') === -1) { %>
+                                    <%= comparingDataObj[key] %>
+                                <% } else { %>
+                                    <div class="_importTableImg">
+                                        <img src="<%= comparingDataObj[key] %>">
+                                    </div>
+                                <% } %>
                             <% } %>
                         </td>
                     <% }) %>

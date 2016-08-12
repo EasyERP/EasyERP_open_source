@@ -34,6 +34,8 @@ define([
             var $thisEl = this.$el;
             var self = this;
 
+            data.keys = data.keys.reverse();
+
             $thisEl.html(this.contentTemplate({
                 data: data
             }));
