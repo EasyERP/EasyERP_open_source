@@ -1896,7 +1896,7 @@ body {
 }
 .ui-autocomplete-input {
   height: 24px;
-  line-height: 24;
+  line-height: 24px;
   overflow: hidden;
   display: block;
 }
