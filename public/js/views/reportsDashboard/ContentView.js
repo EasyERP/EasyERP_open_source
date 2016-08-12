@@ -732,7 +732,7 @@ define([
 
                 xScale = d3.time.scale()
                     .domain([new Date(self.startDateLeads), new Date(self.endDateLeads)])
-                    .range([0, width - margin.left]);
+                    .range([0, width - margin.left*1.5]);
 
                 yScale = d3.scale.linear()
                     .domain([0, max])
@@ -956,6 +956,9 @@ define([
                         'stroke'   : '#f2f2f2',
                         'transform': 'translate(' + (-0.7 * padding) + ',0)'
                     });
+
+                d3.selectAll('.x text')
+                    .attr('transform', "translate(-23,20) rotate(-45)")
             });
         },
 
