@@ -314,6 +314,10 @@ HTTP/1.1 200 OK
         });
     });
 
+    app.get('/nginx', function (req, res, next) {
+        console.log(req.headers);
+    });
+
     function notFound(req, res, next) {
         res.status(404);
 
