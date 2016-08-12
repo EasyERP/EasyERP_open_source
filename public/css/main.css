@@ -4128,25 +4128,14 @@ table.kanban tbody td:nth-child(n+2) {
   position: relative;
 }
 .inputDateActionBlock {
-  display: -webkit-box;
-  display: -moz-box;
-  display: -ms-flexbox;
-  display: -webkit-flex;
-  display: flex;
   margin-top: 15px;
 }
-.inputDateActionBlock > .ui-spinner {
-  flex-grow: 1;
-}
-.inputDateActionBlock > .ui-spinner:nth-child(n+2) input {
-  border-left: 0;
-}
-.inputDateActionBlock > .ui-spinner .ui-spinner-up,
-.inputDateActionBlock > .ui-spinner .ui-spinner-down {
-  right: 5px;
-}
-.inputDateActionBlock > .ui-spinner .ui-spinner-down {
-  bottom: 2px;
+.inputDateActionBlock .timepicker {
+  width: 220px !important;
+  height: 34px;
+  padding: 6px;
+  border: 1px solid #c2cad8;
+  cursor: pointer;
 }
 .superCenter {
   margin: auto;
@@ -5978,6 +5967,7 @@ input::-ms-clear {
 input:not([type="checkbox"]),
 textarea:not([type="checkbox"]),
 select:not([type="checkbox"]) {
+  width: 100%;
   padding: 0 4px;
   border: 1px solid #c8c8d3;
   background-color: inherit;
@@ -11801,8 +11791,6 @@ ul.dialog-tabs li.right button {
   margin-top: 0;
 }
 .form-holder form input:not([type=checkbox]) {
-  border: 1px solid #7f7f80;
-  width: 100%;
   max-width: 280px;
   background-color: transparent;
   font-family: Arial, Helvetica, sans-serif;
