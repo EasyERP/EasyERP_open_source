@@ -3570,6 +3570,26 @@ dl.payrollDateBlock dt {
   font-size: 15px;
   font-family: 'Open Sans Bold', sans-serif, Verdana;
 }
+.listWrap.leadsList .compactRow:first-child {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+.listWrap.leadsList .compactRow:first-child .name {
+  -webkit-flex-grow: 1;
+  flex-grow: 1;
+  width: 1px;
+  padding-right: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.listWrap.leadsList .compactRow:first-child .stage {
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
+}
 .listWrap.opportunitiesList .opportunity {
   color: #508bbd;
   font-size: 15px;
