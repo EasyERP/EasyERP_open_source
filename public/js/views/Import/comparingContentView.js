@@ -14,29 +14,25 @@ define([
         el             : '#contentBlock',
         contentTemplate: _.template(ComparingTemplate),
 
-        events: {
-        },
+        events: {},
 
         initialize: function (options) {
             var url = 'importFiles/merge';
             var self = this;
 
             this.timeStamp = options.timeStamp;
+            this.imported = options.imported;
+            this.skipped = options.skipped;
 
             dataService.getData(url, {timeStamp: self.timeStamp}, function (data) {
-                //self.data = data.mappedObj;
-                //self.unmappedData = data.unmappedObj;
-
                 self.render(data);
             });
 
         },
 
-
         render: function (data) {
             var $thisEl = this.$el;
             var self = this;
-
 
             $thisEl.html(this.contentTemplate({
                 data: data
