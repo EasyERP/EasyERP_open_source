@@ -957,7 +957,7 @@ define([
                         'transform': 'translate(' + (-0.7 * padding) + ',0)'
                     });
 
-                d3.selectAll('.x text')
+                barChart.selectAll('.x text')
                     .attr('transform', "translate(-23,20) rotate(-45)")
             });
         },
