@@ -205,11 +205,7 @@ define([
                 changeMonth: true,
                 changeYear : true
             });
-            this.$el.find('#dueDateHours').spinner({
-                min:'0',
-                max:'23',
-                numberFormat: "d2"
-            });
+            this.$el.find('#timePicker').wickedpicker();
             this.$el.find('#dueDateMinutes, #dueDateSeconds').spinner({
                 min: '0',
                 max:'59',

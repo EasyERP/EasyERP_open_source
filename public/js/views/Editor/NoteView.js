@@ -456,11 +456,17 @@ define([
 
             modelObj.needNotes = this.needNotes;
 
+
             $thisEl.html(this.template({date: date, assignedTo: assignedTo}));
 
             this.renderTimeline();
 
             this.renderCategory();
+            this.$el.find('#timepicker-one').wickedpicker({
+                showSeconds: true, //Whether or not to show seconds,
+                secondsInterval: 1, //Change interval for seconds, defaults to 1,
+                minutesInterval: 1
+            });
 
             populate.get2name('#assignedToDd', CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this, false, false, relatedEmployeeId);
 

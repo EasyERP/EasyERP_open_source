@@ -33,7 +33,9 @@ require.config({
         jqueryBarcode: './libs/jquery-barcode.min',
         moment       : './libs/moment/moment',
         socketio     : '/socket.io/socket.io.js',
-        backstratch  : './libs/jquery-backstretch/jquery.backstretch.min'
+        backstratch  : './libs/jquery-backstretch/jquery.backstretch.min',
+        wickedpicker  : './libs/ericjgagnon-wickedpicker-d7a87c9/src/wickedpicker'
+
     },
 
     shim: {
@@ -44,14 +46,14 @@ require.config({
         jQuery: {
             exports: '$'
         },
-
+        wickedpicker: ['jQuery'],
         jqueryui    : ['jQuery'],
         ajaxForm    : ['jQuery'],
         imageCrop   : ['jQuery'],
         spinJs      : ['jQuery'],
         backstratch : ['jQuery'],
         Backbone    : ['Underscore', 'jQuery'],
-        app         : ['Backbone', 'less', 'jqueryui', 'ajaxForm', 'imageCrop', 'd3', 'backstratch', 'topojson'],
+        app         : ['Backbone', 'less', 'jqueryui', 'ajaxForm', 'imageCrop', 'd3', 'backstratch', 'topojson', 'wickedpicker'],
         d3          : {
             exports: 'd3'
         },
@@ -134,8 +136,8 @@ require(['Backbone', 'jQuery', 'Underscore', 'app'], function (Backbone, $, _, a
         }
     };
 
-    $.widget( "ui.paddedspinner", $.ui.spinner, {
-        widgetEventPrefix: "spin",
+    $.widget('ui.paddedspinner', $.ui.spinner, {
+        widgetEventPrefix: 'spin',
         options: {
             padCount: 2,
             padString: '0'
@@ -146,15 +148,15 @@ require(['Backbone', 'jQuery', 'Underscore', 'app'], function (Backbone, $, _, a
         },
 
         _format: function( value ) {
-            var str = value+'';
+            var str = value + '';
             while ( str.length < this.options.padCount )
                 str = this.options.padString + str;
             return str;
-        },
-
+        }
     });
-    $.widget( "ui.ampmspinner", $.ui.spinner, {
-        widgetEventPrefix: "spin",
+
+    $.widget('ui.ampmspinner', $.ui.spinner, {
+        widgetEventPrefix: 'spin',
         options: {
             max: 1,
             min: 0,
@@ -163,7 +165,7 @@ require(['Backbone', 'jQuery', 'Underscore', 'app'], function (Backbone, $, _, a
 
         _parse: function( value ) {
 
-            if ( typeof value === "string" ) {
+            if ( typeof value === 'string') {
                 return value == 'AM' ? 0 : 1;
             }
             return value;
@@ -171,7 +173,7 @@ require(['Backbone', 'jQuery', 'Underscore', 'app'], function (Backbone, $, _, a
 
         _format: function( value ) {
             return value === 0 ? 'AM' : 'PM';
-        },
+        }
 
     });
 
