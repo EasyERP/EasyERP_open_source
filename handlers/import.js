@@ -229,9 +229,9 @@ var Module = function (models) {
                 $unwind: '$root'
             }, {
                 $project: {
-                    _id           : 0,
-                    total         : 1,
-                    data          : {
+                    _id  : 0,
+                    total: 1,
+                    data : {
                         date          : '$root.date',
                         fileName      : '$root.fileName',
                         user          : '$root.user.login',
@@ -259,7 +259,7 @@ var Module = function (models) {
                 $project: {
                     _id  : 0,
                     total: '$total',
-                    data: '$data'
+                    data : '$data'
                 }
             }
         ], function (err, result) {
@@ -427,7 +427,11 @@ var Module = function (models) {
 
                         conflictedData = _.groupBy(resultArray, 'name.last');
 
-                        res.status(200).send(conflictedData);
+                        res.status(200).send({
+                            result: conflictedData,
+                            keys  : _.values(result),
+                            type  : type
+                        });
                     });
                 });
         });
