@@ -2176,8 +2176,7 @@ label._customCHeckbox input[type="checkbox"] {
   float: right;
   border: none !important;
   text-align: right;
-  cursor: pointer;
-  margin-top: 8px !important; }
+  cursor: pointer; }
 .addTask .current-selected {
   font-weight: bold;
   margin-left: 5px;
@@ -2792,7 +2791,8 @@ label._customCHeckbox input[type="checkbox"] {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
-  user-select: none; }
+  user-select: none;
+  z-index: 1111; }
   .wickedpicker:before, .wickedpicker:after {
     content: '';
     position: absolute;
