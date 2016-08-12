@@ -8,10 +8,11 @@ define([
     'models/DealTasksModel',
     'views/DealTasks/EditView',
     'views/selectView/selectView',
+    'views/Category/TagView',
     'moment',
     'populate',
     'constants'
-], function (Backbone, $, _, NoteTemplate, timelineTemplate, editNote, TaskModel, EditView, SelectView, moment, populate, CONSTANTS) {
+], function (Backbone, $, _, NoteTemplate, timelineTemplate, editNote, TaskModel, EditView, SelectView, CategoryView, moment, populate, CONSTANTS) {
     'use strict';
 
     var NoteView = Backbone.View.extend({
@@ -23,6 +24,8 @@ define([
             this.contentType = options.contentType;
             this.needNotes = options.hasOwnProperty('needNotes') ? options.needNotes : true;
             this.responseObj = {};
+            this.taskModel = new TaskModel();
+            this.taskModel.on('change:category', this.renderCategory, this);
         },
 
         events: {
@@ -34,7 +37,7 @@ define([
             'click .fa-circle-o'                               : 'completeTask',
             'click .editDelNote'                               : 'editDelNote',
             'click .fa-paperclip'                              : 'clickInput',
-            'click .chart-tabs'                                : 'changeTab',
+            'click .chart-tabs li'                             : 'changeTab',
             'click .current-selected:not(.jobs)'               : 'showNewSelect',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
         },
@@ -114,12 +117,18 @@ define([
             var $description = $thisEl.find('#taskArea');
             var description = $.trim($description.val());
             var dueDate = $.trim($thisEl.find('#taskDueDate').val());
-            var model = new TaskModel();
+            var time = moment($.trim($thisEl.find('#timepickerOne').wickedpicker('time')).split(' '), 'hh:mm:ss A');
+            var category = this.model.get('category');
+
+            if (dueDate) {
+                dueDate = moment(dueDate).hours(time.get('hours')).minutes(time.get('minutes')).seconds(time.get('seconds')).toDate();
+            }
             var saveObject = {
                 assignedTo : assignedTo || '',
                 description: description,
                 dueDate    : dueDate,
-                workflow   : CONSTANTS.NOT_STARTED_WORKFLOW
+                workflow   : CONSTANTS.NOT_STARTED_WORKFLOW,
+                category   : this.taskModel.get('category')
             };
 
             switch (this.contentType) {
@@ -144,7 +153,7 @@ define([
                 });
             }
 
-            model.save(saveObject, {
+            this.taskModel.save(saveObject, {
                 wait   : true,
                 success: function () {
                     self.model.fetch({
@@ -412,24 +421,45 @@ define([
             this.$el.find('#timeline').html(_.template(timelineTemplate, {notes: notes}));
         },
 
+        renderCategory: function () {
+            var arrType = ['AM', 'PM'];
+            var notDiv = this.$el.find('#categoryHolder');
+
+            notDiv.html(
+                new CategoryView({
+                    model      : this.taskModel,
+                    contentType: 'DealTasks'
+                }).render().el
+            );
+            this.$el.find('#taskDueDate').datepicker({
+                dateFormat : 'd M, yy',
+                changeMonth: true,
+                changeYear : true
+            });
+        },
+
         render: function () {
             var modelObj = this.model.toJSON();
             var date = moment().format("DD MMM, YYYY");
             var assignedTo = modelObj.salesPerson;
             var $thisEl = this.$el;
+            var relatedEmployeeId = App.currentUser.relatedEmployee ? App.currentUser.relatedEmployee._id : null;
 
             modelObj.needNotes = this.needNotes;
 
+
             $thisEl.html(this.template({date: date, assignedTo: assignedTo}));
 
-            $thisEl.find('#taskDueDate').datepicker({
-                dateFormat : 'd M, yy',
-                changeMonth: true,
-                changeYear : true
+            this.renderTimeline();
+
+            this.renderCategory();
+            this.$el.find('#timepickerOne').wickedpicker({
+                showSeconds: true, //Whether or not to show seconds,
+                secondsInterval: 1, //Change interval for seconds, defaults to 1,
+                minutesInterval: 1
             });
 
-            this.renderTimeline();
-            populate.get2name('#assignedToDd', CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this, false);
+            populate.get2name('#assignedToDd', CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this, false, false, relatedEmployeeId);
 
             return this;
         }

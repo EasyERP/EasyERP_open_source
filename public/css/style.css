@@ -2176,8 +2176,7 @@ label._customCHeckbox input[type="checkbox"] {
   float: right;
   border: none !important;
   text-align: right;
-  cursor: pointer;
-  margin-top: 8px !important; }
+  cursor: pointer; }
 .addTask .current-selected {
   font-weight: bold;
   margin-left: 5px;
@@ -2779,5 +2778,109 @@ label._customCHeckbox input[type="checkbox"] {
   text-align: center;
   margin: 100px 0;
   font-size: 20px; }
+
+.wickedpicker {
+  display: none;
+  position: relative;
+  padding: 4px;
+  margin: 10px auto 0;
+  background: #fff;
+  border: 1px solid #eee;
+  box-shadow: 5px 5px rgba(102, 102, 102, 0.1);
+  font-size: 14px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  z-index: 1111; }
+  .wickedpicker:before, .wickedpicker:after {
+    content: '';
+    position: absolute;
+    display: inline-block; }
+  .wickedpicker:before {
+    top: -7px;
+    left: 9px;
+    border-bottom: 7px solid rgba(0, 0, 0, 0.2);
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent; }
+  .wickedpicker:after {
+    top: -6px;
+    left: 10px;
+    border-bottom: 6px solid #fff;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent; }
+  .wickedpicker__controls {
+    margin: 0;
+    line-height: normal; }
+
+.wickedpicker__controls__control,
+.wickedpicker__controls__control--separator {
+  display: inline-block;
+  margin: 0 auto;
+  font-size: inherit;
+  vertical-align: middle;
+  letter-spacing: 1px; }
+
+.wickedpicker__controls__control-up,
+.wickedpicker__controls__control-down {
+  display: block;
+  height: 30px;
+  line-height: 30px;
+  width: 30px;
+  margin: 0 auto;
+  border: 1px solid transparent;
+  color: #34495e;
+  font-size: 18px;
+  font-family: 'FontAwesome';
+  cursor: pointer; }
+  .wickedpicker__controls__control-up:hover,
+  .wickedpicker__controls__control-down:hover {
+    text-decoration: none;
+    background-color: #eee;
+    border-color: #ddd;
+    color: #34495e; }
+
+.wickedpicker__controls__control-up:before {
+  content: "\f106"; }
+
+.wickedpicker__controls__control-down:after {
+  content: "\f107"; }
+
+.wickedpicker__controls__control--separator {
+  width: 10px;
+  line-height: 78px; }
+
+.text-center,
+.wickedpicker__controls,
+.wickedpicker__controls__control,
+.wickedpicker__controls__control--separator,
+.wickedpicker__controls__control-up,
+.wickedpicker__controls__control-down {
+  text-align: center; }
+
+.clearable-picker {
+  position: relative;
+  display: inline-block; }
+
+.clearable-picker > .hasWickedpicker {
+  padding-right: 1em; }
+
+.clearable-picker > .hasWickedpicker::-ms-clear {
+  display: none; }
+
+.clearable-picker > [data-clear-picker] {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  font-weight: bold;
+  font-size: 0.8em;
+  padding: 0 0.3em 0.2em;
+  line-height: 1;
+  color: #bababa;
+  cursor: pointer; }
+
+.clearable-picker > [data-clear-picker]:hover {
+  color: #a1a1a1; }
 
 /*# sourceMappingURL=style.css.map */

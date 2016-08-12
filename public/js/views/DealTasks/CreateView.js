@@ -23,9 +23,6 @@ define([
 
         events: {
             'click .removeSelect': 'removeSelect',
-            'keyup .time'      : 'validateInput',
-            'keypress .time'                            : 'keypress',
-            'change .time'   : 'changeInput',
         },
 
         initialize: function () {
@@ -34,31 +31,6 @@ define([
             this.render();
             this.responseObj = {};
             this.model.on('change:category', this.renderCategory, this);
-        },
-
-        validateInput : function(e) {
-            var $target = $(e.target);
-            var maxVal = ($target.attr('id') === 'dueDateHours') ? 23 : 59;
-
-            e.preventDefault();
-
-            if ($target.val() > maxVal) {
-                $target.val('' + maxVal);
-            }
-        },
-
-        keypress: function (e) {
-            return keyValidator(e);
-        },
-
-        changeInput : function(e) {
-            var $target = $(e.target);
-
-            e.preventDefault();
-
-            if ($target.val().length === 1) {
-                $target.val('0' + $target.val());
-            }
         },
 
         removeSelect: function (e) {
@@ -77,9 +49,10 @@ define([
             var contact = this.$el.find('#contactItem .showSelect').attr('data-id');
             var description = $.trim(this.$el.find('#description').val());
             var dueDate = $.trim(this.$el.find('#dueDate').val());
-            var hours = $.trim(this.$el.find('#dueDateHours').val()) || 0;
-            var minutes = $.trim(this.$el.find('#dueDateMinutes').val()) || 0;
-            var seconds = $.trim(this.$el.find('#dueDateSeconds').val()) || 0;
+            var time = moment($.trim(this.$el.find('#timepickerOne').wickedpicker('time')).split(' '), 'hh:mm:ss A');
+            var hours = time.get('hours');
+            var minutes = time.get('minutes');
+            var seconds = time.get('seconds');
             var category = this.model.get('category');
             var saveObject;
 
@@ -205,15 +178,10 @@ define([
                 changeMonth: true,
                 changeYear : true
             });
-            this.$el.find('#dueDateHours').spinner({
-                min:'0',
-                max:'23',
-                numberFormat: "d2"
-            });
-            this.$el.find('#dueDateMinutes, #dueDateSeconds').spinner({
-                min: '0',
-                max:'59',
-                numberFormat: "d2"
+            this.$el.find('#timepickerOne').wickedpicker({
+                showSeconds: true,
+                secondsInterval: 1,
+                minutesInterval: 1
             });
 
             this.delegateEvents(this.events);

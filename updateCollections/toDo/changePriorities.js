@@ -45,8 +45,7 @@ Module.remove({type : 'Leads'}, function (err) {
             if (err) {
                 console.log(err);
             }
-            console.log('Good');
-        })
+            console.log('Good');})
 
     });
 

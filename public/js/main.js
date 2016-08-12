@@ -33,7 +33,8 @@ require.config({
         jqueryBarcode: './libs/jquery-barcode.min',
         moment       : './libs/moment/moment',
         socketio     : '/socket.io/socket.io.js',
-        backstratch  : './libs/jquery-backstretch/jquery.backstretch.min'
+        backstratch  : './libs/jquery-backstretch/jquery.backstretch.min',
+        wickedpicker : './libs/wickedpicker'
     },
 
     shim: {
@@ -44,14 +45,14 @@ require.config({
         jQuery: {
             exports: '$'
         },
-
+        wickedpicker: ['jQuery'],
         jqueryui    : ['jQuery'],
         ajaxForm    : ['jQuery'],
         imageCrop   : ['jQuery'],
         spinJs      : ['jQuery'],
         backstratch : ['jQuery'],
         Backbone    : ['Underscore', 'jQuery'],
-        app         : ['Backbone', 'less', 'jqueryui', 'ajaxForm', 'imageCrop', 'd3', 'backstratch', 'topojson'],
+        app         : ['Backbone', 'less', 'jqueryui', 'ajaxForm', 'imageCrop', 'd3', 'backstratch', 'topojson', 'wickedpicker'],
         d3          : {
             exports: 'd3'
         },
@@ -133,23 +134,6 @@ require(['Backbone', 'jQuery', 'Underscore', 'app'], function (Backbone, $, _, a
             }
         }
     };
-
-    if (!window.Globalize) { // todo
-        window.Globalize = {
-            format: function(number, format) {
-                var m;
-                var i;
-                number = String(this.parseFloat(number, 10) * 1);
-                format = (m = String(format).match(/^[nd](\d+)$/)) ? m[1] : 2;
-                for (i = 0; i < format - number.length; i++)
-                    number = '0'+number;
-                return number;
-            },
-            parseFloat: function(number, radix) {
-                return parseFloat(number, radix || 10);
-            }
-        };
-    }
 
     Date.prototype.getWeek = function () {
         // Create a copy of this date object

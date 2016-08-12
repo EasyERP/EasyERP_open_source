@@ -130,16 +130,18 @@
             var deal = this.$el.find('#dealItem .showSelect').attr('data-id');
             var company = this.$el.find('#companyItem .showSelect').attr('data-id');
             var contact = this.$el.find('#contactItem .showSelect').attr('data-id');
+            var time = moment($.trim(this.$el.find('#timepickerOne').wickedpicker('time')).split(' '), 'hh:mm:ss A');
             var description = $.trim(this.$el.find('#description').val());
             var dueDate = $.trim(this.$el.find('#dueDate').val());
-            var hours = $.trim(this.$el.find('#dueDateHours').val()) || 0;
-            var minutes = $.trim(this.$el.find('#dueDateMinutes').val()) || 0;
-            var seconds = $.trim(this.$el.find('#dueDateSeconds').val()) || 0;
+            var hours = time.get('hours');
+            var minutes = time.get('minutes');
+            var seconds = time.get('seconds');
             var category = modelJSON.category ? modelJSON.category._id : null;
 
             event.preventDefault();
 
             viewType = custom.getCurrentVT();
+
             holder = this.$el;
             assignedTo = holder.find('#assignedToDd').data('id');
 
@@ -284,6 +286,8 @@
                 model: this.currentModel.toJSON(),
                 moment : moment
             });
+            var dueDate = this.currentModel.get('dueDate');
+            var time = moment(dueDate).format('H:mm:ss');
             var self = this;
             var notDiv;
 
@@ -331,15 +335,11 @@
             this.delegateEvents(this.events);
 
             this.$el.find('#dueDate').datepicker({dateFormat: 'd M, yy', minDate: new Date()});
-            this.$el.find('#dueDateHours').spinner({
-                min: 0,
-                max: 23,
-                numberFormat: 'd2'
-            });
-            this.$el.find('#dueDateMinutes, #dueDateSeconds').spinner({
-                min: 0,
-                max: 59,
-                numberFormat: 'd2'
+            this.$el.find('#timepickerOne').wickedpicker({
+                now : time,
+                showSeconds: true, //Whether or not to show seconds,
+                secondsInterval: 1, //Change interval for seconds, defaults to 1,
+                minutesInterval: 1
             });
 
             return this;
