@@ -3,9 +3,28 @@
         <div class="bar _progressBar" style="width: 0"></div>
     </div>
     <p class="attachFileName">You have uploaded file <span><%= fileName%></span></p>
-    <button data-table="Customers" class="btn changeTableBtn">Customers</button>
-    <button data-table="Opportunities" class="btn changeTableBtn">Opportunities</button>
-    <button data-table="Employees" class="btn changeTableBtn">Employees</button>
+    <label>
+        customers
+        <input data-table="customers" name="changeTableBtn" type="radio" value="customers" checked="checked"
+               class="btn changeTableBtn">
+    </label>
+    <label>
+        opportunities
+        <input data-table="opportunities" name="changeTableBtn" type="radio" value="opportunities"
+               class="btn changeTableBtn">
+    </label>
+    <label>
+        employees
+        <input data-table="employees" name="changeTableBtn" type="radio" value="employees" class="btn changeTableBtn">
+    </label>
+    <div class="dropDownDateRangeContainer">
+        <div id="changeTableCombobox" class="choseDateRange dropDownDateRange">
+            <div class="item">email</div>
+            <div class="item">color</div>
+            <div class="item">type</div>
+            <span class="selectArrow"></span>
+        </div>
+    </div>
 
     <button class="btn importBtn">Upload File</button>
     <div id="forImport"></div>

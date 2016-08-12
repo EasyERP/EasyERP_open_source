@@ -61,6 +61,7 @@ define([
             this.stage = usersImport.stage || 1;
             this.map = {};
 
+
             this.render();
             this.selectStage();
         },
