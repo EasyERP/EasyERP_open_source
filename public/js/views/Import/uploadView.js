@@ -55,9 +55,15 @@ define([
         changeCombobox: function (e) {
             var thisEl = this.$el;
             var $target = $(e.target);
-            var $combobox = $('#changeTableCombobox')
+            var $combobox = $('#changeTableCombobox');
+            var dropDownAttr = $target.data('table');
 
-            $combobox.append(this.mergeFields);
+            $combobox.html('');
+
+            _.each(this.mergeFields[dropDownAttr], function (item) {
+                $combobox.append('<div class="item">' + item + '</div>');
+            });
+            $combobox.append('<span class="selectArrow"></span>');
         },
 
         importFile: function (e) {
