@@ -732,7 +732,7 @@ define([
 
                 xScale = d3.time.scale()
                     .domain([new Date(self.startDateLeads), new Date(self.endDateLeads)])
-                    .range([0, width]);
+                    .range([0, width - margin.left - margin.right]);
 
                 yScale = d3.scale.linear()
                     .domain([0, max])
@@ -793,7 +793,7 @@ define([
                         height     : function (d) {
                             return yScale(d.count)
                         },
-                        fill       : '#57D0b5',
+                        fill       : '#FEA281',
                         class: function(d){
                             return 'total_' + d._id;
                         },
@@ -836,7 +836,7 @@ define([
 
                             return yScale(d.count);
                         },
-                        fill       : '#00B4EA',
+                        fill       : '#ACC7F2',
                         'transform': 'translate(' + (-(rectWidth / 2 + 2 * offset)) + ',0)'
                     });
 
@@ -896,7 +896,7 @@ define([
                         'd'    : line,
                         'fill' : 'none'
                     })
-                    .style('stroke', '#00B4EA')
+                    .style('stroke', '#ACC7F2')
                     .style('stroke-width', 2);
 
                 barChart.selectAll('.circle')
@@ -915,7 +915,7 @@ define([
                             return yScale2(d.value * 100);
                         },
                         'r'           : 3,
-                        'fill'        : '#00B4EA',
+                        'fill'        : '#ACC7F2',
                         'stroke'      : '#fff',
                         'stroke-width': '1'
                     });
