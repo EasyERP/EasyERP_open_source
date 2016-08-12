@@ -20,7 +20,7 @@
                     <div class="dataField">
                         <input class="extrainfo blueback" type="text" name="dueDate" id="dueDate" value="<%= model.dueDate ? moment(model.dueDate).format('DD MMM, YYYY') : null%>" readonly/>
                         <div class="inputDateActionBlock">
-                            <input class="time" maxlength="2" name="Hours" id="timepickerOne" value="<%= model.dueDate ? moment(model.dueDate).hours() : null%>" placeholder="Hours"/>
+                            <input class="time" maxlength="2" name="Hours" id="timepickerOne" value="<%= model.dueDate ? moment(model.dueDate).hours() : null%>" placeholder="Hours" readonly/>
                          </div>
                     </div>
                 </div>

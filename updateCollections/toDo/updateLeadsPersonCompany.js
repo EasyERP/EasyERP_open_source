@@ -3,7 +3,7 @@ var async = require('async');
 var isoWeekYearComposer = require('../../helpers/isoWeekYearComposer');
 require('../../models/index.js');
 var connectOptions = {
-    user: 'easyErp',
+    user: 'easyerp',
     pass: '1q2w3e!@#',
     w   : 1,
     j   : true
@@ -37,16 +37,17 @@ dbObject.once('open', function callback() {
 
         async.eachLimit(res, 20, function (data, cb) {
             data = data.toJSON();
-
-            Customer.findById(data.customer, function (err, customer) {
+            if (data.customer) {
+                Customer.findById(data.customer, function (err, customer) {
                     if (err) {
                         return cb(err);
                     }
 
-                    if (customer.type === 'Company') {
+                    if (customer && (customer.type === 'Company')) {
                         Opportunitie.findByIdAndUpdate(data._id, {
                             $set: {
-                                company: customer._id
+                                company: customer._id,
+                                customer : null
                             }
                         }, function (err) {
                             if (err) {
@@ -57,8 +58,11 @@ dbObject.once('open', function callback() {
                     } else {
                         cb();
                     }
-                }
-            );
+                });
+            } else {
+                cb();
+            }
+
 
         }, function (err, res) {
             if (err) {

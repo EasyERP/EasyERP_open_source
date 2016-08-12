@@ -135,47 +135,6 @@ require(['Backbone', 'jQuery', 'Underscore', 'app'], function (Backbone, $, _, a
         }
     };
 
-    $.widget('ui.paddedspinner', $.ui.spinner, {
-        widgetEventPrefix: 'spin',
-        options: {
-            padCount: 2,
-            padString: '0'
-        },
-
-        _parse: function( value ) {
-            return +value;
-        },
-
-        _format: function( value ) {
-            var str = value + '';
-            while ( str.length < this.options.padCount )
-                str = this.options.padString + str;
-            return str;
-        }
-    });
-
-    $.widget('ui.ampmspinner', $.ui.spinner, {
-        widgetEventPrefix: 'spin',
-        options: {
-            max: 1,
-            min: 0,
-            alignment: 'vertical'
-        },
-
-        _parse: function( value ) {
-
-            if ( typeof value === 'string') {
-                return value == 'AM' ? 0 : 1;
-            }
-            return value;
-        },
-
-        _format: function( value ) {
-            return value === 0 ? 'AM' : 'PM';
-        }
-
-    });
-
     Date.prototype.getWeek = function () {
         // Create a copy of this date object
         var target = new Date(this.valueOf());

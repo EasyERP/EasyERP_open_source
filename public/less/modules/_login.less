@@ -2092,10 +2092,10 @@ table {
 
 
 .inputDateActionBlock {
-  margin-top: 15px;
+  //margin-top: 15px;
 
   .timepicker {
-    width: 220px !important;
+    //width: 220px !important;
     height: 34px;
     padding: 6px;
     border: 1px solid #c2cad8;
@@ -2153,6 +2153,7 @@ table {
         a, input {
           padding: 0;
           min-height: 30px;
+          line-height: 30px;
         }
       }
     }
@@ -2188,5 +2189,65 @@ td.editable {
 .propertyFormList {
   .social {
     margin-top: 0;
+  }
+}
+
+.addTaskTitle {
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+
+._taskTimeBlock {
+
+  .inputDateActionBlock {
+    float: left;
+
+    .timepicker {
+      border: none;
+      height: auto;
+    }
+  }
+
+  ._taskDueDate,
+  #timepickerOne {
+    width: 100px !important;
+    text-align: left !important;
+  }
+}
+
+.addTaskTitle {
+  display: flex;
+  align-items: center;
+
+  >label {
+    width: auto !important;
+    height: auto !important;
+  }
+  > .current-selected {
+    line-height: 30px;
+    margin-right: 10px;
+  }
+
+  ._taskTimeBlock {
+    display: flex;
+    align-items: center;
+
+    #categoryHolder {
+      margin-right: 20px;
+    }
+  }
+}
+
+.selectCompany {
+  position: relative;
+
+  ._companySaveButton {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
   }
 }

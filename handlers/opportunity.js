@@ -818,6 +818,9 @@ var Module = function (models, event) {
             if (data.customer) {
                 _opportunitie.customer = data.customer;
             }
+            if (data.company) {
+                _opportunitie.company = data.company;
+            }
             if (data.address) {
                 if (data.address.street) {
                     _opportunitie.address.street = data.address.street;
@@ -2154,6 +2157,7 @@ var Module = function (models, event) {
 
 
                         result.populate('salesPerson')
+                            .populate('company')
                             .populate('customer', function (){
                                 var lead = result.toJSON();
                                 historyWriter.addEntry(historyOptions, function () {

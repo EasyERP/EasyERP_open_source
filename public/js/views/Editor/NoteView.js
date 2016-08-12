@@ -37,7 +37,7 @@ define([
             'click .fa-circle-o'                               : 'completeTask',
             'click .editDelNote'                               : 'editDelNote',
             'click .fa-paperclip'                              : 'clickInput',
-            'click .chart-tabs'                                : 'changeTab',
+            'click .chart-tabs li'                             : 'changeTab',
             'click .current-selected:not(.jobs)'               : 'showNewSelect',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
         },
@@ -435,21 +435,6 @@ define([
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true
-            });
-
-            this.$el.find('#taskTime').ampmspinner();
-            this.$el.find('#taskTime').on('keypress', function(){
-                $(this).val(arrType[$(this).val()]);
-            })
-            this.$el.find('#dueDateHours').paddedspinner({
-                alignment: 'vertical',
-                min: 1,
-                max: 12
-            });
-            this.$el.find('#dueDateMinutes, #dueDateSeconds').paddedspinner({
-                alignment: 'vertical',
-                min: 0,
-                max: 59
             });
         },
 
