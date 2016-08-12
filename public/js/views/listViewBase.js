@@ -329,7 +329,7 @@ define([
             if (this.exportToCsvUrl) {
                 tempExportToCsvUrl = this.exportToCsvUrl;
 
-                tempExportToCsvUrl += helpers.makeFilterString(this.filter, this.contentType);
+                tempExportToCsvUrl += helpers.makeFilterString(this.filter, this.type);
 
                 window.location = tempExportToCsvUrl;
             } else {
@@ -337,9 +337,9 @@ define([
                     hasSlash = this.collection.url.substr(-1) === '/';
 
                     if (hasSlash) {
-                        window.location = this.collection.url + 'exportToCsv' + helpers.makeFilterString(this.filter, this.contentType);
+                        window.location = this.collection.url + 'exportToCsv' + helpers.makeFilterString(this.filter, this.type);
                     } else {
-                        window.location = this.collection.url + '/exportToCsv' + helpers.makeFilterString(this.filter, this.contentType);
+                        window.location = this.collection.url + '/exportToCsv' + helpers.makeFilterString(this.filter, this.type);
                     }
                 }
             }
@@ -352,7 +352,7 @@ define([
             if (this.exportToXlsxUrl) {
                 tempExportToXlsxUrl = this.exportToXlsxUrl;
 
-                tempExportToXlsxUrl += helpers.makeFilterString(this.filter, this.contentType);
+                tempExportToXlsxUrl += helpers.makeFilterString(this.filter, this.type);
 
                 window.location = tempExportToXlsxUrl;
             } else {
@@ -360,9 +360,9 @@ define([
                     hasSlash = this.collection.url.substr(-1) === '/';
 
                     if (hasSlash) {
-                        window.location = this.collection.url + 'exportToXlsx' + helpers.makeFilterString(this.filter, this.contentType);
+                        window.location = this.collection.url + 'exportToXlsx' + helpers.makeFilterString(this.filter, this.type);
                     } else {
-                        window.location = this.collection.url + '/exportToXlsx' + helpers.makeFilterString(this.filter, this.contentType);
+                        window.location = this.collection.url + '/exportToXlsx' + helpers.makeFilterString(this.filter, this.type);
                     }
                 }
             }

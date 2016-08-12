@@ -21,6 +21,7 @@ define([
         contentType      : 'Employees',
         formUrl          : '#easyErp/Employees/',
         letterKey        : 'name.last',
+        type: 'Employees',
 
         initialize: function (options) {
             this.startTime = options.startTime;

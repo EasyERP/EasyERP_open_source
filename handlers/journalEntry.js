@@ -1192,7 +1192,7 @@ var Module = function (models, event) {
         };
 
         function lookupForWTrack(cb) {
-            var query = [/*{$match: type ? {type: type} : {}}*/];
+            var query = [{$match: type ? {type: type} : {}}];
             var i;
 
             query.push({$match: matchObject});
@@ -1210,7 +1210,7 @@ var Module = function (models, event) {
         }
 
         function lookupForEmployees(cb) {
-            var query = [/*{$match: type ? {type: type} : {}}*/];
+            var query = [{$match: type ? {type: type} : {}}];
             var i;
 
             query.push({$match: matchObject});
@@ -1228,7 +1228,7 @@ var Module = function (models, event) {
         }
 
         function lookupForInvoice(cb) {
-            var query = [/*{$match: type ? {type: type} : {}}*/];
+            var query = [{$match: type ? {type: type} : {}}];
             var i;
 
             query.push({$match: matchObject});
@@ -1246,7 +1246,7 @@ var Module = function (models, event) {
         }
 
         function lookupForJobs(cb) {
-            var query = [/*{$match: type ? {type: type} : {}}*/];
+            var query = [{$match: type ? {type: type} : {}}];
             var i;
 
             query.push({$match: matchObject});
@@ -1264,7 +1264,7 @@ var Module = function (models, event) {
         }
 
         function lookupForPayments(cb) {
-            var query = [/*{$match: type ? {type: type} : {}}*/];
+            var query = [{$match: type ? {type: type} : {}}];
             var i;
 
             query.push({$match: matchObject});
