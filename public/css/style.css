@@ -2837,7 +2837,8 @@ label._customCHeckbox input[type="checkbox"] {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
-  user-select: none; }
+  user-select: none;
+  z-index: 1111; }
   .wickedpicker:before, .wickedpicker:after {
     content: '';
     position: absolute;

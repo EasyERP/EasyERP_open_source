@@ -4226,6 +4226,15 @@ td.editable {
 .addTaskTitle ._taskTimeBlock #categoryHolder {
   margin-right: 20px;
 }
+.selectCompany {
+  position: relative;
+}
+.selectCompany ._companySaveButton {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  cursor: pointer;
+}
 .collapsed .sideMenu {
   width: 40px !important;
   margin-right: -100%;

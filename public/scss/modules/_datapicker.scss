@@ -14,6 +14,8 @@
   -ms-user-select: none;
   user-select: none;
 
+  z-index: 1111;
+
   &:before,
   &:after {
     content: '';
