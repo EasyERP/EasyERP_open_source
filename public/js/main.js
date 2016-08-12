@@ -34,8 +34,7 @@ require.config({
         moment       : './libs/moment/moment',
         socketio     : '/socket.io/socket.io.js',
         backstratch  : './libs/jquery-backstretch/jquery.backstretch.min',
-        wickedpicker  : './libs/ericjgagnon-wickedpicker-d7a87c9/src/wickedpicker'
-
+        wickedpicker : './libs/wickedpicker/wickedpicker'
     },
 
     shim: {

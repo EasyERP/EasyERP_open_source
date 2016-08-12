@@ -10,10 +10,6 @@
                             <div class="_modalSelect"><input type="text" class="title-input blueback" id="name" placeholder="Describe the lead..." required maxlength="48"/></div>
                         </div>
                         <div class="_modalList">
-                            <div class="_modalLabel"><label for="customerDd">Customer</label></div>
-                            <div class="_modalSelect _newSelectListWrap"><a id="customerDd" class="current-selected" href="javascript:;">Select</a></div>
-                        </div>
-                        <div class="_modalList">
                             <div class="_modalLabel"><label for="sourceDd">Source</label></div>
                             <div class="_modalSelect _newSelectListWrap"><a id="sourceDd" class="current-selected" href="javascript:;">Select</a></div>
                         </div>
@@ -35,7 +31,10 @@
                         </div>
                     </div>
                     <div class="_listModalColumn">
-                        <div class="_listModalTitle"><label><b>Contact</b></label></div>
+                        <div class="_listModalTitle"><label><b>Person</b></label></div>
+                        <div class="_modalList">
+                            <div class="_modalSelect _newSelectListWrap"><a id="customerDd" class="current-selected" href="javascript:;">Select</a></div>
+                        </div>
                         <div class="_modalList">
                             <div class="_modalLabel"><label for="first">First Name </label></div>
                             <div class="_modalSelect"><input type="text" class="name" id="first" placeholder="First Name" maxlength="32"/></div>
@@ -71,6 +70,9 @@
                     </div>
                     <div class="_listModalColumn">
                         <div class="_listModalTitle"><label><b>Company</b></label></div>
+                        <div class="_modalList">
+                            <div class="_modalSelect _newSelectListWrap"><a id="companyDd" class="current-selected" href="javascript:;">Select</a></div>
+                        </div>
                         <div class="_modalList">
                             <div class="_modalLabel"><label for="company">Name</label></div>
                             <div class="_modalSelect"><input type="text" id="company" data-id="" placeholder="Company name" maxlength="32"/></div>

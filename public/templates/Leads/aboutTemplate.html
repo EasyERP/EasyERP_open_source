@@ -7,8 +7,8 @@
 <div class="person-info">
     <div class="propertyFormList">
         <label>Name</label>
-        <div class="inputBox">
-            <input class="editable" data-id="name" value="<%=model.name%>"/>
+        <div  class="inputBox">
+            <input class="editable"  id="name" value="<%=model.name%>"/>
         </div>
     </div>
     <div class="propertyFormList">
@@ -48,8 +48,13 @@
         </div>
     </div>
 
-    <div class="separateBlock">Contact</div>
-
+    <div class="separateBlock">Person</div>
+    <div class="propertyFormList">
+        <label></label>
+        <div class="inputBox _newSelectListWrap">
+            <a class="current-selected assignName"  href="javascript:;" id="customerDd"  data-id="customer"><%=model.customer ? model.customer.fullName : 'Select'%></a>
+        </div>
+    </div>
     <div class="propertyFormList">
         <label>First Name</label>
         <div class="inputBox">
@@ -110,6 +115,12 @@
      </div>-->
 
     <div class="separateBlock">Company</div>
+    <div class="propertyFormList">
+        <label></label>
+        <div class="inputBox _newSelectListWrap">
+            <a class="current-selected assignName"  href="javascript:;" id="companyDd"  data-id="customer"><%=model.company ? model.company.fullName : 'Select'%></a>
+        </div>
+    </div>
 
     <div class="propertyFormList">
         <label>Name</label>

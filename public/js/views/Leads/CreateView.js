@@ -34,6 +34,31 @@ define([
             this.$el.find('.input-file .inputAttach').click();
         },
 
+        selectCompany: function (id) {
+            if (id !== '') {
+                dataService.getData(CONSTANTS.URLS.CUSTOMERS, {
+                    id: id
+                }, function (response, context) {
+                    var customer = response;
+                        context.$el.find('#company').val(customer.name.first);
+                        context.$el.find('#street').val(customer.address.street);
+                        context.$el.find('#city').val(customer.address.city);
+                        context.$el.find('#state').val(customer.address.state);
+                        context.$el.find('#zip').val(customer.address.zip);
+                        context.$el.find('#country').val(customer.address.country);
+
+                }, this);
+            } else {
+                this.$el.find('#street').val('');
+                this.$el.find('#city').val('');
+                this.$el.find('#state').val('');
+                this.$el.find('#zip').val('');
+                this.$el.find('#country').val('');
+                this.$el.find('#company').val('');
+            }
+
+        },
+
         selectCustomer: function (id) {
             if (id !== '') {
                 dataService.getData(CONSTANTS.URLS.CUSTOMERS, {
@@ -45,43 +70,13 @@ define([
                         context.$el.find('#last').val(customer.name.last);
                         context.$el.find('#email').val(customer.email);
                         context.$el.find('#phone').val(customer.phones.phone);
-                        context.$el.find('#LI').val(customer.social.LI.replace('[]', 'linkedin'))
-
-                        context.$el.find('#street').val('');
-                        context.$el.find('#city').val('');
-                        context.$el.find('#state').val('');
-                        context.$el.find('#zip').val('');
-                        context.$el.find('#country').val('');
-
-                        context.$el.find('#company').val('');
-                    } else {
-                        context.$el.find('#company').val(customer.name.first);
-
-                        context.$el.find('#first').val('');
-                        context.$el.find('#last').val('');
-                        context.$el.find('#email').val('');
-                        context.$el.find('#phone').val('');
-                        context.$el.find('#mobile').val('');
-                        context.$el.find('#LI').val('');
-                        context.$el.find('#street').val(customer.address.street);
-                        context.$el.find('#city').val(customer.address.city);
-                        context.$el.find('#state').val(customer.address.state);
-                        context.$el.find('#zip').val(customer.address.zip);
-                        context.$el.find('#country').val(customer.address.country);
-
+                        context.$el.find('#LI').val(customer.social.LI.replace('[]', 'linkedin'));
                     }
-
                 }, this);
             } else {
                 this.$el.find('#email').val('');
                 this.$el.find('#phone').val('');
-                this.$el.find('#mobile').val('');
-                this.$el.find('#street').val('');
-                this.$el.find('#city').val('');
-                this.$el.find('#state').val('');
-                this.$el.find('#zip').val('');
-                this.$el.find('#country').val('');
-                this.$el.find('#company').val('');
+                this.$el.find('#LI').val('');
                 this.$el.find('#first').val('');
                 this.$el.find('#last').val('');
             }
@@ -93,6 +88,9 @@ define([
             holder.text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
             if (holder.attr('id') === 'customerDd') {
                 this.selectCustomer($(e.target).attr('id'));
+            }
+            if (holder.attr('id') === 'companyDd') {
+                this.selectCompany($(e.target).attr('id'));
             }
         },
 
@@ -129,7 +127,7 @@ define([
             var salesTeamId = this.$el.find('#salesTeam option:selected').val();
             var first = $.trim(this.$el.find('#first').val());
             var last = $.trim(this.$el.find('#last').val());
-            var tempCompany = $.trim(this.$el.find('#company').val())
+            var tempCompany = $.trim(this.$el.find('#company').val());
             var contactName = {
                 first: first,
                 last : last
@@ -293,7 +291,8 @@ define([
                 self.responseObj['#priorityDd'] = priorities;
             });
             populate.getWorkflow('#workflowsDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'Leads'}, 'name', this, true);
-            populate.get2name('#customerDd', CONSTANTS.URLS.CUSTOMERS, {}, this, true, true);
+            populate.get2name('#customerDd', CONSTANTS.URLS.CUSTOMERS, {type : 'Person'}, this, true, true);
+            populate.get2name('#companyDd', CONSTANTS.URLS.CUSTOMERS, {type : 'Company'}, this, true, true);
             populate.get('#sourceDd', '/employees/sources', {}, 'name', this, true, true);
             populate.get('#campaignDd', '/Campaigns', {}, 'name', this, true, true);
             dataService.getData('/employees/getForDD', {isEmployee: true}, function (employees) {
