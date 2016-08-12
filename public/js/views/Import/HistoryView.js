@@ -23,7 +23,6 @@ define([
             this.collection = options.collection;
 
             ListBaseView.prototype.initialize.call(this, options);
-            ///_.bind(this.collection.showMore, this.collection);
 
             this.collection.bind('showMore', this.render, this);
         },

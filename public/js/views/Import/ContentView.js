@@ -12,6 +12,7 @@ define([
     'views/Import/uploadView',
     'views/Import/mappingContentView',
     'views/Import/previewContentView',
+    'views/Import/comparingContentView',
     'dataService',
     'helpers/eventsBinder',
     'constants'
@@ -28,6 +29,7 @@ define([
              UploadView,
              MappingContentView,
              PreviewView,
+             ComparingView,
              dataService,
              eventsBinder,
              CONSTANTS) {
@@ -102,10 +104,10 @@ define([
                 e.preventDefault();
 
                 if ($target.hasClass('left')) {
-                    --this.stage;
+                    this.stage = this.stage > 1 ? --this.stage : 1;
 
                 } else {
-                    ++this.stage;
+                    this.stage = this.stage < 4 ? ++this.stage : 4;
                 }
             }
 
@@ -157,7 +159,10 @@ define([
 
                 }
             } else if (this.stage === 4) {
-                this.startImport();
+
+                this.startImport(function() {
+                    self.childView = new ComparingView({timeStamp: self.timeStamp});
+                });
             }
 
             this.changeStage(this.stage);
@@ -221,6 +226,7 @@ define([
             }
 
         },
+
 
         render: function () {
             var $thisEl = this.$el;
