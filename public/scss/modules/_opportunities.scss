@@ -404,7 +404,11 @@
     border: none !important;
     text-align: right;
     cursor: pointer;
-    margin-top: 8px !important;
+    //margin-top: 8px !important;
+
+    ._taskDueDate {
+
+    }
   }
 
   .current-selected {

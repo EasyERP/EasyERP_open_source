@@ -1896,7 +1896,7 @@ body {
 }
 .ui-autocomplete-input {
   height: 24px;
-  line-height: 24;
+  line-height: 24px;
   overflow: hidden;
   display: block;
 }
@@ -4127,11 +4127,7 @@ table.kanban tbody td:nth-child(n+2) {
 .search-view {
   position: relative;
 }
-.inputDateActionBlock {
-  margin-top: 15px;
-}
 .inputDateActionBlock .timepicker {
-  width: 220px !important;
   height: 34px;
   padding: 6px;
   border: 1px solid #c2cad8;
@@ -4171,6 +4167,7 @@ table.kanban tbody td:nth-child(n+2) {
 .ui-dialog ._listModalWrap ._listModal ._modalSelect input {
   padding: 0;
   min-height: 30px;
+  line-height: 30px;
 }
 .ui-dialog .form-holder._listModalWrap {
   padding: 10px;
@@ -4192,6 +4189,42 @@ td.editable {
 }
 .propertyFormList .social {
   margin-top: 0;
+}
+.addTaskTitle:after {
+  content: '';
+  display: table;
+  clear: both;
+}
+._taskTimeBlock .inputDateActionBlock {
+  float: left;
+}
+._taskTimeBlock .inputDateActionBlock .timepicker {
+  border: none;
+  height: auto;
+}
+._taskTimeBlock ._taskDueDate,
+._taskTimeBlock #timepickerOne {
+  width: 100px !important;
+  text-align: left !important;
+}
+.addTaskTitle {
+  display: flex;
+  align-items: center;
+}
+.addTaskTitle > label {
+  width: auto !important;
+  height: auto !important;
+}
+.addTaskTitle > .current-selected {
+  line-height: 30px;
+  margin-right: 10px;
+}
+.addTaskTitle ._taskTimeBlock {
+  display: flex;
+  align-items: center;
+}
+.addTaskTitle ._taskTimeBlock #categoryHolder {
+  margin-right: 20px;
 }
 .collapsed .sideMenu {
   width: 40px !important;
@@ -11796,7 +11829,6 @@ ul.dialog-tabs li.right button {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
   padding: 0 4px;
-  box-sizing: border-box;
   color: #000000;
 }
 .form-holder form input:not([type=checkbox]):focus {

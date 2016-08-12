@@ -40,18 +40,20 @@
                 <div class="addTaskTitle _newSelectListWrap">
                     <label>Assigned To</label>
                     <a  href="javascript:;"  class="current-selected" data-id="<%= assignedTo ? assignedTo._id : '' %>" id="assignedToDd"><%= assignedTo ? assignedTo.fullName : 'Select' %></a>
-                    <div id="categoryHolder"></div>
-                    <div class="inputDateActionBlock">
-                        <input type="text" id="timepickerOne" name="timepicker-one" class="timepicker"/>
+                    <div class="_taskTimeBlock">
+                        <div id="categoryHolder" class="left"></div>
+                        <div class="inputDateActionBlock">
+                            <input type="text" id="timepickerOne" name="timepicker-one" class="timepicker"/>
+                        </div>
+                        <input type="text" class="date _taskDueDate" id="taskDueDate"
+                               value="<%= date %>" maxlength="32"
+                               placeholder="Date" readonly/>
                     </div>
-                    <input type="text" class="date" id="taskDueDate"
-                           value="<%= date %>" maxlength="32"
-                           placeholder="Date"readonly/>
                 </div>
                 <div class="area_holder">
                     <textarea id="taskArea" class="taskArea personsTaskArea" placeholder="Description..." maxlength="500"></textarea>
                     <a href="javascript:;" class="attach_file">
-                        <i class="fa fa-paperclip" aria-hidden="true"></i>
+                        <span class="fa fa-paperclip" aria-hidden="true"></span>
                     </a>
                 </div>
                 <div class="buttons">

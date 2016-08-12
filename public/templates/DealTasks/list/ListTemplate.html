@@ -6,7 +6,9 @@
     <td><%=task.dueDate%></td>
     <td><div class="dealTableDescription"><%=task.description%></div></td>
     <td id='stages_<%=task._id%>'>
-        <a href="javascript:;" class="stageSelect"><%=(task.workflow) ? task.workflow.name : 'Undefinded'%></a>
+        <div class="_newSelectListWrap">
+            <a href="javascript:;" class="stageSelect"><%=(task.workflow) ? task.workflow.name : 'Undefinded'%></a>
+        </div>
     </td>
     <td><%=(task.category) ? task.category.name : ''%></td>
     <td><%=(task.assignedTo) ? task.assignedTo.name.first + ' ' + task.assignedTo.name.last : ''%></td>

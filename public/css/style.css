@@ -2204,8 +2204,7 @@ label._customCHeckbox input[type="checkbox"] {
   float: right;
   border: none !important;
   text-align: right;
-  cursor: pointer;
-  margin-top: 8px !important; }
+  cursor: pointer; }
 .addTask .current-selected {
   font-weight: bold;
   margin-left: 5px;
