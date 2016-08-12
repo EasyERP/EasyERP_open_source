@@ -9,8 +9,8 @@ var connectOptions = {
     j   : true
 };
 
-var dbObject = mongoose.createConnection('144.76.56.111', 'pavlodb', 28017, connectOptions);
-//var dbObject = mongoose.createConnection('erp.thinkmobiles.com', 'production', 27017, connectOptions);
+//var dbObject = mongoose.createConnection('144.76.56.111', 'pavlodb', 28017, connectOptions);
+var dbObject = mongoose.createConnection('localhost', 'production', 27017, connectOptions);
 
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 
@@ -26,26 +26,27 @@ dbObject.once('open', function callback() {
     customerSchema = mongoose.Schemas.Customer;
     Opportunitie = dbObject.model('Opportunities', opportunitySchema);
     Customer = dbObject.model('Customer', customerSchema);
-    var count= 0;
+    var count = 0;
 
-    Opportunitie.find({$and : [{isOpportunitie: false},{  tempCompanyName : null}, {contactName    : null},{$or : [{customer      : {$ne: null}},{company      : {$ne: null}}]}]
-
-    })
+    Opportunitie.find({isOpportunitie: false, tempCompanyField: '', 'contactName.first': ''})
         .populate('customer')
-        .populate('comapny')
-        .exec( function (error, res) {
-        if (error) {
-            return console.dir(error);
-        }
+        .populate('company')
+        .exec(function (error, res) {
+            if (error) {
+                return console.dir(error);
+            }
 
-            res.forEach(function(elem){
-                if(elem.isHidden){
-                    count++
+            res.forEach(function (elem) {
+                if (elem.customer && elem.customer.isHidden) {
+                    count++;
+                }
+                if (elem.company && elem.company.isHidden) {
+                    count++;
                 }
             });
 
             console.log(count);
-    });
+        });
 });
 
 
