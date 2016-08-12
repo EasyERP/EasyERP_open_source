@@ -1,83 +1,90 @@
 .wickedpicker {
+  display: none;
+
+  position: relative;
+  padding: 4px;
+  margin: 10px auto 0;
+  background: #fff;
+  border: 1px solid #eee;
+  box-shadow: 5px 5px rgba(102,102,102,.1);
+  font-size: 14px;
+
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  box-shadow: 5px 5px rgba(102,102,102,.1);
-  border: 1px solid #eee;
-  background: #fff;
-  margin: 10px auto 0;
-  position: relative;
-  width: 175px;
-  height: 115px;
-  font-size: 14px;
-  display: none;
+
+  &:before,
+  &:after {
+    content: '';
+    position: absolute;
+    display: inline-block;
+  }
 
   &:before {
+    top: -7px;
+    left: 9px;
     border-bottom: 7px solid rgba(0,0,0,0.2);
     border-left: 7px solid transparent;
     border-right: 7px solid transparent;
-    content: "";
-    display: inline-block;
-    left: 9px;
-    position: absolute;
-    top: -7px;
   }
   &:after {
+    top: -6px;
+    left: 10px;
     border-bottom: 6px solid #fff;
     border-left: 6px solid transparent;
     border-right: 6px solid transparent;
-    content: "";
-    display: inline-block;
-    left: 10px;
-    position: absolute;
-    top: -6px;
   }
 
-  &__title {
-    display: none;
-  }
-  &__close {
-    display: none;
-  }
   &__controls {
-    padding: 10px 0;
-    line-height: normal;
     margin: 0;
+    line-height: normal;
   }
 }
 
 .wickedpicker__controls__control,
 .wickedpicker__controls__control--separator {
-  vertical-align: middle;
   display: inline-block;
-  font-size: inherit;
   margin: 0 auto;
-  width: 35px;
-  letter-spacing: 1.3px;
+  font-size: inherit;
+  vertical-align: middle;
+  letter-spacing: 1px;
 }
+
 .wickedpicker__controls__control-up,
 .wickedpicker__controls__control-down {
-  font-family: 'FontAwesome';
-  color: #34495e;
-  position: relative;
   display: block;
-  margin: 3px auto;
+  height: 30px;
+  line-height: 30px;
+  width: 30px;
+  margin: 0 auto;
+  border: 1px solid transparent;
+  color: #34495e;
   font-size: 18px;
+  font-family: 'FontAwesome';
   cursor: pointer;
+  &:hover {
+    text-decoration: none;
+    background-color: #eee;
+    border-color: #ddd;
+    color: #34495e;
+  }
 }
+
 .wickedpicker__controls__control-up:before {
   content: "\f106";
 }
+
 .wickedpicker__controls__control-down:after {
   content: "\f107";
 }
+
 .wickedpicker__controls__control--separator {
-  width: 5px;
+  width: 10px;
+  line-height: 78px;
 }
 
 .text-center,
-.wickedpicker__title,
 .wickedpicker__controls,
 .wickedpicker__controls__control,
 .wickedpicker__controls__control--separator,
@@ -85,11 +92,6 @@
 .wickedpicker__controls__control-down {
   text-align: center;
 }
-
-.hover-state {
-  color: #3498db;
-}
-
 
 .clearable-picker {
   position: relative;

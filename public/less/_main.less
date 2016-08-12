@@ -2119,8 +2119,8 @@ input::-ms-clear {
     margin-top: 0;
   }
   input:not([type=checkbox]) {
-    border: @thin-border @border-color-main;
-    width: 100%;
+    //border: @thin-border @border-color-main;
+    //width: 100%;
     max-width: 280px;
     background-color: transparent;
     font-family: Arial, Helvetica, sans-serif;
@@ -2470,17 +2470,15 @@ input::-ms-clear {
   }
 }
 
-input, textarea, select {
+input,
+textarea,
+select {
   &:not([type="checkbox"]) {
+    width: 100%;
     padding: 0 4px; //big cells in BonusType
     border: 1px solid #c8c8d3;
     background-color: inherit;
     color: @mainText-color;
-    &:focus {
-      //.box-shadow(0, 0, 5px, rgba(82, 168, 236, 0.5));
-      //outline: none;
-      //border: @thin-border @border-color-selected;
-    }
   }
 }
 
@@ -2489,67 +2487,6 @@ input, textarea, select {
   font-size: 13px;
   text-decoration: none;
 }
-
-//.newSelectList {
-//  position: absolute !important;
-//  border: solid 1px @border-color-main;
-//  background-color: @bg-main;
-//  padding: 3px 0;
-//  z-index: 100;
-//
-//  li {
-//    margin: 0;
-//    padding: 3px 16px 5px;
-//    cursor: pointer;
-//    font-size: 12px;
-//    text-align: left;
-//    color: @grey;
-//
-//    &.testing,
-//    &.analysis {
-//      background-color: #D9FFC8 !important;
-//    }
-//
-//    &.merge {
-//      color: #C00 !important;
-//      background-color: #FFE3E3 !important;
-//    }
-//
-//    &.design {
-//      color: #000 !important;
-//      background-color: #FFEA73 !important;
-//    }
-//
-//    &.cancelled {
-//      color: #FFF !important;
-//      background-color: #C00 !important;
-//    }
-//
-//    &.done {
-//      color: #000 !important;
-//      background-color: #BEF624 !important;
-//    }
-//
-//    &.selected {
-//      color: #f3f3f3;
-//      background-color: #545454;
-//    }
-//
-//    &:hover {
-//      background-color: lighten(@bg-main, 5%) !important;
-//      border: 0 !important;
-//      color: #FF5A00 !important;
-//    }
-//  }
-//
-//  &.stage {
-//    left: 0;
-//  }
-//
-//  &.taskPriority {
-//    left: -15px;
-//  }
-//}
 
 .icon {
   font-size: 20px;
