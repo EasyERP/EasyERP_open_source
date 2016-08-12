@@ -5382,7 +5382,8 @@ input::-ms-clear {
 .kanban .opportunity-header {
   margin-bottom: 7px;
 }
-.kanban .opportunity-header h3 {
+.kanban .opportunity-header > h3 {
+  float: right;
   text-align: right;
 }
 .kanban .opportunity-header h4 {
