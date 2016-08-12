@@ -1,35 +1,42 @@
-<table class="list _importLoadHistory">
-    <thead>
-        <tr>
-            <% if (data.keys.length) { %>
+<div>
+    <div class="_loadHistoryTopTable tableResponsive">
+        <table class="list _importLoadHistory">
+            <thead>
+            <tr>
+                <% if (data.keys.length) { %>
                 <% _.each(data.keys, function(item){ %>
-                    <td>
-                        <%= item %>
-                    </td>
+                <td>
+                    <%= item %>
+                </td>
                 <% }) %>
-            <% } %>
-        </tr>
-    </thead>
-    <% _.each(data.result, function(comparingData, comparingDataKey) { %>
-        <tbody data-group="<%= comparingDataKey %>" style="background-color: hsl( <%= Math.floor(Math.random() * (360 - 1)) + 1 %> , 50%, 80%)">
+                <% } %>
+            </tr>
+            </thead>
+            <% _.each(data.result, function(comparingData, comparingDataKey) { %>
+            <tbody data-group="<%= comparingDataKey %>" style="background-color: hsl( <%= Math.floor(Math.random() * (360 - 1)) + 1 %> , 50%, 80%)">
             <% _.each(comparingData, function(comparingDataObj, comparingDataObjKey) { %>
-                <tr data-id="<%= comparingDataObj['importId'] %>">
-                    <% _.each(data.keys, function(key) { %>
-                        <td>
-                            <% if (comparingDataObj[key]) { %>
-                                <% if ((comparingDataObj[key]).toString().indexOf('data:image/') === -1) { %>
-                                    <%= comparingDataObj[key] %>
-                                <% } else { %>
-                                    <div class="_importTableImg">
-                                        <img src="<%= comparingDataObj[key] %>">
-                                    </div>
-                                <% } %>
-                            <% } %>
-                        </td>
-                    <% }) %>
-                </tr>
+            <tr data-id="<%= comparingDataObj['importId'] %>">
+                <% _.each(data.keys, function(key) { %>
+                <td>
+                    <% if (comparingDataObj[key]) { %>
+                    <% if ((comparingDataObj[key]).toString().indexOf('data:image/') === -1) { %>
+                    <%= comparingDataObj[key] %>
+                    <% } else { %>
+                    <div class="_importTableImg">
+                        <img src="<%= comparingDataObj[key] %>">
+                    </div>
+                    <% } %>
+                    <% } %>
+                </td>
+                <% }) %>
+            </tr>
             <% }) %>
-        </tbody>
-    <% }) %>
-</table>
-<button id="stepByStepButton" class="btn btnSave right">StepByStep</button>
+            </tbody>
+            <% }) %>
+        </table>
+    </div>
+</div>
+    <div>
+        <button id="stepByStepButton" class="btn btnSave right">StepByStep</button>
+    </div>
+

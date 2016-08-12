@@ -4,11 +4,16 @@
 
   }
   ._importListBody {
-    height: 450px;
+
   }
   ._importListFooter {
 
   }
+}
+
+._loadHistoryTopTable {
+  height: 450px;
+  margin-bottom: 20px;
 }
 
 ._contentBlock,
@@ -24,6 +29,7 @@
   display: -ms-flexbox;
   display: -webkit-flex;
   display: flex;
+
 
   ._contentBlock {
     -webkit-flex-grow: 1;
