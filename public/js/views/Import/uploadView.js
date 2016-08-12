@@ -22,7 +22,8 @@ define([
         events: {
             'click .importBtn'   : 'importFile',
             'change .inputAttach': 'importFiles',
-            'change .changeTableBtn' : 'changeCombobox'
+            'change .changeTableBtn' : 'changeCombobox',
+            'click #changeTableCombobox': 'changeTableCombobox'
         },
 
         initialize: function (options) {
@@ -72,6 +73,12 @@ define([
 
             $thisEl.find('#inputAttach').click();
 
+        },
+
+        changeTableCombobox: function (e) {
+            var $combobox = $('#changeTableCombobox');
+
+            $combobox.toggleClass('open');
         },
 
         importFiles: function (e) {
