@@ -1,26 +1,28 @@
 define([
     'Underscore'
 ], function (_) {
-    function makeFilterString(filter, contentType) {
-        var filterString;
+    function makeFilterString(filter, type) {
+        var filterString = '';
 
-        if (filter && contentType) {
-            filterString = '/?type=' + contentType + '&filter=' + encodeURIComponent(JSON.stringify(filter));
+        if (filter && type) {
+            filterString = '/?type=' + type + '&filter=' + encodeURIComponent(JSON.stringify(filter));
 
             return filterString;
         }
 
-        if (filter && !contentType) {
+        if (filter && !type) {
             filterString = '/?filter=' + encodeURIComponent(JSON.stringify(filter));
 
             return filterString;
         }
 
-        if (!filter && contentType) {
-            filterString = '/?type=' + contentType;
+        if (!filter && type) {
+            filterString = '/?type=' + type;
 
             return filterString;
         }
+
+        return filterString;
     }
 
     function minFromDates(arrayOfDates) {
