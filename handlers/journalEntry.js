@@ -1153,7 +1153,7 @@ var Module = function (models, event) {
 
     this.exportToXlsx = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
-        var filter = JSON.parse(req.params.filter);
+        var filter = req.query.filter ? JSON.parse(req.query.filter) : JSON.stringify({});
         var filterObj = {};
         var type = req.query.type;
         var options;
@@ -1303,7 +1303,7 @@ var Module = function (models, event) {
 
     this.exportToCsv = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
-        var filter = JSON.parse(req.params.filter);
+        var filter = req.query.filter ? JSON.parse(req.query.filter) : JSON.stringify({});
         var filterObj = {};
         var type = req.query.type;
         var options;

@@ -326,6 +326,8 @@ module.exports = function (models, event) {
      }
      */
     router.get('/getCompaniesAlphabet', handler.getCompaniesAlphabet);
+    router.get('/exportToXlsx', handler.exportToXlsx);
+    router.get('/exportToCsv', handler.exportToCsv);
 
     /**
      *@api {get} /customers/:id Request the Customer
@@ -533,8 +535,6 @@ module.exports = function (models, event) {
      */
 
     router.post('/uploadFiles', accessStackMiddleware, multipartMiddleware, handler.uploadFile);
-    // router.get('/exportToXlsx', handler.exportToXlsx);
-    // router.get('/exportToCsv', handler.exportToCsv);
 
     /**
      *@api {post} /companies/ Request for creating new company
