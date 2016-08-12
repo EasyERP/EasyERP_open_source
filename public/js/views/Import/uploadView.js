@@ -72,6 +72,8 @@ define([
             var $combobox = $('#changeTableCombobox');
             var dropDownAttr = $target.data('table');
 
+            this.entity = $target.val();
+
             $combobox.html('');
 
             _.each(this.mergeFields[dropDownAttr], function (item) {
