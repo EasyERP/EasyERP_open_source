@@ -78,11 +78,18 @@ module.exports = function (moduleId, models) {
     };
     var aditionalCheck = function (req) {
         var query = req.query;
+        var body = req.body;
         var filter = query.filter;
         var forSalesObject = filter ? filter.forSales : null;
 
-        if (forSalesObject) {
-            return forSalesObject.value[0] === 'true';
+        if (body && body.forSales) {
+            return !!body.forSales;
+        } else if (query && query.forSales) {
+            return !!query.forSales;
+        } else {
+            if (forSalesObject) {
+                return forSalesObject.value[0] === 'true';
+            }
         }
 
         return !!query.canBeSold;

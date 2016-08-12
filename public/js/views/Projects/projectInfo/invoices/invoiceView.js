@@ -207,7 +207,8 @@ define([
                 data: {
                     id       : id,
                     currentDb: App.currentDb,
-                    viewType : 'form'
+                    viewType : 'form',
+                    forSales : true
                 },
 
                 success: function (model) {

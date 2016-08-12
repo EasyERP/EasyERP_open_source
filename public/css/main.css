@@ -1814,20 +1814,21 @@ body {
   display: block;
   position: relative;
   border: 1px solid #7f7f80;
-  padding: 2px 0 2px 26px;
+  padding-left: 26px;
   border-radius: 3px;
 }
 #searchFilterContainer {
   float: left;
   width: auto;
-  height: 20px;
+  height: 24px;
   overflow: hidden;
 }
 .ui-autocomplete {
   position: absolute;
-  cursor: default;
-  left: -1px !important;
+  top: 28px !important;
+  left: 0 !important;
   width: 100% !important;
+  cursor: default;
 }
 .ui-menu {
   list-style: none;
@@ -1850,52 +1851,52 @@ body {
   display: block;
   padding: .2em .4em;
 }
-.ui-menu .ui-autocomplete-category {
-  margin: .3em 0 0;
+.ui-menu > .ui-autocomplete-category {
+  margin: 0;
   padding: 0;
   line-height: 1.5;
   float: left;
   width: 100%;
+  border: 1px solid #7f7f80;
 }
-.ui-menu .ui-autocomplete-category:last-child {
-  padding-bottom: .3em;
+.ui-menu > .ui-autocomplete-category:nth-child(n+2) {
+  border-top: none;
 }
-.ui-menu .ui-autocomplete-category .searchGroupDropDown {
+.ui-menu > .ui-autocomplete-category .searchGroupDropDown {
   float: left;
   width: 14px;
   height: 14px;
-  padding: 3px 0px 3px 6px;
+  padding: 3px 0 3px 6px;
   line-height: 1;
   cursor: pointer;
   top: 0;
   left: 0;
 }
-.ui-menu .ui-autocomplete-category .searchGroupDropDown:before {
+.ui-menu > .ui-autocomplete-category .searchGroupDropDown:before {
   content: '\f0d7';
   font-family: 'FontAwesome';
 }
-.ui-menu .ui-autocomplete-category .searchGroupResult {
+.ui-menu > .ui-autocomplete-category .searchGroupResult {
   display: block;
   line-height: 20px;
   width: 100%;
 }
-.ui-menu .ui-autocomplete-category .ui-widget-content {
+.ui-menu > .ui-autocomplete-category .ui-widget-content {
   float: left;
-  margin: .3em 0 0;
-  padding: .3em 0;
   display: block;
   width: 100%;
   border: none;
   border-top: 1px solid #7f7f80;
-  border-bottom: 1px solid #7f7f80;
   overflow: auto;
   max-height: 143px;
 }
-.ui-menu .ui-autocomplete-category .ui-widget-content li {
+.ui-menu > .ui-autocomplete-category .ui-widget-content > li {
   padding-left: 25px;
+  line-height: 20px;
 }
 .ui-autocomplete-input {
-  height: 20px;
+  height: 24px;
+  line-height: 24;
   overflow: hidden;
   display: block;
 }
@@ -2503,13 +2504,6 @@ body {
 .salary-list tbody tr td:nth-child(2),
 .subSalary-list tbody tr td:nth-child(2) {
   text-align: left;
-}
-.vocationFilter {
-  position: relative;
-  float: left;
-  margin-left: 15px;
-  height: 100%;
-  width: 210px;
 }
 .settings_modal .check_wrap {
   float: left;
@@ -3231,9 +3225,9 @@ input:not([type="checkbox"]).inputBordered:focus {
   display: inline-block;
   float: left;
   padding: 0 5px;
-  height: 14px;
-  line-height: 14px;
-  font-size: 10px;
+  height: 18px;
+  line-height: 18px;
+  font-size: 14px;
   color: #fff;
   border-radius: 3px;
 }
@@ -3248,7 +3242,7 @@ input:not([type="checkbox"]).inputBordered:focus {
   vertical-align: middle;
   height: 20px;
   line-height: 16px;
-  margin-bottom: 5px;
+  margin: 5px 0;
   padding: 2px 5px;
   cursor: pointer;
   font-size: 12px;
@@ -3568,8 +3562,21 @@ dl.payrollDateBlock dt {
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  height: 100%;
+  height: calc(100vh - 90px);
   border-bottom: 1px solid #ededed;
+}
+.listWrap.leadsList .name {
+  color: #508bbd;
+  font-size: 15px;
+  font-family: 'Open Sans Bold', sans-serif, Verdana;
+}
+.listWrap.opportunitiesList .opportunity {
+  color: #508bbd;
+  font-size: 15px;
+  font-family: 'Open Sans Bold', sans-serif, Verdana;
+}
+.listWrap.opportunitiesList .revenue {
+  font-size: 10px;
 }
 .listWrap.personList .firstName {
   color: #508bbd;
@@ -3593,13 +3600,13 @@ dl.payrollDateBlock dt {
 .listWrap.companiesList .compactRowWrap {
   min-height: 60px;
 }
-.listWrap.opportunitiesList .opportunity {
+.listWrap.quotationsList .firstName,
+.listWrap.ordersList .firstName,
+.listWrap.invoicesList .firstName,
+.listWrap.proformaList .firstName {
   color: #508bbd;
   font-size: 15px;
   font-family: 'Open Sans Bold', sans-serif, Verdana;
-}
-.listWrap.opportunitiesList .revenue {
-  font-size: 10px;
 }
 .listWrap .form-holder {
   padding: 10px;
@@ -3771,6 +3778,9 @@ td.checkboxRow {
   line-height: 26px !important;
   font-size: 13px;
   color: #fff;
+}
+#top-bar ._filterDropDownWrap {
+  margin-top: 7px;
 }
 .dropDown {
   position: relative;
@@ -4100,7 +4110,7 @@ table.kanban tbody td:nth-child(n+2) {
 .formContent .btn.positioned {
   position: absolute;
   top: 5px;
-  left: 411px;
+  left: 311px;
 }
 .dealTableDescription {
   max-width: 800px;
@@ -4141,8 +4151,58 @@ table.kanban tbody td:nth-child(n+2) {
 .superCenter {
   margin: auto;
 }
+.workflowProgress {
+  height: 44px;
+}
 ._borderRight {
   border-right: 1px solid #c8c8d3;
+}
+.separateBlock {
+  margin-top: 10px;
+  font-family: 'Open Sans SemiBold', sans-serif, Verdana;
+  text-align: center;
+}
+._listModalColumn {
+  width: 33.333%;
+  padding: 0 10px;
+  float: left;
+}
+._listModal:after {
+  content: '';
+  display: table;
+  clear: both;
+}
+._modalSelect {
+  position: relative;
+}
+.ui-dialog ._listModalWrap ._listModal {
+  padding: 0;
+}
+.ui-dialog ._listModalWrap ._listModal ._modalSelect a,
+.ui-dialog ._listModalWrap ._listModal ._modalSelect input {
+  padding: 0;
+  min-height: 30px;
+}
+.ui-dialog .form-holder._listModalWrap {
+  padding: 10px;
+}
+.attach_file {
+  cursor: pointer;
+  color: #7eadcc;
+}
+td.editable {
+  position: relative;
+}
+.grid-conatiner {
+  height: calc(100% - 35px);
+}
+._gridTableWrap {
+  position: relative;
+  height: calc(100% - 100px);
+  overflow: auto;
+}
+.propertyFormList .social {
+  margin-top: 0;
 }
 .collapsed .sideMenu {
   width: 40px !important;
@@ -4479,10 +4539,7 @@ table.kanban tbody td:nth-child(n+2) {
   text-overflow: ellipsis;
   box-sizing: border-box;
   color: #000000;
-  font-size: 10px;
-}
-.list2 td {
-  overflow: hidden;
+  font-size: 12px;
 }
 .list2 thead tr {
   border: none;
@@ -4490,13 +4547,13 @@ table.kanban tbody td:nth-child(n+2) {
   vertical-align: middle;
 }
 .list2 thead th {
-  font-size: 10px;
+  font-size: 12px;
   font-family: 'Open Sans SemiBold', sans-serif, Verdana;
   text-align: right;
 }
 .list2 tbody td {
   text-align: right;
-  height: 50px;
+  height: 45px;
 }
 .list2 tbody td.changeContent {
   border-top: 2px solid #5cb85c;
@@ -4588,10 +4645,7 @@ table.kanban tbody td:nth-child(n+2) {
   text-overflow: ellipsis;
   box-sizing: border-box;
   color: #000000;
-  font-size: 10px;
-}
-.list2 td {
-  overflow: hidden;
+  font-size: 12px;
 }
 .list2 thead tr {
   border: none;
@@ -4599,13 +4653,13 @@ table.kanban tbody td:nth-child(n+2) {
   vertical-align: middle;
 }
 .list2 thead th {
-  font-size: 10px;
+  font-size: 12px;
   font-family: 'Open Sans SemiBold', sans-serif, Verdana;
   text-align: right;
 }
 .list2 tbody td {
   text-align: right;
-  height: 50px;
+  height: 45px;
 }
 .list2 tbody td.changeContent {
   border-top: 2px solid #5cb85c;
@@ -4729,11 +4783,6 @@ table.kanban tbody td:nth-child(n+2) {
   margin-right: -100%;
 }
 .content_wrapper {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  height: calc(100% - 40px);
-  width: calc(100% - 200px);
   display: -webkit-box;
   display: -moz-box;
   display: -ms-flexbox;
@@ -4742,6 +4791,11 @@ table.kanban tbody td:nth-child(n+2) {
   -webkit-flex-direction: column;
   -ms-flex-direction: column;
   flex-direction: column;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  height: calc(100% - 40px);
+  width: calc(100% - 200px);
 }
 .template-switcher {
   margin-top: 6px;
@@ -5328,7 +5382,7 @@ input::-ms-clear {
 .kanban .column {
   min-height: 100%;
   width: auto;
-  min-width: 160px;
+  min-width: 250px;
   max-width: 400px;
   height: auto;
   vertical-align: top;
@@ -5719,7 +5773,7 @@ input::-ms-clear {
 }
 .workflow-list-wrapper,
 .workflow-sub-list-wrapper {
-  width: 12%;
+  width: 170px;
 }
 #details > dl,
 #sub-details > dl {
@@ -5746,10 +5800,15 @@ input::-ms-clear {
 #sub-details .listWorkflow {
   margin-left: 20px;
 }
-#profileTableWrapper,
+#profileTableWrapper {
+  width: calc( 100% - 170px);
+}
+#profileTableWrapper .list thead tr {
+  border-top: 1px solid #7f7f80;
+}
 #workflowAccord,
 #workflowSubAccord {
-  width: 88%;
+  width: calc( 100% - 170px);
 }
 #profileTableWrapper table thead th:first-of-type {
   width: auto;
@@ -5757,9 +5816,19 @@ input::-ms-clear {
 #content-holder .inner-holder {
   margin: 20px;
 }
+#content-holder .inner-holder:after {
+  content: '';
+  display: table;
+  clear: both;
+}
 #profileTableWrapper table {
-  width: 95%;
-  margin: auto;
+  width: calc(100% - 20px);
+  margin: 0 0 0 20px;
+}
+.workflow-sub-list li {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .workflow-list,
 .workflow-sub-list {
@@ -5769,13 +5838,10 @@ input::-ms-clear {
 }
 .workflow-list li,
 .workflow-sub-list li {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  border: 1px solid rgba(0, 0, 0, 0);
-  border-right-color: #7f7f80;
+  position: relative;
   height: 40px;
   line-height: 40px;
+  border: 1px solid transparent;
 }
 .workflow-list li:hover:not(.quickEdit),
 .workflow-sub-list li:hover:not(.quickEdit) {
@@ -5797,8 +5863,8 @@ input::-ms-clear {
 }
 .workflow-list li.active,
 .workflow-sub-list li.active {
-  border: 1px solid #7f7f80;
-  border-right: none;
+  border-color: #7f7f80;
+  border-right-color: transparent;
   display: list-item;
 }
 .workflow-list li.active.first,
@@ -5809,9 +5875,23 @@ input::-ms-clear {
 .workflow-sub-list li.active:hover {
   background-color: #d9d9d9;
 }
+.workflow-list li.active:after,
+.workflow-sub-list li.active:after {
+  display: none;
+}
 .workflow-list li.active a,
 .workflow-sub-list li.active a {
   text-decoration: none;
+}
+.workflow-list li:after,
+.workflow-sub-list li:after {
+  content: '';
+  position: absolute;
+  right: -1px;
+  top: -1px;
+  width: 1px;
+  height: 40px;
+  background-color: #7f7f80;
 }
 .workflow-list li a,
 .workflow-sub-list li a {
@@ -5838,6 +5918,13 @@ input::-ms-clear {
   position: relative;
   top: -30px;
 }
+.workflow-list li.active {
+  line-height: 38px;
+  font-family: 'Open Sans SemiBold', sans-serif, Verdana;
+}
+.workflow-list li.active:hover {
+  background-color: #fff;
+}
 /*-----------------------------Styles--------------------------------*/
 /*-----------------------------All--------------------------------*/
 @-moz-document url-prefix() {
@@ -5855,7 +5942,12 @@ input::-ms-clear {
   display: table-row;
 }
 #modulesAccessTable tr.parent {
-  color: #000000;
+  background-color: #7eadcc;
+  border-color: #fff;
+}
+#modulesAccessTable tr.parent td {
+  color: #fff;
+  font-family: 'Open Sans SemiBold', sans-serif, Verdana;
 }
 *:focus {
   outline: 0 !important;
@@ -5892,59 +5984,9 @@ select:not([type="checkbox"]) {
   color: #000000;
 }
 .current-selected {
+  position: relative;
   font-size: 13px;
   text-decoration: none;
-  line-height: 26px !important;
-}
-.newSelectList {
-  position: absolute !important;
-  border: solid 1px #7f7f80;
-  background-color: #ffffff;
-  padding: 3px 0;
-  z-index: 100;
-}
-.newSelectList li {
-  margin: 0;
-  padding: 3px 16px 5px;
-  cursor: pointer;
-  font-size: 12px;
-  text-align: left;
-  color: #4d5a75;
-}
-.newSelectList li.testing,
-.newSelectList li.analysis {
-  background-color: #D9FFC8 !important;
-}
-.newSelectList li.merge {
-  color: #C00 !important;
-  background-color: #FFE3E3 !important;
-}
-.newSelectList li.design {
-  color: #000 !important;
-  background-color: #FFEA73 !important;
-}
-.newSelectList li.cancelled {
-  color: #FFF !important;
-  background-color: #C00 !important;
-}
-.newSelectList li.done {
-  color: #000 !important;
-  background-color: #BEF624 !important;
-}
-.newSelectList li.selected {
-  color: #f3f3f3;
-  background-color: #545454;
-}
-.newSelectList li:hover {
-  background-color: #ffffff !important;
-  border: 0 !important;
-  color: #FF5A00 !important;
-}
-.newSelectList.stage {
-  left: 0;
-}
-.newSelectList.taskPriority {
-  left: -15px;
 }
 .icon {
   font-size: 20px;
@@ -6025,9 +6067,6 @@ dl dd {
   min-height: 18px;
   float: left;
   width: 65%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 dl dd p {
   word-wrap: break-word;
@@ -6101,9 +6140,6 @@ dl dd span.ui-spinner {
   display: block;
   position: relative;
   border: 1px solid #7f7f80;
-}
-.form #internalNotes {
-  resize: none;
 }
 .form #differenceAmount {
   line-height: 26px;
@@ -6399,9 +6435,6 @@ dl dd span.ui-spinner {
   height: 30px;
   line-height: 26px;
   color: #000000;
-}
-.form input {
-  margin: 2px 2px 2px 0;
 }
 .form textarea {
   width: 99%;
@@ -6766,9 +6799,6 @@ dl dd span.ui-spinner {
   min-height: 18px;
   float: left;
   width: 70%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form .job-info dd p {
   word-wrap: break-word;
@@ -6822,9 +6852,6 @@ dl dd span.ui-spinner {
   min-height: 18px;
   float: left;
   width: 60%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form .opp-info dd p {
   word-wrap: break-word;
@@ -6881,9 +6908,6 @@ dl dd span.ui-spinner {
   min-height: 18px;
   float: left;
   width: 80%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form .internal-info dd p {
   word-wrap: break-word;
@@ -6942,9 +6966,6 @@ dl dd span.ui-spinner {
   min-height: 18px;
   float: left;
   width: 80%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form .assignees-info dd p {
   word-wrap: break-word;
@@ -6996,9 +7017,6 @@ dl dd span.ui-spinner {
   position: relative;
   border: 0 solid #7f7f80;
   margin-bottom: 10px;
-}
-.formLeftColumn .form #internalNotes {
-  resize: none;
 }
 .formLeftColumn .form #differenceAmount {
   line-height: 26px;
@@ -7294,9 +7312,6 @@ dl dd span.ui-spinner {
   height: 30px;
   line-height: 26px;
   color: #000000;
-}
-.formLeftColumn .form input {
-  margin: 2px 2px 2px 0;
 }
 .formLeftColumn .form textarea {
   width: 99%;
@@ -7646,9 +7661,6 @@ dl dd span.ui-spinner {
   border: 0 solid #7f7f80;
   margin-bottom: 10px;
 }
-.formRightColumn .form #internalNotes {
-  resize: none;
-}
 .formRightColumn .form #differenceAmount {
   line-height: 26px;
 }
@@ -7943,9 +7955,6 @@ dl dd span.ui-spinner {
   height: 30px;
   line-height: 26px;
   color: #000000;
-}
-.formRightColumn .form input {
-  margin: 2px 2px 2px 0;
 }
 .formRightColumn .form textarea {
   width: 99%;
@@ -8495,8 +8504,9 @@ dl dd span.ui-spinner {
 }
 #wrapper #content-holder {
   position: relative;
-  height: calc(100% - 41px);
+  height: calc(100% - 40px);
   width: 100%;
+  flex-grow: 1;
 }
 #startLetter {
   height: 20px;
@@ -8558,9 +8568,6 @@ dl dd span.ui-spinner {
   min-height: 18px;
   float: left;
   width: 65%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .settings-info dd p {
   word-wrap: break-word;
@@ -8620,9 +8627,6 @@ dl dd span.ui-spinner {
   min-height: 18px;
   float: left;
   width: 60%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .project-edit-info dd p {
   word-wrap: break-word;
@@ -8676,9 +8680,6 @@ dl dd span.ui-spinner {
   min-height: 18px;
   float: left;
   width: 65%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .quotation-info dd p {
   word-wrap: break-word;
@@ -8735,9 +8736,6 @@ dl dd span.ui-spinner {
   min-height: 18px;
   float: left;
   width: 60%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .edit-employee-info dd p {
   word-wrap: break-word;
@@ -10416,10 +10414,7 @@ ul.dialog-tabs li.right button {
   text-overflow: ellipsis;
   box-sizing: border-box;
   color: #000000;
-  font-size: 10px;
-}
-.list td {
-  overflow: hidden;
+  font-size: 12px;
 }
 .list thead tr {
   border: none;
@@ -10427,13 +10422,13 @@ ul.dialog-tabs li.right button {
   vertical-align: middle;
 }
 .list thead th {
-  font-size: 10px;
+  font-size: 12px;
   font-family: 'Open Sans SemiBold', sans-serif, Verdana;
   text-align: right;
 }
 .list tbody td {
   text-align: right;
-  height: 50px;
+  height: 45px;
 }
 .list tbody td.changeContent {
   border-top: 2px solid #5cb85c;
@@ -10692,7 +10687,6 @@ ul.dialog-tabs li.right button {
 }
 #modulesAccessTable td.mname {
   text-align: left;
-  border-left: 1px solid #7f7f80;
 }
 #ui-datepicker-div {
   border-radius: 0 !important;
@@ -11003,9 +10997,6 @@ ul.dialog-tabs li.right button {
   min-height: 18px;
   float: left;
   width: 0%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .ui-dialog .app-empty-info dd p {
   word-wrap: break-word;
@@ -11070,9 +11061,6 @@ ul.dialog-tabs li.right button {
   min-height: 18px;
   float: left;
   width: 50%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .ui-dialog .person-info-h3 dd p {
   word-wrap: break-word;
@@ -11144,9 +11132,6 @@ ul.dialog-tabs li.right button {
   min-height: 18px;
   float: left;
   width: 70%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .ui-dialog .summary-info dd p {
   word-wrap: break-word;
@@ -11456,9 +11441,6 @@ ul.dialog-tabs li.right button {
   min-height: 18px;
   float: left;
   width: 0%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .ui-dialog .app-empty-info dd p {
   word-wrap: break-word;
@@ -11523,9 +11505,6 @@ ul.dialog-tabs li.right button {
   min-height: 18px;
   float: left;
   width: 50%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .ui-dialog .person-info-h3 dd p {
   word-wrap: break-word;
@@ -11597,9 +11576,6 @@ ul.dialog-tabs li.right button {
   min-height: 18px;
   float: left;
   width: 70%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .ui-dialog .summary-info dd p {
   word-wrap: break-word;
@@ -11787,9 +11763,6 @@ ul.dialog-tabs li.right button {
   min-height: 18px;
   float: left;
   width: 60%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form-holder form dd p {
   word-wrap: break-word;
@@ -11835,8 +11808,6 @@ ul.dialog-tabs li.right button {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
   padding: 0 4px;
-  margin-top: 1px;
-  margin-bottom: 1px;
   box-sizing: border-box;
   color: #000000;
 }
@@ -11939,9 +11910,9 @@ ul.dialog-tabs .withEndContract {
 }
 ul.dialog-tabs .withEndContract .newSelectList {
   display: none;
-  width: 112px;
-  margin-top: 22px;
+  width: 115px;
   right: 0;
+  left: auto;
 }
 ul.dialog-tabs .withEndContract .newSelectList li {
   padding-left: 10px;
@@ -12513,6 +12484,11 @@ h3.dashboard {
 }
 #modulesAccessTable tr th {
   text-align: center;
+  vertical-align: top;
+  padding: 8px 0;
+}
+#modulesAccessTable tr th input[type="checkbox"] {
+  margin-top: 5px;
 }
 #timeRecivingDataFromServer,
 #timeBuildingDataFromServer {
@@ -12782,9 +12758,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 60%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form-holder form .task-info dd p {
   word-wrap: break-word;
@@ -12841,9 +12814,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 80%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form-holder form .task-summary-info dd p {
   word-wrap: break-word;
@@ -12900,9 +12870,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 50%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form-holder form .profile-create dd p {
   word-wrap: break-word;
@@ -12962,9 +12929,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 58%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form-holder form .project-edit-info dd p {
   word-wrap: break-word;
@@ -13027,9 +12991,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 58%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form-holder form .job-create-info dd p {
   word-wrap: break-word;
@@ -13064,10 +13025,10 @@ a.cancelled {
   border: 1px solid transparent;
   box-shadow: none;
 }
-.form-holder form .create-employee-info input {
+.form-holder form .create-employee-info > input {
   max-width: 117px !important;
 }
-.form-holder form .create-employee-info select {
+.form-holder form .create-employee-info > select {
   max-width: 130px !important;
 }
 .form-holder form .subject-info {
@@ -13103,9 +13064,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 90%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form-holder form .subject-info dd p {
   word-wrap: break-word;
@@ -13126,7 +13084,7 @@ a.cancelled {
 .form-holder form .subject-info dd span.ui-spinner {
   width: 100%;
 }
-.form-holder form .subject-info input {
+.form-holder form .subject-info > input {
   max-width: inherit !important;
   width: 99% !important;
   margin-right: 1%;
@@ -13170,9 +13128,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 60%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form-holder form .opprtunitie-info dd p {
   word-wrap: break-word;
@@ -13193,10 +13148,10 @@ a.cancelled {
 .form-holder form .opprtunitie-info dd span.ui-spinner {
   width: 100%;
 }
-.form-holder form .opprtunitie-info input {
+.form-holder form .opprtunitie-info > input {
   max-width: 250px !important;
 }
-.form-holder form .opprtunitie-info select {
+.form-holder form .opprtunitie-info > select {
   width: 95% !important;
   max-width: 240px !important;
 }
@@ -13236,9 +13191,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 80%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form-holder form .opprtunitie-lead-info dd p {
   word-wrap: break-word;
@@ -13259,10 +13211,10 @@ a.cancelled {
 .form-holder form .opprtunitie-lead-info dd span.ui-spinner {
   width: 100%;
 }
-.form-holder form .opprtunitie-lead-info input {
+.form-holder form .opprtunitie-lead-info > input {
   max-width: 231px !important;
 }
-.form-holder form .opprtunitie-lead-info select {
+.form-holder form .opprtunitie-lead-info > select {
   width: 95% !important;
   max-width: 240px !important;
 }
@@ -13296,8 +13248,8 @@ a.cancelled {
   box-shadow: none !important;
   border: none !important;
 }
-.form-holder form .startDate input,
-.form-holder form .endDate input {
+.form-holder form .startDate > input,
+.form-holder form .endDate > input {
   display: none;
 }
 #workflows {
@@ -13391,9 +13343,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 70%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form .job-info dd p {
   word-wrap: break-word;
@@ -13447,9 +13396,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 60%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form .opp-info dd p {
   word-wrap: break-word;
@@ -13506,9 +13452,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 80%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form .internal-info dd p {
   word-wrap: break-word;
@@ -13567,9 +13510,6 @@ a.cancelled {
   min-height: 18px;
   float: left;
   width: 80%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 .form .assignees-info dd p {
   word-wrap: break-word;
@@ -13614,8 +13554,9 @@ a.cancelled {
 }
 .newSelectList .miniStylePagination {
   position: relative;
-  text-align: center;
+  line-height: 28px;
   min-width: 160px;
+  text-align: center;
 }
 .newSelectList .miniStylePagination:hover {
   background-color: white;
@@ -13623,7 +13564,8 @@ a.cancelled {
 .newSelectList .miniStylePagination .next,
 .newSelectList .miniStylePagination .prev {
   position: absolute;
-  top: 4px;
+  top: 6px;
+  line-height: normal;
 }
 .newSelectList .miniStylePagination .next.disabled,
 .newSelectList .miniStylePagination .prev.disabled {
@@ -13637,6 +13579,14 @@ a.cancelled {
 }
 .newSelectList .miniStylePagination span {
   padding: 0;
+}
+.newSelectList > input#selectInput {
+  height: 24px;
+  width: 100% !important;
+  margin: 0;
+  float: left;
+  border: 0;
+  border-bottom: 1px solid #7f7f80;
 }
 .blue {
   color: #3e88b9;
@@ -14221,10 +14171,6 @@ textarea#editInput {
   color: #eb759e;
 }
 .grid-conatiner .statisticsAtten.stick {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  width: calc(100% - 200px);
   background-color: #ffffff;
   padding-top: 10px;
 }
@@ -14704,7 +14650,7 @@ textarea#editInput {
   min-width: 230px;
   top: calc(100% - 1px);
   right: 0;
-  z-index: 500;
+  z-index: 1;
 }
 .search-options .filter-dialog-tabs {
   box-sizing: border-box;
@@ -14789,6 +14735,8 @@ textarea#editInput {
 .drop-down-filter #filtersContent .filterGroup li.miniStylePagination {
   list-style: none;
   border-top: 1px solid #7f7f80;
+  line-height: 12px;
+  padding: 5px 8px;
 }
 .drop-down-filter #filtersContent .filterGroup li.miniStylePagination .prev.disabled,
 .drop-down-filter #filtersContent .filterGroup li.miniStylePagination .next.disabled {
@@ -14903,11 +14851,12 @@ textarea#editInput {
   display: list-item;
 }
 #searchContainer {
-  position: absolute;
-  top: -40px;
+  position: fixed;
+  top: 45px;
   right: 0;
   width: 35%;
   margin-right: 90px;
+  z-index: 1;
 }
 #searchContainer.dashBoardVocationSearch {
   position: static;
@@ -14922,8 +14871,8 @@ textarea#editInput {
 #searchContainer .filter-check-list {
   margin-top: -1px;
 }
-.content-holder #searchContainer {
-  top: -34px;
+.content-holder {
+  overflow: auto;
 }
 .removeValues {
   cursor: pointer;
@@ -15055,6 +15004,7 @@ textarea#editInput {
   display: inline-block;
   padding-right: 17px;
   margin-right: 3px;
+  margin-top: 2px;
   border: 1px solid #7f7f80;
   border-radius: 3px;
   line-height: 18px;
@@ -15237,12 +15187,19 @@ textarea#editInput {
 }
 .fired {
   background-color: rgba(235, 0, 4, 0.73) !important;
+  color: #fff!important;
 }
 .text-left {
   text-align: left !important;
 }
 .text-right {
   text-align: right !important;
+}
+.blueText {
+  color: #3e88b9;
+}
+.textGrey {
+  color: #9a9a9e;
 }
 .bgRed {
   background-color: #eb5a46 !important;
