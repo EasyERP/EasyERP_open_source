@@ -178,7 +178,7 @@ define([
                 changeMonth: true,
                 changeYear : true
             });
-            this.$el.find('#timePicker').wickedpicker({
+            this.$el.find('#timepickerOne').wickedpicker({
                 showSeconds: true,
                 secondsInterval: 1,
                 minutesInterval: 1
