@@ -448,7 +448,7 @@ var Module = function (models) {
         var titleArray;
         var mappedFields;
         var skippedArray = [];
-        var importedIds = [];
+        var importedCount = 0;
         var headerItem;
         var criteria = {
             user: userId
@@ -511,6 +511,8 @@ var Module = function (models) {
                                 skippedArray.push(
                                     item
                                 );
+                            } else {
+                                importedCount++;
                             }
 
                             idsForRemove.push(item.importId);
@@ -549,7 +551,7 @@ var Module = function (models) {
                 }
 
             ], function (err) {
-                var imported = importedIds.length;
+                var imported = importedCount;
                 var skipped = skippedArray.length;
 
                 if (err) {

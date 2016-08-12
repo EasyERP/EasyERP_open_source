@@ -159,24 +159,27 @@ define([
 
                 }
             } else if (this.stage === 4) {
-                this.startImport(function (err, data) {
-                    self.childView = new ComparingView({timeStamp: self.timeStamp});
+                this.startImport(function (data) {
+                    var options = {
+                        skipped  : data.skipped,
+                        imported : data.imported,
+                        timeStamp: self.timeStamp
+                    };
+                    self.childView = new ComparingView(options);
                 });
             }
 
             this.changeStage(this.stage);
         },
 
-        startImport: function () {
+        startImport: function (callback) {
             var self = this;
             var currentUser = App.currentUser;
             var importData = currentUser.imports;
             var url = '/importFile/imported';
 
-            dataService.postData(url, importData, function (result) {
-                //alert('Imported: ' + result.imported + ' Skipped: ' + result.skipped);
-
-                self.historyView.collection.getFirstPage();
+            dataService.postData(url, importData, function (err, result) {
+                callback(result);
             });
 
         },
