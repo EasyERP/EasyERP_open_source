@@ -118,7 +118,6 @@ define([
             var description = $.trim($description.val());
             var dueDate = $.trim($thisEl.find('#taskDueDate').val());
             var time = moment($.trim($thisEl.find('#timepickerOne').wickedpicker('time')).split(' '), 'hh:mm:ss A');
-            var category = this.model.get('category');
 
             if (dueDate) {
                 dueDate = moment(dueDate).hours(time.get('hours')).minutes(time.get('minutes')).seconds(time.get('seconds')).toDate();
@@ -128,7 +127,7 @@ define([
                 description: description,
                 dueDate    : dueDate,
                 workflow   : CONSTANTS.NOT_STARTED_WORKFLOW,
-                category   : this.taskModel.get('category')
+                category   : this.taskModel.get('category')._id || null
             };
 
             switch (this.contentType) {
@@ -158,9 +157,12 @@ define([
                 success: function () {
                     self.model.fetch({
                         success: function () {
+                            self.taskModel = new TaskModel();
+                            self.taskModel.on('change:category', self.renderCategory, self);
                             $thisEl.find('#taskArea').val('');
                             $thisEl.find('.createHolder').removeClass('active');
                             self.renderTimeline();
+                            self.renderCategory();
                         }
                     });
                 },
