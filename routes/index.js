@@ -314,6 +314,14 @@ HTTP/1.1 200 OK
         });
     });
 
+    app.get('/nginx', function (req, res, next) {
+        var geoip = require('geoip-lite');
+        var ip = req.headers['x-real-ip'] || '127.0.0.1' ;
+        var geo = geoip.lookup(ip);
+
+        res.status(200).send(geo);
+    });
+
     function notFound(req, res, next) {
         res.status(404);
 
