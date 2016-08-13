@@ -308,16 +308,18 @@ var User = function (event, models) {
                     err.status = 400;
 
                     tracker.track({
-                        name       : 'production:login:error',
-                        status     : 301,
-                        registrType: process.env.SERVER_TYPE,
-                        server     : process.env.SERVER_PLATFORM,
-                        ip         : ip,
-                        country    : (geo) ? geo.country : '',
-                        city       : (geo) ? geo.city : '',
-                        region     : geo ? geo.region : '',
-                        login      : login,
-                        message    : err.message
+                        name         : 'production:login:error',
+                        status       : 301,
+                        registrType  : process.env.SERVER_TYPE,
+                        server       : process.env.SERVER_PLATFORM,
+                        ip           : ip,
+                        country      : (geo) ? geo.country : '',
+                        city         : (geo) ? geo.city : '',
+                        region       : geo ? geo.region : '',
+                        email        : _user.email,
+                        login        : login,
+                        subDomainName: 'production',
+                        message      : err.message
                     });
 
                     return next(err);
@@ -349,17 +351,18 @@ var User = function (event, models) {
                 res.send(200);
 
                 tracker.track({
-                    name       : 'production:login:success',
-                    status     : 301,
-                    registrType: process.env.SERVER_TYPE,
-                    server     : process.env.SERVER_PLATFORM,
-                    ip         : ip,
-                    country    : (geo) ? geo.country : '',
-                    city       : (geo) ? geo.city : '',
-                    region     : geo ? geo.region : '',
-                    login      : login,
-                    email      : user.email,
-                    message    : 'loggedIn'
+                    name         : 'production:login:success',
+                    status       : 301,
+                    registrType  : process.env.SERVER_TYPE,
+                    server       : process.env.SERVER_PLATFORM,
+                    ip           : ip,
+                    country      : (geo) ? geo.country : '',
+                    city         : (geo) ? geo.city : '',
+                    region       : geo ? geo.region : '',
+                    login        : login,
+                    email        : _user.email,
+                    subDomainName: 'production',
+                    message      : 'loggedIn'
                 });
             });
         } else {
