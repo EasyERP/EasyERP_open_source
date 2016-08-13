@@ -273,6 +273,8 @@ var User = function (event, models) {
         var err;
         var queryObject;
 
+        ip = ip || '127.0.0.1';
+
         if (login && data.pass) {
             queryObject = {
                 $or: [
@@ -284,7 +286,13 @@ var User = function (event, models) {
                 ]
             };
 
-            UserModel.findOne(queryObject, {login: 1, pass: 1, kanbanSettings: 1, profile: 1}, function (err, _user) {
+            UserModel.findOne(queryObject, {
+                login         : 1,
+                pass          : 1,
+                kanbanSettings: 1,
+                profile       : 1,
+                email         : 1
+            }, function (err, _user) {
                 var shaSum = crypto.createHash('sha256');
                 var session = req.session;
                 var lastAccess;
@@ -332,7 +340,7 @@ var User = function (event, models) {
                 lastAccess = new Date();
                 session.lastAccess = lastAccess;
 
-                UserModel.findByIdAndUpdate(_user._id, {$set: {lastAccess: lastAccess}}, {new: true}, function (err) {
+                UserModel.findByIdAndUpdate(_user._id, {$set: {lastAccess: lastAccess}}, {new: true}, function (err, user) {
                     if (err) {
                         logger.error(err);
                     }
@@ -350,6 +358,7 @@ var User = function (event, models) {
                     city       : (geo) ? geo.city : '',
                     region     : geo ? geo.region : '',
                     login      : login,
+                    email      : user.email,
                     message    : 'loggedIn'
                 });
             });
