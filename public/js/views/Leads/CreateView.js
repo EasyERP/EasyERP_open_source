@@ -40,12 +40,12 @@ define([
                     id: id
                 }, function (response, context) {
                     var customer = response;
-                        context.$el.find('#company').val(customer.name.first);
-                        context.$el.find('#street').val(customer.address.street);
-                        context.$el.find('#city').val(customer.address.city);
-                        context.$el.find('#state').val(customer.address.state);
-                        context.$el.find('#zip').val(customer.address.zip);
-                        context.$el.find('#country').val(customer.address.country);
+                    context.$el.find('#company').val(customer.name.first);
+                    context.$el.find('#street').val(customer.address.street);
+                    context.$el.find('#city').val(customer.address.city);
+                    context.$el.find('#state').val(customer.address.state);
+                    context.$el.find('#zip').val(customer.address.zip);
+                    context.$el.find('#country').val(customer.address.country);
 
                 }, this);
             } else {
@@ -128,6 +128,8 @@ define([
             var first = $.trim(this.$el.find('#first').val());
             var last = $.trim(this.$el.find('#last').val());
             var tempCompany = $.trim(this.$el.find('#company').val());
+            var company = this.$el.find('#companyDd').attr('data-id');
+
             var contactName = {
                 first: first,
                 last : last
@@ -187,32 +189,32 @@ define([
 
             });
             this.model.save({
-                name            : name,
-                skype           : skype,
-                social          : {
+                name           : name,
+                skype          : skype,
+                social         : {
                     LI: LI.replace('linkedin', '[]'),
                     FB: FB
                 },
-                tempCompanyField: tempCompany,
-                campaign        : $('#campaignDd').attr('data-id'),
-                source          : source,
-                customer        : idCustomer || null,
-                address         : address,
-                salesPerson     : salesPersonId || null,
-                expectedClosing : expectedClosing,
-                salesTeam       : salesTeamId,
-                contactName     : contactName,
-                email           : email,
-                func            : func,
-                phones          : phones,
-                fax             : fax,
-                priority        : priority,
-                notes           : notes,
-                active          : active,
-                optout          : optout,
-                reffered        : reffered,
-                workflow        : workflow,
-                groups          : {
+                company        : company,
+                campaign       : $('#campaignDd').attr('data-id'),
+                source         : source,
+                customer       : idCustomer || null,
+                address        : address,
+                salesPerson    : salesPersonId || null,
+                expectedClosing: expectedClosing,
+                salesTeam      : salesTeamId,
+                contactName    : contactName,
+                email          : email,
+                func           : func,
+                phones         : phones,
+                fax            : fax,
+                priority       : priority,
+                notes          : notes,
+                active         : active,
+                optout         : optout,
+                reffered       : reffered,
+                workflow       : workflow,
+                groups         : {
                     owner: self.$el.find('#allUsersSelect').attr('data-id') || null,
                     users: usersId,
                     group: groupsId
@@ -291,8 +293,8 @@ define([
                 self.responseObj['#priorityDd'] = priorities;
             });
             populate.getWorkflow('#workflowsDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'Leads'}, 'name', this, true);
-            populate.get2name('#customerDd', CONSTANTS.URLS.CUSTOMERS, {type : 'Person'}, this, true, true);
-            populate.get2name('#companyDd', CONSTANTS.URLS.CUSTOMERS, {type : 'Company'}, this, true, true);
+            populate.get2name('#customerDd', CONSTANTS.URLS.CUSTOMERS, {type: 'Person'}, this, true, true);
+            populate.get2name('#companyDd', CONSTANTS.URLS.CUSTOMERS, {type: 'Company'}, this, true, true);
             populate.get('#sourceDd', '/employees/sources', {}, 'name', this, true, true);
             populate.get('#campaignDd', '/Campaigns', {}, 'name', this, true, true);
             dataService.getData('/employees/getForDD', {isEmployee: true}, function (employees) {
