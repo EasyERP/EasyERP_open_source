@@ -31,30 +31,10 @@ define([
             this.step = 0;
             this.skippedArray = App.currentUser.imports.skipped;
             this.imported = App.currentUser.imports.importedCount;
-            //this.mergingArray = [];
+            this.mergedCount = 0;
 
             dataService.getData(url, {timeStamp: self.timeStamp}, function (data) {
-                //data.keys = data.keys.reverse();
                 self.data = data;
-
-                /*_.each(self.data.result, function (parent, key) {
-                    _.each(parent, function (item, key) {
-                        if (item.importId) {
-                            self.mergingArray.push({
-                                id: item.importId,
-                                action: 'skip',
-                                existId: null
-                            });
-                        } else {
-                            self.mergingArray.push({
-                                id: item._id,
-                                action: 'skip',
-                                existId: null
-                            });
-                        }
-                    });
-                });*/
-
                 self.stepKeys = Object.keys(self.data.result);
                 self.render(self.data);
             });
@@ -66,7 +46,6 @@ define([
         checkItem: function (e) {
             var $target = $(e.target);
             var $parent = $target.closest('.changeTableCombobox');
-            var dataId =
 
             $parent.find('.item').removeClass('active');
             $target.addClass('active');
@@ -98,7 +77,7 @@ define([
             };
             var stepKey = this.stepKeys[this.step];
             var result;
-            var url = '';
+            var url = 'importFile/merge';
             var $actions = this.$el.find('tr[data-id]');
 
             this.isExist = null;
@@ -124,8 +103,9 @@ define([
                 });
 
                 dataService.postData(url, {data: this.mergingArray, headerId: this.headerId} ,function(err, result) {
-                    //self.imported += result.imported;
-                    //self.skippedArray.concat(result.skippedArray);
+                    self.imported += result.imported;
+                    self.skippedArray.concat(result.skippedArray);
+                    self.mergedCount += result.mergedCount;
 
                     self.skipping(data);
                 });
@@ -135,7 +115,13 @@ define([
         },
 
         finishStep: function () {
+            var $thisEl = this.$el;
+            var self = this;
 
+            $thisEl.html(this.finishTemplate({
+                data: data,
+                step: this.step
+            }));
         },
 
         render: function (data) {
