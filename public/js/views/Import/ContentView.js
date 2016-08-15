@@ -94,6 +94,7 @@ define([
         },
 
         selectStage: function (e) {
+            var $thisEl = this.$el;
             var data;
             var $target;
             var url = '/importFile/preview';
@@ -157,6 +158,8 @@ define([
                 } else {
                     this.childView = new PreviewView({timeStamp: this.timeStamp});
                 }
+
+                $thisEl.find('.left').remove();
             } else if (this.stage === 4) {
                 if (this.childView) {
                     this.startImport(function (data) {

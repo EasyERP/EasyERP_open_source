@@ -515,8 +515,9 @@ var Module = function (models) {
                         conflictSavedItems = resultItems.map(function(item){
                             var currentItem = item.toJSON();
                             currentItem.isExist = true;
+                            currentItem._id = currentItem._id.toString();
 
-                            return currentItem;
+                            return flatten(currentItem);
                         });
 
                         parCb(null, conflictSavedItems);
