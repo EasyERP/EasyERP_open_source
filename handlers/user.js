@@ -316,7 +316,7 @@ var User = function (event, models) {
                         country      : (geo) ? geo.country : '',
                         city         : (geo) ? geo.city : '',
                         region       : geo ? geo.region : '',
-                        email        : _user.email,
+                        email        : _user ? _user.email : '', // bug on keymetrics
                         login        : login,
                         subDomainName: 'production',
                         message      : err.message
@@ -974,7 +974,7 @@ var User = function (event, models) {
 
                 result = result[0];
 
-                savedFilters = result.savedFilters || [];
+                savedFilters = result && result.savedFilters ? result.savedFilters : []; // bug on keymetrics
 
                 savedFilters = _.groupBy(savedFilters, 'contentType');
                 delete result.savedFilters;
