@@ -15,7 +15,7 @@ define([
         contentTemplate: _.template(ComparingTemplate),
 
         events: {
-            'click #stepByStepButton' : 'stepByStep'
+            'click #stepByStepButton': 'stepByStep'
         },
 
         initialize: function (options) {
@@ -23,10 +23,7 @@ define([
             var self = this;
 
             this.timeStamp = options.timeStamp;
-            this.imported = options.imported;
-            this.skipped = options.skipped;
             this.step = 0;
-
 
             dataService.getData(url, {timeStamp: self.timeStamp}, function (data) {
                 self.data = data;
@@ -39,7 +36,7 @@ define([
         stepByStep: function (e) {
             var $thisEl = this.$el;
             var data = {
-                keys: {},
+                keys  : {},
                 result: {}
             };
             var stepKey = this.stepKeys[this.step];

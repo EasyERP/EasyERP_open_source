@@ -156,17 +156,17 @@ define([
                     });
                 } else {
                     this.childView = new PreviewView({timeStamp: this.timeStamp});
-
                 }
             } else if (this.stage === 4) {
                 this.startImport(function (data) {
-                    var options = {
-                        skipped  : data.skipped,
-                        imported : data.imported,
-                        timeStamp: self.timeStamp
-                    };
+                    this.updateCurrentUser({
+                        stage          : this.stage,
+                        skipped        : data.skippedArray,
+                        importedCount  : data.imported,
+                        conflictedItems: data.conflictedItems
+                    });
 
-                    self.childView = new ComparingView(options);
+                    self.childView = new ComparingView({timeStamp: this.timeStamp});
                 });
             }
 

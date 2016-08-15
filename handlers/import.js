@@ -9,7 +9,8 @@ var Module = function (models) {
 
     var schemaObj = {
         Customers    : mongoose.Schemas.Customer,
-        Opportunities: mongoose.Schemas.Opportunitie
+        Opportunities: mongoose.Schemas.Opportunitie,
+        Employees    : mongoose.Schemas.Employee
     };
 
     var exportMap = require('../helpers/csvMap');
@@ -377,7 +378,6 @@ var Module = function (models) {
     }
 
     function compearingForMerge(savedItems, importedItems, compareFiled, callback) {
-        var conflictItemsIndex = [];
         var itemsToSave = [];
         var conflictSavedItems = [];
         var conflictItems = [];
@@ -407,9 +407,8 @@ var Module = function (models) {
                 if (importedItems[i][compareFiled] && jsonSavedItem[compareFiled] && importedItems[i][compareFiled] === jsonSavedItem[compareFiled]) {
                     conflictItemsIndex.push(i);
                     jsonSavedItem.isExists = true;
-                    if (conflictItemsIndex.indexOf(jsonSavedItem.id.toString()) === -1) {
-                        conflictItemsIndex.push(jsonSavedItem.id.toString());
-                        conflictSavedItems.push(jsonSavedItem);
+                    if (conflictSavedItems.indexOf(jsonSavedItem.id.toString()) === -1) {
+                        conflictSavedItems.push(jsonSavedItem.id.toString());
                     }
                 }
             }
@@ -418,16 +417,10 @@ var Module = function (models) {
         for (var i = 0; i <= importedItems.length - 1; i++) {
             if (conflictItemsIndex.indexOf(i) === -1) {
                 itemsToSave.push(importedItems[i]);
-            } else {
-                importedItem = importedItems[i];
-                importedItem.isExist = false;
-                conflictItems.push(importedItem);
             }
         }
 
-        resultConflictedItems = _.union(conflictItems, conflictItems);
-
-        callback(null, itemsToSave, resultConflictedItems);
+        callback(null, itemsToSave, conflictSavedItems);
     }
 
     this.getConflictedItems = function (req, res, next) {
@@ -436,7 +429,7 @@ var Module = function (models) {
         var userId = req.session.uId;
         var ImportModel = models.get(req.session.lastDb, 'Imports', ImportSchema);
         var UserModel = models.get(req.session.lastDb, 'Users', UserSchema);
-        var criteria = {user: userId};
+        var criteria = {$and: [{user: userId}]};
         var titleArray;
         var mappedFields;
         var resultArray = [];
@@ -444,59 +437,106 @@ var Module = function (models) {
         var type;
         var result;
         var conflictedData;
+        var skipped;
+        var imported;
+        var conflictedSaveItems;
+        var userImports;
+        var Model;
+
 
         if (timeStamp) {
-            criteria.timeStamp = timeStamp;
+            criteria.$and = push({timeStamp: timeStamp});
         }
+
 
         UserModel.findOne({_id: userId}, {imports: 1}, function (err, userModel) {
             if (err) {
                 return next(err);
             }
 
-            map = userModel.imports && userModel.imports.map;
+            userImports = userModel.imports || {};
+
+            map = userImports.map;
             type = map.type;
             result = map.result;
+            skipped = userImports.skipped;
+            imported = userImports.importedCount;
+            conflictedSaveItems = userImports.conflictedItems;
 
-            ImportModel
-                .find(criteria)
-                .exec(function (err, importData) {
-                    if (err) {
-                        return next(err);
-                    }
+            criteria.$and.push({_id: {$nin: skipped}});
 
-                    if (!importData.length) {
-                        res.status(404).send({result: 'Imported data not found'});
-                        return;
-                    }
+            Model = models.get(req.session.lastDb, type, schemaObj[type]);
 
-                    titleArray = importData.shift().result;
+            async.parallel({
+                conflictedUnsavedItems: function (parCb) {
+                    ImportModel
+                        .find(criteria)
+                        .exec(function (err, importData) {
+                            if (err) {
+                                return parCb(err);
+                            }
 
-                    mappedFields = mapImportFileds(result, titleArray);
+                            if (!importData.length) {
+                                res.status(404).send({result: 'Imported data not found'});
+                                return;
+                            }
 
-                    async.each(importData, function (importItem, cb) {
-                        var conflictItem;
-                        var importItemObj = importItem.toJSON().result;
+                            titleArray = importData.shift().result;
 
-                        conflictItem = prepareSaveObject(mappedFields, importItemObj);
-                        conflictItem.importId = importItem._id;
-                        resultArray.push(conflictItem);
-                        cb(null);
+                            mappedFields = mapImportFileds(result, titleArray);
 
-                    }, function (err) {
-                        if (err) {
-                            return next(err);
+                            async.each(importData, function (importItem, eachCb) {
+                                var conflictItem;
+                                var importItemObj = importItem.toJSON().result;
+
+                                conflictItem = prepareSaveObject(mappedFields, importItemObj);
+                                conflictItem.importId = importItem._id;
+                                resultArray.push(conflictItem);
+                                eachCb(null);
+
+                            }, function (err) {
+                                if (err) {
+                                    return parCb(err);
+                                }
+
+                                parCb(null);
+                            });
+                        });
+                },
+
+                conflictedSavedItems  : function (parCb) {
+                    Model.find({_id: {$in: conflictedSaveItems}}, function(err, resultItems){
+                        var conflictSavedItems;
+
+                        if (err){
+                            return parCb(err);
                         }
 
-                        conflictedData = _.groupBy(resultArray, 'name.last');
+                        conflictSavedItems = resultItems.map(function(item){
+                            var currentItem = item.toJSON();
+                            currentItem.isExist = true;
 
-                        res.status(200).send({
-                            result: conflictedData,
-                            keys  : _.values(result),
-                            type  : type
+                            return currentItem;
                         });
+
+                        parCb(null, conflictSavedItems);
+
                     });
+                }
+            }, function (err, result) {
+
+                if (err) {
+                    return next(err);
+                }
+
+                conflictedData = _.union(result.conflictedUnsavedItems, result.conflictedSavedItems);
+
+                res.status(200).send({
+                    result: conflictedData,
+                    keys  : _.values(result),
+                    type  : type
                 });
+            });
         });
     };
 
@@ -710,13 +750,13 @@ var Module = function (models) {
                             if (err) {
                                 item.reason = err.message;
                                 skippedArray.push(
-                                    item
+                                    item._id
                                 );
                             } else {
                                 importedCount++;
+                                idsForRemove.push(item.importId);
                             }
 
-                            idsForRemove.push(item.importId);
                             eachCb(null);
                         });
                     }, function (err) {
