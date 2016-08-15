@@ -159,7 +159,6 @@ define([
                     this.childView = new PreviewView({timeStamp: this.timeStamp});
                 }
 
-                $thisEl.find('.left').remove();
             } else if (this.stage === 4) {
                 if (this.childView) {
                     this.startImport(function (data) {
@@ -175,6 +174,8 @@ define([
                 } else {
                     self.childView = new ComparingView({timeStamp: self.timeStamp});
                 }
+
+                $thisEl.find('.left').remove();
             } else if (this.stage === 5) {
                 if (self.childView && self.childView.finishStep) {
                     self.childView.finishStep();

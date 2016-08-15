@@ -14,8 +14,7 @@ define([
     var comparingContentView = Backbone.View.extend({
         el             : '#contentBlock',
         contentTemplate: _.template(ComparingTemplate),
-        finishTemplate: _.template(FinishTemplate),
-
+        finishTemplate : _.template(FinishTemplate),
 
         events: {
             'click #stepByStepButton': 'stepByStep'
@@ -31,6 +30,7 @@ define([
             dataService.getData(url, {timeStamp: self.timeStamp}, function (data) {
                 self.data = data;
                 self.stepKeys = Object.keys(self.data.result);
+                self.headerId = data.headerId;
                 self.render(self.data);
             });
 

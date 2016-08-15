@@ -20,11 +20,11 @@ define([
         importView     : null,
 
         events: {
-            'click .importBtn'   : 'importFile',
-            'change .inputAttach': 'importFiles',
-            'change .changeTableBtn' : 'changeCombobox',
+            'click .importBtn'          : 'importFile',
+            'change .inputAttach'       : 'importFiles',
+            'change .changeTableBtn'    : 'changeCombobox',
             'click #changeTableCombobox': 'changeTableCombobox',
-            'click .item': 'checkItem'
+            'click .item'               : 'checkItem'
         },
 
         initialize: function (options) {
@@ -39,12 +39,12 @@ define([
                     'email',
                     'name'
                 ],
-                Customers: [
+                Customers    : [
                     'email',
                     'color',
                     'type'
                 ],
-                Employees: [
+                Employees    : [
                     'age',
                     'nationality',
                     'visibility'
@@ -111,10 +111,10 @@ define([
             fileName = $thisEl.find('#inputAttach')[0].files[0].name;
 
             importObj = {
-                fileName : fileName,
-                timeStamp: +timeStamp,
-                stage: 1,
-                type: this.entity,
+                fileName      : fileName,
+                timeStamp     : +timeStamp,
+                stage         : 1,
+                type          : this.entity,
                 comparingField: this.comparingField
             };
 
@@ -148,13 +148,13 @@ define([
             $thisEl.html(this.contentTemplate({fileName: this.fileName}));
 
             $thisEl.find('.importContainer').on('drop', function (e) {
-                    if (e.originalEvent.dataTransfer && e.originalEvent.dataTransfer.files.length) {
-                        e.preventDefault();
-                        e.stopPropagation();
+                if (e.originalEvent.dataTransfer && e.originalEvent.dataTransfer.files.length) {
+                    e.preventDefault();
+                    e.stopPropagation();
 
-                        $thisEl.find('#inputAttach').empty();
-                        $thisEl.find('#inputAttach')[0].files = e.originalEvent.dataTransfer.files;
-                    }
+                    $thisEl.find('#inputAttach').empty();
+                    $thisEl.find('#inputAttach')[0].files = e.originalEvent.dataTransfer.files;
+                }
             });
 
             $thisEl.find('.importContainer').on('dragover', function (e) {

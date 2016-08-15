@@ -508,7 +508,7 @@ module.exports = function (models) {
     router.get('/preview', imports.getForPreview);
     router.get('/history', imports.getImportHistory);
     router.get('/merge', imports.getConflictedItems);
-
+    router.post('/merge', imports.saveMergedData);
 
     return router;
 };

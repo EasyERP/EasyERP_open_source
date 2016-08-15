@@ -24,6 +24,8 @@ var Module = function (models) {
         'groups.group': true
     };
 
+    var ObjectId = mongoose.Types.ObjectId
+
     function toOneCase(item) {
         item = item ? item.toString().toLowerCase() : null;
         item = item ? item.toString().replace(/[-+=_() !@#$%^&*`{}\[\]:;.,|\\]/g, '') : null;
@@ -378,6 +380,12 @@ var Module = function (models) {
         return newObj;
     }
 
+    function deepMap(obj, mapper) {
+        return mapper(_.mapValues(obj, function (v) {
+            return _.isPlainObject(v) ? deepMap(v, mapper) : v;
+        }));
+    }
+
     function compearingForMerge(savedItems, importedItems, compareFiled, callback) {
         var itemsToSave = [];
         var conflictSavedItems = [];
@@ -504,18 +512,18 @@ var Module = function (models) {
                         });
                 },
 
-                conflictedSavedItems  : function (parCb) {
-                    Model.find({_id: {$in: conflictedSaveItems}}, function(err, resultItems){
+                conflictedSavedItems: function (parCb) {
+                    Model.find({_id: {$in: conflictedSaveItems}}, function (err, resultItems) {
                         var conflictSavedItems;
+                        var objectIdRegExp = new RegExp('(^[0-9a-fA-F]{24}$)');
 
-                        if (err){
+                        if (err) {
                             return parCb(err);
                         }
 
-                        conflictSavedItems = resultItems.map(function(item){
+                        conflictSavedItems = resultItems.map(function (item) {
                             var currentItem = item.toJSON();
                             currentItem.isExist = true;
-                            currentItem._id = currentItem._id.toString();
 
                             return flatten(currentItem);
                         });
@@ -523,6 +531,10 @@ var Module = function (models) {
                         parCb(null, conflictSavedItems);
 
                     });
+                },
+
+                getHeaderId: function (parCb) {
+                    ImportModel.findOne(parCb);
                 }
             }, function (err, resultItems) {
 
@@ -535,85 +547,113 @@ var Module = function (models) {
                 conflictedData = _.groupBy(conflictedData, 'name.last');
 
                 res.status(200).send({
-                    result: conflictedData,
-                    keys  : _.values(result),
-                    type  : type
+                    result  : conflictedData,
+                    keys    : _.values(result),
+                    type    : type,
+                    headerId: resultItems.getHeaderId || null
                 });
             });
         });
     };
 
     this.saveMergedData = function (req, res, next) {
-        var data = req.body;
-        var importIds = body.ids;
+        var body = req.body;
+        var importIds = body.data;
         var userId = req.session.uId;
-        var map = data.map || {};
-        var type = map.type;
-        var timeStamp = map.timeStamp;
-        var mapResult = map.result || {};
-        var mapFileName = data.fileName;
+        var ids = _.pluck(importIds, 'id');
+        var timeStamp = body.timeStamp;
+        var criteria = {
+            $and: [
+                {user: userId}
+            ]
+        };
         var ImportModel = models.get(req.session.lastDb, 'Imports', ImportSchema);
-        var Model = models.get(req.session.lastDb, type, schemaObj[type]);
-        var ImportHistoryModel = models.get(req.session.lastDb, 'ImportHistories', ImportHistorySchema);
         var UserModel = models.get(req.session.lastDb, 'Users', UserSchema);
+        var headerId = body.headerId;
+        var headerItem;
         var titleArray;
         var mappedFields;
-        var skippedArray = body.skippedArray || [];
-        var importedCount = body.importedCount;
-        var headerItem;
-        var criteria = {
-            user: userId
-        };
-        var saveItems = [];
+        var skippedArray = [];
+        var idsForRemove;
+        var Model;
+        var importedCount = 0;
+        var mergedCount = 0;
 
         if (timeStamp) {
-            criteria.timeStamp = timeStamp;
+            criteria.$and.push({timeStamp: timeStamp});
         }
 
-        ImportModel.find(criteria, function (err, importData) {
-            if (err) {
-                return next(err);
-            }
+        criteria.$and.push({_id: {$in: ids}});
+        criteria.$and.push({_id: headerId});
 
-            if (!importData.length) {
-                res.status(404).send({result: 'Imported data not found'});
-                return;
-            }
+        async.waterfall([
+            function (wCb) {
+                UserModel.findOne({_id: userId}, {imports: 1}, function (err, userModel) {
+                    var userImports;
 
-            headerItem = importData.shift();
-            titleArray = headerItem.result;
+                    if (err) {
+                        return wCb(err);
+                    }
 
-            mappedFields = mapImportFileds(mapResult, titleArray);
+                    userImports = userModel.imports || {};
 
-            async.waterfall([
-                function (wCb) {
-                    async.each(importData, function (importItem, cb) {
+                    wCb(null, userImports);
+                });
+            },
 
-                        if (importIds.indexOf(importItem._id) !== -1) {
-                            var saveObj;
-                            var importItemObj = importItem.toJSON().result;
+            function (userImports, wCb) {
+                ImportModel.find(criteria, function (err, importData) {
+                    var mapResult;
+                    var type = userImports.type;
 
-                            saveObj = prepareSaveObject(mappedFields, importItemObj);
-                            saveObj.importId = importItem._id;
-                            saveItems.push(saveObj);
+                    if (err) {
+                        return wCb(err);
+                    }
 
-                            cb(null);
-                        }
-                    }, function (err) {
-                        if (err) {
-                            return wCb(err);
-                        }
+                    if (!importData.length) {
+                        res.status(404).send({result: 'Imported data not found'});
+                        return;
+                    }
 
-                        wCb(null, saveItems);
+                    Model = models.get(req.session.lastDb, type, schemaObj[type]);
+
+                    mapResult = userImports.map.result;
+
+                    headerItem = _.filter(importData, function (item) {
+                        return item._id.toString() === headerId;
                     });
-                },
+                    titleArray = headerItem.result;
 
-                function (itemsToSave, wCb) {
-                    var saveModel;
-                    async.each(itemsToSave, function (item, eachCb) {
+                    mappedFields = mapImportFileds(mapResult, titleArray);
 
-                        saveModel = new Model(item);
-                        saveModel.save(function (err) {
+                    wCb(null, mappedFields, importData);
+                });
+            },
+
+            function (mappedFields, importData, wCb) {
+                var item;
+                var importItem;
+                var itemObj;
+                var saveModel;
+                var existId;
+
+                async.each(ids, function (id, eachCb) {
+                    item = _.filter(importData, function (item) {
+                        return item._id.toString() === id.id;
+                    });
+
+                    itemObj = item.toJSON().result;
+
+                    importItem = prepareSaveObject(mappedFields, itemObj);
+
+                    if (id.action === 'skip') {
+                        importItem.reason = 'Skipped by merge';
+                        skippedArray.push(importItem);
+                        eachCb(null);
+                        return;
+                    } else if (id.action === 'import') {
+                        saveModel = new Model(importItem);
+                        saveModel.save(function () {
                             if (err) {
                                 item.reason = err.message;
                                 skippedArray.push(
@@ -625,50 +665,47 @@ var Module = function (models) {
 
                             eachCb(null);
                         });
-                    }, function (err) {
-                        if (err) {
-                            return wCb(err);
-                        }
+                    } else {
+                        existId = id.existId;
 
-                        wCb(null);
-                    });
-                },
+                        Model.update({_id: existId}, {$set: importItem}, function (err) {
+                            if (err) {
+                                return eachCb(err);
+                            }
 
-                function (wCb) {
-                    ImportModel.remove({}, function () {
-                    });
+                            mergedCount++;
+                            eachCb(null);
+                        });
+                    }
+
+                    idsForRemove.push(itemObj._id);
+
+                }, function (err) {
+                    if (err) {
+                        return wCb(err);
+                    }
+
                     wCb(null);
-                },
-
-                function (wCb) {
-                    createXlsxReport(res, wCb, skippedArray, type);
-                },
-
-                function (fileOptions, wCb) {
-                    var option = {
-                        fileName      : mapFileName,
-                        userId        : userId,
-                        type          : type,
-                        status        : 'Finished',
-                        reportFile    : fileOptions.pathName,
-                        reportFileName: fileOptions.fileName
-                    };
-
-                    writeHistory(option, ImportHistoryModel, wCb);
-                }
-
-            ], function (err) {
-                var imported = importedCount;
-                var skipped = skippedArray.length;
-
-                if (err) {
-                    return next(err);
-                }
-
-                res.status(200).send({
-                    imported: imported,
-                    skipped : skipped
                 });
+            },
+
+            function (wCb) {
+                ImportModel.remove({_id: {$in: idsForRemove}}, function () {
+                });
+
+                wCb(null);
+            }
+
+        ], function (err) {
+
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({
+                imported: importedCount,
+                skipped : skippedArray,
+                merged  : mergedCount
             });
         });
     };
@@ -680,11 +717,8 @@ var Module = function (models) {
         var type = map.type;
         var timeStamp = map.timeStamp;
         var mapResult = map.result || {};
-        var mapFileName = data.fileName;
         var ImportModel = models.get(req.session.lastDb, 'Imports', ImportSchema);
         var Model = models.get(req.session.lastDb, type, schemaObj[type]);
-        var ImportHistoryModel = models.get(req.session.lastDb, 'ImportHistories', ImportHistorySchema);
-        var UserModel = models.get(req.session.lastDb, 'Users', UserSchema);
         var titleArray;
         var mappedFields;
         var skippedArray = [];
@@ -709,7 +743,6 @@ var Module = function (models) {
                 res.status(404).send({result: 'Imported data not found'});
                 return;
             }
-
 
             headerItem = importData.shift();
             titleArray = headerItem.result;
@@ -782,8 +815,6 @@ var Module = function (models) {
                 if (err) {
                     return next(err);
                 }
-
-                console.log('3');
 
                 res.status(200).send({
                     imported       : importedCount,
