@@ -4,9 +4,11 @@
             <table class="list _importLoadHistory">
                 <thead>
                 <tr>
-                    <td>
-                        action
-                    </td>
+                    <% if (step) { %>
+                        <td>
+                            action
+                        </td>
+                    <% } %>
                     <% if (data.keys.length) { %>
                         <% _.each(data.keys, function(item){ %>
                             <td>
@@ -24,7 +26,7 @@
                                      <% } else { %>
                                         <%= comparingDataObj['_id'].trim() %>
                                      <% } %>">
-                            <% if (!comparingDataObj['isExist']) { %>
+                            <% if (!comparingDataObj['isExist'] && (step)) { %>
                                 <td>
                                     <div class="dropDownDateRangeContainer">
                                         <div class="changeTableCombobox choseDateRange dropDownDateRange">
@@ -36,9 +38,7 @@
                                     </div>
                                 </td>
                             <% } else { %>
-                                <td>
-                                    none
-                                </td>
+                                <td></td>
                             <% } %>
                             <% _.each(data.keys, function(key) { %>
                                 <td>

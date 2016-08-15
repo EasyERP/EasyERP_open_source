@@ -29,12 +29,12 @@ define([
 
             this.timeStamp = options.timeStamp;
             this.step = 0;
-            this.mergingArray = [];
+            //this.mergingArray = [];
 
             dataService.getData(url, {timeStamp: self.timeStamp}, function (data) {
                 self.data = data;
 
-                _.each(self.data.result, function (parent, key) {
+                /*_.each(self.data.result, function (parent, key) {
                     _.each(parent, function (item, key) {
                         if (item.importId) {
                             self.mergingArray.push({
@@ -50,7 +50,7 @@ define([
                             });
                         }
                     });
-                });
+                });*/
 
 
                 self.stepKeys = Object.keys(self.data.result);
@@ -73,6 +73,7 @@ define([
         changeTableCombobox: function (e) {
             var $combobox = $(e.target);
 
+            //this.$el.find('.changeTableCombobox').removeClass('open');
             $combobox.toggleClass('open');
         },
 
@@ -90,9 +91,10 @@ define([
             data.result[stepKey] = this.data.result[stepKey];
             this.step++;
 
-            $thisEl.html(this.contentTemplate({
+            this.render(data);
+            /*$thisEl.html(this.contentTemplate({
                 data: data
-            }));
+            }));*/
         },
 
         finishStep: function () {
@@ -106,7 +108,8 @@ define([
             data.keys = data.keys.reverse();
 
             $thisEl.html(this.contentTemplate({
-                data: data
+                data: data,
+                step: this.step
             }));
         }
     });
