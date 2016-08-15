@@ -30,21 +30,21 @@ define([
         initialize: function (options) {
             var $thisEl = this.$el;
             this.fileName = options.fileName;
-            this.entity = 'customers';
+            this.entity = 'Customers';
             this.comparingField = 'email';
 
             this.mergeFields = {
-                opportunities: [
+                Opportunities: [
                     'campaign',
                     'email',
                     'name'
                 ],
-                customers: [
+                Customers: [
                     'email',
                     'color',
                     'type'
                 ],
-                employees: [
+                Employees: [
                     'age',
                     'nationality',
                     'visibility'
