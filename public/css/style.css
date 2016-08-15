@@ -1775,6 +1775,17 @@
 ._loadHistoryTopTable {
   height: 450px;
   margin-bottom: 20px; }
+  ._loadHistoryTopTable ._importLoadHistory td {
+    overflow: visible; }
+  ._loadHistoryTopTable ._importLoadHistory ._importTableImg {
+    width: 50px;
+    height: 50px;
+    padding: 5px; }
+    ._loadHistoryTopTable ._importLoadHistory ._importTableImg img {
+      max-width: 100%; }
+  ._loadHistoryTopTable .changeTableCombobox.open {
+    border: 1px solid #000000;
+    z-index: 10; }
 
 ._loadHistoryTopTableContainer {
   width: 100%; }

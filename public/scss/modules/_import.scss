@@ -14,6 +14,29 @@
 ._loadHistoryTopTable {
   height: 450px;
   margin-bottom: 20px;
+
+  ._importLoadHistory {
+    td {
+      overflow: visible;
+    }
+
+    ._importTableImg {
+      width: 50px;
+      height: 50px;
+      padding: 5px;
+
+      img {
+        max-width: 100%;
+      }
+    }
+  }
+
+  .changeTableCombobox {
+    &.open {
+      border: 1px solid $black;
+      z-index: 10;
+    }
+  }
 }
 
 ._loadHistoryTopTableContainer {
