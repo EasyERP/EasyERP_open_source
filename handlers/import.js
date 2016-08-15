@@ -444,11 +444,9 @@ var Module = function (models) {
         var userImports;
         var Model;
 
-
         if (timeStamp) {
-            criteria.$and = push({timeStamp: timeStamp});
+            criteria.$and.push({timeStamp: timeStamp});
         }
-
 
         UserModel.findOne({_id: userId}, {imports: 1}, function (err, userModel) {
             if (err) {
@@ -463,6 +461,7 @@ var Module = function (models) {
             skipped = userImports.skipped;
             imported = userImports.importedCount;
             conflictedSaveItems = userImports.conflictedItems;
+
 
             criteria.$and.push({_id: {$nin: skipped}});
 
@@ -500,7 +499,7 @@ var Module = function (models) {
                                     return parCb(err);
                                 }
 
-                                parCb(null);
+                                parCb(null, resultArray);
                             });
                         });
                 },
@@ -524,13 +523,15 @@ var Module = function (models) {
 
                     });
                 }
-            }, function (err, result) {
+            }, function (err, resultItems) {
 
                 if (err) {
                     return next(err);
                 }
 
-                conflictedData = _.union(result.conflictedUnsavedItems, result.conflictedSavedItems);
+                conflictedData = _.union(resultItems.conflictedUnsavedItems, resultItems.conflictedSavedItems);
+
+                conflictedData = _.groupBy(conflictedData, 'name.last');
 
                 res.status(200).send({
                     result: conflictedData,

@@ -158,16 +158,20 @@ define([
                     this.childView = new PreviewView({timeStamp: this.timeStamp});
                 }
             } else if (this.stage === 4) {
-                this.startImport(function (data) {
-                    this.updateCurrentUser({
-                        stage          : this.stage,
-                        skipped        : data.skippedArray,
-                        importedCount  : data.imported,
-                        conflictedItems: data.conflictedItems
-                    });
+                if (this.childView) {
+                    this.startImport(function (data) {
+                        self.updateCurrentUser({
+                            stage          : self.stage,
+                            skipped        : data.skippedArray,
+                            importedCount  : data.imported,
+                            conflictedItems: data.conflictedItems
+                        });
 
-                    self.childView = new ComparingView({timeStamp: this.timeStamp});
-                });
+                        self.childView = new ComparingView({timeStamp: self.timeStamp});
+                    });
+                } else {
+                    self.childView = new ComparingView({timeStamp: self.timeStamp});
+                }
             } else if (this.stage === 5) {
                 if (self.childView && self.childView.finishStep) {
                     self.childView.finishStep();
