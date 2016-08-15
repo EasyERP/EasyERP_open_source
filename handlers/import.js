@@ -710,6 +710,7 @@ var Module = function (models) {
                 return;
             }
 
+
             headerItem = importData.shift();
             titleArray = headerItem.result;
 
@@ -737,6 +738,7 @@ var Module = function (models) {
                 },
 
                 function (wCb) {
+
                     Model.find({}, wCb);
                 },
 
@@ -747,7 +749,6 @@ var Module = function (models) {
                 function (itemsToSave, conflictedItems, wCb) {
                     var saveModel;
                     async.each(itemsToSave, function (item, eachCb) {
-
                         saveModel = new Model(item);
                         saveModel.save(function (err) {
                             if (err) {
@@ -781,6 +782,8 @@ var Module = function (models) {
                 if (err) {
                     return next(err);
                 }
+
+                console.log('3');
 
                 res.status(200).send({
                     imported       : importedCount,
