@@ -4607,11 +4607,14 @@ var Module = function (models, event) {
                     newElement.closingBalance = newElement.openingBalance + newElement.inwards - newElement.outwards;
 
                     if (newElement.name && !(outwards && outwards.date < startDate)) {
-                        resultArray.push(newElement);
-                    } else {
-                        console.log(outwards ? outwards.date : newElement.name, startDate);
+                        if (!Object.keys(filterObject)) {
+                            resultArray.push(newElement);
+                        } else {
+                            if (newElement.inwards || newElement.outwards) {
+                                resultArray.push(newElement);
+                            }
+                        }
                     }
-
                 });
 
                 if (sortField) { // need refactor on aggregate function

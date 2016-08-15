@@ -9,8 +9,9 @@ define([
     'populate',
     'dataService',
     'views/Notes/AttachView',
-    'constants'
-], function (Backbone, $, _, CreateTemplate, ParentView, LeadModel, common, populate, dataService, AttachView, CONSTANTS) {
+    'constants',
+    'moment'
+], function (Backbone, $, _, CreateTemplate, ParentView, LeadModel, common, populate, dataService, AttachView, CONSTANTS, moment) {
 
     var CreateView = ParentView.extend({
         el         : '#content-holder',
@@ -68,6 +69,7 @@ define([
                     if (customer.type === 'Person') {
                         context.$el.find('#first').val(customer.name.first);
                         context.$el.find('#last').val(customer.name.last);
+                        context.$el.find('#dateBirth').val(customer.dateBirth ? moment(new Date(customer.dateBirth)).format('DD MMM, YYYY') : '');
                         context.$el.find('#email').val(customer.email);
                         context.$el.find('#phone').val(customer.phones.phone);
                         context.$el.find('#LI').val(customer.social.LI.replace('[]', 'linkedin'));
@@ -76,6 +78,7 @@ define([
             } else {
                 this.$el.find('#email').val('');
                 this.$el.find('#phone').val('');
+                this.$el.find('#dateBirth').val('');
                 this.$el.find('#LI').val('');
                 this.$el.find('#first').val('');
                 this.$el.find('#last').val('');
@@ -124,6 +127,7 @@ define([
             var address = {};
             var salesPersonId = this.$el.find('#salesPerson').attr('data-id');
             var expectedClosing = this.$el.find('#expectedClosingDate').val();
+            var dateBirth = this.$el.find('#dateBirthOnCreate').val();
             var salesTeamId = this.$el.find('#salesTeam option:selected').val();
             var first = $.trim(this.$el.find('#first').val());
             var last = $.trim(this.$el.find('#last').val());
@@ -195,6 +199,7 @@ define([
                     LI: LI.replace('linkedin', '[]'),
                     FB: FB
                 },
+                dateBirth      : dateBirth,
                 company        : company,
                 campaign       : $('#campaignDd').attr('data-id'),
                 source         : source,
@@ -306,11 +311,19 @@ define([
 
                 self.responseObj['#salesPerson'] = employees;
             });
+            this.$el.find('#dateBirthOnCreate').datepicker({
+                dateFormat : 'd M, yy',
+                changeMonth: true,
+                changeYear : true
+            });
+
+
             this.$el.find('#expectedClosingDate').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true
             });
+
             this.delegateEvents(this.events);
 
             return this;

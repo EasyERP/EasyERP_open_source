@@ -164,7 +164,7 @@ define([
                         Backbone.history.fragment = '';
                         Backbone.history.navigate(window.location.hash, {trigger: true});
                     } else {
-                        self.editorView.renderTimeline();
+                       // self.editorView.renderTimeline();
                         self.renderAbout();
                         self.modelChanged = {};
                         self.hideButtons();

@@ -13,8 +13,9 @@ define([
     'constants',
     'dataService',
     'views/selectView/selectView',
-    'populate'
-], function (Backbone, _, $, OpportunitiesFormTemplate, workflowProgress,aboutTemplate, EditorView, AttachView, CompanyFormProperty, ContactFormProperty, TagView, constants, dataService, SelectView, populate) {
+    'populate',
+    'moment'
+], function (Backbone, _, $, OpportunitiesFormTemplate, workflowProgress, aboutTemplate, EditorView, AttachView, CompanyFormProperty, ContactFormProperty, TagView, constants, dataService, SelectView, populate, moment) {
     'use strict';
 
     var FormOpportunitiesView = Backbone.View.extend({
@@ -54,14 +55,14 @@ define([
             $('#convert-dialog-form').dialog('open');
         },
 
-     /*   convertToOpp : function (e){
-            e.preventDefault();
-            this.saveDeal({
-                isOpportunitie : true,
-                isConverted    : true,
-                convertedDate  : new Date()
-            }, 'converted');
-        },*/
+        /*   convertToOpp : function (e){
+         e.preventDefault();
+         this.saveDeal({
+         isOpportunitie : true,
+         isConverted    : true,
+         convertedDate  : new Date()
+         }, 'converted');
+         },*/
 
         setChangeValueToModel: function (e) {
             var $target = $(e.target);
@@ -160,7 +161,6 @@ define([
                 this.selectCompany(id);
             }
 
-
             holder.closest('.propertyFormList').addClass('active');
             this.showButtons();
         },
@@ -174,7 +174,7 @@ define([
 
             this.formModel.save(changedAttrs, {
                 patch  : true,
-                wait : true,
+                wait   : true,
                 success: function () {
                     if (type === 'formProperty') {
                         Backbone.history.fragment = '';
@@ -190,7 +190,7 @@ define([
                         self.modelChanged = {};
                         self.hideButtons();
 
-                        if (sendEvent){
+                        if (sendEvent) {
 
                             if (changedAttrs.hasOwnProperty('salesPerson')) {
                                 changedAttrs.salesPerson = $thisEl.find('#salesPersonDd').text().trim();
@@ -200,7 +200,7 @@ define([
                                 changedAttrs.source = $thisEl.find('#sourceDd').text().trim();
                             }
 
-                            if(changedAttrs.hasOwnProperty('workflow')) {
+                            if (changedAttrs.hasOwnProperty('workflow')) {
                                 changedAttrs.workflow = $thisEl.find('.tabListItem.active span').text().trim();
                             }
 
@@ -283,6 +283,7 @@ define([
 
                 context.$el.find('#contactName_first').val(customer.name.first);
                 context.$el.find('#contactName_last').val(customer.name.last);
+                context.$el.find('#dateBirth').val(customer.dateBirth ? moment(new Date(customer.dateBirth)).format('DD MMM, YYYY') : '');
                 context.$el.find('#email').val(customer.email);
                 context.$el.find('#phones_phone').val(customer.phones.phone);
                 context.$el.find('#social_LI').val(customer.social.LI.replace('[]', 'linkedin'));
@@ -304,10 +305,10 @@ define([
 
         },
 
-        renderAbout : function (){
+        renderAbout: function () {
             var self = this;
             var $thisEl = this.$el;
-            $thisEl.find('.aboutHolder').html(_.template(aboutTemplate, { model : self.formModel.toJSON()}));
+            $thisEl.find('.aboutHolder').html(_.template(aboutTemplate, {model: self.formModel.toJSON()}));
             this.renderTags();
             $thisEl.find('#expectedClosing').datepicker({
                 dateFormat : 'd M, yy',
@@ -338,7 +339,7 @@ define([
             var that = this;
             var $thisEl = this.$el;
 
-            $thisEl.html(_.template(OpportunitiesFormTemplate, {model : formModel}));
+            $thisEl.html(_.template(OpportunitiesFormTemplate, {model: formModel}));
 
             dataService.getData('/workflows/', {id: 'Leads'}, function (response) {
                 self.responseObj = {workflows: response.data};
@@ -357,7 +358,7 @@ define([
 
                 self.responseObj['#salesPersonDd'] = employees;
             });
-            dataService.getData('/customers', {type : 'Person'}, function (employees) {
+            dataService.getData('/customers', {type: 'Person'}, function (employees) {
                 employees = _.map(employees.data, function (employee) {
                     employee.name = employee.fullName;
 
@@ -366,7 +367,7 @@ define([
 
                 self.responseObj['#customerDd'] = employees;
             });
-            dataService.getData('/customers', {type : 'Company'}, function (employees) {
+            dataService.getData('/customers', {type: 'Company'}, function (employees) {
                 employees = _.map(employees.data, function (employee) {
                     employee.name = employee.fullName;
 
@@ -398,10 +399,10 @@ define([
                         var createCustomer = ($('select#createCustomerOrNot option:selected').val()) ? true : false;
 
                         that.saveDeal({
-                            isOpportunitie : true,
-                            isConverted    : true,
-                            convertedDate  : new Date(),
-                            createCustomer : createCustomer
+                            isOpportunitie: true,
+                            isConverted   : true,
+                            convertedDate : new Date(),
+                            createCustomer: createCustomer
                         }, 'converted');
 
                     },

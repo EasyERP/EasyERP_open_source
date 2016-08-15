@@ -2684,7 +2684,8 @@ var Module = function (models, event) {
                             address         : 1,
                             skype           : 1,
                             social          : 1,
-                            isOpportunitie  : 1
+                            isOpportunitie  : 1,
+                            dateBirth       : 1
                         }
                     }, {
                         $match: {
@@ -2713,6 +2714,7 @@ var Module = function (models, event) {
                             source            : '$root.source',
                             'address.country' : {$ifNull: ['$root.company.address.country', '$root.customer.address.country']},
                             skype             : '$root.customer.skype',
+                            dateBirth         : '$root.dateBirth',
                             'social.LI'       : '$root.customer.social.LI',
                             total             : 1
 

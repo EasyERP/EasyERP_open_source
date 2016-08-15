@@ -111,9 +111,9 @@ module.exports = (function () {
         company         : {type: ObjectId, ref: 'Customers', default: null},
         customer        : {type: ObjectId, ref: 'Customers', default: null},
 
-        tags: [{type: ObjectId, ref: 'tags', default: null}],
-        dateBirth   : Date,
-        address: {
+        tags     : [{type: ObjectId, ref: 'tags', default: null}],
+        dateBirth: Date,
+        address  : {
             street : {type: String, default: ''},
             city   : {type: String, default: ''},
             state  : {type: String, default: ''},
