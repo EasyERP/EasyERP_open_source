@@ -18,7 +18,9 @@ define([
 
 
         events: {
-            'click #stepByStepButton': 'stepByStep'
+            'click #stepByStepButton': 'stepByStep',
+            'click .changeTableCombobox': 'changeTableCombobox',
+            'click .item': 'checkItem'
         },
 
         initialize: function (options) {
@@ -27,14 +29,54 @@ define([
 
             this.timeStamp = options.timeStamp;
             this.step = 0;
+            this.mergingArray = [];
 
             dataService.getData(url, {timeStamp: self.timeStamp}, function (data) {
                 self.data = data;
+
+                _.each(self.data.result, function (parent, key) {
+                    _.each(parent, function (item, key) {
+                        if (item.importId) {
+                            self.mergingArray.push({
+                                id: item.importId,
+                                action: 'skip',
+                                existId: null
+                            });
+                        } else {
+                            self.mergingArray.push({
+                                id: item._id,
+                                action: 'skip',
+                                existId: null
+                            });
+                        }
+                    });
+                });
+
+
                 self.stepKeys = Object.keys(self.data.result);
                 self.render(self.data);
             });
 
+
+
         },
+
+        checkItem: function (e) {
+            var $target = $(e.target);
+            var $parent = $target.closest('.changeTableCombobox');
+
+            $parent.find('.item').removeClass('active');
+            $target.addClass('active');
+            $parent.toggleClass('open');
+        },
+
+        changeTableCombobox: function (e) {
+            var $combobox = $(e.target);
+
+            $combobox.toggleClass('open');
+        },
+
+
 
         stepByStep: function (e) {
             var $thisEl = this.$el;
