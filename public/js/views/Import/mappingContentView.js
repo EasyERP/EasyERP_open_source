@@ -24,6 +24,7 @@ define([
             var url = '/importFile/imported';
             var self = this;
 
+            this.type = App.currentUser.imports.type || '';
             this.timeStamp = options.timeStamp;
             this.fileName = options.fileName;
 
@@ -34,7 +35,7 @@ define([
                 self.data[App.currentUser.imports.map.type] = App.currentUser.imports.map.result;
                 self.render(self.data);
             } else {*/
-                dataService.getData(url, {timeStamp: this.timeStamp}, function (data) {
+                dataService.getData(url, {timeStamp: this.timeStamp, type: this.type}, function (data) {
                     self.data = data.mappedObj;
                     self.unmappedData = data.unmappedObj;
                     self.render(self.data);
@@ -271,7 +272,7 @@ define([
 
             $thisEl.find('.empty').siblings('.cleanButton').hide();
             $thisEl.find('.empty').closest('.contentBlockRow').addClass('emptyRow');
-            this.changeTab(null, $thisEl.find('.tabItem[data-tab="Customers"]'));
+            this.changeTab(null, $thisEl.find('.tabItem[data-tab="' + this.type + '"]'));
         }
     });
 

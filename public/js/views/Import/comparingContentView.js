@@ -3,16 +3,19 @@ define([
     'jQuery',
     'Underscore',
     'text!templates/Import/ComparingTemplate.html',
+    'text!templates/Import/FinishTemplate.html',
     'constants/importMapping',
     'constants',
     'dataService',
     'common'
-], function (Backbone, $, _, ComparingTemplate, importMapping, CONSTANTS, dataService, common) {
+], function (Backbone, $, _, ComparingTemplate, FinishTemplate, importMapping, CONSTANTS, dataService, common) {
     'use strict';
 
     var comparingContentView = Backbone.View.extend({
         el             : '#contentBlock',
         contentTemplate: _.template(ComparingTemplate),
+        finishTemplate: _.template(FinishTemplate),
+
 
         events: {
             'click #stepByStepButton': 'stepByStep'
@@ -48,6 +51,10 @@ define([
             $thisEl.html(this.contentTemplate({
                 data: data
             }));
+        },
+
+        finishStep: function () {
+
         },
 
         render: function (data) {

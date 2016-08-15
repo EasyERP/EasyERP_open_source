@@ -205,8 +205,9 @@ function reportToXlsx(options) {
     var map = options.map;
     var fileName = options.fileName;
     var resultArray = options.resultArray;
-    var headersArray = Object.keys(map.aliases);
-    var formatters = map.formatters;
+    //var headersArray = Object.keys(map.aliases);
+    var headersArray = map;
+    //var formatters = map.formatters;
     var nameOfFile = fileName ? fileName : type ? type : 'data';
 
     var writeXlsx = function (array) {
@@ -228,7 +229,9 @@ function reportToXlsx(options) {
         });
     };
 
-    if (formatters) {
+
+    writeXlsx(resultArray);
+    /*if (formatters) {
         async.each(resultArray, function (item, callback) {
 
             var keys = Object.keys(formatters);
@@ -249,7 +252,7 @@ function reportToXlsx(options) {
         });
     } else {
         return writeXlsx(resultArray);
-    }
+    }*/
 }
 
 exports.exportToCsv = exportToCsv;

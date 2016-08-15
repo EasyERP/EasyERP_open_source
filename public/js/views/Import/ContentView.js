@@ -107,7 +107,7 @@ define([
                     this.stage = this.stage > 1 ? --this.stage : 1;
 
                 } else {
-                    this.stage = this.stage < 4 ? ++this.stage : 4;
+                    this.stage = this.stage < 4 ? ++this.stage : 5;
                 }
             }
 
@@ -168,6 +168,10 @@ define([
 
                     self.childView = new ComparingView({timeStamp: this.timeStamp});
                 });
+            } else if (this.stage === 5) {
+                if (self.childView && self.childView.finishStep) {
+                    self.childView.finishStep();
+                }
             }
 
             this.changeStage(this.stage);
