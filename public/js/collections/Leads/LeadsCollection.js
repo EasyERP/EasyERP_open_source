@@ -33,6 +33,9 @@ define([
                         if (opportunity.nextAction) {
                             opportunity.nextAction.date = (opportunity.nextAction) ? common.utcDateToLocaleDate(opportunity.nextAction.date) : '';
                         }
+                        if (opportunity.dateBirth) {
+                            opportunity.dateBirth = (opportunity.dateBirth) ? common.utcDateToLocaleDate(opportunity.dateBirth) : '';
+                        }
                         return opportunity;
                     });
                 }

@@ -2151,15 +2151,13 @@ var Module = function (models, event) {
 
                     Opportunity.findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
 
-
                         if (err) {
                             return next(err);
                         }
 
-
                         result.populate('salesPerson')
                             .populate('company')
-                            .populate('customer', function (){
+                            .populate('customer', function () {
                                 var lead = result.toJSON();
                                 historyWriter.addEntry(historyOptions, function () {
                                     getTimeLine(req, lead, function (err, model) {
@@ -2311,10 +2309,7 @@ var Module = function (models, event) {
                                         res.status(200).send(model);
                                     });
                                 });
-                        })
-
-
-
+                            })
 
                     });
                 });
@@ -2945,7 +2940,8 @@ var Module = function (models, event) {
             social          : 1,
             skype           : 1,
             tags            : 1,
-            attachments     : 1
+            attachments     : 1,
+            dateBirth       : 1
         });
 
         query

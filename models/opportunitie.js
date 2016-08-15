@@ -112,7 +112,7 @@ module.exports = (function () {
         customer        : {type: ObjectId, ref: 'Customers', default: null},
 
         tags: [{type: ObjectId, ref: 'tags', default: null}],
-
+        dateBirth   : Date,
         address: {
             street : {type: String, default: ''},
             city   : {type: String, default: ''},

@@ -58,6 +58,10 @@
                     response.expectedClosing = moment(response.expectedClosing).format('DD MMM, YYYY');
                 }
 
+                if (response.dateBirth) {
+                    response.dateBirth = moment(response.dateBirth).format('DD MMM, YYYY');
+                }
+
                 if (response.notes) {
                     _.map(response.notes, function (note) {
                         note.date = moment(note.date).format('DD MMM, YYYY, H:mm:ss');

@@ -318,6 +318,18 @@ define([
                     self.showButtons();
                 }
             });
+
+            $thisEl.find('#dateBirth').datepicker({
+                dateFormat : 'd M, yy',
+                changeMonth: true,
+                changeYear : true,
+                onSelect   : function (dateText) {
+                    self.modelChanged['dateBirth'] = new Date(dateText);
+                    self.showButtons();
+                }
+
+            });
+
         },
 
         render: function () {
@@ -410,6 +422,18 @@ define([
                 changeYear : true,
                 onSelect   : function (dateText) {
                     self.modelChanged['expectedClosing'] = new Date(dateText);
+                    $(this).closest('.propertyFormList').addClass('active');
+                    self.showButtons();
+                }
+
+            });
+
+            $thisEl.find('#dateBirth').datepicker({
+                dateFormat : 'd M, yy',
+                changeMonth: true,
+                changeYear : true,
+                onSelect   : function (dateText) {
+                    self.modelChanged['dateBirth'] = new Date(dateText);
                     $(this).closest('.propertyFormList').addClass('active');
                     self.showButtons();
                 }
