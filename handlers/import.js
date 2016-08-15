@@ -75,8 +75,9 @@ var Module = function (models) {
     }
 
     function createXlsxReport(res, next, resultArray, fileName) {
-        var exportMapImport = exportMap[fileName];
+        //var exportMapImport = exportMap[fileName];
         var options;
+        var exportMapImport = mapObject[fileName];
 
         options = {
             res         : res,
