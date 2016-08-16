@@ -534,7 +534,7 @@ var Module = function (models) {
                     return next(err);
                 }
 
-                conflictedData = _.union(resultItems.conflictedUnsavedItems, resultItems.conflictedSavedItems);
+                conflictedData = _.union(resultItems.conflictedSavedItems, resultItems.conflictedUnsavedItems);
 
                 conflictedData = _.groupBy(conflictedData, 'name.last');
 

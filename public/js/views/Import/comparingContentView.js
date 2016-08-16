@@ -27,7 +27,7 @@ define([
             var self = this;
 
             this.timeStamp = options.timeStamp;
-            this.step = 0;
+            this.step = -1;
             this.skippedArray = App.currentUser.imports.skipped;
             this.imported = App.currentUser.imports.importedCount;
             this.mergedCount = 0;
@@ -68,29 +68,33 @@ define([
             };
             var url = 'importFile/merge';
             var $actions = this.$el.find('tr[data-id]');
+            var stepKey;
             //var stepKey = (!this.step) ? this.stepKeys[this.step] : this.stepKeys[this.step - 1];
-            var stepKey = this.stepKeys[this.step];
+            //var stepKey = this.stepKeys[this.step];
             var linkToFile;
             var linkName;
             var result;
 
             this.existId = null;
 
+            stepKey = this.stepKeys[this.step + 1];
             data.keys = this.data.keys;
             data.result[stepKey] = this.data.result[stepKey];
 
-            result = _.where(data.result[stepKey], {isExist: true});
 
-            if (result.length) {
-                this.existId = result[0]._id;
-                this.isItExist = true;
 
-                if (result.length > 1) {
-                    this.moreExist = true;
+            if (this.step > 0) {
+                result = _.where(this.data.result[this.step], {isExist: true});
+
+                if (result.length) {
+                    this.existId = result[0]._id;
+                    this.isItExist = true;
+
+                    if (result.length > 1) {
+                        this.moreExist = true;
+                    }
                 }
-            }
 
-            if (this.step) {
                 _.each($actions, function (item, key) {
                     if (self.moreExist !== null) {
                         self.existId = $('input:checked').data('exist');
@@ -106,7 +110,7 @@ define([
                     }
                 });
 
-                if (this.step === this.stepKeys.length) {
+                if (this.step === this.stepKeys.length - 1) {
                     dataService.postData(url, {
                         data    : this.mergingArray,
                         headerId: this.headerId
@@ -127,9 +131,11 @@ define([
 
             this.step++;
 
+
             if (this.step <= this.stepKeys.length) {
                 this.render(data);
             }
+
         },
 
         finishStep: function (linkToFile, linkName) {
@@ -151,8 +157,8 @@ define([
             var self = this;
 
             $thisEl.html(this.contentTemplate({
-                data: data,
-                step: this.step,
+                data     : data,
+                step     : this.step,
                 isItExist: this.isItExist,
                 moreExist: this.moreExist
             }));

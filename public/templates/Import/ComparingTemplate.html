@@ -11,7 +11,7 @@
                     <% } else { %>
                         <td></td>
                     <% } %>
-                    <% if (step) { %>
+                    <% if (step >= 0) { %>
                         <td>
                             action
                         </td>
@@ -40,7 +40,7 @@
                             <% } else { %>
                                 <td></td>
                             <% } %>
-                            <% if (!comparingDataObj['isExist'] && (step)) { %>
+                            <% if (!comparingDataObj['isExist'] && (step >= 0)) { %>
                                 <td>
                                     <div class="dropDownDateRangeContainer">
                                         <div class="changeTableCombobox choseDateRange dropDownDateRange">
