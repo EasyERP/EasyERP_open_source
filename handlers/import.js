@@ -667,6 +667,10 @@ var Module = function (models) {
                 var saveModel;
                 var existId;
 
+                if (!importIds.length) {
+                    return wCb(null);
+                }
+
                 async.each(importIds, function (id, eachCb) {
                     item = _.filter(importData, function (item) {
                         return item._id.toString() === id.id;
@@ -721,20 +725,26 @@ var Module = function (models) {
             },
 
             function (wCb) {
+                if (!skippedArray.length) {
+                    return wCb(null, {});
+                }
+
                 createXlsxReport(res, wCb, skippedArray, type);
             },
 
             function (reportOptions, wCb) {
-                var options = {
-                    fileName      : importFileName,
-                    user          : userId,
-                    type          : type,
-                    reportFile    : reportOptions.pathName,
-                    reportFileName: reportOptions.fileName
-                };
+                var options;
 
                 reportFilePath = reportOptions.pathName;
                 reportFileName = reportOptions.fileName;
+
+                options = {
+                    fileName      : importFileName,
+                    user          : userId,
+                    type          : type,
+                    reportFile    : reportFilePath,
+                    reportFileName: reportFileName
+                };
 
 
                 writeHistory(options, ImportHistoryModel, wCb);
@@ -758,7 +768,7 @@ var Module = function (models) {
 
             res.status(200).send({
                 imported      : importedCount,
-                skipped       : skippedArray,
+                skipped       : skippedArray.length,
                 merged        : mergedCount,
                 reportFilePath: reportFilePath,
                 reportFileName: reportFileName
