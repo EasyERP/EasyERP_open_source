@@ -67,11 +67,9 @@ define([
             var result;
             var url = 'importFile/merge';
             var $actions = this.$el.find('tr[data-id]');
-
             var stepKey = this.stepKeys[this.step];
             var linkToFile;
             var linkName;
-
 
             this.isExist = null;
 
@@ -84,34 +82,33 @@ define([
                 this.isExist = result[0]._id;
             }
 
-            if (this.step) {
-                _.each($actions, function (item, key) {
-                    if ($(item).data('id').trim()) {
-                        self.mergingArray.push({
-                            id     : $(item).data('id').trim(),
-                            action : $(item).find('.active').data('action'),
-                            existId: self.isExist
-                        });
-                    }
-                });
 
-                if (this.step === this.stepKeys.length) {
-                    dataService.postData(url, {
-                        //    skipped: this.skippedArray,
-                        //    imported: this.imported,
-                        data    : this.mergingArray,
-                        headerId: this.headerId
-                    }, function (err, result) {
-
-                        self.imported += result.imported;
-                        self.skippedArray.concat(result.skippedArray);
-                        self.mergedCount += result.mergedCount;
-                        linkToFile = result.reportFilePath;
-                        linkName = result.reportFileName;
-
-                        self.finishStep(linkToFile, linkName);
+            _.each($actions, function (item, key) {
+                if ($(item).data('id').trim()) {
+                    self.mergingArray.push({
+                        id     : $(item).data('id').trim(),
+                        action : $(item).find('.active').data('action'),
+                        existId: self.isExist
                     });
                 }
+            });
+
+            if (this.step === this.stepKeys.length - 1) {
+                dataService.postData(url, {
+                    //    skipped: this.skippedArray,
+                    //    imported: this.imported,
+                    data    : this.mergingArray,
+                    headerId: this.headerId
+                }, function (err, result) {
+
+                    self.imported += result.imported;
+                    self.skippedArray.concat(result.skippedArray);
+                    self.mergedCount += result.mergedCount;
+                    linkToFile = result.reportFilePath;
+                    linkName = result.reportFileName;
+
+                    self.finishStep(linkToFile, linkName);
+                });
             }
 
             this.step++;
