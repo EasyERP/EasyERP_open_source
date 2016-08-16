@@ -1,0 +1,41 @@
+<table id="listTable">
+    <% proforms.forEach(function(proform, index){ %>
+    <tr class="compactView" data-id="<%=proform._id%>">
+        <td class="checkboxRow">
+            <label>
+                <input type="checkbox" value="<%=proform._id%>" class="checkbox <%if (proform.workflow && proform.workflow.status !== 'New') { %>
+                        notRemovable
+                        <% } %>"  <%if (proform.workflow && proform.workflow.status !== 'New') { %>
+                    disabled='disabled'
+                    <% } %>/>
+            </label>
+        </td>
+        <td>
+            <div class="compactRowWrap">
+                <div class="compactRow">
+                    <div class="supplier firstName"><%= proform.supplier.name.first %> <%= proform.supplier.name.last %></div>
+                    <div class="assignedTo"><%- proform.salesPerson.name.first %> <%- proform.salesPerson.name.last %></div>
+                </div>
+                <div class="compactRow">
+                    <div class="date"><%= proform.invoiceDate %></div>
+                </div>
+                <div class="compactRow">
+                    <div class="total <%= currencyClass(proform.currency._id) %>"><%- (proform.paymentInfo) ? currencySplitter(proform.paymentInfo.total) : '0.00'%></div>
+                    <div class="status">
+                        <%if(proform.workflow){%>
+                        <%if(proform.workflow.status === 'In Progress'){%>
+                        <span class="<%=proform.workflow.status.toLowerCase().replace(' ', '')%>"><%=proform.workflow.name%></span>
+                        <% } else if (proform.workflow.status === 'New') {%>
+                        <span class="<%=proform.workflow.name.toLowerCase()%>"><%= proform.approved ? proform.workflow.name : 'Not Approved' %></span>
+                        <% } else { %>
+                        <span class="<%=proform.workflow.name.toLowerCase()%>"><%=proform.workflow.name%></span>
+                        <%}%>
+                        <% } else {%>
+                        <span> </span>
+                        <%}%></div>
+                </div>
+            </div>
+        </td>
+    </tr>
+    <% }) %>
+</table>

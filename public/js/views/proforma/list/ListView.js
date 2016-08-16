@@ -36,11 +36,12 @@ define([
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
         contentCollection: contentCollection,
-        contentType      : 'Proforma',
+        contentType      : 'proforma',
         changedModels    : {},
         hasPagination    : true,
 
         initialize: function (options) {
+            this.formUrl = 'easyErp/' + this.contentType + '/tform/';
             this.startTime = options.startTime;
             this.collection = options.collection;
             this.parrentContentId = options.collection.parrentContentId;
@@ -53,7 +54,7 @@ define([
             this.deleteCounter = 0;
             this.page = options.collection.page;
 
-            this.baseFilter = {
+            this.filter = {
                 name : 'forSales',
                 value: {
                     key  : 'forSales',
@@ -191,6 +192,20 @@ define([
 
             this.recalcTotal();
 
+        },
+
+        gotoForm: function (e) {
+            var id = $(e.target).closest('tr').data('id');
+            var page = this.collection.currentPage;
+            var countPerPage = this.collection.pageSize;
+            var url = this.formUrl + id + '/p=' + page + '/c=' + countPerPage;
+
+            if (this.filter) {
+                url += '/filter=' + encodeURI(JSON.stringify(this.filter));
+            }
+
+            App.ownContentType = true;
+            Backbone.history.navigate(url, {trigger: true});
         }
 
         /*goToEditDialog: function (e) {
