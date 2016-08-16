@@ -4,6 +4,13 @@
             <table class="list _importLoadHistory">
                 <thead>
                 <tr>
+                    <% if (moreExist) { %>
+                        <td>
+                            exist change
+                        </td>
+                    <% } else { %>
+                        <td></td>
+                    <% } %>
                     <% if (step) { %>
                         <td>
                             action
@@ -26,13 +33,22 @@
                         <tr data-id="<% if (comparingDataObj['importId']) { %>
                                         <%= comparingDataObj['importId'].trim() %>
                                      <% } else { %><% } %>">
+                            <% if ((moreExist) && (comparingDataObj['isExist'])) { %>
+                                <td>
+                                    <input type="radio" name="dataExist" class="changeExist" data-exist="<%= comparingDataObj['_id'] %>">
+                                </td>
+                            <% } else { %>
+                                <td></td>
+                            <% } %>
                             <% if (!comparingDataObj['isExist'] && (step)) { %>
                                 <td>
                                     <div class="dropDownDateRangeContainer">
                                         <div class="changeTableCombobox choseDateRange dropDownDateRange">
                                             <div data-action="skip" class="item active">skip</div>
                                             <div data-action="import" class="item">import</div>
-                                            <div data-action="merge" class="item">merge</div>
+                                            <% if (isItExist) { %>
+                                                <div data-action="merge" class="item">merge</div>
+                                            <% } %>
                                             <span class="selectArrow"></span>
                                         </div>
                                     </div>

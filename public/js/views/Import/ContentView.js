@@ -61,6 +61,8 @@ define([
             this.stage = usersImport.stage || 1;
             this.map = {};
 
+            this.$el.find('.stageBtnNext').prop('disabled', true);
+
             this.render();
             this.selectStage();
         },
@@ -204,7 +206,7 @@ define([
         },
 
         enabledNextBtn: function () {
-            this.$el.find('.stageBtn').prop('disabled', false);
+            this.$el.find('.stageBtnNext').prop('disabled', false);
         },
 
         insertHistoryView: function () {
