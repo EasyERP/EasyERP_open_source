@@ -74,6 +74,7 @@ define([
             var $actions = this.$el.find('tr[data-id]');
             var stepKey = this.stepKeys[(this.step - 1) >= 0 ? this.step - 1 : this.step];
             var linkToFile;
+            var linkName;
 
             this.isExist = null;
 
@@ -107,9 +108,10 @@ define([
                         self.imported += result.imported;
                         self.skippedArray.concat(result.skippedArray);
                         self.mergedCount += result.mergedCount;
-                        linkToFile = result.link;
+                        linkToFile = result.reportFilePath;
+                        linkName = result.reportFileName;
 
-                        this.finishStep(linkToFile);
+                        this.finishStep(linkToFile, linkName);
                     });
                 }
             }
@@ -118,7 +120,7 @@ define([
             }
         },
 
-        finishStep: function (linkToFile) {
+        finishStep: function (linkToFile, linkName) {
             var $thisEl = this.$el;
 
             $thisEl.html(this.finishTemplate({
@@ -126,7 +128,8 @@ define([
                     imported: this.imported,
                     skippedArray: this.skippedArray.length,
                     mergedCount: this.mergedCount,
-                    linkToFile: this.linkToFile
+                    linkToFile: linkToFile,
+                    linkName: linkName
                 }
             }));
         },
