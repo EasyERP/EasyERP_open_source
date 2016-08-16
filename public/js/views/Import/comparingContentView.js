@@ -102,14 +102,11 @@ define([
                         //self.skippedArray.concat(result.skippedArray);
                         //self.mergedCount += result.mergedCount;
 
-                        self.skipping(data);
                     });
                 }
-
-
-            } else {
-                this.skipping(data);
             }
+
+            this.skipping(data);
         },
 
         finishStep: function () {
