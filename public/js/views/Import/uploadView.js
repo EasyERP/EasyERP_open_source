@@ -35,19 +35,20 @@ define([
 
             this.mergeFields = {
                 Opportunities: [
-                    'campaign',
-                    'email',
+                    'contactName.first',
+                    'contactName.last',
                     'name'
                 ],
                 Customers    : [
                     'email',
-                    'color',
-                    'type'
+                    'name.first',
+                    'website',
+                    'phones.phone'
                 ],
                 Employees    : [
-                    'age',
-                    'nationality',
-                    'visibility'
+                    'name.first',
+                    'name.last',
+                    'workEmail'
                 ]
             };
 

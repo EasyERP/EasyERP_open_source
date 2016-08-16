@@ -73,6 +73,7 @@ define([
             var result;
             var url = 'importFile/merge';
             var $actions = this.$el.find('tr[data-id]');
+            var linkToFile;
 
             this.isExist = null;
 
@@ -97,25 +98,36 @@ define([
                 });
 
                 if (this.step === this.stepKeys.length) {
-                    dataService.postData(url, {data: this.mergingArray, headerId: this.headerId}, function (err, result) {
-                        //self.imported += result.imported;
-                        //self.skippedArray.concat(result.skippedArray);
-                        //self.mergedCount += result.mergedCount;
+                    dataService.postData(url, {
+                    //    skipped: this.skippedArray,
+                    //    imported: this.imported,
+                        data: this.mergingArray,
+                        headerId: this.headerId
+                    }, function (err, result) {
+                        self.imported += result.imported;
+                        self.skippedArray.concat(result.skippedArray);
+                        self.mergedCount += result.mergedCount;
+                        linkToFile = result.link;
 
+                        this.finishStep(linkToFile);
                     });
                 }
             }
-
-            this.skipping(data);
+            if (this.step < this.stepKeys.length) {
+                this.skipping(data);
+            }
         },
 
-        finishStep: function () {
+        finishStep: function (linkToFile) {
             var $thisEl = this.$el;
-            var self = this;
 
             $thisEl.html(this.finishTemplate({
-                data: data,
-                step: this.step
+                data: {
+                    imported: this.imported,
+                    skippedArray: this.skippedArray.length,
+                    mergedCount: this.mergedCount,
+                    linkToFile: this.linkToFile
+                }
             }));
         },
 
