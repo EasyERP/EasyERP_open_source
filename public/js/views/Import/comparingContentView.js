@@ -83,7 +83,6 @@ define([
                 this.isExist = result[0]._id;
             }
 
-
             _.each($actions, function (item, key) {
                 if ($(item).data('id').trim()) {
                     self.mergingArray.push({
@@ -94,20 +93,20 @@ define([
                 }
             });
 
-                if (this.step === this.stepKeys.length) {
-                    dataService.postData(url, {
-                        data: this.mergingArray,
-                        headerId: this.headerId
-                    }, function (err, result) {
-                        if (result) {
+            if (this.step === this.stepKeys.length) {
+                dataService.postData(url, {
+                    data    : this.mergingArray,
+                    headerId: this.headerId
+                }, function (err, result) {
+                    if (result) {
+                        self.imported += result.imported;
+                        self.skippedArray.concat(result.skippedArray);
+                        self.mergedCount += result.mergedCount;
+                        linkToFile = result.reportFilePath;
+                        linkName = result.reportFileName;
 
-                    self.imported += result.imported;
-                    self.skippedArray.concat(result.skippedArray);
-                    self.mergedCount += result.mergedCount;
-                    linkToFile = result.reportFilePath;
-                    linkName = result.reportFileName;
-
-                    self.finishStep(linkToFile, linkName);
+                        self.finishStep(linkToFile, linkName);
+                    }
                 });
             }
 

@@ -58,7 +58,8 @@
             'ID',
             ''
         ],
-        Employees: ['isEmployee',
+        Employees: [
+            'isEmployee',
             'imageSrc',
             'subject',
             'name.first',
