@@ -9,6 +9,8 @@ define([
     'dataService'
 ], function (Backbone, $, _, SettingsView, contentTemplate, settingsTemplate, async, dataService) {
     var ContentView = Backbone.View.extend({
+        el: '#content-holder',
+
         initialize: function () {
 
             this.getParallelResults();
@@ -78,7 +80,16 @@ define([
                     return self.render();
                 }
 
+                /* if (!result.scheduledPay.length || !result.weeklyScheduler.length || !result.bankAccounts || !result.employees.length || !result.payrollStructure.length) {*/
+                self.$el.after('<div id="settings"></div>');
+
+                self.$el.addClass('hidden');
+                $('#top-bar').addClass('hidden');
+
                 new SettingsView(result);
+                /* } else {
+                 self.render();
+                 }*/
 
             });
         },
