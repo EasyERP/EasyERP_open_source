@@ -35,7 +35,9 @@ define([
 
             dataService.getData(url, {timeStamp: self.timeStamp}, function (data) {
                 self.data = data;
+                self.data.keys.reverse();
                 self.stepKeys = Object.keys(self.data.result);
+                self.stepKeys.reverse();
                 self.headerId = data.headerId;
                 self.render(self.data);
             });
@@ -105,13 +107,16 @@ define([
                         data: this.mergingArray,
                         headerId: this.headerId
                     }, function (err, result) {
+                        if (result) {
+
+                        }
                         self.imported += result.imported;
                         self.skippedArray.concat(result.skippedArray);
                         self.mergedCount += result.mergedCount;
                         linkToFile = result.reportFilePath;
                         linkName = result.reportFileName;
 
-                        this.finishStep(linkToFile, linkName);
+                        self.finishStep(linkToFile, linkName);
                     });
                 }
             }
