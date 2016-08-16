@@ -64,12 +64,13 @@ define([
                 keys  : {},
                 result: {}
             };
-            var result;
             var url = 'importFile/merge';
             var $actions = this.$el.find('tr[data-id]');
+            //var stepKey = (!this.step) ? this.stepKeys[this.step] : this.stepKeys[this.step - 1];
             var stepKey = this.stepKeys[this.step];
             var linkToFile;
             var linkName;
+            var result;
 
             this.isExist = null;
 
@@ -93,13 +94,12 @@ define([
                 }
             });
 
-            if (this.step === this.stepKeys.length - 1) {
-                dataService.postData(url, {
-                    //    skipped: this.skippedArray,
-                    //    imported: this.imported,
-                    data    : this.mergingArray,
-                    headerId: this.headerId
-                }, function (err, result) {
+                if (this.step === this.stepKeys.length) {
+                    dataService.postData(url, {
+                        data: this.mergingArray,
+                        headerId: this.headerId
+                    }, function (err, result) {
+                        if (result) {
 
                     self.imported += result.imported;
                     self.skippedArray.concat(result.skippedArray);
@@ -113,7 +113,7 @@ define([
 
             this.step++;
 
-            if (this.step < this.stepKeys.length) {
+            if (this.step <= this.stepKeys.length) {
                 this.render(data);
             }
         },
