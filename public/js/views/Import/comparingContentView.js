@@ -31,6 +31,7 @@ define([
             this.skippedArray = App.currentUser.imports.skipped;
             this.imported = App.currentUser.imports.importedCount;
             this.mergedCount = 0;
+            this.mergingArray = [];
 
             dataService.getData(url, {timeStamp: self.timeStamp}, function (data) {
                 self.data = data;
@@ -57,7 +58,7 @@ define([
 
         skipping: function (data) {
             this.step++;
-            this.mergingArray = [];
+            //this.mergingArray = [];
             this.render(data);
         },
 
@@ -95,13 +96,17 @@ define([
                     }
                 });
 
-                dataService.postData(url, {data: this.mergingArray, headerId: this.headerId}, function (err, result) {
-                    self.imported += result.imported;
-                    self.skippedArray.concat(result.skippedArray);
-                    self.mergedCount += result.mergedCount;
+                if (this.step === this.stepKeys.length) {
+                    dataService.postData(url, {data: this.mergingArray, headerId: this.headerId}, function (err, result) {
+                        //self.imported += result.imported;
+                        //self.skippedArray.concat(result.skippedArray);
+                        //self.mergedCount += result.mergedCount;
 
-                    self.skipping(data);
-                });
+                        self.skipping(data);
+                    });
+                }
+
+
             } else {
                 this.skipping(data);
             }
