@@ -4,6 +4,11 @@
             <table class="list _importLoadHistory">
                 <thead>
                 <tr>
+                    <% if (moreExist) { %>
+                        <td>
+                            exist change
+                        </td>
+                    <% } %>
                     <% if (step) { %>
                         <td>
                             action
@@ -32,7 +37,9 @@
                                         <div class="changeTableCombobox choseDateRange dropDownDateRange">
                                             <div data-action="skip" class="item active">skip</div>
                                             <div data-action="import" class="item">import</div>
-                                            <div data-action="merge" class="item">merge</div>
+                                            <% if (isItExist) { %>
+                                                <div data-action="merge" class="item">merge</div>
+                                            <% } %>
                                             <span class="selectArrow"></span>
                                         </div>
                                     </div>

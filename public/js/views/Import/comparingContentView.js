@@ -32,10 +32,12 @@ define([
             this.imported = App.currentUser.imports.importedCount;
             this.mergedCount = 0;
             this.mergingArray = [];
+            this.isItExist = null;
+            this.moreExist = null;
 
             dataService.getData(url, {timeStamp: self.timeStamp}, function (data) {
                 self.data = data;
-                self.data.keys.reverse();
+                //self.data.keys.reverse();
                 self.stepKeys = Object.keys(self.data.result);
                 self.headerId = data.headerId;
                 self.render(self.data);
@@ -72,7 +74,7 @@ define([
             var linkName;
             var result;
 
-            this.isExist = null;
+            this.existId = null;
 
             data.keys = this.data.keys;
             data.result[stepKey] = this.data.result[stepKey];
@@ -80,7 +82,12 @@ define([
             result = _.where(data.result[stepKey], {isExist: true});
 
             if (result.length) {
-                this.isExist = result[0]._id;
+                this.existId = result[0]._id;
+                this.isItExist = true;
+
+                if (result.length > 1) {
+                    this.moreExist = true;
+                }
             }
 
             if (this.step) {
@@ -89,7 +96,7 @@ define([
                         self.mergingArray.push({
                             id     : $(item).data('id').trim(),
                             action : $(item).find('.active').data('action'),
-                            existId: self.isExist
+                            existId: self.existId
                         });
                     }
                 });
@@ -137,8 +144,13 @@ define([
 
             $thisEl.html(this.contentTemplate({
                 data: data,
-                step: this.step
+                step: this.step,
+                isItExist: this.isItExist,
+                moreExist: this.moreExist
             }));
+
+            this.isItExist = null;
+            this.moreExist = null;
         }
     });
 
