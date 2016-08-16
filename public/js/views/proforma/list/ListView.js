@@ -39,6 +39,7 @@ define([
         contentType      : 'proforma',
         changedModels    : {},
         hasPagination    : true,
+        viewType         : 'list',
 
         initialize: function (options) {
             this.formUrl = 'easyErp/' + this.contentType + '/tform/';
@@ -46,7 +47,7 @@ define([
             this.collection = options.collection;
             this.parrentContentId = options.collection.parrentContentId;
             this.filter = options.filter ? options.filter : {};
-            this.forSales = options.forSales;
+            this.forSales = options.forSales || false;
             this.filter.forSales = {key: 'forSales', value: [this.forSales], type: 'boolean'};
             this.sort = options.sort;
             this.defaultItemsNumber = this.collection.namberToShow || 100;
@@ -54,7 +55,7 @@ define([
             this.deleteCounter = 0;
             this.page = options.collection.page;
 
-            this.filter = {
+            this.baseFilter = {
                 name : 'forSales',
                 value: {
                     key  : 'forSales',
@@ -63,14 +64,15 @@ define([
                 }
             };
 
+            options.filter = this.filter;
+
             listViewBase.prototype.initialize.call(this, options);
 
             this.contentCollection = contentCollection;
             this.stages = [];
         },
 
-        events: {
-        },
+        events: {},
 
         saveItem: function () {
             var model;
@@ -209,34 +211,34 @@ define([
         }
 
         /*goToEditDialog: function (e) {
-            var self = this;
-            var id = $(e.target).closest('tr').data('id');
-            var model = new InvoiceModel({validate: false});
-            var editView = this.forSales ? EditView : proformaEditView;
+         var self = this;
+         var id = $(e.target).closest('tr').data('id');
+         var model = new InvoiceModel({validate: false});
+         var editView = this.forSales ? EditView : proformaEditView;
 
-            e.preventDefault();
+         e.preventDefault();
 
-            model.urlRoot = '/invoices/';
-            model.fetch({
-                data: {
-                    id       : id,
-                    currentDb: App.currentDb,
-                    viewType : 'form',
-                    forSales : self.forSales
-                },
+         model.urlRoot = '/invoices/';
+         model.fetch({
+         data: {
+         id       : id,
+         currentDb: App.currentDb,
+         viewType : 'form',
+         forSales : self.forSales
+         },
 
-                success: function (model) {
-                    return new editView({model: model, forSales: self.forSales});
-                },
+         success: function (model) {
+         return new editView({model: model, forSales: self.forSales});
+         },
 
-                error: function () {
-                    App.render({
-                        type   : 'error',
-                        message: 'Please refresh browser'
-                    });
-                }
-            });
-        }*/
+         error: function () {
+         App.render({
+         type   : 'error',
+         message: 'Please refresh browser'
+         });
+         }
+         });
+         }*/
 
     });
 
