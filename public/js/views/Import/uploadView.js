@@ -91,6 +91,7 @@ define([
 
         changeCombobox: function (e) {
             var thisEl = this.$el;
+            var self = this;
             var $target = $(e.target);
             var $combobox = $('#changeTableCombobox');
             var dropDownAttr = $target.data('table');
