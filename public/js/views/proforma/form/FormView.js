@@ -48,7 +48,6 @@ define([
             'click .approve'      : 'approve',
             'click .cancelInvoice': 'cancelInvoice',
             'click .setDraft'     : 'setDraft'
-
         },
 
         initialize: function (options) {
@@ -402,7 +401,7 @@ define([
                 journal              : journalId,
                 paymentTerms         : paymentTermId,
 
-                products   : products,
+               // products   : products,
                 paymentInfo: payments,
 
                 groups: {
@@ -412,7 +411,7 @@ define([
                 },
 
                 whoCanRW: whoCanRW,
-                workflow: workflow
+                workflow: workflow && workflow._id ? workflow._id : workflow
             };
 
             if (supplier) {
