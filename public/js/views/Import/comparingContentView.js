@@ -81,24 +81,26 @@ define([
             data.keys = this.data.keys;
             data.result[stepKey] = this.data.result[stepKey];
 
+            result = _.where(this.data.result[this.stepKeys[this.step]], {isExist: true});
 
+            if (result.length) {
+                this.existId = result[0]._id;
+            }
 
-            if (this.step > 0) {
-                result = _.where(this.data.result[this.step], {isExist: true});
+            result = _.where(this.data.result[stepKey], {isExist: true});
 
-                if (result.length) {
-                    this.existId = result[0]._id;
-                    this.isItExist = true;
+            if (result.length) {
+                this.isItExist = true;
+            }
+            if (result.length > 0) {
+                this.moreExist = true;
+            }
 
-                    if (result.length > 1) {
-                        this.moreExist = true;
-                    }
-                }
-
+            if (this.step >= 0) {
                 _.each($actions, function (item, key) {
                     if (self.moreExist !== null) {
                         self.existId = $('input:checked').data('exist');
-                        self.moreExist = null;
+                        //self.moreExist = null;
                     }
 
                     if ($(item).data('id').trim()) {
@@ -163,7 +165,8 @@ define([
                 moreExist: this.moreExist
             }));
 
-            this.isItExist = null;
+            self.moreExist = null;
+            self.isItExist = null;
         }
     });
 

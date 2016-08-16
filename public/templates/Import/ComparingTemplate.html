@@ -30,7 +30,7 @@
                 <% _.each(data.result, function(comparingData, comparingDataKey) { %>
                 <tbody data-group="<%= comparingDataKey %>" style="background-color: hsl( <%= Math.floor(Math.random() * (360 - 1)) + 1 %> , 50%, 80%)">
                     <% _.each(comparingData, function(comparingDataObj, comparingDataObjKey) { %>
-                        <tr data-id="<% if (comparingDataObj['importId']) { %>
+                        <tr data-exist="<% comparingDataObj['_id'] %>" data-id="<% if (comparingDataObj['importId']) { %>
                                         <%= comparingDataObj['importId'].trim() %>
                                      <% } else { %><% } %>">
                             <% if ((moreExist) && (comparingDataObj['isExist'])) { %>
