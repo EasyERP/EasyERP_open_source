@@ -91,6 +91,7 @@ define([
             'easyErp/Accounts'                                                                              : 'goToAccounts',
             'easyErp/Dashboard'                                                                             : 'goToDashboard',
             'easyErp/reportsDashboard'                                                                      : 'goToReportsDashboard',
+            'easyErp/payrollDashboard'                                                                      : 'goToPayrollDashboard',
             'easyErp/DashBoardVacation(/filter=:filter)'                                                    : 'dashBoardVacation',
             'easyErp/invoiceCharts(/filter=:filter)'                                                        : 'invoiceCharts',
             'easyErp/HrDashboard'                                                                           : 'hrDashboard',
@@ -728,6 +729,40 @@ define([
                     self.changeTopBarView(topbarView);
 
                     Backbone.history.navigate(url, {replace: true});
+                });
+            }
+        },
+
+        goToPayrollDashboard: function () {
+            var self = this;
+            this.checkLogin(function (success) {
+                if (success) {
+                    goDashboard(self);
+                } else {
+                    self.redirectTo();
+                }
+            });
+
+            function goDashboard(context) {
+                var startTime = new Date();
+                var contentViewUrl = "views/payrollDashboard/ContentView";
+                var topBarViewUrl = "views/payrollDashboard/TopBarView";
+                var self = context;
+
+                if (context.mainView === null) {
+                    context.main("payrollDashboard");
+                } else {
+                    context.mainView.updateMenu("payrollDashboard");
+                }
+
+                require([contentViewUrl, topBarViewUrl], function (contentView, topBarView) {
+
+                    custom.setCurrentVT('list');
+
+                    var contentview = new contentView({startTime: startTime});
+                    var topbarView = new topBarView({actionType: "Content"});
+                    self.changeView(contentview);
+                    self.changeTopBarView(topbarView);
                 });
             }
         },
