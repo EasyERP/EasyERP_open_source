@@ -69,10 +69,10 @@ define([
                 keys  : {},
                 result: {}
             };
-            var stepKey = this.stepKeys[this.step];
             var result;
             var url = 'importFile/merge';
             var $actions = this.$el.find('tr[data-id]');
+            var stepKey = this.stepKeys[(this.step - 1) >= 0 ? this.step - 1 : this.step];
             var linkToFile;
 
             this.isExist = null;

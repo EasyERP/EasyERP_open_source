@@ -523,6 +523,7 @@ var Module = function (models) {
 
                         conflictSavedItems = resultItems.map(function (item) {
                             var currentItem = item.toJSON();
+                            currentItem._id = currentItem._id.toString();
                             currentItem.isExist = true;
 
                             return flatten(currentItem);
