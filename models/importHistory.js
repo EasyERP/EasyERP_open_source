@@ -4,38 +4,38 @@ module.exports = (function () {
 
     var importHistorySchema = mongoose.Schema({
         date: {
-            type: Date,
+            type   : Date,
             default: Date.now
         },
 
         fileName: {
-            type: String,
+            type   : String,
             default: ''
         },
 
         user: {
-            type: ObjectId,
-            ref: 'Users',
+            type   : ObjectId,
+            ref    : 'Users',
             default: null
         },
 
         type: {
-            type: String,
+            type   : String,
             default: ''
         },
 
         status: {
-            type: String,
-            default: ''
+            type   : String,
+            default: 'Finished'
         },
 
         reportFile: {
-            type: String,
+            type   : String,
             default: ''
         },
 
         reportFileName: {
-            type: String,
+            type   : String,
             default: ''
         }
     }, {collection: 'ImportHistories'});
