@@ -68,8 +68,8 @@ define([
             };
             var url = 'importFile/merge';
             var $actions = this.$el.find('tr[data-id]');
-            //var stepKey = (!this.step) ? this.stepKeys[this.step] : this.stepKeys[this.step - 1];
-            var stepKey = this.stepKeys[this.step];
+            var stepKey = (!this.step) ? this.stepKeys[this.step] : this.stepKeys[this.step - 1];
+            //var stepKey = this.stepKeys[this.step];
             var linkToFile;
             var linkName;
             var result;
