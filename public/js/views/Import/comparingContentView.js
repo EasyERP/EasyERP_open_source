@@ -96,7 +96,7 @@ define([
 
                 if (this.step === this.stepKeys.length) {
                     dataService.postData(url, {
-                        data: this.mergingArray,
+                        data    : this.mergingArray,
                         headerId: this.headerId
                     }, function (err, result) {
                         if (result) {
@@ -125,11 +125,11 @@ define([
 
             $thisEl.html(this.finishTemplate({
                 data: {
-                    imported: this.imported,
+                    imported    : this.imported,
                     skippedArray: this.skippedArray.length,
-                    mergedCount: this.mergedCount,
-                    linkToFile: linkToFile,
-                    linkName: linkName
+                    mergedCount : this.mergedCount,
+                    linkToFile  : linkToFile,
+                    linkName    : linkName
                 }
             }));
         },

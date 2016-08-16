@@ -23,8 +23,6 @@ var Module = function (models) {
         'groups.group': true
     };
 
-    var ObjectId = mongoose.Types.ObjectId
-
     function toOneCase(item) {
         item = item ? item.toString().toLowerCase() : null;
         item = item ? item.toString().replace(/[-+=_() !@#$%^&*`{}\[\]:;.,|\\]/g, '') : null;
@@ -568,7 +566,8 @@ var Module = function (models) {
         var headerItem;
         var titleArray;
         var mappedFields;
-        var skippedArray;
+        var skippedArray = [];
+        var skipped;
         var idsForRemove = [];
         var Model;
         var importedCount = 0;
@@ -598,9 +597,9 @@ var Module = function (models) {
                         return wCb(err);
                     }
 
-                    userImports = userModel.imports.toJSON() || {};
+                    userImports = userModel.toJSON().imports || {};
 
-                    skippedArray = userImports.skipped;
+                    skipped = userImports.skipped;
                     importedCount = userImports.importedCount;
                     type = userImports.type;
                     importFileName = userImports.fileName;
@@ -640,6 +639,28 @@ var Module = function (models) {
             },
 
             function (mappedFields, importData, wCb) {
+                var skippedItem;
+
+                if (!skipped.length) {
+                    return wCb(null, mappedFields, importData);
+                }
+
+                ImportModel.find({_id: {$in: skipped}}, function (err, resultItems) {
+                    if (err) {
+                        return wCb(null);
+                    }
+
+                    resultItems.forEach(function (item) {
+                        skippedItem = prepareSaveObject(mappedFields, item.result);
+
+                        skippedArray.push(skippedItem);
+                    });
+
+                    wCb(null, mappedFields, importData);
+                });
+            },
+
+            function (mappedFields, importData, wCb) {
                 var item;
                 var importItem;
                 var itemObj;
@@ -664,9 +685,9 @@ var Module = function (models) {
                         saveModel = new Model(importItem);
                         saveModel.save(function (err) {
                             if (err) {
-                                item.reason = err.message;
+                                itemObj.reason = err.message;
                                 skippedArray.push(
-                                    item
+                                    importItem
                                 );
                             } else {
                                 importedCount++;
@@ -822,9 +843,7 @@ var Module = function (models) {
                         saveModel.save(function (err) {
                             if (err) {
                                 item.reason = err.message;
-                                skippedArray.push(
-                                    item._id
-                                );
+                                skippedArray.push(item.importId.toString());
                             } else {
                                 importedCount++;
                                 idsForRemove.push(item.importId);
