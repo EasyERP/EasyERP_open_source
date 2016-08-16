@@ -37,7 +37,7 @@ define([
 
             dataService.getData(url, {timeStamp: self.timeStamp}, function (data) {
                 self.data = data;
-                //self.data.keys.reverse();
+                self.data.keys.reverse();
                 self.stepKeys = Object.keys(self.data.result);
                 self.headerId = data.headerId;
                 self.render(self.data);
@@ -92,6 +92,11 @@ define([
 
             if (this.step) {
                 _.each($actions, function (item, key) {
+                    if (self.moreExist !== null) {
+                        self.existId = $('input:checked').data('exist');
+                        self.moreExist = null;
+                    }
+
                     if ($(item).data('id').trim()) {
                         self.mergingArray.push({
                             id     : $(item).data('id').trim(),
@@ -150,7 +155,6 @@ define([
             }));
 
             this.isItExist = null;
-            this.moreExist = null;
         }
     });
 

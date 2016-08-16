@@ -8,6 +8,8 @@
                         <td>
                             exist change
                         </td>
+                    <% } else { %>
+                        <td></td>
                     <% } %>
                     <% if (step) { %>
                         <td>
@@ -31,6 +33,13 @@
                         <tr data-id="<% if (comparingDataObj['importId']) { %>
                                         <%= comparingDataObj['importId'].trim() %>
                                      <% } else { %><% } %>">
+                            <% if ((moreExist) && (comparingDataObj['isExist'])) { %>
+                                <td>
+                                    <input type="radio" name="dataExist" class="changeExist" data-exist="<%= comparingDataObj['_id'] %>">
+                                </td>
+                            <% } else { %>
+                                <td></td>
+                            <% } %>
                             <% if (!comparingDataObj['isExist'] && (step)) { %>
                                 <td>
                                     <div class="dropDownDateRangeContainer">
