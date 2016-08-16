@@ -465,7 +465,6 @@ var Module = function (models) {
             imported = userImports.importedCount;
             conflictedSaveItems = userImports.conflictedItems;
 
-
             criteria.$and.push({_id: {$nin: skipped}});
 
             Model = models.get(req.session.lastDb, type, schemaObj[type]);
@@ -680,7 +679,8 @@ var Module = function (models) {
 
                         Model.update({_id: existId}, {$set: importItem}, function (err) {
                             if (err) {
-                                return eachCb(err);
+                                importItem.reason = err.message;
+                                skippedArray.push(importItem);
                             }
 
                             mergedCount++;
@@ -816,6 +816,7 @@ var Module = function (models) {
 
                 function (itemsToSave, conflictedItems, wCb) {
                     var saveModel;
+
                     async.each(itemsToSave, function (item, eachCb) {
                         saveModel = new Model(item);
                         saveModel.save(function (err) {

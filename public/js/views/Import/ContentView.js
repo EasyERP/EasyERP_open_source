@@ -161,9 +161,10 @@ define([
                             skipped        : data.skippedArray,
                             importedCount  : data.imported,
                             conflictedItems: data.conflictedItems
+                        }, function () {
+                            self.childView = new ComparingView({timeStamp: self.timeStamp});
                         });
 
-                        self.childView = new ComparingView({timeStamp: self.timeStamp});
                     });
                 } else {
                     self.childView = new ComparingView({timeStamp: self.timeStamp});
