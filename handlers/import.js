@@ -4,7 +4,6 @@ var Module = function (models) {
 
     var ImportSchema = mongoose.Schemas.Imports;
     var UserSchema = mongoose.Schemas.User;
-    var PersonSchema = mongoose.Schemas.Customer;
     var ImportHistorySchema = mongoose.Schemas.ImportHistories;
 
     var schemaObj = {
@@ -88,7 +87,7 @@ var Module = function (models) {
             resultArray : resultArray,
             map         : exportMapImport,
             returnResult: true,
-            fileName    : fileName || 'Customer'
+            fileName    : fileName || 'Customers'
         };
 
         return exporter.reportToXlsx(options);
@@ -389,12 +388,8 @@ var Module = function (models) {
     function compearingForMerge(savedItems, importedItems, compareFiled, callback) {
         var itemsToSave = [];
         var conflictSavedItems = [];
-        var conflictItems = [];
         var savedItem;
-        var importedItem;
-        var resultConflictedItems;
         var jsonSavedItem;
-        var uniqSavedItems;
         var conflictItemsIndex = [];
 
         for (var i = 0; i <= importedItems.length - 1; i++) {
@@ -515,7 +510,6 @@ var Module = function (models) {
                 conflictedSavedItems: function (parCb) {
                     Model.find({_id: {$in: conflictedSaveItems}}, function (err, resultItems) {
                         var conflictSavedItems;
-                        var objectIdRegExp = new RegExp('(^[0-9a-fA-F]{24}$)');
 
                         if (err) {
                             return parCb(err);
@@ -570,15 +564,20 @@ var Module = function (models) {
         };
         var ImportModel = models.get(req.session.lastDb, 'Imports', ImportSchema);
         var UserModel = models.get(req.session.lastDb, 'Users', UserSchema);
+        var ImportHistoryModel = models.get(req.session.lastDb, 'ImportHistories', ImportHistorySchema);
         var headerId = body.headerId;
         var headerItem;
         var titleArray;
         var mappedFields;
-        var skippedArray = [];
+        var skippedArray;
         var idsForRemove = [];
         var Model;
         var importedCount = 0;
         var mergedCount = 0;
+        var type;
+        var importFileName;
+        var reportFilePath;
+        var reportFileName;
 
         if (timeStamp) {
             criteria.$and.push({timeStamp: timeStamp});
@@ -601,6 +600,11 @@ var Module = function (models) {
                     }
 
                     userImports = userModel.imports.toJSON() || {};
+
+                    skippedArray = userImports.skipped;
+                    importedCount = userImports.importedCount;
+                    type = userImports.type;
+                    importFileName = userImports.fileName;
 
                     wCb(null, userImports);
                 });
@@ -696,12 +700,35 @@ var Module = function (models) {
             },
 
             function (wCb) {
-                ImportModel.remove({_id: {$in: idsForRemove}}, function () {
+                createXlsxReport(res, wCb, skippedArray, type);
+            },
+
+            function (reportOptions, wCb) {
+                var options = {
+                    fileName      : importFileName,
+                    user          : userId,
+                    type          : type,
+                    reportFile    : reportOptions.pathName,
+                    reportFileName: reportOptions.fileName
+                };
+
+                reportFilePath = reportOptions.pathName;
+                reportFileName = reportOptions.fileName;
+
+
+                writeHistory(options, ImportHistoryModel, wCb);
+            },
+
+            function (wCb) {
+                ImportModel.remove({user: userId}, function () {
                 });
 
                 wCb(null);
-            }
+            },
 
+            function (wCb) {
+                UserModel.update({_id: userId}, {$set: {imports: {}}}, wCb);
+            }
         ], function (err) {
 
             if (err) {
@@ -709,9 +736,11 @@ var Module = function (models) {
             }
 
             res.status(200).send({
-                imported: importedCount,
-                skipped : skippedArray,
-                merged  : mergedCount
+                imported      : importedCount,
+                skipped       : skippedArray,
+                merged        : mergedCount,
+                reportFilePath: reportFilePath,
+                reportFileName: reportFileName
             });
         });
     };
