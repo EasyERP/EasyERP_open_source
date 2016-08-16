@@ -93,12 +93,11 @@ define([
                 }
             });
 
-            if (this.step === this.stepKeys.length) {
-                dataService.postData(url, {
-                    data    : this.mergingArray,
-                    headerId: this.headerId
-                }, function (err, result) {
-                    if (result) {
+                if (this.step === this.stepKeys.length) {
+                    dataService.postData(url, {
+                        data: this.mergingArray,
+                        headerId: this.headerId
+                    }, function (err, result) {
                         self.imported += result.imported;
                         self.skippedArray.concat(result.skippedArray);
                         self.mergedCount += result.mergedCount;
