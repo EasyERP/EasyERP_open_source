@@ -35,7 +35,9 @@ define([
 
             dataService.getData(url, {timeStamp: self.timeStamp}, function (data) {
                 self.data = data;
+                self.data.keys.reverse();
                 self.stepKeys = Object.keys(self.data.result);
+                self.stepKeys.reverse();
                 self.headerId = data.headerId;
                 self.render(self.data);
             });
@@ -74,6 +76,7 @@ define([
             var $actions = this.$el.find('tr[data-id]');
             var stepKey = this.stepKeys[(this.step - 1) >= 0 ? this.step - 1 : this.step];
             var linkToFile;
+            var linkName;
 
             this.isExist = null;
 
@@ -104,12 +107,16 @@ define([
                         data: this.mergingArray,
                         headerId: this.headerId
                     }, function (err, result) {
+                        if (result) {
+
+                        }
                         self.imported += result.imported;
                         self.skippedArray.concat(result.skippedArray);
                         self.mergedCount += result.mergedCount;
-                        linkToFile = result.link;
+                        linkToFile = result.reportFilePath;
+                        linkName = result.reportFileName;
 
-                        this.finishStep(linkToFile);
+                        self.finishStep(linkToFile, linkName);
                     });
                 }
             }
@@ -118,7 +125,7 @@ define([
             }
         },
 
-        finishStep: function (linkToFile) {
+        finishStep: function (linkToFile, linkName) {
             var $thisEl = this.$el;
 
             $thisEl.html(this.finishTemplate({
@@ -126,7 +133,8 @@ define([
                     imported: this.imported,
                     skippedArray: this.skippedArray.length,
                     mergedCount: this.mergedCount,
-                    linkToFile: this.linkToFile
+                    linkToFile: linkToFile,
+                    linkName: linkName
                 }
             }));
         },
