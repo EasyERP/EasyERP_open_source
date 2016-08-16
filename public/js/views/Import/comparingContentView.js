@@ -113,7 +113,7 @@ define([
                     }, function (err, result) {
                         self.imported += result.imported;
                         self.skippedArray.concat(result.skippedArray);
-                        self.mergedCount += result.mergedCount;
+                        self.mergedCount += result.merged;
                         linkToFile = result.reportFilePath;
                         linkName = result.reportFileName;
 
