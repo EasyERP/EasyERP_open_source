@@ -17,9 +17,9 @@ define([
         finishTemplate : _.template(FinishTemplate),
 
         events: {
-            'click #stepByStepButton': 'stepByStep',
+            'click #stepByStepButton'   : 'stepByStep',
             'click .changeTableCombobox': 'changeTableCombobox',
-            'click .item': 'checkItem'
+            'click .item'               : 'checkItem'
         },
 
         initialize: function (options) {
@@ -38,9 +38,6 @@ define([
                 self.headerId = data.headerId;
                 self.render(self.data);
             });
-
-
-
         },
 
         checkItem: function (e) {
@@ -50,8 +47,6 @@ define([
             $parent.find('.item').removeClass('active');
             $target.addClass('active');
             $parent.toggleClass('open');
-
-
         },
 
         changeTableCombobox: function (e) {
@@ -62,9 +57,7 @@ define([
 
         skipping: function (data) {
             this.step++;
-
             this.mergingArray = [];
-
             this.render(data);
         },
 
@@ -95,14 +88,14 @@ define([
                 _.each($actions, function (item, key) {
                     if ($(item).data('id').trim()) {
                         self.mergingArray.push({
-                            id: $(item).data('id').trim(),
-                            action: $(item).find('.active').data('action'),
+                            id     : $(item).data('id').trim(),
+                            action : $(item).find('.active').data('action'),
                             existId: self.isExist
                         });
                     }
                 });
 
-                dataService.postData(url, {data: this.mergingArray, headerId: this.headerId} ,function(err, result) {
+                dataService.postData(url, {data: this.mergingArray, headerId: this.headerId}, function (err, result) {
                     self.imported += result.imported;
                     self.skippedArray.concat(result.skippedArray);
                     self.mergedCount += result.mergedCount;

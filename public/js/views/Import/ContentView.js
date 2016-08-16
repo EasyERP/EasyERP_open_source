@@ -61,7 +61,6 @@ define([
             this.stage = usersImport.stage || 1;
             this.map = {};
 
-
             this.render();
             this.selectStage();
         },
@@ -125,11 +124,6 @@ define([
                 if (this.timeStamp) {
                     this.enabledNextBtn();
                 }
-
-                this.updateCurrentUser({
-                    fileName: this.fileName,
-                    stage   : this.stage
-                });
 
                 this.listenTo(this.childView, 'uploadCompleted', this.enabledNextBtn);
 

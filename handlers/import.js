@@ -574,7 +574,7 @@ var Module = function (models) {
         var titleArray;
         var mappedFields;
         var skippedArray = [];
-        var idsForRemove;
+        var idsForRemove = [];
         var Model;
         var importedCount = 0;
         var mergedCount = 0;
@@ -583,8 +583,12 @@ var Module = function (models) {
             criteria.$and.push({timeStamp: timeStamp});
         }
 
-        criteria.$and.push({_id: {$in: ids}});
-        criteria.$and.push({_id: headerId});
+        criteria.$and.push({
+            $or: [
+                {_id: {$in: ids}},
+                {_id: headerId}
+            ]
+        });
 
         async.waterfall([
             function (wCb) {
@@ -595,7 +599,7 @@ var Module = function (models) {
                         return wCb(err);
                     }
 
-                    userImports = userModel.imports || {};
+                    userImports = userModel.imports.toJSON() || {};
 
                     wCb(null, userImports);
                 });
@@ -620,9 +624,10 @@ var Module = function (models) {
                     mapResult = userImports.map.result;
 
                     headerItem = _.filter(importData, function (item) {
-                        return item._id.toString() === headerId;
+                        return item.toJSON()._id.toString() === headerId._id.toString();
                     });
-                    titleArray = headerItem.result;
+
+                    titleArray = headerItem[0].toJSON().result;
 
                     mappedFields = mapImportFileds(mapResult, titleArray);
 
@@ -637,12 +642,12 @@ var Module = function (models) {
                 var saveModel;
                 var existId;
 
-                async.each(ids, function (id, eachCb) {
+                async.each(importIds, function (id, eachCb) {
                     item = _.filter(importData, function (item) {
                         return item._id.toString() === id.id;
                     });
 
-                    itemObj = item.toJSON().result;
+                    itemObj = item[0].toJSON().result;
 
                     importItem = prepareSaveObject(mappedFields, itemObj);
 
@@ -653,7 +658,7 @@ var Module = function (models) {
                         return;
                     } else if (id.action === 'import') {
                         saveModel = new Model(importItem);
-                        saveModel.save(function () {
+                        saveModel.save(function (err) {
                             if (err) {
                                 item.reason = err.message;
                                 skippedArray.push(
