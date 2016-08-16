@@ -34,22 +34,44 @@ define([
             this.comparingField = 'email';
 
             this.mergeFields = {
-                Opportunities: [
-                    'contactName.first',
-                    'contactName.last',
-                    'name'
-                ],
-                Customers    : [
-                    'email',
-                    'name.first',
-                    'website',
-                    'phones.phone'
-                ],
-                Employees    : [
-                    'name.first',
-                    'name.last',
-                    'workEmail'
-                ]
+                Opportunities: {
+                    names: [
+                        'First Name',
+                        'Last Name',
+                        'Full Name'
+                    ],
+                    items: [
+                        'contactName.first',
+                        'contactName.last',
+                        'name'
+                    ]
+                } ,
+                Customers    : {
+                    names: [
+                        'Email',
+                        'First Name',
+                        'Site',
+                        'Phone'
+                    ],
+                    items: [
+                        'email',
+                        'name.first',
+                        'website',
+                        'phones.phone'
+                    ]
+                },
+                Employees    : {
+                    names: [
+                        'First Name',
+                        'Last Name',
+                        'Email'
+                    ],
+                    items: [
+                        'name.first',
+                        'name.last',
+                        'workEmail'
+                    ]
+                }
             };
 
             this.render();
@@ -61,7 +83,7 @@ define([
             var thisEl = this.$el;
             var $target = $(e.target);
 
-            this.comparingField = $target.text();
+            this.comparingField = $target.data('imp');
 
             thisEl.find('.item').removeClass('active');
             $target.addClass('active');
@@ -77,8 +99,8 @@ define([
 
             $combobox.html('');
 
-            _.each(this.mergeFields[dropDownAttr], function (item) {
-                $combobox.append('<div class="item">' + item + '</div>');
+            _.each(this.mergeFields[dropDownAttr].names, function (item, key) {
+                $combobox.append('<div date-imp="' + self.mergeFields[dropDownAttr].items[key] + '" class="item">' + item + '</div>');
             });
             $combobox.append('<span class="selectArrow"></span>');
         },

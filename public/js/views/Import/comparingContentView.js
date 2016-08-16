@@ -99,9 +99,6 @@ define([
                         data: this.mergingArray,
                         headerId: this.headerId
                     }, function (err, result) {
-                        if (result) {
-
-                        }
                         self.imported += result.imported;
                         self.skippedArray.concat(result.skippedArray);
                         self.mergedCount += result.mergedCount;
