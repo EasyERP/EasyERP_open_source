@@ -22,6 +22,8 @@ define([
 
             dataService.getData(url, {timeStamp: this.timeStamp}, function (data) {
                 self.data = data;
+
+
                 self.render();
             });
         },
