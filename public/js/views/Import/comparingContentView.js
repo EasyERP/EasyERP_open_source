@@ -57,12 +57,6 @@ define([
             $combobox.toggleClass('open');
         },
 
-        skipping: function (data) {
-            this.step++;
-            //this.mergingArray = [];
-            this.render(data);
-        },
-
         stepByStep: function (e) {
             var $thisEl = this.$el;
             var self = this;
@@ -73,9 +67,11 @@ define([
             var result;
             var url = 'importFile/merge';
             var $actions = this.$el.find('tr[data-id]');
-            var stepKey = this.stepKeys[(this.step - 1) >= 0 ? this.step - 1 : this.step];
+
+            var stepKey = this.stepKeys[this.step];
             var linkToFile;
             var linkName;
+
 
             this.isExist = null;
 
@@ -117,8 +113,11 @@ define([
                     });
                 }
             }
+
+            this.step++;
+
             if (this.step < this.stepKeys.length) {
-                this.skipping(data);
+                this.render(data);
             }
         },
 
