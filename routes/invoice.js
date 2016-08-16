@@ -224,7 +224,7 @@ HTTP/1.1 200 OK
      * */
     router.get('/stats/project', accessStackMiddleware, handler.getStatsForProject);
     router.get('/chart', accessStackMiddleware, handler.chartForProject);
-
+    router.get('/emails/:id', accessStackMiddleware, handler.getEmails);
     router.patch('/approve', accessStackMiddleware, handler.approve);
 
     /**
