@@ -37,7 +37,6 @@ define([
                 self.data = data;
                 self.data.keys.reverse();
                 self.stepKeys = Object.keys(self.data.result);
-                self.stepKeys.reverse();
                 self.headerId = data.headerId;
                 self.render(self.data);
             });
@@ -102,14 +101,12 @@ define([
 
                 if (this.step === this.stepKeys.length) {
                     dataService.postData(url, {
-                    //    skipped: this.skippedArray,
-                    //    imported: this.imported,
-                        data: this.mergingArray,
+                        //    skipped: this.skippedArray,
+                        //    imported: this.imported,
+                        data    : this.mergingArray,
                         headerId: this.headerId
                     }, function (err, result) {
-                        if (result) {
 
-                        }
                         self.imported += result.imported;
                         self.skippedArray.concat(result.skippedArray);
                         self.mergedCount += result.mergedCount;
@@ -130,11 +127,11 @@ define([
 
             $thisEl.html(this.finishTemplate({
                 data: {
-                    imported: this.imported,
+                    imported    : this.imported,
                     skippedArray: this.skippedArray.length,
-                    mergedCount: this.mergedCount,
-                    linkToFile: linkToFile,
-                    linkName: linkName
+                    mergedCount : this.mergedCount,
+                    linkToFile  : linkToFile,
+                    linkName    : linkName
                 }
             }));
         },

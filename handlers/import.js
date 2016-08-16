@@ -459,7 +459,7 @@ var Module = function (models) {
             userImports = userModel.imports || {};
 
             map = userImports.map;
-            type = map.type;
+            type = userImports.type;
             result = map.result;
             skipped = userImports.skipped;
             imported = userImports.importedCount;
