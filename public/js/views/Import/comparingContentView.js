@@ -83,29 +83,34 @@ define([
                 this.isExist = result[0]._id;
             }
 
-            _.each($actions, function (item, key) {
-                if ($(item).data('id').trim()) {
-                    self.mergingArray.push({
-                        id     : $(item).data('id').trim(),
-                        action : $(item).find('.active').data('action'),
-                        existId: self.isExist
+            if (this.step) {
+                _.each($actions, function (item, key) {
+                    if ($(item).data('id').trim()) {
+                        self.mergingArray.push({
+                            id     : $(item).data('id').trim(),
+                            action : $(item).find('.active').data('action'),
+                            existId: self.isExist
+                        });
+                    }
+                });
+
+                if (this.step === this.stepKeys.length) {
+                    dataService.postData(url, {
+                        data: this.mergingArray,
+                        headerId: this.headerId
+                    }, function (err, result) {
+                        if (result) {
+
+                        }
+                        self.imported += result.imported;
+                        self.skippedArray.concat(result.skippedArray);
+                        self.mergedCount += result.mergedCount;
+                        linkToFile = result.reportFilePath;
+                        linkName = result.reportFileName;
+
+                        self.finishStep(linkToFile, linkName);
                     });
                 }
-            });
-
-            if (this.step === this.stepKeys.length) {
-                dataService.postData(url, {
-                    data    : this.mergingArray,
-                    headerId: this.headerId
-                }, function (err, result) {
-                    self.imported += result.imported;
-                    self.skippedArray.concat(result.skippedArray);
-                    self.mergedCount += result.mergedCount;
-                    linkToFile = result.reportFilePath;
-                    linkName = result.reportFileName;
-
-                    self.finishStep(linkToFile, linkName);
-                });
             }
 
             this.step++;
@@ -120,11 +125,11 @@ define([
 
             $thisEl.html(this.finishTemplate({
                 data: {
-                    imported    : this.imported,
+                    imported: this.imported,
                     skippedArray: this.skippedArray.length,
-                    mergedCount : this.mergedCount,
-                    linkToFile  : linkToFile,
-                    linkName    : linkName
+                    mergedCount: this.mergedCount,
+                    linkToFile: linkToFile,
+                    linkName: linkName
                 }
             }));
         },
