@@ -7,7 +7,7 @@ define([
     'text!templates/stages.html',
     'views/salesInvoices/CreateView',
     'views/salesInvoices/EditView',
-    'views/Proforma/EditView',
+    'views/proforma/EditView',
     'models/InvoiceModel',
     'views/salesInvoices/list/ListItemView',
     'collections/salesInvoices/filterCollection',

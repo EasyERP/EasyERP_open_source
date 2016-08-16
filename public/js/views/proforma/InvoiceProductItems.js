@@ -4,7 +4,7 @@ define([
     'jQuery',
     'text!templates/Invoices/InvoiceProductItems.html',
     'text!templates/Invoices/InvoiceProductInputContent.html',
-    'text!templates/Proforma/EditInvoiceProductInputContent.html',
+    'text!templates/proforma/EditInvoiceProductInputContent.html',
     'text!templates/Products/InvoiceOrder/TotalAmount.html',
     'text!templates/Invoices/EditInvoiceProductInputContent.html',
     'collections/Products/products',
