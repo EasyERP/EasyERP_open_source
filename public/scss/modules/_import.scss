@@ -295,6 +295,12 @@
     }
   }
 
+  input[type="checkbox"],
+  input[type="radio"] {
+    width: 15px;
+    height: 15px;
+  }
+
   .dropDownDateRangeContainer {
     float: none;
     height: 11px;

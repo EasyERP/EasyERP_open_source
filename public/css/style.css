@@ -2238,6 +2238,10 @@ label._customCHeckbox input[type="checkbox"] {
     ._importAttachContainer label span,
     ._importAttachContainer .dropDownDateRangeContainer span {
       display: block; }
+  ._importAttachContainer input[type="checkbox"],
+  ._importAttachContainer input[type="radio"] {
+    width: 15px;
+    height: 15px; }
   ._importAttachContainer .dropDownDateRangeContainer {
     float: none;
     height: 11px; }
