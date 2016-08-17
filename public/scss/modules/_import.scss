@@ -9,6 +9,13 @@
   ._importListFooter {
 
   }
+
+  ._importMainTitle {
+    font-size: 26px;
+    padding-right: 15px;
+    text-align: right;
+    margin-bottom: 20px;
+  }
 }
 
 ._loadHistoryTopTable {
@@ -445,6 +452,10 @@
     td {
       text-align: left;
     }
+  }
+
+  ._importLink {
+    color: #3291c8;
   }
 }
 
