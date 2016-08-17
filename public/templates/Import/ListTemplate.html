@@ -1,17 +1,21 @@
 <% _.each(history, function(historyItem, key1) { %>
-<tr>
-    <% _.each(historyItem, function(headItem, key2) { %>
-    <% if (key2 !== '_id' && key2 !== 'reportFile') { %>
-    <% if (key2 === 'reportFileName') { %>
-    <td>
-        <a href="<%= historyItem[key2] %>"><%= historyItem['reportFile'] %></a>
-    </td>
-    <% } else { %>
-    <td>
-        <%= historyItem[key2] %>
-    </td>
-    <% } %>
-    <% } %>
-    <% }) %>
-</tr>
+    <tr>
+        <% _.each(historyItem, function(headItem, key2) { %>
+            <% if (key2 !== '_id' && key2 !== 'reportFile') { %>
+                <% if (key2 === 'reportFileName') { %>
+                    <td>
+                        <a href="<%= historyItem[key2] %>">
+                            <%= historyItem['reportFile'] %>
+                        </a>
+                    </td>
+                <% } else { %>
+                    <td>
+                        <%= historyItem[key2] %>
+                    </td>
+                <% } %>
+            <% } else { %>
+                <td></td>
+            <% } %>
+        <% }) %>
+    </tr>
 <% }) %>
