@@ -188,6 +188,10 @@ define([
                 moreExist: this.moreExist
             }));
 
+            if (this.step === this.stepKeys.length - 1) {
+                $('#stepByStepButton').text('Finish Import');
+            }
+
             self.moreExist = null;
             self.isItExist = null;
         }

@@ -27,11 +27,13 @@
         <div class="fieldsItems" data-tab="<%= key %>">
             <ul>
                 <% _.each(item, function(itemOne) { %>
-                    <li>
-                        <div class="fieldItem" style="cursor: pointer" data-parent="<%= key %>" data-name="<%= itemOne %>">
-                            <%= itemOne %>
-                        </div>
-                    </li>
+                    <% if (itemOne !== 'reason') { %>
+                        <li>
+                            <div class="fieldItem" style="cursor: pointer" data-parent="<%= key %>" data-name="<%= itemOne %>">
+                                <%= itemOne %>
+                            </div>
+                        </li>
+                    <% } %>
                 <% }); %>
             </ul>
         </div>
