@@ -449,7 +449,8 @@
 }
 
 ._finishImportContainer {
-  border: 1px solid $importTabsBorderColor;
+  border: 1px solid $importAttachBorderColor;
+  background: $importAttachBg;
   width: 100%;
   max-width: 700px;
   padding: 25px 30px;
@@ -477,5 +478,9 @@
         }
       }
     }
+  }
+
+  ._importWithOutConflict {
+    margin-bottom: 25px;
   }
 }
