@@ -460,7 +460,7 @@ var Module = function (models) {
 
             userImports = userModel.imports || {};
 
-            map = userImports.map;
+            map = userImports.map || {};
             type = userImports.type;
             result = map.result;
             skipped = userImports.skipped;
@@ -531,7 +531,13 @@ var Module = function (models) {
                 },
 
                 getHeaderId: function (parCb) {
-                    ImportModel.findOne(parCb);
+                    ImportModel.findOne(function(err, result){
+                        if (err) {
+                            return parCb(err);
+                        }
+
+                        parCb(null, result._id);
+                    });
                 }
             }, function (err, resultItems) {
 
@@ -632,7 +638,7 @@ var Module = function (models) {
                     mapResult = userImports.map.result;
 
                     headerItem = _.filter(importData, function (item) {
-                        return item.toJSON()._id.toString() === headerId._id.toString();
+                        return item.toJSON()._id.toString() === headerId.toString();
                     });
 
                     titleArray = headerItem[0].toJSON().result;

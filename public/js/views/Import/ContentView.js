@@ -54,6 +54,7 @@ define([
         initialize: function (options) {
             var usersImport = App.currentUser.imports || {};
 
+            this.startTime = options.startTime;
             this.timeStamp = usersImport.timeStamp;
             this.fileName = usersImport.fileName;
             this.page = options.page;
@@ -238,7 +239,7 @@ define([
 
                 this.historyView = new ImportHistoryView({
                     collection: importHistoryCollection,
-                    startTime : new Date()
+                    startTime : this.startTime
                 });
 
                 eventsBinder.subscribeCollectionEvents(importHistoryCollection, this.historyView);
