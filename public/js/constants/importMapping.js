@@ -56,7 +56,7 @@
             'companyInfo.size',
             'companyInfo.industry',
             'ID',
-            ''
+            'reason'
         ],
         Employees: [
             'isEmployee',
@@ -131,7 +131,8 @@
             'hire',
             'fire',
             'lastFire',
-            'transferred'
+            'transferred',
+            'reason'
         ],
         Opportunities: [
             'isOpportunitie',
@@ -196,7 +197,8 @@
             'projectType',
             'social.FB',
             'social.LI',
-            'skype'
+            'skype',
+            'reason'
         ]
     };
 
