@@ -26,7 +26,7 @@ $base-border : $white;
 
 // -----------------------
 
-// Header ---------------
+// Header ----------------
 
 // -----------------------
 
@@ -42,7 +42,7 @@ $base-border : $white;
 $ui-dialog-bg: $white;
 // -----------------------
 
-// Opportunities  -------
+// Opportunities  --------
 $dateRage-border-color:  map-get($colors-dark, 'darker-gray');
 $property-box-border-color:  map-get($erp-colors, 'light-gray');
 $property-text-color: map-get($erp-colors, 'light-gray');
@@ -69,7 +69,7 @@ $vocation-filter-border-color: $black;
 $frame-detail-bg: $white;
 // -----------------------
 
-// Create Tasks -------------
+// Create Tasks ----------
 $tasks-border-color: map-get($erp-colors, 'lighter-gray');
 $remove-select-color-hover: map-get($erp-colors, 'lighter-gray');
 $tab-list-color: map-get($erp-colors, 'dark-gray');
@@ -79,6 +79,16 @@ $tasks-item-bg: map-get($erp-colors, 'lighter-gray');
 $passed-bg: map-get($erp-colors, 'green');
 // -----------------------
 
-// HR/Employees -------------
+// HR/Employees ----------
 $error-content-border: map-get($erp-colors, 'red');
+// -----------------------
+
+// Payroll----------------
+$payroll-border-blue: map-get($erp-colors, 'light-blue');
+$payroll-steps-color: map-get($erp-colors, 'light-blue');
+$payroll-border-gray: map-get($erp-colors, 'light-gray');
+$payroll-font-gray: map-get($erp-colors, 'light-gray');
+$payroll-font-darkgray: map-get($erp-colors, 'dark-gray');
+$payroll-font-indigo2: map-get($erp-colors, 'indigo2');
+$payroll-font-indigo3: map-get($erp-colors, 'indigo3');
 // -----------------------

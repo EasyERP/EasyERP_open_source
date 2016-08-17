@@ -1,27 +1,42 @@
-<div>
-    <div class="<%=weeklyScheduler.length ? 'checked' : ''%>">
-        <span>Step 1 of 5</span>
-        <a href="#easyErp/settingsEmployee">Weekly Scheduler</a>
-        <span>Set up your weekly scheduler</span>
+<div class="_payrollListWrap">
+    <div class="<%=weeklyScheduler.length ? 'checked' : ''%> _payrollListItem">
+        <div class="_payrollListImage"></div>
+        <div class="_payrollListBody">
+            <span class="_payrollListSteps">Step 1 of 5</span>
+            <a href="#easyErp/settingsEmployee" class="_payrollListAction">Weekly Scheduler</a>
+            <p class="_payrollListDescription">Set up your weekly scheduler</p>
+        </div>
     </div>
-    <div class="<%=scheduledPay.length ? 'checked' : ''%>">
-        <span>Step 2 of 5</span>
-        <a href="#easyErp/settingsEmployee">Scheduled Pay</a>
-        <span>Set up your Scheduled Pay</span>
+    <div class="<%=scheduledPay.length ? 'checked' : ''%> _payrollListItem">
+        <div class="_payrollListImage"></div>
+        <div class="_payrollListBody">
+            <span class="_payrollListSteps">Step 2 of 5</span>
+            <a href="#easyErp/settingsEmployee" class="_payrollListAction">Scheduled Pay</a>
+            <p class="_payrollListDescription">Set up your Scheduled Pay</p>
+        </div>
     </div>
-    <div class="<%=payrollStructure.length ? 'checked' : ''%>">
-        <span>Step 3 of 5</span>
-        <a href="#easyErp/settingsEmployee">Payroll Structure Types</a>
-        <span>Set up your Payroll Structure Types</span>
+    <div class="<%=payrollStructure.length ? 'checked' : ''%> _payrollListItem">
+        <div class="_payrollListImage"></div>
+        <div class="_payrollListBody">
+            <span class="_payrollListSteps">Step 3 of 5</span>
+            <a href="#easyErp/settingsEmployee" class="_payrollListAction">Payroll Structure Types</a>
+            <p class="_payrollListDescription">Set up your Payroll Structure Types</p>
+        </div>
     </div>
-    <div class="<%=bankAccounts.length ? 'checked' : ''%>">
-        <span>Step  of 5</span>
-        <a href="#easyErp/Accounts">Bank Accounts</a>
-        <span>Set up your Bank Accounts</span>
+    <div class="<%=bankAccounts.length ? 'checked' : ''%> _payrollListItem">
+        <div class="_payrollListImage"></div>
+        <div class="_payrollListBody">
+            <span class="_payrollListSteps">Step  of 5</span>
+            <a href="#easyErp/Accounts" class="_payrollListAction">Bank Accounts</a>
+            <p class="_payrollListDescription">Set up your Bank Accounts</p>
+        </div>
     </div>
-    <div class="<%=employees.length ? 'checked' : ''%>">
-        <span>Step  of 5</span>
-        <a href="#easyErp/Employees">Employees</a>
-        <span>Add your Employees</span>
+    <div class="<%=employees.length ? 'checked' : ''%> _payrollListItem">
+        <div class="_payrollListImage"></div>
+        <div class="_payrollListBody">
+            <span class="_payrollListSteps">Step  of 5</span>
+            <a href="#easyErp/Employees" class="_payrollListAction">Employees</a>
+            <p class="_payrollListDescription">Add your Employees</p>
+        </div>
     </div>
 </div>
