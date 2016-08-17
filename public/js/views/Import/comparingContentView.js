@@ -162,8 +162,8 @@ define([
         finishStep: function (linkToFile, linkName) {
             var $thisEl = this.$el;
 
-            $('.stageBtnNext').addClass('disabled');
-            $('.stageBtnNext').prop('disabled', true);
+            $('.stageBtnNext').remove();
+            //$('.stageBtnNext').prop('disabled', true);
 
             $thisEl.html(this.finishTemplate({
                 data: {
