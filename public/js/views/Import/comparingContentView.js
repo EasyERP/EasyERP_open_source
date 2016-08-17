@@ -92,7 +92,7 @@ define([
             if (result.length) {
                 this.isItExist = true;
             }
-            if (result.length > 0) {
+            if (result.length > 1) {
                 this.moreExist = true;
             }
 
