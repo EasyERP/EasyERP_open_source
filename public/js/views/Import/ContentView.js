@@ -134,7 +134,8 @@ define([
 
                 this.childView = new MappingContentView({
                     timeStamp: this.timeStamp,
-                    fileName : this.fileName
+                    fileName : this.fileName,
+
                 });
 
                 this.updateCurrentUser({
