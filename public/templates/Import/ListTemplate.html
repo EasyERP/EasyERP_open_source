@@ -4,7 +4,7 @@
             <% if (item !== '_id' && item !== 'reportFile') { %>
                 <% if (item === 'reportFileName') { %>
                     <td>
-                        <a href="<%= historyItem[item] %>">
+                        <a href="<%= historyItem[item] %>" class="_importLink">
                             <%= historyItem['reportFile'] %>
                         </a>
                     </td>
