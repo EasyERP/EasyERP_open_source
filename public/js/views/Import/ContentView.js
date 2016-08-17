@@ -137,11 +137,14 @@ define([
                 this.childView = new MappingContentView({
                     timeStamp: this.timeStamp,
                     fileName : this.fileName
+
                 });
 
                 this.updateCurrentUser({
                     stage: this.stage
                 });
+
+                $thisEl.find('#fileName').text(this.fileName);
             } else if (this.stage === 3) {
                 this.enabledNextBtn();
 
@@ -181,8 +184,10 @@ define([
 
                 $thisEl.find('.left').remove();
             } else if (this.stage === 5) {
-                if (self.childView && self.childView.finishStep) {
-                    self.childView.finishStep();
+                if (this.childView && this.childView.finishStep) {
+                    this.childView.finishStep();
+
+                    this.historyView.collection.getFirstPage();
                 }
             }
 
@@ -232,7 +237,8 @@ define([
                 importHistoryCollection.unbind('reset');
 
                 this.historyView = new ImportHistoryView({
-                    collection: importHistoryCollection
+                    collection: importHistoryCollection,
+                    startTime : new Date()
                 });
 
                 eventsBinder.subscribeCollectionEvents(importHistoryCollection, this.historyView);
@@ -251,7 +257,9 @@ define([
             var $topBar = $('#top-bar');
 
             $topBar.html('');
-            $thisEl.html(this.contentTemplate);
+            $thisEl.html(this.contentTemplate({
+                fileName: this.fileName || ''
+            }));
             $importProgress = $thisEl.find('#importProgress');
             $importProgress.html(this.importProgressTemplate);
 

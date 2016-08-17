@@ -1778,6 +1778,14 @@
 .mainTabs .avatarInfoContainer {
   margin-left: 160px; }
 
+._importListWrap ._importMainTitle {
+  font-size: 20px;
+  padding-right: 15px;
+  text-align: right;
+  margin-bottom: 20px;
+  margin-top: -28px;
+  overflow: visible; }
+
 ._loadHistoryTopTable {
   height: 450px;
   margin-bottom: 20px; }
@@ -2055,6 +2063,8 @@
     padding: 0 10px; }
   .list._importLoadHistory tbody td {
     text-align: left; }
+  .list._importLoadHistory ._importLink {
+    color: #3291c8; }
 
 ._finishImportContainer {
   border: 1px solid;
