@@ -130,6 +130,8 @@ define([
                 this.listenTo(this.childView, 'uploadCompleted', this.enabledNextBtn);
 
             } else if (this.stage === 2) {
+                this.enabledNextBtn();
+
                 this.childView = new MappingContentView({
                     timeStamp: this.timeStamp,
                     fileName : this.fileName
@@ -139,6 +141,7 @@ define([
                     stage: this.stage
                 });
             } else if (this.stage === 3) {
+                this.enabledNextBtn();
 
                 if (this.childView) {
                     data = this.childView.getDataWithFields();
@@ -156,6 +159,8 @@ define([
                 }
 
             } else if (this.stage === 4) {
+                this.enabledNextBtn();
+
                 if (this.childView) {
                     this.startImport(function (data) {
                         self.updateCurrentUser({
