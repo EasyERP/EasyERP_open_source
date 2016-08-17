@@ -22,6 +22,7 @@ define([
             this.mId = CONSTANTS.MID[this.contentType];
 
             this.saveDeal = options.saveDeal;
+            this.company = options.company;
 
             _.bindAll(this, 'saveItem', 'render');
             this.model = new PersonModel();
@@ -122,8 +123,6 @@ define([
                 whoCanRW: whoCanRW
             };
 
-            data.isHidden = this.saveDeal ? true : false;
-
             model = new PersonModel();
             model.save(data, {
                 headers: {
@@ -195,7 +194,7 @@ define([
                 }).render().el
             );
 
-            populate.getCompanies('#companiesDd', '/customers/getCompaniesForDd', {}, this, false, true, (this.models) ? this.models._id : null);
+            populate.getCompanies('#companiesDd', '/customers/getCompaniesForDd', {}, this, false, true, this.company);
             common.canvasDraw({model: personModel.toJSON()}, this);
             this.$el.find('.dateBirth').datepicker({
                 dateFormat : 'd M, yy',

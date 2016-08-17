@@ -44,6 +44,7 @@ define([
 
             if (options) {
                 this.invoiceModel = options.model;
+                this.mid = options.mid || 95;
                 this.totalAmount = this.invoiceModel.get('paymentInfo').balance || 0;
                 this.forSales = this.invoiceModel.get('forSales');
             } else {
@@ -166,7 +167,7 @@ define([
             var self = this;
             var data;
             // FixMe change mid value to proper number after inserting it into DB
-            var mid = 95;
+            //var mid = 95;
             var thisEl = this.$el;
             var invoiceModel = this.invoiceModel.toJSON();
             var supplier = thisEl.find('#supplierDd');
@@ -193,7 +194,7 @@ define([
             }
 
             data = {
-                mid             : mid,
+                mid             : this.mid,
                 forSale         : this.forSales,
                 invoice         : invoiceModel._id,
                 supplier        : supplierId,
@@ -211,19 +212,19 @@ define([
             if (supplier) {
                 this.model.save(data, {
                     headers: {
-                        mid: mid
+                        mid: self.mid
                     },
                     wait   : true,
                     success: function () {
                         var redirectUrl;
 
-                        if (mid === 97) {
+                        if (self.mid === 97) {
                             redirectUrl = '#easyErp/ExpensesPayments/list';
-                        } else if (mid === 100) {
+                        } else if (self.mid === 100) {
                             redirectUrl = '#easyErp/DividendPayments/list';
-                        } else if (mid === 109) {
+                        } else if (self.mid === 109) {
                             redirectUrl = '#easyErp/purchasePayments/list';
-                        } else if (mid === 95) {
+                        } else if (self.mid === 95) {
                             redirectUrl = '#easyErp/purchasePayments/list';
                         } else {
                             redirectUrl = self.forSales ? 'easyErp/customerPayments' : 'easyErp/supplierPayments';

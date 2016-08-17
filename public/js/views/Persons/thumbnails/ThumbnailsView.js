@@ -24,6 +24,7 @@
         exportToXlsxUrl: '/Customers/exportToXlsx/?type=Persons',
         exportToCsvUrl : '/Customers/exportToCsv/?type=Persons',
         letterKey      : 'name.first',
+        type           : 'Person',
 
         initialize: function (options) {
             this.mId = CONSTANTS.MID[this.contentType];

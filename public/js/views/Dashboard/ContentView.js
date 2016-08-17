@@ -41,6 +41,7 @@ define([
             this.dateItem = {
                 date       : 'D',
                 winLost    : 'D',
+                leadsChart: 'createdBy',
                 leadsByName: 'leadsBySales'
             };
 
@@ -464,13 +465,14 @@ define([
             this.bindDatePickers(this.startDateLeads, this.endDateLeads, 'Leads');
             this.bindDatePickers(this.startDateLeads, this.endDateLeads, 'LeadsBySale');
             this.bindDatePickers(this.startDateLeads, this.endDateLeads, 'LeadsBySource');
+            this.renderMap();
+            this.renderSalesByCountry();
             this.renderPopulateByType(self, 'source', this.startDateLeadsBySource, this.endDateLeadsBySource);
             this.renderPopulateByType(self, 'sale', this.startDateLeadsBySale, this.endDateLeadsBySale);
             this.renderOpportunitiesWinAndLost();
             this.renderOpportunitiesConversion();
             this.renderOpportunitiesAging();
             this.getDataForLeadsChart();
-            this.renderSalesByCountry();
             this.renderOpportunities();
             this.renderLeadsChart();
             this.renderTreemap();
@@ -1448,8 +1450,6 @@ define([
 
         renderOpportunitiesAging: function () {
             var verticalBarSpacing = 3;
-            var sortedData = [];
-            var self = this;
             var yScaleDomain;
             var workflowArr;
             var outerHeight;
@@ -1465,6 +1465,7 @@ define([
             var yAxis;
             var baseX;
             var chart;
+            var keys;
             var tip1;
             var tip;
             var x;
@@ -1495,25 +1496,35 @@ define([
                     '>120'  : 0
                 };
 
+                keys = [
+                    {range: '0-7_', value: 0, count: 0},
+                    {range: '8-15_', value: 0, count: 0},
+                    {range: '16-30_', value: 0, count: 0},
+                    {range: '31-60_', value: 0, count: 0},
+                    {range: '61-120_', value: 0, count: 0},
+                    {range: '>120_', value: 0, count: 0}
+                ];
+
                 barsMap = {
-                    'To be done'         : 'bar8',
-                    'Waiting fo response': 'bar9',
-                    'To be discussed'    : 'bar10',
-                    'In development'     : 'bar11',
-                    'Finalization'       : 'bar12',
-                    'Proposal'           : 'bar13',
-                    'Lost'               : 'bar14'
+                    'New'             : 'bar8',
+                    'To estimate'     : 'bar9',
+                    'Discuss estimate': 'bar10',
+                    'Proposal'        : 'bar11',
+                    'PM approval'     : 'bar12',
+                    'In development'  : 'bar13',
+                    'Lost'            : 'bar14'
                 };
 
                 colorMap = {
-                    'To be done'         : '#93648D', //violet
-                    'Waiting fo response': '#4CC3D9', //blue
-                    'To be discussed'    : '#F1DD9E', //brown green
-                    'In development'     : '#7BC8A4', //green
-                    'Finalization'       : '#FFC65D', //yellow
-                    'Proposal'           : '#EB6E44', //orange
-                    'Lost'               : '#93073E', //dark red
-                    'barStroke'          : '#2378ae'
+                    'New'            : '#93648D', //violet
+                    'To estimate'    : '#4CC3D9', //blue
+                    'Done estimate'  : '#F1DD9E', //brown green
+                    'Send offer'     : '#7BC8A4', //green
+                    'PM approve'     : '#FFC65D', //yellow
+                    'Pre-development': '#5D4C46', //brown
+                    'In development' : '#EB6E44', //orange
+                    'Lost'           : '#93073E', //dark red
+                    'barStroke'      : '#2378ae'
                 };
 
                 margin = {
@@ -1523,8 +1534,8 @@ define([
                     left  : 140
                 };
 
-                workflowArr = ['To be done',  'Waiting fo response', 'To be discussed',
-                    'In development', 'Finalization', 'Proposal', 'Lost'];
+                workflowArr = ['New',  'To estimate', 'Done estimate',
+                    'Send offer', 'PM approve', 'Pre-development', 'In development', 'Lost'];
 
                 data.sort(sortByWorkflow);
 
@@ -1536,10 +1547,19 @@ define([
 
                 $('svg.opportunitieAgingSum').empty();
 
+                for(var i = data.length; i--;){
+
+                    for(var j = keys.length; j--;){
+
+                        keys[j].value += data[i][keys[j].range + 'Sum'];
+                        keys[j].count += data[i][keys[j].range + 'Count'];
+                    }
+                }
+                
                 x = d3.scale.linear()
                     .range([0, (innerWidth / 2 - margin.right)])
-                    .domain([0, d3.max(data, function (d) {
-                        return d['0-7_Sum'] + d['8-15_Sum'] + d['16-30_Sum'] + d['31-60_Sum'] + d['61-120_Sum'] + d['>120_Sum'];
+                    .domain([0, d3.max(keys, function (d) {
+                        return d.value;
                     })]);
 
                 y = d3.scale.ordinal()
@@ -1672,8 +1692,8 @@ define([
 
                 x = d3.scale.linear()
                     .range([0, innerWidth / 2 - 1.5 * margin.left])
-                    .domain([0, d3.max(data, function (d) {
-                        return d['0-7_Count'] + d['8-15_Count'] + d['16-30_Count'] + d['31-60_Count'] + d['61-120_Count'] + d['>120_Count'];
+                    .domain([0, d3.max(keys, function (d) {
+                        return d.count;
                     })]);
 
                 xAxis = d3.svg.axis()
@@ -1822,6 +1842,7 @@ define([
                 var data5;
                 var data6;
                 var data7;
+                var data8;
                 var arrData;
                 var arrSum;
                 var colorMap;
@@ -1833,26 +1854,29 @@ define([
                 data.forEach(function (item) {
 
                     switch (item._id) {
-                        case 'To be done':
+                        case 'New':
                             data1 = item.data;
                             break;
-                        case 'Waiting fo response':
+                        case 'To estimate':
                             data2 = item.data;
                             break;
-                        case 'To be discussed':
+                        case 'Done estimate':
                             data3 = item.data;
                             break;
-                        case 'In development':
+                        case 'Send offer':
                             data4 = item.data;
                             break;
-                        case 'Finalization':
+                        case 'PM approve':
                             data5 = item.data;
                             break;
-                        case 'Proposal':
+                        case 'Pre-development':
                             data6 = item.data;
                             break;
-                        case 'Lost':
+                        case 'In development':
                             data7 = item.data;
+                            break;
+                        case 'Lost':
+                            data8 = item.data;
                             break;
                     }
                 });
@@ -1863,8 +1887,9 @@ define([
                     'bar3'     : '#F1DD9E', //brown green
                     'bar4'     : '#7BC8A4', //green
                     'bar5'     : '#FFC65D', //yellow
-                    'bar6'     : '#EB6E44', //orange
-                    'bar7'     : '#93073E', //dark red
+                    'bar6'     : '#5D4C46', //brown
+                    'bar7'     : '#EB6E44', //orange
+                    'bar8'     : '#93073E', //dark red
                     'barStroke': '#2378ae'
                 };
 
@@ -1875,6 +1900,7 @@ define([
                 data5 = data5 || [];
                 data6 = data6 || [];
                 data7 = data7 || [];
+                data8 = data8 || [];
 
                 for (i = data1.length - 1; i >= 0; i--) {
                     if (data1[i] && !data1[i].sum || data1[i].sum === 0) {
@@ -1915,6 +1941,12 @@ define([
                 for (i = data7.length - 1; i >= 0; i--) {
                     if (data7[i] && !data7[i].sum || data7[i].sum === 0) {
                         data7.splice(i, 1);
+                    }
+                }
+
+                for (i = data8.length - 1; i >= 0; i--) {
+                    if (data8[i] && !data8[i].sum || data8[i].sum === 0) {
+                        data8.splice(i, 1);
                     }
                 }
 
@@ -2269,6 +2301,57 @@ define([
                         return x(d.sum);
                     })
                     .style('fill', colorMap.bar7)
+                    .style('opacity', '0.8');
+
+                chart.selectAll('.bar8')
+                    .data(data7)
+                    .enter()
+                    .append('rect')
+                    .attr('class', 'bar8')
+                    .attr('x', function (d) {
+                        var x0 = 0;
+
+                        data1.forEach(function (item) {
+                            if (d.salesPerson === item.salesPerson) {
+                                x0 += x(item.sum);
+                            }
+                        });
+
+                        data2.forEach(function (item) {
+                            if (d.salesPerson === item.salesPerson) {
+                                x0 += x(item.sum);
+                            }
+                        });
+
+                        data3.forEach(function (item) {
+                            if (d.salesPerson === item.salesPerson) {
+                                x0 += x(item.sum);
+                            }
+                        });
+
+                        data4.forEach(function (item) {
+                            if (d.salesPerson === item.salesPerson) {
+                                x0 += x(item.sum);
+                            }
+                        });
+
+                        return x0;
+                    })
+                    .attr('y', function (d) {
+                        var range = y.rangeBand();
+                        var difference = range > 70 ? ((range - 70) / 2) : 0;
+
+                        return y(d.salesPerson) + difference;
+                    })
+                    .attr('height', function () {
+                        var range = y.rangeBand();
+
+                        return range > 70 ? 70 : range;
+                    })
+                    .attr('width', function (d) {
+                        return x(d.sum);
+                    })
+                    .style('fill', colorMap.bar8)
                     .style('opacity', '0.8');
 
                 chart.selectAll('.x .tick line')
@@ -2644,7 +2727,7 @@ define([
             });
         },
 
-        renderSalesByCountry: function () {
+        renderMap: function(){
             var $wrapper = $('.content-holder');
             var dataUrl = '../../maps/';
             var continentLabel = [
@@ -2679,95 +2762,43 @@ define([
                     latitude : -25
                 }
             ];
-            var padding = 15;
-            var offset = 2;
             var projection;
-            var barChart;
-            var gradient;
-            var height1;
-            var xScale;
-            var yScale;
-            var height;
             var margin;
+            var height;
             var width;
-            var xAxis;
-            var yAxis;
             var path;
-            var rect;
-            var zoom;
-            var max;
             var svg;
-            var tx;
-            var ty;
             var g;
-            var e;
-            var i;
 
             d3.selectAll('svg.salesByCountryChart > *').remove();
-            d3.selectAll('svg.salesByCountryBarChart > *').remove();
 
-            common.getSalesByCountry({
-                startDay: this.startDate,
-                endDay  : this.endDate
-            }, function (data) {
+            margin = {
+                top: 20,
+                right: 130,
+                bottom: 30,
+                left: 130
+            };
 
-                function chooseRadius(csvData) {
+            width = ($wrapper.width() - margin.right) / 2.1;
+            height =  parseInt($wrapper.width() / 4);
 
-                    max = d3.max(data, function (d) {
-                        return d.pays;
-                    });
+            projection = d3.geo.mercator()
+                .translate([width / 2, height / 1.5])
+                .scale([width / 6]);
 
-                    for (i = data.length; i--;) {
-                        if (csvData.CountryName === data[i]._id) {
-                            return 20 * data[i].pays / max;
-                        }
-                    }
-                }
+            path = d3.geo.path().projection(projection);
 
-                data.sort(function (obj1, obj2) {
-                    return obj2.pays - obj1.pays;
-                });
+            svg = d3.select('svg.salesByCountryChart')
+                .attr({
+                    'width' : width,
+                    'height': height,
+                    'style' : 'background: #ACC7F2'
+                })
+                .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-                margin = {
-                    top: 20,
-                    right: 130,
-                    bottom: 30,
-                    left: 130
-                };
-                width = ($wrapper.width() - margin.right) / 2.1;
-                height =  parseInt($wrapper.width() / 4);
-                height1 = data.length * 20;
+            g = svg.append('g');
 
-                projection = d3.geo.mercator()
-                    .translate([width / 2, height / 1.5])
-                    .scale([width / 6]);
-
-                path = d3.geo.path().projection(projection);
-
-                zoom = d3.behavior.zoom()
-                    .scaleExtent([1, 200])
-                    .on('zoom', function () {
-                        e = d3.event;
-                        tx = Math.min(0, Math.max(e.translate[0], width - width * e.scale));
-                        ty = Math.min(0, Math.max(e.translate[1], height - height * e.scale));
-                        zoom.translate([tx, ty]);
-                        g.attr('transform', [
-                            'translate(' + [tx, ty] + ')',
-                            'scale(' + e.scale + ')'
-                        ].join(' '));
-                    });
-
-                svg = d3.select('svg.salesByCountryChart')
-                    .attr({
-                        'width' : width,
-                        'height': height,
-                        'style' : 'background: #ACC7F2'
-                    })
-                    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-
-                g = svg.append('g');
-
-                d3.json(dataUrl + 'world-110m2.json', function (error, topology) {
+            d3.json(dataUrl + 'world-110m2.json', function (error, topology) {
 
                     g.selectAll('path')
                         .data(topojson.object(topology, topology.objects.countries)
@@ -2782,33 +2813,6 @@ define([
                             }
                         });
 
-                    d3.csv(dataUrl + 'country-capitals.csv', function (error, data) {
-                        g.selectAll('circle')
-                            .data(data)
-                            .enter()
-                            .append('circle')
-                            .attr({
-                                'cx'          : function (d) {
-                                    return projection([
-                                        parseFloat(d.CapitalLongitude),
-                                        parseFloat(d.CapitalLatitude)
-                                    ])[0];
-                                },
-                                'cy'          : function (d) {
-                                    return projection([
-                                        parseFloat(d.CapitalLongitude),
-                                        parseFloat(d.CapitalLatitude)]
-                                    )[1];
-                                },
-                                'r'           : function (d) {
-                                    return chooseRadius(d)
-                                },
-                                'fill'        : '#5CD1C8',
-                                'opacity'     : 0.75,
-                                'stroke'      : '#43A395',
-                                'stroke-width': 1
-                            });
-                    });
 
                     g.selectAll('text')
                         .data(continentLabel)
@@ -2831,9 +2835,67 @@ define([
                                 )[1];
                             }
                         });
+            });
+        },
 
-                    svg.call(zoom);
-                });
+        renderSalesByCountry: function () {
+            var $wrapper = $('.content-holder');
+            var dataUrl = '../../maps/';
+            var padding = 15;
+            var offset = 2;
+            var barChart;
+            var gradient;
+            var height1;
+            var xScale;
+            var yScale;
+            var margin;
+            var width;
+            var xAxis;
+            var yAxis;
+            var rect;
+            var max;
+            var svg;
+            var tx;
+            var ty;
+            var g;
+            var e;
+            var i;
+            var projection;
+            var height;
+
+            d3.selectAll('svg.salesByCountryBarChart > *').remove();
+
+            common.getSalesByCountry({
+                startDay: this.startDate,
+                endDay  : this.endDate
+            }, function (data) {
+
+                function chooseRadius(csvData) {
+
+                    max = d3.max(data, function (d) {
+                        return d.pays;
+                    });
+
+                    for (i = data.length; i--;) {
+                        if (csvData.CountryName === data[i]._id) {
+                            return 20 * data[i].pays / max;
+                        }
+                    }
+                }
+
+                svg = d3.select('svg.salesByCountryChart');
+                svg.selectAll('circle')
+                    .transition().remove();
+                g = svg.select('g');
+                margin = {
+                    top: 20,
+                    right: 130,
+                    bottom: 30,
+                    left: 130
+                };
+                width = ($wrapper.width() - margin.right) / 2.1;
+                height =  parseInt($wrapper.width() / 4);
+                height1 = data.length * 20;
 
                 barChart = d3.select('svg.salesByCountryBarChart')
                     .attr({
@@ -2842,6 +2904,42 @@ define([
                     })
                     .append('g')
                     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+                projection = d3.geo.mercator()
+                    .translate([width / 2, height / 1.5])
+                    .scale([width / 6]);
+
+                data.sort(function (obj1, obj2) {
+                    return obj2.pays - obj1.pays;
+                });
+
+                d3.csv(dataUrl + 'country-capitals.csv', function (error, data) {
+                    g.selectAll('circle')
+                        .data(data)
+                        .enter()
+                        .append('circle')
+                        .attr({
+                            'cx'          : function (d) {
+                                return projection([
+                                    parseFloat(d.CapitalLongitude),
+                                    parseFloat(d.CapitalLatitude)
+                                ])[0];
+                            },
+                            'cy'          : function (d) {
+                                return projection([
+                                    parseFloat(d.CapitalLongitude),
+                                    parseFloat(d.CapitalLatitude)]
+                                )[1];
+                            },
+                            'r'           : function (d) {
+                                return chooseRadius(d);
+                            },
+                            'fill'        : '#5CD1C8',
+                            'opacity'     : 0.75,
+                            'stroke'      : '#43A395',
+                            'stroke-width': 1
+                        });
+                });
 
                 max = d3.max(data, function (d) {
                     return d.pays / 100;

@@ -139,8 +139,8 @@ function exportToXlsx(options) {
 
     var writeXlsx = function (array) {
         arrayToXlsx.writeFile(nameOfFile + '.xlsx', array, {
-            sheetName : "data",
-            headers   : headersArray,
+            sheetName: "data",
+            headers: headersArray,
             attributes: headersArray
         });
 

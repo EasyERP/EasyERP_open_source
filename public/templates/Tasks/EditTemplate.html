@@ -8,7 +8,7 @@
             <div class="half-block left">
                 <dl class="person-info-h3 right">
                     <dt><label>Assigned to :</label></dt>
-                    <dd>
+                    <dd class="_newSelectListWrap">
                         <a id="assignedToDd" data-id="<%=(model.assignedTo) ? model.assignedTo._id : ''%>" class="current-selected" href="javascript:;"><%=(model.assignedTo)?(model.assignedTo.name.first+' '+model.assignedTo.name.last):'Select'%></a>
                 </dl>
             </div>
@@ -25,20 +25,20 @@
                 <div class="inner">
                     <dl class="task-info">
                         <dt><label>Project </label></dt>
-                        <dd>
+                        <dd class="_newSelectListWrap">
                             <a id="projectDd" data-shortdesc="<%=model.project.projectShortDesc%>" data-id="<%=model.project._id%>" class="current-selected" href="javascript:;"><%=model.project.name%></a>
                         </dd>
                         <dt><label for="workflowsDd">Stage </label></dt>
-                        <dd>
+                        <dd class="_newSelectListWrap">
                             <a id="workflowsDd" data-id="<%=(model.workflow) ? model.workflow._id : ''%>" class="current-selected" href="javascript:;"><%=(model.workflow)?model.workflow.name:'Undefinded'%></a>
                         </dd>
 
                         <dt><label>Type </label></dt>
-                        <dd>
+                        <dd class="_newSelectListWrap">
                             <a id="type" data-id="<%=model.type%>" class="current-selected" href="javascript:;"><%=model.type%></a>
                         </dd>
                         <dt><label for="priorityDd">Priority </label></dt>
-                        <dd>
+                        <dd class="_newSelectListWrap">
                             <a id="priorityDd" data-id="<%=model.priority%>" class="current-selected"
                                href="javascript:;"><%=model.priority%></a>
                         </dd>

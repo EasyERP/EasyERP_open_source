@@ -19,6 +19,19 @@ define([
             this.render();
         },
 
+        keyDownHandler: function (e) {
+            switch (e.which) {
+                case 27:
+                    this.hideDialog();
+                    break;
+                case 13:
+                    this.saveItem();
+                    break;
+                default:
+                    break;
+            }
+        },
+
         chooseOption: function (e) {
             var $target = $(e.target);
             var id = $target.attr('id');
@@ -127,6 +140,9 @@ define([
             }, {
                 _id : 'Accrual',
                 name: 'Accrual'
+            }, {
+                _id : 'WriteOff',
+                name: 'WriteOff'
             }];
 
             this.delegateEvents(this.events);

@@ -2,7 +2,7 @@ define([
     'jQuery',
     'Underscore',
     'views/listViewBase',
-    'text!templates/Product/list/ListHeader.html',
+    'text!templates/Products/list/ListHeader.html',
     'views/Products/CreateView',
     'views/Products/list/ListItemView',
     'views/Products/EditView',
@@ -20,8 +20,8 @@ define([
         contentCollection: contentCollection,
         page             : null, // if reload page, and in url is valid page
         contentType      : 'Products', // needs in view.prototype.changeLocationHash
-        exportToXlsxUrl  : '/Product/exportToXlsx',
-        exportToCsvUrl   : '/Product/exportToCsv',
+        exportToXlsxUrl  : '/Products/exportToXlsx',
+        exportToCsvUrl   : '/Products/exportToCsv',
         hasPagination    : true,
 
         initialize: function (options) {

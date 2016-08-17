@@ -33,7 +33,8 @@ require.config({
         jqueryBarcode: './libs/jquery-barcode.min',
         moment       : './libs/moment/moment',
         socketio     : '/socket.io/socket.io.js',
-        backstratch  : './libs/jquery-backstretch/jquery.backstretch.min'
+        backstratch  : './libs/jquery-backstretch/jquery.backstretch.min',
+        wickedpicker : './libs/wickedpicker'
     },
 
     shim: {
@@ -44,14 +45,14 @@ require.config({
         jQuery: {
             exports: '$'
         },
-
+        wickedpicker: ['jQuery'],
         jqueryui    : ['jQuery'],
         ajaxForm    : ['jQuery'],
         imageCrop   : ['jQuery'],
         spinJs      : ['jQuery'],
         backstratch : ['jQuery'],
         Backbone    : ['Underscore', 'jQuery'],
-        app         : ['Backbone', 'less', 'jqueryui', 'ajaxForm', 'imageCrop', 'd3', 'backstratch', 'topojson'],
+        app         : ['Backbone', 'less', 'jqueryui', 'ajaxForm', 'imageCrop', 'd3', 'backstratch', 'topojson', 'wickedpicker'],
         d3          : {
             exports: 'd3'
         },

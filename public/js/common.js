@@ -14,9 +14,15 @@
         Backbone.history.navigate(url, {trigger: true});
     };
 
-    var utcDateToLocaleDate = function (utcDateString) {
+    var utcDateToLocaleDate = function (utcDateString, hours) {
         utcDateString = new Date(utcDateString);
-        utcDateString = utcDateString ? moment(utcDateString).format("DD MMM, YYYY") : null;
+
+        if (hours) {
+            utcDateString = utcDateString ? moment(utcDateString).format("DD MMM, YYYY HH:mm") : null;
+        } else {
+            utcDateString = utcDateString ? moment(utcDateString).format("DD MMM, YYYY") : null;
+        }
+
 
         return utcDateString;
     };
@@ -34,6 +40,12 @@
         } else {
             utcDateString = utcDateString ? moment(utcDateString).format('D/M/YYYY') : null;
         }
+        return utcDateString;
+    };
+
+    var utcDateToLocaleHours = function (utcDateString, notHours) {
+        utcDateString = utcDateString ? moment(utcDateString).format('HH:mm') : null;
+
         return utcDateString;
     };
 
@@ -158,8 +170,8 @@
                                     }
                                     canvasDrawing({model: model, canvas: canvas}, context);
 
-                                    if (context.modelChanged && (typeof context.saveModel === 'function')){
-                                        context.saveModel({imageSrc : imageSrcCrop});
+                                    if (context.modelChanged && (typeof context.saveModel === 'function')) {
+                                        context.saveModel({imageSrc: imageSrcCrop});
                                     }
 
                                     $(this).dialog("close");
@@ -459,7 +471,7 @@
             }
         });
     };
-    
+
     var getLeadsForChart = function (type, filter, callback) {
         dataService.getData('/leads/getLeadsForChart', {
             type    : type,
@@ -513,31 +525,44 @@
         });
     };
     var getOpportunitiesConversionForChart = function (dataRange, dataItem, callback) {
-        dataService.getData("/opportunities/OpportunitiesConversionForChart", {
+        dataService.getData('/opportunities/OpportunitiesConversionForChart', {
             dataRange: dataRange
         }, function (response) {
             callback(response.data);
         });
     };
-    var getSalesByCountry = function(filter, callback){
+    var getSalesByCountry = function (filter, callback) {
+        var startDay = filter.startDay;
+        var endDay = filter.endDay;
+
+        filter.forSales = {
+            key  : 'forSales',
+            type : 'boolean',
+            value: ['true']
+        };
+
+        delete filter.startDay;
+        delete filter.endDay;
+
         dataService.getData('/invoices/getSalesByCountry', {
-            startDay: filter.startDay,
-            endDay: filter.endDay
+            startDay: startDay,
+            endDay  : endDay,
+            filter  : filter
         }, function (response) {
             callback(response.data);
         });
     };
-    var getSalary = function(filter, callback){
+    var getSalary = function (filter, callback) {
         dataService.getData('/employees/getSalaryForChart', {
-            year: filter.year,
+            year : filter.year,
             month: filter.month
         }, function (response) {
             callback(response.data);
         });
     };
-    var getSalaryByDepartment = function(filter, callback){
+    var getSalaryByDepartment = function (filter, callback) {
         dataService.getData('employees/getSalaryByDepartment', {
-            year: filter.year,
+            year : filter.year,
             month: filter.month
         }, function (response) {
             callback(response.data);
@@ -546,7 +571,7 @@
     var totalInvoiceBySales = function (filter, callback) {
         dataService.getData('revenue/totalInvoiceBySales', {
             startDate: filter.startDay,
-            endDate: filter.endDay
+            endDate  : filter.endDay
         }, function (response) {
             callback(response.data);
         });
@@ -557,11 +582,11 @@
             callback(response.data);
         });
     };
-    var getLeads = function(filter, callback){
+    var getLeads = function (filter, callback) {
         dataService.getData('/leads', {
             startDay: filter.startDay,
-            endDay: filter.endDay,
-            stage: filter.stage
+            endDay  : filter.endDay,
+            stage   : filter.stage
         }, function (response) {
             callback(response);
         });
@@ -1250,6 +1275,7 @@
         getSalesByCountry                 : getSalesByCountry,
         getSalary                         : getSalary,
         getSalaryByDepartment             : getSalaryByDepartment,
+        utcDateToLocaleHours              : utcDateToLocaleHours,
         getLeads                          : getLeads
     }
 });

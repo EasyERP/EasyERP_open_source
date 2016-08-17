@@ -19,8 +19,6 @@ define([
 
             var self = this;
 
-            this.isLead = options.isLead;
-
             function resetCollection() {
                 self.renderContent(self.e);
             }
@@ -86,9 +84,7 @@ define([
             $('.tag-list-dialog').remove();
             var optionsObject = {};
 
-            if (this.isLead) {
-                optionsObject.saveDeal = this.saveDeal;
-            }
+            optionsObject.saveDeal = this.saveDeal;
 
             new CreateView(optionsObject);
         },

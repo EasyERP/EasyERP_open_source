@@ -21,10 +21,14 @@
 
 //@import "general/forms";
 @import "general/buttons";
+@import "general/general";
+
+@import "general/forms";
 
 
 // Styles for specific modules
 @import "modules/products";
+@import "modules/lists";
 @import "modules/dialog";
 @import "modules/import";
 @import "modules/opportunities";
@@ -34,5 +38,6 @@
 @import "modules/create_tasks";
 @import "modules/dropDown";
 @import "modules/persons";
+@import "modules/datapicker";
 
 // Styles for condition

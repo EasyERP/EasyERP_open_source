@@ -134,7 +134,6 @@ define([
                     case CONTENT_TYPES.IMPORT:
                     case CONTENT_TYPES.DASHBOARD:
                     case CONTENT_TYPES.TASKS:
-                    case CONTENT_TYPES.DEALTASKS:
                     case CONTENT_TYPES.PROFILES:
                     case CONTENT_TYPES.DEPARTMENTS:
                     case CONTENT_TYPES.USERS:
@@ -183,11 +182,15 @@ define([
                     case CONTENT_TYPES.PROFORMA:
                     case CONTENT_TYPES.CASHBOOK:
                     case CONTENT_TYPES.CASHTRANSFER:
+                    case CONTENT_TYPES.REPORTSDASHBOARD:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:
                     case CONTENT_TYPES.OPPORTUNITIES:
                         App.currentViewType = 'kanban';
+                        break;
+                    case CONTENT_TYPES.DEALTASKS:
+                        App.currentViewType = 'datelist';
                         break;
                     default:
                         App.currentViewType = 'thumbnails';
@@ -203,7 +206,6 @@ define([
                     case CONTENT_TYPES.IMPORT:
                     case CONTENT_TYPES.DASHBOARD:
                     case CONTENT_TYPES.TASKS:
-                    case CONTENT_TYPES.DEALTASKS:
                     case CONTENT_TYPES.PROFILES:
                     case CONTENT_TYPES.INVENTORYREPORT:
                     case CONTENT_TYPES.DEPARTMENTS:
@@ -252,7 +254,11 @@ define([
                     case CONTENT_TYPES.PROFORMA:
                     case CONTENT_TYPES.CASHBOOK:
                     case CONTENT_TYPES.CASHTRANSFER:
+                    case CONTENT_TYPES.REPORTSDASHBOARD:
                         App.currentViewType = 'list';
+                        break;
+                    case CONTENT_TYPES.DEALTASKS:
+                        App.currentViewType = 'datelist';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:
                     case CONTENT_TYPES.OPPORTUNITIES:
@@ -265,7 +271,7 @@ define([
             }
         }
 
-        viewVariants = ['kanban', 'list', 'form', 'thumbnails', 'tform'];
+        viewVariants = ['kanban', 'list', 'form', 'thumbnails', 'tform', 'datelist'];
 
         if ($.inArray(App.currentViewType, viewVariants) === -1) {
             App.currentViewType = 'thumbnails';

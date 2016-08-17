@@ -7,17 +7,15 @@
 
 <div class="half-block left">
     <div class="canReadAndWrite">
-        <input type="radio" name="whoCanRW" value="everyOne" <%= (whoCanRW === 'everyOne') ? ' checked': '' %> />
-        <label>Everyone</label><br>
-        <input type="radio" name="whoCanRW" value="owner" <%= (whoCanRW === 'owner') ? ' checked' : '' %> /> <label>Owner</label><br>
-        <input type="radio" name="whoCanRW" value="group" <%= (whoCanRW === 'group') ? ' checked' : '' %> /> <label>Owner,
-        Users and Users in Groups</label>
+        <input id="everyOneCr" type="radio" name="whoCanRW" value="everyOne" <%= (whoCanRW === 'everyOne') ? ' checked': '' %> /><label for="everyOneCr">Everyone</label><br>
+        <input id="ownerCr" type="radio" name="whoCanRW" value="owner" <%= (whoCanRW === 'owner') ? ' checked' : '' %> /> <label for="ownerCr">Owner</label><br>
+        <input id="groupCr" type="radio" name="whoCanRW" value="group" <%= (whoCanRW === 'group') ? ' checked' : '' %> /> <label for="groupCr">Owner, Users and Users in Groups</label>
     </div>
 </div>
 <div class="half-block left">
     <dl class="assignees-info">
         <dt><label for="allUsersSelect">Owner</label></dt>
-        <dd>
+        <dd class="_newSelectListWrap">
             <a href="javascript:;" class="current-selected" id="allUsersSelect" data-id="<%=owner._id%>"><%=owner && owner.login ?owner.login : "Select"%></a>
         </dd>
     </dl>

@@ -495,7 +495,7 @@ define([
                 });
 
                 it('Try to filter listView by Assigned and company', function () {
-                    var url = '/payment/';
+                    var url = '/payments/';
                     var contentType = 'customerPayments';
                     var firstValue = 'assigned';
                     var secondValue = 'supplier';
@@ -765,7 +765,7 @@ define([
                     $input = listView.$el.find('input.editing');
                     $input.val('16 Mar, 2016');
 
-                    server.respondWith('PATCH', '/payment/customers/', [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                    server.respondWith('PATCH', '/payments/customers/', [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                     $saveBtn.click();
                     server.respond();
 

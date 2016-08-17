@@ -18,7 +18,7 @@
 
         <thead>
         <tr>
-            <th colspan="10"
+            <th colspan="15"
                 class="forCaption">
                 Team & Resources
             </th>
@@ -64,7 +64,7 @@
                 <td class="expand">+</td>
                 <td class="report"><a class="centerCell fa fa-university"></a></td>
                 <td class="editableJobs" id="jobsName"><%=element.name%></td>
-                <td class="selects"><a data-id="<%=element.workflow._id%>" id="workflow" class="current-selected"><%=element.workflow.name%></a>
+                <td class="selects _newSelectListWrap"><a data-id="<%=element.workflow._id%>" id="workflow" class="current-selected"><%=element.workflow.name%></a>
                 </td>
                 <td><%= element.tCardMinDate ? element.tCardMinDate : '' %></td>
                 <td><%= element.tCardMaxDate ? element.tCardMaxDate : '' %></td>

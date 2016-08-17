@@ -24,17 +24,26 @@ var Module = function (models) {
                     }
                 }, {
                     $project: {
-                        'profileAccess': {
+                        profileAccess: {
                             $arrayElemAt: [
                                 '$profile.profileAccess',
                                 0
                             ]
                         },
-                        _id            : 0
+
+                        _id: 0
                     }
                 }, {
-                    $match: {
-                        'profileAccess.access.read': true
+                    $project: {
+                        profileAccess: {
+                            $filter: {
+                                input: '$profileAccess',
+                                as   : 'access',
+                                cond : {$eq: ['$$access.access.read', true]}
+                            }
+                        },
+
+                        _id: 0
                     }
                 }, {
                     $unwind: '$profileAccess'
@@ -61,7 +70,8 @@ var Module = function (models) {
                                 0
                             ]
                         },
-                        _id   : 0
+
+                        _id: 0
                     }
                 }, {
                     $project: {
@@ -100,18 +110,20 @@ var Module = function (models) {
 
                 }, {
                     $project: {
-                        module    : {
+                        module: {
                             $arrayElemAt: [
                                 '$module',
                                 0
                             ]
                         },
+
                         subModules: {
                             mname: 1,
                             href : 1,
                             link : 1
                         },
-                        _id       : 0
+
+                        _id: 0
                     }
                 }, {
                     $match: {
@@ -130,9 +142,7 @@ var Module = function (models) {
                         subModules: 1
 
                     }
-                }
-
-                ],
+                }],
 
                 callback
             );
@@ -148,7 +158,7 @@ var Module = function (models) {
             }
 
             res.status(200).send(modules);
-            redisStore.writeToStorage('modules', key, JSON.stringify(modules));
+            // redisStore.writeToStorage('modules', key, JSON.stringify(modules));
         });
     };
 

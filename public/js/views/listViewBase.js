@@ -9,8 +9,9 @@ define([
     'views/Notes/AttachView',
     'common',
     'dataService',
-    'constants'
-], function (Backbone, $, _, paginationTemplate, importForm, Pagination, SelectView, AttachView, common, dataService, CONSTANTS) {
+    'constants',
+    'helpers'
+], function (Backbone, $, _, paginationTemplate, importForm, Pagination, SelectView, AttachView, common, dataService, CONSTANTS, helpers) {
     'use strict';
 
     var ListViewBase = Pagination.extend({
@@ -322,40 +323,47 @@ define([
         },
 
         exportToCsv: function () {
-            // todo change after routes refactoring
-            var filterString = '';
             var tempExportToCsvUrl = '';
+            var hasSlash;
 
             if (this.exportToCsvUrl) {
                 tempExportToCsvUrl = this.exportToCsvUrl;
-                if (this.filter) {
-                    tempExportToCsvUrl += '/' + encodeURIComponent(JSON.stringify(this.filter));
-                }
+
+                tempExportToCsvUrl += helpers.makeFilterString(this.filter, this.type);
+
                 window.location = tempExportToCsvUrl;
             } else {
                 if (this.collection) {
-                    filterString += '/' + encodeURIComponent(JSON.stringify(this.filter));
+                    hasSlash = this.collection.url.substr(-1) === '/';
+
+                    if (hasSlash) {
+                        window.location = this.collection.url + 'exportToCsv' + helpers.makeFilterString(this.filter, this.type);
+                    } else {
+                        window.location = this.collection.url + '/exportToCsv' + helpers.makeFilterString(this.filter, this.type);
+                    }
                 }
-                window.location = this.collection.url + '/exportToCsv' + filterString;
             }
         },
 
         exportToXlsx: function () {
-            var filterString = '';
             var tempExportToXlsxUrl = '';
-            // todo change after routes refactoring
+            var hasSlash;
+
             if (this.exportToXlsxUrl) {
                 tempExportToXlsxUrl = this.exportToXlsxUrl;
-                if (this.filter) {
-                    tempExportToXlsxUrl += '/?filter=' + encodeURIComponent(JSON.stringify(this.filter));
-                }
+
+                tempExportToXlsxUrl += helpers.makeFilterString(this.filter, this.type);
+
                 window.location = tempExportToXlsxUrl;
             } else {
                 if (this.collection) {
-                    if (this.filter) {
-                        filterString += '/?filter=' + encodeURIComponent(JSON.stringify(this.filter));
+                    hasSlash = this.collection.url.substr(-1) === '/';
+
+                    if (hasSlash) {
+                        window.location = this.collection.url + 'exportToXlsx' + helpers.makeFilterString(this.filter, this.type);
+                    } else {
+                        window.location = this.collection.url + '/exportToXlsx' + helpers.makeFilterString(this.filter, this.type);
                     }
-                    window.location = this.collection.url + '/exportToXlsx' + filterString;
                 }
             }
         },

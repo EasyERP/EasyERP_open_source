@@ -268,10 +268,12 @@ var User = function (event, models) {
         var UserModel = models.get(data.dbId, 'Users', userSchema);
         var login = data.login || data.email;
         // var ip = req.ip;
-        var ip = req.headers ? req.headers['x-real-ip'] : '127.0.0.1';
+        var ip = req.headers ? req.headers['x-real-ip'] : req.ip;
         var geo = geoip.lookup(ip);
         var err;
         var queryObject;
+
+        ip = ip || '127.0.0.1';
 
         if (login && data.pass) {
             queryObject = {
@@ -284,7 +286,13 @@ var User = function (event, models) {
                 ]
             };
 
-            UserModel.findOne(queryObject, {login: 1, pass: 1, kanbanSettings: 1, profile: 1}, function (err, _user) {
+            UserModel.findOne(queryObject, {
+                login         : 1,
+                pass          : 1,
+                kanbanSettings: 1,
+                profile       : 1,
+                email         : 1
+            }, function (err, _user) {
                 var shaSum = crypto.createHash('sha256');
                 var session = req.session;
                 var lastAccess;
@@ -300,16 +308,18 @@ var User = function (event, models) {
                     err.status = 400;
 
                     tracker.track({
-                        name       : 'production:login:error',
-                        status     : 301,
-                        registrType: process.env.SERVER_TYPE,
-                        server     : process.env.SERVER_PLATFORM,
-                        ip         : ip,
-                        country    : (geo) ? geo.country : '',
-                        city       : (geo) ? geo.city : '',
-                        region     : geo ? geo.region : '',
-                        login      : login,
-                        message    : err.message
+                        name         : 'production:login:error',
+                        status       : 301,
+                        registrType  : process.env.SERVER_TYPE,
+                        server       : process.env.SERVER_PLATFORM,
+                        ip           : ip,
+                        country      : (geo) ? geo.country : '',
+                        city         : (geo) ? geo.city : '',
+                        region       : geo ? geo.region : '',
+                        email        : _user ? _user.email : '', // bug on keymetrics
+                        login        : login,
+                        subDomainName: 'production',
+                        message      : err.message
                     });
 
                     return next(err);
@@ -332,7 +342,7 @@ var User = function (event, models) {
                 lastAccess = new Date();
                 session.lastAccess = lastAccess;
 
-                UserModel.findByIdAndUpdate(_user._id, {$set: {lastAccess: lastAccess}}, {new: true}, function (err) {
+                UserModel.findByIdAndUpdate(_user._id, {$set: {lastAccess: lastAccess}}, {new: true}, function (err, user) {
                     if (err) {
                         logger.error(err);
                     }
@@ -341,16 +351,18 @@ var User = function (event, models) {
                 res.send(200);
 
                 tracker.track({
-                    name       : 'production:login:success',
-                    status     : 301,
-                    registrType: process.env.SERVER_TYPE,
-                    server     : process.env.SERVER_PLATFORM,
-                    ip         : ip,
-                    country    : (geo) ? geo.country : '',
-                    city       : (geo) ? geo.city : '',
-                    region     : geo ? geo.region : '',
-                    login      : login,
-                    message    : 'loggedIn'
+                    name         : 'production:login:success',
+                    status       : 301,
+                    registrType  : process.env.SERVER_TYPE,
+                    server       : process.env.SERVER_PLATFORM,
+                    ip           : ip,
+                    country      : (geo) ? geo.country : '',
+                    city         : (geo) ? geo.city : '',
+                    region       : geo ? geo.region : '',
+                    login        : login,
+                    email        : _user.email,
+                    subDomainName: 'production',
+                    message      : 'loggedIn'
                 });
             });
         } else {
@@ -973,7 +985,7 @@ var User = function (event, models) {
 
                 result = result[0];
 
-                savedFilters = result.savedFilters || [];
+                savedFilters = result && result.savedFilters ? result.savedFilters : []; // bug on keymetrics
 
                 savedFilters = _.groupBy(savedFilters, 'contentType');
                 delete result.savedFilters;

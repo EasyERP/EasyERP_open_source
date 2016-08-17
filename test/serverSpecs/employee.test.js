@@ -556,7 +556,7 @@ describe('Employee Specs', function () {
 
         it('should get employee as salesPerson for dropDown', function (done) {
             aggent
-                .get('employees/getPersonsForDd')
+                .get('employees/getForDd')
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;

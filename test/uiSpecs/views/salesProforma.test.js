@@ -1379,7 +1379,7 @@ define([
                 });
 
                 it('Try to filter listView by supplier and salesPerson', function () {
-                    var url = '/Proforma/';
+                    var url = '/proforma/';
                     var contentType = 'salesProforma';
                     var firstValue = 'supplier';
                     var secondValue = 'salesPerson';

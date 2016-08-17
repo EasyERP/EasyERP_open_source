@@ -39,14 +39,14 @@
                                 <dt>
                                     <label for="projectManagerDD">Project Manager</label>
                                 </dt>
-                                <dd>
+                                <dd class="_newSelectListWrap">
                                     <a id="projectManagerDD"
                                        data-id="<%=model.projectmanager?model.projectmanager._id:''%>"
                                        class="current-selected" href="javascript:;"><%=model.projectmanager?(model.projectmanager.fullName):'Select'%></a>
                                 </dd>
 
                                 <dt><label for="projectTypeDD">Project Type </label></dt>
-                                <dd>
+                                <dd class="_newSelectListWrap">
                                     <a id="projectTypeDD" data-id="<%=model.projecttype?model.projecttype:''%>"
                                        class="current-selected" href="javascript:;"><%=model.projecttype?model.projecttype:'Select'%></a>
                                 </dd>
@@ -56,14 +56,14 @@
                                 <dt>
                                     <label for="customerDd">Project Customer </label>
                                 </dt>
-                                <dd>
+                                <dd class="_newSelectListWrap">
                                     <a id="customerDd" data-id="<%=model.customer?model.customer._id:''%>"
                                        class="current-selected" href="javascript:;"><%=model.customer?(model.customer.fullName):'Select'%></a>
                                 </dd>
                                 <dt>
                                     <label for="workflowsDd">Status</label>
                                 </dt>
-                                <dd>
+                                <dd class="_newSelectListWrap">
                                     <a id="workflowsDd" data-id="<%=(model.workflow) ? model.workflow._id : ''%>"
                                        class="current-selected" href="javascript:;"><%=(model.workflow)?model.workflow.name:'Undefinded'%></a>
                                 </dd>

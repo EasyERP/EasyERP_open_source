@@ -7,22 +7,23 @@
   display: block;
   position: relative;
   border: 1px solid @border-color-main;
-  padding: 2px 0 2px 26px;
+  padding-left: 26px;
   .defaultBorRad;
 }
 
 #searchFilterContainer {
   float: left;
   width: auto;
-  height: 20px;
+  height: 24px;
   overflow: hidden;
 }
 
 .ui-autocomplete {
   position: absolute;
-  cursor: default;
-  left: -1px !important;
+  top: 28px !important;
+  left: 0 !important;
   width: 100% !important;
+  cursor: default;
 }
 
 .ui-menu {
@@ -45,20 +46,23 @@
       padding: .2em .4em;
     }
   }
-  .ui-autocomplete-category {
-    margin: .3em 0 0;
+  > .ui-autocomplete-category {
+    margin: 0;
     padding: 0;
     line-height: 1.5;
     float: left;
     width: 100%;
-    &:last-child {
-      padding-bottom: .3em;
+    border: 1px solid @border-color-main;
+
+    &:nth-child(n+2) {
+      border-top: none;
     }
+
     .searchGroupDropDown {
       float: left;
       width: 14px;
       height: 14px;
-      padding: 3px 0px 3px 6px;
+      padding: 3px 0 3px 6px;
       line-height: 1;
       cursor: pointer;
       top: 0;
@@ -75,29 +79,29 @@
     }
     .ui-widget-content {
       float: left;
-      margin: .3em 0 0;
-      padding: .3em 0;
       display: block;
       width: 100%;
       border: none;
       border-top: 1px solid @border-color-main;
-      border-bottom: 1px solid @border-color-main;
       overflow: auto;
       max-height: 143px;
-      li {
+      > li {
         padding-left: 25px;
+        line-height: 20px;
       }
     }
   }
 }
 
 .ui-autocomplete-input {
+  height: 24px;
+  line-height: 24px;
+  overflow: hidden;
+  display: block;
+
   &:empty:not(:focus):before {
     content: attr(data-text)
   }
-  height: 20px;
-  overflow: hidden;
-  display: block;
 }
 
 .ui-helper-hidden-accessible {

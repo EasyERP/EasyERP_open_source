@@ -1,0 +1,32 @@
+<div id="<%=type%>" class="_dateListElement showmoreDiv">
+    <%type = type && type==='next7days'? 'Next 7 days': type%>
+    <span class="dateListElementTitle"><%=type %><span class="countCircle <%= type ==='overdue' ? 'red' : '' %>"><%=' ' +data.length%></span></span>
+    <% data.forEach(function(task, index){ %>
+    <div data-index="<%=index%>" data-id="<%= task._id%>" class="stage-<%=(task.workflow) ? task.workflow.status.toLowerCase() : ''%> dateListItem">
+        <div class="dateListCheckboxWrap">
+            <label class="_customCHeckbox">
+                <input type="checkbox" data-sequence="<%= task.sequence%>" <%=task.workflow.status === 'Done' ? 'checked' : ''%> value="<%=task._id%>" class="checkbox"/>
+                <span></span>
+            </label>
+        </div>
+        <div class="dateListBody">
+            <div class="dateListHeader">
+                <span data-color="<%=(task.category) ?task.category.color : ''%>" class="_tagSmall"><%=(task.category) ? task.category.name : ''%></span>
+                <span class="dateListDescription textEllipsis"><%=task.description%></span>
+            </div>
+
+
+            <div class="dateListFooter">
+                <!--<a href="<%=(task.contact) ? '/#easyErp/Persons/form/' + task.contact._id : (task.company) ?'/#easyErp/Companies/form/' + task.company._id : ''%>"><%=(task.contact && task.contact.name) ? task.contact.name.first + ' ' + task.contact.name.last : (task.company && task.company.name) ?  task.company.name.first : ''%></a>-->
+                <span class="listFooterDate"><%=task.dueDate%></span>
+                <% if (task.assignedTo){%>
+                <span class="textGrey">for</span>
+                <span class="textBlue"><%=(task.assignedTo) ?  task.assignedTo.name.first + ' ' + task.assignedTo.name.last : ''%></span>
+                <% }%>
+            </div>
+        </div>
+    </div>
+    <% }) %>
+    <span class="showmore"  style="<%= data.length > 5 ? 'display:block' : '' %>" >Show More</span>
+    <span class="hideList">Hide</span>
+</div>

@@ -64,21 +64,18 @@ var Filters = function (models) {
             }, {
                 $group: {
                     _id: null,
-
                     name: {
                         $addToSet: {
                             _id : '$_id',
                             name: {$ifNull: ['$name', 'None']}
                         }
                     },
-
                     department: {
                         $addToSet: {
                             _id : '$department._id',
                             name: {$ifNull: ['$department.name', 'None']}
                         }
                     },
-
                     jobPosition: {
                         $addToSet: {
                             _id : '$jobPosition._id',
@@ -87,7 +84,6 @@ var Filters = function (models) {
                             }
                         }
                     },
-
                     manager: {
                         $addToSet: {
                             _id : '$manager._id',
@@ -122,6 +118,7 @@ var Filters = function (models) {
         var Task = models.get(lastDB, 'DealTasks', TaskSchema);
         var pipeLine;
         var aggregation;
+        var notNullQuery = {$and : [{$ne: ['$$element.name', null]}, {$ne: ['$$element.name', '']}]};
 
         pipeLine = [{
             $lookup: {
@@ -158,24 +155,24 @@ var Filters = function (models) {
                     workflow   : {$arrayElemAt: ['$workflow', 0]},
                     assignedTo : {$arrayElemAt: ['$assignedTo', 0]},
                     deal       : {$arrayElemAt: ['$deal', 0]},
-                    category       : {$arrayElemAt: ['$category', 0]}
+                    category   : {$arrayElemAt: ['$category', 0]}
                 }
             }, {
                 $group: {
-                    _id : null,
-                    deal: {
+                    _id     : null,
+                    deal    : {
                         $addToSet: {
                             _id : '$deal._id',
-                            name: '$deal.name'
+                            name: {$ifNull : ['$deal.name', '']}
                         }
                     },
                     category: {
                         $addToSet: {
                             _id : '$category._id',
-                            name: '$category.name'
+                            name: {$ifNull : ['$category.name', '']}
                         }
                     },
-                    name: {
+                    name    : {
                         $addToSet: {
                             _id : '$_id',
                             name: '$description'
@@ -199,6 +196,44 @@ var Filters = function (models) {
                             name: {
                                 $ifNull: ['$workflow.name', 'None']
                             }
+                        }
+                    }
+                }
+            }, {
+                $project : {
+                    deal: {
+                        $filter: {
+                            input: '$deal',
+                            as   : 'element',
+                            cond : notNullQuery
+                        }
+                    },
+                    category: {
+                        $filter: {
+                            input: '$category',
+                            as   : 'element',
+                            cond : notNullQuery
+                        }
+                    },
+                    name: {
+                        $filter: {
+                            input: '$name',
+                            as   : 'element',
+                            cond : notNullQuery
+                        }
+                    },
+                    assignedTo: {
+                        $filter: {
+                            input: '$assignedTo',
+                            as   : 'element',
+                            cond : notNullQuery
+                        }
+                    },
+                    workflow : {
+                        $filter: {
+                            input: '$workflow',
+                            as   : 'element',
+                            cond : notNullQuery
                         }
                     }
                 }
@@ -227,7 +262,7 @@ var Filters = function (models) {
         var Customer = models.get(lastDB, 'Customers', CustomerSchema);
         var aggregation;
         var pipeLine;
-        var query = {type: 'Person', isHidden : false};
+        var query = {type: 'Person'};
 
         pipeLine = [{
             $match: query
@@ -314,7 +349,8 @@ var Filters = function (models) {
         var Customer = models.get(lastDB, 'Customers', CustomerSchema);
         var aggregation;
         var pipeLine;
-        var query = {type: 'Company', isHidden : false};
+        var query = {type: 'Company'};
+        var notNullQuery = {$and : [{$ne: ['$$element.name', null]}, {$ne: ['$$element.name', '']}]};
 
         pipeLine = [{
             $match: query
@@ -347,6 +383,23 @@ var Filters = function (models) {
                     $addToSet: {
                         _id : '$address.country',
                         name: {$ifNull: ['$address.country', 'None']}
+                    }
+                }
+            }
+        }, {
+            $project : {
+                country: {
+                    $filter: {
+                        input: '$country',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                name: {
+                    $filter: {
+                        input: '$name',
+                        as   : 'element',
+                        cond : notNullQuery
                     }
                 }
             }
@@ -819,6 +872,8 @@ var Filters = function (models) {
         var wTrackInvoice = models.get(lastDB, 'wTrackInvoice', wTrackInvoiceSchema);
         var pipeLine;
         var aggregation;
+        var notNullQuery = {$and : [{$ne: ['$$element.name', null]}, {$ne: ['$$element.name', '']}]};
+
 
         pipeLine = [{
             $match: {
@@ -892,14 +947,14 @@ var Filters = function (models) {
                 workflow: {
                     $addToSet: {
                         _id : '$workflow._id',
-                        name: '$workflow.name'
+                        name: {$ifNull : ['$workflow.name', '']}
                     }
                 },
 
                 project: {
                     $addToSet: {
                         _id : '$project._id',
-                        name: '$project.name'
+                        name: {$ifNull : ['$project.name', '']}
                     }
                 },
 
@@ -916,6 +971,37 @@ var Filters = function (models) {
                     $addToSet: {
                         _id : '$supplier._id',
                         name: {$concat: ['$supplier.name.first', ' ', '$supplier.name.last']}
+                    }
+                }
+            }
+        }, {
+            $project : {
+                salesPerson: {
+                    $filter: {
+                        input: '$salesPerson',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                supplier: {
+                    $filter: {
+                        input: '$supplier',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                project: {
+                    $filter: {
+                        input: '$project',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                workflow : {
+                    $filter: {
+                        input: '$workflow',
+                        as   : 'element',
+                        cond : notNullQuery
                     }
                 }
             }
@@ -944,6 +1030,7 @@ var Filters = function (models) {
         var Proforma = models.get(lastDB, 'Proforma', ProformaSchema);
         var pipeLine;
         var aggregation;
+        var notNullQuery = {$and : [{$ne: ['$$element.name', null]}, {$ne: ['$$element.name', '']}]};
 
         pipeLine = [{
             $match: {
@@ -1031,7 +1118,7 @@ var Filters = function (models) {
                 project: {
                     $addToSet: {
                         _id : '$project._id',
-                        name: '$project.name'
+                        name: {$ifNull :[ '$project.name', '']}
                     }
                 },
 
@@ -1050,6 +1137,37 @@ var Filters = function (models) {
                         name: {
                             $concat: ['$supplier.name.first', ' ', '$supplier.name.last']
                         }
+                    }
+                }
+            }
+        }, {
+            $project : {
+                salesPerson: {
+                    $filter: {
+                        input: '$salesPerson',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                supplier: {
+                    $filter: {
+                        input: '$supplier',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                project: {
+                    $filter: {
+                        input: '$project',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                workflow : {
+                    $filter: {
+                        input: '$workflow',
+                        as   : 'element',
+                        cond : notNullQuery
                     }
                 }
             }
@@ -1328,14 +1446,14 @@ var Filters = function (models) {
                     }
                 }/*,
 
-                productType: {
-                    $addToSet: {
-                        _id : '$info.productType',
-                        name: {
-                            $ifNull: ['$info.productType', 'None']
-                        }
-                    }
-                }*/
+                 productType: {
+                 $addToSet: {
+                 _id : '$info.productType',
+                 name: {
+                 $ifNull: ['$info.productType', 'None']
+                 }
+                 }
+                 }*/
             }
         }];
 
@@ -1355,33 +1473,33 @@ var Filters = function (models) {
             result.canBePurchased = [
                 {
                     name: 'True',
-                    _id: 'true'
+                    _id : 'true'
                 },
                 {
                     name: 'False',
-                    _id: 'false'
+                    _id : 'false'
                 }
             ];
 
             result.canBeSold = [
                 {
                     name: 'True',
-                    _id: 'true'
+                    _id : 'true'
                 },
                 {
                     name: 'False',
-                    _id: 'false'
+                    _id : 'false'
                 }
             ];
 
             result.canBeExpensed = [
                 {
                     name: 'True',
-                    _id: 'true'
+                    _id : 'true'
                 },
                 {
                     name: 'False',
-                    _id: 'false'
+                    _id : 'false'
                 }
             ];
 
@@ -1399,6 +1517,7 @@ var Filters = function (models) {
             forSales: false,
             isOrder : false
         };
+        var notNullQuery = {$and : [{$ne: ['$$element.name', null]}, {$ne: ['$$element.name', '']}]};
 
         pipeLine = [{
             $match: query
@@ -1437,6 +1556,23 @@ var Filters = function (models) {
                     $addToSet: {
                         _id : '$workflow._id',
                         name: '$workflow.name'
+                    }
+                }
+            }
+        }, {
+            $project : {
+                supplier: {
+                    $filter: {
+                        input: '$supplier',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                workflow : {
+                    $filter: {
+                        input: '$workflow',
+                        as   : 'element',
+                        cond : notNullQuery
                     }
                 }
             }
@@ -1597,6 +1733,7 @@ var Filters = function (models) {
             forSales: true,
             isOrder : true
         };
+        var notNullQuery = {$and : [{$ne: ['$$element.name', null]}, {$ne: ['$$element.name', '']}]};
 
         pipeLine = [{
             $match: query
@@ -1667,7 +1804,7 @@ var Filters = function (models) {
                 project: {
                     $addToSet: {
                         _id : '$project._id',
-                        name: '$project.name'
+                        name:  {$ifNull : ['$project.name', '']}
                     }
                 },
 
@@ -1688,11 +1825,41 @@ var Filters = function (models) {
                         }
                     }
                 },
-
                 workflow: {
                     $addToSet: {
                         _id : '$workflow._id',
-                        name: '$workflow.name'
+                        name:  {$ifNull : ['$workflow.name', '']}
+                    }
+                }
+            }
+        }, {
+            $project : {
+                salesManager: {
+                    $filter: {
+                        input: '$salesManager',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                supplier: {
+                    $filter: {
+                        input: '$supplier',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                project: {
+                    $filter: {
+                        input: '$project',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                workflow : {
+                    $filter: {
+                        input: '$workflow',
+                        as   : 'element',
+                        cond : notNullQuery
                     }
                 }
             }
@@ -1725,6 +1892,7 @@ var Filters = function (models) {
             forSales: false,
             isOrder : true
         };
+        var notNullQuery = {$and : [{$ne: ['$$element.name', null]}, {$ne: ['$$element.name', '']}]};
 
         pipeLine = [{
             $match: query
@@ -1781,6 +1949,37 @@ var Filters = function (models) {
                     }
                 }
             }
+        }, {
+            $project : {
+                salesManager: {
+                    $filter: {
+                        input: '$salesManager',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                supplier: {
+                    $filter: {
+                        input: '$supplier',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                project: {
+                    $filter: {
+                        input: '$project',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                workflow : {
+                    $filter: {
+                        input: '$workflow',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                }
+            }
         }];
 
         aggregation = Quotation.aggregate(pipeLine);
@@ -1809,6 +2008,7 @@ var Filters = function (models) {
         var query = {
             isOpportunitie: false
         };
+        var notNullQuery = {$and : [{$ne: ['$$element.name', null]}, {$ne: ['$$element.name', '']}]};
 
         pipeLine = [{
             $match: query
@@ -1828,13 +2028,6 @@ var Filters = function (models) {
             }
         }, {
             $lookup: {
-                from        : 'Customers',
-                localField  : 'customer',
-                foreignField: '_id',
-                as          : 'customer'
-            }
-        }, {
-            $lookup: {
                 from        : 'Users',
                 localField  : 'createdBy.user',
                 foreignField: '_id',
@@ -1844,15 +2037,15 @@ var Filters = function (models) {
             $project: {
                 workflow        : {$arrayElemAt: ['$workflow', 0]},
                 source          : 1,
+                contactName     : {$concat: ['$contactName.first', ' ', '$contactName.last']},
                 salesPerson     : {$arrayElemAt: ['$salesPerson', 0]},
-                customer        : {$arrayElemAt: ['$customer', 0]},
                 'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]}
             }
         }, {
             $project: {
                 workflow   : 1,
                 source     : 1,
-                contactName:  {$concat: ['$customer.name.first', ' ', '$customer.name.last']},
+                contactName: 1,
                 salesPerson: {
                     _id : '$salesPerson._id',
                     name: {$concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']}
@@ -1866,7 +2059,6 @@ var Filters = function (models) {
         }, {
             $group: {
                 _id: null,
-
                 contactName: {
                     $addToSet: {
                         _id : '$contactName',
@@ -1911,6 +2103,38 @@ var Filters = function (models) {
                     }
                 }
             }
+        }, {
+            $project : {
+                workflow: {
+                    $filter: {
+                        input: '$workflow',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                source: {
+                    $filter: {
+                        input: '$source',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                contactName  : {
+                    $filter: {
+                        input: '$contactName',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                salesPerson: {
+                    $filter: {
+                        input: '$salesPerson',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                createdBy  : 1
+            }
         }];
 
         aggregation = Opportunities.aggregate(pipeLine);
@@ -1939,6 +2163,7 @@ var Filters = function (models) {
         var query = {
             isOpportunitie: true
         };
+        var notNullQuery = {$and : [{$ne: ['$$element.name', null]}, {$ne: ['$$element.name', '']}]};
 
         pipeLine = [{
             $match: query
@@ -1991,6 +2216,30 @@ var Filters = function (models) {
                     $addToSet: {
                         _id : '$salesPerson._id',
                         name: {$concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']}
+                    }
+                }
+            }
+        }, {
+            $project: {
+                customer   : {
+                    $filter: {
+                        input: '$customer',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                workflow     : {
+                    $filter: {
+                        input: '$workflow',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                salesPerson: {
+                    $filter: {
+                        input: '$salesPerson',
+                        as   : 'element',
+                        cond : notNullQuery
                     }
                 }
             }

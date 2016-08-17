@@ -23,7 +23,6 @@ define([
             this.data = options.data;
 
             this.saveDeal = options.saveDeal;
-            this.isLead = options.isLead;
         },
 
         setChangeValueToModel: function (e) {
@@ -52,8 +51,7 @@ define([
         addProperty: function () {
             new FilterView({
                 attribute: 'company',
-                saveDeal : this.saveDeal,
-                isLead   : this.isLead
+                saveDeal : this.saveDeal
             });
         },
 
@@ -81,19 +79,10 @@ define([
 
         removeProperty: function () {
             var saveObject = {};
-            var self = this;
-            var model = new CompaniesModel(this.data);
 
             saveObject.company = null;
-            self.saveDeal(saveObject, 'formProperty');
 
-            if (this.isLead && this.data.isHidden){
-                model.destroy({success : function (){
-                    self.saveDeal(saveObject, 'formProperty');
-                }});
-            } else {
-                this.saveDeal(saveObject, 'formProperty');
-            }
+            this.saveDeal(saveObject, 'formProperty');
         },
 
         render: function () {

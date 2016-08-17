@@ -1,0 +1,202 @@
+.countCircle {
+  height: 20px;
+  width: 20px;
+  color: #fff;
+  background: #9a9a9e;
+  text-align: center;
+  display: inline-block;
+  border-radius: 50%;
+  font-size: 12px;
+  line-height: 18px;
+
+  &.red {
+    background: #ff0000;
+  }
+
+  &:empty {
+    display: none;
+  }
+}
+
+.dateListElementTitle {
+  display: inline-block;
+  margin: 20px 20px 0 20px;
+  font-size: 14px;
+  color: #8c8e8f;
+  text-transform: uppercase;
+
+  .countCircle {
+    margin-left: 8px;
+  }
+}
+
+.dateListItem {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+
+  height: 46px;
+  margin: 15px 0;
+  cursor: pointer;
+
+  .dateListCheckboxWrap {
+    padding: 0 20px;
+    -webkit-flex-shrink: 0;
+    flex-shrink: 0;
+  }
+
+  .dateListBody {
+    min-width: 1px;
+    -webkit-flex-grow: 1;
+    flex-grow: 1;
+
+    .dateListFooter {
+
+      .listFooterDate {
+        color: #9a9a9e;
+      }
+    }
+  }
+}
+
+.dateListHeader {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+
+  ._tagSmall {
+    -webkit-flex-shrink: 0;
+    flex-shrink: 0;
+
+    margin-right: 5px;
+  }
+
+  .dateListDescription {
+    -webkit-flex-grow: 1;
+    flex-grow: 1;
+  }
+}
+
+._taskListWrap {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+
+  height: calc(100vh - 100px);
+
+  ._taskListDateBlock {
+    width: calc(100% - (35% + 159px));
+    overflow: auto;
+
+    ._dateListElement {
+      position: relative;
+      max-height: 380px;
+      overflow: hidden;
+      font-size: 14px;
+
+      .hideList {
+        display: none;
+        position: absolute;
+        right: 10px;
+        bottom: 0;
+        background-color: #7eadcc;
+        color: #fff;
+        font-size: 12px;
+        height: 20px;
+        line-height: 20px;
+        padding: 0 10px;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+
+      &.open {
+        max-height: none;
+
+        .showmore {
+          display: none !important;
+        }
+        .hideList {
+          display: block;
+        }
+      }
+    }
+  }
+}
+
+.collapsed {
+  ._taskListDateBlock {
+    width: calc(100% - (35% + 103px));
+  }
+}
+
+._taskListActivitiesBlock {
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+
+  width: calc(35% + 159px);
+
+  ._activityHolderTitle {
+    -webkit-flex-shrink: 0;
+    flex-shrink: 0;
+
+    padding: 20px;
+    border-bottom: 1px solid #c8c8d3;
+  }
+
+  ._activityHolder {
+    -webkit-flex-grow: 1;
+    flex-grow: 1;
+
+    padding: 0 20px;
+    font-size: 14px;
+    overflow: auto;
+  }
+}
+
+.collapsed {
+  ._taskListActivitiesBlock {
+    width: calc(35% + 103px);
+  }
+}
+
+.showmore {
+  display: none;
+}
+._dateListElement {
+
+  .showmore {
+    position: absolute;
+    right: 10px;
+    bottom: 0;
+    background-color: #7eadcc;
+    color: #fff;
+    font-size: 12px;
+    height: 20px;
+    line-height: 20px;
+    padding: 0 10px;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+}
+
+._activitiesListItem {
+  padding: 10px 0;
+  border-bottom: 1px solid #c8c8d3;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}

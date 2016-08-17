@@ -76,17 +76,34 @@ module.exports = function (moduleId, models) {
             callback(null, true);
         });
     };
+    var aditionalCheck = function (req) {
+        var query = req.query;
+        var body = req.body;
+        var filter = query.filter;
+        var forSalesObject = filter ? filter.forSales : null;
+
+        if (body && body.forSales) {
+            return !!body.forSales;
+        } else if (query && query.forSales) {
+            return !!query.forSales;
+        } else {
+            if (forSalesObject) {
+                return forSalesObject.value[0] === 'true';
+            }
+        }
+
+        return !!query.canBeSold;
+    };
 
     return function (req, res, next) {
         var MODULES = require('../constants/modules');
         var method = req.method;
         var query = req.query;
-        var type = query.type;
         var approve = query.approve && query.approve === 'true';
         var baseUrl = req.baseUrl;
         var urlStr;
 
-        if (type === 'sales') {
+        if (aditionalCheck(req)) {
             urlStr = baseUrl.substr(1);
             moduleId = MODULES['SALES' + urlStr.toUpperCase()] || moduleId;
         }
@@ -95,7 +112,6 @@ module.exports = function (moduleId, models) {
             if (err || !_access) {
                 err = new Error();
                 err.status = 403;
-                next(err);
 
                 return next(err);
             }

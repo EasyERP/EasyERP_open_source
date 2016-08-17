@@ -24,10 +24,7 @@ define([
             });
         },
 
-        parse: function (response) {
-            if (response.dueDate) {
-                response.dueDate = common.utcDateToLocaleDate(response.dueDate);
-            }
+        /*parse: function (response) {
             if (response && response.attachments) {
                 _.map(response.attachments, function (attachment) {
                     attachment.uploadDate = common.utcDateToLocaleDate(attachment.uploadDate);
@@ -41,12 +38,13 @@ define([
                 });
             }
             return response;
-        },
+        },*/
 
         validate: function (attrs) {
             var errors = [];
 
             Validation.checkGroupsNameField(errors, true, attrs.assignedTo._id || attrs.assignedTo, 'AssignedTo');
+            Validation.checkDateField(errors, true, attrs.dueDate, 'Due Date');
 
             if (errors.length > 0) {
                 return errors;

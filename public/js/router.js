@@ -71,11 +71,12 @@ define([
         view       : null,
 
         routes: {
-            home                                                                                            : 'login',
+            home                                                                                            : 'any',
             'easyErp/Products/thumbnails(/c=:countPerPage)(/filter=:filter)'                                : 'goToProduct',
             'easyErp/import/list(/p=:page)(/c=:countPerPage)'                                               : 'goToImport',
             'login(?password=:password&dbId=:dbId&email=:email)'                                            : 'login',
             'easyErp/:contentType/kanban(/:parrentContentId)(/filter=:filter)'                              : 'goToKanban',
+            'easyErp/:contentType/datelist(/c=:countPerPage)(/filter=:filter)'                              : 'goToDateList',
             'easyErp/:contentType/thumbnails(/c=:countPerPage)(/filter=:filter)'                            : 'goToThumbnails',
             'easyErp/:contentType/tform(/:modelId)(/p=:page)(/c=:countPerPage)(/filter=:filter)'            : 'goToTForm', // FixMe chenge to required Id after test
             'easyErp/:contentType/form(/:modelId)'                                                          : 'goToForm', // FixMe chenge to required Id after test
@@ -90,6 +91,8 @@ define([
             'easyErp/Workflows'                                                                             : 'goToWorkflows',
             'easyErp/Accounts'                                                                              : 'goToAccounts',
             'easyErp/Dashboard'                                                                             : 'goToDashboard',
+            'easyErp/reportsDashboard'                                                                      : 'goToReportsDashboard',
+            'easyErp/payrollDashboard'                                                                      : 'goToPayrollDashboard',
             'easyErp/DashBoardVacation(/filter=:filter)'                                                    : 'dashBoardVacation',
             'easyErp/invoiceCharts(/filter=:filter)'                                                        : 'invoiceCharts',
             'easyErp/HrDashboard'                                                                           : 'hrDashboard',
@@ -773,6 +776,74 @@ define([
             }
         },
 
+        goToPayrollDashboard: function () {
+            var self = this;
+            this.checkLogin(function (success) {
+                if (success) {
+                    goDashboard(self);
+                } else {
+                    self.redirectTo();
+                }
+            });
+
+            function goDashboard(context) {
+                var startTime = new Date();
+                var contentViewUrl = "views/payrollDashboard/ContentView";
+                var topBarViewUrl = "views/payrollDashboard/TopBarView";
+                var self = context;
+
+                if (context.mainView === null) {
+                    context.main("payrollDashboard");
+                } else {
+                    context.mainView.updateMenu("payrollDashboard");
+                }
+
+                require([contentViewUrl, topBarViewUrl], function (contentView, topBarView) {
+
+                    custom.setCurrentVT('list');
+
+                    var contentview = new contentView({startTime: startTime});
+                    var topbarView = new topBarView({actionType: "Content"});
+                    self.changeView(contentview);
+                    self.changeTopBarView(topbarView);
+                });
+            }
+        },
+
+        goToReportsDashboard: function () {
+            var self = this;
+            this.checkLogin(function (success) {
+                if (success) {
+                    goDashboard(self);
+                } else {
+                    self.redirectTo();
+                }
+            });
+
+            function goDashboard(context) {
+                var startTime = new Date();
+                var contentViewUrl = "views/reportsDashboard/ContentView";
+                var topBarViewUrl = "views/reportsDashboard/TopBarView";
+                var self = context;
+
+                if (context.mainView === null) {
+                    context.main("reportsDashboard");
+                } else {
+                    context.mainView.updateMenu("reportsDashboard");
+                }
+
+                require([contentViewUrl, topBarViewUrl], function (contentView, topBarView) {
+
+                    custom.setCurrentVT('list');
+
+                    var contentview = new contentView({startTime: startTime});
+                    var topbarView = new topBarView({actionType: "Content"});
+                    self.changeView(contentview);
+                    self.changeTopBarView(topbarView);
+                });
+            }
+        },
+
         goToDashboard: function () {
             var self = this;
             this.checkLogin(function (success) {
@@ -1108,6 +1179,75 @@ define([
                         context.changeView(contentview);
                         context.changeTopBarView(topbarView);
                     }
+                });
+            }
+        },
+
+        goToDateList: function (contentType, countPerPage, filter) {
+            var self = this;
+
+            if (filter && typeof filter === 'string') {
+                filter = decodeURIComponent(filter);
+                filter = JSON.parse(filter);
+            }
+
+            if (!this.isAuth) {
+                this.checkLogin(function (success) {
+                    if (success) {
+                        self.isAuth = true;
+                        renderDateList();
+                    } else {
+                        self.redirectTo();
+                    }
+                });
+            } else {
+                renderDateList();
+            }
+
+            function renderDateList() {
+                var startTime = new Date();
+                var contentViewUrl = "views/" + contentType + "/dateList/ListView";
+                var topBarViewUrl = "views/" + contentType + "/TopBarView";
+                var collectionUrl = "collections/DealTasks/dateCollection";
+
+                if (self.mainView === null) {
+                    self.main(contentType);
+                } else {
+                    self.mainView.updateMenu(contentType);
+                }
+
+                require([contentViewUrl, topBarViewUrl, collectionUrl], function (ContentView, TopBarView, ContentCollection) {
+                    var contentview;
+                    var topbarView;
+                    var collection;
+
+                    App.filtersObject.filter = filter;
+
+                    collection = new ContentCollection({
+                        viewType: 'datelist',
+                        reset   : true,
+                        filter  : filter
+                    });
+
+                    collection.bind('reset', _.bind(createViews, self));
+
+                    custom.setCurrentVT('dateList');
+
+                    function createViews() {
+                        collection.unbind('reset');
+                        topbarView = new TopBarView({actionType: 'Content'});
+                        contentview = new ContentView({
+                            startTime : startTime,
+                            collection: collection,
+                            filter    : filter
+                        });
+                        eventsBinder.subscribeTopBarEvents(topbarView, contentview);
+                        eventsBinder.subscribeCollectionEvents(collection, contentview)
+
+                        self.changeView(contentview);
+                        self.changeTopBarView(topbarView);
+                    }
+
                 });
             }
         },

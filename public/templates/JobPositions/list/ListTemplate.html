@@ -11,8 +11,10 @@
     <td><%=jobPosition.numberOfEmployees%></td>
     <td><%=jobPosition.expectedRecruitment%></td>
     <td id='stages_<%=jobPosition._id%>'>
-        <a href="javascript:;" class="stageSelect"><%=(jobPosition.workflow) ? jobPosition.workflow.name :
-            'Undefinded'%></a>
+        <div class="_newSelectListWrap">
+            <a href="javascript:;" class="stageSelect"><%=(jobPosition.workflow) ? jobPosition.workflow.name :
+                'Undefinded'%></a>
+        </div>
     </td>
     <td><%=(jobPosition.createdBy&&jobPosition.createdBy.date)?( jobPosition.createdBy.date +
         ((jobPosition.createdBy.user) ?(' (' + jobPosition.createdBy.user.login + ')') : '')):''%>

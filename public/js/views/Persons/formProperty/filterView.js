@@ -18,11 +18,12 @@ define([
         initialize: function (options) {
 
             var self = this;
-            this.isLead = options.isLead;
 
             function resetCollection() {
                 self.renderContent(self.e);
             }
+
+            this.attribute = options.attribute;
 
             this.saveDeal = options.saveDeal;
 
@@ -79,16 +80,10 @@ define([
         },
 
         createCustomer: function () {
-            var optionsObject = {};
 
             $('.tag-list-dialog').remove();
 
-
-            if (this.isLead) {
-                optionsObject.saveDeal = this.saveDeal;
-            }
-
-            new CreateView(optionsObject);
+            new CreateView({saveDeal : this.saveDeal, attribute : this.attribute});
         },
 
         changeSelected: function (e) {

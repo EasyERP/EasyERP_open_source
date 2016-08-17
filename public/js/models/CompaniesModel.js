@@ -39,6 +39,10 @@
                     });
                 }
 
+                if (response.social && response.social.LI) {
+                    response.social.LI = response.social.LI.replace('[]', 'linkedin');
+                }
+
                 if (response.notes) {
                     _.map(response.notes, function (note) {
                         note.date = moment(note.date).format('DD MMM, YYYY, H:mm:ss');
@@ -48,16 +52,29 @@
                             note.history.newValue = note.history.newValue ? moment(new Date(note.history.newValue)).format('DD MMM, YYYY') : '';
                             note.history.prevValue = note.history.prevValue ? moment(new Date(note.history.prevValue)).format('DD MMM, YYYY') : '';
                         }
-
-                        response.notes.forEach(function(elem, index) {
-                            if (note.history && (note.history.changedField === 'Creation Date')){
-                                response.notes.splice(index, 1);
-                                response.notes.unshift(note);
-                                return;
-                            }
-                        });
+                        if (note.history && note.history.changedField === 'LinkedIn'){
+                            note.history.changedValue = note.history.changedValue ? note.history.changedValue.replace('[]', 'linkedin') : '';
+                            note.history.newValue = note.history.newValue ? note.history.newValue.replace('[]', 'linkedin') : '';
+                            note.history.prevValue = note.history.prevValue ? note.history.prevValue.replace('[]', 'linkedin') : '';
+                        }
 
                         return note;
+                    });
+
+                    response.notes.forEach(function(note, index) {
+                        if (!note.name && note.history && (note.history.changedField === 'Creation Date')){
+                            response.notes.splice(index, 1);
+                            response.notes.unshift(note);
+                            return;
+                        }
+                    });
+
+                    response.notes.forEach(function(note, index) {
+                        if (note.task && (note.task.workflow.status !== 'Done') && (note.task.workflow.status !== 'Cancelled')){
+                            response.notes.splice(index, 1);
+                            response.notes.push(note);
+                            return;
+                        }
                     });
                 }
 
@@ -75,15 +92,16 @@
 
         validate: function (attrs) {
             var errors = [];
-            Validation.checkGroupsNameField(errors, true, attrs.name.first, 'Company');
-            Validation.checkPhoneField(errors, false, attrs.phones.phone, 'Phone');
-            Validation.checkPhoneField(errors, false, attrs.phones.mobile, 'Mobile');
-            Validation.checkCountryCityStateField(errors, false, attrs.address.country, 'Country');
-            Validation.checkCountryCityStateField(errors, false, attrs.address.state, 'State');
-            Validation.checkCountryCityStateField(errors, false, attrs.address.city, 'City');
-            Validation.checkZipField(errors, false, attrs.address.zip, 'Zip');
-            Validation.checkStreetField(errors, false, attrs.address.street, 'Street');
+            Validation.checkGroupsNameField(errors, true,attrs['name.first'] || attrs.name.first, 'Company');
+            Validation.checkPhoneField(errors, false,attrs['phones.phone']  || attrs.phones.phone, 'Phone');
+            Validation.checkPhoneField(errors, false,attrs['phones.mobile'] || attrs.phones.mobile, 'Mobile');
+            Validation.checkCountryCityStateField(errors,  attrs['address.country'] || false, attrs.address.country, 'Country');
+            Validation.checkCountryCityStateField(errors, false,  attrs['address.state'] || attrs.address.state, 'State');
+            Validation.checkCountryCityStateField(errors, false,  attrs['address.city'] || attrs.address.city, 'City');Validation.checkZipField(errors, false, attrs.address.zip, 'Zip');
+            Validation.checkStreetField(errors, false, attrs['address.street'] || attrs.address.street, 'Street');
+            Validation.checkZipField(errors, false, attrs['address.zip'] || attrs.address.zip, 'Zip');
             Validation.checkEmailField(errors, false, attrs.email, 'Email');
+
             if (errors.length > 0) {
                 return errors;
             }

@@ -1691,7 +1691,7 @@ define([
                     server.respond();
                     expect($('.ui-dialog').find('#createPaymentForm')).to.exist;
 
-                    server.respondWith('POST', '/payment/', [200, {"Content-Type": "application/json"},  JSON.stringify({})]);
+                    server.respondWith('POST', '/payments/', [200, {"Content-Type": "application/json"},  JSON.stringify({})]);
                     server.respondWith('GET', paymentsUrl, [200, {"Content-Type": "application/json"},  JSON.stringify(PROJECTS.fakePayments)]);
                     server.respondWith('GET', ordersUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeOrders)]);
                     server.respondWith('GET', invoiceUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeProformas)]);
@@ -2283,7 +2283,7 @@ define([
                 it('Try to open CreateView', function () {
                     var $createBtn = topBarView.$el.find('#top-bar-createBtn');
                     var usersUrl = '/users/forDd';
-                    var employeesUrl = '/employees/getPersonsForDd';
+                    var employeesUrl = '/employees/getForDd';
                     var customerUrl = '/customers/';
                     var $dialog;
 
@@ -2393,7 +2393,7 @@ define([
                     var $needItem = $thisEl.find('#55b92ad621e4b7c40f00065f');
                     var projectFormUrl = new RegExp('\/projects\/', 'i');
                     var usersUrl = '/users/forDd';
-                    var employeesUrl = '/employees/getPersonsForDd';
+                    var employeesUrl = '/employees/getForDd';
                     var customerUrl = '/customers/';
 
                     server.respondWith('GET', projectFormUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(PROJECTS.fakeProjectById)]);

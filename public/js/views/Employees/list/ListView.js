@@ -20,9 +20,8 @@ define([
         hasPagination    : true,
         contentType      : 'Employees',
         formUrl          : '#easyErp/Employees/',
-        exportToXlsxUrl  : '/employees/exportToXlsx',
-        exportToCsvUrl   : '/employees/exportToCsv',
         letterKey        : 'name.last',
+        type: 'Employees',
 
         initialize: function (options) {
             this.startTime = options.startTime;

@@ -10,8 +10,10 @@ define([
     'populate',
     'views/Notes/AttachView',
     'views/Category/TagView',
-    'constants'
-], function (Backbone, $, _, ParentView, CreateTemplate, showSelectTemplate, TaskModel, common, populate, AttachView, CategoryView, CONSTANTS) {
+    'constants',
+    'moment',
+    'helpers/keyValidator'
+], function (Backbone, $, _, ParentView, CreateTemplate, showSelectTemplate, TaskModel, common, populate, AttachView, CategoryView, CONSTANTS, moment, keyValidator) {
 
     var CreateView = ParentView.extend({
         el         : '#content-holder',
@@ -20,7 +22,7 @@ define([
         responseObj: {},
 
         events: {
-            'click .removeSelect': 'removeSelect'
+            'click .removeSelect': 'removeSelect',
         },
 
         initialize: function () {
@@ -47,8 +49,16 @@ define([
             var contact = this.$el.find('#contactItem .showSelect').attr('data-id');
             var description = $.trim(this.$el.find('#description').val());
             var dueDate = $.trim(this.$el.find('#dueDate').val());
+            var time = moment($.trim(this.$el.find('#timepickerOne').wickedpicker('time')).split(' '), 'hh:mm:ss A');
+            var hours = time.get('hours');
+            var minutes = time.get('minutes');
+            var seconds = time.get('seconds');
             var category = this.model.get('category');
             var saveObject;
+
+            if (dueDate) {
+                dueDate = moment(dueDate).hours(hours).minutes(minutes).seconds(seconds).toDate();
+            }
 
             if (!description) {
                 return App.render({
@@ -167,6 +177,11 @@ define([
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true
+            });
+            this.$el.find('#timepickerOne').wickedpicker({
+                showSeconds: true,
+                secondsInterval: 1,
+                minutesInterval: 1
             });
 
             this.delegateEvents(this.events);

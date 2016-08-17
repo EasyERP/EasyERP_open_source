@@ -88,7 +88,7 @@ define([
 
             model.urlRoot = '/orders/';
             model.fetch({
-                data   : {id: id, contentType: this.contentType},
+                data   : {id: id, contentType: this.contentType, forSales: true},
                 success: function (model) {
                     return new EditView({
                         model         : model,

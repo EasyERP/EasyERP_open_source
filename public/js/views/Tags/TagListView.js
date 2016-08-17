@@ -71,7 +71,7 @@ define([
         events: {
             'click .editTag'                                                  : 'editTag',
             'click #newTag'                                                   : 'createTag',
-            'click li'                                                        : 'changeSelected'
+            'click li span:not(.editTag)'                                     : 'changeSelected'
         },
 
         changeSelected: function (e) {

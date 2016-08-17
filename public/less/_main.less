@@ -399,7 +399,7 @@ input::-ms-clear {
     }
     .left;
     width: 100%-@with-dt;
-    .text-overflow;
+    //.text-overflow;
     &:nth-child(2) {
       margin-top: 0;
     }
@@ -730,10 +730,6 @@ input::-ms-clear {
     width: 90%;
     line-height: 26px;
     color: @mainText-color;
-  }
-
-  input {
-    margin: 2px 2px 2px 0;
   }
 
   textarea {
@@ -1205,7 +1201,8 @@ input::-ms-clear {
 
   .opportunity-header {
     margin-bottom: 7px;
-    h3 {
+    > h3 {
+      float: right;
       text-align: right;
 
     }
@@ -1230,7 +1227,7 @@ input::-ms-clear {
   .column {
     min-height: 100%;
     width: auto;
-    min-width: 160px;
+    min-width: 250px;
     max-width: 400px;
     height: auto;
     vertical-align: top;
@@ -2122,23 +2119,20 @@ input::-ms-clear {
   .inner {
     margin-top: 0;
   }
+
   input:not([type=checkbox]) {
-    border: @thin-border @border-color-main;
     max-width: 280px;
-    //line-height: 16px;
     background-color: transparent;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 12px;
     padding: 0 4px;
-    margin-top: 1px; //need for Project-Project-Order
-    margin-bottom: 1px; //need for Project-Project-Order
-    box-sizing: border-box;
     color: @mainText-color;
 
     &:focus {
       outline: medium none;
       border: @thin-border @border-color-selected;
     }
+
     &#editInput {
       padding: 2px 6px;
     }
@@ -2244,8 +2238,9 @@ input::-ms-clear {
 
 .workflow-list-wrapper,
 .workflow-sub-list-wrapper {
-  width: 12%;
+  width: 170px;
 }
+
 
 #details,
 #sub-details {
@@ -2278,10 +2273,19 @@ input::-ms-clear {
   }
 }
 
-#profileTableWrapper,
+#profileTableWrapper {
+  width: calc(~" 100% - 170px");
+  .list {
+    thead {
+      tr {
+        border-top: 1px solid #7f7f80;
+      }
+    }
+  }
+}
 #workflowAccord,
 #workflowSubAccord {
-  width: 88%;
+  width: calc(~" 100% - 170px");
 }
 
 #profileTableWrapper table thead th:first-of-type {
@@ -2290,12 +2294,22 @@ input::-ms-clear {
 
 #content-holder .inner-holder {
   margin: 20px;
-
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
 }
 
 #profileTableWrapper table {
-  width: 95%;
-  margin: auto;
+  width: calc(~"100% - 20px");
+  margin: 0 0 0 20px;
+}
+
+.workflow-sub-list {
+  li {
+    .text-overflow;
+  }
 }
 
 .workflow-list,
@@ -2305,11 +2319,10 @@ input::-ms-clear {
   font-size: 13px;
 
   li {
-    .text-overflow;
-    border: @thin-border rgba(0, 0, 0, 0);
-    border-right-color: @border-color-main;
+    position: relative;
     height: 40px;
     line-height: 40px;
+    border: @thin-border transparent;
 
     &:hover:not(.quickEdit) {
       background-color: lighten(@bg-main, 15%);;
@@ -2328,8 +2341,8 @@ input::-ms-clear {
       }
     }
     &.active {
-      border: @thin-border @border-color-main;
-      border-right: none;
+      border-color: @border-color-main;
+      border-right-color: transparent;
       display: list-item;
 
       &.first {
@@ -2339,10 +2352,23 @@ input::-ms-clear {
       &:hover {
         background-color: @defaultBgHover-color;
       }
+      &:after {
+        display: none;
+      }
 
       a {
         text-decoration: none;
       }
+    }
+
+    &:after {
+      content: '';
+      position: absolute;
+      right: -1px;
+      top: -1px;
+      width: 1px;
+      height: 40px;
+      background-color: @border-color-main;
     }
 
     a {
@@ -2372,20 +2398,22 @@ input::-ms-clear {
   }
 }
 
+.workflow-list {
+  li.active {
+    line-height: 38px;
+    font-family: @fontSemiBold;
+    &:hover {
+      background-color: #fff;
+    }
+  }
+}
+
 /*-----------------------------Styles--------------------------------*/
 /*-----------------------------All--------------------------------*/
 @-moz-document url-prefix() {
   body {
     font-size: 10px;
   }
-
-  //.form {
-  //  p {
-  //    label {
-  //      line-height: 30px;
-  //    }
-  //  }
-  //}
 }
 
 #modulesAccessTable {
@@ -2401,11 +2429,12 @@ input::-ms-clear {
     }
 
     &.parent {
-      //background-color: #36A9E1;
-      color: @mainText-color;
-      //border: 2px solid #1E8FC6;
+      background-color: #7eadcc;
+      border-color: #fff;
 
       td {
+        color: #fff;
+        font-family: @fontSemiBold;
       }
     }
   }
@@ -2439,86 +2468,22 @@ input::-ms-clear {
   }
 }
 
-input, textarea, select {
+input,
+textarea,
+select {
   &:not([type="checkbox"]) {
+    width: 100%;
     padding: 0 4px; //big cells in BonusType
     border: 1px solid #c8c8d3;
     background-color: inherit;
     color: @mainText-color;
-    &:focus {
-      //.box-shadow(0, 0, 5px, rgba(82, 168, 236, 0.5));
-      //outline: none;
-      //border: @thin-border @border-color-selected;
-    }
   }
 }
 
 .current-selected {
-  // color: @tilte-color !important;
+  position: relative;
   font-size: 13px;
   text-decoration: none;
-  line-height: 26px !important;
-}
-
-.newSelectList {
-  position: absolute !important;
-  border: solid 1px @border-color-main;
-  background-color: @bg-main;
-  padding: 3px 0;
-  z-index: 100;
-
-  li {
-    margin: 0;
-    padding: 3px 16px 5px;
-    cursor: pointer;
-    font-size: 12px;
-    text-align: left;
-    color: @grey;
-
-    &.testing,
-    &.analysis {
-      background-color: #D9FFC8 !important;
-    }
-
-    &.merge {
-      color: #C00 !important;
-      background-color: #FFE3E3 !important;
-    }
-
-    &.design {
-      color: #000 !important;
-      background-color: #FFEA73 !important;
-    }
-
-    &.cancelled {
-      color: #FFF !important;
-      background-color: #C00 !important;
-    }
-
-    &.done {
-      color: #000 !important;
-      background-color: #BEF624 !important;
-    }
-
-    &.selected {
-      color: #f3f3f3;
-      background-color: #545454;
-    }
-
-    &:hover {
-      background-color: lighten(@bg-main, 5%) !important;
-      border: 0 !important;
-      color: #FF5A00 !important;
-    }
-  }
-
-  &.stage {
-    left: 0;
-  }
-
-  &.taskPriority {
-    left: -15px;
-  }
 }
 
 .icon {
@@ -2958,8 +2923,9 @@ dl {
 
   #content-holder {
     position: relative;
-    height: calc(~"100% - 41px");
+    height: calc(~"100% - 40px");
     width: 100%;
+    flex-grow: 1;
   }
 }
 
@@ -3838,7 +3804,6 @@ table#workflows {
 #top-bar {
   -webkit-flex-shrink: 0;
   flex-shrink: 0;
-
   .top-bar;
 }
 
@@ -3957,7 +3922,7 @@ ul.dialog-tabs {
 
     &.mname {
       text-align: left;
-      border-left: 1px solid @border-color-main;
+      //border-left: 1px solid @border-color-main;
     }
   }
 }
@@ -3981,9 +3946,6 @@ ul.dialog-tabs {
   padding: 20px;
   box-sizing: border-box;
   width: 100%;
-  //&.employee {
-  //  padding: 20px 40px 20px 20px;
-  //}
   form {
     .notdialogform;
     &#addAttachments {
@@ -4024,15 +3986,16 @@ ul.dialog-tabs {
     position: relative;
     .newSelectList {
       display: none;
-      width: 112px;
-      margin-top: 22px;
+      width: 115px;
       right: 0;
+      left: auto;
       li {
         padding-left: 10px;
         float: none;
       }
     }
-    .endContractReasonList, .arrow {
+    .endContractReasonList,
+    .arrow {
       float: right;
       width: 80px;
       //height: 15px;
@@ -4354,6 +4317,12 @@ h3.dashboard {
   tr {
     th {
       text-align: center;
+      vertical-align: top;
+      padding: 8px 0;
+
+      input[type="checkbox"] {
+        margin-top: 5px;
+      }
     }
   }
 }
@@ -4646,20 +4615,16 @@ h3.dashboard {
   }
 
   .create-employee-info {
-    //.dl-auto(200px, 40%);
-    dt {
-      // margin-top: 10px;
-    }
-    input {
+    > input {
       max-width: 117px !important;
     }
-    select {
+    > select {
       max-width: 130px !important;
     }
   }
   .subject-info {
     .dl-auto(200px, 10%);
-    input {
+    > input {
       max-width: inherit !important;
       width: 99% !important;
       margin-right: 1%;
@@ -4674,10 +4639,10 @@ h3.dashboard {
   }
   .opprtunitie-info {
     .dl-auto(250px, 40%);
-    input {
+    > input {
       max-width: 250px !important;
     }
-    select {
+    > select {
       width: 95% !important;
       max-width: 240px !important;
     }
@@ -4687,10 +4652,10 @@ h3.dashboard {
   }
   .opprtunitie-lead-info {
     .dl-auto(250px, 20%);
-    input {
+    > input {
       max-width: 231px !important;
     }
-    select {
+    > select {
       width: 95% !important;
       max-width: 240px !important;
     }
@@ -4712,7 +4677,7 @@ h3.dashboard {
 
   .startDate, .endDate {
     .disable_input_style;
-    input {
+    > input {
       display: none;
     }
   }
@@ -4825,14 +4790,18 @@ h3.dashboard {
   }
   .miniStylePagination {
     position: relative;
-    text-align: center;
+    line-height: 28px;
     min-width: 160px;
+    text-align: center;
+
     &:hover {
       background-color: white;
     }
-    .next, .prev {
+    .next,
+    .prev {
       position: absolute;
-      top: 4px;
+      top: 6px;
+      line-height: normal;
       &.disabled {
         display: none;
       }
@@ -4846,6 +4815,15 @@ h3.dashboard {
     span {
       padding: 0;
     }
+  }
+
+  > input#selectInput {
+    height: 24px;
+    width: 100% !important;
+    margin: 0;
+    float: left;
+    border: 0;
+    border-bottom: 1px solid #7f7f80;
   }
 }
 
@@ -4951,7 +4929,7 @@ input::-webkit-inner-spin-button {
     .person-info {
       display: table;
       width: 100%;
-      overflow: hidden;
+    //  overflow: hidden;
 
       & > div {
         vertical-align: middle;
@@ -5571,10 +5549,10 @@ textarea#editInput {
     }
 
     &.stick {
-      position: fixed;
-      bottom: 0;
-      right: 0;
-      width: calc(~"100% - 200px");
+      //position: fixed;
+      //bottom: 0;
+      //right: 0;
+      //width: calc(~"100% - 200px");
       background-color: @bg-main;
       padding-top: 10px;
     }
@@ -6205,7 +6183,7 @@ textarea#editInput {
   min-width: 230px;
   top: ~"calc(100% - 1px)";
   right: 0;
-  z-index: 500;
+  z-index: 1;
 
   .filter-dialog-tabs {
     box-sizing: border-box;
@@ -6260,7 +6238,7 @@ textarea#editInput {
   position: absolute;
   top: ~"calc(100% - 3px)";
   right: 0;
-  min-width: 178px;
+  min-width: 176px;
   width: ~"calc(100% - 52px)";
   padding: 5px 25px;
   background-color: @bg-drop-down-color;
@@ -6300,6 +6278,9 @@ textarea#editInput {
         &.miniStylePagination {
           list-style: none;
           border-top: 1px solid @border-color-main;
+          line-height: 12px;
+          padding: 5px 8px;
+
           .prev.disabled,
           .next.disabled {
             display: none;
@@ -6314,11 +6295,6 @@ textarea#editInput {
         &:not(.checkedValue):hover:before {
           color: @bg-hover-drop-down-color;
         }
-        //&:not(.checkedValue):before,
-        //&.checkedValue:before,
-        //&.checkedValue:hover:before {
-        //  color: @bg-main;
-        //}
         &.checkedValue {
           &:before {
             content: '\2713';
@@ -6447,11 +6423,12 @@ textarea#editInput {
 }
 
 #searchContainer {
-  position: absolute;
-  top: -40px;
+  position: fixed;
+  top: 45px;
   right: 0;
   width: 35%;
   margin-right: 90px;
+  z-index: 1;
 
   &.dashBoardVocationSearch {
     position: static;
@@ -6471,9 +6448,7 @@ textarea#editInput {
 }
 
 .content-holder {
-  #searchContainer {
-    top: -34px;
-  }
+  overflow: auto;
 }
 
 .removeValues {
@@ -6623,6 +6598,7 @@ textarea#editInput {
   display: inline-block;
   padding-right: 17px;
   margin-right: 3px;
+  margin-top: 2px;
   border: 1px solid @border-color-main;
   border-radius: 3px;
   line-height: 18px;

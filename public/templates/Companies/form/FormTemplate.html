@@ -1,7 +1,7 @@
 <div class="form-holder">
 
         <form class="form notDialog" id="createCompanyForm" data-id="<%=_id%>">
-            <div class="floatColumn col1-3">
+            <div class="floatColumn col4-10">
             <div class="moduleList aboutHolder">
 
 
@@ -94,13 +94,14 @@
                     </div>
                     <div class="propertyFormList">
                         <label>Assigned To</label>
-                        <div  class="inputBox">
-                            <a  class="current-selected assignName"  href="javascript:;" id="salesPersonDd"  data-id="salesPurchases_salesPerson"><%=(salesPurchases.salesPerson) ? salesPurchases.salesPerson.name.first + ' ' + salesPurchases.salesPerson.name.last : 'Select'%></a>
+                        <div class="inputBox _newSelectListWrap">
+                            <a class="current-selected assignName"  href="javascript:;" id="salesPersonDd"  data-id="salesPurchases_salesPerson"><%=(salesPurchases.salesPerson) ? salesPurchases.salesPerson.name.first + ' ' + salesPurchases.salesPerson.name.last : 'Select'%></a>
                         </div>
                     </div>
                     <div class="social">
                         <% if (social.FB){%><a class="facebook" href="<%=social.FB%>"></a><%}%>
                         <% if (social.LI){%><a class="linkedin" href="<%=social.LI%>"></a><%}%>
+                        <% if (skype){%><a class="skype" href="skype:<%=skype%>?call"></a><%}%>
                         <div class="clearfix"></div>
                     </div>
                 </div>
@@ -131,7 +132,7 @@
             <div class="attachments"></div>
             </div>
 
-            <div class="floatColumn col2-3">
+            <div class="floatColumn col6-10">
                 <div class="notes">
                 </div>
             </div>

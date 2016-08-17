@@ -169,8 +169,7 @@ module.exports = (function () {
             task      : {type: ObjectId, ref: 'DealTasks', default: null},
             attachment: {},
             date      : {type: Date, default: Date.now},
-
-            user: {
+            user      : {
                 _id  : {type: ObjectId, ref: 'Users', default: null},
                 login: String
             }

@@ -12,7 +12,6 @@ module.exports = function (models, event) {
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
     router.use(authStackMiddleware);
-    router.use(accessStackMiddleware);
 
     /**
      *@api {get} /invoices/ Request Invoices
@@ -92,7 +91,7 @@ HTTP/1.1 200 OK
         ]
 }
      */
-    router.get('/', function (req, res, next) {
+    router.get('/', accessStackMiddleware, function (req, res, next) {
         var viewType = req.query.viewType;
         switch (viewType) {
             case 'form':
@@ -182,8 +181,8 @@ HTTP/1.1 200 OK
 }
      * */
     router.get('/getSalesByCountry', handler.getSalesByCountry);
-    router.get('/generateName', handler.generateName);
-    router.get('/stats', handler.getStats);
+    router.get('/generateName', accessStackMiddleware, handler.generateName);
+    router.get('/stats', accessStackMiddleware, handler.getStats);
 
     router.get('/:id', handler.getStats);
 
@@ -223,9 +222,9 @@ HTTP/1.1 200 OK
 }
      *
      * */
-    router.get('/stats/project', handler.getStatsForProject);
-    router.get('/chart', handler.chartForProject);
-
+    router.get('/stats/project', accessStackMiddleware, handler.getStatsForProject);
+    router.get('/chart', accessStackMiddleware, handler.chartForProject);
+    router.get('/emails/:id', accessStackMiddleware, handler.getEmails);
     router.patch('/approve', accessStackMiddleware, handler.approve);
 
     /**
@@ -354,8 +353,8 @@ HTTP/1.1 200 OK
       "id": "577a7da67134263421cab3ee"
 }
      * */
-    router.patch('/:id', handler.updateOnlySelected);
-    router.put('/:_id', function (req, res) {
+    router.patch('/:id', accessStackMiddleware, handler.updateOnlySelected);
+    router.put('/:_id', accessStackMiddleware, function (req, res) {
         var data = {};
         var id = req.params._id;
 
@@ -363,8 +362,8 @@ HTTP/1.1 200 OK
 
         handler.updateInvoice(req, res, id, data);
     });
-    router.post('/', handler.create);
-    router.post('/receive', handler.receive);
+    router.post('/', accessStackMiddleware, handler.create);
+    router.post('/receive', accessStackMiddleware, handler.receive);
     // router.post('/attach', multipartMiddleware, handler.attach);
     router.post('/uploadFiles', accessStackMiddleware, multipartMiddleware, handler.uploadFile);
 
@@ -459,7 +458,7 @@ HTTP/1.1 200 OK
       "id": "5783ad06f810fcf53eb2f0aa"
 }
      * */
-    router.delete('/:_id', function (req, res) {
+    router.delete('/:_id', accessStackMiddleware, function (req, res) {
         var id = req.param('_id');
 
         handler.removeInvoice(req, res, id);
@@ -486,7 +485,7 @@ HTTP/1.1 200 OK
    "success":true
 }
      * */
-    router.delete('/', handler.bulkRemove);
+    router.delete('/', accessStackMiddleware, handler.bulkRemove);
 
     return router;
 };

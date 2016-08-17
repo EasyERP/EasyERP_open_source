@@ -25,6 +25,7 @@ define([
         letterKey        : 'name.first',
         hasPagination    : true,
         hasAlphabet      : true,
+        type             : 'Company',
 
         events: {
             'click .letter:not(.empty)': 'alpabeticalRender'

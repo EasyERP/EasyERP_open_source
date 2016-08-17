@@ -64,6 +64,9 @@
     color: $property-link-color;
   }
 }
+.separateBlock {
+  text-align: center;
+}
 
 .propertyFormList {
   display: table !important;
@@ -402,7 +405,11 @@
     border: none !important;
     text-align: right;
     cursor: pointer;
-    margin-top: 8px !important;
+    //margin-top: 8px !important;
+
+    ._taskDueDate {
+
+    }
   }
 
   .current-selected {
@@ -460,7 +467,8 @@
 }
 
 .ui-dialog {
-  ._salesModal {
+
+  ._listModal {
     padding: 10px 20px;
 
     .modal_title {
@@ -482,8 +490,7 @@
     }
 
     ._modalSelect {
-      a,
-      input {
+      > a, > input {
         display: block;
         padding: 5px;
         width: 100% !important;

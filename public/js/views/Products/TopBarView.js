@@ -1,7 +1,7 @@
 define([
     'Underscore',
     'views/topBarViewBase',
-    'text!templates/Product/TopBarTemplate.html',
+    'text!templates/Products/TopBarTemplate.html',
     'text!templates/Notes/importTemplate.html',
     'views/Notes/AttachView',
     'custom',

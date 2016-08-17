@@ -26,13 +26,13 @@ define([
                 tds = $newRow.find('td');
 
                 $(tds[0]).find('input').attr('value', options.cid);
-                $(tds[1]).text('New');
+               /* $(tds[1]).text('New');*/
+                $(tds[1]).text('');
+                $(tds[1]).addClass('editable errorContent');
                 $(tds[2]).text('');
                 $(tds[2]).addClass('editable errorContent');
                 $(tds[3]).text('');
                 $(tds[3]).addClass('editable errorContent');
-                $(tds[4]).text('');
-                $(tds[4]).addClass('editable errorContent');
             } else {
                 this.$el.prepend(this.template(options));
             }
