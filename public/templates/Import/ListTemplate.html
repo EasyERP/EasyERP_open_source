@@ -4,7 +4,7 @@
             <% if (key2 !== '_id' && key2 !== 'reportFile') { %>
                 <% if (key2 === 'reportFileName') { %>
                     <td>
-                        <a href="<%= historyItem[key2] %>">
+                        <a href="<%= historyItem[key2] %>" class="_importLink">
                             <%= historyItem['reportFile'] %>
                         </a>
                     </td>
