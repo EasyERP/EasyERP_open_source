@@ -121,6 +121,7 @@ define([
             }
 
             if (this.stage === 1) {
+                this.$el.find('.stageBtnBack').hide();
                 this.childView = new UploadView({fileName: this.fileName});
 
                 if (this.timeStamp) {
@@ -130,6 +131,7 @@ define([
                 this.listenTo(this.childView, 'uploadCompleted', this.enabledNextBtn);
 
             } else if (this.stage === 2) {
+                this.$el.find('.stageBtnBack').show();
                 this.enabledNextBtn();
 
                 this.childView = new MappingContentView({
