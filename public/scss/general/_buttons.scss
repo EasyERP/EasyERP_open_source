@@ -151,6 +151,16 @@
       }
     }
   }
+
+  &.btnDisable {
+    background: none;
+    color: #000;
+    border: 1px solid $btnBorderColor;
+
+    &:hover {
+      background: none;
+    }
+  }
 }
 
 .editorTab {
@@ -162,7 +172,7 @@
 .btnAdd {
   border: 1px solid transparent;
   background: darken(#66B5D4, 15%);
-  padding: 0px 6px;
+  padding: 0 6px;
   color: #f4f4f4;
   line-height: 19px;
 
