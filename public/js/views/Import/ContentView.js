@@ -134,13 +134,15 @@ define([
 
                 this.childView = new MappingContentView({
                     timeStamp: this.timeStamp,
-                    fileName : this.fileName,
+                    fileName : this.fileName
 
                 });
 
                 this.updateCurrentUser({
                     stage: this.stage
                 });
+
+                $thisEl.find('#fileName').text(this.fileName);
             } else if (this.stage === 3) {
                 this.enabledNextBtn();
 
@@ -253,7 +255,9 @@ define([
             var $topBar = $('#top-bar');
 
             $topBar.html('');
-            $thisEl.html(this.contentTemplate);
+            $thisEl.html(this.contentTemplate({
+                fileName: this.fileName || ''
+            }));
             $importProgress = $thisEl.find('#importProgress');
             $importProgress.html(this.importProgressTemplate);
 
