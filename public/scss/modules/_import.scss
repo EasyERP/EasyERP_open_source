@@ -14,8 +14,7 @@
     font-size: 20px;
     padding-right: 15px;
     text-align: right;
-    margin-bottom: 20px;
-    margin-top: -28px;
+    margin: 20px 0;
     overflow: visible;
   }
 }
@@ -268,7 +267,7 @@
   width: 100%;
   max-width: 900px;
   margin: 40px auto;
-  padding: 50px 30px 30px;
+  padding: 50px 20px 20px;
   text-align: center;
   border: 3px dashed $importAttachBorderColor;
   background: $importAttachBg;
@@ -295,6 +294,12 @@
     }
   }
 
+  input[type="checkbox"],
+  input[type="radio"] {
+    width: 15px;
+    height: 15px;
+  }
+
   .dropDownDateRangeContainer {
     float: none;
     height: 11px;
@@ -302,6 +307,15 @@
 
   .importBtn {
     margin-top: 7px;
+  }
+
+  ._exampleLink {
+    margin-top: 30px;
+    text-align: right;
+
+    a {
+      color: #00a2d0;
+    }
   }
 }
 

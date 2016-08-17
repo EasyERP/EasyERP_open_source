@@ -2055,8 +2055,7 @@ label._customCHeckbox input[type="checkbox"] {
   font-size: 20px;
   padding-right: 15px;
   text-align: right;
-  margin-bottom: 20px;
-  margin-top: -28px;
+  margin: 20px 0;
   overflow: visible; }
 
 ._loadHistoryTopTable {
@@ -2219,7 +2218,7 @@ label._customCHeckbox input[type="checkbox"] {
   width: 100%;
   max-width: 900px;
   margin: 40px auto;
-  padding: 50px 30px 30px;
+  padding: 50px 20px 20px;
   text-align: center;
   border: 3px dashed;
   background: #f2f2f2; }
@@ -2238,11 +2237,20 @@ label._customCHeckbox input[type="checkbox"] {
     ._importAttachContainer label span,
     ._importAttachContainer .dropDownDateRangeContainer span {
       display: block; }
+  ._importAttachContainer input[type="checkbox"],
+  ._importAttachContainer input[type="radio"] {
+    width: 15px;
+    height: 15px; }
   ._importAttachContainer .dropDownDateRangeContainer {
     float: none;
     height: 11px; }
   ._importAttachContainer .importBtn {
     margin-top: 7px; }
+  ._importAttachContainer ._exampleLink {
+    margin-top: 30px;
+    text-align: right; }
+    ._importAttachContainer ._exampleLink a {
+      color: #00a2d0; }
 
 ._progressBarContainer {
   height: 20px;
