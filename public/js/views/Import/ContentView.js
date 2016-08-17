@@ -206,6 +206,7 @@ define([
         },
 
         enabledNextBtn: function () {
+            this.$el.find('.stageBtnNext').removeClass('disabled');
             this.$el.find('.stageBtnNext').prop('disabled', false);
         },
 

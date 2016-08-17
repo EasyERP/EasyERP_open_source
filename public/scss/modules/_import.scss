@@ -447,3 +447,35 @@
     }
   }
 }
+
+._finishImportContainer {
+  border: 1px solid $importTabsBorderColor;
+  width: 100%;
+  max-width: 700px;
+  padding: 25px 30px;
+  margin: 25px auto;
+  text-align: center;
+
+  ._finishImportTitle {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+
+  ._finishList {
+    margin-bottom: 15px;
+
+    span {
+      font-size: 16px;
+
+      &:after {
+        content: ',';
+      }
+
+      &:last-child {
+        &:after {
+          content: none;
+        }
+      }
+    }
+  }
+}

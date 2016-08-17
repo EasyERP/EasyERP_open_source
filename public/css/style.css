@@ -2050,6 +2050,25 @@
   .list._importLoadHistory tbody td {
     text-align: left; }
 
+._finishImportContainer {
+  border: 1px solid #c8c8d3;
+  width: 100%;
+  max-width: 700px;
+  padding: 25px 30px;
+  margin: 25px auto;
+  text-align: center; }
+  ._finishImportContainer ._finishImportTitle {
+    font-size: 22px;
+    margin-bottom: 20px; }
+  ._finishImportContainer ._finishList {
+    margin-bottom: 15px; }
+    ._finishImportContainer ._finishList span {
+      font-size: 16px; }
+      ._finishImportContainer ._finishList span:after {
+        content: ','; }
+      ._finishImportContainer ._finishList span:last-child:after {
+        content: none; }
+
 .propertyContainer a:hover {
   text-decoration: none; }
 
