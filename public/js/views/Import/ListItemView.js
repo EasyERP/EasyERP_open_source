@@ -11,6 +11,7 @@ define([
 
         initialize: function (options) {
             this.collection = options.collection;
+            this.keys = options.keys;
             this.startNumber = (parseInt(this.collection.currentPage, 10) - 1) * this.collection.pageSize; // Counting the start index of list items
         },
 
@@ -18,7 +19,8 @@ define([
 
             this.$el.append(_.template(listTemplate, {
                 history: this.collection.toJSON(),
-                startNumber: this.startNumber
+                startNumber: this.startNumber,
+                keys: this.keys
             }));
         }
     });

@@ -20,6 +20,16 @@ define([
         ListItemView   : ListItemView,
 
         initialize: function (options) {
+            this.keys = [
+                'date',
+                'fileName',
+                'user',
+                'type',
+                'status',
+                'reportFile',
+                'reportFileName'
+            ];
+
             this.collection = options.collection;
 
             ListBaseView.prototype.initialize.call(this, options);
@@ -32,11 +42,13 @@ define([
             var itemView;
 
             $thisEl.html(this.historyTemplate({
-                history: this.collection.toJSON()
+                history: this.collection.toJSON(),
+                keys: this.keys
             }));
 
             itemView = new this.ListItemView({
-                collection: this.collection
+                collection: this.collection,
+                keys: this.keys
             });
 
             itemView.render();
