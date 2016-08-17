@@ -145,14 +145,13 @@ var Module = function (models) {
             fileName      : options.fileName,
             user          : options.userId,
             type          : options.type,
-            status        : options.status,
             reportFile    : options.reportFile,
             reportFileName: options.reportFileName
         };
 
         var importHistory = new ImportHistoryModel(importHistoryObj);
 
-        importHistory.save(function (err, result) {
+        importHistory.save(function (err) {
             if (err) {
                 return callback(err);
             }
