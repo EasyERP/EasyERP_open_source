@@ -97,12 +97,11 @@ define([
             }
 
             if (this.step >= 0) {
+                if (self.moreExist !== null) {
+                    self.existId = $('input:checked').data('exist') || self.existId;
+                    //self.moreExist = null;
+                }
                 _.each($actions, function (item, key) {
-                    if (self.moreExist !== null) {
-                        self.existId = $('input:checked').data('exist');
-                        //self.moreExist = null;
-                    }
-
                     if ($(item).data('id').trim()) {
                         self.mergingArray.push({
                             id     : $(item).data('id').trim(),
