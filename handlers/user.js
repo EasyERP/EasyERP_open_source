@@ -855,31 +855,36 @@ var User = function (event, models) {
                 credentials    : '$credentials',
                 profile        : {$arrayElemAt: ['$profile', 0]},
                 relatedEmployee: {$arrayElemAt: ['$relatedEmployee', 0]},
-                savedFilters   : '$savedFilters'
+                savedFilters   : '$savedFilters',
+                imports        : '$imports'
             }
         });
 
         pipeLine.push({
             $project: {
-                _id            : '$_id',
-                imageSrc       : '$imageSrc',
-                login          : '$login',
-                email          : '$email',
-                kanbanSettings : '$kanbanSettings',
-                lastAccess     : '$lastAccess',
-                credentials    : '$credentials',
-                profile        : {
+                _id           : '$_id',
+                imageSrc      : '$imageSrc',
+                login         : '$login',
+                email         : '$email',
+                kanbanSettings: '$kanbanSettings',
+                lastAccess    : '$lastAccess',
+                credentials   : '$credentials',
+
+                profile: {
                     _id          : '$profile._id',
                     profileName  : '$profile.profileName',
                     profileAccess: '$profile.profileAccess'
                 },
+
                 relatedEmployee: {
                     _id     : '$relatedEmployee._id',
                     imageSrc: '$relatedEmployee.imageSrc',
                     name    : '$relatedEmployee.name',
                     fullName: '$relatedEmployee.fullName'
                 },
-                savedFilters   : '$savedFilters'
+
+                savedFilters: '$savedFilters',
+                imports     : '$imports'
             }
         });
 
@@ -914,7 +919,9 @@ var User = function (event, models) {
                     _id        : {$arrayElemAt: ['$savedFilters._id', 0]},
                     byDefault  : '$savedFilters.byDefault',
                     contentType: '$savedFilters.contentType'
-                }
+                },
+
+                imports: '$imports'
             }
         });
 
@@ -939,7 +946,9 @@ var User = function (event, models) {
                         filters  : '$savedFilters._id.filter',
                         byDefault: '$savedFilters.byDefault'
                     }
-                }
+                },
+
+                imports: {$first: '$imports'}
             }
         });
 
@@ -959,7 +968,9 @@ var User = function (event, models) {
                         contentType: '$_id.contentType',
                         filter     : '$savedFilters'
                     }
-                }
+                },
+
+                imports: {$first: '$imports'}
             }
         });
 
