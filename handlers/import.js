@@ -448,6 +448,7 @@ var Module = function (models) {
         var conflictedSaveItems;
         var userImports;
         var Model;
+        var compearingField;
 
         if (timeStamp) {
             criteria.$and.push({timeStamp: timeStamp});
@@ -466,6 +467,7 @@ var Module = function (models) {
             skipped = userImports.skipped;
             imported = userImports.importedCount;
             conflictedSaveItems = userImports.conflictedItems;
+            compearingField = userImports.comparingField;
 
             criteria.$and.push({_id: {$nin: skipped}});
 
@@ -540,7 +542,7 @@ var Module = function (models) {
 
                 conflictedData = _.union(resultItems.conflictedSavedItems, resultItems.conflictedUnsavedItems);
 
-                conflictedData = _.groupBy(conflictedData, 'name.last');
+                conflictedData = _.groupBy(conflictedData, compearingField);
 
                 res.status(200).send({
                     result  : conflictedData,
