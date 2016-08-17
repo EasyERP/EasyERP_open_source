@@ -89,8 +89,8 @@ define([
             var invoiceDate = $currentEl.find('#invoice_date_Create').val();
             var dueDate = $currentEl.find('#due_date_Create').val();
             var i;
-            var total = parseFloat($currentEl.find('#totalAmount').text()) * 100;
-            var unTaxed = parseFloat($currentEl.find('#totalUntaxes').text()) * 100;
+            var total = parseFloat(helpers.spaceReplacer($currentEl.find('#totalAmount').text())) * 100;
+            var unTaxed = parseFloat(helpers.spaceReplacer($currentEl.find('#totalUntaxes').text())) * 100;
             var balance = total; // parseFloat($currentEl.find('#balance').text()) * 100;
             var journal = $currentEl.find('#journal_Create').attr('data-id') || null;
 
@@ -127,8 +127,8 @@ define([
                         quantity = targetEl.find('[data-name="quantity"] input').val();
                         price = targetEl.find('[data-name="price"] input').val() * 100;
                         description = targetEl.find('[data-name="productDescr"] textarea').val();
-                        taxes = targetEl.find('.taxes').text();
-                        subtotal = targetEl.find('.subtotal').text();
+                        taxes = helpers.spaceReplacer(targetEl.find('.taxes').text());
+                        subtotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
                         subtotal = parseFloat(subtotal) * 100;
 
                         if (isNaN(price) || price <= 0) {
