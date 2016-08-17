@@ -81,10 +81,7 @@ define([
                 }
 
                 /* if (!result.scheduledPay.length || !result.weeklyScheduler.length || !result.bankAccounts || !result.employees.length || !result.payrollStructure.length) {*/
-                self.$el.after('<div id="settings" class="_payrollListWrapOuter"></div>');
-
-                self.$el.addClass('hidden');
-                $('#top-bar').addClass('hidden');
+                self.$el.html('<div id="settings" class="_payrollListWrapOuter"></div>');
 
                 new SettingsView(result);
                 /* } else {
