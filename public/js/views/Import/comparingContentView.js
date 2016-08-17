@@ -19,7 +19,8 @@ define([
         events: {
             'click #stepByStepButton'   : 'stepByStep',
             'click .changeTableCombobox': 'changeTableCombobox',
-            'click .item'               : 'checkItem'
+            'click .item'               : 'checkItem',
+            'click #finishBtn'          : 'finishImport'
         },
 
         initialize: function (options) {
@@ -59,8 +60,7 @@ define([
             $combobox.toggleClass('open');
         },
 
-        stepByStep: function (e) {
-            var $thisEl = this.$el;
+        stepByStep: function () {
             var self = this;
             var data = {
                 keys  : {},
@@ -117,9 +117,6 @@ define([
                         data    : this.mergingArray,
                         headerId: this.headerId
                     }, function (err, result) {
-                        if (result) {
-
-                        }
                         self.imported += result.imported;
                         self.skippedArray.concat(result.skippedArray);
                         self.mergedCount += result.merged;
@@ -140,13 +137,36 @@ define([
 
         },
 
+        finishImport: function (e) {
+            var linkToFile;
+            var linkName;
+            var self = this;
+            var url = 'importFile/merge';
+
+            e.preventDefault();
+
+            dataService.postData(url, {
+                data    : this.mergingArray,
+                headerId: this.headerId
+            }, function (err, result) {
+
+                self.imported = result.imported;
+                self.skipped = result.skipped;
+                self.mergedCount = result.merged;
+                linkToFile = result.reportFilePath;
+                linkName = result.reportFileName;
+
+                self.finishStep(linkToFile, linkName);
+            });
+        },
+
         finishStep: function (linkToFile, linkName) {
             var $thisEl = this.$el;
 
             $thisEl.html(this.finishTemplate({
                 data: {
                     imported    : this.imported,
-                    skippedArray: this.skippedArray.length,
+                    skippedArray: this.skipped,
                     mergedCount : this.mergedCount,
                     linkToFile  : linkToFile,
                     linkName    : linkName
