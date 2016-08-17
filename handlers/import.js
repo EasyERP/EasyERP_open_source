@@ -390,10 +390,14 @@ var Module = function (models) {
         var jsonSavedItem;
         var conflictItemsIndex = [];
 
+        if (!compareFiled) {
+            return callback(null, importedItems, []);
+        }
+
         for (var i = 0; i <= importedItems.length - 1; i++) {
             for (var j = i + 1; j <= importedItems.length - 1; j++) {
 
-                if (importedItems[i][compareFiled] && importedItems[j][compareFiled] && importedItems[i][compareFiled] === importedItems[j][compareFiled]) {
+                if (importedItems[i][compareFiled] && importedItems[j][compareFiled] && importedItems[i][compareFiled].trim() === importedItems[j][compareFiled].trim()) {
                     conflictItemsIndex.push(i);
                     conflictItemsIndex.push(j);
                 }
@@ -406,7 +410,7 @@ var Module = function (models) {
                 savedItem._id = savedItem._id.toString();
                 jsonSavedItem = flatten(savedItem);
 
-                if (importedItems[i][compareFiled] && jsonSavedItem[compareFiled] && importedItems[i][compareFiled] === jsonSavedItem[compareFiled]) {
+                if (importedItems[i][compareFiled] && jsonSavedItem[compareFiled] && importedItems[i][compareFiled].trim() === jsonSavedItem[compareFiled].trim()) {
                     conflictItemsIndex.push(i);
                     jsonSavedItem.isExists = true;
                     if (conflictSavedItems.indexOf(jsonSavedItem.id.toString()) === -1) {
@@ -794,6 +798,7 @@ var Module = function (models) {
         };
         var importItems = [];
         var idsForRemove = [];
+        var compearingFiled = data.comparingField;
 
         if (timeStamp) {
             criteria.timeStamp = timeStamp;
@@ -841,7 +846,7 @@ var Module = function (models) {
                 },
 
                 function (savedItems, wCb) {
-                    compearingForMerge(savedItems, importItems, 'name.last', wCb);
+                    compearingForMerge(savedItems, importItems, compearingFiled, wCb);
                 },
 
                 function (itemsToSave, conflictedItems, wCb) {
