@@ -7417,6 +7417,9 @@ table#workflows tr td.edit-status {
 #top-bar #reconcileDate {
   color: #000000;
 }
+#top-bar:empty {
+  display: none !important;
+}
 .dashBoardVocationSearch {
   margin-top: 7px !important;
   /*only for DashBoard vocation*/
@@ -7441,6 +7444,9 @@ table#workflows tr td.edit-status {
 }
 .projectInfoTopBar #reconcileDate {
   color: #000000;
+}
+.projectInfoTopBar:empty {
+  display: none !important;
 }
 .noPadding {
   padding: 0 !important;
@@ -13866,6 +13872,9 @@ td.checkboxRow {
 }
 .list tr td.centerCell {
   text-align: center;
+}
+.top-bar:empty {
+  display: none !important;
 }
 .listOpen .top-bar {
   display: none !important;
