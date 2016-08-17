@@ -238,96 +238,97 @@ input {
 :focus:-moz-placeholder           {color:transparent!important;}
 :focus:-ms-input-placeholder      {color:transparent!important;}
 
-.btn {
-  display: inline-block;
-  height: 32px;
-  padding: 0 12px!important;
-  margin-bottom: 0;
-  font-weight: 400;
-  text-align: center;
-  vertical-align: middle;
-  touch-action: manipulation;
-  cursor: pointer;
-  border: 1px solid transparent;
-  white-space: nowrap;
-  font-size: 14px;
-  line-height: 30px!important;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  border-radius: 0;
+//.btn {
+//  display: inline-block;
+//  height: 32px;
+//  padding: 0 12px!important;
+//  margin-bottom: 0;
+//  font-weight: 400;
+//  text-align: center;
+//  vertical-align: middle;
+//  touch-action: manipulation;
+//  cursor: pointer;
+//  border: 1px solid transparent;
+//  white-space: nowrap;
+//  font-size: 14px;
+//  line-height: 30px!important;
+//  -webkit-user-select: none;
+//  -moz-user-select: none;
+//  -ms-user-select: none;
+//  user-select: none;
+//  border-radius: 0;
+//
+//  outline: 0!important;
+//  box-shadow: none!important;
+//
+//  &:hover {
+//    -webkit-transition: all .3s;
+//    transition: all .3s;
+//  }
+//
+//  &.green {
+//    color: #FFF;
+//    background-color: #32c5d2;
+//    border-color: #32c5d2;
+//
+//    &:hover {
+//      background-color: #26a1ab;
+//      border-color: #2499a3;
+//      text-decoration: none;
+//    }
+//  }
+//
+//  &.blue {
+//    color: #FFF;
+//    background-color: #3e88b9;
+//    border-color: #3e88b9;
+//    &:hover {
+//      background-color: #4d5a75;
+//      border-color: #4d5a75;
+//      text-decoration: none;
+//    }
+//  }
+//
+//  &Blue {
+//    border: 0 !important;
+//
+//    &.slim {
+//      height: 26px;
+//      line-height: 26px !important;
+//    }
+//  }
+//
+//  &Rounded {
+//    background-color: #fff;
+//    color: #000;
+//
+//    &.green {
+//      background-color: #fff;
+//      border-color: #32c5d2;
+//      color: #32c5d2;
+//
+//      &:hover {
+//        background-color: #32c5d2;
+//        border-color: #32c5d2;
+//        color: #fff;
+//      }
+//    }
+//
+//    &.blue {
+//      background-color: #fff;
+//      border-color: #3e88b9;
+//      color: #3e88b9;
+//
+//      &:hover {
+//        background-color: #3e88b9;
+//        border-color: #3e88b9;
+//        color: #fff;
+//        text-decoration: none;
+//      }
+//    }
+//  }
+//}
 
-  outline: 0!important;
-  box-shadow: none!important;
-
-  &:hover {
-    -webkit-transition: all .3s;
-    transition: all .3s;
-  }
-
-  &.green {
-    color: #FFF;
-    background-color: #32c5d2;
-    border-color: #32c5d2;
-
-    &:hover {
-      background-color: #26a1ab;
-      border-color: #2499a3;
-      text-decoration: none;
-    }
-  }
-
-  &.blue {
-    color: #FFF;
-    background-color: #3e88b9;
-    border-color: #3e88b9;
-    &:hover {
-      background-color: #4d5a75;
-      border-color: #4d5a75;
-      text-decoration: none;
-    }
-  }
-
-  &Blue {
-    border: 0 !important;
-
-    &.slim {
-      height: 26px;
-      line-height: 26px !important;
-    }
-  }
-
-  &Rounded {
-    background-color: #fff;
-    color: #000;
-
-    &.green {
-      background-color: #fff;
-      border-color: #32c5d2;
-      color: #32c5d2;
-
-      &:hover {
-        background-color: #32c5d2;
-        border-color: #32c5d2;
-        color: #fff;
-      }
-    }
-
-    &.blue {
-      background-color: #fff;
-      border-color: #3e88b9;
-      color: #3e88b9;
-
-      &:hover {
-        background-color: #3e88b9;
-        border-color: #3e88b9;
-        color: #fff;
-        text-decoration: none;
-      }
-    }
-  }
-}
 
 .formGroup {
   margin-bottom: 25px;
@@ -1016,6 +1017,7 @@ input {
           margin: 0!important;
           border: none;
           line-height: normal!important;
+          background: none;
           &:after, &:before {
             content: '';
             position: absolute;
@@ -1585,6 +1587,11 @@ td.checkboxRow {
   }
 }
 
+.top-bar {
+  &:empty {
+    display: none !important;
+  }
+}
 
 
 .listOpen {

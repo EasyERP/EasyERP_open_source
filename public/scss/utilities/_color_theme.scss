@@ -22,8 +22,10 @@ $base-link   : $white;
 $base-border : $white;
 // -----------------------
 
-// General ---------------
-
+// Buttons ---------------
+$btnBorderColor: map-get($erp-colors, 'light-gray');
+$btnTextColor: map-get($erp-colors, 'lighter-gray');
+$btnBgColor: map-get($erp-colors, 'darker-gray');
 // -----------------------
 
 // Header ---------------
@@ -77,6 +79,23 @@ $tab-list-color-active: $white;
 $tasks-item-color: map-get($erp-colors, 'blue');
 $tasks-item-bg: map-get($erp-colors, 'lighter-gray');
 $passed-bg: map-get($erp-colors, 'green');
+// -----------------------
+
+// Import -------------
+$importStepColor: map-get($erp-colors, 'gray');
+$importFieldItemBorderColor: map-get($erp-colors, 'light-gray');
+$importTabsBorderColor: map-get($erp-colors, 'light-gray');
+$importTabsBorderBgActive: map-get($erp-colors, 'blue');
+$importHoverRowBg: map-get($erp-colors, 'blue');
+$importFooterBorder: map-get($erp-colors, 'light-grey');
+$importProgressBarContainerBg: map-get($erp-colors, 'lighter-gray');
+$importProgressBarBg: map-get($erp-colors, 'green');
+$importAttachBorderColor: map-get($erp-colors, 'light-grey');
+$importAttachBg: map-get($erp-colors, 'lighter-gray');
+$importCellContainerBorder: map-get($erp-colors, 'light-gray');
+$importCellContainerBg: map-get($erp-colors, 'lighter-gray');
+$importTableTrBg: map-get($erp-colors, 'lighter-gray');
+$importCellContainer: map-get($erp-colors, 'blue');
 // -----------------------
 
 // HR/Employees -------------

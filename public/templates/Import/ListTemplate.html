@@ -1,0 +1,21 @@
+<% _.each(history, function(historyItem, key1) { %>
+    <tr>
+        <% _.each(keys, function(item, key2) { %>
+            <% if (item !== '_id' && item !== 'reportFile') { %>
+                <% if (item === 'reportFileName') { %>
+                    <td>
+                        <a href="<%= historyItem[item] %>" class="_importLink">
+                            <%= historyItem['reportFile'] %>
+                        </a>
+                    </td>
+                <% } else { %>
+                    <td>
+                        <%= historyItem[item] %>
+                    </td>
+                <% } %>
+            <% } else { %>
+                <td></td>
+            <% } %>
+        <% }) %>
+    </tr>
+<% }) %>
