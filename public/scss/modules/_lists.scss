@@ -220,12 +220,13 @@
 
     position: relative;
     padding: 8px 20px 8px 30px;
+    background-color: #f7f7f7;
     border: 2px dashed $payroll-border-gray;
     border-radius: 3px;
     transition: .2s all ease-in;
 
     &.checked {
-      background-color: #f2f2f5;
+      background-color: #F8F8F8;
       border: 2px solid $payroll-border-blue;
 
       &:after {
@@ -235,6 +236,18 @@
         right: 15px;
         font-family: FontAwesome;
         color: $payroll-border-blue;
+      }
+
+      &._weeklyItem,
+      &._payItem,
+      &._structureItem,
+      &._bankItem,
+      &._employeesItem {
+        ._payrollListImage {
+          &:after {
+            color: $payroll-border-blue;
+          }
+        }
       }
 
       ._payrollListSteps {
@@ -268,11 +281,68 @@
       }
     }
 
+    &._weeklyItem,
+    &._payItem,
+    &._structureItem,
+    &._bankItem,
+    &._employeesItem {
+      ._payrollListImage {
+        &:after {
+          font-family: 'fontAwesome';
+          margin: auto;
+          color: $payroll-border-gray;
+          font-size: 24px;
+        }
+      }
+    }
+
+    &._weeklyItem {
+      ._payrollListImage {
+        &:after {
+          content: "\f073";
+        }
+      }
+    }
+    &._payItem {
+      ._payrollListImage {
+        &:after {
+          content: "\f080";
+        }
+      }
+    }
+    &._structureItem {
+      ._payrollListImage {
+        &:after {
+          content: "\f200";
+        }
+      }
+    }
+    &._bankItem {
+      ._payrollListImage {
+        &:after {
+          content: "\f09d";
+        }
+      }
+    }
+    &._employeesItem {
+      ._payrollListImage {
+        &:after {
+          content: "\f0c0";
+        }
+      }
+    }
+
     + ._payrollListItem {
       margin-top: 20px;
     }
 
     ._payrollListImage {
+      display: -webkit-box;
+      display: -moz-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+
       height: 60px;
       width: 60px;
       border: 2px dashed $payroll-border-gray;
@@ -300,6 +370,7 @@
       font-size: 10px;
       text-transform: uppercase;
     }
+
     ._payrollListAction {
       font-size: 20px;
       color: $payroll-font-darkgray;
@@ -307,10 +378,11 @@
         text-decoration: none;
       }
     }
+
     ._payrollListDescription {
       margin-top: 10px;
       font-size: 12px;
-      color: $payroll-font-gray;
+      color: $payroll-font-darkgray;
     }
   }
 }
