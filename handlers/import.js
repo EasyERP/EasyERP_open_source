@@ -740,12 +740,11 @@ var Module = function (models) {
 
                 options = {
                     fileName      : importFileName,
-                    user          : userId,
+                    userId        : userId,
                     type          : type,
                     reportFile    : reportFilePath,
                     reportFileName: reportFileName
                 };
-
 
                 writeHistory(options, ImportHistoryModel, wCb);
             },
@@ -768,7 +767,7 @@ var Module = function (models) {
 
             res.status(200).send({
                 imported      : importedCount,
-                skipped       : skippedArray.length,
+                skipped       : skippedArray.length ? skippedArray.length - 1 : 0,
                 merged        : mergedCount,
                 reportFilePath: reportFilePath,
                 reportFileName: reportFileName

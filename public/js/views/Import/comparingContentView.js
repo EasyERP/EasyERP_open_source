@@ -92,7 +92,7 @@ define([
             if (result.length) {
                 this.isItExist = true;
             }
-            if (result.length > 0) {
+            if (result.length > 1) {
                 this.moreExist = true;
             }
 
@@ -117,8 +117,8 @@ define([
                         data    : this.mergingArray,
                         headerId: this.headerId
                     }, function (err, result) {
-                        self.imported += result.imported;
-                        self.skippedArray.concat(result.skippedArray);
+                        self.imported = result.imported;
+                        self.skipped = result.skipped;
                         self.mergedCount += result.merged;
                         linkToFile = result.reportFilePath;
                         linkName = result.reportFileName;
@@ -129,7 +129,6 @@ define([
             }
 
             this.step++;
-
 
             if (this.step <= this.stepKeys.length) {
                 this.render(data);
@@ -172,6 +171,8 @@ define([
                     linkName    : linkName
                 }
             }));
+
+            App.currentUser.imports = {};
         },
 
         render: function (data) {
