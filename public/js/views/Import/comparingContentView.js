@@ -17,10 +17,11 @@ define([
         finishTemplate : _.template(FinishTemplate),
 
         events: {
-            'click #stepByStepButton'   : 'stepByStep',
-            'click .changeTableCombobox': 'changeTableCombobox',
-            'click .item'               : 'checkItem',
-            'click #finishBtn'          : 'finishImport'
+            'click #stepByStepButton'              : 'stepByStep',
+            'click #skipAllButton, #importAllButton': 'actionAll',
+            'click .changeTableCombobox'           : 'changeTableCombobox',
+            'click .item'                          : 'checkItem',
+            'click #finishBtn'                     : 'finishImport'
         },
 
         initialize: function (options) {
@@ -58,6 +59,41 @@ define([
             var $combobox = $(e.target);
 
             $combobox.toggleClass('open');
+        },
+
+        actionAll: function (e) {
+            var $target = $(e.target);
+            var action = $target.data('action');
+            var self = this;
+            var mergingArray = [];
+            var url = 'importFile/merge';
+            var linkToFile;
+            var linkName;
+
+            _.each(this.stepKeys, function (stepKey) {
+                _.each(self.data.result[stepKey], function (item, key) {
+                    if (!item.isExist) {
+                        mergingArray.push({
+                            id     : item.importId,
+                            action : action,
+                            existId: self.existId
+                        });
+                    }
+                });
+            });
+
+            dataService.postData(url, {
+                data    : mergingArray,
+                headerId: this.headerId
+            }, function (err, result) {
+                self.imported = result.imported;
+                self.skipped = result.skipped;
+                self.mergedCount += result.merged;
+                linkToFile = result.reportFilePath;
+                linkName = result.reportFileName;
+
+                self.finishStep(linkToFile, linkName);
+            });
         },
 
         stepByStep: function () {
@@ -187,6 +223,10 @@ define([
                 isItExist: this.isItExist,
                 moreExist: this.moreExist
             }));
+
+            if (this.step >= 0) {
+                $('#stepByStepButton').text('Step (' + (this.step + 1) + '/' + this.stepKeys.length + ')');
+            }
 
             if (this.step === this.stepKeys.length - 1) {
                 $('#stepByStepButton').text('Finish Import');

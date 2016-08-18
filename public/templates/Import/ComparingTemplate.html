@@ -1,6 +1,9 @@
 <% if (Object.keys(data.result).length) { %>
     <div class="_loadHistoryTopTableContainer">
         <div class="_loadHistoryTopTable tableResponsive">
+            <% if (step < 0) { %>
+                Found <%= Object.keys(data.result).length %> conflicts
+            <% } %>
             <table class="list _importLoadHistory">
                 <thead>
                 <tr>
@@ -45,9 +48,11 @@
                                     <div class="dropDownDateRangeContainer">
                                         <div class="changeTableCombobox choseDateRange dropDownDateRange">
                                             <div data-action="skip" class="item active">skip</div>
-                                            <div data-action="import" class="item">import</div>
                                             <% if (isItExist) { %>
+                                                <div data-action="import" class="item">duplicate</div>
                                                 <div data-action="merge" class="item">merge</div>
+                                            <% } else { %>
+                                                <div data-action="import" class="item">import</div>
                                             <% } %>
                                             <span class="selectArrow"></span>
                                         </div>
@@ -80,7 +85,9 @@
             </table>
         </div>
         <div>
-            <button id="stepByStepButton" class="btn btnSave right">StepByStep</button>
+            <button id="stepByStepButton" class="btn btnSave right">Step-By-Step</button>
+            <button id="skipAllButton" data-action="skip" class="btn btnSave right">Skip All</button>
+            <button id="importAllButton" data-action="import" class="btn btnSave right">Import All</button>
         </div>
     </div>
 <% } else { %>

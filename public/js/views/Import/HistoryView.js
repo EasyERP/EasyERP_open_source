@@ -30,6 +30,15 @@ define([
                 'reportFileName'
             ];
 
+            this.headers = {
+                date: 'Date of import',
+                fileName: 'File name',
+                user: 'User',
+                type: 'Type',
+                status: 'Status',
+                reportFileName: 'Source file name'
+            };
+
             this.collection = options.collection;
 
             ListBaseView.prototype.initialize.call(this, options);
@@ -43,7 +52,8 @@ define([
 
             $thisEl.html(this.historyTemplate({
                 history: this.collection.toJSON(),
-                keys: this.keys
+                keys: this.keys,
+                headers: this.headers
             }));
 
             itemView = new this.ListItemView({
