@@ -12407,17 +12407,17 @@ textarea#editInput {
 .pagination .nextPrev div,
 .pagination .nextPrev button {
   float: left;
-  line-height: 20px;
 }
 .pagination .nextPrev span {
   padding: 0 3px;
+  line-height: 20px;
 }
-.pagination .nextPrev #firstShowPage,
-.pagination .nextPrev #lastShowPage,
-.pagination .nextPrev #previousPage,
-.pagination .nextPrev #nextPage,
+.pagination .nextPrev .first_ShowPage,
+.pagination .nextPrev .last_ShowPage,
+.pagination .nextPrev .previous_Page,
+.pagination .nextPrev .next_Page,
 .pagination .nextPrev .currentPageList,
-.pagination .nextPrev #currentShowPage {
+.pagination .nextPrev .current_ShowPage {
   border: 1px solid #7f7f80;
   background: transparent;
   line-height: 14px;
@@ -12426,48 +12426,48 @@ textarea#editInput {
   height: 20px;
   display: block;
   text-align: center;
-  padding: 2px;
 }
-.pagination .nextPrev #firstShowPage:hover,
-.pagination .nextPrev #lastShowPage:hover,
-.pagination .nextPrev #previousPage:hover,
-.pagination .nextPrev #nextPage:hover,
+.pagination .nextPrev .first_ShowPage:hover,
+.pagination .nextPrev .last_ShowPage:hover,
+.pagination .nextPrev .previous_Page:hover,
+.pagination .nextPrev .next_Page:hover,
 .pagination .nextPrev .currentPageList:hover,
-.pagination .nextPrev #currentShowPage:hover {
+.pagination .nextPrev .current_ShowPage:hover {
   color: #808080;
 }
-.pagination .nextPrev #firstShowPage[disabled],
-.pagination .nextPrev #lastShowPage[disabled],
-.pagination .nextPrev #previousPage[disabled],
-.pagination .nextPrev #nextPage[disabled],
+.pagination .nextPrev .first_ShowPage[disabled],
+.pagination .nextPrev .last_ShowPage[disabled],
+.pagination .nextPrev .previous_Page[disabled],
+.pagination .nextPrev .next_Page[disabled],
 .pagination .nextPrev .currentPageList[disabled],
-.pagination .nextPrev #currentShowPage[disabled] {
+.pagination .nextPrev .current_ShowPage[disabled] {
   color: #808080;
   border-color: #d7d7d7;
   cursor: default;
 }
-.pagination .nextPrev #currentShowPage {
+.pagination .nextPrev .current_ShowPage {
   width: 30px;
   margin: 0 -2px 0 5px;
   font-size: 12px;
   color: #000000 !important;
 }
-.pagination .nextPrev #currentShowPage:focus {
+.pagination .nextPrev .current_ShowPage:focus {
   box-shadow: 0 0 5px #3e88b9;
   -moz-box-shadow: 0 0 5px #3e88b9;
   -webkit-box-shadow: 0 0 5px #3e88b9;
   outline: medium none;
 }
-.pagination .nextPrev #firstShowPage,
-.pagination .nextPrev #lastShowPage {
+.pagination .nextPrev .first_ShowPage,
+.pagination .nextPrev .last_ShowPage {
   width: 30px;
 }
-.pagination .nextPrev #previousPage,
-.pagination .nextPrev #nextPage {
+.pagination .nextPrev .previous_Page,
+.pagination .nextPrev .next_Page {
   margin: 0 3px;
 }
 .pagination .nextPrev .currentPageList {
   margin: 0 5px;
+  width: 26px;
 }
 .pagination .nextPrev .allPage {
   position: relative;
@@ -12524,24 +12524,10 @@ textarea#editInput {
 .nextPrev button.fa-angle-left:before,
 .nextPrev button.fa-angle-right:before,
 .nextPrev button.fa-angle-up:before {
-  position: absolute;
-  top: -6px;
-}
-.nextPrev button.fa-angle-double-left:before,
-.nextPrev button.fa-angle-left:before {
-  left: 9px;
-}
-.nextPrev button.fa-angle-right:before {
-  left: 10px;
-}
-.nextPrev button.fa-angle-double-right:before {
-  left: 11px;
+  top: 2px;
 }
 .nextPrev button.fa-angle-up {
   position: relative;
-}
-.nextPrev button.fa-angle-up:before {
-  left: 7px;
 }
 .week_list {
   zoom: 1;
