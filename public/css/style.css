@@ -1582,6 +1582,15 @@ b, strong {
     text-decoration: none;
     background: #297492; }
 
+.backToSettings {
+  position: absolute;
+  right: 12px;
+  top: 6px; }
+
+.closePayrollList {
+  float: right;
+  right: 55px; }
+
 .textLightGrey {
   color: #c5c7c7; }
 
@@ -1698,6 +1707,9 @@ label._customCHeckbox input[type="checkbox"] {
     -webkit-transform-origin: 100% 100%;
         -ms-transform-origin: 100% 100%;
             transform-origin: 100% 100%; }
+
+.internal_Notes {
+  min-height: 100px; }
 
 .flex {
   display: -webkit-box;
@@ -2024,6 +2036,7 @@ label._customCHeckbox input[type="checkbox"] {
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
+    cursor: pointer;
     position: relative;
     padding: 8px 20px 8px 30px;
     background-color: #f7f7f7;
