@@ -8,8 +8,9 @@ define([
     'models/CompaniesModel',
     'common',
     'custom',
-    'constants'
-], function (Backbone, $, _, ParentView, CreateTemplate, SalesPurchasesView, CompanyModel, common, custom, CONSTANTS) {
+    'constants',
+    'populate'
+], function (Backbone, $, _, ParentView, CreateTemplate, SalesPurchasesView, CompanyModel, common, custom, CONSTANTS, populate) {
     'use strict';
     var CreateView = ParentView.extend({
         el         : '#content-holder',
@@ -71,7 +72,7 @@ define([
 
             this.$el.find('.person-info').find('.address').each(function () {
                 var el = $(this);
-                address[el.attr('name')] = $.trim(el.val());
+                address[el.attr('name')] = $.trim(el.val() || el.text());
             });
 
             $('.groupsAndUser tr').each(function () {
@@ -188,6 +189,8 @@ define([
                     parrent: self
                 }).render().el
             );
+
+            populate.get('#countryInputCreate', CONSTANTS.URLS.COUNTRIES, {}, '_id', this);
 
             common.canvasDraw({model: companyModel.toJSON()}, this);
 

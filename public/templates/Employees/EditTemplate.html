@@ -346,12 +346,8 @@
                                     <dt>
                                         <label for="employeeEditCountry">Country</label>
                                     </dt>
-                                    <dd><input type="text"
-                                               class="homeAddress"
-                                               name="country"
-                                               id="employeeEditCountry"
-                                               value="<%=model.homeAddress.country%>"
-                                               maxlength="32"/></dd>
+                                    <dd><a class="homeAddress current-selected" name="country" data-id="<%=model.homeAddress.country%>"
+                                           id="employeeEditCountry"><%=model.homeAddress.country || 'Select'%></a></dd>
                                 </dl>
                             </div>
                             <div class="clearfix">

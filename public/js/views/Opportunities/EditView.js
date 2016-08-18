@@ -116,7 +116,8 @@
                 context.$el.find('#city').val(customer.address.city);
                 context.$el.find('#state').val(customer.address.state);
                 context.$el.find('#zip').val(customer.address.zip);
-                context.$el.find('#country').val(customer.address.country);
+                context.$el.find('#country').attr('data-id', customer.address.country);
+                context.$el.find('#country').text(customer.address.country);
             }, this);
 
         },
