@@ -10523,13 +10523,6 @@ ul.dialog-tabs li.right button {
   display: table;
   border-collapse: collapse;
 }
-.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset {
-  text-align: center;
-}
-.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button {
-  margin: .5em .4em .5em 0;
-  line-height: normal;
-}
 .ui-dialog .ui-helper-clearfix:before,
 .ui-dialog .ui-helper-clearfix:after {
   content: "";
