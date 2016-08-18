@@ -386,3 +386,51 @@
     }
   }
 }
+
+.list td {
+  &._priorityCell {
+    padding: 0;
+  }
+}
+
+._tagsCellWrap {
+  width: 100px;
+  padding-bottom: 5px;
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+
+  ._tagSmall {
+    float: left;
+    margin: 5px 5px 0 0;
+  }
+}
+
+._priorityCell {
+
+  .High,
+  .Medium,
+  .Low,
+  .Trivial {
+    height: 35px;
+    width: 30px;
+    margin: 0 auto;
+    background-image: url('../images/priority_icons.png');
+    background-size: 132px;
+  }
+
+  .High {
+    background-position: -2px -3px;
+  }
+  .Medium {
+    background-position: -69px -3px;
+  }
+  .Low {
+    background-position: -35px -3px;
+  }
+  .Trivial {
+    background-position: -103px -3px;
+  }
+}
