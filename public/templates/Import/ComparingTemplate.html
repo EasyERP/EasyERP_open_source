@@ -1,0 +1,94 @@
+<% if (Object.keys(data.result).length) { %>
+    <div class="_loadHistoryTopTableContainer">
+        <div class="_loadHistoryTopTable tableResponsive">
+            <table class="list _importLoadHistory">
+                <thead>
+                <tr>
+                    <% if (moreExist) { %>
+                        <td>
+                            exist change
+                        </td>
+                    <% } else { %>
+                        <td></td>
+                    <% } %>
+                    <% if (step >= 0) { %>
+                        <td>
+                            action
+                        </td>
+                    <% } else { %>
+                        <td></td>
+                    <% } %>
+                    <% if (data.keys.length) { %>
+                        <% _.each(data.keys, function(item){ %>
+                            <td>
+                                <%= item %>
+                            </td>
+                        <% }) %>
+                    <% } %>
+                </tr>
+                </thead>
+                <% _.each(data.result, function(comparingData, comparingDataKey) { %>
+                <tbody data-group="<%= comparingDataKey %>" style="background-color: hsl( <%= Math.floor(Math.random() * (360 - 1)) + 1 %> , 50%, 80%)">
+                    <% _.each(comparingData, function(comparingDataObj, comparingDataObjKey) { %>
+                        <tr data-exist="<% comparingDataObj['_id'] %>" data-id="<% if (comparingDataObj['importId']) { %>
+                                        <%= comparingDataObj['importId'].trim() %>
+                                     <% } else { %><% } %>">
+                            <% if ((moreExist) && (comparingDataObj['isExist'])) { %>
+                                <td>
+                                    <input type="radio" name="dataExist" class="changeExist" data-exist="<%= comparingDataObj['_id'] %>">
+                                </td>
+                            <% } else { %>
+                                <td></td>
+                            <% } %>
+                            <% if (!comparingDataObj['isExist'] && (step >= 0)) { %>
+                                <td>
+                                    <div class="dropDownDateRangeContainer">
+                                        <div class="changeTableCombobox choseDateRange dropDownDateRange">
+                                            <div data-action="skip" class="item active">skip</div>
+                                            <div data-action="import" class="item">import</div>
+                                            <% if (isItExist) { %>
+                                                <div data-action="merge" class="item">merge</div>
+                                            <% } %>
+                                            <span class="selectArrow"></span>
+                                        </div>
+                                    </div>
+                                </td>
+                            <% } else { %>
+                                <td></td>
+                            <% } %>
+                            <% _.each(data.keys, function(key) { %>
+                                <td>
+                                    <% if (comparingDataObj[key]) { %>
+                                        <% if ((comparingDataObj[key]).toString().indexOf('data:image/') === -1) { %>
+                                            <% if (comparingDataObj['isExist']) { %>
+                                                <strong><%= comparingDataObj[key] %></strong>
+                                            <% } else { %>
+                                                <%= comparingDataObj[key] %>
+                                            <% } %>
+                                        <% } else { %>
+                                            <div class="_importTableImg">
+                                                <img src="<%= comparingDataObj[key] %>">
+                                            </div>
+                                        <% } %>
+                                    <% } %>
+                                </td>
+                            <% }) %>
+                        </tr>
+                    <% }) %>
+                </tbody>
+                <% }) %>
+            </table>
+        </div>
+        <div>
+            <button id="stepByStepButton" class="btn btnSave right">StepByStep</button>
+        </div>
+    </div>
+<% } else { %>
+<div class="_finishImportContainer">
+    <h3 class="_importWithOutConflict">Data conflicts not found, you can finish import without merging data</h3>
+    <button id="finishBtn" class="btn btnSave">Finish Import</button>
+</div>
+
+<% } %>
+
+

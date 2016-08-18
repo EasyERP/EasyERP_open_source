@@ -7,7 +7,7 @@ define([
     'text!templates/stages.html',
     'views/salesInvoices/CreateView',
     'views/salesInvoices/EditView',
-    'views/Proforma/EditView',
+    'views/proforma/EditView',
     'models/InvoiceModel',
     'views/salesInvoices/list/ListItemView',
     'collections/salesInvoices/filterCollection',
@@ -36,16 +36,18 @@ define([
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
         contentCollection: contentCollection,
-        contentType      : 'Proforma',
+        contentType      : 'proforma',
         changedModels    : {},
         hasPagination    : true,
+        viewType         : 'list',
 
         initialize: function (options) {
+            this.formUrl = 'easyErp/' + this.contentType + '/tform/';
             this.startTime = options.startTime;
             this.collection = options.collection;
             this.parrentContentId = options.collection.parrentContentId;
             this.filter = options.filter ? options.filter : {};
-            this.forSales = options.forSales;
+            this.forSales = options.forSales || false;
             this.filter.forSales = {key: 'forSales', value: [this.forSales], type: 'boolean'};
             this.sort = options.sort;
             this.defaultItemsNumber = this.collection.namberToShow || 100;
@@ -62,14 +64,15 @@ define([
                 }
             };
 
+            options.filter = this.filter;
+
             listViewBase.prototype.initialize.call(this, options);
 
             this.contentCollection = contentCollection;
             this.stages = [];
         },
 
-        events: {
-        },
+        events: {},
 
         saveItem: function () {
             var model;
@@ -191,37 +194,51 @@ define([
 
             this.recalcTotal();
 
+        },
+
+        gotoForm: function (e) {
+            var id = $(e.target).closest('tr').data('id');
+            var page = this.collection.currentPage;
+            var countPerPage = this.collection.pageSize;
+            var url = this.formUrl + id + '/p=' + page + '/c=' + countPerPage;
+
+            if (this.filter) {
+                url += '/filter=' + encodeURI(JSON.stringify(this.filter));
+            }
+
+            App.ownContentType = true;
+            Backbone.history.navigate(url, {trigger: true});
         }
 
         /*goToEditDialog: function (e) {
-            var self = this;
-            var id = $(e.target).closest('tr').data('id');
-            var model = new InvoiceModel({validate: false});
-            var editView = this.forSales ? EditView : proformaEditView;
+         var self = this;
+         var id = $(e.target).closest('tr').data('id');
+         var model = new InvoiceModel({validate: false});
+         var editView = this.forSales ? EditView : proformaEditView;
 
-            e.preventDefault();
+         e.preventDefault();
 
-            model.urlRoot = '/invoices/';
-            model.fetch({
-                data: {
-                    id       : id,
-                    currentDb: App.currentDb,
-                    viewType : 'form',
-                    forSales : self.forSales
-                },
+         model.urlRoot = '/invoices/';
+         model.fetch({
+         data: {
+         id       : id,
+         currentDb: App.currentDb,
+         viewType : 'form',
+         forSales : self.forSales
+         },
 
-                success: function (model) {
-                    return new editView({model: model, forSales: self.forSales});
-                },
+         success: function (model) {
+         return new editView({model: model, forSales: self.forSales});
+         },
 
-                error: function () {
-                    App.render({
-                        type   : 'error',
-                        message: 'Please refresh browser'
-                    });
-                }
-            });
-        }*/
+         error: function () {
+         App.render({
+         type   : 'error',
+         message: 'Please refresh browser'
+         });
+         }
+         });
+         }*/
 
     });
 

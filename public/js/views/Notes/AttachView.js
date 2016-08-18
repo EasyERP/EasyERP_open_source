@@ -13,6 +13,7 @@ define([
             this.contentType = options.contentType;
             this.isCreate = options.isCreate;
             this.elementId = options.elementId;
+            this.timeStamp = options.timeStamp;
         },
 
         events: {
@@ -61,7 +62,9 @@ define([
                 currentModelId = currentModel.id || currentModel._id;
 
                 this.$el.find('li .inputAttach').each(function () {
+
                     addInptAttach = $(this)[0].files[0];
+
                     fileArr.push(addInptAttach);
 
                     if (!self.fileSizeIsAcceptable(addInptAttach)) {
@@ -124,6 +127,7 @@ define([
 
                         xhr.setRequestHeader('modelid', currentModelId);
                         xhr.setRequestHeader('modelname', self.contentType);
+                        xhr.setRequestHeader('timestamp', self.timeStamp);
                         status.show();
                         bar.width(statusVal);
                         status.html(statusVal);
@@ -151,8 +155,7 @@ define([
                             Backbone.history.fragment = '';
                             Backbone.history.navigate(window.location.hash, {trigger: true});
                         } else if (self.import) {
-                            Backbone.history.fragment = '';
-                            Backbone.history.navigate(window.location.hash, {trigger: true});
+                            self.trigger('uploadCompleted');
                         } else {
                             attachments = currentModel.get('attachments') || [];
                             attachments.length = 0;

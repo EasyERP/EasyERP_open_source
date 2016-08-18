@@ -707,6 +707,50 @@ var Module = function (models, event) {
         }
     };
 
+    this.getEmails = function (req, res, next) {
+        var id = req.params.id;
+        var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+
+        Invoice.aggregate([
+            {
+                $match: {
+                    _id: objectId(id)
+                }
+            }, {
+                $lookup: {
+                    from        : 'Employees',
+                    localField  : 'salesPerson',
+                    foreignField: '_id',
+                    as          : 'salesPerson'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Customers',
+                    localField  : 'supplier',
+                    foreignField: '_id',
+                    as          : 'supplier'
+                }
+            }, {
+                $project: {
+                    salesPerson: {$arrayElemAt: ['$salesPerson', 0]},
+                    supplier   : {$arrayElemAt: ['$supplier', 0]}
+                }
+            }, {
+                $project: {
+                    _id            : 0,
+                    salesmanager   : '$salesPerson.workEmail',
+                    customerPersons: '$supplier.email'
+                }
+            }
+        ], function (err, result) {
+            if (err) {
+                return next(err);
+            }
+            res.status(200).send(result);
+        });
+
+    };
+
     this.approve = function (req, res, next) {
         var db = req.session.lastDb;
         var id = req.body.invoiceId;

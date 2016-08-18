@@ -1,0 +1,513 @@
+._importListWrap {
+
+  ._importListHeader {
+
+  }
+  ._importListBody {
+
+  }
+  ._importListFooter {
+
+  }
+
+  ._importMainTitle {
+    font-size: 20px;
+    padding-right: 15px;
+    text-align: right;
+    margin: 20px 0;
+    overflow: visible;
+  }
+}
+
+._loadHistoryTopTable {
+  height: 450px;
+  margin-bottom: 20px;
+
+  ._importLoadHistory {
+    td {
+      overflow: visible;
+    }
+
+    ._importTableImg {
+      width: 50px;
+      height: 50px;
+      padding: 5px;
+
+      img {
+        max-width: 100%;
+      }
+    }
+  }
+
+  .changeTableCombobox {
+    &.open {
+      border: 1px solid $black;
+      z-index: 10;
+    }
+  }
+}
+
+._loadHistoryTopTableContainer {
+  width: 100%;
+}
+
+._contentBlock,
+._tabsBlock {
+  height: calc(100vh - 205px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+
+._importListBody {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+
+
+  ._contentBlock {
+    -webkit-flex-grow: 1;
+    flex-grow: 1;
+    padding: 16px 0 16px 24px;
+  }
+
+  ._tabsBlock {
+    -webkit-flex-shrink: 0;
+    flex-shrink: 0;
+    width: 500px;
+    padding-right: 20px;
+    margin-left: 20px;
+
+    ._importListTabs {
+      border-bottom: 1px solid $importTabsBorderColor;
+
+      li {
+        display: inline-block;
+        vertical-align: bottom;
+        padding: 10px 15px;
+        cursor: pointer;
+
+        &.active {
+          background: $importTabsBorderBgActive;
+          color: $white;
+        }
+      }
+    }
+
+    ._importTabItem {
+      width: 100%;
+      padding: 24px 0;
+      display: none;
+
+
+      &.active {
+        display: block;
+      }
+    }
+
+    .fieldItem {
+      width: 100%;
+      max-width: 460px;
+      padding: 10px 15px;
+      border: 1px solid $importFieldItemBorderColor;
+      margin-bottom: 10px;
+      cursor: move;
+      background: $white;
+    }
+
+    .fieldsItems {
+      display: none;
+
+      &.active {
+        display: block;
+      }
+    }
+  }
+
+  
+}
+
+._contentBlockRow {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+
+  min-height: 53px;
+  border-radius: 3px;
+  background-color: $white;
+  margin-bottom: 10px;
+
+
+  
+  &.emptyRow {
+    background-color: #f3f5f6;
+
+    .secondBox {
+      border: 1px dashed #c2c8cd;
+    }
+
+    .empty {
+      &:after {
+        content: 'Drag and drop field here';
+        position: absolute;
+        left: 17px;
+        top: 50%;
+        transform: translate(0, -50%);
+        font-style: italic;
+        color: #c2c8cd;
+      }
+    }
+  }
+
+  &.hoverRow {
+    background: rgba($importHoverRowBg, .4);
+
+    ._rowItem {
+      border-color: $importHoverRowBg !important;
+    }
+
+    .secondBox {
+      border: 1px dashed #c2c8cd;
+    }
+
+    .empty {
+      &:after {
+        color: $white;
+      }
+    }
+  }
+  
+  ._rowItem {
+    position: relative;
+    width: 1px;
+    border: 1px solid #c2c8cd;
+    -webkit-flex-grow: 1;
+    flex-grow: 1;
+    font-size: 14px;
+
+    &:hover {
+     .cleanButton {
+       display: block !important;
+     }
+    }
+
+    &:nth-child(n+2) {
+      border-left: none;
+    }
+
+    .importStatic {
+      min-height: 53px;
+      padding: 17px 15px;
+    }
+
+    .cleanButton {
+      position: absolute;
+      right: 5px;
+      top: 50%;
+      transform: translate(0,-50%);
+      padding: 8px;
+      cursor: pointer;
+      font-size: 18px;
+      display: none !important;
+    }
+
+    .empty {
+      + .cleanButton {
+        display: none !important;
+      }
+    }
+  }
+
+  ._movingItem {
+    min-height: 53px;
+    padding: 17px 15px;
+    cursor: move;
+
+    &.borderField {
+      border: 1px solid #c2c8cd;
+      background: $white;
+      z-index: 10;
+    }
+  }
+}
+
+._importTabs {
+  .tabListItem {
+    span {
+      display: inline-block !important;
+      color: $white;
+      line-height: 12px;
+    }
+
+    ._importStep {
+      color: $importStepColor;
+      font-weight: bold;
+    }
+  }
+}
+
+.ui-draggable {
+  &.draggableActive {
+    position: fixed !important;
+    z-index: 10;
+  }
+}
+
+._importListFooter {
+  padding: 15px 20px;
+  margin-top: 10px;
+  border-top: 1px solid $importFooterBorder;
+}
+
+._importAttachContainer {
+  width: 100%;
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 50px 20px 20px;
+  text-align: center;
+  border: 3px dashed $importAttachBorderColor;
+  background: $importAttachBg;
+
+  .attachFileName {
+    margin: 15px 0;
+    font-size: 16px;
+
+    span {
+      font-weight:bold;
+    }
+  }
+  
+  label,
+  .dropDownDateRangeContainer {
+    display: inline-block;
+    vertical-align: middle;
+    text-align: center;
+    margin-right: 15px;
+    cursor: pointer;
+
+    span {
+      display: block;
+    }
+  }
+
+  input[type="checkbox"],
+  input[type="radio"] {
+    width: 15px;
+    height: 15px;
+  }
+
+  .dropDownDateRangeContainer {
+    float: none;
+    height: 11px;
+  }
+
+  .importBtn {
+    margin-top: 7px;
+  }
+
+  ._exampleLink {
+    margin-top: 30px;
+    text-align: right;
+
+    a {
+      color: #00a2d0;
+    }
+  }
+}
+
+._progressBarContainer {
+  height: 20px;
+  border-radius: 30px;
+  margin-bottom: 20px;
+  background: $importProgressBarContainerBg;
+
+  ._progressBar {
+    height: 100%;
+    border-radius: 30px;
+    background: $importProgressBarBg;
+    transition: (all .5s ease);
+  }
+}
+
+._importTitle {
+  font-size: 30px;
+  margin: 15px 0;
+}
+
+._importStep3 {
+  width: 100%;
+  padding: 0 15px;
+
+
+  ._step3Desk {
+    margin: 25px 0;
+
+    h2 {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 13px;
+    }
+  }
+}
+
+._importTable {
+  th,
+  td {
+    border: 1px solid $importCellContainerBorder;
+    padding: 0 10px;
+  }
+
+  thead {
+    th {
+      text-align: right;
+    }
+  }
+
+  tbody {
+    tr {
+      &:nth-child(2n) {
+        background: $importTableTrBg;
+      }
+    }
+  }
+
+  ._importTableImg {
+    width: 50px;
+    height: 50px;
+    margin: 5px auto;
+
+    img {
+      max-width: 100%;
+    }
+  }
+
+}
+
+._importCheckboxContainer {
+  text-align: center;
+  font-size: 0;
+
+  ._importItemTitle {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  ._importItemDesk {
+    font-size: 13px;
+  }
+
+  ._importCheckboxItem {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    width: 50%;
+    min-height: 290px;
+    border: 1px solid $importCellContainerBorder;
+
+    &:last-child {
+      border-left: none;
+    }
+
+    label {
+      display: block;
+      padding: 25px;
+      cursor: pointer;
+      background: $importCellContainerBg;
+
+      &:hover {
+        ._cellContainer {
+          border-color: $importCellContainer;
+        }
+      }
+    }
+  }
+
+  ._cellContainer {
+    position: relative;
+    padding: 20px;
+    border: 1px solid $importCellContainerBorder;
+    margin-top: 25px;
+  }
+
+  ._radioContainer {
+    position: absolute;
+    left: 70px;
+    bottom: 55px;
+    width: 20px;
+    height: 20px;
+
+    &:checked + label {
+      background: $white;
+
+      ._cellContainer {
+        background: rgba($importCellContainer, .1);
+        border-color: $importCellContainer;
+      }
+    }
+  }
+}
+
+.list._importLoadHistory {
+  margin: 15px 0 25px;
+
+  th,
+  td {
+    padding: 0 10px;
+  }
+
+  tbody {
+    td {
+      text-align: left;
+    }
+  }
+
+  ._importLink {
+    color: #3291c8;
+  }
+}
+
+._finishImportContainer {
+  border: 1px solid $importAttachBorderColor;
+  background: $importAttachBg;
+  width: 100%;
+  max-width: 700px;
+  padding: 25px 30px;
+  margin: 25px auto;
+  text-align: center;
+
+  ._finishImportTitle {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+
+  ._finishList {
+    margin-bottom: 15px;
+
+    span {
+      font-size: 16px;
+
+      &:after {
+        content: ',';
+      }
+
+      &:last-child {
+        &:after {
+          content: none;
+        }
+      }
+    }
+  }
+
+  ._importWithOutConflict {
+    margin-bottom: 25px;
+  }
+}

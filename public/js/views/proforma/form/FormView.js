@@ -3,10 +3,10 @@ define([
     'jQuery',
     'Underscore',
     'views/dialogViewBase',
-    'text!templates/Proforma/form/FormTemplate.html',
+    'text!templates/proforma/form/FormTemplate.html',
     'views/Assignees/AssigneesView',
     'views/Notes/NoteView',
-    'views/Proforma/InvoiceProductItems',
+    'views/proforma/InvoiceProductItems',
     'views/Products/InvoiceOrder/ProductItems',
     'views/salesInvoices/wTrack/wTrackRows',
     'views/Payment/ProformaCreateView',
@@ -48,7 +48,6 @@ define([
             'click .approve'      : 'approve',
             'click .cancelInvoice': 'cancelInvoice',
             'click .setDraft'     : 'setDraft'
-
         },
 
         initialize: function (options) {
@@ -355,7 +354,7 @@ define([
                                 message: 'Please, enter Unit Price!'
                             });
                         }
-                        jobs = targetEl.find('[data-name="jobs"]').attr('data-content');
+                        jobs = targetEl.find('[data-name="jobs"]').attr('data-content') || null;
                         taxes = helpers.spaceReplacer(targetEl.find('.taxes').text());
                         taxes = parseFloat(taxes) * 100;
                         description = targetEl.find('[data-name="productDescr"] textarea').val() || targetEl.find('[data-name="productDescr"]').text();
@@ -412,8 +411,12 @@ define([
                 },
 
                 whoCanRW: whoCanRW,
-                workflow: workflow
+                workflow: workflow && workflow._id ? workflow._id : workflow
             };
+
+            if (this.model.get('approved')) {
+                delete data.products;
+            }
 
             if (supplier) {
                 this.model.save(data, {

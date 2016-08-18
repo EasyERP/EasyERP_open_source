@@ -8,6 +8,7 @@ var Module = function (models, event) {
     var WorkflowSchema = mongoose.Schemas.workflow;
     var prioritySchema = mongoose.Schemas.Priority;
     var historySchema = mongoose.Schemas.History;
+    var tagsSchema = mongoose.Schemas.tags;
     var objectId = mongoose.Types.ObjectId;
 
     var _ = require('../node_modules/underscore');
@@ -2151,15 +2152,13 @@ var Module = function (models, event) {
 
                     Opportunity.findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
 
-
                         if (err) {
                             return next(err);
                         }
 
-
                         result.populate('salesPerson')
                             .populate('company')
-                            .populate('customer', function (){
+                            .populate('customer', function () {
                                 var lead = result.toJSON();
                                 historyWriter.addEntry(historyOptions, function () {
                                     getTimeLine(req, lead, function (err, model) {
@@ -2311,10 +2310,7 @@ var Module = function (models, event) {
                                         res.status(200).send(model);
                                     });
                                 });
-                        })
-
-
-
+                            })
 
                     });
                 });
@@ -2521,6 +2517,7 @@ var Module = function (models, event) {
 
     function getFilter(req, res, next) {
         var Opportunities = models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema);
+        var Tags = models.get(req.session.lastDb, 'tags', tagsSchema);
         var data = req.query;
         var contentType = data.contentType;
         var paginationObject = pageHelper(data);
@@ -2681,6 +2678,8 @@ var Module = function (models, event) {
                             company         : {$arrayElemAt: ['$company', 0]},
                             salesPerson     : {$arrayElemAt: ['$salesPerson', 0]},
                             workflow        : {$arrayElemAt: ['$workflow', 0]},
+                            tags            : 1,
+                            priority        : 1,
                             'editedBy.user' : {$arrayElemAt: ['$editedBy.user', 0]},
                             'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]},
                             expectedClosing : 1,
@@ -2689,7 +2688,8 @@ var Module = function (models, event) {
                             address         : 1,
                             skype           : 1,
                             social          : 1,
-                            isOpportunitie  : 1
+                            isOpportunitie  : 1,
+                            dateBirth       : 1
                         }
                     }, {
                         $match: {
@@ -2715,9 +2715,12 @@ var Module = function (models, event) {
                             expectedClosing   : '$root.expectedClosing',
                             'editedBy.date'   : '$root.editedBy.date',
                             name              : '$root.name',
+                            priority          : '$root.priority',
+                            tags              : '$root.tags',
                             source            : '$root.source',
                             'address.country' : {$ifNull: ['$root.company.address.country', '$root.customer.address.country']},
                             skype             : '$root.customer.skype',
+                            dateBirth         : '$root.dateBirth',
                             'social.LI'       : '$root.customer.social.LI',
                             total             : 1
 
@@ -2761,12 +2764,19 @@ var Module = function (models, event) {
             }
 
             firstElement = result[0];
+
             count = firstElement && firstElement.total ? firstElement.total : 0;
 
             response.total = count;
             response.data = result;
 
-            res.status(200).send(response);
+            Tags.populate(response.data, {
+                path  : 'tags',
+                select: 'color name'
+            }, function () {
+                res.status(200).send(response);
+            });
+
         });
     }
 
@@ -2945,7 +2955,8 @@ var Module = function (models, event) {
             social          : 1,
             skype           : 1,
             tags            : 1,
-            attachments     : 1
+            attachments     : 1,
+            dateBirth       : 1
         });
 
         query

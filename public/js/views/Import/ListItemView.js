@@ -1,7 +1,7 @@
-﻿define([
+define([
     'Backbone',
     'Underscore',
-    'text!templates/Proforma/ListTemplate.html',
+    'text!templates/Import/ListTemplate.html',
     'helpers'
 ], function (Backbone, _, listTemplate, helpers) {
     'use strict';
@@ -11,16 +11,16 @@
 
         initialize: function (options) {
             this.collection = options.collection;
+            this.keys = options.keys;
             this.startNumber = (parseInt(this.collection.currentPage, 10) - 1) * this.collection.pageSize; // Counting the start index of list items
         },
 
-        render: function (options) {
-            var el = (options && options.thisEl) ? options.thisEl : this.$el;
+        render: function () {
 
-            el.append(_.template(listTemplate, {
-                collection      : this.collection.toJSON(),
-                startNumber     : this.startNumber,
-                currencySplitter: helpers.currencySplitter
+            this.$el.append(_.template(listTemplate, {
+                history: this.collection.toJSON(),
+                startNumber: this.startNumber,
+                keys: this.keys
             }));
         }
     });
