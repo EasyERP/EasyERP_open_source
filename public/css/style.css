@@ -2178,7 +2178,7 @@ label._customCHeckbox input[type="checkbox"] {
         padding: 10px 15px;
         cursor: pointer; }
         ._importListBody ._tabsBlock ._importListTabs li.active {
-          background: #3291c8;
+          background: #3e88b9;
           color: #ffffff; }
     ._importListBody ._tabsBlock ._importTabItem {
       width: 100%;
@@ -2222,9 +2222,9 @@ label._customCHeckbox input[type="checkbox"] {
       font-style: italic;
       color: #c2c8cd; }
   ._contentBlockRow.hoverRow {
-    background: rgba(50, 145, 200, 0.4); }
+    background: rgba(62, 136, 185, 0.4); }
     ._contentBlockRow.hoverRow ._rowItem {
-      border-color: #3291c8 !important; }
+      border-color: #3e88b9 !important; }
     ._contentBlockRow.hoverRow .secondBox {
       border: 1px dashed #c2c8cd; }
     ._contentBlockRow.hoverRow .empty:after {
@@ -2383,7 +2383,7 @@ label._customCHeckbox input[type="checkbox"] {
       cursor: pointer;
       background: #f2f2f2; }
       ._importCheckboxContainer ._importCheckboxItem label:hover ._cellContainer {
-        border-color: #3291c8; }
+        border-color: #3e88b9; }
   ._importCheckboxContainer ._cellContainer {
     position: relative;
     padding: 20px;
@@ -2398,8 +2398,8 @@ label._customCHeckbox input[type="checkbox"] {
     ._importCheckboxContainer ._radioContainer:checked + label {
       background: #ffffff; }
       ._importCheckboxContainer ._radioContainer:checked + label ._cellContainer {
-        background: rgba(50, 145, 200, 0.1);
-        border-color: #3291c8; }
+        background: rgba(62, 136, 185, 0.1);
+        border-color: #3e88b9; }
 
 .list._importLoadHistory {
   margin: 15px 0 25px; }
