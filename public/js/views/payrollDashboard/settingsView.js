@@ -8,7 +8,10 @@ define([
         el      : '#settings',
         template: _.template(settingsTemplate),
 
-        events: {},
+        events: {
+            'click .closeBtn'        : 'closeSettings',
+            'click ._payrollListItem': 'redirectTo'
+        },
 
         initialize: function (options) {
             this.employees = options.employees;
@@ -20,6 +23,19 @@ define([
             this.render();
         },
 
+        closeSettings: function () {
+            this.$el.hide();
+            $('.backToSettings').show();
+        },
+
+        redirectTo: function (e) {
+            var $target = $(e.target);
+            var a = $target.find('._payrollListAction');
+            var href = a.attr('href');
+
+            Backbone.history.navigate(href, {trigger: true});
+        },
+
         render: function () {
             this.$el.html(this.template({
                 employees       : this.employees,
@@ -28,7 +44,7 @@ define([
                 payrollStructure: this.payrollStructure,
                 bankAccounts    : this.bankAccounts
             }));
-            
+
             return this;
         }
     });

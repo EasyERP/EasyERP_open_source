@@ -12,8 +12,22 @@ define([
         el: '#content-holder',
 
         initialize: function () {
-
+            this.render();
             this.getParallelResults();
+        },
+
+        backToSettings: function () {
+            var settings = this.$el.find('#settings');
+
+            $('.backToSettings').hide();
+
+            if (settings && settings.length) {
+                return settings.show();
+            }
+
+            this.$el.html('<div id="settings" class="_payrollListWrapOuter"></div>');
+
+            new SettingsView(this.results);
         },
 
         getParallelResults: function () {
@@ -77,16 +91,18 @@ define([
                 employees       : getEmployees
             }, function (err, result) {
                 if (err) {
-                    return self.render();
+                    return console.log(err);
                 }
 
-                /* if (!result.scheduledPay.length || !result.weeklyScheduler.length || !result.bankAccounts || !result.employees.length || !result.payrollStructure.length) {*/
-                self.$el.html('<div id="settings" class="_payrollListWrapOuter"></div>');
+                self.results = result;
 
-                new SettingsView(result);
-                /* } else {
-                 self.render();
-                 }*/
+                if (!result.scheduledPay.length || !result.weeklyScheduler.length || !result.bankAccounts || !result.employees.length || !result.payrollStructure.length) {
+                    self.$el.html('<div id="settings" class="_payrollListWrapOuter"></div>');
+
+                    new SettingsView(result);
+
+                    $('.backToSettings').hide();
+                }
 
             });
         },

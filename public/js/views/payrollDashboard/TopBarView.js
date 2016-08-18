@@ -8,7 +8,17 @@ define([
         el         : '#top-bar',
         contentType: 'Dashboard',
         actionType : null, // Content, Edit, Create
-        template   : _.template(TopBarTemplate)
+        template   : _.template(TopBarTemplate),
+
+        events: {
+            'click .backToSettings': 'backToSettingsEvent'
+        },
+
+        backToSettingsEvent: function (e) {
+            e.stopPropagation();
+
+            this.trigger('backToSettingsEvent');
+        }
     });
 
     return TopBarView;
