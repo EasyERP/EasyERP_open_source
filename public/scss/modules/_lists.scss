@@ -175,6 +175,7 @@
 .showmore {
   display: none;
 }
+
 ._dateListElement {
 
   .showmore {
@@ -198,5 +199,190 @@
 
   &:last-child {
     border-bottom: none;
+  }
+}
+
+.payrollListWrapOuter {
+  height: 100%;
+}
+
+._payrollListWrap {
+  height: 100%;
+  padding: 20px 80px;
+  overflow: auto;
+
+  ._payrollListItem {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+
+    position: relative;
+    padding: 8px 20px 8px 30px;
+    background-color: #f7f7f7;
+    border: 2px dashed $payroll-border-gray;
+    border-radius: 3px;
+    transition: .2s all ease-in;
+
+    &.checked {
+      background-color: #F8F8F8;
+      border: 2px solid $payroll-border-blue;
+
+      &:after {
+        content: "\f00c";
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-family: FontAwesome;
+        color: $payroll-border-blue;
+      }
+
+      &._weeklyItem,
+      &._payItem,
+      &._structureItem,
+      &._bankItem,
+      &._employeesItem {
+        ._payrollListImage {
+          &:after {
+            color: $payroll-border-blue;
+          }
+        }
+      }
+
+      ._payrollListSteps {
+        color: $payroll-steps-color;
+      }
+      ._payrollListAction {
+        color: $payroll-font-indigo3;
+      }
+      ._payrollListDescription {
+        color: $payroll-font-darkgray;
+      }
+
+      &:hover {
+        border-style: solid;
+
+        ._payrollListImage {
+          border-style: solid;
+        }
+      }
+
+      ._payrollListImage {
+        border: 2px solid $payroll-border-blue;
+      }
+    }
+
+    &:hover {
+      border: 2px dashed $payroll-border-blue;
+
+      ._payrollListImage {
+        border: 2px dashed $payroll-border-blue;
+      }
+    }
+
+    &._weeklyItem,
+    &._payItem,
+    &._structureItem,
+    &._bankItem,
+    &._employeesItem {
+      ._payrollListImage {
+        &:after {
+          font-family: 'fontAwesome';
+          margin: auto;
+          color: $payroll-border-gray;
+          font-size: 24px;
+        }
+      }
+    }
+
+    &._weeklyItem {
+      ._payrollListImage {
+        &:after {
+          content: "\f073";
+        }
+      }
+    }
+    &._payItem {
+      ._payrollListImage {
+        &:after {
+          content: "\f080";
+        }
+      }
+    }
+    &._structureItem {
+      ._payrollListImage {
+        &:after {
+          content: "\f200";
+        }
+      }
+    }
+    &._bankItem {
+      ._payrollListImage {
+        &:after {
+          content: "\f09d";
+        }
+      }
+    }
+    &._employeesItem {
+      ._payrollListImage {
+        &:after {
+          content: "\f0c0";
+        }
+      }
+    }
+
+    + ._payrollListItem {
+      margin-top: 20px;
+    }
+
+    ._payrollListImage {
+      display: -webkit-box;
+      display: -moz-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+
+      height: 60px;
+      width: 60px;
+      border: 2px dashed $payroll-border-gray;
+      border-radius: 50%;
+      background-color: $white;
+      transition: .2s border-color ease-in;
+    }
+
+    ._payrollListBody {
+      display: -webkit-box;
+      display: -moz-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+      flex-direction: column;
+
+      margin-left: 10px;
+    }
+
+    ._payrollListSteps {
+      color: $payroll-font-indigo2;
+      font-family: $semibold-font-family;
+      font-size: 10px;
+      text-transform: uppercase;
+    }
+
+    ._payrollListAction {
+      font-size: 20px;
+      color: $payroll-font-darkgray;
+      &:hover {
+        text-decoration: none;
+      }
+    }
+
+    ._payrollListDescription {
+      margin-top: 10px;
+      font-size: 12px;
+      color: $payroll-font-darkgray;
+    }
   }
 }

@@ -804,6 +804,9 @@ define([
 
                     var contentview = new contentView({startTime: startTime});
                     var topbarView = new topBarView({actionType: "Content"});
+
+                    topbarView.bind('backToSettingsEvent', contentview.backToSettings, contentview);
+                    
                     self.changeView(contentview);
                     self.changeTopBarView(topbarView);
                 });

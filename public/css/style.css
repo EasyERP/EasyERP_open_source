@@ -1981,6 +1981,107 @@ label._customCHeckbox input[type="checkbox"] {
   ._activitiesListItem:last-child {
     border-bottom: none; }
 
+.payrollListWrapOuter {
+  height: 100%; }
+
+._payrollListWrap {
+  height: 100%;
+  padding: 20px 80px;
+  overflow: auto; }
+  ._payrollListWrap ._payrollListItem {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    position: relative;
+    padding: 8px 20px 8px 30px;
+    background-color: #f7f7f7;
+    border: 2px dashed #c8c8d3;
+    border-radius: 3px;
+    transition: .2s all ease-in; }
+    ._payrollListWrap ._payrollListItem.checked {
+      background-color: #F8F8F8;
+      border: 2px solid #7eadcc; }
+      ._payrollListWrap ._payrollListItem.checked:after {
+        content: "\f00c";
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-family: FontAwesome;
+        color: #7eadcc; }
+      ._payrollListWrap ._payrollListItem.checked._weeklyItem ._payrollListImage:after, ._payrollListWrap ._payrollListItem.checked._payItem ._payrollListImage:after, ._payrollListWrap ._payrollListItem.checked._structureItem ._payrollListImage:after, ._payrollListWrap ._payrollListItem.checked._bankItem ._payrollListImage:after, ._payrollListWrap ._payrollListItem.checked._employeesItem ._payrollListImage:after {
+        color: #7eadcc; }
+      ._payrollListWrap ._payrollListItem.checked ._payrollListSteps {
+        color: #7eadcc; }
+      ._payrollListWrap ._payrollListItem.checked ._payrollListAction {
+        color: #404d5f; }
+      ._payrollListWrap ._payrollListItem.checked ._payrollListDescription {
+        color: #7f7f80; }
+      ._payrollListWrap ._payrollListItem.checked:hover {
+        border-style: solid; }
+        ._payrollListWrap ._payrollListItem.checked:hover ._payrollListImage {
+          border-style: solid; }
+      ._payrollListWrap ._payrollListItem.checked ._payrollListImage {
+        border: 2px solid #7eadcc; }
+    ._payrollListWrap ._payrollListItem:hover {
+      border: 2px dashed #7eadcc; }
+      ._payrollListWrap ._payrollListItem:hover ._payrollListImage {
+        border: 2px dashed #7eadcc; }
+    ._payrollListWrap ._payrollListItem._weeklyItem ._payrollListImage:after, ._payrollListWrap ._payrollListItem._payItem ._payrollListImage:after, ._payrollListWrap ._payrollListItem._structureItem ._payrollListImage:after, ._payrollListWrap ._payrollListItem._bankItem ._payrollListImage:after, ._payrollListWrap ._payrollListItem._employeesItem ._payrollListImage:after {
+      font-family: 'fontAwesome';
+      margin: auto;
+      color: #c8c8d3;
+      font-size: 24px; }
+    ._payrollListWrap ._payrollListItem._weeklyItem ._payrollListImage:after {
+      content: "\f073"; }
+    ._payrollListWrap ._payrollListItem._payItem ._payrollListImage:after {
+      content: "\f080"; }
+    ._payrollListWrap ._payrollListItem._structureItem ._payrollListImage:after {
+      content: "\f200"; }
+    ._payrollListWrap ._payrollListItem._bankItem ._payrollListImage:after {
+      content: "\f09d"; }
+    ._payrollListWrap ._payrollListItem._employeesItem ._payrollListImage:after {
+      content: "\f0c0"; }
+    ._payrollListWrap ._payrollListItem + ._payrollListItem {
+      margin-top: 20px; }
+    ._payrollListWrap ._payrollListItem ._payrollListImage {
+      display: -webkit-box;
+      display: -moz-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      height: 60px;
+      width: 60px;
+      border: 2px dashed #c8c8d3;
+      border-radius: 50%;
+      background-color: #ffffff;
+      transition: .2s border-color ease-in; }
+    ._payrollListWrap ._payrollListItem ._payrollListBody {
+      display: -webkit-box;
+      display: -moz-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+      flex-direction: column;
+      margin-left: 10px; }
+    ._payrollListWrap ._payrollListItem ._payrollListSteps {
+      color: #364150;
+      font-family: "OpenSans SemiBold", sans-serif;
+      font-size: 10px;
+      text-transform: uppercase; }
+    ._payrollListWrap ._payrollListItem ._payrollListAction {
+      font-size: 20px;
+      color: #7f7f80; }
+      ._payrollListWrap ._payrollListItem ._payrollListAction:hover {
+        text-decoration: none; }
+    ._payrollListWrap ._payrollListItem ._payrollListDescription {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #7f7f80; }
+
 .dialog-tabs:before, .dialog-tabs:after {
   content: " ";
   display: table; }
@@ -2371,7 +2472,7 @@ label._customCHeckbox input[type="checkbox"] {
     margin-bottom: 5px;
     font-weight: bold; }
   .propertyBox a {
-    color: #3291c8; }
+    color: #3e88b9; }
 
 .separateBlock {
   text-align: center; }
@@ -2381,7 +2482,7 @@ label._customCHeckbox input[type="checkbox"] {
   width: 100%;
   border-left: 1px solid transparent; }
   .propertyFormList.active {
-    border-left-color: #3291c8; }
+    border-left-color: #3e88b9; }
   .propertyFormList label,
   .propertyFormList .inputBox {
     display: table-cell !important;
@@ -2998,7 +3099,7 @@ label._customCHeckbox input[type="checkbox"] {
 .tasksItemIcon {
   display: inline-block;
   vertical-align: middle;
-  color: #3291c8; }
+  color: #3e88b9; }
   .tasksItemIcon + .tasksItemIcon {
     margin-left: 8px; }
   .tasksItemIcon img {
@@ -3024,11 +3125,11 @@ label._customCHeckbox input[type="checkbox"] {
     flex-grow: 1;
     width: 10px; }
     .tabListWrap .tabListItem.active {
-      background: #3291c8; }
+      background: #3e88b9; }
       .tabListWrap .tabListItem.active span {
         color: #ffffff; }
       .tabListWrap .tabListItem.active:after {
-        border-left-color: #3291c8; }
+        border-left-color: #3e88b9; }
     .tabListWrap .tabListItem + .tabListItem {
       padding-left: 33px; }
     .tabListWrap .tabListItem.passed {
