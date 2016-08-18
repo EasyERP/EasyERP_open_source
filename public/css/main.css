@@ -2874,6 +2874,648 @@ input::-ms-clear {
 .text-center {
   text-align: center;
 }
+/*
+.form(@width: 860px, @border: 1px, @background: @bg-main, @border-color: @border-color-main, @captionColor: @formColum-main-text-color, @usualText: @formColum-main-subText-color) {
+  width: @width;
+  max-width: @width;
+  margin: 0 auto;
+  background: @background;
+  min-height: 150px;
+  display: block;
+  position: relative;
+  border: @border solid @border-color;
+  #internalNotes {
+    resize: none;
+  }
+  #differenceAmount {
+    line-height: 26px;
+  }
+  &.employee {
+    width: 100%;
+    max-width: 100%;
+  }
+  .compactList {
+    li {
+      border-bottom: @thin-border @border-color;
+
+      &.inner {
+        margin: 0 !important;
+        padding: 4px 10px;
+
+        &:hover {
+          p {
+            color: @formColum-main-text-color;
+          }
+        }
+      }
+
+      p {
+        line-height: 20px !important;
+        min-height: 20px !important;
+        .text-overflow;
+      }
+    }
+  }
+  .formTitle {
+    width: 100%;
+    border-bottom: @thin-border @border-color;
+
+    &.withMargin {
+      margin-bottom: 0;
+    }
+
+    .btnHolder {
+      //.right;
+      float: right;
+
+      .calculateTotal {
+        .totalAmount {
+          border-top: 1px solid grey;
+          label, span {
+            //
+          }
+        }
+        width: 50%;
+        text-align: right;
+      }
+      height: 26px;
+    }
+
+    h3 {
+      color: @captionColor !important;
+      margin: 0;
+      font-family: @fontSemiBold;
+      font-size: 14px;
+      .text-overflow;
+      padding: 4px;
+
+      span {
+        width: inherit;
+        .text-overflow;
+        color: @captionColor;
+      }
+    }
+
+    .area_holder {
+      position: relative;
+
+      .attach_file {
+        position: absolute;
+        bottom: 5px;
+        right: 10px;
+        font-size: 18px;
+        color: @mainText-color;
+      }
+
+    }
+  }
+  h3 {
+    margin-bottom: 10px;
+    display: block;
+    color: @captionColor;
+    .text-overflow;
+
+    span {
+      padding: 0;
+      width: 99%;
+      display: block;
+      float: left;
+      .text-overflow;
+    }
+  }
+  .mainInfo {
+    margin-left: 156px;
+    width: auto;
+    display: block;
+
+    h3 {
+      color: @captionColor;
+      font-size: 24px;
+      line-height: 30px;
+      min-height: 24px;
+      font: @fontRegular;
+    }
+
+    p {
+      height: 20px !important;
+      line-height: 20px !important;
+      min-height: 20px !important;
+    }
+  }
+  .details {
+    border: @thin-border @border-color;
+    background: #cecece;
+    padding: 2px 3px;
+    line-height: 5px;
+    text-align: center;
+    color: #999;
+    cursor: pointer;
+    width: 12px;
+    height: 6px;
+
+    &.center {
+      margin: 0 auto;
+    }
+
+    &.person {
+      margin-top: -30px;
+      margin-right: -15px;
+      z-index: 100;
+      position: relative;
+    }
+  }
+  #details {
+    display: none;
+  }
+  .details-box {
+    display: none;
+  }
+  .social {
+    clear: both;
+    a {
+      display: block;
+      height: 28px;
+      width: 28px;
+
+      //.left;
+      float: left;
+
+      margin-right: 5px;
+      background-position: top;
+      -webkit-transition: background-position .1s ease-in;
+      -moz-transition: background-position .1s ease-in;
+      -o-transition: background-position .1s ease-in;
+      transition: background-position .1s ease-in;
+      &:hover {
+        background-position: bottom;
+      }
+    }
+
+    .facebook {
+      background: url("@{imagesfolder}/facebook.png");
+    }
+
+    .linkedin {
+      background: url("@{imagesfolder}/linkedin.png");
+    }
+
+    .skype {
+      background: url("@{imagesfolder}/skype.png");
+    }
+  }
+
+  .avatar {
+    //.avatar(140px, 10px, 0, 10px, 0);
+    //margin:10px 0 10px 0;
+
+    //.left;
+    float: left;
+
+    .box-shadow(0, 1px, 4px, rgba(0, 0, 0, 0.4));
+    position: relative;
+    border: none;
+
+    .upload {
+      overflow: hidden;
+      font-size: 15px;
+      line-height: 18px;
+      text-align: center;
+      display: block;
+      //.position;
+      height: 0;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      color: #fff;
+
+      input {
+        //.position;
+        opacity: 0;
+        .noPaddingMargin;
+        background: rgba(0, 0, 0, 0.5);
+        width: 100%;
+        height: 20px;
+      }
+    }
+  }
+
+  .inner {
+    .half-block {
+      textarea {
+        width: 99%;
+        resize: none;
+        padding: 10px 5px;
+      }
+    }
+  }
+
+  & > #tabList {
+    li {
+      //.left;
+      float: left;
+
+      margin: 0 2px 5px 0;
+    }
+  }
+
+  h2 {
+    font-family: @fontRegular;
+    color: @mainText-color;
+    .bold;
+    font-size: 24px !important;
+    margin-bottom: 12px;
+  }
+
+  h2:first-of-type {
+    font-size: 26px;
+    .bold;
+    color: @mainText-color;
+    margin: 0 0 8px;
+  }
+
+  p {
+    font-family: @fontRegular;
+    color: @mainText-color;
+    font-size: 13px;
+    line-height: 30px;
+    min-height: 30px;
+
+    label {
+      margin-bottom: 2px;
+    }
+
+    input {
+      margin-bottom: 2px;
+      width: 90%;
+    }
+
+    select {
+      margin-bottom: 2px;
+      width: 90%;
+    }
+  }
+
+  span {
+    //padding: 3px 8px 3px 0;
+    //&#editSpan {
+    //  a {
+    //    margin-left: 5px;
+    //    width: 16px;
+    //    height: 25px;
+    //    line-height: 16px;
+    //    font-size: 16px;
+    //    background: no-repeat 0 50%;
+    //    margin-right: 5px;
+    //    font-family: Icons;
+    //  }
+    //}
+    &#saveSpan, &#cancelSpan, &#editSpan {
+      a {
+        margin-left: 5px;
+        width: 16px;
+        height: 20px;
+        //line-height: 20px;
+        font-size: 16px;
+        background: no-repeat 0 50%;
+        margin-right: 5px;
+        font-family: Icons;
+      }
+
+      i {
+        margin: 0 5px;
+        //width: 16px;
+        //height: 20px;
+        line-height: 20px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+    }
+  }
+  #cancelSpan, #saveSpan, #editSpan {
+    a {
+      color: @formColum-customer-info;
+    }
+  }
+
+  label {
+    display: block;
+    float: left;
+    .bold;
+    width: 90%;
+    line-height: 26px;
+    color: @mainText-color;
+  }
+
+  textarea {
+    resize: none;
+  }
+  .job-create-info {
+    textarea {
+      height: 130px;
+      line-height: 20px;
+    }
+  }
+}
+*/
+/*
+.gradient(@color) {
+  @startcolor: @color + #111;
+  @endcolor: @color - #111;
+  background-color: @endcolor;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(@startcolor), to(@endcolor));
+  background-image: -webkit-linear-gradient(top, @startcolor, @endcolor);
+  background-image: -moz-linear-gradient(top, @startcolor, @endcolor);
+  background-image: -ms-linear-gradient(top, @startcolor, @endcolor);
+  background-image: -o-linear-gradient(top, @startcolor, @endcolor);
+  background-image: linear-gradient(to bottom, @startcolor, @endcolor);
+}
+
+*/
+/*
+.position(@type: absolute, @left: 0, @top: 0, @right: auto, @bottom: auto) {
+  position: @type;
+  left: @left;
+  top: @top;
+  right: @right;
+  bottom: @bottom;
+}
+*/
+/*
+.mainmenu(@defaultColor: #333,@activeColor: @bg-main-menu-selected, @height: 30px, @border-color: @border-color-main) {
+  display: block;
+  float: none;
+  //.position(fixed);
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  background: @bg-main;
+  height: @height;
+  .noPaddingMargin;
+  z-index: 1000;
+  nav {
+    //.left;
+    float: left;
+
+    background: @bg-main-menu;
+
+    ul {
+      .noPaddingMargin;
+      display: block;
+      height: @height;
+
+      li {
+        height: @height;
+        width: 120px;
+        text-align: center;
+        color: @main-menu-text;
+        line-height: @height;
+        overflow: hidden;
+        //.left;
+        float: left;
+        position: relative;
+        cursor: pointer;
+
+        a {
+          letter-spacing: 1.5px;
+          color: @main-menu-text;
+          font-size: 0.75rem;
+          text-decoration: none;
+          display: block;
+          .fullsize;
+          line-height: @height - 2px;
+          font-weight: 400;
+          text-transform: uppercase;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+
+        &.hover {
+          height: @height;
+
+          a {
+            text-decoration: underline;
+            display: block;
+          }
+        }
+
+        &.selected {
+          background-color: @activeColor;
+          height: @height;
+          border: 0;
+          -webkit-transition: all ease .5s;
+          -moz-transition: all ease .5s;
+          transition: all ease .5s;
+
+          a {
+            font-size: 0.75rem;
+            color: #fff;
+            text-decoration: none;
+            display: block;
+            letter-spacing: 1.5px;
+          }
+        }
+      }
+    }
+  }
+}
+*/
+/*
+.loginForm(@defaultWidth: 360px, @defaultMargin: 130px auto, @defaultMinHeight: 150px, @defaultBgColor: #fff, @defaultPadding: 20px 0 13px, @font-size: 24px) {
+  display: block;
+  width: @defaultWidth;
+  margin: @defaultMargin;
+  min-height: @defaultMinHeight;
+  background: @defaultBgColor;
+  border: @thin-border #ccc;
+  padding: @defaultPadding;
+  font-family: 'Open Sans', sans-serif;
+  input:focus {
+    outline: none;
+    .box-shadow(0, 0, 0, 0);
+    border: 0 !important;
+  }
+  .margin {
+    margin: 0 30px;
+  }
+  input {
+    &:not([type="checkbox"]) {
+      background: transparent;
+    }
+  }
+  input[type="submit"] {
+    height: 0;
+    width: 0;
+  }
+
+  .loginImage(@x: 0, @y: 0) {
+    background-image: url("@{imagesfolder}/login-sprite.png");
+    background-repeat: no-repeat;
+    background-position: @x @y;
+  }
+
+  .error {
+    padding-left: 30px;
+    line-height: 30px;
+    display: none;
+    color: red;
+  }
+
+  h2 {
+    font-weight: 300 !important;
+    font-size: @font-size;
+    margin: 25px 0 35px 30px;
+  }
+
+  .icon-pass,
+  .icon-login {
+    border: @thin-border #e5e5e5;
+    border-left: 2px solid #35aa74;
+    margin: 0 30px;
+
+    .icon {
+      margin: 8px 0 0 5px;
+      display: block;
+      width: 25px;
+      height: 19px;
+      margin-top: 10px;
+      .loginImage;
+      //.left;
+      float: left;
+    }
+
+    &.active {
+      border-color: #999;
+      border-left: 2px solid #35aa74;
+    }
+  }
+
+  &.notRegister {
+    .error {
+      display: block;
+    }
+
+    .icon-pass,
+    .icon-login {
+      border: @thin-border red;
+    }
+  }
+
+  .icon-login {
+    .icon {
+      background-position: 50% -48px;
+      height: 14px;
+    }
+  }
+
+  .icon-pass {
+    margin-bottom: 30px;
+
+    .icon {
+      background-position: 2px -62px;
+      height: 13px;
+    }
+  }
+
+  p {
+    margin: 10px 0;
+  }
+
+  h3 {
+    font-weight: 300 !important;
+    font-size: @font-size - 6;
+    color: #555;
+    margin-left: 30px;
+    padding: 20px 0 0;
+    overflow: inherit;
+  }
+
+  span.text {
+    line-height: 40px;
+    margin: 0 30px;
+    font-size: @font-size/2;
+
+    a {
+      font-size: @font-size/2;
+    }
+  }
+
+  .dotted-line {
+    margin: 0 30px 5px 30px;
+    border-top: 1px dotted #eee;
+  }
+
+  .login-button {
+    background-color: #35aa47;
+    padding: 11px 14px 11px 14px;
+    font-size: @font-size/2+2;
+    color: white;
+    float: right;
+    margin: -9px 30px 0 0;
+
+    &:hover {
+      text-decoration: none;
+      background-color: #1d943b;
+      color: white;
+    }
+
+
+  }
+
+  .remember-me {
+    position: relative;
+    padding-left: 25px;
+    margin-left: 30px;
+    font-size: @font-size/2+2;
+    line-height: 19px;
+    color: black;
+    //.left;
+    float: left;
+    .loginImage(0, 1px);
+
+    &:hover {
+      color: black;
+      background-position: 0 -20px;
+    }
+
+    .check {
+      .position(absolute, 5px, 5px);
+      display: none;
+      width: 9px;
+      height: 8px;
+      z-index: 1000;
+      //.left;
+      float: left;
+      .loginImage(50%, -40px);
+    }
+
+    &.active {
+      .check {
+        display: block;
+      }
+    }
+  }
+
+  .line {
+    height: 17px;
+    border-bottom: @thin-border #eee;
+    clear: both;
+  }
+
+  input {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 400;
+    color: #333;
+    padding-left: 3px;
+    border: 0;
+    width: 260px;
+    height: 30px;
+    font-size: 14px;
+  }
+}
+*/
 .thumbnail-text {
   color: #4c4c4c;
   font-size: 13px;
@@ -3172,6 +3814,113 @@ input::-ms-clear {
   text-align: left;
   color: #34495E;
 }
+/*
+.thumbnailwithavatar(@defaultWidth: 149px, @minHeight: 165px, @font-size: 12px, @defaultMargin: 7px 0 0 7px) {
+  display: block;
+  position: relative;
+  width: @defaultWidth;
+  min-height: @minHeight;
+  margin: @defaultMargin;
+  border: @thin-border transparent;
+  background: transparent !important;
+  text-align: center;
+  &.employee {
+    min-height: 225px;
+  }
+  .border-radius;
+  //.left;
+  float: left;
+  .info {
+    > * {
+      .text-overflow;
+
+    }
+    p {
+      line-height: 15px;
+      color: @mainText-color;
+
+      a {
+        color: @mainText-color;
+      }
+    }
+  }
+  //h4 {
+  //  color: @tilte-color;
+  //  font-size: @font-size;
+  //  line-height: 18px;
+  //  font-family: @lucida-font;
+  //  white-space: normal;
+  //  span {
+  //    .text-overflow;
+  //    white-space: normal;
+  //    width: 182px;
+  //  }
+  //  &:hover {
+  //    text-decoration: underline;
+  //    cursor: pointer;
+  //  }
+  //
+  //}
+  h4, .title {
+    color: @tilte-color;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 18px;
+    font-family: @fontRegular;
+    white-space: normal;
+    span {
+      .text-overflow;
+      white-space: normal;
+      width: 182px;
+    }
+  }
+
+  .inner {
+    cursor: pointer;
+    padding: 10px;
+
+    .info {
+      //.left;
+      float: left;
+
+      width: @defaultWidth - 20;
+
+      div {
+        .text-overflow;
+        text-align: center;
+      }
+
+      p {
+        font-family: @fontRegular;
+        color: #000;
+        font-size: @font-size;
+        font-weight: 200 !important;
+        line-height: 16px;
+        text-align: center;
+
+        a {
+          word-break: break-all;
+          word-wrap: break-word;
+        }
+      }
+    }
+  }
+
+  .avatar {
+    cursor: pointer;
+    .avatar(100px, 0, auto, 0, auto);
+    .border-radius(3px);
+    .box-shadow(0 1px 4px rgba(0, 0, 0, 0.4));
+  }
+
+  .email, .company {
+    color: @link-color;
+  }
+  .company {
+    color: @mainText-color;
+  }
+}
+*/
 .ui-datepicker {
   padding: .2em .2em 0;
   background-color: #ffffff;
@@ -3289,6 +4038,177 @@ input::-ms-clear {
   border: 1px solid #3e88b9 !important;
   color: #b4bcc8 !important;
 }
+/*
+.notdialogform(@width: 96%) {
+  border: none;
+  margin: 0 auto;
+  width: auto;
+  max-width: @width;
+  #description {
+    margin-top: 15px;
+  }
+
+  .buttons {
+    .dialog-buttons;
+  }
+
+  label {
+    font-weight: normal;
+    border: none;
+    //font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    display: inline;
+    float: none;
+    min-width: 10px;
+  }
+
+  //.dl-auto(160px, 40%, 18px, 18px, 10px);
+
+  dt{
+    padding: 1px;
+    margin: -1px;
+    width: 40%;
+    max-width: 160px;
+    float: left;
+    clear: both;
+    line-height: 18px;
+    min-height: 18px;
+    margin-top: 10px;
+    .text-overflow;
+    p {
+      word-wrap: break-word;
+      white-space: normal;
+    }
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  dd{
+    padding: 1px;
+    margin: -1px;
+    line-height: 18px;
+    min-height: 18px;
+    margin-top: 10px;
+    p {
+      word-wrap: break-word;
+      white-space: normal;
+    }
+    //.left;
+    float: left;
+
+    width: 100%-@with-dt;
+    //.text-overflow;
+    &:nth-child(2) {
+      margin-top: 0;
+    }
+
+    input:not([type='checkbox']) {
+      width: 100%;
+    }
+
+    input.pikerSize {
+      width: 137px;
+    }
+
+    a.formLink {
+      line-height: @line-height;
+    }
+    span {
+      &.ui-spinner {
+        width: 100%;
+      }
+    }
+  }
+
+  select {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    max-width: 290px;
+    width: 71%;
+    border: @thin-border #E2E9EF;
+    border-top-color: #CBD3E2;
+    color: #262626;
+    padding: 0;
+    height: 25px;
+
+    &:focus {
+      outline: -webkit-focus-ring-color auto 5px;
+    }
+  }
+
+  .inner {
+    margin-top: 0;
+  }
+
+  input:not([type=checkbox]) {
+    max-width: 280px;
+    background-color: transparent;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    padding: 0 4px;
+    color: @mainText-color;
+
+    &:focus {
+      outline: medium none;
+      border: @thin-border @border-color-selected;
+    }
+
+    &#editInput {
+      padding: 2px 6px;
+    }
+  }
+
+  .canReadAndWrite {
+    line-height: 22px;
+    margin: 10px 0 0 0;
+    padding-bottom: 10px;
+    input[type=radio] {
+      margin-top: 6px;
+      margin-right: 10px;
+      clear: both;
+      display: block;
+      float: left;
+      height: 16px;
+      &:focus {
+        box-shadow: none !important;
+      }
+    }
+  }
+
+  .mainInfo {
+    width: auto;
+    margin-left: 170px;
+  }
+
+  &.notDialog {
+    dl {
+      dt, dd {
+        line-height: 17px;
+      }
+      dd {
+        &.editable {
+          a {
+            line-height: 17px;
+            width: 100%;
+          }
+        }
+        &.cashBalance {
+
+        }
+      }
+      .no-long {
+        width: auto;
+        line-height: 17px;
+        float: left;
+        max-width: 95%;
+        color: @formColum-main-text-color;
+        .text-overflow;
+      }
+    }
+  }
+}
+*/
 .addUserDialog,
 .addGroupDialog {
   display: none;
@@ -3300,6 +4220,46 @@ input::-ms-clear {
   width: 180px;
   height: 200px;
 }
+/*
+.tabs(@marginTop: 0, @marginLeft: -20px) {
+  li {
+    float: left;
+
+    a {
+      border: @thin-border rgba(0, 0, 0, 0);
+      display: block;
+      float: left;
+      border-radius: 3px 3px 0 0;
+      padding-left: 20px;
+      padding-right: 20px;
+      height: 35px;
+      text-align: center;
+      line-height: 35px;
+      text-decoration: none;
+      color: @mainText-color;
+
+      &.active {
+        height: 35px;
+        line-height: 34px;
+        //border: @thin-border #DDD;
+        border-bottom: none;
+        background-color: @bg-main-menu-selected;
+        color: @whiteText;
+      }
+
+      &:hover {
+        //background-color: #EEE;
+      }
+    }
+    &.right {
+      float: right;
+      button {
+        margin-top: 4px;
+      }
+    }
+  }
+}
+*/
 .workflow-list-wrapper,
 .workflow-sub-list-wrapper {
   width: 170px;
@@ -3564,59 +4524,6 @@ body {
   font-size: 12px;
   height: 100%;
 }
-dl {
-  clear: both;
-  font-size: 14px;
-}
-dl dt {
-  padding: 1px;
-  margin: -1px;
-  width: 35%;
-  max-width: 120px;
-  float: left;
-  clear: both;
-  line-height: 0;
-  min-height: 18px;
-  margin-top: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-dl dt p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-dl dt:first-child {
-  margin-top: 0;
-}
-dl dd {
-  padding: 1px;
-  margin: -1px;
-  margin-top: 0;
-  line-height: 0;
-  min-height: 18px;
-  float: left;
-  width: 65%;
-}
-dl dd p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-dl dd:nth-child(2) {
-  margin-top: 0;
-}
-dl dd input:not([type='checkbox']) {
-  width: 100%;
-}
-dl dd input.pikerSize {
-  width: 137px;
-}
-dl dd a.formLink {
-  line-height: 0;
-}
-dl dd span.ui-spinner {
-  width: 100%;
-}
 .clear {
   content: "\0020";
   display: block;
@@ -3624,20 +4531,16 @@ dl dd span.ui-spinner {
   overflow: hidden;
 }
 .clearfix {
-  zoom: 1;
   clear: both;
 }
 .clearfix:before {
-  content: "\0020";
-  display: block;
-  height: 0;
-  overflow: hidden;
+  content: '';
+  display: table;
+  clear: both;
 }
 .clearfix:after {
-  content: "\0020";
-  display: block;
-  height: 0;
-  overflow: hidden;
+  content: '';
+  display: table;
   clear: both;
 }
 .left {
@@ -3670,312 +4573,6 @@ dl dd span.ui-spinner {
   display: block;
   position: relative;
   border: 1px solid #7f7f80;
-}
-.form #differenceAmount {
-  line-height: 26px;
-}
-.form.employee {
-  width: 100%;
-  max-width: 100%;
-}
-.form .compactList li {
-  border-bottom: 1px solid #7f7f80;
-}
-.form .compactList li.inner {
-  margin: 0 !important;
-  padding: 4px 10px;
-}
-.form .compactList li.inner:hover p {
-  color: #000000;
-}
-.form .compactList li p {
-  line-height: 20px !important;
-  min-height: 20px !important;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.form .formTitle {
-  width: 100%;
-  border-bottom: 1px solid #7f7f80;
-}
-.form .formTitle.withMargin {
-  margin-bottom: 0;
-}
-.form .formTitle .btnHolder {
-  float: right;
-  height: 26px;
-}
-.form .formTitle .btnHolder .calculateTotal {
-  width: 50%;
-  text-align: right;
-}
-.form .formTitle .btnHolder .calculateTotal .totalAmount {
-  border-top: 1px solid grey;
-}
-.form .formTitle h3 {
-  color: #000000 !important;
-  margin: 0;
-  font-family: Title;
-  font-size: 18px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  padding: 4px;
-}
-.form .formTitle h3 span {
-  width: inherit;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  color: #000000;
-}
-.form h3 {
-  margin-bottom: 10px;
-  display: block;
-  color: #000000;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.form h3 span {
-  padding: 0;
-  width: 99%;
-  display: block;
-  float: left;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.form .mainInfo {
-  margin-left: 156px;
-  width: auto;
-  display: block;
-}
-.form .mainInfo h3 {
-  color: #000000;
-  font-size: 24px;
-  line-height: 30px;
-  min-height: 24px;
-  font: 'Open Sans Regular', sans-serif, Verdana;
-}
-.form .mainInfo p {
-  height: 20px !important;
-  line-height: 20px !important;
-  min-height: 20px !important;
-}
-.form .details {
-  border: 1px solid #7f7f80;
-  background: #cecece;
-  padding: 2px 3px;
-  line-height: 5px;
-  text-align: center;
-  color: #999;
-  cursor: pointer;
-  width: 12px;
-  height: 6px;
-}
-.form .details.center {
-  margin: 0 auto;
-}
-.form .details.person {
-  margin-top: -30px;
-  margin-right: -15px;
-  z-index: 100;
-  position: relative;
-}
-.form #details {
-  display: none;
-}
-.form .details-box {
-  display: none;
-}
-.form .social {
-  clear: both;
-}
-.form .social a {
-  display: block;
-  height: 28px;
-  width: 28px;
-  float: left;
-  margin-right: 5px;
-  background-position: top;
-  -webkit-transition: background-position 0.1s ease-in;
-  -moz-transition: background-position 0.1s ease-in;
-  -o-transition: background-position 0.1s ease-in;
-  transition: background-position 0.1s ease-in;
-}
-.form .social a:hover {
-  background-position: bottom;
-}
-.form .social .facebook {
-  background: url("../images/facebook.png");
-}
-.form .social .linkedin {
-  background: url("../images/linkedin.png");
-}
-.form .social .skype {
-  background: url("../images/skype.png");
-}
-.form .avatar {
-  display: block;
-  overflow: hidden;
-  width: 140px;
-  height: 140px;
-  margin: 10px 0 10px 0;
-  float: left;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
-  -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
-  -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
-  position: relative;
-  border: none;
-}
-.form .avatar img {
-  height: auto;
-  width: 100%;
-}
-.form .avatar canvas {
-  height: auto;
-  width: 100%;
-}
-.form .avatar .upload {
-  overflow: hidden;
-  font-size: 15px;
-  line-height: 18px;
-  text-align: center;
-  display: block;
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: auto;
-  bottom: auto;
-  height: 0;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  color: #fff;
-}
-.form .avatar .upload input {
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: auto;
-  bottom: auto;
-  height: 20px;
-  opacity: 0;
-  background: rgba(0, 0, 0, 0.5);
-  margin: 0;
-  padding: 0;
-  width: 100%;
-}
-.form .avatar .upload {
-  overflow: hidden;
-  font-size: 15px;
-  line-height: 18px;
-  text-align: center;
-  display: block;
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: auto;
-  bottom: auto;
-  height: 0;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  color: #fff;
-}
-.form .avatar .upload input {
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: auto;
-  bottom: auto;
-  opacity: 0;
-  padding: 0;
-  margin: 0;
-  background: rgba(0, 0, 0, 0.5);
-  width: 100%;
-  height: 20px;
-}
-.form .inner .half-block textarea {
-  width: 99%;
-  resize: none;
-  padding: 10px 5px;
-}
-.form > #tabList li {
-  float: left;
-  margin: 0 2px 5px 0;
-}
-.form h2 {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
-  color: #000000;
-  font-size: 24px !important;
-  margin-bottom: 12px;
-}
-.form h2:first-of-type {
-  font-size: 26px;
-  color: #000000;
-  margin: 0 0 8px;
-}
-.form p {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
-  color: #000000;
-  font-size: 13px;
-  line-height: 30px;
-  min-height: 30px;
-}
-.form p label {
-  margin-bottom: 2px;
-}
-.form p input {
-  margin-bottom: 2px;
-  width: 90%;
-}
-.form p select {
-  margin-bottom: 2px;
-  width: 90%;
-}
-.form span#saveSpan a,
-.form span#cancelSpan a,
-.form span#editSpan a {
-  margin-left: 5px;
-  width: 16px;
-  height: 20px;
-  font-size: 16px;
-  background: no-repeat 0 50%;
-  margin-right: 5px;
-  font-family: Icons;
-}
-.form span#saveSpan i,
-.form span#cancelSpan i,
-.form span#editSpan i {
-  margin: 0 5px;
-  line-height: 20px;
-  font-size: 16px;
-  cursor: pointer;
-}
-.form #cancelSpan a,
-.form #saveSpan a,
-.form #editSpan a {
-  color: #3e88b9;
-}
-.form label {
-  display: block;
-  float: left;
-  width: 90%;
-  height: 30px;
-  line-height: 26px;
-  color: #000000;
-}
-.form textarea {
-  width: 99%;
-  min-height: 160px;
-  resize: none;
-}
-.form .job-create-info textarea {
-  width: 99%;
-  height: 160px;
-  resize: none;
-  line-height: 20px;
 }
 .form #internalNotes {
   resize: none;
@@ -4137,11 +4734,6 @@ dl dd span.ui-spinner {
   background: url("../images/skype.png");
 }
 .form .avatar {
-  display: block;
-  overflow: hidden;
-  width: 140px;
-  height: 140px;
-  margin: 10px 0 10px 0;
   float: left;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
   -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
@@ -4149,65 +4741,18 @@ dl dd span.ui-spinner {
   position: relative;
   border: none;
 }
-.form .avatar img {
-  height: auto;
-  width: 100%;
-}
-.form .avatar canvas {
-  height: auto;
-  width: 100%;
-}
 .form .avatar .upload {
   overflow: hidden;
   font-size: 15px;
   line-height: 18px;
   text-align: center;
   display: block;
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: auto;
-  bottom: auto;
   height: 0;
   width: 100%;
   background: rgba(0, 0, 0, 0.7);
   color: #fff;
 }
 .form .avatar .upload input {
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: auto;
-  bottom: auto;
-  height: 20px;
-  opacity: 0;
-  background: rgba(0, 0, 0, 0.5);
-  margin: 0;
-  padding: 0;
-  width: 100%;
-}
-.form .avatar .upload {
-  overflow: hidden;
-  font-size: 15px;
-  line-height: 18px;
-  text-align: center;
-  display: block;
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: auto;
-  bottom: auto;
-  height: 0;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  color: #fff;
-}
-.form .avatar .upload input {
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: auto;
-  bottom: auto;
   opacity: 0;
   padding: 0;
   margin: 0;
@@ -4291,241 +4836,6 @@ dl dd span.ui-spinner {
   height: 130px;
   line-height: 20px;
 }
-.form .noteWrapper .formTitle h3,
-.form .moduleList .formTitle h3 {
-  padding: 0;
-}
-.form .job-info {
-  clear: both;
-  font-size: 14px;
-  color: #000000;
-}
-.form .job-info dt {
-  padding: 1px;
-  margin: -1px;
-  width: 30%;
-  max-width: 300px;
-  float: left;
-  clear: both;
-  line-height: 30px;
-  min-height: 18px;
-  margin-top: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.form .job-info dt p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.form .job-info dt:first-child {
-  margin-top: 0;
-}
-.form .job-info dd {
-  padding: 1px;
-  margin: -1px;
-  margin-top: 0;
-  line-height: 30px;
-  min-height: 18px;
-  float: left;
-  width: 70%;
-}
-.form .job-info dd p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.form .job-info dd:nth-child(2) {
-  margin-top: 0;
-}
-.form .job-info dd input:not([type='checkbox']) {
-  width: 100%;
-}
-.form .job-info dd input.pikerSize {
-  width: 137px;
-}
-.form .job-info dd a.formLink {
-  line-height: 30px;
-}
-.form .job-info dd span.ui-spinner {
-  width: 100%;
-}
-.form .opp-info {
-  clear: both;
-  font-size: 14px;
-}
-.form .opp-info dt {
-  padding: 1px;
-  margin: -1px;
-  width: 40%;
-  max-width: 300px;
-  float: left;
-  clear: both;
-  line-height: 30px;
-  min-height: 18px;
-  margin-top: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.form .opp-info dt p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.form .opp-info dt:first-child {
-  margin-top: 0;
-}
-.form .opp-info dd {
-  padding: 1px;
-  margin: -1px;
-  margin-top: 0;
-  line-height: 30px;
-  min-height: 18px;
-  float: left;
-  width: 60%;
-}
-.form .opp-info dd p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.form .opp-info dd:nth-child(2) {
-  margin-top: 0;
-}
-.form .opp-info dd input:not([type='checkbox']) {
-  width: 100%;
-}
-.form .opp-info dd input.pikerSize {
-  width: 137px;
-}
-.form .opp-info dd a.formLink {
-  line-height: 30px;
-}
-.form .opp-info dd span.ui-spinner {
-  width: 100%;
-}
-.form .opp-info input {
-  width: 80% !important;
-}
-.form .internal-info {
-  clear: both;
-  font-size: 14px;
-}
-.form .internal-info dt {
-  padding: 1px;
-  margin: -1px;
-  width: 20%;
-  max-width: 132px;
-  float: left;
-  clear: both;
-  line-height: 30px;
-  min-height: 18px;
-  margin-top: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.form .internal-info dt p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.form .internal-info dt:first-child {
-  margin-top: 0;
-}
-.form .internal-info dd {
-  padding: 1px;
-  margin: -1px;
-  margin-top: 0;
-  line-height: 30px;
-  min-height: 18px;
-  float: left;
-  width: 80%;
-}
-.form .internal-info dd p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.form .internal-info dd:nth-child(2) {
-  margin-top: 0;
-}
-.form .internal-info dd input:not([type='checkbox']) {
-  width: 100%;
-}
-.form .internal-info dd input.pikerSize {
-  width: 137px;
-}
-.form .internal-info dd a.formLink {
-  line-height: 30px;
-}
-.form .internal-info dd span.ui-spinner {
-  width: 100%;
-}
-.form .internal-info textarea {
-  width: 94%;
-  resize: none;
-  padding: 5px;
-}
-.form .assignees-info {
-  clear: both;
-  font-size: 14px;
-}
-.form .assignees-info dt {
-  padding: 1px;
-  margin: -1px;
-  width: 20%;
-  max-width: 200px;
-  float: left;
-  clear: both;
-  line-height: 0;
-  min-height: 18px;
-  margin-top: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.form .assignees-info dt p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.form .assignees-info dt:first-child {
-  margin-top: 0;
-}
-.form .assignees-info dd {
-  padding: 1px;
-  margin: -1px;
-  margin-top: 0;
-  line-height: 0;
-  min-height: 18px;
-  float: left;
-  width: 80%;
-}
-.form .assignees-info dd p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.form .assignees-info dd:nth-child(2) {
-  margin-top: 0;
-}
-.form .assignees-info dd input:not([type='checkbox']) {
-  width: 100%;
-}
-.form .assignees-info dd input.pikerSize {
-  width: 137px;
-}
-.form .assignees-info dd a.formLink {
-  line-height: 0;
-}
-.form .assignees-info dd span.ui-spinner {
-  width: 100%;
-}
-.form .assignees-info input {
-  max-width: 180px !important;
-}
-.form .assignees-info select {
-  max-width: 190px !important;
-}
-.form .assignees-info .current-selected {
-  line-height: 27px !important;
-  color: #3e88b9;
-}
 .hidden {
   display: none !important;
 }
@@ -4539,634 +4849,8 @@ dl dd span.ui-spinner {
 }
 .formLeftColumn .form {
   width: 98%;
-  max-width: 98%;
-  margin: 0 auto;
-  background: #ffffff;
-  min-height: 150px;
-  display: block;
-  position: relative;
-  border: 0 solid #7f7f80;
+  border: 0;
   margin-bottom: 10px;
-}
-.formLeftColumn .form #differenceAmount {
-  line-height: 26px;
-}
-.formLeftColumn .form.employee {
-  width: 100%;
-  max-width: 100%;
-}
-.formLeftColumn .form .compactList li {
-  border-bottom: 1px solid #7f7f80;
-}
-.formLeftColumn .form .compactList li.inner {
-  margin: 0 !important;
-  padding: 4px 10px;
-}
-.formLeftColumn .form .compactList li.inner:hover p {
-  color: #000000;
-}
-.formLeftColumn .form .compactList li p {
-  line-height: 20px !important;
-  min-height: 20px !important;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.formLeftColumn .form .formTitle {
-  width: 100%;
-  border-bottom: 1px solid #7f7f80;
-}
-.formLeftColumn .form .formTitle.withMargin {
-  margin-bottom: 0;
-}
-.formLeftColumn .form .formTitle .btnHolder {
-  float: right;
-  height: 26px;
-}
-.formLeftColumn .form .formTitle .btnHolder .calculateTotal {
-  width: 50%;
-  text-align: right;
-}
-.formLeftColumn .form .formTitle .btnHolder .calculateTotal .totalAmount {
-  border-top: 1px solid grey;
-}
-.formLeftColumn .form .formTitle h3 {
-  color: #000000 !important;
-  margin: 0;
-  font-family: Title;
-  font-size: 18px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  padding: 4px;
-}
-.formLeftColumn .form .formTitle h3 span {
-  width: inherit;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  color: #000000;
-}
-.formLeftColumn .form h3 {
-  margin-bottom: 10px;
-  display: block;
-  color: #000000;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.formLeftColumn .form h3 span {
-  padding: 0;
-  width: 99%;
-  display: block;
-  float: left;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.formLeftColumn .form .mainInfo {
-  margin-left: 156px;
-  width: auto;
-  display: block;
-}
-.formLeftColumn .form .mainInfo h3 {
-  color: #000000;
-  font-size: 24px;
-  line-height: 30px;
-  min-height: 24px;
-  font: 'Open Sans Regular', sans-serif, Verdana;
-}
-.formLeftColumn .form .mainInfo p {
-  height: 20px !important;
-  line-height: 20px !important;
-  min-height: 20px !important;
-}
-.formLeftColumn .form .details {
-  border: 1px solid #7f7f80;
-  background: #cecece;
-  padding: 2px 3px;
-  line-height: 5px;
-  text-align: center;
-  color: #999;
-  cursor: pointer;
-  width: 12px;
-  height: 6px;
-}
-.formLeftColumn .form .details.center {
-  margin: 0 auto;
-}
-.formLeftColumn .form .details.person {
-  margin-top: -30px;
-  margin-right: -15px;
-  z-index: 100;
-  position: relative;
-}
-.formLeftColumn .form #details {
-  display: none;
-}
-.formLeftColumn .form .details-box {
-  display: none;
-}
-.formLeftColumn .form .social {
-  clear: both;
-}
-.formLeftColumn .form .social a {
-  display: block;
-  height: 28px;
-  width: 28px;
-  float: left;
-  margin-right: 5px;
-  background-position: top;
-  -webkit-transition: background-position 0.1s ease-in;
-  -moz-transition: background-position 0.1s ease-in;
-  -o-transition: background-position 0.1s ease-in;
-  transition: background-position 0.1s ease-in;
-}
-.formLeftColumn .form .social a:hover {
-  background-position: bottom;
-}
-.formLeftColumn .form .social .facebook {
-  background: url("../images/facebook.png");
-}
-.formLeftColumn .form .social .linkedin {
-  background: url("../images/linkedin.png");
-}
-.formLeftColumn .form .social .skype {
-  background: url("../images/skype.png");
-}
-.formLeftColumn .form .avatar {
-  display: block;
-  overflow: hidden;
-  width: 140px;
-  height: 140px;
-  margin: 10px 0 10px 0;
-  float: left;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
-  -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
-  -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
-  position: relative;
-  border: none;
-}
-.formLeftColumn .form .avatar img {
-  height: auto;
-  width: 100%;
-}
-.formLeftColumn .form .avatar canvas {
-  height: auto;
-  width: 100%;
-}
-.formLeftColumn .form .avatar .upload {
-  overflow: hidden;
-  font-size: 15px;
-  line-height: 18px;
-  text-align: center;
-  display: block;
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: auto;
-  bottom: auto;
-  height: 0;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  color: #fff;
-}
-.formLeftColumn .form .avatar .upload input {
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: auto;
-  bottom: auto;
-  height: 20px;
-  opacity: 0;
-  background: rgba(0, 0, 0, 0.5);
-  margin: 0;
-  padding: 0;
-  width: 100%;
-}
-.formLeftColumn .form .avatar .upload {
-  overflow: hidden;
-  font-size: 15px;
-  line-height: 18px;
-  text-align: center;
-  display: block;
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: auto;
-  bottom: auto;
-  height: 0;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  color: #fff;
-}
-.formLeftColumn .form .avatar .upload input {
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: auto;
-  bottom: auto;
-  opacity: 0;
-  padding: 0;
-  margin: 0;
-  background: rgba(0, 0, 0, 0.5);
-  width: 100%;
-  height: 20px;
-}
-.formLeftColumn .form .inner .half-block textarea {
-  width: 99%;
-  resize: none;
-  padding: 10px 5px;
-}
-.formLeftColumn .form > #tabList li {
-  float: left;
-  margin: 0 2px 5px 0;
-}
-.formLeftColumn .form h2 {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
-  color: #000000;
-  font-size: 24px !important;
-  margin-bottom: 12px;
-}
-.formLeftColumn .form h2:first-of-type {
-  font-size: 26px;
-  color: #000000;
-  margin: 0 0 8px;
-}
-.formLeftColumn .form p {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
-  color: #000000;
-  font-size: 13px;
-  line-height: 30px;
-  min-height: 30px;
-}
-.formLeftColumn .form p label {
-  margin-bottom: 2px;
-}
-.formLeftColumn .form p input {
-  margin-bottom: 2px;
-  width: 90%;
-}
-.formLeftColumn .form p select {
-  margin-bottom: 2px;
-  width: 90%;
-}
-.formLeftColumn .form span#saveSpan a,
-.formLeftColumn .form span#cancelSpan a,
-.formLeftColumn .form span#editSpan a {
-  margin-left: 5px;
-  width: 16px;
-  height: 20px;
-  font-size: 16px;
-  background: no-repeat 0 50%;
-  margin-right: 5px;
-  font-family: Icons;
-}
-.formLeftColumn .form span#saveSpan i,
-.formLeftColumn .form span#cancelSpan i,
-.formLeftColumn .form span#editSpan i {
-  margin: 0 5px;
-  line-height: 20px;
-  font-size: 16px;
-  cursor: pointer;
-}
-.formLeftColumn .form #cancelSpan a,
-.formLeftColumn .form #saveSpan a,
-.formLeftColumn .form #editSpan a {
-  color: #3e88b9;
-}
-.formLeftColumn .form label {
-  display: block;
-  float: left;
-  width: 90%;
-  height: 30px;
-  line-height: 26px;
-  color: #000000;
-}
-.formLeftColumn .form textarea {
-  width: 99%;
-  min-height: 160px;
-  resize: none;
-}
-.formLeftColumn .form .job-create-info textarea {
-  width: 99%;
-  height: 160px;
-  resize: none;
-  line-height: 20px;
-}
-.formLeftColumn .form #internalNotes {
-  resize: none;
-}
-.formLeftColumn .form #differenceAmount {
-  line-height: 26px;
-}
-.formLeftColumn .form.employee {
-  width: 100%;
-  max-width: 100%;
-}
-.formLeftColumn .form .compactList li {
-  border-bottom: 1px solid #7f7f80;
-}
-.formLeftColumn .form .compactList li.inner {
-  margin: 0 !important;
-  padding: 4px 10px;
-}
-.formLeftColumn .form .compactList li.inner:hover p {
-  color: #000000;
-}
-.formLeftColumn .form .compactList li p {
-  line-height: 20px !important;
-  min-height: 20px !important;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.formLeftColumn .form .formTitle {
-  width: 100%;
-  border-bottom: 1px solid #7f7f80;
-}
-.formLeftColumn .form .formTitle.withMargin {
-  margin-bottom: 0;
-}
-.formLeftColumn .form .formTitle .btnHolder {
-  float: right;
-  height: 26px;
-}
-.formLeftColumn .form .formTitle .btnHolder .calculateTotal {
-  width: 50%;
-  text-align: right;
-}
-.formLeftColumn .form .formTitle .btnHolder .calculateTotal .totalAmount {
-  border-top: 1px solid grey;
-}
-.formLeftColumn .form .formTitle h3 {
-  color: #000000 !important;
-  margin: 0;
-  font-family: 'Open Sans SemiBold', sans-serif, Verdana;
-  font-size: 14px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  padding: 4px;
-}
-.formLeftColumn .form .formTitle h3 span {
-  width: inherit;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  color: #000000;
-}
-.formLeftColumn .form .formTitle .area_holder {
-  position: relative;
-}
-.formLeftColumn .form .formTitle .area_holder .attach_file {
-  position: absolute;
-  bottom: 5px;
-  right: 10px;
-  font-size: 18px;
-  color: #000000;
-}
-.formLeftColumn .form h3 {
-  margin-bottom: 10px;
-  display: block;
-  color: #000000;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.formLeftColumn .form h3 span {
-  padding: 0;
-  width: 99%;
-  display: block;
-  float: left;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.formLeftColumn .form .mainInfo {
-  margin-left: 156px;
-  width: auto;
-  display: block;
-}
-.formLeftColumn .form .mainInfo h3 {
-  color: #000000;
-  font-size: 24px;
-  line-height: 30px;
-  min-height: 24px;
-  font: 'Open Sans Regular', sans-serif, Verdana;
-}
-.formLeftColumn .form .mainInfo p {
-  height: 20px !important;
-  line-height: 20px !important;
-  min-height: 20px !important;
-}
-.formLeftColumn .form .details {
-  border: 1px solid #7f7f80;
-  background: #cecece;
-  padding: 2px 3px;
-  line-height: 5px;
-  text-align: center;
-  color: #999;
-  cursor: pointer;
-  width: 12px;
-  height: 6px;
-}
-.formLeftColumn .form .details.center {
-  margin: 0 auto;
-}
-.formLeftColumn .form .details.person {
-  margin-top: -30px;
-  margin-right: -15px;
-  z-index: 100;
-  position: relative;
-}
-.formLeftColumn .form #details {
-  display: none;
-}
-.formLeftColumn .form .details-box {
-  display: none;
-}
-.formLeftColumn .form .social {
-  clear: both;
-}
-.formLeftColumn .form .social a {
-  display: block;
-  height: 28px;
-  width: 28px;
-  float: left;
-  margin-right: 5px;
-  background-position: top;
-  -webkit-transition: background-position 0.1s ease-in;
-  -moz-transition: background-position 0.1s ease-in;
-  -o-transition: background-position 0.1s ease-in;
-  transition: background-position 0.1s ease-in;
-}
-.formLeftColumn .form .social a:hover {
-  background-position: bottom;
-}
-.formLeftColumn .form .social .facebook {
-  background: url("../images/facebook.png");
-}
-.formLeftColumn .form .social .linkedin {
-  background: url("../images/linkedin.png");
-}
-.formLeftColumn .form .social .skype {
-  background: url("../images/skype.png");
-}
-.formLeftColumn .form .avatar {
-  display: block;
-  overflow: hidden;
-  width: 140px;
-  height: 140px;
-  margin: 10px 0 10px 0;
-  float: left;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
-  -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
-  -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
-  position: relative;
-  border: none;
-}
-.formLeftColumn .form .avatar img {
-  height: auto;
-  width: 100%;
-}
-.formLeftColumn .form .avatar canvas {
-  height: auto;
-  width: 100%;
-}
-.formLeftColumn .form .avatar .upload {
-  overflow: hidden;
-  font-size: 15px;
-  line-height: 18px;
-  text-align: center;
-  display: block;
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: auto;
-  bottom: auto;
-  height: 0;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  color: #fff;
-}
-.formLeftColumn .form .avatar .upload input {
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: auto;
-  bottom: auto;
-  height: 20px;
-  opacity: 0;
-  background: rgba(0, 0, 0, 0.5);
-  margin: 0;
-  padding: 0;
-  width: 100%;
-}
-.formLeftColumn .form .avatar .upload {
-  overflow: hidden;
-  font-size: 15px;
-  line-height: 18px;
-  text-align: center;
-  display: block;
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: auto;
-  bottom: auto;
-  height: 0;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  color: #fff;
-}
-.formLeftColumn .form .avatar .upload input {
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: auto;
-  bottom: auto;
-  opacity: 0;
-  padding: 0;
-  margin: 0;
-  background: rgba(0, 0, 0, 0.5);
-  width: 100%;
-  height: 20px;
-}
-.formLeftColumn .form .inner .half-block textarea {
-  width: 99%;
-  resize: none;
-  padding: 10px 5px;
-}
-.formLeftColumn .form > #tabList li {
-  float: left;
-  margin: 0 2px 5px 0;
-}
-.formLeftColumn .form h2 {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
-  color: #000000;
-  font-size: 24px !important;
-  margin-bottom: 12px;
-}
-.formLeftColumn .form h2:first-of-type {
-  font-size: 26px;
-  color: #000000;
-  margin: 0 0 8px;
-}
-.formLeftColumn .form p {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
-  color: #000000;
-  font-size: 13px;
-  line-height: 30px;
-  min-height: 30px;
-}
-.formLeftColumn .form p label {
-  margin-bottom: 2px;
-}
-.formLeftColumn .form p input {
-  margin-bottom: 2px;
-  width: 90%;
-}
-.formLeftColumn .form p select {
-  margin-bottom: 2px;
-  width: 90%;
-}
-.formLeftColumn .form span#saveSpan a,
-.formLeftColumn .form span#cancelSpan a,
-.formLeftColumn .form span#editSpan a {
-  margin-left: 5px;
-  width: 16px;
-  height: 20px;
-  font-size: 16px;
-  background: no-repeat 0 50%;
-  margin-right: 5px;
-  font-family: Icons;
-}
-.formLeftColumn .form span#saveSpan i,
-.formLeftColumn .form span#cancelSpan i,
-.formLeftColumn .form span#editSpan i {
-  margin: 0 5px;
-  line-height: 20px;
-  font-size: 16px;
-  cursor: pointer;
-}
-.formLeftColumn .form #cancelSpan a,
-.formLeftColumn .form #saveSpan a,
-.formLeftColumn .form #editSpan a {
-  color: #3e88b9;
-}
-.formLeftColumn .form label {
-  display: block;
-  float: left;
-  width: 90%;
-  line-height: 26px;
-  color: #000000;
-}
-.formLeftColumn .form textarea {
-  resize: none;
-}
-.formLeftColumn .form .job-create-info textarea {
-  height: 130px;
-  line-height: 20px;
 }
 .formLeftColumn .edited-block p,
 .formLeftColumn .edited-block span {
@@ -5182,634 +4866,8 @@ dl dd span.ui-spinner {
 }
 .formRightColumn .form {
   width: 98%;
-  max-width: 98%;
-  margin: 0 auto;
-  background: #ffffff;
-  min-height: 150px;
-  display: block;
-  position: relative;
-  border: 0 solid #7f7f80;
+  border: 0;
   margin-bottom: 10px;
-}
-.formRightColumn .form #differenceAmount {
-  line-height: 26px;
-}
-.formRightColumn .form.employee {
-  width: 100%;
-  max-width: 100%;
-}
-.formRightColumn .form .compactList li {
-  border-bottom: 1px solid #7f7f80;
-}
-.formRightColumn .form .compactList li.inner {
-  margin: 0 !important;
-  padding: 4px 10px;
-}
-.formRightColumn .form .compactList li.inner:hover p {
-  color: #000000;
-}
-.formRightColumn .form .compactList li p {
-  line-height: 20px !important;
-  min-height: 20px !important;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.formRightColumn .form .formTitle {
-  width: 100%;
-  border-bottom: 1px solid #7f7f80;
-}
-.formRightColumn .form .formTitle.withMargin {
-  margin-bottom: 0;
-}
-.formRightColumn .form .formTitle .btnHolder {
-  float: right;
-  height: 26px;
-}
-.formRightColumn .form .formTitle .btnHolder .calculateTotal {
-  width: 50%;
-  text-align: right;
-}
-.formRightColumn .form .formTitle .btnHolder .calculateTotal .totalAmount {
-  border-top: 1px solid grey;
-}
-.formRightColumn .form .formTitle h3 {
-  color: #000000 !important;
-  margin: 0;
-  font-family: Title;
-  font-size: 18px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  padding: 4px;
-}
-.formRightColumn .form .formTitle h3 span {
-  width: inherit;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  color: #000000;
-}
-.formRightColumn .form h3 {
-  margin-bottom: 10px;
-  display: block;
-  color: #000000;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.formRightColumn .form h3 span {
-  padding: 0;
-  width: 99%;
-  display: block;
-  float: left;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.formRightColumn .form .mainInfo {
-  margin-left: 156px;
-  width: auto;
-  display: block;
-}
-.formRightColumn .form .mainInfo h3 {
-  color: #000000;
-  font-size: 24px;
-  line-height: 30px;
-  min-height: 24px;
-  font: 'Open Sans Regular', sans-serif, Verdana;
-}
-.formRightColumn .form .mainInfo p {
-  height: 20px !important;
-  line-height: 20px !important;
-  min-height: 20px !important;
-}
-.formRightColumn .form .details {
-  border: 1px solid #7f7f80;
-  background: #cecece;
-  padding: 2px 3px;
-  line-height: 5px;
-  text-align: center;
-  color: #999;
-  cursor: pointer;
-  width: 12px;
-  height: 6px;
-}
-.formRightColumn .form .details.center {
-  margin: 0 auto;
-}
-.formRightColumn .form .details.person {
-  margin-top: -30px;
-  margin-right: -15px;
-  z-index: 100;
-  position: relative;
-}
-.formRightColumn .form #details {
-  display: none;
-}
-.formRightColumn .form .details-box {
-  display: none;
-}
-.formRightColumn .form .social {
-  clear: both;
-}
-.formRightColumn .form .social a {
-  display: block;
-  height: 28px;
-  width: 28px;
-  float: left;
-  margin-right: 5px;
-  background-position: top;
-  -webkit-transition: background-position 0.1s ease-in;
-  -moz-transition: background-position 0.1s ease-in;
-  -o-transition: background-position 0.1s ease-in;
-  transition: background-position 0.1s ease-in;
-}
-.formRightColumn .form .social a:hover {
-  background-position: bottom;
-}
-.formRightColumn .form .social .facebook {
-  background: url("../images/facebook.png");
-}
-.formRightColumn .form .social .linkedin {
-  background: url("../images/linkedin.png");
-}
-.formRightColumn .form .social .skype {
-  background: url("../images/skype.png");
-}
-.formRightColumn .form .avatar {
-  display: block;
-  overflow: hidden;
-  width: 140px;
-  height: 140px;
-  margin: 10px 0 10px 0;
-  float: left;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
-  -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
-  -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
-  position: relative;
-  border: none;
-}
-.formRightColumn .form .avatar img {
-  height: auto;
-  width: 100%;
-}
-.formRightColumn .form .avatar canvas {
-  height: auto;
-  width: 100%;
-}
-.formRightColumn .form .avatar .upload {
-  overflow: hidden;
-  font-size: 15px;
-  line-height: 18px;
-  text-align: center;
-  display: block;
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: auto;
-  bottom: auto;
-  height: 0;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  color: #fff;
-}
-.formRightColumn .form .avatar .upload input {
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: auto;
-  bottom: auto;
-  height: 20px;
-  opacity: 0;
-  background: rgba(0, 0, 0, 0.5);
-  margin: 0;
-  padding: 0;
-  width: 100%;
-}
-.formRightColumn .form .avatar .upload {
-  overflow: hidden;
-  font-size: 15px;
-  line-height: 18px;
-  text-align: center;
-  display: block;
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: auto;
-  bottom: auto;
-  height: 0;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  color: #fff;
-}
-.formRightColumn .form .avatar .upload input {
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: auto;
-  bottom: auto;
-  opacity: 0;
-  padding: 0;
-  margin: 0;
-  background: rgba(0, 0, 0, 0.5);
-  width: 100%;
-  height: 20px;
-}
-.formRightColumn .form .inner .half-block textarea {
-  width: 99%;
-  resize: none;
-  padding: 10px 5px;
-}
-.formRightColumn .form > #tabList li {
-  float: left;
-  margin: 0 2px 5px 0;
-}
-.formRightColumn .form h2 {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
-  color: #000000;
-  font-size: 24px !important;
-  margin-bottom: 12px;
-}
-.formRightColumn .form h2:first-of-type {
-  font-size: 26px;
-  color: #000000;
-  margin: 0 0 8px;
-}
-.formRightColumn .form p {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
-  color: #000000;
-  font-size: 13px;
-  line-height: 30px;
-  min-height: 30px;
-}
-.formRightColumn .form p label {
-  margin-bottom: 2px;
-}
-.formRightColumn .form p input {
-  margin-bottom: 2px;
-  width: 90%;
-}
-.formRightColumn .form p select {
-  margin-bottom: 2px;
-  width: 90%;
-}
-.formRightColumn .form span#saveSpan a,
-.formRightColumn .form span#cancelSpan a,
-.formRightColumn .form span#editSpan a {
-  margin-left: 5px;
-  width: 16px;
-  height: 20px;
-  font-size: 16px;
-  background: no-repeat 0 50%;
-  margin-right: 5px;
-  font-family: Icons;
-}
-.formRightColumn .form span#saveSpan i,
-.formRightColumn .form span#cancelSpan i,
-.formRightColumn .form span#editSpan i {
-  margin: 0 5px;
-  line-height: 20px;
-  font-size: 16px;
-  cursor: pointer;
-}
-.formRightColumn .form #cancelSpan a,
-.formRightColumn .form #saveSpan a,
-.formRightColumn .form #editSpan a {
-  color: #3e88b9;
-}
-.formRightColumn .form label {
-  display: block;
-  float: left;
-  width: 90%;
-  height: 30px;
-  line-height: 26px;
-  color: #000000;
-}
-.formRightColumn .form textarea {
-  width: 99%;
-  min-height: 160px;
-  resize: none;
-}
-.formRightColumn .form .job-create-info textarea {
-  width: 99%;
-  height: 160px;
-  resize: none;
-  line-height: 20px;
-}
-.formRightColumn .form #internalNotes {
-  resize: none;
-}
-.formRightColumn .form #differenceAmount {
-  line-height: 26px;
-}
-.formRightColumn .form.employee {
-  width: 100%;
-  max-width: 100%;
-}
-.formRightColumn .form .compactList li {
-  border-bottom: 1px solid #7f7f80;
-}
-.formRightColumn .form .compactList li.inner {
-  margin: 0 !important;
-  padding: 4px 10px;
-}
-.formRightColumn .form .compactList li.inner:hover p {
-  color: #000000;
-}
-.formRightColumn .form .compactList li p {
-  line-height: 20px !important;
-  min-height: 20px !important;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.formRightColumn .form .formTitle {
-  width: 100%;
-  border-bottom: 1px solid #7f7f80;
-}
-.formRightColumn .form .formTitle.withMargin {
-  margin-bottom: 0;
-}
-.formRightColumn .form .formTitle .btnHolder {
-  float: right;
-  height: 26px;
-}
-.formRightColumn .form .formTitle .btnHolder .calculateTotal {
-  width: 50%;
-  text-align: right;
-}
-.formRightColumn .form .formTitle .btnHolder .calculateTotal .totalAmount {
-  border-top: 1px solid grey;
-}
-.formRightColumn .form .formTitle h3 {
-  color: #000000 !important;
-  margin: 0;
-  font-family: 'Open Sans SemiBold', sans-serif, Verdana;
-  font-size: 14px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  padding: 4px;
-}
-.formRightColumn .form .formTitle h3 span {
-  width: inherit;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  color: #000000;
-}
-.formRightColumn .form .formTitle .area_holder {
-  position: relative;
-}
-.formRightColumn .form .formTitle .area_holder .attach_file {
-  position: absolute;
-  bottom: 5px;
-  right: 10px;
-  font-size: 18px;
-  color: #000000;
-}
-.formRightColumn .form h3 {
-  margin-bottom: 10px;
-  display: block;
-  color: #000000;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.formRightColumn .form h3 span {
-  padding: 0;
-  width: 99%;
-  display: block;
-  float: left;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.formRightColumn .form .mainInfo {
-  margin-left: 156px;
-  width: auto;
-  display: block;
-}
-.formRightColumn .form .mainInfo h3 {
-  color: #000000;
-  font-size: 24px;
-  line-height: 30px;
-  min-height: 24px;
-  font: 'Open Sans Regular', sans-serif, Verdana;
-}
-.formRightColumn .form .mainInfo p {
-  height: 20px !important;
-  line-height: 20px !important;
-  min-height: 20px !important;
-}
-.formRightColumn .form .details {
-  border: 1px solid #7f7f80;
-  background: #cecece;
-  padding: 2px 3px;
-  line-height: 5px;
-  text-align: center;
-  color: #999;
-  cursor: pointer;
-  width: 12px;
-  height: 6px;
-}
-.formRightColumn .form .details.center {
-  margin: 0 auto;
-}
-.formRightColumn .form .details.person {
-  margin-top: -30px;
-  margin-right: -15px;
-  z-index: 100;
-  position: relative;
-}
-.formRightColumn .form #details {
-  display: none;
-}
-.formRightColumn .form .details-box {
-  display: none;
-}
-.formRightColumn .form .social {
-  clear: both;
-}
-.formRightColumn .form .social a {
-  display: block;
-  height: 28px;
-  width: 28px;
-  float: left;
-  margin-right: 5px;
-  background-position: top;
-  -webkit-transition: background-position 0.1s ease-in;
-  -moz-transition: background-position 0.1s ease-in;
-  -o-transition: background-position 0.1s ease-in;
-  transition: background-position 0.1s ease-in;
-}
-.formRightColumn .form .social a:hover {
-  background-position: bottom;
-}
-.formRightColumn .form .social .facebook {
-  background: url("../images/facebook.png");
-}
-.formRightColumn .form .social .linkedin {
-  background: url("../images/linkedin.png");
-}
-.formRightColumn .form .social .skype {
-  background: url("../images/skype.png");
-}
-.formRightColumn .form .avatar {
-  display: block;
-  overflow: hidden;
-  width: 140px;
-  height: 140px;
-  margin: 10px 0 10px 0;
-  float: left;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
-  -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
-  -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
-  position: relative;
-  border: none;
-}
-.formRightColumn .form .avatar img {
-  height: auto;
-  width: 100%;
-}
-.formRightColumn .form .avatar canvas {
-  height: auto;
-  width: 100%;
-}
-.formRightColumn .form .avatar .upload {
-  overflow: hidden;
-  font-size: 15px;
-  line-height: 18px;
-  text-align: center;
-  display: block;
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: auto;
-  bottom: auto;
-  height: 0;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  color: #fff;
-}
-.formRightColumn .form .avatar .upload input {
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: auto;
-  bottom: auto;
-  height: 20px;
-  opacity: 0;
-  background: rgba(0, 0, 0, 0.5);
-  margin: 0;
-  padding: 0;
-  width: 100%;
-}
-.formRightColumn .form .avatar .upload {
-  overflow: hidden;
-  font-size: 15px;
-  line-height: 18px;
-  text-align: center;
-  display: block;
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: auto;
-  bottom: auto;
-  height: 0;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  color: #fff;
-}
-.formRightColumn .form .avatar .upload input {
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: auto;
-  bottom: auto;
-  opacity: 0;
-  padding: 0;
-  margin: 0;
-  background: rgba(0, 0, 0, 0.5);
-  width: 100%;
-  height: 20px;
-}
-.formRightColumn .form .inner .half-block textarea {
-  width: 99%;
-  resize: none;
-  padding: 10px 5px;
-}
-.formRightColumn .form > #tabList li {
-  float: left;
-  margin: 0 2px 5px 0;
-}
-.formRightColumn .form h2 {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
-  color: #000000;
-  font-size: 24px !important;
-  margin-bottom: 12px;
-}
-.formRightColumn .form h2:first-of-type {
-  font-size: 26px;
-  color: #000000;
-  margin: 0 0 8px;
-}
-.formRightColumn .form p {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
-  color: #000000;
-  font-size: 13px;
-  line-height: 30px;
-  min-height: 30px;
-}
-.formRightColumn .form p label {
-  margin-bottom: 2px;
-}
-.formRightColumn .form p input {
-  margin-bottom: 2px;
-  width: 90%;
-}
-.formRightColumn .form p select {
-  margin-bottom: 2px;
-  width: 90%;
-}
-.formRightColumn .form span#saveSpan a,
-.formRightColumn .form span#cancelSpan a,
-.formRightColumn .form span#editSpan a {
-  margin-left: 5px;
-  width: 16px;
-  height: 20px;
-  font-size: 16px;
-  background: no-repeat 0 50%;
-  margin-right: 5px;
-  font-family: Icons;
-}
-.formRightColumn .form span#saveSpan i,
-.formRightColumn .form span#cancelSpan i,
-.formRightColumn .form span#editSpan i {
-  margin: 0 5px;
-  line-height: 20px;
-  font-size: 16px;
-  cursor: pointer;
-}
-.formRightColumn .form #cancelSpan a,
-.formRightColumn .form #saveSpan a,
-.formRightColumn .form #editSpan a {
-  color: #3e88b9;
-}
-.formRightColumn .form label {
-  display: block;
-  float: left;
-  width: 90%;
-  line-height: 26px;
-  color: #000000;
-}
-.formRightColumn .form textarea {
-  resize: none;
-}
-.formRightColumn .form .job-create-info textarea {
-  height: 130px;
-  line-height: 20px;
 }
 .noteWrapper {
   width: 100%;
@@ -6012,25 +5070,11 @@ dl dd span.ui-spinner {
   height: 100%;
 }
 #wrapper {
-  zoom: 1;
   min-width: 100%;
   height: 100%;
   position: absolute;
   clear: both;
   box-sizing: border-box;
-}
-#wrapper:before {
-  content: "\0020";
-  display: block;
-  height: 0;
-  overflow: hidden;
-}
-#wrapper:after {
-  content: "\0020";
-  display: block;
-  height: 0;
-  overflow: hidden;
-  clear: both;
 }
 #wrapper #content-holder {
   position: relative;
@@ -6065,226 +5109,24 @@ dl dd span.ui-spinner {
   padding: 0 !important;
   color: #3e88b9;
 }
-.settings-info {
-  clear: both;
-  font-size: 14px;
-}
-.settings-info dt {
-  padding: 1px;
-  margin: -1px;
-  width: 35%;
-  max-width: 120px;
-  float: left;
-  clear: both;
-  line-height: 0;
-  min-height: 18px;
-  margin-top: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.settings-info dt p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.settings-info dt:first-child {
-  margin-top: 0;
-}
-.settings-info dd {
-  padding: 1px;
-  margin: -1px;
-  margin-top: 0;
-  line-height: 0;
-  min-height: 18px;
-  float: left;
-  width: 65%;
-}
-.settings-info dd p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.settings-info dd:nth-child(2) {
-  margin-top: 0;
-}
-.settings-info dd input:not([type='checkbox']) {
-  width: 100%;
-}
-.settings-info dd input.pikerSize {
-  width: 137px;
-}
-.settings-info dd a.formLink {
-  line-height: 0;
-}
-.settings-info dd span.ui-spinner {
-  width: 100%;
-}
-.settings-info label {
-  line-height: 20px;
-}
+/*.settings-info {
+  .dl-auto;
+  label {
+    line-height: 20px;
+  }
+}*/
 .customer-info dt {
   color: #b4bcc8;
 }
-.project-edit-info {
-  clear: both;
-  font-size: 14px;
-}
 .project-edit-info dt {
-  padding: 1px;
-  margin: -1px;
   width: 40%;
   max-width: 200px;
-  float: left;
-  clear: both;
-  line-height: 0;
-  min-height: 18px;
-  margin-top: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.project-edit-info dt p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.project-edit-info dt:first-child {
-  margin-top: 0;
 }
 .project-edit-info dd {
-  padding: 1px;
-  margin: -1px;
   margin-top: 0;
-  line-height: 0;
-  min-height: 18px;
-  float: left;
-  width: 60%;
-}
-.project-edit-info dd p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.project-edit-info dd:nth-child(2) {
-  margin-top: 0;
-}
-.project-edit-info dd input:not([type='checkbox']) {
-  width: 100%;
-}
-.project-edit-info dd input.pikerSize {
-  width: 137px;
-}
-.project-edit-info dd a.formLink {
-  line-height: 0;
-}
-.project-edit-info dd span.ui-spinner {
-  width: 100%;
-}
-.quotation-info {
-  clear: both;
-  font-size: 14px;
-}
-.quotation-info dt {
-  padding: 1px;
-  margin: -1px;
-  width: 35%;
-  max-width: 120px;
-  float: left;
-  clear: both;
-  line-height: 0;
-  min-height: 18px;
-  margin-top: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.quotation-info dt p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.quotation-info dt:first-child {
-  margin-top: 0;
-}
-.quotation-info dd {
-  padding: 1px;
-  margin: -1px;
-  margin-top: 0;
-  line-height: 0;
-  min-height: 18px;
-  float: left;
-  width: 65%;
-}
-.quotation-info dd p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.quotation-info dd:nth-child(2) {
-  margin-top: 0;
-}
-.quotation-info dd input:not([type='checkbox']) {
-  width: 100%;
-}
-.quotation-info dd input.pikerSize {
-  width: 137px;
-}
-.quotation-info dd a.formLink {
-  line-height: 0;
-}
-.quotation-info dd span.ui-spinner {
-  width: 100%;
 }
 .quotation-info dd {
   margin-top: 1em;
-}
-.edit-employee-info {
-  clear: both;
-  font-size: 14px;
-}
-.edit-employee-info dt {
-  padding: 1px;
-  margin: -1px;
-  width: 40%;
-  max-width: 200px;
-  float: left;
-  clear: both;
-  line-height: 0;
-  min-height: 18px;
-  margin-top: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.edit-employee-info dt p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.edit-employee-info dt:first-child {
-  margin-top: 0;
-}
-.edit-employee-info dd {
-  padding: 1px;
-  margin: -1px;
-  margin-top: 0;
-  line-height: 0;
-  min-height: 18px;
-  float: left;
-  width: 60%;
-}
-.edit-employee-info dd p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.edit-employee-info dd:nth-child(2) {
-  margin-top: 0;
-}
-.edit-employee-info dd input:not([type='checkbox']) {
-  width: 100%;
-}
-.edit-employee-info dd input.pikerSize {
-  width: 137px;
-}
-.edit-employee-info dd a.formLink {
-  line-height: 0;
-}
-.edit-employee-info dd span.ui-spinner {
-  width: 100%;
 }
 .edit-employee-info input {
   max-width: 180px !important;
@@ -6533,22 +5375,12 @@ a.red:hover {
   line-height: 18px;
   text-align: center;
   display: block;
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: auto;
-  bottom: auto;
   height: 0;
   width: 100%;
   background: rgba(0, 0, 0, 0.7);
   color: #fff;
 }
 .birthday-item .info .ava .upload input {
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: auto;
-  bottom: auto;
   height: 20px;
   opacity: 0;
   background: rgba(0, 0, 0, 0.5);
@@ -7037,10 +5869,8 @@ table#workflows tr td.edit-status {
   display: block;
   float: none;
   position: fixed;
-  left: 0;
   top: 0;
-  right: auto;
-  bottom: auto;
+  left: 0;
   width: 100%;
   background: #ffffff;
   height: 30px;
@@ -7122,20 +5952,16 @@ table#workflows tr td.edit-status {
   width: 200px;
 }
 .sideMenu nav ul {
-  zoom: 1;
   clear: both;
 }
 .sideMenu nav ul:before {
-  content: "\0020";
-  display: block;
-  height: 0;
-  overflow: hidden;
+  content: '';
+  display: table;
+  clear: both;
 }
 .sideMenu nav ul:after {
-  content: "\0020";
-  display: block;
-  height: 0;
-  overflow: hidden;
+  content: '';
+  display: table;
   clear: both;
 }
 .sideMenu nav ul li {
@@ -7656,22 +6482,12 @@ ul.dialog-tabs li.right button {
   line-height: 18px;
   text-align: center;
   display: block;
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: auto;
-  bottom: auto;
   height: 0;
   width: 100%;
   background: rgba(0, 0, 0, 0.7);
   color: #fff;
 }
 .thumbnailwithavatar .avatar .upload input {
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: auto;
-  bottom: auto;
   height: 20px;
   opacity: 0;
   background: rgba(0, 0, 0, 0.5);
@@ -7807,6 +6623,31 @@ ul.dialog-tabs li.right button {
   width: 280px;
   min-height: 130px;
   cursor: pointer;
+  /*
+  .viewswitch {
+    //.position(absolute, auto, 5px, 5px, auto);
+    position: absolute;
+    left: auto;
+    right: 5px;
+    top: 5px;
+    bottom: auto;
+
+    a {
+      display: block;
+      float: left;
+      overflow: hidden;
+      width: 16px;
+      .noPaddingMargin;
+      line-height: 18px !important;
+      height: 16px;
+      border: @thin-border transparent;
+      margin-left: 3px;
+      &:hover {
+        border-bottom: @thin-border @tilte-color;
+      }
+    }
+  }
+*/
 }
 .thumbnail .dropDown {
   width: 5%;
@@ -7820,28 +6661,6 @@ ul.dialog-tabs li.right button {
 }
 .thumbnail .dropDown a:hover {
   color: #3e88b9;
-}
-.thumbnail .viewswitch {
-  position: absolute;
-  left: auto;
-  top: 5px;
-  right: 5px;
-  bottom: auto;
-}
-.thumbnail .viewswitch a {
-  display: block;
-  float: left;
-  overflow: hidden;
-  width: 16px;
-  padding: 0;
-  margin: 0;
-  line-height: 18px !important;
-  height: 16px;
-  border: 1px solid transparent;
-  margin-left: 3px;
-}
-.thumbnail .viewswitch a:hover {
-  border-bottom: 1px solid #3e88b9;
 }
 .thumbnail .inner {
   padding: 5px;
@@ -7929,22 +6748,12 @@ ul.dialog-tabs li.right button {
   line-height: 18px;
   text-align: center;
   display: block;
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: auto;
-  bottom: auto;
   height: 0;
   width: 100%;
   background: rgba(0, 0, 0, 0.7);
   color: #fff;
 }
 .thumbnail .avatar .upload input {
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: auto;
-  bottom: auto;
   height: 20px;
   opacity: 0;
   background: rgba(0, 0, 0, 0.5);
@@ -8089,6 +6898,31 @@ ul.dialog-tabs li.right button {
   opacity: .35;
 }
 .ui-dialog {
+  /*.app-empty-info {
+    .dl-auto(200px, 100%);
+    margin-top: -3px;
+
+    dd {
+      display: none;
+    }
+
+    dt {
+      margin-top: 11px;
+
+      input {
+        width: 95% !important;
+      }
+    }
+  }*/
+  /*.summary-info {
+    width: 50%;
+    .dl-auto(none, 30%);
+    height: 30px;
+
+    #summary {
+      width: 89% !important;
+    }
+  }*/
   background: #ffffff;
   color: #000000;
   z-index: 1000;
@@ -8098,6 +6932,31 @@ ul.dialog-tabs li.right button {
   -moz-border-radius: 0px;
   -webkit-border-radius: 0px;
   border-radius: 0px;
+  /*.app-empty-info {
+    .dl-auto(200px, 100%);
+    margin-top: -3px;
+
+    dd {
+      display: none;
+    }
+
+    dt {
+      margin-top: 11px;
+
+      input {
+        width: 95% !important;
+      }
+    }
+  }*/
+  /*.summary-info {
+    width: 50%;
+    .dl-auto(none, 30%);
+    height: 30px;
+
+    #summary {
+      width: 89% !important;
+    }
+  }*/
 }
 .ui-dialog .ui-widget-content {
   border: none;
@@ -8131,22 +6990,12 @@ ul.dialog-tabs li.right button {
   line-height: 18px;
   text-align: center;
   display: block;
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: auto;
-  bottom: auto;
   height: 0;
   width: 100%;
   background: rgba(0, 0, 0, 0.7);
   color: #fff;
 }
 .ui-dialog .avatar .upload input {
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: auto;
-  bottom: auto;
   height: 20px;
   opacity: 0;
   background: rgba(0, 0, 0, 0.5);
@@ -8255,123 +7104,10 @@ ul.dialog-tabs li.right button {
 .ui-dialog .form-holder.task-create-holder {
   margin-bottom: -17px;
 }
-.ui-dialog .app-empty-info {
-  clear: both;
-  font-size: 14px;
-  margin-top: -3px;
-}
-.ui-dialog .app-empty-info dt {
-  padding: 1px;
-  margin: -1px;
-  width: 100%;
-  max-width: 200px;
-  float: left;
-  clear: both;
-  line-height: 0;
-  min-height: 18px;
-  margin-top: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.ui-dialog .app-empty-info dt p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.ui-dialog .app-empty-info dt:first-child {
-  margin-top: 0;
-}
-.ui-dialog .app-empty-info dd {
-  padding: 1px;
-  margin: -1px;
-  margin-top: 0;
-  line-height: 0;
-  min-height: 18px;
-  float: left;
-  width: 0%;
-}
-.ui-dialog .app-empty-info dd p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.ui-dialog .app-empty-info dd:nth-child(2) {
-  margin-top: 0;
-}
-.ui-dialog .app-empty-info dd input:not([type='checkbox']) {
-  width: 100%;
-}
-.ui-dialog .app-empty-info dd input.pikerSize {
-  width: 137px;
-}
-.ui-dialog .app-empty-info dd a.formLink {
-  line-height: 0;
-}
-.ui-dialog .app-empty-info dd span.ui-spinner {
-  width: 100%;
-}
-.ui-dialog .app-empty-info dd {
-  display: none;
-}
-.ui-dialog .app-empty-info dt {
-  margin-top: 11px;
-}
-.ui-dialog .app-empty-info dt input {
-  width: 95% !important;
-}
 .ui-dialog .person-info-h3 {
   width: auto;
-  clear: both;
-  font-size: 14px;
-  clear: none;
-}
-.ui-dialog .person-info-h3 dt {
-  padding: 1px;
-  margin: -1px;
-  width: 50%;
   max-width: auto;
-  float: left;
-  clear: both;
-  line-height: 0;
-  min-height: 18px;
-  margin-top: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.ui-dialog .person-info-h3 dt p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.ui-dialog .person-info-h3 dt:first-child {
-  margin-top: 0;
-}
-.ui-dialog .person-info-h3 dd {
-  padding: 1px;
-  margin: -1px;
-  margin-top: 0;
-  line-height: 0;
-  min-height: 18px;
-  float: left;
-  width: 50%;
-}
-.ui-dialog .person-info-h3 dd p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.ui-dialog .person-info-h3 dd:nth-child(2) {
-  margin-top: 0;
-}
-.ui-dialog .person-info-h3 dd input:not([type='checkbox']) {
-  width: 100%;
-}
-.ui-dialog .person-info-h3 dd input.pikerSize {
-  width: 137px;
-}
-.ui-dialog .person-info-h3 dd a.formLink {
-  line-height: 0;
-}
-.ui-dialog .person-info-h3 dd span.ui-spinner {
-  width: 100%;
+  clear: none;
 }
 .ui-dialog .person-info-h3 dt,
 .ui-dialog .person-info-h3 dd {
@@ -8388,64 +7124,6 @@ ul.dialog-tabs li.right button {
 }
 .ui-dialog .person-info-h3 dd {
   width: auto;
-}
-.ui-dialog .summary-info {
-  width: 50%;
-  clear: both;
-  font-size: 14px;
-  height: 30px;
-}
-.ui-dialog .summary-info dt {
-  padding: 1px;
-  margin: -1px;
-  width: 30%;
-  max-width: none;
-  float: left;
-  clear: both;
-  line-height: 0;
-  min-height: 18px;
-  margin-top: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.ui-dialog .summary-info dt p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.ui-dialog .summary-info dt:first-child {
-  margin-top: 0;
-}
-.ui-dialog .summary-info dd {
-  padding: 1px;
-  margin: -1px;
-  margin-top: 0;
-  line-height: 0;
-  min-height: 18px;
-  float: left;
-  width: 70%;
-}
-.ui-dialog .summary-info dd p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.ui-dialog .summary-info dd:nth-child(2) {
-  margin-top: 0;
-}
-.ui-dialog .summary-info dd input:not([type='checkbox']) {
-  width: 100%;
-}
-.ui-dialog .summary-info dd input.pikerSize {
-  width: 137px;
-}
-.ui-dialog .summary-info dd a.formLink {
-  line-height: 0;
-}
-.ui-dialog .summary-info dd span.ui-spinner {
-  width: 100%;
-}
-.ui-dialog .summary-info #summary {
-  width: 89% !important;
 }
 .ui-dialog input {
   -moz-border-radius: 0;
@@ -8582,22 +7260,12 @@ ul.dialog-tabs li.right button {
   line-height: 18px;
   text-align: center;
   display: block;
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: auto;
-  bottom: auto;
   height: 0;
   width: 100%;
   background: rgba(0, 0, 0, 0.7);
   color: #fff;
 }
 .ui-dialog .avatar .upload input {
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: auto;
-  bottom: auto;
   height: 20px;
   opacity: 0;
   background: rgba(0, 0, 0, 0.5);
@@ -8699,123 +7367,10 @@ ul.dialog-tabs li.right button {
 .ui-dialog .form-holder.task-create-holder {
   margin-bottom: -17px;
 }
-.ui-dialog .app-empty-info {
-  clear: both;
-  font-size: 14px;
-  margin-top: -3px;
-}
-.ui-dialog .app-empty-info dt {
-  padding: 1px;
-  margin: -1px;
-  width: 100%;
-  max-width: 200px;
-  float: left;
-  clear: both;
-  line-height: 0;
-  min-height: 18px;
-  margin-top: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.ui-dialog .app-empty-info dt p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.ui-dialog .app-empty-info dt:first-child {
-  margin-top: 0;
-}
-.ui-dialog .app-empty-info dd {
-  padding: 1px;
-  margin: -1px;
-  margin-top: 0;
-  line-height: 0;
-  min-height: 18px;
-  float: left;
-  width: 0%;
-}
-.ui-dialog .app-empty-info dd p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.ui-dialog .app-empty-info dd:nth-child(2) {
-  margin-top: 0;
-}
-.ui-dialog .app-empty-info dd input:not([type='checkbox']) {
-  width: 100%;
-}
-.ui-dialog .app-empty-info dd input.pikerSize {
-  width: 137px;
-}
-.ui-dialog .app-empty-info dd a.formLink {
-  line-height: 0;
-}
-.ui-dialog .app-empty-info dd span.ui-spinner {
-  width: 100%;
-}
-.ui-dialog .app-empty-info dd {
-  display: none;
-}
-.ui-dialog .app-empty-info dt {
-  margin-top: 11px;
-}
-.ui-dialog .app-empty-info dt input {
-  width: 95% !important;
-}
 .ui-dialog .person-info-h3 {
   width: auto;
-  clear: both;
-  font-size: 14px;
-  clear: none;
-}
-.ui-dialog .person-info-h3 dt {
-  padding: 1px;
-  margin: -1px;
-  width: 50%;
   max-width: auto;
-  float: left;
-  clear: both;
-  line-height: 0;
-  min-height: 18px;
-  margin-top: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.ui-dialog .person-info-h3 dt p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.ui-dialog .person-info-h3 dt:first-child {
-  margin-top: 0;
-}
-.ui-dialog .person-info-h3 dd {
-  padding: 1px;
-  margin: -1px;
-  margin-top: 0;
-  line-height: 0;
-  min-height: 18px;
-  float: left;
-  width: 50%;
-}
-.ui-dialog .person-info-h3 dd p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.ui-dialog .person-info-h3 dd:nth-child(2) {
-  margin-top: 0;
-}
-.ui-dialog .person-info-h3 dd input:not([type='checkbox']) {
-  width: 100%;
-}
-.ui-dialog .person-info-h3 dd input.pikerSize {
-  width: 137px;
-}
-.ui-dialog .person-info-h3 dd a.formLink {
-  line-height: 0;
-}
-.ui-dialog .person-info-h3 dd span.ui-spinner {
-  width: 100%;
+  clear: none;
 }
 .ui-dialog .person-info-h3 dt,
 .ui-dialog .person-info-h3 dd {
@@ -8832,64 +7387,6 @@ ul.dialog-tabs li.right button {
 }
 .ui-dialog .person-info-h3 dd {
   width: auto;
-}
-.ui-dialog .summary-info {
-  width: 50%;
-  clear: both;
-  font-size: 14px;
-  height: 30px;
-}
-.ui-dialog .summary-info dt {
-  padding: 1px;
-  margin: -1px;
-  width: 30%;
-  max-width: none;
-  float: left;
-  clear: both;
-  line-height: 0;
-  min-height: 18px;
-  margin-top: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.ui-dialog .summary-info dt p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.ui-dialog .summary-info dt:first-child {
-  margin-top: 0;
-}
-.ui-dialog .summary-info dd {
-  padding: 1px;
-  margin: -1px;
-  margin-top: 0;
-  line-height: 0;
-  min-height: 18px;
-  float: left;
-  width: 70%;
-}
-.ui-dialog .summary-info dd p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.ui-dialog .summary-info dd:nth-child(2) {
-  margin-top: 0;
-}
-.ui-dialog .summary-info dd input:not([type='checkbox']) {
-  width: 100%;
-}
-.ui-dialog .summary-info dd input.pikerSize {
-  width: 137px;
-}
-.ui-dialog .summary-info dd a.formLink {
-  line-height: 0;
-}
-.ui-dialog .summary-info dd span.ui-spinner {
-  width: 100%;
-}
-.ui-dialog .summary-info #summary {
-  width: 89% !important;
 }
 .ui-dialog input {
   -moz-border-radius: 0;
@@ -8952,13 +7449,6 @@ ul.dialog-tabs li.right button {
   display: table;
   border-collapse: collapse;
 }
-.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset {
-  text-align: center;
-}
-.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button {
-  margin: .5em .4em .5em 0;
-  line-height: normal;
-}
 .ui-dialog .ui-helper-clearfix:before,
 .ui-dialog .ui-helper-clearfix:after {
   content: "";
@@ -8994,12 +7484,14 @@ ul.dialog-tabs li.right button {
   width: 100%;
 }
 .form-holder form {
+  max-width: 100%;
   border: none;
   margin: 0 auto;
   width: auto;
-  max-width: 96%;
-  clear: both;
-  font-size: 14px;
+}
+.form-holder form#addAttachments {
+  width: 100%;
+  max-width: 100%;
 }
 .form-holder form #description {
   margin-top: 15px;
@@ -9050,9 +7542,9 @@ ul.dialog-tabs li.right button {
 .form-holder form dd {
   padding: 1px;
   margin: -1px;
-  margin-top: 10px;
   line-height: 18px;
   min-height: 18px;
+  margin-top: 10px;
   float: left;
   width: 60%;
 }
@@ -9145,10 +7637,6 @@ ul.dialog-tabs li.right button {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-.form-holder form#addAttachments {
-  width: 100%;
-  max-width: 100%;
-}
 .attachWrapper .input-file {
   border: 1px solid #c8c8d3;
 }
@@ -9157,14 +7645,20 @@ ul.dialog-tabs li.right button {
   text-align: center;
   color: #000000;
 }
-.tabs-items .dialog-tabs-item,
-.tabs-items .chart-tabs-item {
-  display: none;
+/*
+.tabs-items {
+  //margin-bottom: -29px;
+
+  .dialog-tabs-item,
+  .chart-tabs-item {
+    display: none;
+
+    &.active {
+      display: block;
+    }
+  }
 }
-.tabs-items .dialog-tabs-item.active,
-.tabs-items .chart-tabs-item.active {
-  display: block;
-}
+*/
 ul.dialog-tabs li {
   float: left;
 }
@@ -9754,170 +8248,46 @@ span.cancelled,
 a.cancelled {
   text-decoration: line-through;
 }
-.form-holder form .task-info {
-  clear: both;
-  font-size: 14px;
+.form-holder form {
+  /*.task-summary-info {
+    .dl-auto(1000px, 20%);
+    dt{
+      width: 20%;
+      max-width: 1000px;
+    }
+    input {
+      width: 95% !important;
+    }
+  }*/
 }
 .form-holder form .task-info dt {
-  padding: 1px;
-  margin: -1px;
   width: 40%;
   max-width: 200px;
-  float: left;
-  clear: both;
-  line-height: 0;
-  min-height: 18px;
-  margin-top: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.form-holder form .task-info dt p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.form-holder form .task-info dt:first-child {
-  margin-top: 0;
-}
-.form-holder form .task-info dd {
-  padding: 1px;
-  margin: -1px;
-  margin-top: 0;
-  line-height: 0;
-  min-height: 18px;
-  float: left;
-  width: 60%;
-}
-.form-holder form .task-info dd p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.form-holder form .task-info dd:nth-child(2) {
-  margin-top: 0;
-}
-.form-holder form .task-info dd input:not([type='checkbox']) {
-  width: 100%;
-}
-.form-holder form .task-info dd input.pikerSize {
-  width: 137px;
-}
-.form-holder form .task-info dd a.formLink {
-  line-height: 0;
-}
-.form-holder form .task-info dd span.ui-spinner {
-  width: 100%;
 }
 .form-holder form .task-info input {
   width: 150px;
 }
-.form-holder form .task-summary-info {
-  clear: both;
-  font-size: 14px;
-}
-.form-holder form .task-summary-info dt {
-  padding: 1px;
-  margin: -1px;
-  width: 20%;
-  max-width: 1000px;
-  float: left;
-  clear: both;
-  line-height: 0;
-  min-height: 18px;
-  margin-top: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.form-holder form .task-summary-info dt p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.form-holder form .task-summary-info dt:first-child {
-  margin-top: 0;
-}
-.form-holder form .task-summary-info dd {
-  padding: 1px;
-  margin: -1px;
-  margin-top: 0;
-  line-height: 0;
-  min-height: 18px;
-  float: left;
-  width: 80%;
-}
-.form-holder form .task-summary-info dd p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.form-holder form .task-summary-info dd:nth-child(2) {
-  margin-top: 0;
-}
-.form-holder form .task-summary-info dd input:not([type='checkbox']) {
-  width: 100%;
-}
-.form-holder form .task-summary-info dd input.pikerSize {
-  width: 137px;
-}
-.form-holder form .task-summary-info dd a.formLink {
-  line-height: 0;
-}
-.form-holder form .task-summary-info dd span.ui-spinner {
-  width: 100%;
-}
-.form-holder form .task-summary-info input {
-  width: 95% !important;
-}
-.form-holder form .profile-create {
-  clear: both;
-  font-size: 14px;
+.form-holder form {
+  /*.project-edit-info {
+    .dl-auto(200px, 42%);
+    input {
+      width: 220px;
+    }
+    select {
+      width: 232px;
+    }
+    #health {
+      width: 25px;
+    }
+  }*/
 }
 .form-holder form .profile-create dt {
-  padding: 1px;
-  margin: -1px;
   width: 50%;
   max-width: 250px;
-  float: left;
-  clear: both;
-  line-height: 0;
-  min-height: 18px;
-  margin-top: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.form-holder form .profile-create dt p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.form-holder form .profile-create dt:first-child {
-  margin-top: 0;
 }
 .form-holder form .profile-create dd {
-  padding: 1px;
-  margin: -1px;
-  margin-top: 0;
   line-height: 0;
-  min-height: 18px;
-  float: left;
   width: 50%;
-}
-.form-holder form .profile-create dd p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.form-holder form .profile-create dd:nth-child(2) {
-  margin-top: 0;
-}
-.form-holder form .profile-create dd input:not([type='checkbox']) {
-  width: 100%;
-}
-.form-holder form .profile-create dd input.pikerSize {
-  width: 137px;
-}
-.form-holder form .profile-create dd a.formLink {
-  line-height: 0;
-}
-.form-holder form .profile-create dd span.ui-spinner {
-  width: 100%;
 }
 .form-holder form .profile-create input {
   width: 276px;
@@ -9925,120 +8295,14 @@ a.cancelled {
 .form-holder form .profile-create input[type='radio'] {
   width: auto !important;
 }
-.form-holder form .project-edit-info {
-  clear: both;
-  font-size: 14px;
-}
-.form-holder form .project-edit-info dt {
-  padding: 1px;
-  margin: -1px;
-  width: 42%;
-  max-width: 200px;
-  float: left;
-  clear: both;
-  line-height: 0;
-  min-height: 18px;
-  margin-top: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.form-holder form .project-edit-info dt p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.form-holder form .project-edit-info dt:first-child {
-  margin-top: 0;
-}
-.form-holder form .project-edit-info dd {
-  padding: 1px;
-  margin: -1px;
-  margin-top: 0;
-  line-height: 0;
-  min-height: 18px;
-  float: left;
-  width: 58%;
-}
-.form-holder form .project-edit-info dd p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.form-holder form .project-edit-info dd:nth-child(2) {
-  margin-top: 0;
-}
-.form-holder form .project-edit-info dd input:not([type='checkbox']) {
-  width: 100%;
-}
-.form-holder form .project-edit-info dd input.pikerSize {
-  width: 137px;
-}
-.form-holder form .project-edit-info dd a.formLink {
-  line-height: 0;
-}
-.form-holder form .project-edit-info dd span.ui-spinner {
-  width: 100%;
-}
-.form-holder form .project-edit-info input {
-  width: 220px;
-}
-.form-holder form .project-edit-info select {
-  width: 232px;
-}
-.form-holder form .project-edit-info #health {
-  width: 25px;
-}
-.form-holder form .job-create-info {
-  clear: both;
-  font-size: 14px;
-}
 .form-holder form .job-create-info dt {
-  padding: 1px;
-  margin: -1px;
   width: 42%;
   max-width: 200px;
-  float: left;
-  clear: both;
-  line-height: 0;
-  min-height: 18px;
-  margin-top: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.form-holder form .job-create-info dt p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.form-holder form .job-create-info dt:first-child {
-  margin-top: 0;
 }
 .form-holder form .job-create-info dd {
-  padding: 1px;
-  margin: -1px;
-  margin-top: 0;
   line-height: 0;
-  min-height: 18px;
-  float: left;
   width: 58%;
-}
-.form-holder form .job-create-info dd p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.form-holder form .job-create-info dd:nth-child(2) {
   margin-top: 0;
-}
-.form-holder form .job-create-info dd input:not([type='checkbox']) {
-  width: 100%;
-}
-.form-holder form .job-create-info dd input.pikerSize {
-  width: 137px;
-}
-.form-holder form .job-create-info dd a.formLink {
-  line-height: 0;
-}
-.form-holder form .job-create-info dd span.ui-spinner {
-  width: 100%;
 }
 .form-holder form .job-create-info input {
   width: 218px;
@@ -10060,59 +8324,6 @@ a.cancelled {
 .form-holder form .create-employee-info > select {
   max-width: 130px !important;
 }
-.form-holder form .subject-info {
-  clear: both;
-  font-size: 14px;
-}
-.form-holder form .subject-info dt {
-  padding: 1px;
-  margin: -1px;
-  width: 10%;
-  max-width: 200px;
-  float: left;
-  clear: both;
-  line-height: 0;
-  min-height: 18px;
-  margin-top: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.form-holder form .subject-info dt p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.form-holder form .subject-info dt:first-child {
-  margin-top: 0;
-}
-.form-holder form .subject-info dd {
-  padding: 1px;
-  margin: -1px;
-  margin-top: 0;
-  line-height: 0;
-  min-height: 18px;
-  float: left;
-  width: 90%;
-}
-.form-holder form .subject-info dd p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.form-holder form .subject-info dd:nth-child(2) {
-  margin-top: 0;
-}
-.form-holder form .subject-info dd input:not([type='checkbox']) {
-  width: 100%;
-}
-.form-holder form .subject-info dd input.pikerSize {
-  width: 137px;
-}
-.form-holder form .subject-info dd a.formLink {
-  line-height: 0;
-}
-.form-holder form .subject-info dd span.ui-spinner {
-  width: 100%;
-}
 .form-holder form .subject-info > input {
   max-width: inherit !important;
   width: 99% !important;
@@ -10120,62 +8331,18 @@ a.cancelled {
 }
 .form-holder form .subject-info dt {
   width: 10% !important;
+  max-width: 200px;
 }
 .form-holder form .subject-info dd {
   width: 90% !important;
-}
-.form-holder form .opprtunitie-info {
-  clear: both;
-  font-size: 14px;
+  line-height: 0;
 }
 .form-holder form .opprtunitie-info dt {
-  padding: 1px;
-  margin: -1px;
   width: 40%;
   max-width: 250px;
-  float: left;
-  clear: both;
-  line-height: 0;
-  min-height: 18px;
-  margin-top: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.form-holder form .opprtunitie-info dt p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.form-holder form .opprtunitie-info dt:first-child {
-  margin-top: 0;
 }
 .form-holder form .opprtunitie-info dd {
-  padding: 1px;
-  margin: -1px;
-  margin-top: 0;
   line-height: 0;
-  min-height: 18px;
-  float: left;
-  width: 60%;
-}
-.form-holder form .opprtunitie-info dd p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.form-holder form .opprtunitie-info dd:nth-child(2) {
-  margin-top: 0;
-}
-.form-holder form .opprtunitie-info dd input:not([type='checkbox']) {
-  width: 100%;
-}
-.form-holder form .opprtunitie-info dd input.pikerSize {
-  width: 137px;
-}
-.form-holder form .opprtunitie-info dd a.formLink {
-  line-height: 0;
-}
-.form-holder form .opprtunitie-info dd span.ui-spinner {
-  width: 100%;
 }
 .form-holder form .opprtunitie-info > input {
   max-width: 250px !important;
@@ -10187,58 +8354,12 @@ a.cancelled {
 .form-holder form .opprtunitie-info .date-min {
   width: 75px !important;
 }
-.form-holder form .opprtunitie-lead-info {
-  clear: both;
-  font-size: 14px;
-}
 .form-holder form .opprtunitie-lead-info dt {
-  padding: 1px;
-  margin: -1px;
   width: 20%;
   max-width: 250px;
-  float: left;
-  clear: both;
-  line-height: 0;
-  min-height: 18px;
-  margin-top: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.form-holder form .opprtunitie-lead-info dt p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.form-holder form .opprtunitie-lead-info dt:first-child {
-  margin-top: 0;
 }
 .form-holder form .opprtunitie-lead-info dd {
-  padding: 1px;
-  margin: -1px;
-  margin-top: 0;
   line-height: 0;
-  min-height: 18px;
-  float: left;
-  width: 80%;
-}
-.form-holder form .opprtunitie-lead-info dd p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.form-holder form .opprtunitie-lead-info dd:nth-child(2) {
-  margin-top: 0;
-}
-.form-holder form .opprtunitie-lead-info dd input:not([type='checkbox']) {
-  width: 100%;
-}
-.form-holder form .opprtunitie-lead-info dd input.pikerSize {
-  width: 137px;
-}
-.form-holder form .opprtunitie-lead-info dd a.formLink {
-  line-height: 0;
-}
-.form-holder form .opprtunitie-lead-info dd span.ui-spinner {
-  width: 100%;
 }
 .form-holder form .opprtunitie-lead-info > input {
   max-width: 231px !important;
@@ -10339,225 +8460,46 @@ a.cancelled {
   padding-right: 5px;
 }
 .form .job-info {
-  clear: both;
-  font-size: 14px;
   color: #000000;
 }
 .form .job-info dt {
-  padding: 1px;
-  margin: -1px;
   width: 30%;
   max-width: 300px;
-  float: left;
-  clear: both;
   line-height: 30px;
-  min-height: 18px;
-  margin-top: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.form .job-info dt p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.form .job-info dt:first-child {
-  margin-top: 0;
 }
 .form .job-info dd {
-  padding: 1px;
-  margin: -1px;
-  margin-top: 0;
   line-height: 30px;
-  min-height: 18px;
-  float: left;
-  width: 70%;
-}
-.form .job-info dd p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.form .job-info dd:nth-child(2) {
-  margin-top: 0;
-}
-.form .job-info dd input:not([type='checkbox']) {
-  width: 100%;
-}
-.form .job-info dd input.pikerSize {
-  width: 137px;
-}
-.form .job-info dd a.formLink {
-  line-height: 30px;
-}
-.form .job-info dd span.ui-spinner {
-  width: 100%;
-}
-.form .opp-info {
-  clear: both;
-  font-size: 14px;
 }
 .form .opp-info dt {
-  padding: 1px;
-  margin: -1px;
   width: 40%;
   max-width: 300px;
-  float: left;
-  clear: both;
   line-height: 30px;
-  min-height: 18px;
-  margin-top: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.form .opp-info dt p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.form .opp-info dt:first-child {
-  margin-top: 0;
 }
 .form .opp-info dd {
-  padding: 1px;
-  margin: -1px;
-  margin-top: 0;
   line-height: 30px;
-  min-height: 18px;
-  float: left;
-  width: 60%;
-}
-.form .opp-info dd p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.form .opp-info dd:nth-child(2) {
-  margin-top: 0;
-}
-.form .opp-info dd input:not([type='checkbox']) {
-  width: 100%;
-}
-.form .opp-info dd input.pikerSize {
-  width: 137px;
-}
-.form .opp-info dd a.formLink {
-  line-height: 30px;
-}
-.form .opp-info dd span.ui-spinner {
-  width: 100%;
 }
 .form .opp-info input {
   width: 80% !important;
 }
-.form .internal-info {
-  clear: both;
-  font-size: 14px;
-}
 .form .internal-info dt {
-  padding: 1px;
-  margin: -1px;
   width: 20%;
   max-width: 132px;
-  float: left;
-  clear: both;
   line-height: 30px;
-  min-height: 18px;
-  margin-top: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.form .internal-info dt p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.form .internal-info dt:first-child {
-  margin-top: 0;
 }
 .form .internal-info dd {
-  padding: 1px;
-  margin: -1px;
-  margin-top: 0;
   line-height: 30px;
-  min-height: 18px;
-  float: left;
-  width: 80%;
-}
-.form .internal-info dd p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.form .internal-info dd:nth-child(2) {
-  margin-top: 0;
-}
-.form .internal-info dd input:not([type='checkbox']) {
-  width: 100%;
-}
-.form .internal-info dd input.pikerSize {
-  width: 137px;
-}
-.form .internal-info dd a.formLink {
-  line-height: 30px;
-}
-.form .internal-info dd span.ui-spinner {
-  width: 100%;
 }
 .form .internal-info textarea {
   width: 94%;
   resize: none;
   padding: 5px;
 }
-.form .assignees-info {
-  clear: both;
-  font-size: 14px;
-}
 .form .assignees-info dt {
-  padding: 1px;
-  margin: -1px;
   width: 20%;
   max-width: 200px;
-  float: left;
-  clear: both;
-  line-height: 0;
-  min-height: 18px;
-  margin-top: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.form .assignees-info dt p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.form .assignees-info dt:first-child {
-  margin-top: 0;
 }
 .form .assignees-info dd {
-  padding: 1px;
-  margin: -1px;
-  margin-top: 0;
-  line-height: 0;
-  min-height: 18px;
-  float: left;
-  width: 80%;
-}
-.form .assignees-info dd p {
-  word-wrap: break-word;
-  white-space: normal;
-}
-.form .assignees-info dd:nth-child(2) {
-  margin-top: 0;
-}
-.form .assignees-info dd input:not([type='checkbox']) {
-  width: 100%;
-}
-.form .assignees-info dd input.pikerSize {
-  width: 137px;
-}
-.form .assignees-info dd a.formLink {
-  line-height: 0;
-}
-.form .assignees-info dd span.ui-spinner {
-  width: 100%;
+  line-height: 0px;
 }
 .form .assignees-info input {
   max-width: 180px !important;
@@ -11227,22 +9169,18 @@ textarea#editInput {
 }
 .grid-conatiner.revenue .chartContainer .legend div,
 .grid-conatiner.revenue .chartContainer .legendHours div {
-  zoom: 1;
   clear: both;
 }
 .grid-conatiner.revenue .chartContainer .legend div:before,
 .grid-conatiner.revenue .chartContainer .legendHours div:before {
-  content: "\0020";
-  display: block;
-  height: 0;
-  overflow: hidden;
+  content: '';
+  display: table;
+  clear: both;
 }
 .grid-conatiner.revenue .chartContainer .legend div:after,
 .grid-conatiner.revenue .chartContainer .legendHours div:after {
-  content: "\0020";
-  display: block;
-  height: 0;
-  overflow: hidden;
+  content: '';
+  display: table;
   clear: both;
 }
 .grid-conatiner.revenue .chartContainer .legend label,
@@ -12343,20 +10281,16 @@ textarea#editInput {
   padding: 0 5px;
 }
 .pagination .countOnPage {
-  zoom: 1;
   clear: both;
 }
 .pagination .countOnPage:before {
-  content: "\0020";
-  display: block;
-  height: 0;
-  overflow: hidden;
+  content: '';
+  display: table;
+  clear: both;
 }
 .pagination .countOnPage:after {
-  content: "\0020";
-  display: block;
-  height: 0;
-  overflow: hidden;
+  content: '';
+  display: table;
   clear: both;
 }
 .pagination .countOnPage > div {
@@ -12530,20 +10464,16 @@ textarea#editInput {
   position: relative;
 }
 .week_list {
-  zoom: 1;
   clear: both;
 }
 .week_list:before {
-  content: "\0020";
-  display: block;
-  height: 0;
-  overflow: hidden;
+  content: '';
+  display: table;
+  clear: both;
 }
 .week_list:after {
-  content: "\0020";
-  display: block;
-  height: 0;
-  overflow: hidden;
+  content: '';
+  display: table;
   clear: both;
 }
 .week_list .week_title {
@@ -12553,23 +10483,19 @@ textarea#editInput {
   text-align: center;
 }
 .thumbnail_birthday_list {
-  zoom: 1;
   clear: both;
   padding: 0;
   margin: 0;
   list-style: none;
 }
 .thumbnail_birthday_list:before {
-  content: "\0020";
-  display: block;
-  height: 0;
-  overflow: hidden;
+  content: '';
+  display: table;
+  clear: both;
 }
 .thumbnail_birthday_list:after {
-  content: "\0020";
-  display: block;
-  height: 0;
-  overflow: hidden;
+  content: '';
+  display: table;
   clear: both;
 }
 .thumbnail_birthday_list > li {
@@ -12640,26 +10566,346 @@ textarea#editInput {
   display: inline-block;
   margin-top: 5px;
 }
+/*
+.submenu(@defaultColor: @bg-submenu, @height: 40px) {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  display: block;
+  z-index: 200;
+  width: auto;
+  height: calc(~"100% - 40px");
+  background-color: @defaultColor;
+  box-sizing: border-box;
+  font-family: @fontLight;
+
+  nav {
+    width: 200px;
+
+    ul {
+      .clearfix;
+      li {
+        position: relative;
+        display: block;
+        height: @height;
+        width: 100%;
+        list-style: none;
+        line-height: @height;
+        background: @defaultColor;
+        text-align: left;
+      }
+    }
+    > ul {
+      > li {
+        border-top: 1px solid #3d4957;
+        &:first-child {
+          border-top: none;
+        }
+      }
+    }
+
+    .root {
+      text-align: left;
+      //border-bottom: 1px solid @submenu-border;
+
+      ul {
+        display: none;
+        height: auto;
+        padding: 8px 0;
+        background-color: #364150;
+
+        li {
+          border-top: 1px solid #364150;
+          height: 31px;
+
+          .sub_item {
+            display: block;
+            padding-left: 39px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 300;
+            line-height: 31px;
+            color: @submenu-text-color;
+          }
+
+          &:hover, &.selected {
+            background-color: @submenu-selected;
+          }
+
+          &:first-child {
+            border-top: none;
+            display: none;
+          }
+        }
+      }
+
+      .icons {
+        padding: 0 11px;
+        display: inline-block;
+        font: normal normal normal 14px simple-line-icons;
+        font-size: inherit;
+        text-rendering: auto;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        transform: translate(0, 0);
+        font-style: normal;
+        font-variant: normal;
+        text-transform: none;
+      }
+
+      > a, .icons {
+        color: @submenu-text-color;
+        font-size: 16px;
+        line-height: @height;
+        display: block;
+        float: left;
+        text-decoration: none;
+        text-shadow: none;
+        font-weight: 300;
+      }
+
+      .icon {
+        &-Sales {
+          &:before {
+            content: "\e043";
+          }
+        }
+        &-HR {
+          &:before {
+            content: "\e001";
+          }
+        }
+        &-Project {
+          &:before {
+            content: "\e02d";
+          }
+        }
+        &-Settings {
+          &:before {
+            content: "\e09a";
+          }
+        }
+        &-Accounting {
+          &:before {
+            content: "\e04b";
+          }
+        }
+        &-Expenses {
+          &:before {
+            content: "\e077";
+          }
+        }
+        &-Payroll {
+          &:before {
+            content: "\e025";
+          }
+        }
+        &-Purchases {
+          &:before {
+            content: "\e04e";
+          }
+        }
+      }
+
+      &:hover, &.opened {
+        cursor: pointer;
+        height: @height;
+        background-color: @submenu-hover;
+      }
+
+      &.active {
+        background-color: @submenu-opened;
+        a, .icons {
+          color: @submenu-active-text-color;
+        }
+        &:before {
+          color: @submenu-active-text-color;
+        }
+        &:after {
+          content: '';
+          position: absolute;
+          right: 0;
+          top: 8px;
+          background: 0 0;
+          width: 0;
+          height: 0;
+          border-top: 12px solid transparent;
+          border-bottom: 12px solid transparent;
+          border-right: 12px solid #fff;
+        }
+        &.opened {
+          &:before {
+            transform: rotate(-90deg);
+            color: @submenu-active-text-color;
+          }
+        }
+      }
+
+      &:before {
+        float: right;
+        width: 30px;
+        text-align: center;
+        display: inline;
+        font-size: 16px;
+        font-family: 'FontAwesome';
+        height: auto;
+        content: "\f104";
+        font-weight: 300;
+        text-shadow: none;
+        position: absolute;
+        top: 0;
+        right: 14px;
+        line-height: 40px;
+        color: @submenu-arrow;
+        transition: all 0.3s;
+      }
+
+      &.opened {
+        height: auto;
+        ul {
+          display: block;
+        }
+        &:before {
+          transform: rotate(-90deg);
+        }
+      }
+    }
+  }
+
+  .logo {
+    position: absolute;
+    bottom: 15px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    width: 100%;
+    margin: 0 auto;
+
+    a {
+      font-size: 35px;
+      text-decoration: none;
+      color: @submenu-opened;
+
+    }
+  }
+
+  .sidebar_toggler {
+    position: absolute;
+    top: 10px;
+    left: 100%;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    margin: 0;
+    width: 24px;
+    height: 24px;
+    background-color: @bg-submenu;
+    border-left: 1px solid @submenu-border;
+    &:before {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-75%, -50%);
+      content: '';
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 5px 6px 5px 0;
+      border-color: transparent @submenu-active-text-color transparent transparent;
+    }
+  }
+
+  .login_panel {
+    //.position(absolute, 0, 0, auto, auto);
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: auto;
+    bottom: auto;
+
+    width: 100%;
+
+    .dropdown-button {
+      text-indent: 5px;
+      cursor: pointer;
+      padding: 5px;
+      box-sizing: border-box;
+      max-width: 200px;
+      width: 100%;
+      float: left;
+      height: auto;
+
+      &:hover {
+        background: @bg-main-menu-selected;
+        color: #fff;
+      }
+    }
+
+    .login_list {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      z-index: 999;
+
+      li {
+        text-align: left;
+        color: @submenu-text-color;
+        background: @defaultColor;
+        &:hover {
+          background-color: @submenu-selected;
+        }
+      }
+
+      a {
+        display: block;
+        padding-left: 39px;
+        text-decoration: none;
+        font-size: 14px;
+        line-height: @height;
+        color: @submenu-text-color;
+      }
+      &.opened {
+        display: block;
+      }
+    }
+
+    .user_name {
+      display: block;
+      line-height: 30px;
+      color: @login-text;
+      font-size: 14px;
+      font-weight: 300;
+      &:hover {
+        color: @login-hover-text;
+      }
+    }
+
+    .iconEmployee {
+      border-radius: 3px;
+      margin: 4px auto;
+      width: 29px;
+      height: 29px;
+    }
+  }
+}
+*/
 .history_item {
   padding: 10px 5px;
   border-bottom: 1px solid #7f7f80;
 }
 .history_item .history_header {
-  zoom: 1;
   clear: both;
   margin-bottom: 10px;
 }
 .history_item .history_header:before {
-  content: "\0020";
-  display: block;
-  height: 0;
-  overflow: hidden;
+  content: '';
+  display: table;
+  clear: both;
 }
 .history_item .history_header:after {
-  content: "\0020";
-  display: block;
-  height: 0;
-  overflow: hidden;
+  content: '';
+  display: table;
   clear: both;
 }
 .history_item .history_header .editBy {
@@ -12672,21 +10918,17 @@ textarea#editInput {
   float: right;
 }
 .history_item .history_body .history_changed {
-  zoom: 1;
   clear: both;
   margin-bottom: 10px;
 }
 .history_item .history_body .history_changed:before {
-  content: "\0020";
-  display: block;
-  height: 0;
-  overflow: hidden;
+  content: '';
+  display: table;
+  clear: both;
 }
 .history_item .history_body .history_changed:after {
-  content: "\0020";
-  display: block;
-  height: 0;
-  overflow: hidden;
+  content: '';
+  display: table;
   clear: both;
 }
 .history_item .history_body .history_changed .changedFieldName {
@@ -13894,20 +12136,26 @@ td.checkboxRow {
   font-family: 'Open Sans Regular', sans-serif, Verdana;
   font-size: 13px;
 }
+#top-bar {
+  /*
+    &.position {
+      position: absolute;
+      left: 35px;
+      z-index: 1;
+
+      h3 {
+        display: none;
+      }
+
+      #createBtnHolder {
+        margin-top: 8px;
+      }
+    }
+*/
+}
 #top-bar #createBtnHolder,
 #top-bar .createBtnHolder {
   margin-top: 6px;
-}
-#top-bar.position {
-  position: absolute;
-  left: 35px;
-  z-index: 1;
-}
-#top-bar.position h3 {
-  display: none;
-}
-#top-bar.position #createBtnHolder {
-  margin-top: 8px;
 }
 #top-bar #createBtnHolder .btnBlue {
   height: 26px;
