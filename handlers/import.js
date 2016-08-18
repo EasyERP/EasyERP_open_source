@@ -241,6 +241,7 @@ var Module = function (models) {
                     data : {
                         date          : '$root.date',
                         fileName      : '$root.fileName',
+                        filePath      : '$root.filePath',
                         user          : '$root.user.login',
                         type          : '$root.type',
                         status        : '$root.status',

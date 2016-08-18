@@ -22,21 +22,21 @@ define([
         initialize: function (options) {
             this.keys = [
                 'date',
-                'fileName',
-                'filePath',
                 'user',
                 'type',
                 'status',
+                'fileName',
+                'filePath',
                 'reportFile',
                 'reportFileName'
             ];
 
             this.headers = {
                 date: 'Date of import',
-                fileName: 'Source File',
                 user: 'User',
                 type: 'Type',
                 status: 'Status',
+                fileName: 'Source File',
                 reportFileName: 'Skipped file'
             };
 

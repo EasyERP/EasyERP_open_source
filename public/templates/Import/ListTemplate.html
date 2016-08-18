@@ -10,7 +10,7 @@
                     </td>
                 <% } else if (item === 'fileName') { %>
                     <td>
-                        <a href="<%= historyItem['filePath'] %>" class="_importLink">
+                        <a href="<%= historyItem['filePath'].trim() %>" class="_importLink">
                             <%= historyItem['fileName'] %>
                         </a>
                     </td>
