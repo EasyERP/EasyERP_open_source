@@ -11,6 +11,9 @@ var async = require('async');
 var logWriter = require('../helpers/logger.js');
 var ImportSchema = mongoose.Schemas.Imports;
 var ImportHandler = require('../handlers/import');
+var Uploader = require('../services/fileStorage/index');
+var uploader = new Uploader();
+var path = require('path');
 
 module.exports = function (models) {
     var imports = new ImportHandler(models);
@@ -36,64 +39,79 @@ module.exports = function (models) {
         var userId = req.session.uId;
         var fileName;
         var timeStamp;
+        var dir = path.join('importFiles', userId);
 
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
 
-            if (headers && files && files.attachfile) {
+        uploader.postFile(dir, files.attachfile, {userId: userId}, function (err, file) {
+            if (err) {
+                return next(err);
+            }
 
-                filePath = files.attachfile.path;
-                modelName = headers.modelname;
-                fileName = files.attachfile.name;
-                timeStamp = headers.timestamp;
+            file = file[0];
 
-                if (!modelName || !filePath) {
-                    error = new Error((!modelName) ? 'Model name empty' : 'File path empty');
-                    error.status = 400;
-                    next(error);
+            if (req.session && req.session.loggedIn && req.session.lastDb) {
 
-                    return;
-                }
-                /*  task = importMap[modelName];
+                if (headers && files && files.attachfile) {
 
-                 if (!task) {
-                 error = new Error('Model name\"' + modelName + '\" is not valid');
-                 error.status = 400;
-                 next(error);
+                    filePath = decodeURIComponent(file.shortPas);
+                    //filePath = files.attachfile.path;
+                    modelName = headers.modelname;
+                    //fileName = files.attachfile.name;
+                    fileName = file.name;
 
-                 return;
-                 }
-                 aliases = task.aliases;
-                 collection = task.collection;
-                 schema = mongoose.Schemas[task.schema];
-                 Model = models.get(req.session.lastDb, collection, schema);
+                    timeStamp = headers.timestamp;
 
-                 for (var key in aliases) {
-                 keysAliases.push(key);
-                 expertedKey.push(aliases[key]);
-                 }*/
-
-                switch (getExtension(filePath)) {
-
-                    case '.csv':
-                        importCsvToTemporaryCollection(res, next);
-                        break;
-                    case '.xlsx':
-                        importXlsxToTemporaryDb(res, next);
-                        break;
-                    default:
-                        error = new Error('Extension file \"' + getExtension(filePath) + '\" not support');
+                    if (!modelName || !filePath) {
+                        error = new Error((!modelName) ? 'Model name empty' : 'File path empty');
                         error.status = 400;
                         next(error);
+
+                        return;
+                    }
+                    /*  task = importMap[modelName];
+
+                     if (!task) {
+                     error = new Error('Model name\"' + modelName + '\" is not valid');
+                     error.status = 400;
+                     next(error);
+
+                     return;
+                     }
+                     aliases = task.aliases;
+                     collection = task.collection;
+                     schema = mongoose.Schemas[task.schema];
+                     Model = models.get(req.session.lastDb, collection, schema);
+
+                     for (var key in aliases) {
+                     keysAliases.push(key);
+                     expertedKey.push(aliases[key]);
+                     }*/
+
+                    switch (getExtension(filePath)) {
+
+                        case '.csv':
+                            importCsvToTemporaryCollection(res, next, file);
+                            break;
+                        case '.xlsx':
+                            importXlsxToTemporaryDb(res, next, file);
+                            break;
+                        default:
+                            error = new Error('Extension file \"' + getExtension(filePath) + '\" not support');
+                            error.status = 400;
+                            next(error);
+                    }
+
+                } else {
+                    res.status(400).send('Bad Request');
                 }
-
             } else {
-                res.status(400).send('Bad Request');
+                res.status(401).send('Unauthorized');
             }
-        } else {
-            res.status(401).send('Unauthorized');
-        }
+        });
 
-        function importCsvToTemporaryCollection(res, next) {
+
+
+        function importCsvToTemporaryCollection(res, next, file) {
             var headers;
             var q = async.queue(function (data, callback) {
                 var tasksWaterflow;
@@ -162,7 +180,7 @@ module.exports = function (models) {
             };
         }
 
-        function importXlsxToTemporaryDb(res, next) {
+        function importXlsxToTemporaryDb(res, next, file) {
             var obj = xlsx.parse(filePath);
             var sheet;
             var rows;
@@ -495,6 +513,7 @@ module.exports = function (models) {
                 user     : userId,
                 result   : objectToDb,
                 fileName : fileName,
+                filePath : filePath,
                 timeStamp: +timeStamp
             });
 

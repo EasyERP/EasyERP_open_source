@@ -176,6 +176,9 @@ define([
             var linkName;
             var self = this;
             var url = 'importFile/merge';
+            var imported = 0;
+            var skipped = 0;
+            var mergedCount = 0;
 
             e.preventDefault();
 
@@ -184,9 +187,15 @@ define([
                 headerId: this.headerId
             }, function (err, result) {
 
-                self.imported = result.imported;
-                self.skipped = result.skipped;
-                self.mergedCount = result.merged;
+                if (result) {
+                    imported = result.imported;
+                    skipped = result.skipped;
+                    mergedCount = result.merged;
+                }
+
+                self.imported = imported;
+                self.skipped = skipped;
+                self.mergedCount = mergedCount;
                 linkToFile = result.reportFilePath;
                 linkName = result.reportFileName;
 

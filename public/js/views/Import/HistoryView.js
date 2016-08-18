@@ -23,6 +23,7 @@ define([
             this.keys = [
                 'date',
                 'fileName',
+                'filePath',
                 'user',
                 'type',
                 'status',
@@ -32,11 +33,11 @@ define([
 
             this.headers = {
                 date: 'Date of import',
-                fileName: 'File name',
+                fileName: 'Source File',
                 user: 'User',
                 type: 'Type',
                 status: 'Status',
-                reportFileName: 'Source file name'
+                reportFileName: 'Skipped file'
             };
 
             this.collection = options.collection;

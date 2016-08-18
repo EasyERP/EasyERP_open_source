@@ -22,6 +22,9 @@ var Module = function (models) {
         'groups.users': true,
         'groups.group': true
     };
+    var importedFileName;
+    var importedFilePath;
+
 
     function toOneCase(item) {
         item = item ? item.toString().toLowerCase() : null;
@@ -143,6 +146,7 @@ var Module = function (models) {
         var importHistoryObj = {
             dateHistory   : options.dateHistory,
             fileName      : options.fileName,
+            filePath      : options.filePath,
             user          : options.userId,
             type          : options.type,
             reportFile    : options.reportFile,
@@ -185,6 +189,9 @@ var Module = function (models) {
             if (importedData) {
                 mappedObj = splitFields(personKeysArray, importedData.result);
             }
+
+            importedFileName = importedData.fileName;
+            importedFilePath = importedData.fileName;
 
             mappedObj.unMapped = _.compact(mappedObj.unMapped);
             unmappedResult[type] = mappedObj.unMapped;
@@ -585,6 +592,7 @@ var Module = function (models) {
         var mergedCount = 0;
         var type;
         var importFileName;
+        var importFilePath;
         var reportFilePath;
         var reportFileName;
 
@@ -613,7 +621,8 @@ var Module = function (models) {
                     skipped = userImports.skipped;
                     importedCount = userImports.importedCount;
                     type = userImports.type;
-                    importFileName = userImports.fileName;
+                    //importFileName = userImports.fileName;
+                    //importFile = userImports.filePath;
 
                     wCb(null, userImports);
                 });
@@ -623,6 +632,10 @@ var Module = function (models) {
                 ImportModel.find(criteria, function (err, importData) {
                     var mapResult;
                     var type = userImports.type;
+
+                    //console.log(importData);
+                    importFileName = importData[0].fileName;
+                    importFilePath = importData[0].filePath;
 
                     if (err) {
                         return wCb(err);
@@ -641,7 +654,9 @@ var Module = function (models) {
                         return item.toJSON()._id.toString() === headerId.toString();
                     });
 
-                    titleArray = headerItem[0].toJSON().result;
+                    if (headerItem[0]) {
+                        titleArray = headerItem[0].toJSON().result;
+                    }
 
                     mappedFields = mapImportFileds(mapResult, titleArray);
 
@@ -749,8 +764,11 @@ var Module = function (models) {
                 reportFilePath = reportOptions.pathName;
                 reportFileName = reportOptions.fileName;
 
+                console.log(importFileName, importFilePath);
+
                 options = {
                     fileName      : importFileName,
+                    filePath      : importFilePath,
                     userId        : userId,
                     type          : type,
                     reportFile    : reportFilePath,
