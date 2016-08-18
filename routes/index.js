@@ -51,7 +51,7 @@ module.exports = function (app, mainDb) {
     var filterRouter = require('./filter')(models);
     var productCategoriesRouter = require('./productCategories')(models, event);
     var customersRouter = require('./customers')(models, event);
-    
+
     var personsRouter = require('./person')(models, event);
     var capacityRouter = require('./capacity')(models);
     var payRollRouter = require('./payroll')(models);
@@ -75,6 +75,7 @@ module.exports = function (app, mainDb) {
     var writeOffRouter = require('./writeOff')(models, event);
     var payrollStructureTypesRouter = require('./payrollStructureTypes')(models);
     var cashTransferRouter = require('./cashTransfer')(models, event);
+    var countriesRouter = require('./countries')(models);
 
     var logger = require('../helpers/logger');
     var async = require('async');
@@ -186,6 +187,7 @@ module.exports = function (app, mainDb) {
     app.use('/writeOff', writeOffRouter);
     app.use('/payrollStructureTypes', payrollStructureTypesRouter);
     app.use('/cashTransfer', cashTransferRouter);
+    app.use('/countries', countriesRouter);
 
     /**
      *@api {get} /getDBS/ Request DBS
@@ -196,47 +198,47 @@ module.exports = function (app, mainDb) {
      *
      * @apiSuccess {String} DBS
      * @apiSuccessExample Success-Response:
-HTTP/1.1 200 OK
-{
-    "dbsNames": {
-        "sergey": {
-            "DBname": "sergey",
-            "url": "144.76.56.111"
-        },
-        "pavlodb": {
-            "DBname": "pavlodb",
-            "url": "144.76.56.111"
-        },
-        "romadb": {
-            "DBname": "romadb",
-            "url": "144.76.56.111"
-        },
-        "vasyadb": {
-            "DBname": "vasyadb",
-            "url": "144.76.56.111"
-        },
-        "fabio_lunardi": {
-            "DBname": "fabio_lunardi",
-            "url": "144.76.56.111"
-        },
-        "alexKhutor": {
-            "DBname": "alexKhutor",
-            "url": "144.76.56.111"
-        },
-        "lilyadb": {
-            "DBname": "lilyadb",
-            "url": "144.76.56.111"
-        },
-        "micheldb": {
-            "DBname": "micheldb",
-            "url": "144.76.56.111"
-        },
-        "alex": {
-            "DBname": "alex",
-            "url": "144.76.56.111"
-        }
-    }
-}
+     HTTP/1.1 200 OK
+     {
+         "dbsNames": {
+             "sergey": {
+                 "DBname": "sergey",
+                 "url": "144.76.56.111"
+             },
+             "pavlodb": {
+                 "DBname": "pavlodb",
+                 "url": "144.76.56.111"
+             },
+             "romadb": {
+                 "DBname": "romadb",
+                 "url": "144.76.56.111"
+             },
+             "vasyadb": {
+                 "DBname": "vasyadb",
+                 "url": "144.76.56.111"
+             },
+             "fabio_lunardi": {
+                 "DBname": "fabio_lunardi",
+                 "url": "144.76.56.111"
+             },
+             "alexKhutor": {
+                 "DBname": "alexKhutor",
+                 "url": "144.76.56.111"
+             },
+             "lilyadb": {
+                 "DBname": "lilyadb",
+                 "url": "144.76.56.111"
+             },
+             "micheldb": {
+                 "DBname": "micheldb",
+                 "url": "144.76.56.111"
+             },
+             "alex": {
+                 "DBname": "alex",
+                 "url": "144.76.56.111"
+             }
+         }
+     }
      */
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});
@@ -251,8 +253,8 @@ HTTP/1.1 200 OK
      *
      * @apiSuccess {String} CurrentDb
      * @apiSuccessExample Success-Response:
-HTTP/1.1 200 OK
-    "vasyadb"
+     HTTP/1.1 200 OK
+     "vasyadb"
      */
     app.get('/currentDb', function (req, res, next) {
         if (req.session && req.session.lastDb) {
@@ -271,8 +273,8 @@ HTTP/1.1 200 OK
      *
      * @apiSuccess {String} AuthStatus
      * @apiSuccessExample Success-Response:
-HTTP/1.1 200 OK
-    "OK"
+     HTTP/1.1 200 OK
+     "OK"
      */
     app.get('/account/authenticated', function (req, res, next) {
         if (req.session && req.session.loggedIn) {
@@ -316,7 +318,7 @@ HTTP/1.1 200 OK
 
     app.get('/nginx', function (req, res, next) {
         var geoip = require('geoip-lite');
-        var ip = req.headers['x-real-ip'] || '127.0.0.1' ;
+        var ip = req.headers['x-real-ip'] || '127.0.0.1';
         var geo = geoip.lookup(ip);
 
         res.status(200).send(geo);

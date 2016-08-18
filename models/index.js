@@ -66,4 +66,5 @@ module.exports = (function () {
     require('./payrollStructureTypes.js');
     require('./cashTransfer.js');
     require('./import.js');
+    require('./countries.js');
 })();
