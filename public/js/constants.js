@@ -181,6 +181,7 @@ define([], function () {
             APPLICATIONS_WFLENGTH      : '/applications/getApplicationsLengthByWorkflows',
             APPLICATIONS_KANBAN        : '/applications/',
             EMPLOYEES_NATIONALITY      : '/employees/nationality',
+            COUNTRIES                  : '/countries/getForDd',
             JOBPOSITIONS_JOBTYPE       : '/jobPositions/jobType',
             JOBPOSITIONS_FORDD         : '/jobPositions/getForDd',
             DEPARTMENTS_FORDD          : '/departments/getForDD',

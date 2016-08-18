@@ -104,7 +104,7 @@ define([
                     city   : $.trim(thisEl.find('#cityInput').val()),
                     state  : $.trim(thisEl.find('#stateInput').val()),
                     zip    : $.trim(thisEl.find('#zipInput').val()),
-                    country: $.trim(thisEl.find('#countryInput').val())
+                    country: thisEl.find('#countryInput').attr('data-id')
                 },
 
                 website    : $.trim(thisEl.find('#websiteInput').val()),
