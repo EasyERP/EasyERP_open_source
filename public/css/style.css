@@ -1460,7 +1460,6 @@ b, strong {
     order: -1; } }
 .btn {
   display: inline-block;
-  height: 32px;
   padding: 0 12px !important;
   margin-bottom: 0;
   font-weight: 400;
@@ -1471,15 +1470,18 @@ b, strong {
   cursor: pointer;
   white-space: nowrap;
   font-size: 14px;
-  line-height: 30px !important;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
   border-radius: 0;
   border: 1px solid #c8c8d3;
+  background-color: #ffffff;
   outline: 0 !important;
-  box-shadow: none !important; }
+  box-shadow: none !important;
+  height: 26px;
+  line-height: 22px !important;
+  border-radius: 3px; }
   .btn span, .btn a {
     padding: 0 !important;
     color: #000000; }
