@@ -11947,7 +11947,7 @@ dl.payrollDateBlock dt {
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  height: calc(100vh - 90px);
+  height: calc(100vh - 121px);
   border-bottom: 1px solid #ededed;
 }
 .listWrap.leadsList .name {
