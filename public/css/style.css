@@ -1466,7 +1466,8 @@ b, strong {
   font-weight: 400;
   text-align: center;
   vertical-align: middle;
-  touch-action: manipulation;
+  -ms-touch-action: manipulation;
+      touch-action: manipulation;
   cursor: pointer;
   white-space: nowrap;
   font-size: 14px;
@@ -2018,7 +2019,6 @@ label._customCHeckbox input[type="checkbox"] {
   overflow: auto; }
   ._payrollListWrap ._payrollListItem {
     display: -webkit-box;
-    display: -moz-box;
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
@@ -2027,6 +2027,7 @@ label._customCHeckbox input[type="checkbox"] {
     background-color: #f7f7f7;
     border: 2px dashed #c8c8d3;
     border-radius: 3px;
+    -webkit-transition: .2s all ease-in;
     transition: .2s all ease-in; }
     ._payrollListWrap ._payrollListItem.checked {
       background-color: #F8F8F8;
@@ -2075,7 +2076,6 @@ label._customCHeckbox input[type="checkbox"] {
       margin-top: 20px; }
     ._payrollListWrap ._payrollListItem ._payrollListImage {
       display: -webkit-box;
-      display: -moz-box;
       display: -webkit-flex;
       display: -ms-flexbox;
       display: flex;
@@ -2084,16 +2084,18 @@ label._customCHeckbox input[type="checkbox"] {
       border: 2px dashed #c8c8d3;
       border-radius: 50%;
       background-color: #ffffff;
+      -webkit-transition: .2s border-color ease-in;
       transition: .2s border-color ease-in; }
     ._payrollListWrap ._payrollListItem ._payrollListBody {
       display: -webkit-box;
-      display: -moz-box;
       display: -webkit-flex;
       display: -ms-flexbox;
       display: flex;
       -webkit-flex-direction: column;
       -ms-flex-direction: column;
-      flex-direction: column;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+              flex-direction: column;
       margin-left: 10px; }
     ._payrollListWrap ._payrollListItem ._payrollListSteps {
       color: #364150;
@@ -2184,17 +2186,19 @@ label._customCHeckbox input[type="checkbox"] {
 
 ._importListBody {
   display: -webkit-box;
-  display: -moz-box;
   display: -ms-flexbox;
   display: -webkit-flex;
   display: flex; }
   ._importListBody ._contentBlock {
     -webkit-flex-grow: 1;
-    flex-grow: 1;
+    -webkit-box-flex: 1;
+        -ms-flex-positive: 1;
+            flex-grow: 1;
     padding: 16px 0 16px 24px; }
   ._importListBody ._tabsBlock {
     -webkit-flex-shrink: 0;
-    flex-shrink: 0;
+    -ms-flex-negative: 0;
+        flex-shrink: 0;
     width: 500px;
     padding-right: 20px;
     margin-left: 20px; }
@@ -2229,7 +2233,6 @@ label._customCHeckbox input[type="checkbox"] {
 
 ._contentBlockRow {
   display: -webkit-box;
-  display: -moz-box;
   display: -ms-flexbox;
   display: -webkit-flex;
   display: flex;
@@ -2246,7 +2249,9 @@ label._customCHeckbox input[type="checkbox"] {
       position: absolute;
       left: 17px;
       top: 50%;
-      transform: translate(0, -50%);
+      -webkit-transform: translate(0, -50%);
+          -ms-transform: translate(0, -50%);
+              transform: translate(0, -50%);
       font-style: italic;
       color: #c2c8cd; }
   ._contentBlockRow.hoverRow {
@@ -2262,7 +2267,9 @@ label._customCHeckbox input[type="checkbox"] {
     width: 1px;
     border: 1px solid #c2c8cd;
     -webkit-flex-grow: 1;
-    flex-grow: 1;
+    -webkit-box-flex: 1;
+        -ms-flex-positive: 1;
+            flex-grow: 1;
     font-size: 14px; }
     ._contentBlockRow ._rowItem:hover .cleanButton {
       display: block !important; }
@@ -2275,7 +2282,9 @@ label._customCHeckbox input[type="checkbox"] {
       position: absolute;
       right: 5px;
       top: 50%;
-      transform: translate(0, -50%);
+      -webkit-transform: translate(0, -50%);
+          -ms-transform: translate(0, -50%);
+              transform: translate(0, -50%);
       padding: 8px;
       cursor: pointer;
       font-size: 18px;
@@ -2354,6 +2363,7 @@ label._customCHeckbox input[type="checkbox"] {
     height: 100%;
     border-radius: 30px;
     background: #4BCB81;
+    -webkit-transition: all 0.5s ease;
     transition: all 0.5s ease; }
 
 ._importTitle {
