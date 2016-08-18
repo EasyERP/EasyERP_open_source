@@ -621,6 +621,11 @@ define([
                 self.$el.find('a.deleteAttach').remove();
             }
 
+            if (isFinancial && !model.approved) {
+                self.$el.find('.sendEmail').remove();
+                self.$el.find('.newPayment').remove();
+            }
+
             return this;
         }
 

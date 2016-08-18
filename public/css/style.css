@@ -1458,6 +1458,127 @@ b, strong {
     -ms-flex-order: -1;
     -webkit-order: -1;
     order: -1; } }
+.btn {
+  display: inline-block;
+  height: 32px;
+  padding: 0 12px !important;
+  margin-bottom: 0;
+  font-weight: 400;
+  text-align: center;
+  vertical-align: middle;
+  touch-action: manipulation;
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 14px;
+  line-height: 30px !important;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  border-radius: 0;
+  border: 1px solid #c8c8d3;
+  outline: 0 !important;
+  box-shadow: none !important; }
+  .btn span, .btn a {
+    padding: 0 !important;
+    color: #000000; }
+  .btn:hover {
+    cursor: pointer;
+    background: #f2f2f2;
+    background-position: 0;
+    text-decoration: none; }
+    .btn:hover span, .btn:hover a {
+      color: #000000; }
+  .btn.btnRounded {
+    border-radius: 3px; }
+  .btn:hover {
+    -webkit-transition: all .3s;
+    transition: all .3s; }
+  .btn.green {
+    color: #FFF;
+    background-color: #32c5d2;
+    border-color: #32c5d2; }
+    .btn.green:hover {
+      background-color: #26a1ab;
+      border-color: #2499a3;
+      text-decoration: none; }
+  .btn.blue {
+    color: #FFF;
+    background-color: #3e88b9;
+    border-color: #3e88b9; }
+    .btn.blue:hover {
+      background-color: #4d5a75;
+      border-color: #4d5a75;
+      text-decoration: none; }
+  .btnBlue {
+    border: 0 !important; }
+    .btnBlue.slim {
+      height: 26px;
+      line-height: 26px !important; }
+  .btnRounded {
+    background-color: #fff;
+    color: #000; }
+    .btnRounded.green {
+      background-color: #fff;
+      border-color: #32c5d2;
+      color: #32c5d2; }
+      .btnRounded.green:hover {
+        background-color: #32c5d2;
+        border-color: #32c5d2;
+        color: #fff; }
+    .btnRounded.blue {
+      background-color: #fff;
+      border-color: #3e88b9;
+      color: #3e88b9; }
+      .btnRounded.blue:hover {
+        background-color: #3e88b9;
+        border-color: #3e88b9;
+        color: #fff;
+        text-decoration: none; }
+  .btn.btnSave {
+    background: #3291c8;
+    color: #ffffff;
+    border-color: transparent; }
+    .btn.btnSave span,
+    .btn.btnSave a {
+      color: #ffffff; }
+    .btn.btnSave:hover {
+      background: #2d82b4; }
+      .btn.btnSave:hover span,
+      .btn.btnSave:hover a {
+        color: #ffffff; }
+  .btn.btnSuccess {
+    border-color: #3E7F42; }
+    .btn.btnSuccess:hover {
+      background: #3E7F42; }
+      .btn.btnSuccess:hover span, .btn.btnSuccess:hover a {
+        color: #CDCDCD; }
+  .btn.btnAttention {
+    border-color: #A22A2D; }
+    .btn.btnAttention:hover {
+      background: #A22A2D; }
+      .btn.btnAttention:hover span, .btn.btnAttention:hover a {
+        color: #CDCDCD; }
+  .btn.btnDisable {
+    background: none;
+    color: #000;
+    border: 1px solid #c8c8d3; }
+    .btn.btnDisable:hover {
+      background: none; }
+
+.editorTab .btn {
+  min-width: 66px; }
+
+.btnAdd {
+  border: 1px solid transparent;
+  background: #3494b9;
+  padding: 0 6px;
+  color: #f4f4f4;
+  line-height: 19px; }
+  .btnAdd:hover {
+    text-decoration: none;
+    background: #297492; }
+
 .textLightGrey {
   color: #c5c7c7; }
 
@@ -1888,6 +2009,107 @@ label._customCHeckbox input[type="checkbox"] {
   ._activitiesListItem:last-child {
     border-bottom: none; }
 
+.payrollListWrapOuter {
+  height: 100%; }
+
+._payrollListWrap {
+  height: 100%;
+  padding: 20px 80px;
+  overflow: auto; }
+  ._payrollListWrap ._payrollListItem {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    position: relative;
+    padding: 8px 20px 8px 30px;
+    background-color: #f7f7f7;
+    border: 2px dashed #c8c8d3;
+    border-radius: 3px;
+    transition: .2s all ease-in; }
+    ._payrollListWrap ._payrollListItem.checked {
+      background-color: #F8F8F8;
+      border: 2px solid #7eadcc; }
+      ._payrollListWrap ._payrollListItem.checked:after {
+        content: "\f00c";
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-family: FontAwesome;
+        color: #7eadcc; }
+      ._payrollListWrap ._payrollListItem.checked._weeklyItem ._payrollListImage:after, ._payrollListWrap ._payrollListItem.checked._payItem ._payrollListImage:after, ._payrollListWrap ._payrollListItem.checked._structureItem ._payrollListImage:after, ._payrollListWrap ._payrollListItem.checked._bankItem ._payrollListImage:after, ._payrollListWrap ._payrollListItem.checked._employeesItem ._payrollListImage:after {
+        color: #7eadcc; }
+      ._payrollListWrap ._payrollListItem.checked ._payrollListSteps {
+        color: #7eadcc; }
+      ._payrollListWrap ._payrollListItem.checked ._payrollListAction {
+        color: #404d5f; }
+      ._payrollListWrap ._payrollListItem.checked ._payrollListDescription {
+        color: #7f7f80; }
+      ._payrollListWrap ._payrollListItem.checked:hover {
+        border-style: solid; }
+        ._payrollListWrap ._payrollListItem.checked:hover ._payrollListImage {
+          border-style: solid; }
+      ._payrollListWrap ._payrollListItem.checked ._payrollListImage {
+        border: 2px solid #7eadcc; }
+    ._payrollListWrap ._payrollListItem:hover {
+      border: 2px dashed #7eadcc; }
+      ._payrollListWrap ._payrollListItem:hover ._payrollListImage {
+        border: 2px dashed #7eadcc; }
+    ._payrollListWrap ._payrollListItem._weeklyItem ._payrollListImage:after, ._payrollListWrap ._payrollListItem._payItem ._payrollListImage:after, ._payrollListWrap ._payrollListItem._structureItem ._payrollListImage:after, ._payrollListWrap ._payrollListItem._bankItem ._payrollListImage:after, ._payrollListWrap ._payrollListItem._employeesItem ._payrollListImage:after {
+      font-family: 'fontAwesome';
+      margin: auto;
+      color: #c8c8d3;
+      font-size: 24px; }
+    ._payrollListWrap ._payrollListItem._weeklyItem ._payrollListImage:after {
+      content: "\f073"; }
+    ._payrollListWrap ._payrollListItem._payItem ._payrollListImage:after {
+      content: "\f080"; }
+    ._payrollListWrap ._payrollListItem._structureItem ._payrollListImage:after {
+      content: "\f200"; }
+    ._payrollListWrap ._payrollListItem._bankItem ._payrollListImage:after {
+      content: "\f09d"; }
+    ._payrollListWrap ._payrollListItem._employeesItem ._payrollListImage:after {
+      content: "\f0c0"; }
+    ._payrollListWrap ._payrollListItem + ._payrollListItem {
+      margin-top: 20px; }
+    ._payrollListWrap ._payrollListItem ._payrollListImage {
+      display: -webkit-box;
+      display: -moz-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      height: 60px;
+      width: 60px;
+      border: 2px dashed #c8c8d3;
+      border-radius: 50%;
+      background-color: #ffffff;
+      transition: .2s border-color ease-in; }
+    ._payrollListWrap ._payrollListItem ._payrollListBody {
+      display: -webkit-box;
+      display: -moz-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+      flex-direction: column;
+      margin-left: 10px; }
+    ._payrollListWrap ._payrollListItem ._payrollListSteps {
+      color: #364150;
+      font-family: "OpenSans SemiBold", sans-serif;
+      font-size: 10px;
+      text-transform: uppercase; }
+    ._payrollListWrap ._payrollListItem ._payrollListAction {
+      font-size: 20px;
+      color: #7f7f80; }
+      ._payrollListWrap ._payrollListItem ._payrollListAction:hover {
+        text-decoration: none; }
+    ._payrollListWrap ._payrollListItem ._payrollListDescription {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #7f7f80; }
+
 .dialog-tabs:before, .dialog-tabs:after {
   content: " ";
   display: table; }
@@ -1929,6 +2151,316 @@ label._customCHeckbox input[type="checkbox"] {
 .mainTabs .avatarInfoContainer {
   margin-left: 160px; }
 
+._importListWrap ._importMainTitle {
+  font-size: 20px;
+  padding-right: 15px;
+  text-align: right;
+  margin: 20px 0;
+  overflow: visible; }
+
+._loadHistoryTopTable {
+  height: 450px;
+  margin-bottom: 20px; }
+  ._loadHistoryTopTable ._importLoadHistory td {
+    overflow: visible; }
+  ._loadHistoryTopTable ._importLoadHistory ._importTableImg {
+    width: 50px;
+    height: 50px;
+    padding: 5px; }
+    ._loadHistoryTopTable ._importLoadHistory ._importTableImg img {
+      max-width: 100%; }
+  ._loadHistoryTopTable .changeTableCombobox.open {
+    border: 1px solid #000000;
+    z-index: 10; }
+
+._loadHistoryTopTableContainer {
+  width: 100%; }
+
+._contentBlock,
+._tabsBlock {
+  height: calc(100vh - 205px);
+  overflow-y: auto;
+  overflow-x: hidden; }
+
+._importListBody {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex; }
+  ._importListBody ._contentBlock {
+    -webkit-flex-grow: 1;
+    flex-grow: 1;
+    padding: 16px 0 16px 24px; }
+  ._importListBody ._tabsBlock {
+    -webkit-flex-shrink: 0;
+    flex-shrink: 0;
+    width: 500px;
+    padding-right: 20px;
+    margin-left: 20px; }
+    ._importListBody ._tabsBlock ._importListTabs {
+      border-bottom: 1px solid #c8c8d3; }
+      ._importListBody ._tabsBlock ._importListTabs li {
+        display: inline-block;
+        vertical-align: bottom;
+        padding: 10px 15px;
+        cursor: pointer; }
+        ._importListBody ._tabsBlock ._importListTabs li.active {
+          background: #3e88b9;
+          color: #ffffff; }
+    ._importListBody ._tabsBlock ._importTabItem {
+      width: 100%;
+      padding: 24px 0;
+      display: none; }
+      ._importListBody ._tabsBlock ._importTabItem.active {
+        display: block; }
+    ._importListBody ._tabsBlock .fieldItem {
+      width: 100%;
+      max-width: 460px;
+      padding: 10px 15px;
+      border: 1px solid #c8c8d3;
+      margin-bottom: 10px;
+      cursor: move;
+      background: #ffffff; }
+    ._importListBody ._tabsBlock .fieldsItems {
+      display: none; }
+      ._importListBody ._tabsBlock .fieldsItems.active {
+        display: block; }
+
+._contentBlockRow {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  min-height: 53px;
+  border-radius: 3px;
+  background-color: #ffffff;
+  margin-bottom: 10px; }
+  ._contentBlockRow.emptyRow {
+    background-color: #f3f5f6; }
+    ._contentBlockRow.emptyRow .secondBox {
+      border: 1px dashed #c2c8cd; }
+    ._contentBlockRow.emptyRow .empty:after {
+      content: 'Drag and drop field here';
+      position: absolute;
+      left: 17px;
+      top: 50%;
+      transform: translate(0, -50%);
+      font-style: italic;
+      color: #c2c8cd; }
+  ._contentBlockRow.hoverRow {
+    background: rgba(62, 136, 185, 0.4); }
+    ._contentBlockRow.hoverRow ._rowItem {
+      border-color: #3e88b9 !important; }
+    ._contentBlockRow.hoverRow .secondBox {
+      border: 1px dashed #c2c8cd; }
+    ._contentBlockRow.hoverRow .empty:after {
+      color: #ffffff; }
+  ._contentBlockRow ._rowItem {
+    position: relative;
+    width: 1px;
+    border: 1px solid #c2c8cd;
+    -webkit-flex-grow: 1;
+    flex-grow: 1;
+    font-size: 14px; }
+    ._contentBlockRow ._rowItem:hover .cleanButton {
+      display: block !important; }
+    ._contentBlockRow ._rowItem:nth-child(n+2) {
+      border-left: none; }
+    ._contentBlockRow ._rowItem .importStatic {
+      min-height: 53px;
+      padding: 17px 15px; }
+    ._contentBlockRow ._rowItem .cleanButton {
+      position: absolute;
+      right: 5px;
+      top: 50%;
+      transform: translate(0, -50%);
+      padding: 8px;
+      cursor: pointer;
+      font-size: 18px;
+      display: none !important; }
+    ._contentBlockRow ._rowItem .empty + .cleanButton {
+      display: none !important; }
+  ._contentBlockRow ._movingItem {
+    min-height: 53px;
+    padding: 17px 15px;
+    cursor: move; }
+    ._contentBlockRow ._movingItem.borderField {
+      border: 1px solid #c2c8cd;
+      background: #ffffff;
+      z-index: 10; }
+
+._importTabs .tabListItem span {
+  display: inline-block !important;
+  color: #ffffff;
+  line-height: 12px; }
+._importTabs .tabListItem ._importStep {
+  font-weight: bold; }
+
+.ui-draggable.draggableActive {
+  position: fixed !important;
+  z-index: 10; }
+
+._importListFooter {
+  padding: 15px 20px;
+  margin-top: 10px;
+  border-top: 1px solid; }
+
+._importAttachContainer {
+  width: 100%;
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 50px 20px 20px;
+  text-align: center;
+  border: 3px dashed;
+  background: #f2f2f2; }
+  ._importAttachContainer .attachFileName {
+    margin: 15px 0;
+    font-size: 16px; }
+    ._importAttachContainer .attachFileName span {
+      font-weight: bold; }
+  ._importAttachContainer label,
+  ._importAttachContainer .dropDownDateRangeContainer {
+    display: inline-block;
+    vertical-align: middle;
+    text-align: center;
+    margin-right: 15px;
+    cursor: pointer; }
+    ._importAttachContainer label span,
+    ._importAttachContainer .dropDownDateRangeContainer span {
+      display: block; }
+  ._importAttachContainer input[type="checkbox"],
+  ._importAttachContainer input[type="radio"] {
+    width: 15px;
+    height: 15px; }
+  ._importAttachContainer .dropDownDateRangeContainer {
+    float: none;
+    height: 11px; }
+  ._importAttachContainer .importBtn {
+    margin-top: 7px; }
+  ._importAttachContainer ._exampleLink {
+    margin-top: 30px;
+    text-align: right; }
+    ._importAttachContainer ._exampleLink a {
+      color: #00a2d0; }
+
+._progressBarContainer {
+  height: 20px;
+  border-radius: 30px;
+  margin-bottom: 20px;
+  background: #f2f2f2; }
+  ._progressBarContainer ._progressBar {
+    height: 100%;
+    border-radius: 30px;
+    background: #4BCB81;
+    transition: all 0.5s ease; }
+
+._importTitle {
+  font-size: 30px;
+  margin: 15px 0; }
+
+._importStep3 {
+  width: 100%;
+  padding: 0 15px; }
+  ._importStep3 ._step3Desk {
+    margin: 25px 0; }
+    ._importStep3 ._step3Desk h2 {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 10px; }
+    ._importStep3 ._step3Desk p {
+      font-size: 13px; }
+
+._importTable th,
+._importTable td {
+  border: 1px solid #c8c8d3;
+  padding: 0 10px; }
+._importTable thead th {
+  text-align: right; }
+._importTable tbody tr:nth-child(2n) {
+  background: #f2f2f2; }
+._importTable ._importTableImg {
+  width: 50px;
+  height: 50px;
+  margin: 5px auto; }
+  ._importTable ._importTableImg img {
+    max-width: 100%; }
+
+._importCheckboxContainer {
+  text-align: center;
+  font-size: 0; }
+  ._importCheckboxContainer ._importItemTitle {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px; }
+  ._importCheckboxContainer ._importItemDesk {
+    font-size: 13px; }
+  ._importCheckboxContainer ._importCheckboxItem {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    width: 50%;
+    min-height: 290px;
+    border: 1px solid #c8c8d3; }
+    ._importCheckboxContainer ._importCheckboxItem:last-child {
+      border-left: none; }
+    ._importCheckboxContainer ._importCheckboxItem label {
+      display: block;
+      padding: 25px;
+      cursor: pointer;
+      background: #f2f2f2; }
+      ._importCheckboxContainer ._importCheckboxItem label:hover ._cellContainer {
+        border-color: #3e88b9; }
+  ._importCheckboxContainer ._cellContainer {
+    position: relative;
+    padding: 20px;
+    border: 1px solid #c8c8d3;
+    margin-top: 25px; }
+  ._importCheckboxContainer ._radioContainer {
+    position: absolute;
+    left: 70px;
+    bottom: 55px;
+    width: 20px;
+    height: 20px; }
+    ._importCheckboxContainer ._radioContainer:checked + label {
+      background: #ffffff; }
+      ._importCheckboxContainer ._radioContainer:checked + label ._cellContainer {
+        background: rgba(62, 136, 185, 0.1);
+        border-color: #3e88b9; }
+
+.list._importLoadHistory {
+  margin: 15px 0 25px; }
+  .list._importLoadHistory th,
+  .list._importLoadHistory td {
+    padding: 0 10px; }
+  .list._importLoadHistory tbody td {
+    text-align: left; }
+  .list._importLoadHistory ._importLink {
+    color: #3291c8; }
+
+._finishImportContainer {
+  border: 1px solid;
+  background: #f2f2f2;
+  width: 100%;
+  max-width: 700px;
+  padding: 25px 30px;
+  margin: 25px auto;
+  text-align: center; }
+  ._finishImportContainer ._finishImportTitle {
+    font-size: 22px;
+    margin-bottom: 20px; }
+  ._finishImportContainer ._finishList {
+    margin-bottom: 15px; }
+    ._finishImportContainer ._finishList span {
+      font-size: 16px; }
+      ._finishImportContainer ._finishList span:after {
+        content: ','; }
+      ._finishImportContainer ._finishList span:last-child:after {
+        content: none; }
+  ._finishImportContainer ._importWithOutConflict {
+    margin-bottom: 25px; }
+
 .propertyContainer a:hover {
   text-decoration: none; }
 
@@ -1968,7 +2500,7 @@ label._customCHeckbox input[type="checkbox"] {
     margin-bottom: 5px;
     font-weight: bold; }
   .propertyBox a {
-    color: #3291c8; }
+    color: #3e88b9; }
 
 .separateBlock {
   text-align: center; }
@@ -1978,7 +2510,7 @@ label._customCHeckbox input[type="checkbox"] {
   width: 100%;
   border-left: 1px solid transparent; }
   .propertyFormList.active {
-    border-left-color: #3291c8; }
+    border-left-color: #3e88b9; }
   .propertyFormList label,
   .propertyFormList .inputBox {
     display: table-cell !important;
@@ -2611,7 +3143,7 @@ label._customCHeckbox input[type="checkbox"] {
 .tasksItemIcon {
   display: inline-block;
   vertical-align: middle;
-  color: #3291c8; }
+  color: #3e88b9; }
   .tasksItemIcon + .tasksItemIcon {
     margin-left: 8px; }
   .tasksItemIcon img {
@@ -2639,11 +3171,11 @@ label._customCHeckbox input[type="checkbox"] {
             flex-grow: 1;
     width: 10px; }
     .tabListWrap .tabListItem.active {
-      background: #3291c8; }
+      background: #3e88b9; }
       .tabListWrap .tabListItem.active span {
         color: #ffffff; }
       .tabListWrap .tabListItem.active:after {
-        border-left-color: #3291c8; }
+        border-left-color: #3e88b9; }
     .tabListWrap .tabListItem + .tabListItem {
       padding-left: 33px; }
     .tabListWrap .tabListItem.passed {

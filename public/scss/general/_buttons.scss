@@ -1,0 +1,189 @@
+.btn {
+  display: inline-block;
+  height: 32px;
+  padding: 0 12px!important;
+  margin-bottom: 0;
+  font-weight: 400;
+  text-align: center;
+  vertical-align: middle;
+  touch-action: manipulation;
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 14px;
+  line-height: 30px!important;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  border-radius: 0;
+  border: 1px solid $btnBorderColor;
+  background: $btnBgColor;
+
+
+  outline: 0!important;
+  box-shadow: none!important;
+
+  span, a {
+    padding: 0 !important;
+    color: $black;
+  }
+
+  &:hover {
+    cursor: pointer;
+    background: $btnTextColor;
+    background-position: 0;
+    text-decoration: none;
+    span, a {
+      color: $black;
+    }
+  }
+
+  &.btnRounded {
+    border-radius: 3px;
+  }
+
+  &:hover {
+    -webkit-transition: all .3s;
+    transition: all .3s;
+  }
+
+  &.green {
+    color: #FFF;
+    background-color: #32c5d2;
+    border-color: #32c5d2;
+
+    &:hover {
+      background-color: #26a1ab;
+      border-color: #2499a3;
+      text-decoration: none;
+    }
+  }
+
+  &.blue {
+    color: #FFF;
+    background-color: #3e88b9;
+    border-color: #3e88b9;
+    &:hover {
+      background-color: #4d5a75;
+      border-color: #4d5a75;
+      text-decoration: none;
+    }
+  }
+
+  &Blue {
+    border: 0 !important;
+
+    &.slim {
+      height: 26px;
+      line-height: 26px !important;
+    }
+  }
+
+  &Rounded {
+    background-color: #fff;
+    color: #000;
+
+    &.green {
+      background-color: #fff;
+      border-color: #32c5d2;
+      color: #32c5d2;
+
+      &:hover {
+        background-color: #32c5d2;
+        border-color: #32c5d2;
+        color: #fff;
+      }
+    }
+
+    &.blue {
+      background-color: #fff;
+      border-color: #3e88b9;
+      color: #3e88b9;
+
+      &:hover {
+        background-color: #3e88b9;
+        border-color: #3e88b9;
+        color: #fff;
+        text-decoration: none;
+      }
+    }
+  }
+
+  &.btnSave {
+    background: #3291c8;
+    color: $white;
+    border-color: transparent;
+
+    span,
+    a {
+      color: $white;
+    }
+
+    &:hover {
+      background: #2d82b4;
+
+      span,
+      a {
+        color: $white;
+      }
+    }
+  }
+
+  &.btnSuccess {
+    border-color: #3E7F42;
+
+    &:hover {
+      background: #3E7F42;
+
+      span, a {
+        color: #CDCDCD;
+      }
+    }
+  }
+
+  &.btnAttention {
+    border-color: #A22A2D;
+
+    &:hover {
+      background: #A22A2D;
+      span, a {
+        color: #CDCDCD;
+      }
+    }
+  }
+
+  &.btnDisable {
+    background: none;
+    color: #000;
+    border: 1px solid $btnBorderColor;
+
+    &:hover {
+      background: none;
+    }
+  }
+}
+
+.editorTab {
+  .btn {
+    min-width: 66px;
+  }
+}
+
+.btnAdd {
+  border: 1px solid transparent;
+  background: darken(#66B5D4, 15%);
+  padding: 0 6px;
+  color: #f4f4f4;
+  line-height: 19px;
+
+  &:hover {
+    text-decoration: none;
+    background: darken(#66B5D4, 25%);
+  }
+}
+
+
+
+
+
+

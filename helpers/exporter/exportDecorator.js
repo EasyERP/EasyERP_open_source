@@ -2,6 +2,7 @@ var csv = require('fast-csv');
 var fs = require('fs');
 var arrayToXlsx = require('../exporter/arrayToXlsx');
 var async = require('async');
+var path = require('path');
 
 function createProjection(map, options) {
     var project = {};
@@ -196,11 +197,67 @@ function exportToXlsx(options) {
     } else {
         writeXlsx(resultArray);
     }
+}
 
-};
+function reportToXlsx(options) {
+    var res = options.res;
+    var next = options.next;
+    var map = options.map;
+    var fileName = options.fileName;
+    var resultArray = options.resultArray;
+    //var headersArray = Object.keys(map.aliases);
+    var headersArray = map;
+    //var formatters = map.formatters;
+    var nameOfFile = fileName ? fileName : type ? type : 'data';
+
+    var writeXlsx = function (array) {
+        var randomNumber = Number(Date.now());
+        var pathToFile = path.join('exportFiles', nameOfFile + '_' + randomNumber.toString() + '.xlsx');
+        arrayToXlsx.writeFile(pathToFile, array, {
+            sheetName : 'report',
+            headers   : headersArray,
+            attributes: headersArray
+        });
+
+        pathToFile = encodeURIComponent(pathToFile);
+
+        pathToFile = path.join('download', pathToFile);
+
+        next(null, {
+            fileName: nameOfFile + '.xlsx',
+            pathName: pathToFile
+        });
+    };
+
+
+    writeXlsx(resultArray);
+    /*if (formatters) {
+        async.each(resultArray, function (item, callback) {
+
+            var keys = Object.keys(formatters);
+
+            for (var i = keys.length - 1; i >= 0; i--) {
+                var key = keys[i];
+                item[key] = formatters[key](item[key]);
+            }
+
+            callback();
+
+        }, function (err) {
+            if (err) {
+                return next(err);
+            }
+
+            writeXlsx(resultArray);
+        });
+    } else {
+        return writeXlsx(resultArray);
+    }*/
+}
 
 exports.exportToCsv = exportToCsv;
 exports.exportToXlsx = exportToXlsx;
+exports.reportToXlsx = reportToXlsx;
 //
 ///**
 // *

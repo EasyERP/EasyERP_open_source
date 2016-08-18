@@ -25,19 +25,33 @@ define([
             this.model = options.model.toJSON();
             this.attachments = this.model.attachments;
 
-            projectId = App.projectInfo && App.projectInfo.projectId ? App.projectInfo.projectId : this.model.project._id;
+            projectId = App.projectInfo && App.projectInfo.projectId ? App.projectInfo.projectId : this.model.project ? this.model.project._id : null;
 
             url = url + projectId;
 
-            dataService.getData(url, null, function (response) {
-                var emails = {};
-                var res = response[0];
+            if (projectId) {
+                dataService.getData(url, null, function (response) {
+                    var emails = {};
+                    var res = response[0];
 
-                emails.Cc = (res.projectmanager || '') + ', ' + (res.salesmanager || '');
-                emails.To = (res.customerCompany || '') + ', ' + res.customerPersons.join(', ');
+                    emails.Cc = (res.projectmanager || '') + ', ' + (res.salesmanager || '');
+                    emails.To = (res.customerCompany || '') + ', ' + res.customerPersons.join(', ');
 
-                self.render(emails);
-            });
+                    self.render(emails);
+                });
+            } else {
+                url = 'invoices/emails/' + this.model._id;
+                dataService.getData(url, null, function (response) {
+                    var emails = {};
+                    var res = response[0];
+
+                    emails.Cc = (res.salesmanager || '');
+                    emails.To = res.customerPersons;
+
+                    self.render(emails);
+                });
+            }
+
         },
 
         events: {

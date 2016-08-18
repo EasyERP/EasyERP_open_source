@@ -73,6 +73,7 @@ define([
         routes: {
             home                                                                                            : 'any',
             'easyErp/Products/thumbnails(/c=:countPerPage)(/filter=:filter)'                                : 'goToProduct',
+            'easyErp/import/list(/p=:page)(/c=:countPerPage)'                                               : 'goToImport',
             'login(?password=:password&dbId=:dbId&email=:email)'                                            : 'login',
             'easyErp/:contentType/kanban(/:parrentContentId)(/filter=:filter)'                              : 'goToKanban',
             'easyErp/:contentType/datelist(/c=:countPerPage)(/filter=:filter)'                              : 'goToDateList',
@@ -470,6 +471,48 @@ define([
             }
         },
 
+        goToImport: function (page, count) {
+            var self = this;
+
+            this.checkLogin(function (success) {
+                if (success) {
+                    goImport(self);
+                } else {
+                    self.redirectTo();
+                }
+            });
+
+            function goImport(context) {
+                var startTime = new Date();
+                if (context.mainView === null) {
+                    context.main('import');
+                } else {
+                    context.mainView.updateMenu('import');
+                }
+
+                var contentViewUrl = 'views/Import/ContentView';
+
+                require([contentViewUrl], function (contentView) {
+                    var contentview = new contentView({startTime: startTime, page: page, count: count});
+                    var url = '#easyErp/import/list';
+
+                    if (page) {
+                        url += '/p=' + page;
+                    }
+
+                    if (count) {
+                        url += '/c=' + count;
+                    }
+
+
+                    custom.setCurrentVT('list');
+
+                    context.changeView(contentview);
+                    Backbone.history.navigate(url, {replace: true});
+                });
+            }
+        },
+
         goToProfiles: function () {
             var self = this;
 
@@ -761,6 +804,9 @@ define([
 
                     var contentview = new contentView({startTime: startTime});
                     var topbarView = new topBarView({actionType: "Content"});
+
+                    topbarView.bind('backToSettingsEvent', contentview.backToSettings, contentview);
+                    
                     self.changeView(contentview);
                     self.changeTopBarView(topbarView);
                 });

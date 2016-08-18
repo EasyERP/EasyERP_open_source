@@ -305,9 +305,9 @@ module.exports = (function () {
 
 
     var invoice = {
-        collection  : 'Invoice',
-        schema      : 'Invoice',
-        aliases     : {
+        collection: 'Invoice',
+        schema    : 'Invoice',
+        aliases   : {
             ID                   : 'Id',
             forSales             : 'ForSales',
             'supplier._id'       : 'Supplier ID',
@@ -339,10 +339,12 @@ module.exports = (function () {
             'editedBy.user'      : 'Edited By User',
             'editedBy.date'      : 'Edited By Date'
         },
-        arrayKeys   : {
+
+        arrayKeys: {
             'groups.users': true,
             'groups.group': true
         },
+
         objectIdList: {
             'supplier._id'   : 'Customers',
             'salesPerson._id': 'Employees',

@@ -23,6 +23,7 @@ define([
         template   : _.template(CreateTemplate),
 
         initialize: function () {
+            this.undelegateEvents();
             _.bindAll(this, 'saveItem', 'render');
             this.model = new InvoiceModel();
             this.responseObj = {};
@@ -82,16 +83,16 @@ define([
 
             var forSales = this.forSales || false;
 
-            var supplier = $currentEl.find('#supplier').data('id');
-            var salesPersonId = $currentEl.find('#salesPerson').data('id') ? this.$('#salesPerson').data('id') : null;
-            var paymentTermId = $currentEl.find('#payment_terms').data('id') ? this.$('#payment_terms').data('id') : null;
-            var invoiceDate = $currentEl.find('#invoice_date').val();
-            var dueDate = $currentEl.find('#due_date').val();
+            var supplier = $currentEl.find('#supplier_Create').data('id');
+            var salesPersonId = $currentEl.find('#salesPerson_Create').data('id') ? this.$('#salesPerson').data('id') : null;
+            var paymentTermId = $currentEl.find('#payment_terms_Create').data('id') ? this.$('#payment_terms').data('id') : null;
+            var invoiceDate = $currentEl.find('#invoice_date_Create').val();
+            var dueDate = $currentEl.find('#due_date_Create').val();
             var i;
-            var total = parseFloat($currentEl.find('#totalAmount').text()) * 100;
-            var unTaxed = parseFloat($currentEl.find('#totalUntaxes').text()) * 100;
+            var total = parseFloat(helpers.spaceReplacer($currentEl.find('#totalAmount').text())) * 100;
+            var unTaxed = parseFloat(helpers.spaceReplacer($currentEl.find('#totalUntaxes').text())) * 100;
             var balance = total; // parseFloat($currentEl.find('#balance').text()) * 100;
-            var journal = $currentEl.find('#journal').attr('data-id') || null;
+            var journal = $currentEl.find('#journal_Create').attr('data-id') || null;
 
             var payments = {
                 total  : total,
@@ -100,8 +101,8 @@ define([
             };
 
             var currency = {
-                _id : $currentEl.find('#currencyDd').attr('data-id'),
-                name: $.trim($currentEl.find('#currencyDd').text())
+                _id : $currentEl.find('#currencyDd_Create').attr('data-id'),
+                name: $.trim($currentEl.find('#currencyDd_Create').text())
             };
 
             var usersId = [];
@@ -126,8 +127,8 @@ define([
                         quantity = targetEl.find('[data-name="quantity"] input').val();
                         price = targetEl.find('[data-name="price"] input').val() * 100;
                         description = targetEl.find('[data-name="productDescr"] textarea').val();
-                        taxes = targetEl.find('.taxes').text();
-                        subtotal = targetEl.find('.subtotal').text();
+                        taxes = helpers.spaceReplacer(targetEl.find('.taxes').text());
+                        subtotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
                         subtotal = parseFloat(subtotal) * 100;
 
                         if (isNaN(price) || price <= 0) {
@@ -302,19 +303,19 @@ define([
             });
             $notDiv.append(this.attachView.render().el);
 
-            populate.get('#currencyDd', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
+            populate.get('#currencyDd_Create', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
 
-            populate.get2name('#supplier', CONSTANTS.URLS.SUPPLIER, {}, this, false, true);
-            populate.get('#payment_terms', '/paymentTerm', {}, 'name', this, true, true);
-            populate.get2name('#salesPerson', CONSTANTS.URLS.EMPLOYEES_RELATEDUSER, {}, this, true, true);
-            populate.get('#journal', '/journals/getForDd', {}, 'name', this, true);
+            populate.get2name('#supplier_Create', CONSTANTS.URLS.SUPPLIER, {}, this, false, true);
+            populate.get('#payment_terms_Create', '/paymentTerm', {}, 'name', this, true, true);
+            populate.get2name('#salesPerson_Create', CONSTANTS.URLS.EMPLOYEES_RELATEDUSER, {}, this, true, true);
+            populate.get('#journal_Create', '/journals/getForDd', {}, 'name', this, true);
             populate.fetchWorkflow({wId: 'Purchase Invoice'}, function (response) {
                 if (!response.error) {
                     self.defaultWorkflow = response._id;
                 }
             });
 
-            this.$el.find('#invoice_date').datepicker({
+            this.$el.find('#invoice_date_Create').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
@@ -326,7 +327,7 @@ define([
 
             invoiceDate = this.$el.find('#invoice_date').val();
 
-            this.$el.find('#due_date').datepicker({
+            this.$el.find('#due_date_Create').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,

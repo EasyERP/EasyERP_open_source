@@ -76,7 +76,8 @@
 
                                 <dt><label for="journal">Journal</label></dt>
                                 <dd class="_newSelectListWrap">
-                                    <a id="journal" class="<%= model.approved ? '' : 'current-selected'%>" href="javascript:;"><%= model.journal && model.journal._id ?
+                                    <a id="journal" class="<%= model.approved ? '' : 'current-selected'%>" data-id="<%= model.journal && model.journal._id ?
+                                        model.journal._id : null%>" href="javascript:;"><%= model.journal && model.journal._id ?
                                         model.journal.name : 'Select'%></a>
                                 </dd>
 
@@ -128,7 +129,8 @@
 
                                 <dt><label for="journal">Journal</label></dt>
                                 <dd class="_newSelectListWrap">
-                                    <a id="journal" class="<%= model.approved ? '' : 'current-selected'%>" href="javascript:;"><%= model.journal && model.journal._id ?
+                                    <a id="journal" class="<%= model.approved ? '' : 'current-selected'%>" data-id="<%= model.journal && model.journal._id ?
+                                        model.journal._id : null%>" href="javascript:;"><%= model.journal && model.journal._id ?
                                         model.journal.name : 'Select'%></a>
                                 </dd>
 

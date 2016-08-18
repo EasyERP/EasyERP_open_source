@@ -61,7 +61,7 @@ define([
             var expectedRevenue;
             var companyId = $thisEl.find('#companyDd').attr('data-id');
             var customerId = $thisEl.find('#customerDd').attr('data-id');
-            var salesPersonId =$thisEl.find('#salesPersonDd').attr('data-id');
+            var salesPersonId = $thisEl.find('#salesPersonDd').attr('data-id');
             var expectedClosing = $.trim($thisEl.find('#expectedClosing').val());
             var priority = $.trim($thisEl.find('#priorityDd').text());
             var internalNotes = $.trim($thisEl.find('#internalNotes').val());
@@ -133,8 +133,8 @@ define([
         },
 
         render: function () {
-            var parentModel =  this.parentModel ? this.parentModel.toJSON() : '';
-            var formString = this.template({parentModel : parentModel});
+            var parentModel = this.parentModel ? this.parentModel.toJSON() : '';
+            var formString = this.template({parentModel: parentModel});
             var self = this;
             var notDiv;
             var model = new OpportunityModel();
@@ -170,7 +170,7 @@ define([
             });
 
             notDiv.append(this.attachView.render().el);
-           /* this.renderAssignees(model);*/
+            /* this.renderAssignees(model);*/
 
             this.$el.find('#expectedClosing').datepicker({dateFormat: 'd M, yy', minDate: new Date()});
             dataService.getData('/opportunities/priority', {}, function (priorities) {
@@ -181,8 +181,8 @@ define([
                 });
                 self.responseObj['#priorityDd'] = priorities;
             });
-            populate.get2name('#customerDd', CONSTANTS.URLS.CUSTOMERS, {type : 'Person'}, this);
-            populate.get2name('#companyDd', CONSTANTS.URLS.CUSTOMERS, {type : 'Company'}, this);
+            populate.get2name('#customerDd', CONSTANTS.URLS.CUSTOMERS, {type: 'Person'}, this);
+            populate.get2name('#companyDd', CONSTANTS.URLS.CUSTOMERS, {type: 'Company'}, this);
             dataService.getData('/employees/getForDD', {isEmployee: true}, function (employees) {
                 employees = _.map(employees.data, function (employee) {
                     employee.name = employee.name.first + ' ' + employee.name.last;
