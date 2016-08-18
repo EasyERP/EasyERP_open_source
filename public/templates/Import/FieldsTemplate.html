@@ -1,5 +1,5 @@
 <div class="_contentBlock" id="dbContentBlock">
-    <div class="content contentBlockRow _contentBlockRow unmapped">
+    <div class="content contentBlockRow _contentBlockRow unmapped _withOutBorder text-center">
         <div class="firstColumn _rowItem">
             <div class="importStatic">Source file</div>
         </div>
@@ -7,19 +7,21 @@
             <div class="importStatic">System database</div>
         </div>
     </div>
-    <% _.each(content, function(itemParent, parent){%>
+    <div class="_contentBlockInner">
+        <% _.each(content, function(itemParent, parent){%>
         <% _.each(itemParent, function(item, key){%>
-            <div class="content contentBlockRow _contentBlockRow unmapped">
-                <div data-name="<%= key %>" class="firstColumn _rowItem">
-                    <div data-name="<%= key %>" class="importStatic"><%= key %></div>
-                </div>
-                <div class="_rowItem secondBox">
-                    <div data-name="<%= item %>" data-parent="<%= parent %>" class="secondColumn dbFieldItem <% if (item) { %> dbFieldItemDrag <% } else { %> empty <% } %> _movingItem"><%= item %></div>
-                    <span class="cleanButton fa fa-times" aria-hidden="true"></span>
-                </div>
+        <div class="content contentBlockRow _contentBlockRow unmapped">
+            <div data-name="<%= key %>" class="firstColumn _rowItem">
+                <div data-name="<%= key %>" class="importStatic"><%= key %></div>
             </div>
+            <div class="_rowItem secondBox">
+                <div data-name="<%= item %>" data-parent="<%= parent %>" class="secondColumn dbFieldItem <% if (item) { %> dbFieldItemDrag <% } else { %> empty <% } %> _movingItem"><%= item %></div>
+                <span class="cleanButton fa fa-times" aria-hidden="true"></span>
+            </div>
+        </div>
         <% }); %>
-    <% }); %>
+        <% }); %>
+    </div>
 </div>
 <div id="fieldsContainer" class="_tabsBlock">
     <ul class="_importListTabs">

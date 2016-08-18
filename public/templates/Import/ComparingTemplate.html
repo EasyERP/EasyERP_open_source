@@ -1,9 +1,13 @@
 <% if (Object.keys(data.result).length) { %>
     <div class="_loadHistoryTopTableContainer">
         <div class="_loadHistoryTopTable tableResponsive">
-            <% if (step < 0) { %>
-                Found <%= Object.keys(data.result).length %> conflicts
-            <% } %>
+            <div class="_importShowConflicts">
+                <h2>
+                    <% if (step < 0) { %>
+                    Found <%= Object.keys(data.result).length %> conflicts
+                    <% } %>
+                </h2>
+            </div>
             <table class="list _importLoadHistory">
                 <thead>
                 <tr>
@@ -84,7 +88,7 @@
                 <% }) %>
             </table>
         </div>
-        <div>
+        <div class="_importButtonsGroup">
             <button id="stepByStepButton" class="btn btnSave right">Step-By-Step</button>
             <button id="skipAllButton" data-action="skip" class="btn btnSave right">Skip All</button>
             <button id="importAllButton" data-action="import" class="btn btnSave right">Import All</button>
