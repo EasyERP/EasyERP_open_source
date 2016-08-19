@@ -12627,6 +12627,13 @@ td.editable {
   right: 20px;
   cursor: pointer;
 }
+.projectMembersTable ._newSelectListWrap {
+  display: inline-block;
+}
+.projectMembersTable ._newSelectListWrap .newSelectList {
+  left: auto;
+  right: 0;
+}
 .collapsed .sideMenu {
   width: 40px !important;
   margin-right: -100%;
