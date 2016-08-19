@@ -2146,8 +2146,14 @@ label._customCHeckbox input[type="checkbox"] {
 ._priorityCell .Trivial {
   background-position: -103px -3px; }
 
-._contractJobsListItem ._contractJobsStatusBlock.finished {
-  background-color: #fff; }
+._contractJobsListItem ._contractJobsStatusBlock {
+  font-family: "OpenSans SemiBold", sans-serif; }
+  ._contractJobsListItem ._contractJobsStatusBlock.finished, ._contractJobsListItem ._contractJobsStatusBlock.inProgress {
+    color: #fff; }
+  ._contractJobsListItem ._contractJobsStatusBlock.finished {
+    background-color: #46BF40; }
+  ._contractJobsListItem ._contractJobsStatusBlock.inProgress {
+    background-color: #46BF40; }
 
 .dialog-tabs:before, .dialog-tabs:after {
   content: " ";

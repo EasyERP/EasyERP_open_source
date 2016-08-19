@@ -445,11 +445,16 @@
 ._contractJobsListItem {
 
   ._contractJobsStatusBlock {
+    font-family: $semibold-font-family;
+    &.finished,
+    &.inProgress  {
+      color: #fff;
+    }
     &.finished {
-      background-color: #fff;
+      background-color: $contractJobs-green-bg;
     }
     &.inProgress {
-      
+      background-color: $contractJobs-green-bg;
     }
   }
   ._contractJobsJobBlock {
