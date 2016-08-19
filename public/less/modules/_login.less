@@ -2235,14 +2235,6 @@ td.editable {
   }
 }
 
-.addTaskTitle {
-  &:after {
-    content: '';
-    display: table;
-    clear: both;
-  }
-}
-
 ._taskTimeBlock {
 
   .inputDateActionBlock {
@@ -2264,6 +2256,7 @@ td.editable {
 .addTaskTitle {
   display: flex;
   align-items: center;
+  white-space: nowrap;
 
   >label {
     width: auto !important;

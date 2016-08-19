@@ -1480,9 +1480,8 @@ b, strong {
   box-shadow: none !important;
   height: 26px;
   line-height: 24px !important;
-  border-radius: 3px; }
-  .btn + .btn {
-    margin-left: 8px; }
+  border-radius: 3px;
+  min-width: 70px; }
   .btn.plus:before {
     content: "\f067";
     margin-right: 6px;
