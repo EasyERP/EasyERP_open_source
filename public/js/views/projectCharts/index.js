@@ -85,7 +85,7 @@ define([
                     return x(d.value / 100);
                 })
                 .attr('fill', function (d) {
-                    return d.field === 'cost' ? '#8E44AD' : d.field === 'lost' ? 'red' : d.field === 'profit' ? 'green' : '#26a7dd';
+                    return d.field === 'cost' ? '#FFC107' : d.field === 'lost' ? 'red' : d.field === 'profit' ? 'green' : '#26a7dd';
                 });
 
             topChart

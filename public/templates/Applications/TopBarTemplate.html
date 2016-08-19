@@ -1,17 +1,17 @@
 <h3><%=contentType%></h3>
 <div id="createBtnHolder">
-    <a href="#home/action-<%=contentType%>/Create" class="fa fa-plus" title="Create" id="top-bar-createBtn"></a>
-    <a href="#home/action-<%=contentType%>/Edit" class="fa fa-wrench" title="Edit" id="top-bar-editBtn"></a>
-    <a href="javascript:;" class="top-bar-deleteBtn" title="Remove" id="top-bar-deleteBtn"></a>
-    <%if(viewType=='kanban') {%><a id="kanban-settings-Btn" class="fa fa-wrench" title="Kanban Settings"></a><%} else {%>
+    <a href="#home/action-<%=contentType%>/Create" class="btn blue slim plus" title="Create" id="top-bar-createBtn">New</a>
+    <a href="#home/action-<%=contentType%>/Edit" class="btn blue slim" title="Edit" id="top-bar-editBtn"Edit</a>
+    <a href="javascript:;" class="btn blue slim" title="Remove" id="top-bar-deleteBtn">Delete</a>
+    <%if(viewType=='kanban') {%><a id="kanban-settings-Btn" class="btn blue slim" title="Kanban Settings">Setting</a><%} else {%>
     <ul>
         <li>
-            <button class="btn ">
+            <button class="btn">
                 <span title="Export to csv" id="top-bar-exportToCsvBtn">Export to Csv</span>
             </button>
         </li>
         <li>
-            <button class="btn ">
+            <button class="btn">
                 <span href="javascript:;" title="Export to xlsx" id="top-bar-exportToXlsxBtn">Export to Xlsx</span>
             </button>
         </li>
