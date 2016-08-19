@@ -155,6 +155,10 @@ var Countries = function (models) {
                 }, {
                     $match: filterObect
                 }, {
+                    $sort: {
+                        _id: -1
+                    }
+                }, {
                     $skip: skip
                 }, {
                     $limit: limit
