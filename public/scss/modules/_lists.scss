@@ -434,3 +434,37 @@
     background-position: -103px -3px;
   }
 }
+
+._contractJobsListWrap {
+
+  ._contractJobsListItem {
+
+  }
+}
+
+._contractJobsListItem {
+
+  ._contractJobsStatusBlock {
+    &.finished {
+      background-color: #fff;
+    }
+    &.inProgress {
+      
+    }
+  }
+  ._contractJobsJobBlock {
+
+  }
+  ._contractJobsInvoiceBlock {
+
+  }
+  ._contractJobsRevenueBlock {
+
+  }
+  ._contractJobsCostBlock {
+
+  }
+  ._contractJobsProfitBlock {
+
+  }
+}

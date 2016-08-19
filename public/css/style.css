@@ -2146,6 +2146,9 @@ label._customCHeckbox input[type="checkbox"] {
 ._priorityCell .Trivial {
   background-position: -103px -3px; }
 
+._contractJobsListItem ._contractJobsStatusBlock.finished {
+  background-color: #fff; }
+
 .dialog-tabs:before, .dialog-tabs:after {
   content: " ";
   display: table; }
