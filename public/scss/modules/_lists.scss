@@ -473,7 +473,7 @@
 
     ._contractJobsName {
       font-size: 16px;
-      font-family: $semibold-font-family;
+      font-family: $bold-font-family;
     }
     ._contractJobsCustomer {
       font-style: italic;
@@ -526,4 +526,8 @@
   &.contractCell {
     text-align: center;
   }
+}
+
+.semiBold {
+  font-family: $semibold-font-family;
 }

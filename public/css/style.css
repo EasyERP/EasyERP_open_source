@@ -2165,7 +2165,7 @@ label._customCHeckbox input[type="checkbox"] {
   overflow: hidden; }
 ._contractJobsListItem ._contractJobsJobBlock ._contractJobsName {
   font-size: 16px;
-  font-family: "OpenSans SemiBold", sans-serif; }
+  font-family: "OpenSans Bold", sans-serif; }
 ._contractJobsListItem ._contractJobsJobBlock ._contractJobsCustomer {
   font-style: italic; }
 
@@ -2176,6 +2176,9 @@ label._customCHeckbox input[type="checkbox"] {
 
 .list tbody td.contractCell {
   text-align: center; }
+
+.semiBold {
+  font-family: "OpenSans SemiBold", sans-serif; }
 
 .dialog-tabs:before, .dialog-tabs:after {
   content: " ";

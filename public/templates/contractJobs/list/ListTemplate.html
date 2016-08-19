@@ -5,30 +5,30 @@
     <td class="_contractJobsStatusBlock <%=el.workflow.name === 'Finished' ? 'finished' : 'inProgress'%> contractCell"><span><%=el.workflow ? el.workflow.name : ''%></span></td>
     <td class="_contractJobsJobBlock">
         <div class="_contractJobsName"><%=el.name%> in <%=el.project.name%></div>
-        <div class="_contractJobsCustomer"><span>For </span><span><%=el.customer%></span></div>
-        <div class="_contractJobsDates"><span>From </span><span><%=el.tCardMinDate%></span><span> to </span><span><%=el.tCardMaxDate%></span></div>
+        <div class="_contractJobsCustomer"><span class="semiBold">For </span><span><%=el.customer%></span></div>
+        <div class="_contractJobsDates"><span class="semiBold">From </span><span><%=el.tCardMinDate%></span><span class="semiBold"> to </span><span><%=el.tCardMaxDate%></span></div>
         <%if (el.salesManager && el.salesManager.name) {%>
-        <div class="_contractJobsSales"><span>Sales Manager: </span><span><%=el.salesManager ? el.salesManager.name : ''%></span></div>
+        <div class="_contractJobsSales"><span class="semiBold">Sales Manager: </span><span><%=el.salesManager ? el.salesManager.name : ''%></span></div>
         <%}%>
         <%if (el.projectManager && el.projectManager.name) {%>
-        <div class="_contractJobsPM"><span>Project Manager: </span><span><%=el.projectManager ? el.projectManager.name : ''%></span></div>
+        <div class="_contractJobsPM"><span class="semiBold">Project Manager: </span><span><%=el.projectManager ? el.projectManager.name : ''%></span></div>
         <%}%>
-        <div class="_contractJobsTotalHour"><span>Total Hours: </span><span><%=el.totalWorked%></span></div>
+        <div class="_contractJobsTotalHour"><span class="semiBold">Total Hours: </span><span><%=el.totalWorked%></span></div>
         <%if (el.totalWorked - el.totalQAWorked - el.totalDesignWorked > 0) {%>
-        <div class="_contractJobsDevHours"><span>Development Hours: </span><span><%=(el.totalWorked - el.totalQAWorked - el.totalDesignWorked)%></span></div>
+        <div class="_contractJobsDevHours"><span class="semiBold">Development Hours: </span><span><%=(el.totalWorked - el.totalQAWorked - el.totalDesignWorked)%></span></div>
         <%}%>
         <%if (adr && isFinite(adr)) {%>
-        <div class="_contractJobsADR"><span>ADR: </span><span><%=isFinite(adr) ? adr.toFixed(2): 0%></span></div>
+        <div class="_contractJobsADR"><span class="semiBold">ADR: </span><span><%=isFinite(adr) ? adr.toFixed(2): 0%></span></div>
         <%}%>
         <%if (tadr && isFinite(tadr)) {%>
-        <div class="_contractJobsTotalADR"><span>Total ADR: </span><span><%=isFinite(tadr) ? tadr.toFixed(2): 0%></span></div>
+        <div class="_contractJobsTotalADR"><span class="semiBold">Total ADR: </span><span><%=isFinite(tadr) ? tadr.toFixed(2): 0%></span></div>
         <%}%>
     </td>
     <td class="_contractJobsInvoiceBlock">
         <%if (el.invoice && el.invoice._id) {%>
-        <div><span><%=el.invoice && el.invoice.name ? el.invoice.name : ''%></span></div>
-        <div><span>Invoice Date: </span><span><%=el.invoice && el.invoice.date ? utcDateToLocaleDate(new Date(el.invoice.date)) : ''%></span></div>
-        <div><span>Due Date: </span><span><%=el.invoice && el.invoice.dueDate ? utcDateToLocaleDate(new Date(el.invoice.dueDate)) : ''%></span></div>
+        <div><span class="semiBold">Invoice number: </span><span><%=el.invoice && el.invoice.name ? el.invoice.name : ''%></span></div>
+        <div><span class="semiBold">Invoice Date: </span><span><%=el.invoice && el.invoice.date ? utcDateToLocaleDate(new Date(el.invoice.date)) : ''%></span></div>
+        <div><span class="semiBold">Due Date: </span><span><%=el.invoice && el.invoice.dueDate ? utcDateToLocaleDate(new Date(el.invoice.dueDate)) : ''%></span></div>
         <%}%>
     </td>
     <td class="_contractJobsRevenueBlock">
