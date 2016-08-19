@@ -368,12 +368,12 @@
 
             salesManager: {
                 displayName: 'Sales Manager',
-                backend    : 'salesManager'
+                backend    : 'salesManager.employeeId'
             },
 
             projectManager: {
                 displayName: 'Project Manager',
-                backend    : 'projectManager'
+                backend    : 'projectManager.employeeId'
             },
 
             array: ['project', 'customer', 'workflow', 'salesManager', 'projectManager']

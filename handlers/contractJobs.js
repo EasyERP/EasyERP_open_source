@@ -269,23 +269,6 @@ var Countries = function (models) {
                         preserveNullAndEmptyArrays: true
                     }
                 }, {
-                    $group: {
-                        _id                   : '$_id',
-                        project               : {$first: '$project'},
-                        projectManager        : {$first: '$projectManager'},
-                        customer              : {$first: '$customer'},
-                        salesManager          : {$first: '$salesManager'},
-                        name                  : {$first: '$name'},
-                        invoice               : {$first: '$invoice'},
-                        proforma              : {$first: '$proforma'},
-                        type                  : {$first: '$type'},
-                        quotation             : {$first: '$quotation'},
-                        workflow              : {$first: '$workflow'},
-                        costLabour            : {$sum: '$journalentries.debit'},
-                        journalentriesOverhead: {$first: '$journalentriesOverhead'},
-                        jobPrice              : {$first: '$jobPrice.unitPrice'}
-                    }
-                }, {
                     $unwind: {
                         path                      : '$journalentriesOverhead',
                         preserveNullAndEmptyArrays: true
@@ -303,9 +286,9 @@ var Countries = function (models) {
                         type          : {$first: '$type'},
                         quotation     : {$first: '$quotation'},
                         workflow      : {$first: '$workflow'},
+                        costLabour    : {$sum: '$journalentries.debit'},
                         costMaterials : {$sum: '$journalentriesOverhead.debit'},
-                        costLabour    : {$first: '$costLabour'},
-                        jobPrice      : {$first: '$jobPrice'}
+                        jobPrice      : {$first: '$jobPrice.unitPrice'}
                     }
                 }, {
                     $lookup: {
@@ -348,173 +331,89 @@ var Countries = function (models) {
                         totalDesignWorked: {$cond: [{$eq: ['$tCards.department', objectId('55bb1f14cb76ca630b000006')]}, '$tCards.worked', 0]}
 
                     }
-                },
-                    {
-                        $group: {
-                            _id              : '$_id',
-                            project          : {$first: '$project'},
-                            projectManager   : {$first: '$projectManager'},
-                            customer         : {$first: '$customer'},
-                            salesManager     : {$first: '$salesManager'},
-                            name             : {$first: '$name'},
-                            invoice          : {$first: '$invoice'},
-                            proforma         : {$first: '$proforma'},
-                            type             : {$first: '$type'},
-                            quotation        : {$first: '$quotation'},
-                            workflow         : {$first: '$workflow'},
-                            costLabour       : {$first: '$costLabour'},
-                            costMaterials    : {$first: '$costMaterials'},
-                            jobPrice         : {$first: '$jobPrice'},
-                            totalWorked      : {$sum: '$tCards.worked'},
-                            tCards           : {$push: '$tCards'},
-                            tCardMinDate     : {$first: '$tCards'},
-                            tCardMaxDate     : {$last: '$tCards'},
-                            totalQAWorked    : {$sum: '$totalQAWorked'},
-                            totalDesignWorked: {$sum: '$totalDesignWorked'}
-                        }
-                    }, {
-                        $unwind: {
-                            path                      : '$tCards',
-                            preserveNullAndEmptyArrays: true
-                        }
-                    }, {
-                        $group: {
-                            _id              : {
-                                _id       : '$_id',
-                                employee  : '$tCards.employee',
-                                department: '$tCards.department'
-                            },
-                            tCardDateByWeek  : {$last: '$tCards.dateByWeek'},
-                            project          : {$first: '$project'},
-                            projectManager   : {$first: '$projectManager'},
-                            customer         : {$first: '$customer'},
-                            salesManager     : {$first: '$salesManager'},
-                            name             : {$first: '$name'},
-                            invoice          : {$first: '$invoice'},
-                            proforma         : {$first: '$proforma'},
-                            type             : {$first: '$type'},
-                            costLabour       : {$first: '$costLabour'},
-                            costMaterials    : {$first: '$costMaterials'},
-                            tCardMinDate     : {$first: '$tCardMinDate'},
-                            tCardMaxDate     : {$last: '$tCardMaxDate'},
-                            quotation        : {$first: '$quotation'},
-                            workflow         : {$first: '$workflow'},
-                            cost             : {$first: '$cost'},
-                            jobPrice         : {$first: '$jobPrice'},
-                            worked           : {$sum: '$tCards.worked'},
-                            totalWorked      : {$first: '$totalWorked'},
-                            totalQAWorked    : {$first: '$totalQAWorked'},
-                            totalDesignWorked: {$first: '$totalDesignWorked'}
-                        }
-                    }, {
-                        $project: {
-                            project          : 1,
-                            projectManager   : 1,
-                            customer         : 1,
-                            salesManager     : 1,
-                            name             : 1,
-                            invoice          : 1,
-                            proforma         : 1,
-                            type             : 1,
-                            quotation        : 1,
-                            workflow         : 1,
-                            costLabour       : 1,
-                            costMaterials    : 1,
-                            jobPrice         : 1,
-                            tCardMinDate     : 1,
-                            tCardMaxDate     : 1,
-                            totalWorked      : {
-                                $cond: [{$eq: ['$totalWorked', 0]}, 1, '$totalWorked']
-                            },
-                            totalQAWorked    : 1,
-                            totalDesignWorked: 1,
-                            worked           : 1,
-                            tCardDateByWeek  : 1
-                        }
-                    }, {
-                        $project: {
-                            project          : 1,
-                            projectManager   : 1,
-                            customer         : 1,
-                            salesManager     : 1,
-                            name             : 1,
-                            invoice          : 1,
-                            proforma         : 1,
-                            type             : 1,
-                            quotation        : 1,
-                            workflow         : 1,
-                            costLabour       : 1,
-                            costMaterials    : 1,
-                            tCardMinDate     : 1,
-                            tCardMaxDate     : 1,
-                            jobPrice         : 1,
-                            totalWorked      : 1,
-                            totalQAWorked    : 1,
-                            totalDesignWorked: 1,
-                            worked           : 1,
-                            tCardDateByWeek  : 1,
-                            revenue          : {
-                                $cond: {
-                                    if: {
-                                        $eq: ['$invoice', {}]
-                                    },
+                }, {
+                    $group: {
+                        _id              : '$_id',
+                        project          : {$first: '$project'},
+                        projectManager   : {$first: '$projectManager'},
+                        customer         : {$first: '$customer'},
+                        salesManager     : {$first: '$salesManager'},
+                        name             : {$first: '$name'},
+                        invoice          : {$first: '$invoice'},
+                        proforma         : {$first: '$proforma'},
+                        type             : {$first: '$type'},
+                        quotation        : {$first: '$quotation'},
+                        workflow         : {$first: '$workflow'},
+                        costLabour       : {$first: '$costLabour'},
+                        costMaterials    : {$first: '$costMaterials'},
+                        jobPrice         : {$first: '$jobPrice'},
+                        totalWorked      : {$sum: '$tCards.worked'},
+                        tCards           : {$push: '$tCards'},
+                        tCardMinDate     : {$first: '$tCards'},
+                        tCardMaxDate     : {$last: '$tCards'},
+                        totalQAWorked    : {$sum: '$totalQAWorked'},
+                        totalDesignWorked: {$sum: '$totalDesignWorked'}
+                    }
+                }, {
+                    $project: {
+                        project          : 1,
+                        projectManager   : 1,
+                        customer         : 1,
+                        salesManager     : 1,
+                        name             : 1,
+                        invoice          : 1,
+                        proforma         : 1,
+                        type             : 1,
+                        quotation        : 1,
+                        workflow         : 1,
+                        costLabour       : 1,
+                        costMaterials    : 1,
+                        jobPrice         : 1,
+                        tCardMinDate     : 1,
+                        tCardMaxDate     : 1,
+                        totalWorked      : {
+                            $cond: [{$eq: ['$totalWorked', 0]}, 1, '$totalWorked']
+                        },
+                        totalQAWorked    : 1,
+                        totalDesignWorked: 1,
+                        worked           : 1
+                    }
+                }, {
+                    $project: {
+                        project          : 1,
+                        projectManager   : 1,
+                        customer         : 1,
+                        salesManager     : 1,
+                        name             : 1,
+                        invoice          : 1,
+                        proforma         : 1,
+                        type             : 1,
+                        quotation        : 1,
+                        workflow         : 1,
+                        costLabour       : 1,
+                        costMaterials    : 1,
+                        tCardMinDate     : 1,
+                        tCardMaxDate     : 1,
+                        jobPrice         : 1,
+                        totalWorked      : 1,
+                        totalQAWorked    : 1,
+                        totalDesignWorked: 1,
+                        worked           : 1,
+                        tCardDateByWeek  : 1,
+                        revenue          : {
+                            $cond: {
+                                if: {
+                                    $eq: ['$invoice', {}]
+                                },
 
-                                    then: {$multiply: [{$divide: ['$worked', '$totalWorked']}, '$jobPrice']},
-                                    else: {
-                                        $divide: [{$multiply: [{$divide: ['$worked', '$totalWorked']}, '$jobPrice']}, '$invoice.currency.rate']
-                                    }
+                                then: {$multiply: [{$divide: ['$worked', '$totalWorked']}, '$jobPrice']},
+                                else: {
+                                    $divide: [{$multiply: [{$divide: ['$worked', '$totalWorked']}, '$jobPrice']}, '$invoice.currency.rate']
                                 }
                             }
                         }
-                    }, {
-                        $project: {
-                            project          : 1,
-                            projectManager   : 1,
-                            customer         : 1,
-                            salesManager     : 1,
-                            name             : 1,
-                            invoice          : 1,
-                            proforma         : 1,
-                            type             : 1,
-                            quotation        : 1,
-                            workflow         : 1,
-                            costLabour       : 1,
-                            costMaterials    : 1,
-                            jobPrice         : 1,
-                            tCardMinDate     : 1,
-                            tCardMaxDate     : 1,
-                            totalWorked      : 1,
-                            totalQAWorked    : 1,
-                            totalDesignWorked: 1,
-                            worked           : 1,
-                            revenue          : 1,
-                            tCardDateByWeek  : 1
-                        }
-                    }, {
-                        $project: {
-                            project          : 1,
-                            projectManager   : 1,
-                            customer         : 1,
-                            salesManager     : 1,
-                            name             : 1,
-                            invoice          : 1,
-                            proforma         : 1,
-                            type             : 1,
-                            quotation        : 1,
-                            workflow         : 1,
-                            costLabour       : 1,
-                            costMaterials    : 1,
-                            jobPrice         : 1,
-                            totalWorked      : 1,
-                            totalQAWorked    : 1,
-                            totalDesignWorked: 1,
-                            tCardMinDate     : 1,
-                            tCardMaxDate     : 1,
-                            worked           : 1,
-                            revenue          : 1
-                        }
                     }
-                ],
+                }],
                 function (err, jobs) {
                     if (err) {
                         return pCb(err);
@@ -526,12 +425,83 @@ var Countries = function (models) {
         }
 
         function getCount(pCb) {
-            JobsModel.find({}).count(function (err, count) {
+            JobsModel.aggregate([{
+                $lookup: {
+                    from        : 'projectMembers',
+                    localField  : 'project',
+                    foreignField: 'projectId',
+                    as          : 'projectMembers'
+                }
+            }, {
+                $project: {
+                    projectManager: {
+                        $filter: {
+                            input: '$projectMembers',
+                            as   : 'projectMember',
+                            cond : {
+                                $and: [{
+                                    $eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.PROJECTSMANAGER)]
+                                }, {
+                                    $or: [{
+                                        $max: '$$projectMember.startDate'
+                                    }, {
+                                        $eq: ['$$projectMember.startDate', null]
+                                    }]
+                                }]
+                            }
+                        }
+                    },
+
+                    salesManager: {
+                        $filter: {
+                            input: '$projectMembers',
+                            as   : 'projectMember',
+                            cond : {
+                                $and: [{
+                                    $eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALESMANAGER)]
+                                }, {
+                                    $or: [{
+                                        $max: '$$projectMember.startDate'
+                                    }, {
+                                        $eq: ['$$projectMember.startDate', null]
+                                    }]
+                                }]
+                            }
+                        }
+                    },
+
+                    project : 1,
+                    workflow: 1
+                }
+            }, {
+                $lookup: {
+                    from        : 'Project',
+                    localField  : 'project',
+                    foreignField: '_id',
+                    as          : 'project'
+                }
+            }, {
+                $lookup: {
+                    from        : 'workflows',
+                    localField  : 'workflow',
+                    foreignField: '_id',
+                    as          : 'workflow'
+                }
+            }, {
+                $project: {
+                    project       : {$arrayElemAt: ['$project', 0]},
+                    workflow      : {$arrayElemAt: ['$workflow', 0]},
+                    projectManager: {$arrayElemAt: ['$projectManager', 0]},
+                    salesManager  : {$arrayElemAt: ['$salesManager', 0]}
+                }
+            }, {
+                $match: filterObect
+            }], function (err, count) {
                 if (err) {
                     return pCb(err);
                 }
 
-                pCb(null, count);
+                pCb(null, count.length);
             });
         }
 
