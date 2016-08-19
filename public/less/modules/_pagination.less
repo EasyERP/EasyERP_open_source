@@ -9,9 +9,7 @@
 
   & > div {
     float: left;
-    //color: @mainText-color;
     padding: 0 5px;
-    //box-sizing: border-box;
   }
 
   .countOnPage {
@@ -66,7 +64,6 @@
     float: right;
     div, button {
       float: left;
-      //line-height: 20px;
     }
     span {
       padding: 0 3px;
@@ -82,7 +79,6 @@
       height: 20px;
       display: block;
       text-align: center;
-      //padding: 2px;
       &:hover {
         color: lighten(@mainText-color, 50%);
       }
@@ -101,7 +97,6 @@
       &:focus {
         .box-shadow(0, 0, 5px, @border-color-selected);
         outline: medium none;
-        //border: @thin-border @pagination-border !important;
       }
     }
 
@@ -183,37 +178,13 @@
     &.fa-angle-right,
     &.fa-angle-up{
       &:before {
-        //position: absolute;
         top:2px;
-        //left: 50%;
-        //transform: translate(-50%, 0);
       }
     }
 
-    &.fa-angle-double-left,
-    &.fa-angle-left {
-      &:before {
-        //left: 9px;
-        //left: 50%;
-        //transform: translate(-50%, 0);
-      }
-    }
-    &.fa-angle-right {
-      &:before {
-        //left: 10px;
-      }
-    }
-    &.fa-angle-double-right {
-      &:before {
-        //left: 11px;
-      }
-    }
+
     &.fa-angle-up {
       position: relative;
-
-      &:before {
-        //left: 7px;
-      }
     }
   }
 }
