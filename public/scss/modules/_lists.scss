@@ -436,6 +436,7 @@
 }
 
 ._contractJobsListWrap {
+  table-layout: fixed;
 
   ._contractJobsListItem {
 
@@ -444,8 +445,13 @@
 
 ._contractJobsListItem {
 
+  td + td {
+    border-left: 1px solid #d7d7d7;
+  }
+
   ._contractJobsStatusBlock {
     font-family: $semibold-font-family;
+
     &.finished,
     &.inProgress  {
       color: #fff;
@@ -459,6 +465,40 @@
   }
   ._contractJobsJobBlock {
 
+    > div {
+      line-height: 20px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    ._contractJobsName {
+      font-size: 16px;
+      font-family: $semibold-font-family;
+    }
+    ._contractJobsCustomer {
+      font-style: italic;
+    }
+    ._contractJobsDates {
+
+    }
+    ._contractJobsSales {
+
+    }
+    ._contractJobsPM {
+
+    }
+    ._contractJobsTotalHour {
+
+    }
+    ._contractJobsDevHours {
+
+    }
+    ._contractJobsADR {
+
+    }
+    ._contractJobsTotalADR {
+
+    }
   }
   ._contractJobsInvoiceBlock {
 
@@ -471,5 +511,19 @@
   }
   ._contractJobsProfitBlock {
 
+  }
+}
+
+
+.list tbody tr._contractJobsListItem td {
+  padding: 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+
+.list tbody td {
+  &.contractCell {
+    text-align: center;
   }
 }

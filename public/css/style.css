@@ -2146,14 +2146,36 @@ label._customCHeckbox input[type="checkbox"] {
 ._priorityCell .Trivial {
   background-position: -103px -3px; }
 
+._contractJobsListWrap {
+  table-layout: fixed; }
+
+._contractJobsListItem td + td {
+  border-left: 1px solid #d7d7d7; }
 ._contractJobsListItem ._contractJobsStatusBlock {
   font-family: "OpenSans SemiBold", sans-serif; }
   ._contractJobsListItem ._contractJobsStatusBlock.finished, ._contractJobsListItem ._contractJobsStatusBlock.inProgress {
     color: #fff; }
   ._contractJobsListItem ._contractJobsStatusBlock.finished {
-    background-color: #46BF40; }
+    background-color: #4BCB81; }
   ._contractJobsListItem ._contractJobsStatusBlock.inProgress {
-    background-color: #46BF40; }
+    background-color: #4BCB81; }
+._contractJobsListItem ._contractJobsJobBlock > div {
+  line-height: 20px;
+  text-overflow: ellipsis;
+  overflow: hidden; }
+._contractJobsListItem ._contractJobsJobBlock ._contractJobsName {
+  font-size: 16px;
+  font-family: "OpenSans SemiBold", sans-serif; }
+._contractJobsListItem ._contractJobsJobBlock ._contractJobsCustomer {
+  font-style: italic; }
+
+.list tbody tr._contractJobsListItem td {
+  padding: 10px;
+  text-align: left;
+  vertical-align: top; }
+
+.list tbody td.contractCell {
+  text-align: center; }
 
 .dialog-tabs:before, .dialog-tabs:after {
   content: " ";
