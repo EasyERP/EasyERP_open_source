@@ -3,6 +3,7 @@ var objectId = mongoose.Types.ObjectId;
 var CONSTANTS = require('../constants/mainConstants.js');
 var pageHelper = require('../helpers/pageHelper');
 var async = require('async');
+var FilterMapper = require('../helpers/filterMapper');
 
 var Countries = function (models) {
     var JobsSchema = mongoose.Schemas.jobs;
@@ -14,13 +15,18 @@ var Countries = function (models) {
         var limit = paginationObject.limit;
         var skip = paginationObject.skip;
         var parallelTasks;
+        var filterObect = {};
+        var filter = data.filter;
+        var contentType = 'contractJobs';
+        var filterMapper = new FilterMapper();
+
+        if (filter && typeof filter === 'object') {
+            // optionsObject.$and = caseFilter(filter);
+            filterObect = filterMapper.mapFilter(filter, contentType);
+        }
 
         function getData(pCb) {
             JobsModel.aggregate([{
-                    $skip: skip
-                }, {
-                    $limit: limit
-                }, {
                     $lookup: {
                         from        : 'journalentries',
                         localField  : '_id',
@@ -146,6 +152,12 @@ var Countries = function (models) {
                         projectManager        : {$arrayElemAt: ['$projectManager', 0]},
                         salesManager          : {$arrayElemAt: ['$salesManager', 0]}
                     }
+                }, {
+                    $match: filterObect
+                }, {
+                    $skip: skip
+                }, {
+                    $limit: limit
                 }, {
                     $lookup: {
                         from        : 'Employees',
