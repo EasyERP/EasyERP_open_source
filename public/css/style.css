@@ -2,9 +2,7 @@
   width: 100%;
   margin-left: auto;
   margin-right: auto;
-  padding-left: 12px;
   padding-left: 0.75rem;
-  padding-right: 12px;
   padding-right: 0.75rem; }
 
 .clearfix:before, .container:before, .container-full:before, .row:before, .flex #thumbnailContent:before, .clearfix:after, .container:after, .container-full:after, .row:after, .flex #thumbnailContent:after {
@@ -60,9 +58,7 @@ b, strong {
     max-width: 1140px; } }
 
 .row {
-  margin-left: -15px;
   margin-left: -0.9375rem;
-  margin-right: -15px;
   margin-right: -0.9375rem; }
 
 .col {
@@ -71,9 +67,7 @@ b, strong {
   min-height: 1px;
   position: relative;
   box-sizing: border-box;
-  padding-left: 15px;
   padding-left: 0.9375rem;
-  padding-right: 15px;
   padding-right: 0.9375rem; }
 
 @media (max-width: 543px) {
@@ -989,6 +983,7 @@ b, strong {
 
 [class^="flexRow"] > .col, [class^="flexRow"] > [class^="col-"] {
   -webkit-box-flex: 1;
+  -moz-box-flex: 1;
   -webkit-flex: 1;
   -ms-flex: 1;
   flex: 1;
@@ -1001,6 +996,7 @@ b, strong {
 
 [class^="flexRow"] > [class^="col-"] {
   -webkit-box-flex: 0 0 auto;
+  -moz-box-flex: 0 0 auto;
   -webkit-flex: 0 0 auto;
   -ms-flex: 0 0 auto;
   flex: 0 0 auto; }
@@ -1011,6 +1007,7 @@ b, strong {
   flex-wrap: wrap;
   -js-display: flex;
   display: -webkit-box;
+  display: -moz-box;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex; }
@@ -1025,30 +1022,33 @@ b, strong {
 
 .flexRowMiddle {
   -webkit-box-align: center;
+  -moz-box-align: center;
   -webkit-align-items: center;
   -ms-flex-align: center;
-  -ms-grid-row-align: center;
-      align-items: center; }
+  align-items: center; }
 .flexRowTop {
   -webkit-box-align: start;
+  -moz-box-align: start;
   -webkit-align-items: flex-start;
   -ms-flex-align: start;
-  -ms-grid-row-align: flex-start;
-      align-items: flex-start; }
+  align-items: flex-start; }
 .flexRowBottom {
   -webkit-box-align: end;
+  -moz-box-align: end;
   -webkit-align-items: flex-end;
   -ms-flex-align: end;
-  -ms-grid-row-align: flex-end;
-      align-items: flex-end; }
+  align-items: flex-end; }
 .flexRowCenter {
   -webkit-box-pack: center;
+  -moz-box-pack: center;
   -ms-flex-pack: center;
   -webkit-justify-content: center;
   justify-content: center; }
 .flexRowReverse {
   -webkit-box-direction: reverse;
+  -moz-box-direction: reverse;
   -webkit-box-orient: horizontal;
+  -moz-box-orient: horizontal;
   -webkit-flex-direction: row-reverse;
   -ms-flex-direction: row-reverse;
   flex-direction: row-reverse; }
@@ -1058,26 +1058,30 @@ b, strong {
   justify-content: space-around; }
 .flexRowBetween {
   -webkit-box-pack: justify;
+  -moz-box-pack: justify;
   -ms-flex-pack: justify;
   -webkit-justify-content: space-between;
   justify-content: space-between; }
 .flexRowEnd {
   -webkit-box-pack: end;
+  -moz-box-pack: end;
   -ms-flex-pack: end;
   -webkit-justify-content: flex-end;
   justify-content: flex-end; }
 .flexRowStart {
   -webkit-box-pack: start;
+  -moz-box-pack: start;
   -ms-flex-pack: start;
   -webkit-justify-content: flex-start;
   justify-content: flex-start; }
 .flexRowStretch {
   -webkit-box-align: stretch;
+  -moz-box-align: stretch;
   -webkit-align-items: stretch;
   -ms-flex-align: stretch;
-  -ms-grid-row-align: stretch;
-      align-items: stretch;
+  align-items: stretch;
   -webkit-box-direction: normal;
+  -moz-box-direction: normal;
   -webkit-flex-direction: row;
   -ms-flex-direction: row;
   flex-direction: row;
@@ -1085,12 +1089,14 @@ b, strong {
   -ms-flex-wrap: wrap;
   flex-wrap: wrap;
   -webkit-box-pack: start;
+  -moz-box-pack: start;
   -ms-flex-pack: start;
   -webkit-justify-content: flex-start;
   justify-content: flex-start; }
 .flexRowStretch > .col, .flexRowStretch > [class^="col-"] {
   -js-display: flex;
   display: -webkit-box;
+  display: -moz-box;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex; }
@@ -1130,12 +1136,14 @@ b, strong {
 
 .colFirst {
   -webkit-box-ordinal-group: -1;
+  -moz-box-ordinal-group: -1;
   -ms-flex-order: -1;
   -webkit-order: -1;
   order: -1; }
 
 .colLast {
   -webkit-box-ordinal-group: 1;
+  -moz-box-ordinal-group: 1;
   -ms-flex-order: 1;
   -webkit-order: 1;
   order: 1; }
@@ -1251,12 +1259,14 @@ b, strong {
 
   .colFirst-sm {
     -webkit-box-ordinal-group: -1;
+    -moz-box-ordinal-group: -1;
     -ms-flex-order: -1;
     -webkit-order: -1;
     order: -1; }
 
   .colLast-sm {
     -webkit-box-ordinal-group: -1;
+    -moz-box-ordinal-group: -1;
     -ms-flex-order: -1;
     -webkit-order: -1;
     order: -1; } }
@@ -1317,12 +1327,14 @@ b, strong {
 
   .colFirst-md {
     -webkit-box-ordinal-group: -1;
+    -moz-box-ordinal-group: -1;
     -ms-flex-order: -1;
     -webkit-order: -1;
     order: -1; }
 
   .colLast-md {
     -webkit-box-ordinal-group: -1;
+    -moz-box-ordinal-group: -1;
     -ms-flex-order: -1;
     -webkit-order: -1;
     order: -1; } }
@@ -1383,12 +1395,14 @@ b, strong {
 
   .colFirst-lg {
     -webkit-box-ordinal-group: -1;
+    -moz-box-ordinal-group: -1;
     -ms-flex-order: -1;
     -webkit-order: -1;
     order: -1; }
 
   .colLast-lg {
     -webkit-box-ordinal-group: -1;
+    -moz-box-ordinal-group: -1;
     -ms-flex-order: -1;
     -webkit-order: -1;
     order: -1; } }
@@ -1449,12 +1463,14 @@ b, strong {
 
   .colFirst-xl {
     -webkit-box-ordinal-group: -1;
+    -moz-box-ordinal-group: -1;
     -ms-flex-order: -1;
     -webkit-order: -1;
     order: -1; }
 
   .colLast-xl {
     -webkit-box-ordinal-group: -1;
+    -moz-box-ordinal-group: -1;
     -ms-flex-order: -1;
     -webkit-order: -1;
     order: -1; } }
@@ -1466,8 +1482,7 @@ b, strong {
   font-weight: 400;
   text-align: center;
   vertical-align: middle;
-  -ms-touch-action: manipulation;
-      touch-action: manipulation;
+  touch-action: manipulation;
   cursor: pointer;
   white-space: nowrap;
   font-size: 14px;
@@ -1657,10 +1672,7 @@ label._customCHeckbox input[type="checkbox"] {
     line-height: 18px;
     font-size: 13px;
     color: #5a5a5a;
-    -webkit-user-select: none;
-       -moz-user-select: none;
-        -ms-user-select: none;
-            user-select: none; }
+    user-select: none; }
     label._customCHeckbox input[type="checkbox"] + span:before, label._customCHeckbox input[type="checkbox"] + span:after {
       position: absolute;
       content: '';
@@ -1671,14 +1683,11 @@ label._customCHeckbox input[type="checkbox"] {
       border: 1px solid #5a5a5a;
       border-radius: 1px;
       margin-top: 3px;
-      -webkit-transition: .2s;
       transition: .2s;
       z-index: 0; }
     label._customCHeckbox input[type="checkbox"] + span:after {
       border: 0;
-      -webkit-transform: scale(0);
-          -ms-transform: scale(0);
-              transform: scale(0); }
+      transform: scale(0); }
   label._customCHeckbox input[type="checkbox"]:checked + span:before {
     top: -3px;
     left: 0;
@@ -1688,25 +1697,14 @@ label._customCHeckbox input[type="checkbox"] {
     border-left: 2px solid transparent;
     border-right: 2px solid #3e88b9;
     border-bottom: 2px solid #3e88b9;
-    -webkit-transform: rotate(45deg);
-        -ms-transform: rotate(45deg);
-            transform: rotate(45deg);
-    -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
-    -webkit-transform-origin: 100% 100%;
-        -ms-transform-origin: 100% 100%;
-            transform-origin: 100% 100%; }
+    transform: rotate(45deg);
+    backface-visibility: hidden;
+    transform-origin: 100% 100%; }
 
 .flex {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
   display: flex; }
   .flex #productTree {
-    -webkit-box-flex: 0;
-    -webkit-flex: 0 0 250px;
-        -ms-flex: 0 0 250px;
-            flex: 0 0 250px;
+    flex: 0 0 250px;
     margin-top: 30px;
     border-right: 1px solid #ddd; }
     .flex #productTree ul li {
@@ -1740,9 +1738,7 @@ label._customCHeckbox input[type="checkbox"] {
       position: absolute;
       top: 50%;
       right: 5px;
-      -webkit-transform: translate(0, -50%);
-          -ms-transform: translate(0, -50%);
-              transform: translate(0, -50%); }
+      transform: translate(0, -50%); }
       .flex #productTree .action-btn span {
         vertical-align: middle;
         cursor: pointer;
@@ -1802,28 +1798,15 @@ label._customCHeckbox input[type="checkbox"] {
       .flex .addProduct a:hover {
         text-decoration: none; }
   .flex #thumbnailContent {
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
     display: flex;
-    -webkit-flex-flow: row wrap;
-        -ms-flex-flow: row wrap;
-            flex-flow: row wrap;
-    -webkit-box-pack: start;
-    -webkit-justify-content: flex-start;
-        -ms-flex-pack: start;
-            justify-content: flex-start;
-    -webkit-align-content: stretch;
-        -ms-flex-line-pack: stretch;
-            align-content: stretch;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    align-content: stretch;
     padding: 35px 0 4px 12px;
     box-sizing: border-box; }
     .flex #thumbnailContent .thumbnail.product {
       position: relative;
-      -webkit-box-flex: 1;
-      -webkit-flex: 1 1 200px;
-          -ms-flex: 1 1 200px;
-              flex: 1 1 200px;
+      flex: 1 1 200px;
       box-sizing: border-box;
       padding: 8px;
       min-width: 150px;
@@ -1848,10 +1831,7 @@ label._customCHeckbox input[type="checkbox"] {
         padding-left: 55px; }
   .flex #productContent {
     position: relative;
-    -webkit-box-flex: 1;
-    -webkit-flex-grow: 1;
-        -ms-flex-positive: 1;
-            flex-grow: 1; }
+    flex-grow: 1; }
 
 .productHeading {
   margin-bottom: 5px;
@@ -1883,6 +1863,7 @@ label._customCHeckbox input[type="checkbox"] {
 
 .dateListItem {
   display: -webkit-box;
+  display: -moz-box;
   display: -ms-flexbox;
   display: -webkit-flex;
   display: flex;
@@ -1892,32 +1873,27 @@ label._customCHeckbox input[type="checkbox"] {
   .dateListItem .dateListCheckboxWrap {
     padding: 0 20px;
     -webkit-flex-shrink: 0;
-    -ms-flex-negative: 0;
-        flex-shrink: 0; }
+    flex-shrink: 0; }
   .dateListItem .dateListBody {
     min-width: 1px;
     -webkit-flex-grow: 1;
-    -webkit-box-flex: 1;
-        -ms-flex-positive: 1;
-            flex-grow: 1; }
+    flex-grow: 1; }
     .dateListItem .dateListBody .dateListFooter .listFooterDate {
       color: #9a9a9e; }
 
 .dateListHeader {
   display: -webkit-box;
+  display: -moz-box;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex; }
   .dateListHeader ._tagSmall {
     -webkit-flex-shrink: 0;
-    -ms-flex-negative: 0;
-        flex-shrink: 0;
+    flex-shrink: 0;
     margin-right: 5px; }
   .dateListHeader .dateListDescription {
     -webkit-flex-grow: 1;
-    -webkit-box-flex: 1;
-        -ms-flex-positive: 1;
-            flex-grow: 1; }
+    flex-grow: 1; }
 
 ._taskListWrap {
   display: -webkit-box;
@@ -1958,29 +1934,24 @@ label._customCHeckbox input[type="checkbox"] {
 
 ._taskListActivitiesBlock {
   -webkit-flex-shrink: 0;
-  -ms-flex-negative: 0;
-      flex-shrink: 0;
+  flex-shrink: 0;
   display: -webkit-box;
+  display: -moz-box;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
   -webkit-flex-direction: column;
   -ms-flex-direction: column;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-          flex-direction: column;
+  flex-direction: column;
   width: calc(35% + 159px); }
   ._taskListActivitiesBlock ._activityHolderTitle {
     -webkit-flex-shrink: 0;
-    -ms-flex-negative: 0;
-        flex-shrink: 0;
+    flex-shrink: 0;
     padding: 20px;
     border-bottom: 1px solid #c8c8d3; }
   ._taskListActivitiesBlock ._activityHolder {
     -webkit-flex-grow: 1;
-    -webkit-box-flex: 1;
-        -ms-flex-positive: 1;
-            flex-grow: 1;
+    flex-grow: 1;
     padding: 0 20px;
     font-size: 14px;
     overflow: auto; }
@@ -2090,19 +2061,17 @@ label._customCHeckbox input[type="checkbox"] {
 
 ._importListBody {
   display: -webkit-box;
+  display: -moz-box;
   display: -ms-flexbox;
   display: -webkit-flex;
   display: flex; }
   ._importListBody ._contentBlock {
     -webkit-flex-grow: 1;
-    -webkit-box-flex: 1;
-        -ms-flex-positive: 1;
-            flex-grow: 1;
+    flex-grow: 1;
     padding: 16px 0 16px 24px; }
   ._importListBody ._tabsBlock {
     -webkit-flex-shrink: 0;
-    -ms-flex-negative: 0;
-        flex-shrink: 0;
+    flex-shrink: 0;
     width: 500px;
     padding-right: 20px;
     margin-left: 20px; }
@@ -2137,6 +2106,7 @@ label._customCHeckbox input[type="checkbox"] {
 
 ._contentBlockRow {
   display: -webkit-box;
+  display: -moz-box;
   display: -ms-flexbox;
   display: -webkit-flex;
   display: flex;
@@ -2153,9 +2123,7 @@ label._customCHeckbox input[type="checkbox"] {
       position: absolute;
       left: 17px;
       top: 50%;
-      -webkit-transform: translate(0, -50%);
-          -ms-transform: translate(0, -50%);
-              transform: translate(0, -50%);
+      transform: translate(0, -50%);
       font-style: italic;
       color: #c2c8cd; }
   ._contentBlockRow.hoverRow {
@@ -2174,9 +2142,7 @@ label._customCHeckbox input[type="checkbox"] {
     width: 1px;
     border: 1px solid #c2c8cd;
     -webkit-flex-grow: 1;
-    -webkit-box-flex: 1;
-        -ms-flex-positive: 1;
-            flex-grow: 1;
+    flex-grow: 1;
     font-size: 14px; }
     ._contentBlockRow ._rowItem:hover .cleanButton {
       display: block !important; }
@@ -2189,9 +2155,7 @@ label._customCHeckbox input[type="checkbox"] {
       position: absolute;
       right: 5px;
       top: 50%;
-      -webkit-transform: translate(0, -50%);
-          -ms-transform: translate(0, -50%);
-              transform: translate(0, -50%);
+      transform: translate(0, -50%);
       padding: 8px;
       cursor: pointer;
       font-size: 18px;
@@ -2270,7 +2234,6 @@ label._customCHeckbox input[type="checkbox"] {
     height: 100%;
     border-radius: 30px;
     background: #4BCB81;
-    -webkit-transition: all 0.5s ease;
     transition: all 0.5s ease; }
 
 ._importTitle {
@@ -2725,15 +2688,8 @@ label._customCHeckbox input[type="checkbox"] {
 
 .choseDateRange.dropDownDateRange {
   position: absolute;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: column;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  flex-direction: column;
   height: 22px;
   width: 110px;
   border: 1px solid #c8c8d3;
@@ -2744,9 +2700,7 @@ label._customCHeckbox input[type="checkbox"] {
   .choseDateRange.dropDownDateRange.open {
     height: auto; }
     .choseDateRange.dropDownDateRange.open .selectArrow {
-      -webkit-transform: rotate(180deg);
-          -ms-transform: rotate(180deg);
-              transform: rotate(180deg); }
+      transform: rotate(180deg); }
   .choseDateRange.dropDownDateRange .item {
     padding: 0;
     float: none;
@@ -2758,15 +2712,9 @@ label._customCHeckbox input[type="checkbox"] {
     border: none;
     background: none;
     white-space: nowrap;
-    -webkit-box-ordinal-group: 2;
-    -webkit-order: 1;
-        -ms-flex-order: 1;
-            order: 1; }
+    order: 1; }
     .choseDateRange.dropDownDateRange .item.active {
-      -webkit-box-ordinal-group: 1;
-      -webkit-order: 0;
-          -ms-flex-order: 0;
-              order: 0;
+      order: 0;
       background: none;
       color: #000000; }
   .choseDateRange.dropDownDateRange .selectArrow {
@@ -2952,6 +2900,7 @@ label._customCHeckbox input[type="checkbox"] {
   padding-top: 30px !important; }
   .newTasksContainer .taskTop {
     display: -webkit-box;
+    display: -moz-box;
     display: -ms-flexbox;
     display: -webkit-flex;
     display: flex; }
@@ -3037,9 +2986,7 @@ label._customCHeckbox input[type="checkbox"] {
       border: none;
       padding: 3px !important;
       line-height: 13px !important;
-      -webkit-transform: translate(0, -50%);
-          -ms-transform: translate(0, -50%);
-              transform: translate(0, -50%);
+      transform: translate(0, -50%);
       background: none; }
       .newTasksContainer .showSelect .removeSelect:hover {
         background: none;
@@ -3088,9 +3035,7 @@ label._customCHeckbox input[type="checkbox"] {
     overflow: visible;
     background: #f2f2f2;
     -webkit-flex-grow: 1;
-    -webkit-box-flex: 1;
-        -ms-flex-positive: 1;
-            flex-grow: 1;
+    flex-grow: 1;
     width: 10px; }
     .tabListWrap .tabListItem.active {
       background: #3291c8; }
@@ -3372,9 +3317,7 @@ label._customCHeckbox input[type="checkbox"] {
   position: absolute;
   top: 50%;
   right: 0;
-  -webkit-transform: translateY(-50%);
-      -ms-transform: translateY(-50%);
-          transform: translateY(-50%);
+  transform: translateY(-50%);
   font-weight: bold;
   font-size: 0.8em;
   padding: 0 0.3em 0.2em;
@@ -3384,3 +3327,5 @@ label._customCHeckbox input[type="checkbox"] {
 
 .clearable-picker > [data-clear-picker]:hover {
   color: #a1a1a1; }
+
+/*# sourceMappingURL=style.css.map */
