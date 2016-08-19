@@ -259,7 +259,7 @@ var connectOptions = {
 };
 
 //var dbObject = mongoose.createConnection('144.76.56.111', 'sergey', 28017, connectOptions);
-var dbObject = mongoose.createConnection('localhost', 'production');
+//var dbObject = mongoose.createConnection('localhost', 'production');
 
 var newCOuntries = [];
 
