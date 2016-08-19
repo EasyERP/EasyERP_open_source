@@ -2107,11 +2107,11 @@ label._customCHeckbox input[type="checkbox"] {
   margin: 0 auto;
   background-image: url("../images/priority_icons.png");
   background-size: 132px; }
-._priorityCell .High {
+._priorityCell .Hot {
   background-position: -2px -3px; }
 ._priorityCell .Medium {
   background-position: -69px -3px; }
-._priorityCell .Low {
+._priorityCell .Cold {
   background-position: -35px -3px; }
 ._priorityCell .Trivial {
   background-position: -103px -3px; }
