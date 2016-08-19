@@ -2209,12 +2209,18 @@ label._customCHeckbox input[type="checkbox"] {
     border: 1px solid #000000;
     z-index: 10; }
 
+._importShowConflicts {
+  padding: 25px 0;
+  text-align: center; }
+  ._importShowConflicts h2 {
+    font-size: 20px; }
+
 ._loadHistoryTopTableContainer {
   width: 100%; }
 
-._contentBlock,
+._contentBlockInner,
 ._tabsBlock {
-  height: calc(100vh - 205px);
+  height: calc(100vh - 325px);
   overflow-y: auto;
   overflow-x: hidden; }
 
@@ -2296,6 +2302,9 @@ label._customCHeckbox input[type="checkbox"] {
       border: 1px dashed #c2c8cd; }
     ._contentBlockRow.hoverRow .empty:after {
       color: #ffffff; }
+  ._contentBlockRow._withOutBorder ._rowItem {
+    border: none;
+    font-weight: bold; }
   ._contentBlockRow ._rowItem {
     position: relative;
     width: 1px;
@@ -2363,15 +2372,13 @@ label._customCHeckbox input[type="checkbox"] {
     font-size: 16px; }
     ._importAttachContainer .attachFileName span {
       font-weight: bold; }
-  ._importAttachContainer label,
-  ._importAttachContainer .dropDownDateRangeContainer {
+  ._importAttachContainer label {
     display: inline-block;
     vertical-align: middle;
     text-align: center;
     margin-right: 15px;
     cursor: pointer; }
-    ._importAttachContainer label span,
-    ._importAttachContainer .dropDownDateRangeContainer span {
+    ._importAttachContainer label span {
       display: block; }
   ._importAttachContainer input[type="checkbox"],
   ._importAttachContainer input[type="radio"] {
@@ -2387,6 +2394,8 @@ label._customCHeckbox input[type="checkbox"] {
     text-align: right; }
     ._importAttachContainer ._exampleLink a {
       color: #00a2d0; }
+  ._importAttachContainer ._importSearchDublicate {
+    margin-bottom: 10px; }
 
 ._progressBarContainer {
   height: 20px;
@@ -2504,6 +2513,11 @@ label._customCHeckbox input[type="checkbox"] {
         content: none; }
   ._finishImportContainer ._importWithOutConflict {
     margin-bottom: 25px; }
+
+._importButtonsGroup {
+  padding-right: 15px; }
+  ._importButtonsGroup button + button {
+    margin-right: 15px; }
 
 .propertyContainer a:hover {
   text-decoration: none; }

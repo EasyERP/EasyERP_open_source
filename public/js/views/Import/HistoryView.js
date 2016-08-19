@@ -22,13 +22,23 @@ define([
         initialize: function (options) {
             this.keys = [
                 'date',
-                'fileName',
                 'user',
                 'type',
                 'status',
+                'fileName',
+                'filePath',
                 'reportFile',
                 'reportFileName'
             ];
+
+            this.headers = {
+                date: 'Date of import',
+                user: 'User',
+                type: 'Type',
+                status: 'Status',
+                fileName: 'Source File',
+                reportFileName: 'Skipped file'
+            };
 
             this.collection = options.collection;
 
@@ -43,7 +53,8 @@ define([
 
             $thisEl.html(this.historyTemplate({
                 history: this.collection.toJSON(),
-                keys: this.keys
+                keys: this.keys,
+                headers: this.headers
             }));
 
             itemView = new this.ListItemView({

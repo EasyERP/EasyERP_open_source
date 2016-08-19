@@ -163,8 +163,6 @@ define([
             this.listenTo(this.importView, 'uploadCompleted', function () {
                 this.trigger('uploadCompleted');
             });
-
-
         },
 
         render: function () {

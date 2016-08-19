@@ -165,10 +165,13 @@ define([
                 }
 
             } else if (this.stage === 4) {
-                this.enabledNextBtn();
+                //this.enabledNextBtn();
+                self.$el.find('.stageBtnNext').hide();
 
                 if (this.childView) {
+
                     this.startImport(function (data) {
+
                         self.updateCurrentUser({
                             stage          : self.stage,
                             skipped        : data.skippedArray,
@@ -187,6 +190,7 @@ define([
             } else if (this.stage === 5) {
                 if (this.childView && this.childView.finishStep) {
                     this.childView.finishStep();
+                    this.$el.find('.stageBtnNext').hide();
 
                     this.historyView.collection.getFirstPage();
                 }
@@ -219,8 +223,11 @@ define([
         },
 
         enabledNextBtn: function () {
-            this.$el.find('.stageBtnNext').removeClass('btnDisable');
-            this.$el.find('.stageBtnNext').prop('disabled', false);
+            var $nextBtn = this.$el.find('.stageBtnNext');
+
+            $nextBtn.show();
+            $nextBtn.removeClass('btnDisable');
+            $nextBtn.prop('disabled', false);
         },
 
         insertHistoryView: function () {
