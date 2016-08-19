@@ -7,8 +7,8 @@ var connectOptions = {
     w   : 1,
     j   : true
 };
-var dbObject = mongoose.createConnection('localhost', 'production', 27017, connectOptions);
-//var url = 'mongodb://144.76.56.111:28017/lilyadb';
+//var dbObject = mongoose.createConnection('localhost', 'production', 27017, connectOptions);
+var url = 'mongodb://localhost:27017/production';
 var async = require('async');
 
 MongoClient.connect(url, function (err, db) {
@@ -27,7 +27,7 @@ MongoClient.connect(url, function (err, db) {
             mname: 'Contract Jobs',
             href: 'contractJobs',
             sequence: 0,
-            parrent: 78,
+            parrent: 36,
             link: true,
             visible: true
         };

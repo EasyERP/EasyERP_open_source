@@ -1,0 +1,50 @@
+<%collection.forEach(function (el){%>
+<tr>
+    <% var adr = (el.jobPrice/(100 * (el.totalWorked - el.totalQAWorked - el.totalDesignWorked))).toFixed(2)%>
+    <% var tadr = (el.jobPrice/(100 * el.totalWorked)).toFixed(2)%>
+
+    <td><span><%=el.workflow ? el.workflow.name : ''%></span></td>
+    <td>
+        <div><span><%=el.name%> in <%=el.project.name%></span></div>
+        <div><span><label>For </label><%=el.customer%></span></div>
+        <div><label>From </label><span><%=el.tCardMinDate%></span><label> to </label><span><%=el.tCardMaxDate%></span>
+        </div>
+        <%if (el.salesManager && el.salesManager.name) {%>
+        <div><label>Sales Manager: </label><span><%=el.salesManager ? el.salesManager.name : ''%></span></div>
+        <%}%>
+        <%if (el.projectManager && el.projectManager.name) {%>
+        <div><label>Project Manager: </label><span><%=el.projectManager ? el.projectManager.name : ''%></span></div>
+        <%}%>
+        <div><label>Total Hours: </label><span><%=el.totalWorked%></span></div>
+        <div><label>Development
+            Hours: </label><span><%=(el.totalWorked - el.totalQAWorked - el.totalDesignWorked)%></span></div>
+        <div><label>ADR: </label><span><%=isFinite(adr) ? adr: 0%></span></div>
+        <div><label>Total ADR: </label><span><%=isFinite(tadr) ? tadr: 0%></span></div>
+
+    </td>
+    <td>
+        <div><span><%=el.invoice && el.invoice.name ? el.invoice.name : ''%></span></div>
+        <div><label>Invoice Date: </label><span><%=el.invoice && el.invoice.date ? utcDateToLocaleDate(new Date(el.invoice.date)) : ''%></span>
+            <div><label>Due Date: </label><span><%=el.invoice && el.invoice.dueDate ? utcDateToLocaleDate(new Date(el.invoice.dueDate)) : ''%></span>
+            </div>
+    </td>
+    <td>
+        <div><%=currencySplitter((el.jobPrice/100).toFixed(2))%></div>
+        <div><label>Quoted: </label><span><%=el.invoice && el.invoice.name ? 0.00 : currencySplitter((el.jobPrice/100).toFixed(2))%></span>
+        </div>
+        <%if (el.proforma && el.proforma.sum && !el.invoice && !el.invoice._id) {%>
+        <div><label>Proformed: </label><span><%=currencySplitter((el.proforma.sum/100).toFixed(2))%></span>
+            <%}%>
+            <div><label>Invoiced: </label><span><%=el.invoice && el.invoice.name ? currencySplitter((el.jobPrice/100).toFixed(2)) : 0.00%></span>
+            </div>
+    </td>
+    <td>
+        <span><%=currencySplitter(((el.costMaterials + el.costLabour)/100).toFixed(2))%></span>
+        <label>Materials: </label><span><%=currencySplitter((el.costMaterials/100).toFixed(2))%></span>
+        <label>Labour: </label><span><%=currencySplitter((el.costLabour/100).toFixed(2))%></span>
+    </td>
+    <td><%=currencySplitter((((el.jobPrice - (el.costMaterials + el.costLabour)) / (el.costMaterials + el.costLabour)) *
+        100).toFixed(2))%>
+    </td>
+</tr>
+<% }) %>

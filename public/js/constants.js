@@ -70,6 +70,7 @@ define([], function () {
         CASHBOOK          : 'cashBook', // cash book
         CASHTRANSFER      : 'cashTransfer',
         REPORTSDASHBOARD  : 'reportsDashboard',
+        CONTRACTJOBS      : 'contractJobs',
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
@@ -203,6 +204,7 @@ define([], function () {
             PAYROLLSTRUCTURETYPES_FORDD: '/payrollStructureTypes/forDd',
             PAYMENT_METHOD_DD          : 'paymentMethod/',
             DEALTASKS                  : '/DealTasks/',
+            CONTRACTJOBS               : '/contractJobs/'
         },
 
         MID: {
