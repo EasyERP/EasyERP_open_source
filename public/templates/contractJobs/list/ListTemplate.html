@@ -3,7 +3,8 @@
     <% var adr = (el.jobPrice/(100 * (el.totalWorked - el.totalQAWorked - el.totalDesignWorked)))%>
     <% var tadr = (el.jobPrice/(100 * el.totalWorked))%>
 
-    <td><span><%=el.workflow ? el.workflow.name : ''%></span></td>
+    <td class="<%=el.workflow.name === 'Finished' ? 'finished' : 'inProgress'%>"><span><%=el.workflow ? el.workflow.name : ''%></span>
+    </td>
     <td>
         <div><span><%=el.name%> in <%=el.project.name%></span></div>
         <div><span><label>For </label><%=el.customer%></span></div>
@@ -17,7 +18,8 @@
         <%}%>
         <div><label>Total Hours: </label><span><%=el.totalWorked%></span></div>
         <%if (el.totalWorked - el.totalQAWorked - el.totalDesignWorked > 0) {%>
-        <div><label>Development Hours: </label><span><%=(el.totalWorked - el.totalQAWorked - el.totalDesignWorked)%></span></div>
+        <div><label>Development
+            Hours: </label><span><%=(el.totalWorked - el.totalQAWorked - el.totalDesignWorked)%></span></div>
         <%}%>
         <%if (adr && isFinite(adr)) {%>
         <div><label>ADR: </label><span><%=isFinite(adr) ? adr.toFixed(2): 0%></span></div>
