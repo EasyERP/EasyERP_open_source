@@ -1,6 +1,9 @@
-.dialog(@background: @dialog-bg, @color: @mainText-color, @borderColor: @border-color-main) {
-  background: @background;
-  color: @color;
+//.dialog(@background: @dialog-bg, @color: @mainText-color, @borderColor: @border-color-main) {
+//@import '../_darckColor';
+
+.ui-dialog {
+  background: @dialog-bg;
+  color: @mainText-color;
   z-index: 1000;
   margin: 0 auto;
   left: 50%;
@@ -11,13 +14,61 @@
     border: none;
     a {
       color: @tilte-color;
+      &.editTags {
+        color: #000;
+        &:hover {
+          text-decoration: none;
+        }
+      }
     }
   }
 
   .avatar {
-    .avatar(140px, 5px, 5px, 5px, 0);
+    //.avatar(140px, 5px, 5px, 5px, 0);
+    display: block;
+    overflow: hidden;
+    position: relative;
+    width: 140px;
+    height: 140px;
+    margin: 5px 5px 5px 0;
+
+    img {
+      height: auto;
+      width: 100%;
+    }
+
+    canvas {
+      height: auto;
+      width: 100%;
+    }
+
+    .upload {
+      overflow: hidden;
+      font-size: 15px;
+      line-height: 18px;
+      text-align: center;
+      display: block;
+
+      //.position;
+
+
+      height: 0;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      color: #fff;
+
+      input {
+        //.position;
+        height: 20px;
+        opacity: 0;
+        background: rgba(0, 0, 0, 0.5);
+        margin: 0;
+        padding: 0;
+        width: 100%;
+      }
+    }
     .box-shadow;
-    border: @thin-border @borderColor;
+    border: @thin-border @border-color-main;
   }
 
   .ui-dialog-content {
@@ -42,6 +93,7 @@
   textarea {
     .noPaddingMargin;
     width: 95%;
+    //width: 100%;
     resize: none;
     &#description {
       margin-top: 0 !important;
@@ -85,7 +137,8 @@
 
   .inner {
     padding: 5px;
-    background: @background;
+    background: @dialog-bg;
+    //position: relative;
   }
 
   .form-holder {
@@ -196,8 +249,8 @@
 
   .ui-dialog-buttonpane {
     border: @thin-border @border-color-main;
-    background: @background;
-    color: @color;
+    background: @dialog-bg;
+    color: @mainText-color;
     text-align: left;
     border-width: 1px 0 0;
     background-image: none;
@@ -293,3 +346,4 @@
   }
 
 }
+

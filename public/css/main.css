@@ -2064,6 +2064,342 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .hireFireTable {
   margin-bottom: 10px;
 }
+.ui-dialog {
+  background: #ffffff;
+  color: #000000;
+  z-index: 1000;
+  margin: 0 auto;
+  left: 50%;
+  top: 50%;
+  -moz-border-radius: 0px;
+  -webkit-border-radius: 0px;
+  border-radius: 0px;
+  /*.app-empty-info {
+    .dl-auto(200px, 100%);
+    margin-top: -3px;
+
+    dd {
+      display: none;
+    }
+
+    dt {
+      margin-top: 11px;
+
+      input {
+        width: 95% !important;
+      }
+    }
+  }*/
+  /*.summary-info {
+    width: 50%;
+    .dl-auto(none, 30%);
+    height: 30px;
+
+    #summary {
+      width: 89% !important;
+    }
+  }*/
+}
+.ui-dialog .ui-widget-content {
+  border: none;
+}
+.ui-dialog .ui-widget-content a {
+  color: #3e88b9;
+}
+.ui-dialog .ui-widget-content a.editTags {
+  color: #000;
+}
+.ui-dialog .ui-widget-content a.editTags:hover {
+  text-decoration: none;
+}
+.ui-dialog .avatar {
+  display: block;
+  overflow: hidden;
+  position: relative;
+  width: 140px;
+  height: 140px;
+  margin: 5px 5px 5px 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  -moz-box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  -webkit-box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border: 1px solid #7f7f80;
+}
+.ui-dialog .avatar img {
+  height: auto;
+  width: 100%;
+}
+.ui-dialog .avatar canvas {
+  height: auto;
+  width: 100%;
+}
+.ui-dialog .avatar .upload {
+  overflow: hidden;
+  font-size: 15px;
+  line-height: 18px;
+  text-align: center;
+  display: block;
+  height: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+}
+.ui-dialog .avatar .upload input {
+  height: 20px;
+  opacity: 0;
+  background: rgba(0, 0, 0, 0.5);
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+.ui-dialog .ui-dialog-content {
+  position: relative;
+  border: 0;
+  padding: .5em 1em;
+  background: 0;
+}
+.ui-dialog .ui-dialog-buttonpane {
+  margin-top: 10px !important;
+}
+.ui-dialog .ui-dialog-titlebar {
+  display: none;
+}
+.ui-dialog .app-block {
+  width: 42%;
+  margin-right: 5%;
+}
+.ui-dialog .app-block.withPaddingRightProject .inner {
+  padding-top: 5px;
+  padding-left: 8px;
+  padding-right: 0;
+}
+.ui-dialog .app-block.withPaddingLeftProject .inner {
+  padding-left: 0;
+}
+.ui-dialog .app-block.projectNote {
+  width: 45%;
+  padding-right: 4%;
+}
+.ui-dialog .app-block.projectNote .noteWrapper {
+  width: 100%;
+}
+.ui-dialog .app-block.projectNote #noteArea {
+  width: 100%;
+}
+.ui-dialog .app-block.taskNote {
+  width: 45%;
+  padding-right: 4%;
+}
+.ui-dialog .app-block.taskNote .noteWrapper {
+  width: 95%;
+}
+.ui-dialog .app-block.taskNote #noteArea {
+  width: 100%;
+}
+.ui-dialog .app-block + .half-block {
+  margin-right: 0;
+}
+.ui-dialog textarea {
+  padding: 0;
+  margin: 0;
+  width: 95%;
+  resize: none;
+}
+.ui-dialog textarea#description {
+  margin-top: 0 !important;
+}
+.ui-dialog textarea#description.taskDescription {
+  height: 310px;
+}
+.ui-dialog textarea#description.projectDescription {
+  height: 225px;
+  margin-top: 5px !important;
+}
+.ui-dialog textarea#description.projectDescriptionEdit {
+  width: 98%;
+  height: 265px;
+}
+.ui-dialog textarea#description.taskDescriptionCreate {
+  height: 205px;
+  margin-top: 8px !important;
+  margin-left: 1px;
+  width: 100%;
+}
+.ui-dialog textarea#description.taskDescriptionEdit {
+  height: 188px;
+  margin-top: 8px !important;
+  margin-left: 1px;
+  width: 100%;
+}
+.ui-dialog textarea#description.projectDescriptionCreate {
+  height: 230px;
+}
+.ui-dialog textarea#otherInfo {
+  margin-top: 13px;
+  width: 300px;
+  height: 193px;
+  min-height: initial;
+  max-width: 300px;
+}
+.ui-dialog .inner {
+  padding: 5px;
+  background: #ffffff;
+}
+.ui-dialog .form-holder {
+  position: relative;
+  padding: .5em 1em;
+  clear: both;
+}
+.ui-dialog .form-holder.task-create-holder {
+  margin-bottom: -17px;
+}
+.ui-dialog .person-info-h3 {
+  width: auto;
+  max-width: auto;
+  clear: none;
+}
+.ui-dialog .person-info-h3 dt,
+.ui-dialog .person-info-h3 dd {
+  clear: none;
+  margin-top: 0 !important;
+}
+.ui-dialog .person-info-h3 dt a,
+.ui-dialog .person-info-h3 dd a {
+  line-height: 22px;
+  margin-right: 3px;
+}
+.ui-dialog .person-info-h3 dt {
+  width: 90px;
+}
+.ui-dialog .person-info-h3 dd {
+  width: auto;
+}
+.ui-dialog input {
+  -moz-border-radius: 0;
+  -webkit-border-radius: 0;
+  border-radius: 0;
+  border: 1px solid #E2E9EF;
+  border-top: 1px solid #CBD3E2;
+  max-width: 280px;
+  height: 20px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  border: 1px solid #d7d7d7;
+  line-height: 20px;
+  background-color: transparent;
+  padding: 0 2px;
+  color: #000000;
+}
+.ui-dialog input:focus {
+  outline: medium none;
+  border: 1px solid #3e88b9;
+}
+.ui-dialog input#summary {
+  width: 100%;
+  max-width: none;
+}
+.ui-dialog input#summaryTask,
+.ui-dialog input#summaryEdit {
+  margin-top: 17px;
+  margin-bottom: 8px;
+  padding-left: 2px;
+  padding-right: 2px;
+  width: 544px;
+  max-width: none;
+}
+.ui-dialog input#summaryTask {
+  width: 544px;
+}
+.ui-dialog input#summaryEdit {
+  margin-top: 7px;
+}
+.ui-dialog .ui-dialog-buttonpane {
+  border: 1px solid #7f7f80;
+  background: #ffffff;
+  color: #000000;
+  text-align: left;
+  border-width: 1px 0 0;
+  background-image: none;
+  margin: 0 1em;
+  margin-top: .7em;
+  padding: .3em 1em .5em .4em;
+}
+.ui-dialog .ui-dialog-buttonpane:before {
+  content: "";
+  display: table;
+  border-collapse: collapse;
+}
+.ui-dialog .ui-dialog-buttonpane:after {
+  clear: both;
+  content: "";
+  display: table;
+  border-collapse: collapse;
+}
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset {
+  text-align: center;
+}
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button {
+  line-height: normal;
+  display: inline-block;
+  padding: 0 12px !important;
+  margin-bottom: 0;
+  font-weight: 400;
+  text-align: center;
+  vertical-align: middle;
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 14px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  border-radius: 0;
+  border: 1px solid #c8c8d3;
+  background-color: #ffffff;
+  outline: 0 !important;
+  box-shadow: none !important;
+  height: 26px;
+  line-height: 22px !important;
+  border-radius: 3px;
+}
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button:first-child {
+  background: #3291c8;
+  color: #ffffff;
+  border-color: transparent;
+}
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button:first-child span {
+  color: #fff;
+}
+.ui-dialog .ui-helper-clearfix:before,
+.ui-dialog .ui-helper-clearfix:after {
+  content: "";
+  display: table;
+  border-collapse: collapse;
+}
+.ui-dialog .ui-helper-clearfix:after {
+  clear: both;
+}
+.ui-dialog .ui-helper-clearfix {
+  min-height: 0;
+}
+.ui-dialog .ui-helper-zfix {
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  position: absolute;
+  opacity: 0;
+  filter: alpha(opacity=0);
+}
+.ui-dialog.task-edit-dialog .ui-dialog-buttonpane {
+  margin-left: 24px;
+  margin-right: 24px;
+}
+.ui-dialog.task-edit-dialog .ui-dialog-buttonpane button {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
 .sideMenu {
   display: block;
   width: auto;
@@ -2693,6 +3029,52 @@ input::-ms-clear {
 .text-center {
   text-align: center;
 }
+/*
+.avatar(@size: 32px, @t: 5px, @r: 5px, @b: 5px, @l: 5px) {
+  display: block;
+  overflow: hidden;
+  position: relative;
+  width: @size;
+  height: @size;
+  margin: @t @r @b @l;
+
+  img {
+    height: auto;
+    width: 100%;
+  }
+
+  canvas {
+    height: auto;
+    width: 100%;
+  }
+
+  .upload {
+    overflow: hidden;
+    font-size: 15px;
+    line-height: 18px;
+    text-align: center;
+    display: block;
+
+    //.position;
+
+
+    height: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    color: #fff;
+
+    input {
+      //.position;
+      height: 20px;
+      opacity: 0;
+      background: rgba(0, 0, 0, 0.5);
+      margin: 0;
+      padding: 0;
+      width: 100%;
+    }
+  }
+}
+*/
 /*
 .form(@width: 860px, @border: 1px, @background: @bg-main, @border-color: @border-color-main, @captionColor: @formColum-main-text-color, @usualText: @formColum-main-subText-color) {
   width: @width;
@@ -3843,6 +4225,272 @@ input::-ms-clear {
 .ui-datepicker table.ui-datepicker-calendar tr td.ui-state-disabled {
   opacity: .35;
 }
+/*
+.dialog(@background: @dialog-bg, @color: @mainText-color, @borderColor: @border-color-main) {
+  background: @background;
+  color: @color;
+  z-index: 1000;
+  margin: 0 auto;
+  left: 50%;
+  top: 50%;
+  .border-radius(0px);
+
+  .ui-widget-content {
+    border: none;
+    a {
+      color: @tilte-color;
+      &.editTags {
+        color: #000;
+        &:hover {
+          text-decoration: none;
+        }
+      }
+    }
+  }
+
+  .avatar {
+    .avatar(140px, 5px, 5px, 5px, 0);
+    .box-shadow;
+    border: @thin-border @borderColor;
+  }
+
+  .ui-dialog-content {
+    position: relative;
+    border: 0;
+    padding: .5em 1em;
+    background: 0;
+  }
+
+  //.ui-dialog-buttonpane {
+  //  margin-top: 30px !important;
+  //}
+
+  .ui-dialog-titlebar {
+    display: none;
+  }
+
+  .app-block {
+    .half-block;
+  }
+
+  textarea {
+    .noPaddingMargin;
+    width: 100%;
+    resize: none;
+    &#description {
+      margin-top: 0 !important;
+      &.taskDescription {
+        height: 310px;
+      }
+      &.projectDescription {
+        height: 225px;
+        margin-top: 5px !important;
+      }
+      &.projectDescriptionEdit {
+        width: 98%;
+        height: 265px;
+      }
+      &.taskDescriptionCreate {
+        height: 205px;
+        margin-top: 8px !important;
+        margin-left: 1px;
+        width: 100%;
+      }
+      &.taskDescriptionEdit {
+        height: 188px;
+        margin-top: 8px !important;
+        margin-left: 1px;
+        width: 100%;
+      }
+      &.projectDescriptionCreate {
+        height: 230px;
+      }
+
+    }
+
+    &#otherInfo {
+      margin-top: 13px;
+      width: 300px;
+      height: 193px;
+      min-height: initial;
+      max-width: 300px;
+    }
+  }
+
+  //.inner {
+  //  padding: 5px;
+  //  background: @background;
+  //}
+
+  .form-holder {
+    position: relative;
+    padding: .5em 1em;
+    clear: both;
+    &.task-create-holder {
+      margin-bottom: -17px;
+    }
+  }
+
+  /*.app-empty-info {
+    .dl-auto(200px, 100%);
+    margin-top: -3px;
+
+    dd {
+      display: none;
+    }
+
+    dt {
+      margin-top: 11px;
+
+      input {
+        width: 95% !important;
+      }
+    }
+  }*/
+/*
+  .person-info-h3 {
+    width: auto;
+    //.dl-auto(auto, 50%);
+    max-width: auto;
+    clear: none;
+
+    dt, dd {
+      clear: none;
+      margin-top: 0 !important;
+
+      a {
+        line-height: 22px;
+        margin-right: 3px;
+      }
+    }
+
+    dt {
+      width: 90px;
+    }
+
+    dd {
+      width: auto;
+    }
+
+  }
+
+  /*.summary-info {
+    width: 50%;
+    .dl-auto(none, 30%);
+    height: 30px;
+
+    #summary {
+      width: 89% !important;
+    }
+  }*/
+/*
+  input {
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    border-radius: 0;
+    border: 1px solid #E2E9EF;
+    border-top: 1px solid #CBD3E2;
+    max-width: 280px;
+    height: 20px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    border: @thin-border @list-border-color;
+    line-height: 20px;
+    background-color: transparent;
+    padding: 0 2px;
+    color: @mainText-color;
+
+    &:focus {
+      //.box-shadow(0, 0, 5px, @border-color-selected);
+      outline: medium none;
+      border: @thin-border @border-color-selected;
+    }
+
+    &#summary {
+      width: 100%;
+      max-width: none;
+    }
+    &#summaryTask,
+    &#summaryEdit {
+      margin-top: 17px;
+      margin-bottom: 8px;
+      padding-left: 2px;
+      padding-right: 2px;
+      width: 544px;
+      max-width: none;
+    }
+    &#summaryTask {
+      width: 544px;
+    }
+
+    &#summaryEdit {
+      margin-top: 7px;
+    }
+
+  }
+
+  .ui-dialog-buttonpane {
+    border: @thin-border @border-color-main;
+    background: @background;
+    color: @color;
+    text-align: left;
+    border-width: 1px 0 0;
+    background-image: none;
+    margin: 0 1em;
+    margin-top: .7em;
+    padding: .3em 1em .5em .4em;
+
+    &:before {
+      content: "";
+      display: table;
+      border-collapse: collapse;
+    }
+
+    &:after {
+      clear: both;
+      content: "";
+      display: table;
+      border-collapse: collapse;
+    }
+  }
+
+  .ui-helper-clearfix:before, .ui-helper-clearfix:after {
+    content: "";
+    display: table;
+    border-collapse: collapse;
+  }
+
+  .ui-helper-clearfix:after {
+    clear: both;
+  }
+
+  .ui-helper-clearfix {
+    min-height: 0;
+  }
+
+  .ui-helper-zfix {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    position: absolute;
+    opacity: 0;
+    filter: Alpha(Opacity=0);
+  }
+  &.task-edit-dialog {
+    .ui-dialog-buttonpane {
+      margin-left: 24px;
+      margin-right: 24px;
+      button {
+        margin-top: 15px;
+        margin-bottom: 15px;
+      }
+    }
+  }
+
+}
+
+*/
 .dialog-buttons input {
   height: 25px !important;
   line-height: 15px !important;
@@ -6708,618 +7356,6 @@ ul.dialog-tabs li.right button {
 .ui-datepicker table.ui-datepicker-calendar tr td.ui-state-disabled {
   opacity: .35;
 }
-.ui-dialog {
-  /*.app-empty-info {
-    .dl-auto(200px, 100%);
-    margin-top: -3px;
-
-    dd {
-      display: none;
-    }
-
-    dt {
-      margin-top: 11px;
-
-      input {
-        width: 95% !important;
-      }
-    }
-  }*/
-  /*.summary-info {
-    width: 50%;
-    .dl-auto(none, 30%);
-    height: 30px;
-
-    #summary {
-      width: 89% !important;
-    }
-  }*/
-  background: #ffffff;
-  color: #000000;
-  z-index: 1000;
-  margin: 0 auto;
-  left: 50%;
-  top: 50%;
-  -moz-border-radius: 0px;
-  -webkit-border-radius: 0px;
-  border-radius: 0px;
-  /*.app-empty-info {
-    .dl-auto(200px, 100%);
-    margin-top: -3px;
-
-    dd {
-      display: none;
-    }
-
-    dt {
-      margin-top: 11px;
-
-      input {
-        width: 95% !important;
-      }
-    }
-  }*/
-  /*.summary-info {
-    width: 50%;
-    .dl-auto(none, 30%);
-    height: 30px;
-
-    #summary {
-      width: 89% !important;
-    }
-  }*/
-}
-.ui-dialog .ui-widget-content {
-  border: none;
-}
-.ui-dialog .ui-widget-content a {
-  color: #3e88b9;
-}
-.ui-dialog .avatar {
-  display: block;
-  overflow: hidden;
-  position: relative;
-  width: 140px;
-  height: 140px;
-  margin: 5px 5px 5px 0;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  -moz-box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  -webkit-box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  border: 1px solid #7f7f80;
-}
-.ui-dialog .avatar img {
-  height: auto;
-  width: 100%;
-}
-.ui-dialog .avatar canvas {
-  height: auto;
-  width: 100%;
-}
-.ui-dialog .avatar .upload {
-  overflow: hidden;
-  font-size: 15px;
-  line-height: 18px;
-  text-align: center;
-  display: block;
-  height: 0;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  color: #fff;
-}
-.ui-dialog .avatar .upload input {
-  height: 20px;
-  opacity: 0;
-  background: rgba(0, 0, 0, 0.5);
-  margin: 0;
-  padding: 0;
-  width: 100%;
-}
-.ui-dialog .ui-dialog-content {
-  position: relative;
-  border: 0;
-  padding: .5em 1em;
-  background: 0;
-}
-.ui-dialog .ui-dialog-buttonpane {
-  margin-top: 10px !important;
-}
-.ui-dialog .ui-dialog-titlebar {
-  display: none;
-}
-.ui-dialog .app-block {
-  width: 42%;
-  margin-right: 5%;
-}
-.ui-dialog .app-block.withPaddingRightProject .inner {
-  padding-top: 5px;
-  padding-left: 8px;
-  padding-right: 0;
-}
-.ui-dialog .app-block.withPaddingLeftProject .inner {
-  padding-left: 0;
-}
-.ui-dialog .app-block.projectNote {
-  width: 45%;
-  padding-right: 4%;
-}
-.ui-dialog .app-block.projectNote .noteWrapper {
-  width: 100%;
-}
-.ui-dialog .app-block.projectNote #noteArea {
-  width: 100%;
-}
-.ui-dialog .app-block.taskNote {
-  width: 45%;
-  padding-right: 4%;
-}
-.ui-dialog .app-block.taskNote .noteWrapper {
-  width: 95%;
-}
-.ui-dialog .app-block.taskNote #noteArea {
-  width: 100%;
-}
-.ui-dialog .app-block + .half-block {
-  margin-right: 0;
-}
-.ui-dialog textarea {
-  padding: 0;
-  margin: 0;
-  width: 95%;
-  resize: none;
-}
-.ui-dialog textarea#description {
-  margin-top: 0 !important;
-}
-.ui-dialog textarea#description.taskDescription {
-  height: 310px;
-}
-.ui-dialog textarea#description.projectDescription {
-  height: 225px;
-  margin-top: 5px !important;
-}
-.ui-dialog textarea#description.projectDescriptionEdit {
-  width: 98%;
-  height: 265px;
-}
-.ui-dialog textarea#description.taskDescriptionCreate {
-  height: 205px;
-  margin-top: 8px !important;
-  margin-left: 1px;
-  width: 100%;
-}
-.ui-dialog textarea#description.taskDescriptionEdit {
-  height: 188px;
-  margin-top: 8px !important;
-  margin-left: 1px;
-  width: 100%;
-}
-.ui-dialog textarea#description.projectDescriptionCreate {
-  height: 230px;
-}
-.ui-dialog textarea#otherInfo {
-  margin-top: 13px;
-  width: 300px;
-  height: 193px;
-  min-height: initial;
-  max-width: 300px;
-}
-.ui-dialog .inner {
-  padding: 5px;
-  background: #ffffff;
-}
-.ui-dialog .form-holder {
-  position: relative;
-  padding: .5em 1em;
-  clear: both;
-}
-.ui-dialog .form-holder.task-create-holder {
-  margin-bottom: -17px;
-}
-.ui-dialog .person-info-h3 {
-  width: auto;
-  max-width: auto;
-  clear: none;
-}
-.ui-dialog .person-info-h3 dt,
-.ui-dialog .person-info-h3 dd {
-  clear: none;
-  margin-top: 0 !important;
-}
-.ui-dialog .person-info-h3 dt a,
-.ui-dialog .person-info-h3 dd a {
-  line-height: 22px;
-  margin-right: 3px;
-}
-.ui-dialog .person-info-h3 dt {
-  width: 90px;
-}
-.ui-dialog .person-info-h3 dd {
-  width: auto;
-}
-.ui-dialog input {
-  -moz-border-radius: 0;
-  -webkit-border-radius: 0;
-  border-radius: 0;
-  border: 1px solid #E2E9EF;
-  border-top: 1px solid #CBD3E2;
-  max-width: 280px;
-  height: 20px;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 12px;
-  border: 1px solid #d7d7d7;
-  line-height: 20px;
-  background-color: transparent;
-  padding: 0 2px;
-  color: #000000;
-}
-.ui-dialog input:focus {
-  outline: medium none;
-  border: 1px solid #3e88b9;
-}
-.ui-dialog input#summary {
-  width: 100%;
-  max-width: none;
-}
-.ui-dialog input#summaryTask,
-.ui-dialog input#summaryEdit {
-  margin-top: 17px;
-  margin-bottom: 8px;
-  padding-left: 2px;
-  padding-right: 2px;
-  width: 544px;
-  max-width: none;
-}
-.ui-dialog input#summaryTask {
-  width: 544px;
-}
-.ui-dialog input#summaryEdit {
-  margin-top: 7px;
-}
-.ui-dialog .ui-dialog-buttonpane {
-  border: 1px solid #7f7f80;
-  background: #ffffff;
-  color: #000000;
-  text-align: left;
-  border-width: 1px 0 0;
-  background-image: none;
-  margin: 0 1em;
-  margin-top: .7em;
-  padding: .3em 1em .5em .4em;
-}
-.ui-dialog .ui-dialog-buttonpane:before {
-  content: "";
-  display: table;
-  border-collapse: collapse;
-}
-.ui-dialog .ui-dialog-buttonpane:after {
-  clear: both;
-  content: "";
-  display: table;
-  border-collapse: collapse;
-}
-.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset {
-  text-align: center;
-}
-.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button {
-  margin: .5em .4em .5em 0;
-  line-height: normal;
-  display: inline-block;
-  padding: 0 12px !important;
-  margin-bottom: 0;
-  font-weight: 400;
-  text-align: center;
-  vertical-align: middle;
-  -ms-touch-action: manipulation;
-  touch-action: manipulation;
-  cursor: pointer;
-  white-space: nowrap;
-  font-size: 14px;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  border-radius: 0;
-  border: 1px solid #c8c8d3;
-  background-color: #ffffff;
-  outline: 0 !important;
-  box-shadow: none !important;
-  height: 26px;
-  line-height: 22px !important;
-  border-radius: 3px;
-}
-.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button:first-child {
-  background: #3291c8;
-  color: #ffffff;
-  border-color: transparent;
-}
-.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button:first-child span {
-  color: #fff;
-}
-.ui-dialog .ui-helper-clearfix:before,
-.ui-dialog .ui-helper-clearfix:after {
-  content: "";
-  display: table;
-  border-collapse: collapse;
-}
-.ui-dialog .ui-helper-clearfix:after {
-  clear: both;
-}
-.ui-dialog .ui-helper-clearfix {
-  min-height: 0;
-}
-.ui-dialog .ui-helper-zfix {
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  position: absolute;
-  opacity: 0;
-  filter: alpha(opacity=0);
-}
-.ui-dialog.task-edit-dialog .ui-dialog-buttonpane {
-  margin-left: 24px;
-  margin-right: 24px;
-}
-.ui-dialog.task-edit-dialog .ui-dialog-buttonpane button {
-  margin-top: 15px;
-  margin-bottom: 15px;
-}
-.ui-dialog .ui-widget-content {
-  border: none;
-}
-.ui-dialog .ui-widget-content a {
-  color: #3e88b9;
-}
-.ui-dialog .ui-widget-content a.editTags {
-  color: #000;
-}
-.ui-dialog .ui-widget-content a.editTags:hover {
-  text-decoration: none;
-}
-.ui-dialog .avatar {
-  display: block;
-  overflow: hidden;
-  position: relative;
-  width: 140px;
-  height: 140px;
-  margin: 5px 5px 5px 0;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  -moz-box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  -webkit-box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  border: 1px solid #7f7f80;
-}
-.ui-dialog .avatar img {
-  height: auto;
-  width: 100%;
-}
-.ui-dialog .avatar canvas {
-  height: auto;
-  width: 100%;
-}
-.ui-dialog .avatar .upload {
-  overflow: hidden;
-  font-size: 15px;
-  line-height: 18px;
-  text-align: center;
-  display: block;
-  height: 0;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  color: #fff;
-}
-.ui-dialog .avatar .upload input {
-  height: 20px;
-  opacity: 0;
-  background: rgba(0, 0, 0, 0.5);
-  margin: 0;
-  padding: 0;
-  width: 100%;
-}
-.ui-dialog .ui-dialog-content {
-  position: relative;
-  border: 0;
-  padding: .5em 1em;
-  background: 0;
-}
-.ui-dialog .ui-dialog-titlebar {
-  display: none;
-}
-.ui-dialog .app-block {
-  width: 42%;
-  margin-right: 5%;
-}
-.ui-dialog .app-block.withPaddingRightProject .inner {
-  padding-top: 5px;
-  padding-left: 8px;
-  padding-right: 0;
-}
-.ui-dialog .app-block.withPaddingLeftProject .inner {
-  padding-left: 0;
-}
-.ui-dialog .app-block.projectNote {
-  width: 45%;
-  padding-right: 4%;
-}
-.ui-dialog .app-block.projectNote .noteWrapper {
-  width: 100%;
-}
-.ui-dialog .app-block.projectNote #noteArea {
-  width: 100%;
-}
-.ui-dialog .app-block.taskNote {
-  width: 45%;
-  padding-right: 4%;
-}
-.ui-dialog .app-block.taskNote .noteWrapper {
-  width: 95%;
-}
-.ui-dialog .app-block.taskNote #noteArea {
-  width: 100%;
-}
-.ui-dialog .app-block + .half-block {
-  margin-right: 0;
-}
-.ui-dialog textarea {
-  padding: 0;
-  margin: 0;
-  width: 100%;
-  resize: none;
-}
-.ui-dialog textarea#description {
-  margin-top: 0 !important;
-}
-.ui-dialog textarea#description.taskDescription {
-  height: 310px;
-}
-.ui-dialog textarea#description.projectDescription {
-  height: 225px;
-  margin-top: 5px !important;
-}
-.ui-dialog textarea#description.projectDescriptionEdit {
-  width: 98%;
-  height: 265px;
-}
-.ui-dialog textarea#description.taskDescriptionCreate {
-  height: 205px;
-  margin-top: 8px !important;
-  margin-left: 1px;
-  width: 100%;
-}
-.ui-dialog textarea#description.taskDescriptionEdit {
-  height: 188px;
-  margin-top: 8px !important;
-  margin-left: 1px;
-  width: 100%;
-}
-.ui-dialog textarea#description.projectDescriptionCreate {
-  height: 230px;
-}
-.ui-dialog textarea#otherInfo {
-  margin-top: 13px;
-  width: 300px;
-  height: 193px;
-  min-height: initial;
-  max-width: 300px;
-}
-.ui-dialog .form-holder {
-  position: relative;
-  padding: .5em 1em;
-  clear: both;
-}
-.ui-dialog .form-holder.task-create-holder {
-  margin-bottom: -17px;
-}
-.ui-dialog .person-info-h3 {
-  width: auto;
-  max-width: auto;
-  clear: none;
-}
-.ui-dialog .person-info-h3 dt,
-.ui-dialog .person-info-h3 dd {
-  clear: none;
-  margin-top: 0 !important;
-}
-.ui-dialog .person-info-h3 dt a,
-.ui-dialog .person-info-h3 dd a {
-  line-height: 22px;
-  margin-right: 3px;
-}
-.ui-dialog .person-info-h3 dt {
-  width: 90px;
-}
-.ui-dialog .person-info-h3 dd {
-  width: auto;
-}
-.ui-dialog input {
-  -moz-border-radius: 0;
-  -webkit-border-radius: 0;
-  border-radius: 0;
-  border: 1px solid #E2E9EF;
-  border-top: 1px solid #CBD3E2;
-  max-width: 280px;
-  height: 20px;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 12px;
-  border: 1px solid #d7d7d7;
-  line-height: 20px;
-  background-color: transparent;
-  padding: 0 2px;
-  color: #000000;
-}
-.ui-dialog input:focus {
-  outline: medium none;
-  border: 1px solid #3e88b9;
-}
-.ui-dialog input#summary {
-  width: 100%;
-  max-width: none;
-}
-.ui-dialog input#summaryTask,
-.ui-dialog input#summaryEdit {
-  margin-top: 17px;
-  margin-bottom: 8px;
-  padding-left: 2px;
-  padding-right: 2px;
-  width: 544px;
-  max-width: none;
-}
-.ui-dialog input#summaryTask {
-  width: 544px;
-}
-.ui-dialog input#summaryEdit {
-  margin-top: 7px;
-}
-.ui-dialog .ui-dialog-buttonpane {
-  border: 1px solid #7f7f80;
-  background: #ffffff;
-  color: #000000;
-  text-align: left;
-  border-width: 1px 0 0;
-  background-image: none;
-  margin: 0 1em;
-  margin-top: .7em;
-  padding: .3em 1em .5em .4em;
-}
-.ui-dialog .ui-dialog-buttonpane:before {
-  content: "";
-  display: table;
-  border-collapse: collapse;
-}
-.ui-dialog .ui-dialog-buttonpane:after {
-  clear: both;
-  content: "";
-  display: table;
-  border-collapse: collapse;
-}
-.ui-dialog .ui-helper-clearfix:before,
-.ui-dialog .ui-helper-clearfix:after {
-  content: "";
-  display: table;
-  border-collapse: collapse;
-}
-.ui-dialog .ui-helper-clearfix:after {
-  clear: both;
-}
-.ui-dialog .ui-helper-clearfix {
-  min-height: 0;
-}
-.ui-dialog .ui-helper-zfix {
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  position: absolute;
-  opacity: 0;
-  filter: alpha(opacity=0);
-}
-.ui-dialog.task-edit-dialog .ui-dialog-buttonpane {
-  margin-left: 24px;
-  margin-right: 24px;
-}
-.ui-dialog.task-edit-dialog .ui-dialog-buttonpane button {
-  margin-top: 15px;
-  margin-bottom: 15px;
-}
 .form-holder {
   padding: 20px;
   box-sizing: border-box;
@@ -9664,7 +9700,7 @@ textarea#editInput {
   right: 0;
   width: 35%;
   margin-right: 90px;
-  z-index: 1;
+  z-index: 200;
 }
 #searchContainer.dashBoardVocationSearch {
   position: static;
@@ -11184,7 +11220,7 @@ input:not([type="checkbox"]).inputBordered:focus {
   height: 40px;
   width: 100%;
   background-color: #2b3643;
-  z-index: 200;
+  z-index: 300;
 }
 .topbarHolder .topbarLogo {
   float: left;
@@ -11761,7 +11797,7 @@ dl.payrollDateBlock dt {
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  height: calc(100vh - 90px);
+  height: calc(100vh - 121px);
   border-bottom: 1px solid #ededed;
 }
 .listWrap.leadsList .name {
@@ -11957,26 +11993,6 @@ td.checkboxRow {
 }
 .listOpen .pagination {
   margin: 5px 0 10px;
-}
-#top-bar-createBtn {
-  height: 26px;
-  padding: 0 12px;
-  background: #7eadcc;
-  line-height: 26px !important;
-  color: #fff;
-  -webkit-transition: all .3s;
-  transition: all .3s;
-  border-radius: 3px;
-}
-#top-bar-createBtn:after,
-#top-bar-createBtn:before {
-  color: #fff;
-}
-#top-bar-createBtn:after {
-  content: 'New';
-  margin-left: 5px;
-  font-family: 'OpenSans Regular', sans-serif, Verdana;
-  font-size: 13px;
 }
 #top-bar {
   /*
@@ -12391,9 +12407,9 @@ table.kanban tbody td:nth-child(n+2) {
 .ui-dialog ._listModalWrap ._listModal {
   padding: 0;
 }
-.ui-dialog ._listModalWrap ._listModal ._modalSelect a,
-.ui-dialog ._listModalWrap ._listModal ._modalSelect input {
-  padding: 0;
+.ui-dialog ._listModalWrap ._listModal ._modalSelect > a,
+.ui-dialog ._listModalWrap ._listModal ._modalSelect > input {
+  padding: 0 0 0 10px;
   min-height: 30px;
   line-height: 30px;
 }
