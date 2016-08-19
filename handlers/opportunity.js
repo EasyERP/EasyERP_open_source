@@ -573,7 +573,6 @@ var Module = function (models, event) {
             return next(err);
         }
 
-
         uploader.postFile(dir, files, {userId: req.session.uName}, function (err, file) {
             var notes = [];
             if (err) {
@@ -872,6 +871,11 @@ var Module = function (models, event) {
             if (data.salesTeam) {
                 _opportunitie.salesTeam = data.salesTeam;
             }
+
+            if (data.jobPosition) {
+                _opportunitie.jobPosition = data.jobPosition;
+            }
+
             if (data.internalNotes) {
 
                 _opportunitie.notes = [{
@@ -2957,8 +2961,9 @@ var Module = function (models, event) {
             skype           : 1,
             tags            : 1,
             attachments     : 1,
-            dateBirth       : 1
-        });
+            dateBirth       : 1,
+            jobPosition     : 1
+    });
 
         query
             .populate('company')
