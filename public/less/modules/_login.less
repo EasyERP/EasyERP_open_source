@@ -2235,14 +2235,6 @@ td.editable {
   }
 }
 
-.addTaskTitle {
-  &:after {
-    content: '';
-    display: table;
-    clear: both;
-  }
-}
-
 ._taskTimeBlock {
 
   .inputDateActionBlock {
@@ -2264,6 +2256,7 @@ td.editable {
 .addTaskTitle {
   display: flex;
   align-items: center;
+  white-space: nowrap;
 
   >label {
     width: auto !important;
@@ -2292,5 +2285,16 @@ td.editable {
     top: 20px;
     right: 20px;
     cursor: pointer;
+  }
+}
+
+.projectMembersTable {
+  ._newSelectListWrap {
+    display: inline-block;
+
+    .newSelectList {
+      left: auto;
+      right: 0;
+    }
   }
 }

@@ -22,10 +22,7 @@
   height: 26px;
   line-height: 24px!important;
   border-radius: 3px;
-
-  + .btn {
-    margin-left: 8px;
-  }
+  min-width: 70px;
 
   &.plus {
     &:before {
