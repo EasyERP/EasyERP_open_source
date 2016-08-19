@@ -2,7 +2,7 @@
 
 .btn {
   display: inline-block;
-  padding: 0 12px!important;
+  padding: 0 12px !important;
   margin-bottom: 0;
   font-weight: 400;
   text-align: center;
@@ -10,7 +10,7 @@
   touch-action: manipulation;
   cursor: pointer;
   white-space: nowrap;
-  font-size: 14px;
+  font-size: 13px;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -22,6 +22,18 @@
   height: 26px;
   line-height: 24px!important;
   border-radius: 3px;
+
+  + .btn {
+    margin-left: 8px;
+  }
+
+  &.plus {
+    &:before {
+      content: "\f067";
+      margin-right: 6px;
+      font-family: 'FontAwesome';
+    }
+  }
 
   &:hover {
     cursor: pointer;
@@ -38,7 +50,7 @@
 
   &.slim {
     height: 26px;
-    line-height: 26px !important;
+    line-height: 24px !important;
   }
 
   &.green {
@@ -54,15 +66,21 @@
   }
 
   &.blue {
-    color: #FFF;
-    background-color: #3e88b9;
-    border-color: #3e88b9;
+    color: #fff !important;
+    background-color: #7eadcc !important;
+    border-color: #7eadcc !important;
 
-    &:hover {
-      background-color: #4d5a75;
-      border-color: #4d5a75;
-      text-decoration: none;
+    &.plus {
+      &:before {
+        color: #fff;
+      }
     }
+
+    //&:hover {
+    //  background-color: #4d5a75 !important;
+    //  border-color: #4d5a75 !important;
+    //  text-decoration: none !important;
+    //}
   }
 
   &.border {

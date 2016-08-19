@@ -7190,7 +7190,6 @@ ul.dialog-tabs li.right button {
   text-align: center;
 }
 .ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button {
-  margin: .5em .4em .5em 0;
   line-height: normal;
   display: inline-block;
   padding: 0 12px !important;
@@ -12144,26 +12143,6 @@ td.checkboxRow {
 .listOpen .pagination {
   margin: 5px 0 10px;
 }
-#top-bar-createBtn {
-  height: 26px;
-  padding: 0 12px;
-  background: #7eadcc;
-  line-height: 26px !important;
-  color: #fff;
-  -webkit-transition: all .3s;
-  transition: all .3s;
-  border-radius: 3px;
-}
-#top-bar-createBtn:after,
-#top-bar-createBtn:before {
-  color: #fff;
-}
-#top-bar-createBtn:after {
-  content: 'New';
-  margin-left: 5px;
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
-  font-size: 13px;
-}
 #top-bar {
   /*
     &.position {
@@ -12577,9 +12556,9 @@ table.kanban tbody td:nth-child(n+2) {
 .ui-dialog ._listModalWrap ._listModal {
   padding: 0;
 }
-.ui-dialog ._listModalWrap ._listModal ._modalSelect a,
-.ui-dialog ._listModalWrap ._listModal ._modalSelect input {
-  padding: 0;
+.ui-dialog ._listModalWrap ._listModal ._modalSelect > a,
+.ui-dialog ._listModalWrap ._listModal ._modalSelect > input {
+  padding: 0 0 0 10px;
   min-height: 30px;
   line-height: 30px;
 }

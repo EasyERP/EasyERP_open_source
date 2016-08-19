@@ -1469,7 +1469,7 @@ b, strong {
       touch-action: manipulation;
   cursor: pointer;
   white-space: nowrap;
-  font-size: 14px;
+  font-size: 13px;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -1481,6 +1481,12 @@ b, strong {
   height: 26px;
   line-height: 24px !important;
   border-radius: 3px; }
+  .btn + .btn {
+    margin-left: 8px; }
+  .btn.plus:before {
+    content: "\f067";
+    margin-right: 6px;
+    font-family: 'FontAwesome'; }
   .btn:hover {
     cursor: pointer;
     background: #f2f2f2;
@@ -1493,7 +1499,7 @@ b, strong {
       text-decoration: none; }
   .btn.slim {
     height: 26px;
-    line-height: 26px !important; }
+    line-height: 24px !important; }
   .btn.green {
     color: #FFF;
     background-color: #32c5d2;
@@ -1503,13 +1509,11 @@ b, strong {
       border-color: #2499a3;
       text-decoration: none; }
   .btn.blue {
-    color: #FFF;
-    background-color: #3e88b9;
-    border-color: #3e88b9; }
-    .btn.blue:hover {
-      background-color: #4d5a75;
-      border-color: #4d5a75;
-      text-decoration: none; }
+    color: #fff !important;
+    background-color: #7eadcc !important;
+    border-color: #7eadcc !important; }
+    .btn.blue.plus:before {
+      color: #fff; }
   .btn.border {
     background-color: #fff;
     color: #000; }
