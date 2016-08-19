@@ -1,14 +1,14 @@
 
 var MongoClient = require('mongodb').MongoClient;
-//var url = 'mongodb://localhost:27017/production';
+var url = 'mongodb://localhost:27017/production';
 var connectOptions = {
     user: 'easyerp',
     pass: '1q2w3e!@#',
     w   : 1,
     j   : true
 };
-//var dbObject = mongoose.createConnection('localhost', 'production', 27017, connectOptions);
-var url = 'mongodb://144.76.56.111:28017/lilyadb';
+var dbObject = mongoose.createConnection('localhost', 'production', 27017, connectOptions);
+//var url = 'mongodb://144.76.56.111:28017/lilyadb';
 var async = require('async');
 
 MongoClient.connect(url, function (err, db) {
@@ -23,11 +23,11 @@ MongoClient.connect(url, function (err, db) {
 
     function childModule(callback) {
         var module = {
-            _id: 112,
-            mname: 'Dashboard',
-            href: 'reportsDashboard',
+            _id: 115,
+            mname: 'Contract Jobs',
+            href: 'contractJobs',
             sequence: 0,
-            parrent: 19,
+            parrent: 78,
             link: true,
             visible: true
         };
