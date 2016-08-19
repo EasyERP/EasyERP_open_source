@@ -38,7 +38,7 @@
         },
 
         parse: function (response) {
-            var jobs = response;
+            var jobs = response.data;
 
             _.map(jobs, function (job) {
                 var i;
@@ -62,7 +62,7 @@
                     }
                 }
 
-                return job;
+                return response;
             });
 
             return Parent.prototype.parse.call(this, response);

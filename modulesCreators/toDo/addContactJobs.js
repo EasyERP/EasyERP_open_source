@@ -1,6 +1,6 @@
 
 var MongoClient = require('mongodb').MongoClient;
-var url = 'mongodb://localhost:27017/production';
+//var url = 'mongodb://localhost:27017/production';
 var connectOptions = {
     user: 'easyerp',
     pass: '1q2w3e!@#',
@@ -8,7 +8,7 @@ var connectOptions = {
     j   : true
 };
 //var dbObject = mongoose.createConnection('localhost', 'production', 27017, connectOptions);
-var url = 'mongodb://localhost:27017/production';
+var url = 'mongodb://144.76.56.111:28017/lilyadb';
 var async = require('async');
 
 MongoClient.connect(url, function (err, db) {
