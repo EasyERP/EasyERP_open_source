@@ -17,7 +17,7 @@
 /*------------------------Constants-----------------------------*/
 @imagesfolder: '../images';
 @icon-font: Icons;
-@title-font: Title;
+@title-font: @fontRegular;
 @metroicon-font: "Metrize-Icons";
 @bold-border: 3px solid;
 @thin-border: 1px solid;
@@ -2671,12 +2671,7 @@ a {
   }
 }
 
-h3 {
-  color: @tilte-color;
-  font-size: 18px;
-  line-height: 24px;
-  .text-overflow;
-}
+
 
 body {
   font-family: @fontRegular;
@@ -2684,6 +2679,7 @@ body {
   height: 100%;
   //min-width: 1349px;//this return bug in login view
 }
+
 
 dl {
   //.dl-auto;
@@ -3710,7 +3706,7 @@ button.red, a.red {
     }
 
     h2 {
-      font-family: 'Open Sans', sans-serif;
+      font-family: @fontRegular;
       padding-right: 30px;
       font-weight: 300;
       font-size: 30px;
@@ -3752,7 +3748,7 @@ button.red, a.red {
       border-bottom: @thin-border rgba(255, 255, 255, 0.3);
 
       a {
-        font-family: 'Open Sans', sans-serif;
+        font-family: @fontRegular;
         font-weight: 300 !important;
         line-height: 40px;
         font-size: 24px;

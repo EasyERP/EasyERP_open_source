@@ -765,228 +765,70 @@
   content: "\e00c";
 }
 @font-face {
-  font-family: 'Segoe UI';
-  src: url("../font/segoeui.woff") format('woff');
-}
-@font-face {
-  font-family: 'Title';
-  src: url("../font/title.woff") format('woff');
-}
-@font-face {
   font-family: 'Icons';
   src: url("../font/easyERP.eot");
   src: url("../font/easyERP.eot?#iefix") format('embedded-opentype'), url("../font/easyERP.woff") format('woff'), url("../font/easyERP.ttf") format('truetype'), url("../font/easyERP.svg#quartzregular") format('svg');
 }
+/*@font-face {
+  font-family: 'Segoe UI';
+  src: url("../font/segoeui.woff") format('woff');
+}
+
+@font-face {
+  font-family: 'Title';
+  src: url("../font/title.woff") format('woff');
+}
+
+@font-face {
+  font-family: 'Icons';
+  src: url("../font/easyERP.eot");
+  src: url("../font/easyERP.eot?#iefix") format('embedded-opentype'),
+  url("../font/easyERP.woff") format('woff'),
+  url("../font/easyERP.ttf") format('truetype'),
+  url("../font/easyERP.svg#quartzregular") format('svg');
+}
+
 @font-face {
   font-family: 'Open Sans ExtraBold';
   font-style: normal;
   font-weight: 800;
-  src: local('Open Sans ExtraBold'), local('opensans-extrabold'), url(../font/opensans/opensans-extrabold.woff) format('woff');
+  src: local('Open Sans ExtraBold'), local('opensans-extrabold'),
+  url(../font/opensans/opensans-extrabold.woff) format('woff');
 }
+
 @font-face {
   font-family: 'Open Sans Bold';
   font-style: normal;
   font-weight: 700;
-  src: local('Open Sans Bold'), local('opensans-bold'), url(../font/opensans/opensans-bold.woff) format('woff');
+  src: local('Open Sans Bold'), local('opensans-bold'),
+  url(../font/opensans/opensans-bold.woff) format('woff');
 }
+
 @font-face {
   font-family: 'Open Sans SemiBold';
   font-style: normal;
   font-weight: 600;
-  src: local('Open Sans SemiBold'), local('opensans-semibold'), url(../font/opensans/opensans-semibold.woff) format('woff');
+  src: local('Open Sans SemiBold'), local('opensans-semibold'),
+  url(../font/opensans/opensans-semibold.woff) format('woff');
 }
+
 @font-face {
   font-family: 'Open Sans Regular';
   font-style: normal;
   font-weight: 400;
-  src: local('Open Sans Regular'), local('opensans-regular'), url(../font/opensans/opensans-regular.woff) format('woff');
+  src: local('Open Sans Regular'), local('opensans-regular'),
+  url(../font/opensans/opensans-regular.woff) format('woff');
 }
+
 @font-face {
   font-family: 'Open Sans Light';
   font-style: normal;
   font-weight: 300;
-  src: local('Open Sans Light'), local('opensans-light'), url(../font/opensans/opensans-light.woff) format('woff');
+  src: local('Open Sans Light'), local('opensans-light'),
+  url(../font/opensans/opensans-light.woff) format('woff');
 }
-html {
-  font-family: sans-serif;
-  -webkit-text-size-adjust: 100%;
-  -ms-text-size-adjust: 100%;
-}
-body {
-  margin: 0;
-}
-article,
-aside,
-details,
-figcaption,
-figure,
-footer,
-header,
-main,
-menu,
-nav,
-section,
-summary {
-  display: block;
-}
-audio,
-canvas,
-progress,
-video {
-  display: inline-block;
-  vertical-align: baseline;
-}
-audio:not([controls]) {
-  display: none;
-  height: 0;
-}
-[hidden],
-template {
-  display: none;
-}
-a {
-  background-color: transparent;
-}
-a:active,
-a:hover {
-  outline: 0;
-}
-abbr[title] {
-  border-bottom: 1px dotted;
-}
-b,
-strong {
-  font-weight: bold;
-}
-dfn {
-  font-style: italic;
-}
-h1 {
-  font-size: 2em;
-  margin: 0.67em 0;
-}
-mark {
-  background: #ff0;
-  color: #000;
-}
-small {
-  font-size: 80%;
-}
-sub,
-sup {
-  font-size: 75%;
-  line-height: 0;
-  position: relative;
-  vertical-align: baseline;
-}
-sup {
-  top: -0.5em;
-}
-sub {
-  bottom: -0.25em;
-}
-img {
-  border: 0;
-}
-svg:not(:root) {
-  overflow: hidden;
-}
-figure {
-  margin: 1em 40px;
-}
-hr {
-  -moz-box-sizing: content-box;
-  box-sizing: content-box;
-  height: 0;
-}
-pre {
-  overflow: auto;
-}
-code,
-kbd,
-pre,
-samp {
-  font-family: monospace, monospace;
-  font-size: 1em;
-}
-button,
-input,
-optgroup,
-select,
-textarea {
-  color: inherit;
-  font: inherit;
-  margin: 0;
-  box-sizing: border-box;
-}
-button {
-  overflow: visible;
-}
-button,
-select {
-  text-transform: none;
-}
-button,
-html input[type="button"],
-input[type="reset"],
-input[type="submit"] {
-  -webkit-appearance: button;
-  cursor: pointer;
-}
-button[disabled],
-html input[disabled] {
-  cursor: default;
-}
-button::-moz-focus-inner,
-input::-moz-focus-inner {
-  border: 0;
-  padding: 0;
-}
-input {
-  line-height: normal;
-}
-input[type="checkbox"],
-input[type="radio"] {
-  box-sizing: border-box;
-  padding: 0;
-}
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-  height: auto;
-}
-input[type="search"] {
-  -webkit-appearance: textfield;
-  -moz-box-sizing: content-box;
-  -webkit-box-sizing: content-box;
-  box-sizing: content-box;
-}
-input[type="search"]::-webkit-search-cancel-button,
-input[type="search"]::-webkit-search-decoration {
-  -webkit-appearance: none;
-}
-fieldset {
-  border: 1px solid #c0c0c0;
-  margin: 0 2px;
-  padding: 0.35em 0.625em 0.75em;
-}
-legend {
-  border: 0;
-  padding: 0;
-}
-textarea {
-  overflow: auto;
-}
-optgroup {
-  font-weight: bold;
-}
-table {
-  border-collapse: collapse;
-  border-spacing: 0;
-}
-td,
-th {
-  padding: 0;
-}
+
+*/
 .container,
 .container-full {
   width: 100%;
@@ -1967,7 +1809,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   background-color: transparent;
 }
 .list2 {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  font-family: 'OpenSans Regular', sans-serif, Verdana;
   width: 100%;
   table-layout: fixed;
 }
@@ -1988,7 +1830,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 .list2 thead th {
   font-size: 12px;
-  font-family: 'Open Sans SemiBold', sans-serif, Verdana;
+  font-family: 'OpenSans SemiBold', sans-serif, Verdana;
   text-align: right;
 }
 .list2 tbody td {
@@ -2086,7 +1928,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 .list2 thead th {
   font-size: 12px;
-  font-family: 'Open Sans SemiBold', sans-serif, Verdana;
+  font-family: 'OpenSans SemiBold', sans-serif, Verdana;
   text-align: right;
 }
 .list2 tbody td {
@@ -2170,7 +2012,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .list2 .blue {
   color: #3e88b9;
   font-size: 15px;
-  font-family: 'Open Sans Bold', sans-serif, Verdana;
+  font-family: 'OpenSans Bold', sans-serif, Verdana;
 }
 .list2 tr td.centerCell {
   text-align: center;
@@ -2178,7 +2020,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .list2 .blue {
   color: #3e88b9;
   font-size: 15px;
-  font-family: 'Open Sans Bold', sans-serif, Verdana;
+  font-family: 'OpenSans Bold', sans-serif, Verdana;
 }
 .list2 tr td.centerCell {
   text-align: center;
@@ -2658,9 +2500,11 @@ body {
   margin: 0;
   padding: 0;
 }
+/*
 body {
-  background-color: #ffffff;
+  background-color: @bg-main;
 }
+
 html {
   font-size: 100%;
   -webkit-text-size-adjust: 100%;
@@ -2668,51 +2512,8 @@ html {
   width: 100%;
   height: 100%;
 }
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-blockquote,
-pre,
-a,
-abbr,
-acronym,
-address,
-cite,
-code,
-del,
-dfn,
-img,
-q,
-s,
-samp,
-small,
-strike,
-sub,
-sup,
-tt,
-var,
-dd,
-dl,
-dt,
-ol,
-ul,
-fieldset,
-form,
-label,
-legend,
-button,
-table,
-caption,
-tbody,
-tfoot,
-thead,
-tr,
-th,
-td {
+
+h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, cite, code, del, dfn, img, q, s, samp, small, strike, sub, sup, tt, var, dd, dl, dt, ol, ul, fieldset, form, label, legend, button, table, caption, tbody, tfoot, thead, tr, th, td {
   margin: 0;
   padding: 0;
   border: 0;
@@ -2722,30 +2523,34 @@ td {
   line-height: 1;
   font-family: inherit;
 }
+
 input {
   box-sizing: border-box;
 }
+
 table {
   border-collapse: collapse;
   border-spacing: 0;
 }
-ol,
-ul {
+
+ol, ul {
   list-style: none;
 }
-q:before,
-q:after,
-blockquote:before,
-blockquote:after {
+
+q:before, q:after, blockquote:before, blockquote:after {
   content: "";
 }
+
 a:focus {
   outline: thin dotted;
 }
+
+// Hover & Active
 a:hover,
 a:active {
   outline: 0;
 }
+
 article,
 aside,
 details,
@@ -2757,6 +2562,7 @@ nav,
 section {
   display: block;
 }
+
 audio,
 canvas,
 video {
@@ -2764,9 +2570,11 @@ video {
   *display: inline;
   *zoom: 1;
 }
+
 audio:not([controls]) {
   display: none;
 }
+
 sub,
 sup {
   font-size: 75%;
@@ -2774,16 +2582,20 @@ sup {
   position: relative;
   vertical-align: baseline;
 }
+
 sup {
   top: -0.5em;
 }
+
 sub {
   bottom: -0.25em;
 }
+
 img {
   border: 0;
   -ms-interpolation-mode: bicubic;
 }
+
 button,
 input,
 select,
@@ -2793,16 +2605,19 @@ textarea {
   vertical-align: baseline;
   *vertical-align: middle;
 }
+
 button,
 input {
   line-height: normal;
   *overflow: visible;
 }
+
 button::-moz-focus-inner,
 input::-moz-focus-inner {
   border: 0;
   padding: 0;
 }
+
 button,
 input[type="button"],
 input[type="reset"],
@@ -2810,19 +2625,23 @@ input[type="submit"] {
   cursor: pointer;
   -webkit-appearance: button;
 }
+
 input[type="search"] {
   -webkit-appearance: textfield;
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
 }
+
 input[type="search"]::-webkit-search-decoration {
   -webkit-appearance: none;
 }
+
 textarea {
   overflow: auto;
   vertical-align: top;
 }
+*/
 /*------------------------Functions-----------------------------*/
 .dollar:before,
 .money:before {
@@ -3990,7 +3809,7 @@ input::-ms-clear {
   padding: .7em .3em;
   text-align: center;
   color: #000000;
-  font-family: 'Open Sans SemiBold', sans-serif, Verdana;
+  font-family: 'OpenSans SemiBold', sans-serif, Verdana;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td {
   width: 15px;
@@ -4409,7 +4228,7 @@ input::-ms-clear {
 }
 .workflow-list li.active {
   line-height: 38px;
-  font-family: 'Open Sans SemiBold', sans-serif, Verdana;
+  font-family: 'OpenSans SemiBold', sans-serif, Verdana;
 }
 .workflow-list li.active:hover {
   background-color: #fff;
@@ -4436,7 +4255,7 @@ input::-ms-clear {
 }
 #modulesAccessTable tr.parent td {
   color: #fff;
-  font-family: 'Open Sans SemiBold', sans-serif, Verdana;
+  font-family: 'OpenSans SemiBold', sans-serif, Verdana;
 }
 *:focus {
   outline: 0 !important;
@@ -4511,16 +4330,8 @@ a:hover {
 a:focus {
   outline: 0;
 }
-h3 {
-  color: #3e88b9;
-  font-size: 18px;
-  line-height: 24px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
 body {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  font-family: 'OpenSans Regular', sans-serif, Verdana;
   font-size: 12px;
   height: 100%;
 }
@@ -4622,7 +4433,7 @@ body {
 .form .formTitle h3 {
   color: #000000 !important;
   margin: 0;
-  font-family: 'Open Sans SemiBold', sans-serif, Verdana;
+  font-family: 'OpenSans SemiBold', sans-serif, Verdana;
   font-size: 14px;
   overflow: hidden;
   white-space: nowrap;
@@ -4673,7 +4484,7 @@ body {
   font-size: 24px;
   line-height: 30px;
   min-height: 24px;
-  font: 'Open Sans Regular', sans-serif, Verdana;
+  font: 'OpenSans Regular', sans-serif, Verdana;
 }
 .form .mainInfo p {
   height: 20px !important;
@@ -4770,7 +4581,7 @@ body {
   margin: 0 2px 5px 0;
 }
 .form h2 {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  font-family: 'OpenSans Regular', sans-serif, Verdana;
   color: #000000;
   font-size: 24px !important;
   margin-bottom: 12px;
@@ -4781,7 +4592,7 @@ body {
   margin: 0 0 8px;
 }
 .form p {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  font-family: 'OpenSans Regular', sans-serif, Verdana;
   color: #000000;
   font-size: 13px;
   line-height: 30px;
@@ -5304,7 +5115,7 @@ a.red:hover {
   font-weight: 300;
 }
 .birthday-item .date h2 {
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'OpenSans Regular', sans-serif, Verdana;
   padding-right: 30px;
   font-weight: 300;
   font-size: 30px;
@@ -5342,7 +5153,7 @@ a.red:hover {
   border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 }
 .birthday-item .info .top a {
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'OpenSans Regular', sans-serif, Verdana;
   font-weight: 300 !important;
   line-height: 40px;
   font-size: 24px;
@@ -5946,7 +5757,7 @@ table#workflows tr td.edit-status {
   height: calc(100% - 40px);
   background-color: #364150;
   box-sizing: border-box;
-  font-family: 'Open Sans Light', sans-serif, Verdana;
+  font-family: 'OpenSans Light', sans-serif, Verdana;
 }
 .sideMenu nav {
   width: 200px;
@@ -6232,7 +6043,7 @@ table#workflows tr td.edit-status {
   line-height: 40px;
   padding: 0 10px;
   color: #666666 !important;
-  font-family: Title;
+  font-family: 'OpenSans Regular', sans-serif, Verdana;
   font-weight: normal;
   float: left;
   overflow: visible;
@@ -6260,7 +6071,7 @@ table#workflows tr td.edit-status {
   line-height: 40px;
   padding: 0 10px;
   color: #666666 !important;
-  font-family: Title;
+  font-family: 'OpenSans Regular', sans-serif, Verdana;
   font-weight: normal;
   float: left;
   overflow: visible;
@@ -6416,7 +6227,7 @@ ul.dialog-tabs li.right button {
   font-size: 13px;
   font-weight: 600;
   line-height: 18px;
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  font-family: 'OpenSans Regular', sans-serif, Verdana;
   white-space: normal;
 }
 .thumbnailwithavatar h4 span,
@@ -6442,7 +6253,7 @@ ul.dialog-tabs li.right button {
   text-align: center;
 }
 .thumbnailwithavatar .inner .info p {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  font-family: 'OpenSans Regular', sans-serif, Verdana;
   color: #000;
   font-size: 12px;
   font-weight: 200 !important;
@@ -6503,7 +6314,7 @@ ul.dialog-tabs li.right button {
   color: #000000;
 }
 .list {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  font-family: 'OpenSans Regular', sans-serif, Verdana;
   width: 100%;
 }
 .list td,
@@ -6523,7 +6334,7 @@ ul.dialog-tabs li.right button {
 }
 .list thead th {
   font-size: 12px;
-  font-family: 'Open Sans SemiBold', sans-serif, Verdana;
+  font-family: 'OpenSans SemiBold', sans-serif, Verdana;
   text-align: right;
 }
 .list tbody td {
@@ -6607,7 +6418,7 @@ ul.dialog-tabs li.right button {
 .list .blue {
   color: #3e88b9;
   font-size: 15px;
-  font-family: 'Open Sans Bold', sans-serif, Verdana;
+  font-family: 'OpenSans Bold', sans-serif, Verdana;
 }
 .list tr td.centerCell {
   text-align: center;
@@ -6682,7 +6493,7 @@ ul.dialog-tabs li.right button {
   line-height: 16px;
 }
 .thumbnail span {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  font-family: 'OpenSans Regular', sans-serif, Verdana;
   position: relative;
   color: #4c4c4c;
   font-size: 13px;
@@ -6707,7 +6518,7 @@ ul.dialog-tabs li.right button {
   text-decoration: underline;
 }
 .thumbnail p {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  font-family: 'OpenSans Regular', sans-serif, Verdana;
   color: #4c4c4c;
   font-size: 13px;
 }
@@ -6715,7 +6526,7 @@ ul.dialog-tabs li.right button {
   font-weight: normal !important;
 }
 .thumbnail h2 {
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  font-family: 'OpenSans Regular', sans-serif, Verdana;
   color: #4c4c4c;
   font-size: 13px;
   margin: 0 0 8px;
@@ -6863,7 +6674,7 @@ ul.dialog-tabs li.right button {
   padding: .7em .3em;
   text-align: center;
   color: #000000;
-  font-family: 'Open Sans SemiBold', sans-serif, Verdana;
+  font-family: 'OpenSans SemiBold', sans-serif, Verdana;
 }
 .ui-datepicker table.ui-datepicker-calendar tr td {
   width: 15px;
@@ -9700,7 +9511,7 @@ textarea#editInput {
   width: calc(100% - 52px);
   padding: 5px 25px;
   background-color: #ffffff;
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  font-family: 'OpenSans Regular', sans-serif, Verdana;
   border: 1px solid #7f7f80;
   z-index: 10;
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
@@ -11126,7 +10937,7 @@ h2.green {
   color: #4e5a64;
   font-size: 30px;
   font-weight: 300;
-  font-family: 'Open Sans Light', sans-serif, Verdana;
+  font-family: 'OpenSans Light', sans-serif, Verdana;
   white-space: nowrap;
 }
 .loginTitleBlock {
@@ -11387,7 +11198,7 @@ input:not([type="checkbox"]).inputBordered:focus {
 .topbarHolder .topbarLogo .mainLogo {
   font-size: 22px;
   line-height: 40px;
-  font-family: 'Open Sans Light';
+  font-family: 'OpenSans Light', sans-serif, Verdana;
 }
 .topbarHolder .sidebarToggler {
   position: relative;
@@ -11912,7 +11723,7 @@ dl.payrollDateBlock dt {
   border-top: 1px solid #ededed;
 }
 .fontBold {
-  font-family: 'Open Sans Bold', sans-serif, Verdana;
+  font-family: 'OpenSans Bold', sans-serif, Verdana;
 }
 .closeBtn {
   position: relative;
@@ -11956,7 +11767,7 @@ dl.payrollDateBlock dt {
 .listWrap.leadsList .name {
   color: #508bbd;
   font-size: 15px;
-  font-family: 'Open Sans Bold', sans-serif, Verdana;
+  font-family: 'OpenSans Bold', sans-serif, Verdana;
 }
 .listWrap.leadsList .compactRow:first-child {
   display: -webkit-box;
@@ -11981,7 +11792,7 @@ dl.payrollDateBlock dt {
 .listWrap.opportunitiesList .opportunity {
   color: #508bbd;
   font-size: 15px;
-  font-family: 'Open Sans Bold', sans-serif, Verdana;
+  font-family: 'OpenSans Bold', sans-serif, Verdana;
 }
 .listWrap.opportunitiesList .revenue {
   font-size: 10px;
@@ -11989,7 +11800,7 @@ dl.payrollDateBlock dt {
 .listWrap.personList .firstName {
   color: #508bbd;
   font-size: 15px;
-  font-family: 'Open Sans Bold', sans-serif, Verdana;
+  font-family: 'OpenSans Bold', sans-serif, Verdana;
 }
 .listWrap.personList .email {
   font-size: 10px;
@@ -12000,7 +11811,7 @@ dl.payrollDateBlock dt {
 .listWrap.companiesList .firstName {
   color: #508bbd;
   font-size: 15px;
-  font-family: 'Open Sans Bold', sans-serif, Verdana;
+  font-family: 'OpenSans Bold', sans-serif, Verdana;
 }
 .listWrap.companiesList .email {
   font-size: 10px;
@@ -12014,7 +11825,7 @@ dl.payrollDateBlock dt {
 .listWrap.proformaList .firstName {
   color: #508bbd;
   font-size: 15px;
-  font-family: 'Open Sans Bold', sans-serif, Verdana;
+  font-family: 'OpenSans Bold', sans-serif, Verdana;
 }
 .listWrap .form-holder {
   padding: 10px;
@@ -12127,7 +11938,7 @@ td.checkboxRow {
 .list .blue {
   color: #3e88b9;
   font-size: 15px;
-  font-family: 'Open Sans Bold', sans-serif, Verdana;
+  font-family: 'OpenSans Bold', sans-serif, Verdana;
 }
 .list tr td.centerCell {
   text-align: center;
@@ -12164,7 +11975,7 @@ td.checkboxRow {
 #top-bar-createBtn:after {
   content: 'New';
   margin-left: 5px;
-  font-family: 'Open Sans Regular', sans-serif, Verdana;
+  font-family: 'OpenSans Regular', sans-serif, Verdana;
   font-size: 13px;
 }
 #top-bar {
@@ -12561,7 +12372,7 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .separateBlock {
   margin-top: 10px;
-  font-family: 'Open Sans SemiBold', sans-serif, Verdana;
+  font-family: 'OpenSans SemiBold', sans-serif, Verdana;
   text-align: center;
 }
 ._listModalColumn {
