@@ -2098,9 +2098,9 @@ label._customCHeckbox input[type="checkbox"] {
     float: left;
     margin: 5px 5px 0 0; }
 
-._priorityCell .High,
+._priorityCell .Hot,
 ._priorityCell .Medium,
-._priorityCell .Low,
+._priorityCell .Cold,
 ._priorityCell .Trivial {
   height: 35px;
   width: 30px;
