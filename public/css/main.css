@@ -7221,6 +7221,9 @@ ul.dialog-tabs li.right button {
   color: #ffffff;
   border-color: transparent;
 }
+.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset button:first-child span {
+  color: #fff;
+}
 .ui-dialog .ui-helper-clearfix:before,
 .ui-dialog .ui-helper-clearfix:after {
   content: "";
