@@ -1586,6 +1586,9 @@ b, strong {
   float: right;
   right: 55px; }
 
+.quotationsButtonsWrap {
+  margin-bottom: 10px; }
+
 .textLightGrey {
   color: #c5c7c7; }
 
