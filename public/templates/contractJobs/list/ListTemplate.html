@@ -1,10 +1,11 @@
 <%collection.forEach(function (el){%>
-<tr class="_contractJobsListItem">
-    <% var adr = (el.jobPrice/(100 * (el.totalWorked - el.totalQAWorked - el.totalDesignWorked))).toFixed(2)%>
-    <% var tadr = (el.jobPrice/(100 * el.totalWorked)).toFixed(2)%>
+<tr>
+    <% var adr = (el.jobPrice/(100 * (el.totalWorked - el.totalQAWorked - el.totalDesignWorked)))%>
+    <% var tadr = (el.jobPrice/(100 * el.totalWorked))%>
 
-    <td class="_contractJobsStatusBlock"><span><%=el.workflow ? el.workflow.name : ''%></span></td>
-    <td class="_contractJobsJobBlock">
+    <td class="<%=el.workflow.name === 'Finished' ? 'finished' : 'inProgress'%>"><span><%=el.workflow ? el.workflow.name : ''%></span>
+    </td>
+    <td>
         <div><span><%=el.name%> in <%=el.project.name%></span></div>
         <div><span><label>For </label><%=el.customer%></span></div>
         <div><label>From </label><span><%=el.tCardMinDate%></span><label> to </label><span><%=el.tCardMaxDate%></span>
@@ -16,19 +17,28 @@
         <div><label>Project Manager: </label><span><%=el.projectManager ? el.projectManager.name : ''%></span></div>
         <%}%>
         <div><label>Total Hours: </label><span><%=el.totalWorked%></span></div>
+        <%if (el.totalWorked - el.totalQAWorked - el.totalDesignWorked > 0) {%>
         <div><label>Development
             Hours: </label><span><%=(el.totalWorked - el.totalQAWorked - el.totalDesignWorked)%></span></div>
-        <div><label>ADR: </label><span><%=isFinite(adr) ? adr: 0%></span></div>
-        <div><label>Total ADR: </label><span><%=isFinite(tadr) ? tadr: 0%></span></div>
+        <%}%>
+        <%if (adr && isFinite(adr)) {%>
+        <div><label>ADR: </label><span><%=isFinite(adr) ? adr.toFixed(2): 0%></span></div>
+        <%}%>
+        <%if (tadr && isFinite(tadr)) {%>
+        <div><label>Total ADR: </label><span><%=isFinite(tadr) ? tadr.toFixed(2): 0%></span></div>
+        <%}%>
 
     </td>
-    <td class="_contractJobsInvoiceBlock">
+    <td>
+        <%if (el.invoice && el.invoice._id) {%>
         <div><span><%=el.invoice && el.invoice.name ? el.invoice.name : ''%></span></div>
         <div><label>Invoice Date: </label><span><%=el.invoice && el.invoice.date ? utcDateToLocaleDate(new Date(el.invoice.date)) : ''%></span>
             <div><label>Due Date: </label><span><%=el.invoice && el.invoice.dueDate ? utcDateToLocaleDate(new Date(el.invoice.dueDate)) : ''%></span>
             </div>
+            <%}%>
     </td>
-    <td class="_contractJobsRevenueBlock">
+    <td>
+        <%if (el.jobPrice) {%>
         <div><%=currencySplitter((el.jobPrice/100).toFixed(2))%></div>
         <div><label>Quoted: </label><span><%=el.invoice && el.invoice.name ? 0.00 : currencySplitter((el.jobPrice/100).toFixed(2))%></span>
         </div>
@@ -38,12 +48,17 @@
             <div><label>Invoiced: </label><span><%=el.invoice && el.invoice.name ? currencySplitter((el.jobPrice/100).toFixed(2)) : 0.00%></span>
             </div>
     </td>
-    <td class="_contractJobsCostBlock">
+    <%}%>
+    <td>
         <span><%=currencySplitter(((el.costMaterials + el.costLabour)/100).toFixed(2))%></span>
+        <%if (el.costMaterials) {%>
         <label>Materials: </label><span><%=currencySplitter((el.costMaterials/100).toFixed(2))%></span>
+        <%}%>
+        <%if (el.costLabour) {%>
         <label>Labour: </label><span><%=currencySplitter((el.costLabour/100).toFixed(2))%></span>
+        <%}%>
     </td>
-    <td class="_contractJobsProfitBlock"><%=currencySplitter((((el.jobPrice - (el.costMaterials + el.costLabour)) / (el.costMaterials + el.costLabour)) *
+    <td><%=currencySplitter((((el.jobPrice - (el.costMaterials + el.costLabour)) / (el.costMaterials + el.costLabour)) *
         100).toFixed(2))%>
     </td>
 </tr>
