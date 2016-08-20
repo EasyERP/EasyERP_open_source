@@ -26,7 +26,7 @@ MongoClient.connect(url, function (err, db) {
             _id: 115,
             mname: 'Contract Jobs',
             href: 'contractJobs',
-            sequence: 0,
+            sequence: 22,
             parrent: 36,
             link: true,
             visible: true
