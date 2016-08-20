@@ -49,7 +49,7 @@
     </td>
     <td class="_contractJobsRevenueBlock">
         <%if (el.jobPrice) {%>
-        <div class="semiBold"><%=currencySplitter((el.jobPrice/100).toFixed(2))%></div>
+        <div class="semiBold money"><%=currencySplitter((el.jobPrice/100).toFixed(2))%></div>
         <div><span>Quoted: </span><span><%=el.invoice && el.invoice.name ? 0.00 : currencySplitter((el.jobPrice/100).toFixed(2))%></span></div>
         <%if (el.proforma && el.proforma.sum && !el.invoice && !el.invoice._id) {%>
         <div><span>Proformed: </span><span class="money"><%=currencySplitter((el.proforma.sum/100).toFixed(2))%></span>
@@ -60,14 +60,12 @@
         <%}%>
     </td>
     <td class="_contractJobsCostBlock">
-        <div  class="semiBold"><%=currencySplitter(((el.costMaterials + el.costLabour)/100).toFixed(2))%></div>
+        <div  class="semiBold money"><%=currencySplitter(((el.costMaterials + el.costLabour)/100).toFixed(2))%></div>
         <%if (el.costMaterials) {%>
-        <div>Materials:</div>
-        <div class="money"><%=currencySplitter((el.costMaterials/100).toFixed(2))%></div>
+        <div>Materials:  <span class="money"><%=currencySplitter((el.costMaterials/100).toFixed(2))%></span></div>
         <%}%>
         <%if (el.costLabour) {%>
-        <div>Labour:</div>
-        <div class="money"><%=currencySplitter((el.costLabour/100).toFixed(2))%></div>
+        <div>Labour:  <span class="money"><%=currencySplitter((el.costLabour/100).toFixed(2))%></span></div>
         <%}%>
     </td>
     <%if (isFinite(((el.jobPrice - (el.costMaterials +el.costLabour)) / (el.costMaterials + el.costLabour)) * 100)){%>
