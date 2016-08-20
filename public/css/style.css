@@ -2168,6 +2168,8 @@ label._customCHeckbox input[type="checkbox"] {
   font-family: "OpenSans Bold", sans-serif; }
 ._contractJobsListItem ._contractJobsJobBlock ._contractJobsCustomer {
   font-style: italic; }
+._contractJobsListItem ._contractJobsInvoiceBlock > div {
+  line-height: 20px; }
 
 .list tbody tr._contractJobsListItem td {
   padding: 10px;
