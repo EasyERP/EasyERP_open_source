@@ -141,7 +141,7 @@ var Countries = function (models) {
                     }
                 }, {
                     $project: {
-                        journalentries        : '$journalentries',
+                        journalentries        : '$journalentries.',
                         journalentriesOverhead: '$journalentriesOverhead',
                         type                  : 1,
                         name                  : 1,

@@ -4,8 +4,10 @@ define([
     'views/listViewBase',
     'text!templates/contractJobs/list/ListHeader.html',
     'views/contractJobs/list/ListItemView',
-    'collections/contractJobs/filterCollection'
-], function ($, _, ListViewBase, listTemplate, ListItemView, contentCollection) {
+    'collections/contractJobs/filterCollection',
+    'models/InvoiceModel',
+    'views/salesInvoices/EditView'
+], function ($, _, ListViewBase, listTemplate, ListItemView, contentCollection, InvoiceModel, EditView) {
     'use strict';
     var EmployeesListView = ListViewBase.extend({
         listTemplate     : listTemplate,
@@ -13,6 +15,10 @@ define([
         contentCollection: contentCollection,
         hasPagination    : true,
         contentType      : 'contractJobs',
+
+        events: {
+            'click .invoice': 'showInvoice'
+        },
 
         initialize: function (options) {
             this.startTime = options.startTime;
@@ -25,6 +31,32 @@ define([
             this.contentCollection = contentCollection;
 
             ListViewBase.prototype.initialize.call(this, options);
+        },
+
+        showInvoice: function (e) {
+            var $target = $(e.target);
+            var id = $target.attr('data-id');
+            var model = new InvoiceModel({validate: false});
+
+            model.urlRoot = '/Invoices';
+            model.fetch({
+                data: {
+                    id      : id,
+                    forSales: true,
+                    viewType: 'form'
+                },
+
+                success: function (model) {
+                    return new EditView({model: model});
+                },
+
+                error: function () {
+                    App.render({
+                        type   : 'error',
+                        message: 'Please refresh browser'
+                    });
+                }
+            });
         },
 
         render: function () {

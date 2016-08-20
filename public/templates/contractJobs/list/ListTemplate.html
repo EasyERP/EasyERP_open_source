@@ -5,9 +5,11 @@
     <td class="_contractJobsStatusBlock <%=el.workflow.name === 'Finished' ? 'finished' : 'inProgress'%> contractCell">
         <span><%=el.workflow ? el.workflow.name : ''%></span></td>
     <td class="_contractJobsJobBlock">
-        <div class="_contractJobsName"><%=el.name%> in <%=el.project.name%></div>
+        <div class="_contractJobsName"><%=el.name%> in <a href="#easyErp/Projects/form/<%=el.project._id %>"><%=el.project.name%></a>
+        </div>
         <div class="_contractJobsCustomer"><span class="semiBold">For </span><span><%=el.customer%></span></div>
-        <div class="_contractJobsDates"><span class="semiBold">From </span><span><%=el.tCardMinDate%></span><span
+        <div class="_contractJobsDates"><span
+                class="semiBold"> Timecards from </span><span><%=el.tCardMinDate%></span><span
                 class="semiBold"> to </span><span><%=el.tCardMaxDate%></span></div>
         <%if (el.salesManager && el.salesManager.name) {%>
         <div class="_contractJobsSales"><span class="semiBold">Sales Manager: </span><span><%=el.salesManager ? el.salesManager.name : ''%></span>
@@ -39,7 +41,8 @@
         <div><span class="semiBold">Balance: </span><span class="<%=currencyClass(el.invoice.currency._id)%>"><%=(el.invoice.paymentInfo.balance / 100).toFixed(2)%></span>
         </div>
         <%}%>
-        <div><span class="semiBold">Invoice number: </span><span><%=el.invoice && el.invoice.name ? el.invoice.name : ''%></span>
+        <div><span class="semiBold">Invoice number: </span><a class="invoice" data-id="<%=el.invoice._id%>"><%=el.invoice
+            && el.invoice.name ? el.invoice.name : ''%></a>
         </div>
         <div><span class="semiBold">Invoice Date: </span><span><%=el.invoice && el.invoice.date ? utcDateToLocaleDate(new Date(el.invoice.date)) : ''%></span>
         </div>
@@ -50,7 +53,8 @@
     <td class="_contractJobsRevenueBlock">
         <%if (el.jobPrice) {%>
         <div class="semiBold money"><%=currencySplitter((el.jobPrice/100).toFixed(2))%></div>
-        <div><span>Quoted: </span><span><%=el.invoice && el.invoice.name ? 0.00 : currencySplitter((el.jobPrice/100).toFixed(2))%></span></div>
+        <div><span>Quoted: </span><span><%=el.invoice && el.invoice.name ? 0.00 : currencySplitter((el.jobPrice/100).toFixed(2))%></span>
+        </div>
         <%if (el.proforma && el.proforma.sum && !el.invoice && !el.invoice._id) {%>
         <div><span>Proformed: </span><span class="money"><%=currencySplitter((el.proforma.sum/100).toFixed(2))%></span>
         </div>
@@ -60,16 +64,19 @@
         <%}%>
     </td>
     <td class="_contractJobsCostBlock">
-        <div  class="semiBold money"><%=currencySplitter(((el.costMaterials + el.costLabour)/100).toFixed(2))%></div>
+        <div class="semiBold money"><%=currencySplitter(((el.costMaterials + el.costLabour)/100).toFixed(2))%></div>
         <%if (el.costMaterials) {%>
-        <div>Materials:  <span class="money"><%=currencySplitter((el.costMaterials/100).toFixed(2))%></span></div>
+        <div>Materials: <span class="money"><%=currencySplitter((el.costMaterials/100).toFixed(2))%></span></div>
         <%}%>
         <%if (el.costLabour) {%>
-        <div>Labour:  <span class="money"><%=currencySplitter((el.costLabour/100).toFixed(2))%></span></div>
+        <div>Labour: <span class="money"><%=currencySplitter((el.costLabour/100).toFixed(2))%></span></div>
         <%}%>
     </td>
     <%if (isFinite(((el.jobPrice - (el.costMaterials +el.costLabour)) / (el.costMaterials + el.costLabour)) * 100)){%>
-    <td class="_contractJobsProfitBlock percent"><%=currencySplitter((((el.jobPrice - (el.costMaterials +el.costLabour)) / (el.costMaterials + el.costLabour)) * 100).toFixed(2))%></td>
+    <td class="_contractJobsProfitBlock">
+        <div class="money"><%=currencySplitter(((el.jobPrice - (el.costMaterials +el.costLabour))/100).toFixed(2))%></div>
+        <div class="percent"><%=currencySplitter((((el.jobPrice - (el.costMaterials +el.costLabour)) / (el.costMaterials +el.costLabour)) * 100).toFixed(2))%> %</div>
+    </td>
     <%} else {%>
     <td class="_contractJobsProfitBlock percent">0</td>
     <%}%>
