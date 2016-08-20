@@ -76,6 +76,7 @@ module.exports = function (app, mainDb) {
     var payrollStructureTypesRouter = require('./payrollStructureTypes')(models);
     var cashTransferRouter = require('./cashTransfer')(models, event);
     var countriesRouter = require('./countries')(models);
+    var contractJobsRouter = require('./contractJobs')(models);
 
     var logger = require('../helpers/logger');
     var async = require('async');
@@ -188,6 +189,7 @@ module.exports = function (app, mainDb) {
     app.use('/payrollStructureTypes', payrollStructureTypesRouter);
     app.use('/cashTransfer', cashTransferRouter);
     app.use('/countries', countriesRouter);
+    app.use('/contractJobs', contractJobsRouter);
 
     /**
      *@api {get} /getDBS/ Request DBS

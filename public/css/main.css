@@ -9140,6 +9140,10 @@ textarea#editInput {
   text-align: center;
   color: #eb759e;
 }
+.grid-conatiner .statisticsAtten .percent {
+  text-align: center;
+  color: #eb759e;
+}
 .grid-conatiner .statisticsAtten.stick {
   background-color: #ffffff;
   padding-top: 10px;

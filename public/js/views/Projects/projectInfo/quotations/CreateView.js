@@ -230,7 +230,7 @@ define([
             } else {
                 return App.render({
                     type   : 'error',
-                    message: 'Products can not be empty.'
+                    message: 'Customer can not be empty.'
                 });
             }
         },

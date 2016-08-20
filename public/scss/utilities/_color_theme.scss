@@ -111,3 +111,8 @@ $payroll-font-darkgray: map-get($erp-colors, 'dark-gray');
 $payroll-font-indigo2: map-get($erp-colors, 'indigo2');
 $payroll-font-indigo3: map-get($erp-colors, 'indigo3');
 // -----------------------
+
+// Contract jobs----------
+$contractJobs-green-bg: map-get($erp-colors, 'green');
+$contractJobs-blue-bg: map-get($erp-colors, 'blue');
+// -----------------------
