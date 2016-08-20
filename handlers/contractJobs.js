@@ -180,7 +180,7 @@ var Countries = function (models) {
                                 }
                             }
                         },
-                        
+
                         type                  : 1,
                         name                  : 1,
                         projectManagerEmployee: {$arrayElemAt: ['$projectManagerEmployee', 0]},
@@ -500,8 +500,12 @@ var Countries = function (models) {
                         }
                     },
 
-                    project : 1,
-                    workflow: 1
+                    type     : 1,
+                    name     : 1,
+                    project  : 1,
+                    invoice  : 1,
+                    quotation: 1,
+                    workflow : 1
                 }
             }, {
                 $lookup: {
@@ -512,14 +516,32 @@ var Countries = function (models) {
                 }
             }, {
                 $lookup: {
+                    from        : 'Invoice',
+                    localField  : 'invoice',
+                    foreignField: '_id',
+                    as          : 'invoice'
+                }
+            }, {
+                $lookup: {
                     from        : 'workflows',
                     localField  : 'workflow',
                     foreignField: '_id',
                     as          : 'workflow'
                 }
             }, {
+                $lookup: {
+                    from        : 'Quotation',
+                    localField  : 'quotation',
+                    foreignField: '_id',
+                    as          : 'quotation'
+                }
+            }, {
                 $project: {
+                    type          : 1,
+                    name          : 1,
                     project       : {$arrayElemAt: ['$project', 0]},
+                    invoice       : {$arrayElemAt: ['$invoice', 0]},
+                    quotation     : {$arrayElemAt: ['$quotation', 0]},
                     workflow      : {$arrayElemAt: ['$workflow', 0]},
                     projectManager: {$arrayElemAt: ['$projectManager', 0]},
                     salesManager  : {$arrayElemAt: ['$salesManager', 0]}
