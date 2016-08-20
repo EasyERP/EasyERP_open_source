@@ -34,7 +34,7 @@
     </td>
     <td class="_contractJobsInvoiceBlock">
         <%if (el.invoice && el.invoice._id) {%>
-        <div><span class="_contractJobsName"><%=el.invoice.workflow.name%></span></div>
+        <div><span class="semiBold"><%=el.invoice.workflow.name%></span></div>
         <%if (el.invoice.paymentInfo.balance) {%>
         <div><span class="semiBold">Balance: </span><span class="<%=currencyClass(el.invoice.currency._id)%>"><%=(el.invoice.paymentInfo.balance / 100).toFixed(2)%></span>
         </div>
