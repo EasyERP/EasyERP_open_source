@@ -12,7 +12,7 @@
     var CompaniesCollection = Parent.extend({
         model      : Model,
         url        : CONSTANTS.URLS.CONTRACTJOBS,
-        pageSize   : CONSTANTS.DEFAULT_THUMBNAILS_PER_PAGE,
+        pageSize   : 10,
         contentType: 'Companies',
 
         initialize: function (options) {

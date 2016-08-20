@@ -193,11 +193,13 @@ var Countries = function (models) {
                         salesManagerEmployee  : {$arrayElemAt: ['$salesManagerEmployee', 0]},
                         invoice               : {
                             $cond: [{$eq: ['$invoice._type', 'writeOff']}, null, {
-                                _id     : '$invoice._id',
-                                name    : '$invoice.name',
-                                currency: '$invoice.currency',
-                                date    : '$invoice.invoiceDate',
-                                dueDate : '$invoice.dueDate'
+                                _id        : '$invoice._id',
+                                name       : '$invoice.name',
+                                currency   : '$invoice.currency',
+                                date       : '$invoice.invoiceDate',
+                                dueDate    : '$invoice.dueDate',
+                                paymentInfo: '$invoice.paymentInfo',
+                                workflow   : '$invoice.workflow'
                             }]
                         },
 
@@ -250,6 +252,13 @@ var Countries = function (models) {
                         }
                     }
                 }, {
+                    $lookup: {
+                        from        : 'workflows',
+                        localField  : 'invoice.workflow',
+                        foreignField: '_id',
+                        as          : 'invoice.workflow'
+                    }
+                }, {
                     $project: {
                         journalentries        : 1,
                         journalentriesOverhead: 1,
@@ -261,8 +270,14 @@ var Countries = function (models) {
                         project               : 1,
                         type                  : 1,
                         name                  : 1,
-                        invoice               : 1,
                         proforma              : 1,
+                        'invoice._id'         : 1,
+                        'invoice.name'        : 1,
+                        'invoice.currency'    : 1,
+                        'invoice.date'        : 1,
+                        'invoice.dueDate'     : 1,
+                        'invoice.paymentInfo' : 1,
+                        'invoice.workflow'    : {$arrayElemAt: ['$invoice.workflow', 0]},
                         quotation             : 1,
                         workflow              : 1,
                         jobPrice              : {$cond: [{$eq: ['$jobPriceInvoice', null]}, {$arrayElemAt: ['$jobPriceQuotation', 0]}, {$arrayElemAt: ['$jobPriceInvoice', 0]}]}

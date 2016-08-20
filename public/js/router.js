@@ -1093,6 +1093,10 @@ define([
                     count = CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE;
                 }
 
+                if (contentType === 'contractJobs'){
+                    count = 10;
+                }
+
                 if (!filter) {
 
                     filter = custom.getSavedFilterForCT(contentType) || custom.getDefSavedFilterForCT(contentType);
