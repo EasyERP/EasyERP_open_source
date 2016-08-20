@@ -28,13 +28,6 @@ var Countries = function (models) {
         function getData(pCb) {
             JobsModel.aggregate([{
                     $lookup: {
-                        from        : 'journalentries',
-                        localField  : '_id',
-                        foreignField: 'sourceDocument._id',
-                        as          : 'journalentries'
-                    }
-                }, {
-                    $lookup: {
                         from        : 'projectMembers',
                         localField  : 'project',
                         foreignField: 'projectId',
@@ -42,30 +35,6 @@ var Countries = function (models) {
                     }
                 }, {
                     $project: {
-                        journalentries: {
-                            $filter: {
-                                input: '$journalentries',
-                                as   : 'je',
-                                cond : {
-                                    $or: [{
-                                        $eq: ['$$je.journal', objectId('56cc727e541812c07197356c')]
-                                    }, {
-                                        $eq: ['$$je.journal', objectId('56cc7383541812c071973574')]
-                                    }]
-                                }
-                            }
-                        },
-
-                        journalentriesOverhead: {
-                            $filter: {
-                                input: '$journalentries',
-                                as   : 'je',
-                                cond : {
-                                    $eq: ['$$je.journal', objectId('56cc734b541812c071973572')]
-                                }
-                            }
-                        },
-
                         projectManager: {
                             $filter: {
                                 input: '$projectMembers',
@@ -139,16 +108,14 @@ var Countries = function (models) {
                     }
                 }, {
                     $project: {
-                        journalentries        : 1,
-                        journalentriesOverhead: 1,
-                        type                  : 1,
-                        name                  : 1,
-                        project               : {$arrayElemAt: ['$project', 0]},
-                        invoice               : {$arrayElemAt: ['$invoice', 0]},
-                        quotation             : {$arrayElemAt: ['$quotation', 0]},
-                        workflow              : {$arrayElemAt: ['$workflow', 0]},
-                        projectManager        : {$arrayElemAt: ['$projectManager', 0]},
-                        salesManager          : {$arrayElemAt: ['$salesManager', 0]}
+                        type          : 1,
+                        name          : 1,
+                        project       : {$arrayElemAt: ['$project', 0]},
+                        invoice       : {$arrayElemAt: ['$invoice', 0]},
+                        quotation     : {$arrayElemAt: ['$quotation', 0]},
+                        workflow      : {$arrayElemAt: ['$workflow', 0]},
+                        projectManager: {$arrayElemAt: ['$projectManager', 0]},
+                        salesManager  : {$arrayElemAt: ['$salesManager', 0]}
                     }
                 }, {
                     $match: filterObect
@@ -160,6 +127,13 @@ var Countries = function (models) {
                     $skip: skip
                 }, {
                     $limit: limit
+                }, {
+                    $lookup: {
+                        from        : 'journalentries',
+                        localField  : '_id',
+                        foreignField: 'sourceDocument._id',
+                        as          : 'journalentries'
+                    }
                 }, {
                     $lookup: {
                         from        : 'Employees',
@@ -183,8 +157,30 @@ var Countries = function (models) {
                     }
                 }, {
                     $project: {
-                        journalentries        : 1,
-                        journalentriesOverhead: 1,
+                        journalentries: {
+                            $filter: {
+                                input: '$journalentries',
+                                as   : 'je',
+                                cond : {
+                                    $or: [{
+                                        $eq: ['$$je.journal', objectId('56cc727e541812c07197356c')]
+                                    }, {
+                                        $eq: ['$$je.journal', objectId('56cc7383541812c071973574')]
+                                    }]
+                                }
+                            }
+                        },
+
+                        journalentriesOverhead: {
+                            $filter: {
+                                input: '$journalentries',
+                                as   : 'je',
+                                cond : {
+                                    $eq: ['$$je.journal', objectId('56cc734b541812c071973572')]
+                                }
+                            }
+                        },
+                        
                         type                  : 1,
                         name                  : 1,
                         projectManagerEmployee: {$arrayElemAt: ['$projectManagerEmployee', 0]},
