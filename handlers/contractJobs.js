@@ -286,6 +286,23 @@ var Countries = function (models) {
                         preserveNullAndEmptyArrays: true
                     }
                 }, {
+                    $group: {
+                        _id                   : '$_id',
+                        project               : {$first: '$project'},
+                        projectManager        : {$first: '$projectManager'},
+                        customer              : {$first: '$customer'},
+                        salesManager          : {$first: '$salesManager'},
+                        name                  : {$first: '$name'},
+                        invoice               : {$first: '$invoice'},
+                        proforma              : {$first: '$proforma'},
+                        type                  : {$first: '$type'},
+                        quotation             : {$first: '$quotation'},
+                        workflow              : {$first: '$workflow'},
+                        costLabour            : {$sum: '$journalentries.debit'},
+                        journalentriesOverhead: {$first: '$journalentriesOverhead'},
+                        jobPrice              : {$first: '$jobPrice.unitPrice'}
+                    }
+                }, {
                     $unwind: {
                         path                      : '$journalentriesOverhead',
                         preserveNullAndEmptyArrays: true
@@ -303,7 +320,7 @@ var Countries = function (models) {
                         type          : {$first: '$type'},
                         quotation     : {$first: '$quotation'},
                         workflow      : {$first: '$workflow'},
-                        costLabour    : {$sum: '$journalentries.debit'},
+                        costLabour    : {$first: '$costLabour'},
                         costMaterials : {$sum: '$journalentriesOverhead.debit'},
                         jobPrice      : {$first: '$jobPrice.unitPrice'}
                     }
