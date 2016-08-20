@@ -120,7 +120,7 @@ define([
                         $filterValues.append('<span class="showLast"> ...&nbsp </span>');
                     }
 
-                    if ((key !== 'forSales') && (key !== 'viewType') && (key !== 'startDate') && (key !== 'endDate') && (key !== 'workflowId')) {
+                    if ((key !== 'forSales') && (key !== 'viewType') && (key !== 'startDate') && (key !== 'endDate') && (key !== 'workflowId') && (key !== 'date')) {
                         groupName = self.constantsObject[key] ? self.constantsObject[key].displayName : 'letter';
                     } else {
                         groupName = null;

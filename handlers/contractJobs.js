@@ -15,15 +15,27 @@ var Countries = function (models) {
         var limit = paginationObject.limit;
         var skip = paginationObject.skip;
         var parallelTasks;
-        var filterObect = {};
+        var filterObject = {};
         var filter = data.filter;
         var contentType = 'contractJobs';
         var filterMapper = new FilterMapper();
+        var startDate = data.startDate;
+        var endDate = data.endDate;
+        var matchObject = {};
 
         if (filter && typeof filter === 'object') {
             // optionsObject.$and = caseFilter(filter);
-            filterObect = filterMapper.mapFilter(filter, contentType);
+            filterObject = filterMapper.mapFilter(filter, contentType);
         }
+
+        if (filterObject.date) {
+            matchObject = filterObject.date;
+
+            delete filterObject.date;
+        }
+
+        startDate = startDate || matchObject.$gte;
+        endDate = endDate || matchObject.$lte;
 
         function getData(pCb) {
             JobsModel.aggregate([{
@@ -118,7 +130,16 @@ var Countries = function (models) {
                         salesManager  : {$arrayElemAt: ['$salesManager', 0]}
                     }
                 }, {
-                    $match: filterObect
+                    $match: {
+                        $or: [{
+                            'invoice.invoiceDate': {
+                                $gte: new Date(startDate),
+                                $lte: new Date(endDate)
+                            }
+                        }, {'invoice.invoiceDate': null}]
+                    }
+                }, {
+                    $match: filterObject
                 }, {
                     $sort: {
                         _id: -1
@@ -456,105 +477,116 @@ var Countries = function (models) {
 
         function getCount(pCb) {
             JobsModel.aggregate([{
-                $lookup: {
-                    from        : 'projectMembers',
-                    localField  : 'project',
-                    foreignField: 'projectId',
-                    as          : 'projectMembers'
-                }
-            }, {
-                $project: {
-                    projectManager: {
-                        $filter: {
-                            input: '$projectMembers',
-                            as   : 'projectMember',
-                            cond : {
-                                $and: [{
-                                    $eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.PROJECTSMANAGER)]
-                                }, {
-                                    $or: [{
-                                        $max: '$$projectMember.startDate'
+                    $lookup: {
+                        from        : 'projectMembers',
+                        localField  : 'project',
+                        foreignField: 'projectId',
+                        as          : 'projectMembers'
+                    }
+                }, {
+                    $project: {
+                        projectManager: {
+                            $filter: {
+                                input: '$projectMembers',
+                                as   : 'projectMember',
+                                cond : {
+                                    $and: [{
+                                        $eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.PROJECTSMANAGER)]
                                     }, {
-                                        $eq: ['$$projectMember.startDate', null]
+                                        $or: [{
+                                            $max: '$$projectMember.startDate'
+                                        }, {
+                                            $eq: ['$$projectMember.startDate', null]
+                                        }]
                                     }]
-                                }]
+                                }
                             }
-                        }
-                    },
+                        },
 
-                    salesManager: {
-                        $filter: {
-                            input: '$projectMembers',
-                            as   : 'projectMember',
-                            cond : {
-                                $and: [{
-                                    $eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALESMANAGER)]
-                                }, {
-                                    $or: [{
-                                        $max: '$$projectMember.startDate'
+                        salesManager: {
+                            $filter: {
+                                input: '$projectMembers',
+                                as   : 'projectMember',
+                                cond : {
+                                    $and: [{
+                                        $eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALESMANAGER)]
                                     }, {
-                                        $eq: ['$$projectMember.startDate', null]
+                                        $or: [{
+                                            $max: '$$projectMember.startDate'
+                                        }, {
+                                            $eq: ['$$projectMember.startDate', null]
+                                        }]
                                     }]
-                                }]
+                                }
                             }
-                        }
-                    },
+                        },
 
-                    type     : 1,
-                    name     : 1,
-                    project  : 1,
-                    invoice  : 1,
-                    quotation: 1,
-                    workflow : 1
-                }
-            }, {
-                $lookup: {
-                    from        : 'Project',
-                    localField  : 'project',
-                    foreignField: '_id',
-                    as          : 'project'
-                }
-            }, {
-                $lookup: {
-                    from        : 'Invoice',
-                    localField  : 'invoice',
-                    foreignField: '_id',
-                    as          : 'invoice'
-                }
-            }, {
-                $lookup: {
-                    from        : 'workflows',
-                    localField  : 'workflow',
-                    foreignField: '_id',
-                    as          : 'workflow'
-                }
-            }, {
-                $lookup: {
-                    from        : 'Quotation',
-                    localField  : 'quotation',
-                    foreignField: '_id',
-                    as          : 'quotation'
-                }
-            }, {
-                $project: {
-                    type          : 1,
-                    name          : 1,
-                    project       : {$arrayElemAt: ['$project', 0]},
-                    invoice       : {$arrayElemAt: ['$invoice', 0]},
-                    quotation     : {$arrayElemAt: ['$quotation', 0]},
-                    workflow      : {$arrayElemAt: ['$workflow', 0]},
-                    projectManager: {$arrayElemAt: ['$projectManager', 0]},
-                    salesManager  : {$arrayElemAt: ['$salesManager', 0]}
-                }
-            }, {
-                $match: filterObect
-            }], function (err, count) {
-                if (err) {
-                    return pCb(err);
-                }
+                        type     : 1,
+                        name     : 1,
+                        project  : 1,
+                        invoice  : 1,
+                        quotation: 1,
+                        workflow : 1
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'Project',
+                        localField  : 'project',
+                        foreignField: '_id',
+                        as          : 'project'
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'Invoice',
+                        localField  : 'invoice',
+                        foreignField: '_id',
+                        as          : 'invoice'
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'workflows',
+                        localField  : 'workflow',
+                        foreignField: '_id',
+                        as          : 'workflow'
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'Quotation',
+                        localField  : 'quotation',
+                        foreignField: '_id',
+                        as          : 'quotation'
+                    }
+                }, {
+                    $project: {
+                        type          : 1,
+                        name          : 1,
+                        project       : {$arrayElemAt: ['$project', 0]},
+                        invoice       : {$arrayElemAt: ['$invoice', 0]},
+                        quotation     : {$arrayElemAt: ['$quotation', 0]},
+                        workflow      : {$arrayElemAt: ['$workflow', 0]},
+                        projectManager: {$arrayElemAt: ['$projectManager', 0]},
+                        salesManager  : {$arrayElemAt: ['$salesManager', 0]}
+                    }
+                }, {
+                    $match: {
+                        $or: [{
+                            'invoice.invoiceDate': {
+                                $gte: new Date(startDate),
+                                $lte: new Date(endDate)
+                            }
+                        }, {'invoice.invoiceDate': null}]
+                    }
+                }, {
+                    $match: filterObject
+                }], function (err, count) {
+                    if (err) {
+                        return pCb(err);
+                    }
 
-                pCb(null, count.length);
-            });
+                    pCb(null, count.length);
+                }
+            )
+            ;
         }
 
         parallelTasks = [getData, getCount];
