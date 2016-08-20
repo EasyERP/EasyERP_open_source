@@ -50,8 +50,6 @@ var Countries = function (models) {
                                     $or: [{
                                         $eq: ['$$je.journal', objectId('56cc727e541812c07197356c')]
                                     }, {
-                                        $eq: ['$$je.journal', objectId('56cc734b541812c071973572')]
-                                    }, {
                                         $eq: ['$$je.journal', objectId('56cc7383541812c071973574')]
                                     }]
                                 }
@@ -141,8 +139,8 @@ var Countries = function (models) {
                     }
                 }, {
                     $project: {
-                        journalentries        : '$journalentries.',
-                        journalentriesOverhead: '$journalentriesOverhead',
+                        journalentries        : 1,
+                        journalentriesOverhead: 1,
                         type                  : 1,
                         name                  : 1,
                         project               : {$arrayElemAt: ['$project', 0]},
