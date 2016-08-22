@@ -77,8 +77,14 @@
         <div class="money"><%=currencySplitter(((el.revenue - (el.costMaterials +el.costLabour))/100).toFixed(2))%></div>
         <div class="percent"><%=currencySplitter((((el.revenue - (el.costMaterials +el.costLabour)) / (el.costMaterials +el.costLabour)) * 100).toFixed(2))%> %</div>
     </td>
+    <%} else if ((((el.revenue - (el.costMaterials +el.costLabour)) / (el.costMaterials + el.costLabour)) * 100) > 0) {%>
+    <td class="_contractJobsProfitBlock percent">
+        <div class="money"><%=currencySplitter(((el.revenue - (el.costMaterials +el.costLabour))/100).toFixed(2))%></div>
+        <div class="percent">100 %</div>
+    </td>
     <%} else {%>
-    <td class="_contractJobsProfitBlock percent">0</td>
-    <%}%>
+    <div class="money"><%=currencySplitter(((el.revenue - (el.costMaterials +el.costLabour))/100).toFixed(2))%></div>
+    <div class="percent">0 %</div>
+    <% } %>
 </tr>
 <% }) %>
