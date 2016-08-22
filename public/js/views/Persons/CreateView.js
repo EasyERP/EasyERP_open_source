@@ -194,7 +194,7 @@ define([
                 }).render().el
             );
 
-            populate.get('#countryInputCreate', '/countries/getForDd', {}, 'name', this);
+            populate.get('#countryInputCreate', '/countries/getForDD', {}, 'name', this);
             populate.getCompanies('#companiesDd', '/customers/getCompaniesForDd', {}, this, false, true, this.company);
             common.canvasDraw({model: personModel.toJSON()}, this);
             this.$el.find('.dateBirth').datepicker({

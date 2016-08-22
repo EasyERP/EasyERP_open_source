@@ -378,7 +378,7 @@ define([
                 self.responseObj['#companyDd'] = employees;
             });
 
-            dataService.getData('/countries/getForDd', {}, function (countries) {
+            dataService.getData('/countries/getForDD', {}, function (countries) {
 
                 self.responseObj['#address_country'] = countries.data;
             });
