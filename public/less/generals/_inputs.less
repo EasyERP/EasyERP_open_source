@@ -44,16 +44,10 @@
 }
 
 .disable_input_style {
-  //disable all visual effects for input (add to parent input)
-  //box-sizing: border-box;//bad for projects -> Bonus
-  //height: 26px !important;
-  //line-height: 26px;
-  //padding: 2px 4px !important;
   cursor: pointer;
   text-align: right;
 
   input {
-    //display: none;
     height: 19px;
     margin: 0;
     border: none !important;
@@ -61,7 +55,6 @@
     min-width: 100%;
 
     &:focus {
-      // must be working on ui-dialog
       outline: none !important;
       box-shadow: none !important;
       border: none !important;
