@@ -17,6 +17,7 @@ var Module = function (models) {
     var async = require('async');
     var mapObject = require('../public/js/constants/importMapping');
     var moment = require('../public/js/libs/moment/moment');
+    var path = require('path');
     var _ = require('lodash');
     var arrayKeys = {
         'groups.users': true,
@@ -764,8 +765,7 @@ var Module = function (models) {
 
                 reportFilePath = reportOptions.pathName;
                 reportFileName = reportOptions.fileName;
-
-                console.log(importFileName, importFilePath);
+                importFilePath = path.join('download', encodeURIComponent(importFilePath));
 
                 options = {
                     fileName      : importFileName,
