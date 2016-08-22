@@ -3294,7 +3294,8 @@ label._customCHeckbox input[type="checkbox"] {
 
 .ui-dialog-buttonset {
   border: none;
-  border-top: 1px solid #d7d7d7; }
+  border-top: 1px solid #d7d7d7;
+  padding-top: 10px; }
 
 .task-content {
   padding: 5px;
