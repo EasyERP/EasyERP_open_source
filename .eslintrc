@@ -2,6 +2,7 @@
   "extends": "thinkmobiles",
   "globals": {
     "App": true,
+    "FlurryAgent": true,
     "sinon": true
   },
   "rules": {
@@ -29,7 +30,15 @@
         "props": false
       }
     ],
-//    "default-case": ["error", { "commentPattern": "^skip\\sdefault" }],
-    "no-extend-native": ["error", { "exceptions": ["Object", "Date"] }]
+    //    "default-case": ["error", { "commentPattern": "^skip\\sdefault" }],
+    "no-extend-native": [
+      "error",
+      {
+        "exceptions": [
+          "Object",
+          "Date"
+        ]
+      }
+    ]
   }
 }

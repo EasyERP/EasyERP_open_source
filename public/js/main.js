@@ -42,7 +42,7 @@ require.config({
             exports: '_'
         },
 
-        jQuery: {
+        jQuery      : {
             exports: '$'
         },
         wickedpicker: ['jQuery'],
@@ -56,11 +56,11 @@ require.config({
         d3          : {
             exports: 'd3'
         },
-        topojson   : {
+        topojson    : {
             deps   : ['d3'],
             exports: 'topojson'
         },
-        dateFormat : {
+        dateFormat  : {
             exports: 'dateFormat'
         }
     }
@@ -75,6 +75,10 @@ require(['Backbone', 'jQuery', 'Underscore', 'app'], function (Backbone, $, _, a
         var renderEl = '<div class="animate ' + messageClass + '">' + text + '</div>';
 
         container.append(renderEl);
+
+        if (messageClass === 'error') {
+            FlurryAgent.logError('Error', text);
+        }
 
         container.find('div.animate').delay(10).animate({
             left   : '84%',

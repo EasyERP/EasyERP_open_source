@@ -60,7 +60,6 @@ define([
         $('#wrapper').on('click', function () {
             $('.loginPanel').removeClass('open');
         });
-
     };
 
     var appRouter = Backbone.Router.extend({
@@ -121,18 +120,14 @@ define([
                         }
                         App.filtersObject.savedFilters = response.savedFilters;
                     }
-                    /*else {
-                     App.render({
-                     type   : 'error',
-                     message: 'can\'t fetch currentUser'
-                     });
-                     }*/
                 });
             }
         },
 
         dashBoardVacation: function (filter) {
             var self = this;
+
+            FlurryAgent.logEvent('DashBoard Vacation', {filter: filter});
 
             filter = filter || custom.retriveFromCash('DashVacation.filter');
 
@@ -186,6 +181,8 @@ define([
 
         invoiceCharts: function (filter) {
             var self = this;
+
+            FlurryAgent.logEvent('Invoice Charts', {filter: filter});
 
             if (filter) {
                 filter = decodeURIComponent(filter);
@@ -245,6 +242,8 @@ define([
         hrDashboard: function () {
             var self = this;
 
+            FlurryAgent.logEvent('HR Dashboard');
+
             if (!this.isAuth) {
                 this.checkLogin(function (success) {
                     if (success) {
@@ -291,6 +290,8 @@ define([
 
         revenue: function (filter) {
             var self = this;
+
+            FlurryAgent.logEvent('Revenue', {filter: filter});
 
             if (filter) {
                 filter = decodeURIComponent(filter);
@@ -353,6 +354,8 @@ define([
         settingsEmployee: function (filter) {
             var self = this;
 
+            FlurryAgent.logEvent('Settings Employee', {filter: filter});
+
             if (filter) {
                 filter = decodeURIComponent(filter);
                 filter = JSON.parse(filter);
@@ -405,6 +408,8 @@ define([
         hours: function () {
             var self = this;
 
+            FlurryAgent.logEvent('Hours');
+
             if (!this.isAuth) {
                 this.checkLogin(function (success) {
                     if (success) {
@@ -443,6 +448,8 @@ define([
         attendance: function () {
             var self = this;
 
+            FlurryAgent.logEvent('Attendance');
+
             this.checkLogin(function (success) {
                 if (success) {
                     renderAttendance(self);
@@ -474,6 +481,8 @@ define([
         goToImport: function (page, count) {
             var self = this;
 
+            FlurryAgent.logEvent('Import', {page: page, count: count});
+
             this.checkLogin(function (success) {
                 if (success) {
                     goImport(self);
@@ -484,6 +493,7 @@ define([
 
             function goImport(context) {
                 var startTime = new Date();
+
                 if (context.mainView === null) {
                     context.main('import');
                 } else {
@@ -515,6 +525,8 @@ define([
 
         goToProfiles: function () {
             var self = this;
+
+            FlurryAgent.logEvent('Profiles');
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -565,6 +577,9 @@ define([
 
         goToAccounts: function () {
             var self = this;
+
+            FlurryAgent.logEvent('Accounts');
+
             this.checkLogin(function (success) {
                 if (success) {
                     goAccounts(self);
@@ -597,6 +612,8 @@ define([
 
         productSettings: function () {
             var self = this;
+
+            FlurryAgent.logEvent('productSettings');
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -650,6 +667,8 @@ define([
 
         goToProduct: function (countPerPage, filter) {
             var self = this;
+
+            FlurryAgent.logEvent('Products');
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -742,6 +761,9 @@ define([
 
         goToUserPages: function () {
             var self = this;
+
+            FlurryAgent.logEvent('UserPage');
+
             this.checkLogin(function (success) {
                 if (success) {
                     goMyProfile(self);
@@ -778,6 +800,9 @@ define([
 
         goToPayrollDashboard: function () {
             var self = this;
+
+            FlurryAgent.logEvent('Payroll Dashboard');
+
             this.checkLogin(function (success) {
                 if (success) {
                     goDashboard(self);
@@ -788,25 +813,24 @@ define([
 
             function goDashboard(context) {
                 var startTime = new Date();
-                var contentViewUrl = "views/payrollDashboard/ContentView";
-                var topBarViewUrl = "views/payrollDashboard/TopBarView";
+                var contentViewUrl = 'views/payrollDashboard/ContentView';
+                var topBarViewUrl = 'views/payrollDashboard/TopBarView';
                 var self = context;
 
                 if (context.mainView === null) {
-                    context.main("payrollDashboard");
+                    context.main('payrollDashboard');
                 } else {
-                    context.mainView.updateMenu("payrollDashboard");
+                    context.mainView.updateMenu('payrollDashboard');
                 }
 
                 require([contentViewUrl, topBarViewUrl], function (contentView, topBarView) {
+                    var contentview = new contentView({startTime: startTime});
+                    var topbarView = new topBarView({actionType: 'Content'});
 
                     custom.setCurrentVT('list');
 
-                    var contentview = new contentView({startTime: startTime});
-                    var topbarView = new topBarView({actionType: "Content"});
-
                     topbarView.bind('backToSettingsEvent', contentview.backToSettings, contentview);
-                    
+
                     self.changeView(contentview);
                     self.changeTopBarView(topbarView);
                 });
@@ -815,6 +839,9 @@ define([
 
         goToReportsDashboard: function () {
             var self = this;
+
+            FlurryAgent.logEvent('Reports Dashboard');
+
             this.checkLogin(function (success) {
                 if (success) {
                     goDashboard(self);
@@ -825,22 +852,21 @@ define([
 
             function goDashboard(context) {
                 var startTime = new Date();
-                var contentViewUrl = "views/reportsDashboard/ContentView";
-                var topBarViewUrl = "views/reportsDashboard/TopBarView";
+                var contentViewUrl = 'views/reportsDashboard/ContentView';
+                var topBarViewUrl = 'views/reportsDashboard/TopBarView';
                 var self = context;
 
                 if (context.mainView === null) {
-                    context.main("reportsDashboard");
+                    context.main('reportsDashboard');
                 } else {
-                    context.mainView.updateMenu("reportsDashboard");
+                    context.mainView.updateMenu('reportsDashboard');
                 }
 
                 require([contentViewUrl, topBarViewUrl], function (contentView, topBarView) {
+                    var contentview = new contentView({startTime: startTime});
+                    var topbarView = new topBarView({actionType: 'Content'});
 
                     custom.setCurrentVT('list');
-
-                    var contentview = new contentView({startTime: startTime});
-                    var topbarView = new topBarView({actionType: "Content"});
                     self.changeView(contentview);
                     self.changeTopBarView(topbarView);
                 });
@@ -849,6 +875,9 @@ define([
 
         goToDashboard: function () {
             var self = this;
+
+            FlurryAgent.logEvent('Dashboard');
+
             this.checkLogin(function (success) {
                 if (success) {
                     goDashboard(self);
@@ -883,6 +912,9 @@ define([
 
         goToProjectDashboard: function () {
             var self = this;
+
+            FlurryAgent.logEvent('Project Dashboard');
+
             this.checkLogin(function (success) {
                 if (success) {
                     goProjectDashboard(self);
@@ -963,6 +995,9 @@ define([
 
         goToWorkflows: function () {
             var self = this;
+
+            FlurryAgent.logEvent('Workflows');
+
             this.checkLogin(function (success) {
                 if (success) {
                     goToWorkflows(self);
@@ -1077,8 +1112,12 @@ define([
                         url += '/' + parrentContentId;
                     }
 
-                    Backbone.history.navigate(url, {replace: true});
+                    FlurryAgent.logEvent(contentType + ' List');
+
+                    return Backbone.history.navigate(url, {replace: true});
                 }
+
+                FlurryAgent.logEvent(contentType + ' List');
 
                 contentViewUrl = 'views/' + contentType + '/list/ListView';
                 topBarViewUrl = 'views/' + contentType + '/TopBarView';
@@ -1093,7 +1132,7 @@ define([
                     count = CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE;
                 }
 
-                if (contentType === 'contractJobs'){
+                if (contentType === 'contractJobs') {
                     count = 10;
                 }
 
@@ -1108,7 +1147,7 @@ define([
 
                     if (contentType === 'salesProduct') {
                         filter = {
-                            'canBeSold': {
+                            canBeSold: {
                                 key  : 'canBeSold',
                                 value: ['true']
                             }
@@ -1131,8 +1170,8 @@ define([
                     filter = JSON.parse(filter);
                 }
 
-                //savedFilter = custom.savedFilters(contentType, filter);
-                //savedFilter = filter;
+                // savedFilter = custom.savedFilters(contentType, filter);
+                // savedFilter = filter;
 
                 if (context.mainView === null) {
                     context.main(contentType);
@@ -1297,6 +1336,8 @@ define([
                 var navigatePage;
                 var count;
 
+                FlurryAgent.logEvent(contentType + ' TForm');
+
                 contentViewUrl = 'views/' + contentType + '/form/ContentView';
                 topBarViewUrl = 'views/' + contentType + '/TopBarView';
                 collectionUrl = context.buildCollectionRoute(contentType);
@@ -1448,6 +1489,8 @@ define([
                     Backbone.history.navigate(url, {replace: true});
                 }
 
+                FlurryAgent.logEvent(contentType + ' Form');
+
                 if (context.mainView === null) {
                     context.main(contentType);
                 } else {
@@ -1512,6 +1555,7 @@ define([
 
         goToKanban: function (contentType, parrentContentId, filter) {
             var self = this;
+
             this.checkLogin(function (success) {
                 if (success) {
                     goKanban(self);
@@ -1521,20 +1565,28 @@ define([
             });
 
             function goKanban(context) {
-                var self = context;
                 var currentContentType = context.testContent(contentType);
+                var self = context;
+                var contentViewUrl;
+                var topBarViewUrl;
+                var collectionUrl;
+
                 if (contentType !== currentContentType) {
                     contentType = currentContentType;
                 }
-                var contentViewUrl = "views/" + contentType + "/kanban/KanbanView";
-                var topBarViewUrl = "views/" + contentType + "/TopBarView";
-                var collectionUrl = "collections/Workflows/WorkflowsCollection";
+
+                FlurryAgent.logEvent(contentType + ' Kanban');
+
+                contentViewUrl = 'views/' + contentType + '/kanban/KanbanView';
+                topBarViewUrl = 'views/' + contentType + '/TopBarView';
+                collectionUrl = 'collections/Workflows/WorkflowsCollection';
 
                 if (context.mainView === null) {
                     context.main(contentType);
                 } else {
                     context.mainView.updateMenu(contentType);
                 }
+
                 custom.setCurrentVT('kanban');
                 require([contentViewUrl, topBarViewUrl, collectionUrl], function (contentView, topBarView, workflowsCollection) {
                     var startTime = new Date();
@@ -1603,13 +1655,11 @@ define([
                 var self = context;
                 var location = window.location.hash;
                 var currentContentType = context.testContent(contentType);
-                var newCollection = true;
                 var startTime = new Date();
                 var viewType = custom.getCurrentVT({contentType: contentType}); // for default filter && defaultViewType
                 var topBarViewUrl;
                 var contentViewUrl;
                 var collectionUrl;
-                var savedFilter;
                 var url;
 
                 if (countPerPage) {
@@ -1628,6 +1678,8 @@ define([
                 }
 
                 topBarViewUrl = 'views/' + contentType + '/TopBarView';
+
+                FlurryAgent.logEvent(contentType + ' Thumbnails');
 
                 if (!filter) {
 
@@ -1786,8 +1838,9 @@ define([
             this.mainView = null;
 
             $.ajax({
-                url    : url,
-                type   : 'GET',
+                url : url,
+                type: 'GET',
+
                 success: function (response) {
                     self.changeWrapperView(new loginView({
                         dbs      : response.dbsNames,
@@ -1796,7 +1849,8 @@ define([
                         login    : email
                     }));
                 },
-                error  : function () {
+
+                error: function () {
                     self.changeWrapperView(new loginView());
                 }
             });
