@@ -27,19 +27,23 @@
         <input data-table="Employees" name="changeTableBtn" type="radio" value="Employees" class="changeTableBtn">
         <span>Employees</span>
     </label>
-    <div class="dropDownDateRangeContainer">
-        <div id="changeTableCombobox" class="choseDateRange dropDownDateRange">
-            <div class="item" data-imp="email">Email</div>
-            <div class="item" data-imp="name.first">First Name</div>
-            <div class="item" data-imp="website">Site</div>
-            <div class="item" data-imp="phones.phone">Phone</div>
-            <span class="selectArrow"></span>
+
+    <label>
+        <p class="_importSearchDublicate"> Search duplicates by</p>
+        <div class="dropDownDateRangeContainer">
+            <div id="changeTableCombobox" class="choseDateRange dropDownDateRange">
+                <div class="item" data-imp="email">Email</div>
+                <div class="item" data-imp="name.first">First Name</div>
+                <div class="item" data-imp="website">Site</div>
+                <div class="item" data-imp="phones.phone">Phone</div>
+                <span class="selectArrow"></span>
+            </div>
         </div>
-    </div>
+    </label>
 
     <button class="btn importBtn">Upload File</button>
     <div id="forImport"></div>
     <div class="_exampleLink">
-        <a href="download/exportFiles%2Fsample.csv" >Sample Data</a>
+        <a href="download/exportFiles%2Fsample.csv">Sample Data</a>
     </div>
 </div>

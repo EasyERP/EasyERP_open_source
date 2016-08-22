@@ -134,6 +134,7 @@ define([
             var first = $.trim($thisEl.find('#first').val());
             var last = $.trim($thisEl.find('#last').val());
             var tempCompany = $.trim($thisEl.find('#company').val());
+            var jobPosition = $.trim($thisEl.find('#jobPosition').val());
             var company = $thisEl.find('#companyDd').attr('data-id');
 
             var contactName = {
@@ -201,6 +202,7 @@ define([
                     LI: LI.replace('linkedin', '[]'),
                     FB: FB
                 },
+                jobPosition     : jobPosition,
                 dateBirth       : dateBirth,
                 company         : company,
                 campaign        : $('#campaignDd').attr('data-id'),

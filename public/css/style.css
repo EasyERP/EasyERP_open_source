@@ -2128,23 +2128,59 @@ label._customCHeckbox input[type="checkbox"] {
     float: left;
     margin: 5px 5px 0 0; }
 
-._priorityCell .High,
+._priorityCell .Hot,
 ._priorityCell .Medium,
-._priorityCell .Low,
+._priorityCell .Cold,
 ._priorityCell .Trivial {
   height: 35px;
   width: 30px;
   margin: 0 auto;
   background-image: url("../images/priority_icons.png");
   background-size: 132px; }
-._priorityCell .High {
+._priorityCell .Hot {
   background-position: -2px -3px; }
 ._priorityCell .Medium {
   background-position: -69px -3px; }
-._priorityCell .Low {
+._priorityCell .Cold {
   background-position: -35px -3px; }
 ._priorityCell .Trivial {
   background-position: -103px -3px; }
+
+._contractJobsListWrap {
+  table-layout: fixed; }
+
+._contractJobsListItem td + td {
+  border-left: 1px solid #d7d7d7; }
+._contractJobsListItem ._contractJobsStatusBlock {
+  font-family: "OpenSans SemiBold", sans-serif; }
+  ._contractJobsListItem ._contractJobsStatusBlock.finished, ._contractJobsListItem ._contractJobsStatusBlock.inProgress {
+    color: #fff; }
+  ._contractJobsListItem ._contractJobsStatusBlock.finished {
+    background-color: #4BCB81; }
+  ._contractJobsListItem ._contractJobsStatusBlock.inProgress {
+    background-color: #4BCB81; }
+._contractJobsListItem ._contractJobsJobBlock > div {
+  line-height: 20px;
+  text-overflow: ellipsis;
+  overflow: hidden; }
+._contractJobsListItem ._contractJobsJobBlock ._contractJobsName {
+  font-size: 16px;
+  font-family: "OpenSans Bold", sans-serif; }
+._contractJobsListItem ._contractJobsJobBlock ._contractJobsCustomer {
+  font-style: italic; }
+._contractJobsListItem ._contractJobsInvoiceBlock > div {
+  line-height: 20px; }
+
+.list tbody tr._contractJobsListItem td {
+  padding: 10px;
+  text-align: left;
+  vertical-align: top; }
+
+.list tbody td.contractCell {
+  text-align: center; }
+
+.semiBold {
+  font-family: "OpenSans SemiBold", sans-serif; }
 
 .dialog-tabs:before, .dialog-tabs:after {
   content: " ";
@@ -2209,12 +2245,18 @@ label._customCHeckbox input[type="checkbox"] {
     border: 1px solid #000000;
     z-index: 10; }
 
+._importShowConflicts {
+  padding: 25px 0;
+  text-align: center; }
+  ._importShowConflicts h2 {
+    font-size: 20px; }
+
 ._loadHistoryTopTableContainer {
   width: 100%; }
 
-._contentBlock,
+._contentBlockInner,
 ._tabsBlock {
-  height: calc(100vh - 205px);
+  height: calc(100vh - 325px);
   overflow-y: auto;
   overflow-x: hidden; }
 
@@ -2296,6 +2338,9 @@ label._customCHeckbox input[type="checkbox"] {
       border: 1px dashed #c2c8cd; }
     ._contentBlockRow.hoverRow .empty:after {
       color: #ffffff; }
+  ._contentBlockRow._withOutBorder ._rowItem {
+    border: none;
+    font-weight: bold; }
   ._contentBlockRow ._rowItem {
     position: relative;
     width: 1px;
@@ -2363,15 +2408,13 @@ label._customCHeckbox input[type="checkbox"] {
     font-size: 16px; }
     ._importAttachContainer .attachFileName span {
       font-weight: bold; }
-  ._importAttachContainer label,
-  ._importAttachContainer .dropDownDateRangeContainer {
+  ._importAttachContainer label {
     display: inline-block;
     vertical-align: middle;
     text-align: center;
     margin-right: 15px;
     cursor: pointer; }
-    ._importAttachContainer label span,
-    ._importAttachContainer .dropDownDateRangeContainer span {
+    ._importAttachContainer label span {
       display: block; }
   ._importAttachContainer input[type="checkbox"],
   ._importAttachContainer input[type="radio"] {
@@ -2387,6 +2430,8 @@ label._customCHeckbox input[type="checkbox"] {
     text-align: right; }
     ._importAttachContainer ._exampleLink a {
       color: #00a2d0; }
+  ._importAttachContainer ._importSearchDublicate {
+    margin-bottom: 10px; }
 
 ._progressBarContainer {
   height: 20px;
@@ -2504,6 +2549,11 @@ label._customCHeckbox input[type="checkbox"] {
         content: none; }
   ._finishImportContainer ._importWithOutConflict {
     margin-bottom: 25px; }
+
+._importButtonsGroup {
+  padding-right: 15px; }
+  ._importButtonsGroup button + button {
+    margin-right: 15px; }
 
 .propertyContainer a:hover {
   text-decoration: none; }

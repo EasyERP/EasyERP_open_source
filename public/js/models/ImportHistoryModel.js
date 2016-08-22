@@ -42,6 +42,7 @@ define([
         defaults: {
             date: '',
             fileName: '',
+            filePath: '',
             user: '',
             status: '',
             reportFile: '',

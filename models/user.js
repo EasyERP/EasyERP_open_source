@@ -81,6 +81,7 @@ module.exports = (function () {
         relatedEmployee: {type: ObjectId, ref: 'Employees', default: null},
         imports        : {
             fileName       : {type: String, default: ''},
+            filePath       : {type: String, default: ''},
             timeStamp      : {type: Number},
             stage          : {type: Number, default: 1},
             map            : {type: JSON},
