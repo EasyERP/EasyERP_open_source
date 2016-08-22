@@ -343,7 +343,7 @@ var Countries = function (models) {
                         workflow      : {$first: '$workflow'},
                         costLabour    : {$first: '$costLabour'},
                         costMaterials : {$sum: '$journalentriesOverhead.debit'},
-                        jobPrice      : {$first: '$jobPrice.unitPrice'}
+                        jobPrice      : {$first: '$jobPrice'}
                     }
                 }, {
                     $lookup: {
@@ -430,8 +430,7 @@ var Countries = function (models) {
                             $cond: [{$eq: ['$totalWorked', 0]}, 1, '$totalWorked']
                         },
                         totalQAWorked    : 1,
-                        totalDesignWorked: 1,
-                        worked           : 1
+                        totalDesignWorked: 1
                     }
                 }, {
                     $project: {
@@ -453,7 +452,6 @@ var Countries = function (models) {
                         totalWorked      : 1,
                         totalQAWorked    : 1,
                         totalDesignWorked: 1,
-                        worked           : 1,
                         tCardDateByWeek  : 1,
                         revenue          : {
                             $cond: {
@@ -461,9 +459,15 @@ var Countries = function (models) {
                                     $eq: ['$invoice', {}]
                                 },
 
-                                then: {$multiply: [{$divide: ['$worked', '$totalWorked']}, '$jobPrice']},
+                                then: {
+                                    $cond: {
+                                        if  : {$eq: ['$quotation', {}]},
+                                        then: '$jobPrice',
+                                        else: {$divide: ['$jobPrice', '$quotation.currency.rate']}
+                                    }
+                                },
                                 else: {
-                                    $divide: [{$multiply: [{$divide: ['$worked', '$totalWorked']}, '$jobPrice']}, '$invoice.currency.rate']
+                                    $divide: ['$jobPrice', '$invoice.currency.rate']
                                 }
                             }
                         }

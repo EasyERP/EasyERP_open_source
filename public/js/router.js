@@ -514,7 +514,6 @@ define([
                         url += '/c=' + count;
                     }
 
-
                     custom.setCurrentVT('list');
 
                     context.changeView(contentview);
@@ -1591,7 +1590,7 @@ define([
                 require([contentViewUrl, topBarViewUrl, collectionUrl], function (contentView, topBarView, workflowsCollection) {
                     var startTime = new Date();
 
-                    App.filtersObject.filter = filter;
+                    App.filtersObject.filter = JSON.parse(filter);
 
                     var collection = new workflowsCollection({id: contentType});
 
@@ -1621,6 +1620,10 @@ define([
                         }
 
                         url = encodeURI(url);
+
+                        if (filter) {
+                            url += '/filter=' + encodeURI(JSON.stringify(filter));
+                        }
 
                         Backbone.history.navigate(url, {replace: true});
                     }

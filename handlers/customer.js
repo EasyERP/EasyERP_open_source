@@ -450,7 +450,7 @@ var Module = function (models, event) {
                 var findObject = {};
                 var resDate;
 
-                if (customer.type ==='Company') {
+                if (customer.type === 'Company') {
                     findObject.company = customer._id;
                     resDate = 'companyDate';
                 } else {
@@ -682,7 +682,7 @@ var Module = function (models, event) {
         var Customers = models.get(req.session.lastDb, 'Customers', CustomerSchema);
 
         Customers.find({
-            type    : 'Company'
+            type: 'Company'
         }, {'name.first': 1}).sort({'name.first': 1}).exec(function (err, result) {
             if (err) {
                 return next(err);
@@ -785,8 +785,6 @@ var Module = function (models, event) {
         contentSearcher = function (ids, cb) {
             var queryObject = {};
 
-
-
             if (optionsObject) {
                 queryObject.$and = [];
                 queryObject.$and.push(optionsObject);
@@ -814,6 +812,7 @@ var Module = function (models, event) {
                                     .populate('editedBy.user', 'login');
                                 break;
                             case ('thumbnails'):
+                                query.sort(sort);
                                 query
                                     .select('_id name address.country salesPurchases fullName company')
                                     .populate('company', '_id name');
@@ -825,7 +824,6 @@ var Module = function (models, event) {
                         switch (viewType) {
                             case ('list'):
                                 query.sort(sort);
-
                                 query
                                     .select('_id editedBy createdBy salesPurchases name fullName email phones.phone phones.mobile address.country')
                                     .populate('salesPurchases.salesPerson', '_id name')
@@ -834,6 +832,7 @@ var Module = function (models, event) {
                                     .populate('editedBy.user', 'login');
                                 break;
                             case ('thumbnails'):
+                                query.sort(sort);
                                 query
                                     .select('_id name fullName company address.country salesPurchases')
                                     .populate('company', '_id name address');
@@ -844,6 +843,7 @@ var Module = function (models, event) {
                     case ('ownCompanies'):
                         switch (viewType) {
                             case ('list'):
+                                query.sort(sort);
                                 query
                                     .populate('salesPurchases.salesPerson', '_id name')
                                     .populate('salesPurchases.salesTeam', '_id name')
@@ -851,6 +851,7 @@ var Module = function (models, event) {
                                     .populate('editedBy.user');
                                 break;
                             case ('thumbnails'):
+                                query.sort(sort);
                                 query
                                     .select('_id name fullName company')
                                     .populate('company', '_id name address');

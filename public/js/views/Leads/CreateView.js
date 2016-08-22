@@ -320,7 +320,10 @@ define([
             this.$el.find('#dateBirthOnCreate').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
-                changeYear : true
+                changeYear : true,
+                yearRange  : '-100y:c+nn',
+                maxDate    : '-18y',
+                minDate    : null
             });
 
             this.$el.find('#expectedClosingDate').datepicker({
