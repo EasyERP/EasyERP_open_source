@@ -1884,9 +1884,7 @@ body {
   margin: 0 auto;
   left: 50%;
   top: 50%;
-  -moz-border-radius: 0px;
-  -webkit-border-radius: 0px;
-  border-radius: 0px;
+  border-radius: 0;
 }
 .ui-dialog .ui-widget-content {
   border: none;
@@ -1931,6 +1929,8 @@ body {
   color: #fff;
 }
 .ui-dialog .avatar .upload input {
+  position: absolute;
+  top: 0;
   height: 20px;
   opacity: 0;
   background: rgba(0, 0, 0, 0.5);
@@ -5513,6 +5513,8 @@ ul.dialog-tabs li.right button {
   color: #fff;
 }
 .thumbnail .avatar .upload input {
+  position: absolute;
+  top: 0;
   height: 20px;
   opacity: 0;
   background: rgba(0, 0, 0, 0.5);
