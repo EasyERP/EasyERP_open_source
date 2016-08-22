@@ -76,6 +76,7 @@ define([
 
             this.render();
 
+            this.changingStatus();
             $thisEl.find('#forImport').html(this.importTemplate);
         },
 
@@ -158,11 +159,26 @@ define([
 
             this.importView.sendToServer(e, null, this);
 
-            $thisEl.find('.attachFileName span').html($thisEl.find('#inputAttach')[0].files[0].name);
+            this.changingStatus();
 
             this.listenTo(this.importView, 'uploadCompleted', function () {
                 this.trigger('uploadCompleted');
             });
+        },
+
+        changingStatus: function() {
+            var $attachFileName;
+            var $importBtn = this.$el.find('.importBtn');
+            var $thisEl = this.$el;
+
+            if (App.currentUser && App.currentUser.imports && App.currentUser.imports.fileName) {
+                $attachFileName = $thisEl.find('.attachFileName');
+                $importBtn.text('Import another file');
+                //$attachFileName.find('span').html($thisEl.find('#inputAttach')[0].files[0].name);
+
+                $attachFileName.html('You have uploaded file ' + '<span></span>');
+                $attachFileName.find('span').html(App.currentUser.imports.fileName);
+            }
         },
 
         render: function () {

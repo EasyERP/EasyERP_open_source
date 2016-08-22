@@ -73,6 +73,10 @@ define([
             App.currentUser.imports = {};
 
             this.stage = 1;
+
+            this.updateCurrentUser({
+                stage: this.stage
+            });
         },
 
         updateCurrentUser: function (options, callback) {
