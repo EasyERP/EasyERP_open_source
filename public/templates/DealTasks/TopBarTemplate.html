@@ -1,9 +1,9 @@
 <h3>Tasks</h3>
 <div id="createBtnHolder" class="tasksView">
-    <a href="#home/action-<%=contentType%>/Create" class="fa fa-plus" title="Create" id="top-bar-createBtn"></a>
-    <a href="#home/action-<%=contentType%>/Edit" class="fa fa-wrench" title="Edit" id="top-bar-editBtn"></a>
-    <a href="#home/action-<%=contentType%>/Remove" class="btn btnBlue deleteTasks" id="top-bar-deleteBtn" title="Remove">Delete</a>
-    <%if(viewType === 'kanban') {%><a id="kanban-settings-Btn" class="fa fa-wrench" title="Kanban Settings"></a><%}%>
+    <a href="#home/action-<%=contentType%>/Create" class="btn blue slim plus" title="Create" id="top-bar-createBtn">New</a>
+    <a href="#home/action-<%=contentType%>/Edit" class="btn blue slim" title="Edit" id="top-bar-editBtn"></a>
+    <a href="#home/action-<%=contentType%>/Remove" class="btn blue slim" id="top-bar-deleteBtn" title="Remove">Delete</a>
+    <%if(viewType === 'kanban') {%><a id="kanban-settings-Btn" class="btn blue slim" title="Kanban Settings">Settings</a><%}%>
 </div>
 
 <div id="template-switcher" class="template-switcher right">

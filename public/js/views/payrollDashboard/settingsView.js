@@ -9,7 +9,7 @@ define([
         template: _.template(settingsTemplate),
 
         events: {
-            'click .closeBtn'        : 'closeSettings',
+            'click .closePayrollList'        : 'closeSettings',
             'click ._payrollListItem': 'redirectTo'
         },
 

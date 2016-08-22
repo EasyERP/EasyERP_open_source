@@ -566,7 +566,7 @@ input {
   height: 40px;
   width: 100%;
   background-color: #2b3643;
-  z-index: 200;
+  z-index: 300;
 
   .topbarLogo {
     float: @left;
@@ -1288,7 +1288,7 @@ dl.payrollDateBlock {
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  height: calc(~"100vh - 90px");
+  height: calc(~"100vh - 121px");
   border-bottom: 1px solid #ededed;
 
   &.leadsList {
@@ -1616,28 +1616,28 @@ td.checkboxRow {
   }
 }
 
-#top-bar-createBtn {
-  height: 26px;
-  padding: 0 12px;
-  background: #7eadcc;
-  line-height: 26px !important;
-  color: #fff;
-  -webkit-transition: all .3s;
-  transition: all .3s;
-  border-radius: 3px;
-
-  &:after,
-  &:before {
-    color: #fff;
-  }
-
-  &:after {
-    content: 'New';
-    margin-left: 5px;
-    font-family: @fontRegular;
-    font-size: 13px;
-  }
-}
+//#top-bar-createBtn {
+//  height: 26px;
+//  padding: 0 12px;
+//  background: #7eadcc;
+//  line-height: 26px !important;
+//  color: #fff;
+//  -webkit-transition: all .3s;
+//  transition: all .3s;
+//  border-radius: 3px;
+//
+//  &:after,
+//  &:before {
+//    color: #fff;
+//  }
+//
+//  &:after {
+//    content: 'New';
+//    margin-left: 5px;
+//    font-family: @fontRegular;
+//    font-size: 13px;
+//  }
+//}
 
 #top-bar {
 
@@ -2190,8 +2190,8 @@ table {
       padding: 0;
 
       ._modalSelect {
-        a, input {
-          padding: 0;
+        > a, > input {
+          padding: 0 0 0 10px;
           min-height: 30px;
           line-height: 30px;
         }
@@ -2232,14 +2232,6 @@ td.editable {
   }
 }
 
-.addTaskTitle {
-  &:after {
-    content: '';
-    display: table;
-    clear: both;
-  }
-}
-
 ._taskTimeBlock {
 
   .inputDateActionBlock {
@@ -2261,6 +2253,7 @@ td.editable {
 .addTaskTitle {
   display: flex;
   align-items: center;
+  white-space: nowrap;
 
   >label {
     width: auto !important;
@@ -2289,5 +2282,16 @@ td.editable {
     top: 20px;
     right: 20px;
     cursor: pointer;
+  }
+}
+
+.projectMembersTable {
+  ._newSelectListWrap {
+    display: inline-block;
+
+    .newSelectList {
+      left: auto;
+      right: 0;
+    }
   }
 }

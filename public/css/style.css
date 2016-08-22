@@ -1472,34 +1472,36 @@ b, strong {
     touch-action: manipulation;
   cursor: pointer;
   white-space: nowrap;
-  font-size: 14px;
+  font-size: 13px;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  border-radius: 0;
   border: 1px solid #c8c8d3;
   background-color: #ffffff;
   outline: 0 !important;
   box-shadow: none !important;
   height: 26px;
-  line-height: 22px !important;
-  border-radius: 3px; }
-  .btn span, .btn a {
-    padding: 0 !important;
-    color: #000000; }
+  line-height: 24px !important;
+  border-radius: 3px;
+  min-width: 70px; }
+  .btn.plus:before {
+    content: "\f067";
+    margin-right: 6px;
+    font-family: 'FontAwesome'; }
   .btn:hover {
     cursor: pointer;
     background: #f2f2f2;
     background-position: 0;
-    text-decoration: none; }
-    .btn:hover span, .btn:hover a {
-      color: #000000; }
-  .btn.btnRounded {
-    border-radius: 3px; }
-  .btn:hover {
+    text-decoration: none;
     -webkit-transition: all .3s;
     transition: all .3s; }
+    .btn:hover span, .btn:hover a {
+      color: #000000;
+      text-decoration: none; }
+  .btn.slim {
+    height: 26px;
+    line-height: 24px !important; }
   .btn.green {
     color: #FFF;
     background-color: #32c5d2;
@@ -1509,34 +1511,27 @@ b, strong {
       border-color: #2499a3;
       text-decoration: none; }
   .btn.blue {
-    color: #FFF;
-    background-color: #3e88b9;
-    border-color: #3e88b9; }
-    .btn.blue:hover {
-      background-color: #4d5a75;
-      border-color: #4d5a75;
-      text-decoration: none; }
-  .btnBlue {
-    border: 0 !important; }
-    .btnBlue.slim {
-      height: 26px;
-      line-height: 26px !important; }
-  .btnRounded {
+    color: #fff !important;
+    background-color: #7eadcc !important;
+    border-color: #7eadcc !important; }
+    .btn.blue.plus:before {
+      color: #fff; }
+  .btn.border {
     background-color: #fff;
     color: #000; }
-    .btnRounded.green {
+    .btn.borderGreen {
       background-color: #fff;
       border-color: #32c5d2;
       color: #32c5d2; }
-      .btnRounded.green:hover {
+      .btn.borderGreen:hover {
         background-color: #32c5d2;
         border-color: #32c5d2;
         color: #fff; }
-    .btnRounded.blue {
+    .btn.borderBlue {
       background-color: #fff;
       border-color: #3e88b9;
       color: #3e88b9; }
-      .btnRounded.blue:hover {
+      .btn.borderBlue:hover {
         background-color: #3e88b9;
         border-color: #3e88b9;
         color: #fff;
@@ -1571,6 +1566,9 @@ b, strong {
     border: 1px solid #c8c8d3; }
     .btn.btnDisable:hover {
       background: none; }
+  .btn span, .btn a {
+    padding: 0 !important;
+    color: #000000; }
 
 .editorTab .btn {
   min-width: 66px; }
@@ -1584,6 +1582,18 @@ b, strong {
   .btnAdd:hover {
     text-decoration: none;
     background: #297492; }
+
+.backToSettings {
+  position: absolute;
+  right: 12px;
+  top: 6px; }
+
+.closePayrollList {
+  float: right;
+  right: 55px; }
+
+.quotationsButtonsWrap {
+  margin-bottom: 10px; }
 
 .textLightGrey {
   color: #c5c7c7; }
@@ -1704,6 +1714,9 @@ label._customCHeckbox input[type="checkbox"] {
       -ms-transform-origin: 100% 100%;
       transform-origin: 100% 100%;
   }
+
+.internal_Notes {
+  min-height: 100px; }
 
 .flex {
     display: -webkit-box;
@@ -2035,6 +2048,7 @@ label._customCHeckbox input[type="checkbox"] {
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
+    cursor: pointer;
     position: relative;
     padding: 8px 20px 8px 30px;
     background-color: #f7f7f7;
@@ -2896,6 +2910,7 @@ label._customCHeckbox input[type="checkbox"] {
     width: 100% !important;
     max-width: 100% !important;
     min-height: 35px;
+    line-height: 22px;
     border: 1px solid #c8c8d3;
     border-radius: 3px;
     cursor: pointer; }
