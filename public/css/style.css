@@ -1699,6 +1699,33 @@ label._customCHeckbox input[type="checkbox"] {
         -ms-transform-origin: 100% 100%;
             transform-origin: 100% 100%; }
 
+.payRoll-list ._payRoll-TableBody
+td {
+  border: 1px solid #d7d7d7; }
+.payRoll-list + .totalContainer dd, .payRoll-list + .totalContainer dt {
+  display: inline-block;
+  line-height: 23px; }
+.payRoll-list + .totalContainer dd {
+  width: 60%; }
+  .payRoll-list + .totalContainer dd .newSelectList {
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+        -ms-transform: translateX(-50%);
+            transform: translateX(-50%); }
+
+._newSelectListWrap {
+  display: inline-block; }
+
+.payRoll-expenses dd, .payRoll-expenses dt {
+  display: inline-block;
+  line-height: 23px;
+  width: 40%;
+  float: left; }
+.payRoll-expenses dd + dt {
+  clear: both; }
+.payRoll-expenses dd {
+  width: 60%; }
+
 .flex {
   display: -webkit-box;
   display: -webkit-flex;

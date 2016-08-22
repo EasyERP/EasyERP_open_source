@@ -1,0 +1,44 @@
+.payRoll-list {
+  ._payRoll-TableBody
+    td{
+    border: 1px solid #d7d7d7;
+  }
+  & + .totalContainer{
+    dd, dt{
+      display: inline-block;
+      line-height: 23px;
+      //width: 40%;
+      //float: left;
+    }
+    dd{
+      width: 60%;
+      .newSelectList{
+        left: 50%;
+        transform: translateX(-50%);
+      }
+    }
+  }
+}
+
+._newSelectListWrap {
+  display: inline-block;
+}
+
+.payRoll-expenses{
+  dd, dt{
+    display: inline-block;
+    line-height: 23px;
+    width: 40%;
+    float: left;
+  }
+  dd + dt{
+    clear: both;
+  }
+  dd {
+    width: 60%;
+  }
+  //.newSelectList{
+  //  left: 50%;
+  //  transform: translateX(-50%);
+  //}
+}
