@@ -12175,7 +12175,7 @@ td.checkboxRow {
 .dropDown {
   position: relative;
 }
-.dropDown ul {
+.dropDown > ul {
   display: none;
   position: absolute;
   top: 28px;
@@ -12184,26 +12184,27 @@ td.checkboxRow {
   border: 1px solid #bebebe;
   border-radius: 3px;
   z-index: 1;
-  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+  box-shadow: 5px 5px rgba(102, 102, 102, 0.1);
 }
-.dropDown ul li {
+.dropDown > ul > li {
   position: relative;
   min-width: 125px;
   padding: 0 22px 0 12px;
   line-height: 32px;
   cursor: pointer;
+  white-space: nowrap;
 }
-.dropDown ul li:hover {
+.dropDown > ul > li:hover {
   background-color: #7eadcc;
   color: #fff;
   transition: all .1s ease;
 }
-.dropDown ul li.sortDn,
-.dropDown ul li.sortUp {
+.dropDown > ul > li.sortDn,
+.dropDown > ul > li.sortUp {
   background-color: #7eadcc;
   color: #fff;
 }
-.dropDown ul li.sortDn .sortArrow {
+.dropDown > ul > li.sortDn .sortArrow {
   color: #fff;
   -webkit-transform: rotate(180deg);
   -moz-transform: rotate(180deg);
@@ -12211,16 +12212,16 @@ td.checkboxRow {
   -o-transform: rotate(180deg);
   transform: rotate(180deg);
 }
-.dropDown ul li.sortDn .sortArrow:before {
+.dropDown > ul > li.sortDn .sortArrow:before {
   content: "\f176";
 }
-.dropDown ul li.sortUp .sortArrow {
+.dropDown > ul > li.sortUp .sortArrow {
   color: #fff;
 }
-.dropDown ul li.sortUp .sortArrow:before {
+.dropDown > ul > li.sortUp .sortArrow:before {
   content: "\f176";
 }
-.dropDown ul li .sortArrow {
+.dropDown > ul > li .sortArrow {
   position: absolute;
   top: 0;
   right: 8px;
