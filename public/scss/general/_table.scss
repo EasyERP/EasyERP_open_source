@@ -8,10 +8,12 @@
   th, td {
     white-space: nowrap;
     text-overflow: ellipsis;
-    //border: 1px solid white;
-    border-top: none;
     border: 1px solid transparent;
+    border-top: none;
     vertical-align: middle;
+  }
+  thead > tr{
+    border-top: none;
   }
 
   tfoot {
@@ -27,35 +29,38 @@
     }
   }
 
+  #payRoll-Table {
+    padding: 0;
+    .datePicker {
+      padding: 0;
+      input {
+        &:not([disabled]) {
+          outline: 1px solid #66b5d4 !important;
+        }
+        &:focus {
+          outline: 1px solid #66b5d4 !important;
+        }
+      }
+    }
+    .mainRow td{
+      border:none;
+    }
+    #payRoll-TableBody {
+      td{
+        border-top: 1px solid #d7d7d7;
+      }
+    }
+    .scrollit {
+      display: block;
+      height: calc(100vh - 2010px);
+      overflow-x: hidden;
+    }
+  }
+
   ._payRoll-TableBody
     td{
       border: 1px solid #d7d7d7;
     }
-  /*
-    & + .totalContainer{
-      dd, dt{
-        display: inline-block;
-        line-height: 23px;
-        font-size: 14px;
-        //width: 40%;
-        //float: left;
-      }
-      dd{
-        width: 60%;
-        .newSelectList{
-          left: 50%;
-          transform: translateX(-50%);
-        }
-      }
-    }
-  */
-}
-
-
-
-
-._newSelectListWrap {
-  display: inline-block;
 }
 
 .payRoll-expenses{
@@ -96,16 +101,16 @@
     width: 65%;
     .newSelectList{
       left: 50%;
-      transform: translateX(-50%);
+      margin-left: -100%;
     }
   }
 }
 
-.borders {
-  col {
-    border: 1px solid;
-  }
-}
+//.borders {
+//  col {
+//    border: 1px solid;
+//  }
+//}
 
 #searchContainer {
   &.payRoll {

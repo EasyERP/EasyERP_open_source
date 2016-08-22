@@ -1704,31 +1704,15 @@ label._customCHeckbox input[type="checkbox"] {
   min-width: 100%;
   border-spacing: 0;
   border-collapse: collapse;
-  table-layout: fixed;
-  /*
-    & + .totalContainer{
-      dd, dt{
-        display: inline-block;
-        line-height: 23px;
-        font-size: 14px;
-        //width: 40%;
-        //float: left;
-      }
-      dd{
-        width: 60%;
-        .newSelectList{
-          left: 50%;
-          transform: translateX(-50%);
-        }
-      }
-    }
-  */ }
+  table-layout: fixed; }
   .payRoll-list th, .payRoll-list td {
     white-space: nowrap;
     text-overflow: ellipsis;
-    border-top: none;
     border: 1px solid transparent;
+    border-top: none;
     vertical-align: middle; }
+  .payRoll-list thead > tr {
+    border-top: none; }
   .payRoll-list tfoot {
     margin-right: 17px; }
     .payRoll-list tfoot td {
@@ -1736,12 +1720,25 @@ label._customCHeckbox input[type="checkbox"] {
       padding-right: 20px; }
   .payRoll-list tbody tr:hover {
     background: none; }
+  .payRoll-list #payRoll-Table {
+    padding: 0; }
+    .payRoll-list #payRoll-Table .datePicker {
+      padding: 0; }
+      .payRoll-list #payRoll-Table .datePicker input:not([disabled]) {
+        outline: 1px solid #66b5d4 !important; }
+      .payRoll-list #payRoll-Table .datePicker input:focus {
+        outline: 1px solid #66b5d4 !important; }
+    .payRoll-list #payRoll-Table .mainRow td {
+      border: none; }
+    .payRoll-list #payRoll-Table #payRoll-TableBody td {
+      border-top: 1px solid #d7d7d7; }
+    .payRoll-list #payRoll-Table .scrollit {
+      display: block;
+      height: calc(100vh - 2010px);
+      overflow-x: hidden; }
   .payRoll-list ._payRoll-TableBody
   td {
     border: 1px solid #d7d7d7; }
-
-._newSelectListWrap {
-  display: inline-block; }
 
 .payRoll-expenses dd, .payRoll-expenses dt {
   display: inline-block;
@@ -1769,12 +1766,7 @@ label._customCHeckbox input[type="checkbox"] {
     width: 65%; }
     .totalContainer dd .newSelectList {
       left: 50%;
-      -webkit-transform: translateX(-50%);
-          -ms-transform: translateX(-50%);
-              transform: translateX(-50%); }
-
-.borders col {
-  border: 1px solid; }
+      margin-left: -100%; }
 
 #searchContainer.payRoll {
   margin: 0 0 10px; }
@@ -3301,7 +3293,7 @@ label._customCHeckbox input[type="checkbox"] {
         color: #f2f2f2; }
 
 .ui-dialog-buttonset {
-  border: none !important;
+  border: none;
   border-top: 1px solid #d7d7d7; }
 
 .task-content {
@@ -3487,7 +3479,9 @@ label._customCHeckbox input[type="checkbox"] {
   position: relative; }
 
 ._newSelectListWrap {
-  position: relative; }
+  position: relative;
+  display: inline-block;
+  cursor: pointer; }
 
 .newSelectList {
   position: absolute;
