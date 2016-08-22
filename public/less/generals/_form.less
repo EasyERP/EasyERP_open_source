@@ -157,7 +157,49 @@
   .avatar {
     width: 140px;
     margin: 0 auto;
-    .avatar(140px, 10px, 0, 10px, 0);
+    //.avatar(140px, 10px, 0, 10px, 0);
+    display: block;
+    overflow: hidden;
+    position: relative;
+    width: 140px;
+    height: 140px;
+    margin: 10px 0 10px 0;
+
+    img {
+      height: auto;
+      width: 100%;
+    }
+
+    canvas {
+      height: auto;
+      width: 100%;
+    }
+
+    .upload {
+      overflow: hidden;
+      font-size: 15px;
+      line-height: 18px;
+      text-align: center;
+      display: block;
+
+      //.position;
+
+
+      height: 0;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      color: #fff;
+
+      input {
+        //.position;
+        height: 20px;
+        opacity: 0;
+        background: rgba(0, 0, 0, 0.5);
+        margin: 0;
+        padding: 0;
+        width: 100%;
+      }
+    }
     .left;
     .box-shadow(0, 1px, 4px, rgba(0, 0, 0, 0.4));
     position: relative;

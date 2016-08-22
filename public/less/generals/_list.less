@@ -73,10 +73,8 @@
   }
 
   .oe_sortable, .oe_sortable_sub {
-    //style for sort arrows in thead
     cursor: pointer;
     position: relative;
-    //padding-right: 15px;
     .arrow {
       display: none;
       text-align: center;
@@ -107,13 +105,7 @@
   }
 
   .enableTableOdd {
-    // class to enabled table odd color (add to tbody)
     tr {
-      //&:nth-child(odd) {
-      //  &:not(.innerRow) {
-      //    background-color: @defaultBgColorOdd-color;
-      //  }
-      //}
       &:not(.innerRow) {
         &:hover {
           background-color: @defaultBgColorOdd-color;
@@ -137,7 +129,6 @@
     }
   }
   &.enable_hover {
-    // enable hover in table (add to table)
     tbody {
       tr {
         &:hover {
