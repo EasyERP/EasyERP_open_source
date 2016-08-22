@@ -38,6 +38,10 @@
   font-style: normal;
   src: url("../font/opensans/opensans-extrabold.woff2") format("woff2"), url("../font/opensans/opensans-extrabold.woff") format("woff"), url("../font/opensans/opensans-extrabold.ttf") format("truetype");
   font-weight: 800; }
+@font-face {
+  font-family: 'Icons';
+  src: url("../font/easyERP.eot");
+  src: url("../font/easyERP.eot?#iefix") format("embedded-opentype"), url("../font/easyERP.woff") format("woff"), url("../font/easyERP.ttf") format("truetype"), url("../font/easyERP.svg#quartzregular") format("svg"); }
 * {
   box-sizing: border-box; }
   *:before, *:after {
