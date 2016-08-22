@@ -38,6 +38,10 @@
   font-style: normal;
   src: url("../font/opensans/opensans-extrabold.woff2") format("woff2"), url("../font/opensans/opensans-extrabold.woff") format("woff"), url("../font/opensans/opensans-extrabold.ttf") format("truetype");
   font-weight: 800; }
+@font-face {
+  font-family: 'Icons';
+  src: url("../font/easyERP.eot");
+  src: url("../font/easyERP.eot?#iefix") format("embedded-opentype"), url("../font/easyERP.woff") format("woff"), url("../font/easyERP.ttf") format("truetype"), url("../font/easyERP.svg#quartzregular") format("svg"); }
 * {
   box-sizing: border-box; }
   *:before, *:after {
@@ -1261,22 +1265,19 @@ h3 {
   -webkit-align-items: center;
   -ms-flex-align: center;
   -ms-grid-row-align: center;
-    align-items: center;
-}
+      align-items: center; }
 .flexRowTop {
   -webkit-box-align: start;
   -webkit-align-items: flex-start;
   -ms-flex-align: start;
   -ms-grid-row-align: flex-start;
-    align-items: flex-start;
-}
+      align-items: flex-start; }
 .flexRowBottom {
   -webkit-box-align: end;
   -webkit-align-items: flex-end;
   -ms-flex-align: end;
   -ms-grid-row-align: flex-end;
-    align-items: flex-end;
-}
+      align-items: flex-end; }
 .flexRowCenter {
   -webkit-box-pack: center;
   -ms-flex-pack: center;
@@ -1312,7 +1313,7 @@ h3 {
   -webkit-align-items: stretch;
   -ms-flex-align: stretch;
   -ms-grid-row-align: stretch;
-    align-items: stretch;
+      align-items: stretch;
   -webkit-box-direction: normal;
   -webkit-flex-direction: row;
   -ms-flex-direction: row;
@@ -1702,7 +1703,7 @@ h3 {
   text-align: center;
   vertical-align: middle;
   -ms-touch-action: manipulation;
-    touch-action: manipulation;
+      touch-action: manipulation;
   cursor: pointer;
   white-space: nowrap;
   font-size: 13px;
@@ -1906,10 +1907,9 @@ label._customCHeckbox input[type="checkbox"] {
     font-size: 13px;
     color: #5a5a5a;
     -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
-  }
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none; }
     label._customCHeckbox input[type="checkbox"] + span:before, label._customCHeckbox input[type="checkbox"] + span:after {
       position: absolute;
       content: '';
@@ -1926,9 +1926,8 @@ label._customCHeckbox input[type="checkbox"] {
     label._customCHeckbox input[type="checkbox"] + span:after {
       border: 0;
       -webkit-transform: scale(0);
-        -ms-transform: scale(0);
-        transform: scale(0);
-    }
+          -ms-transform: scale(0);
+              transform: scale(0); }
   label._customCHeckbox input[type="checkbox"]:checked + span:before {
     top: -3px;
     left: 0;
@@ -1939,14 +1938,13 @@ label._customCHeckbox input[type="checkbox"] {
     border-right: 2px solid #3e88b9;
     border-bottom: 2px solid #3e88b9;
     -webkit-transform: rotate(45deg);
-      -ms-transform: rotate(45deg);
-      transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+            transform: rotate(45deg);
     -webkit-backface-visibility: hidden;
-      backface-visibility: hidden;
+            backface-visibility: hidden;
     -webkit-transform-origin: 100% 100%;
-      -ms-transform-origin: 100% 100%;
-      transform-origin: 100% 100%;
-  }
+        -ms-transform-origin: 100% 100%;
+            transform-origin: 100% 100%; }
 
 .internal_Notes {
   min-height: 100px; }
@@ -1959,8 +1957,8 @@ label._customCHeckbox input[type="checkbox"] {
   .flex #productTree {
     -webkit-box-flex: 0;
     -webkit-flex: 0 0 250px;
-      -ms-flex: 0 0 250px;
-      flex: 0 0 250px;
+        -ms-flex: 0 0 250px;
+            flex: 0 0 250px;
     margin-top: 30px;
     border-right: 1px solid #ddd; }
     .flex #productTree ul li {
@@ -1995,9 +1993,8 @@ label._customCHeckbox input[type="checkbox"] {
       top: 50%;
       right: 5px;
       -webkit-transform: translate(0, -50%);
-        -ms-transform: translate(0, -50%);
-        transform: translate(0, -50%);
-    }
+          -ms-transform: translate(0, -50%);
+              transform: translate(0, -50%); }
       .flex #productTree .action-btn span {
         vertical-align: middle;
         cursor: pointer;
@@ -2062,23 +2059,23 @@ label._customCHeckbox input[type="checkbox"] {
     display: -ms-flexbox;
     display: flex;
     -webkit-flex-flow: row wrap;
-      -ms-flex-flow: row wrap;
-      flex-flow: row wrap;
+        -ms-flex-flow: row wrap;
+            flex-flow: row wrap;
     -webkit-box-pack: start;
     -webkit-justify-content: flex-start;
-      -ms-flex-pack: start;
-      justify-content: flex-start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
     -webkit-align-content: stretch;
-      -ms-flex-line-pack: stretch;
-      align-content: stretch;
+        -ms-flex-line-pack: stretch;
+            align-content: stretch;
     padding: 35px 0 4px 12px;
     box-sizing: border-box; }
     .flex #thumbnailContent .thumbnail.product {
       position: relative;
       -webkit-box-flex: 1;
       -webkit-flex: 1 1 200px;
-        -ms-flex: 1 1 200px;
-        flex: 1 1 200px;
+          -ms-flex: 1 1 200px;
+              flex: 1 1 200px;
       box-sizing: border-box;
       padding: 8px;
       min-width: 150px;
@@ -2105,9 +2102,8 @@ label._customCHeckbox input[type="checkbox"] {
     position: relative;
     -webkit-box-flex: 1;
     -webkit-flex-grow: 1;
-      -ms-flex-positive: 1;
-      flex-grow: 1;
-  }
+        -ms-flex-positive: 1;
+            flex-grow: 1; }
 
 .productHeading {
   margin-bottom: 5px;
@@ -2149,15 +2145,13 @@ label._customCHeckbox input[type="checkbox"] {
     padding: 0 20px;
     -webkit-flex-shrink: 0;
     -ms-flex-negative: 0;
-      flex-shrink: 0;
-  }
+        flex-shrink: 0; }
   .dateListItem .dateListBody {
     min-width: 1px;
     -webkit-flex-grow: 1;
     -webkit-box-flex: 1;
-      -ms-flex-positive: 1;
-      flex-grow: 1;
-  }
+        -ms-flex-positive: 1;
+            flex-grow: 1; }
     .dateListItem .dateListBody .dateListFooter .listFooterDate {
       color: #9a9a9e; }
 
@@ -2169,14 +2163,13 @@ label._customCHeckbox input[type="checkbox"] {
   .dateListHeader ._tagSmall {
     -webkit-flex-shrink: 0;
     -ms-flex-negative: 0;
-      flex-shrink: 0;
+        flex-shrink: 0;
     margin-right: 5px; }
   .dateListHeader .dateListDescription {
     -webkit-flex-grow: 1;
     -webkit-box-flex: 1;
-      -ms-flex-positive: 1;
-      flex-grow: 1;
-  }
+        -ms-flex-positive: 1;
+            flex-grow: 1; }
 
 ._taskListWrap {
   display: -webkit-box;
@@ -2218,7 +2211,7 @@ label._customCHeckbox input[type="checkbox"] {
 ._taskListActivitiesBlock {
   -webkit-flex-shrink: 0;
   -ms-flex-negative: 0;
-    flex-shrink: 0;
+      flex-shrink: 0;
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -2227,19 +2220,19 @@ label._customCHeckbox input[type="checkbox"] {
   -ms-flex-direction: column;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-    flex-direction: column;
+          flex-direction: column;
   width: calc(35% + 159px); }
   ._taskListActivitiesBlock ._activityHolderTitle {
     -webkit-flex-shrink: 0;
     -ms-flex-negative: 0;
-      flex-shrink: 0;
+        flex-shrink: 0;
     padding: 20px;
     border-bottom: 1px solid #c8c8d3; }
   ._taskListActivitiesBlock ._activityHolder {
     -webkit-flex-grow: 1;
     -webkit-box-flex: 1;
-      -ms-flex-positive: 1;
-      flex-grow: 1;
+        -ms-flex-positive: 1;
+            flex-grow: 1;
     padding: 0 20px;
     font-size: 14px;
     overflow: auto; }
@@ -2355,7 +2348,7 @@ label._customCHeckbox input[type="checkbox"] {
       -ms-flex-direction: column;
       -webkit-box-orient: vertical;
       -webkit-box-direction: normal;
-        flex-direction: column;
+              flex-direction: column;
       margin-left: 10px; }
     ._payrollListWrap ._payrollListItem ._payrollListSteps {
       color: #364150;
@@ -2528,13 +2521,13 @@ label._customCHeckbox input[type="checkbox"] {
   ._importListBody ._contentBlock {
     -webkit-flex-grow: 1;
     -webkit-box-flex: 1;
-      -ms-flex-positive: 1;
-      flex-grow: 1;
+        -ms-flex-positive: 1;
+            flex-grow: 1;
     padding: 16px 0 16px 24px; }
   ._importListBody ._tabsBlock {
     -webkit-flex-shrink: 0;
     -ms-flex-negative: 0;
-      flex-shrink: 0;
+        flex-shrink: 0;
     width: 500px;
     padding-right: 20px;
     margin-left: 20px; }
@@ -2586,8 +2579,8 @@ label._customCHeckbox input[type="checkbox"] {
       left: 17px;
       top: 50%;
       -webkit-transform: translate(0, -50%);
-        -ms-transform: translate(0, -50%);
-        transform: translate(0, -50%);
+          -ms-transform: translate(0, -50%);
+              transform: translate(0, -50%);
       font-style: italic;
       color: #c2c8cd; }
   ._contentBlockRow.hoverRow {
@@ -2607,8 +2600,8 @@ label._customCHeckbox input[type="checkbox"] {
     border: 1px solid #c2c8cd;
     -webkit-flex-grow: 1;
     -webkit-box-flex: 1;
-      -ms-flex-positive: 1;
-      flex-grow: 1;
+        -ms-flex-positive: 1;
+            flex-grow: 1;
     font-size: 14px; }
     ._contentBlockRow ._rowItem:hover .cleanButton {
       display: block !important; }
@@ -2622,8 +2615,8 @@ label._customCHeckbox input[type="checkbox"] {
       right: 5px;
       top: 50%;
       -webkit-transform: translate(0, -50%);
-        -ms-transform: translate(0, -50%);
-        transform: translate(0, -50%);
+          -ms-transform: translate(0, -50%);
+              transform: translate(0, -50%);
       padding: 8px;
       cursor: pointer;
       font-size: 18px;
@@ -3165,8 +3158,8 @@ label._customCHeckbox input[type="checkbox"] {
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
   -webkit-flex-direction: column;
-    -ms-flex-direction: column;
-    flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
   height: 22px;
   width: 110px;
   border: 1px solid #c8c8d3;
@@ -3178,9 +3171,8 @@ label._customCHeckbox input[type="checkbox"] {
     height: auto; }
     .choseDateRange.dropDownDateRange.open .selectArrow {
       -webkit-transform: rotate(180deg);
-        -ms-transform: rotate(180deg);
-        transform: rotate(180deg);
-    }
+          -ms-transform: rotate(180deg);
+              transform: rotate(180deg); }
   .choseDateRange.dropDownDateRange .item {
     padding: 0;
     float: none;
@@ -3194,14 +3186,13 @@ label._customCHeckbox input[type="checkbox"] {
     white-space: nowrap;
     -webkit-box-ordinal-group: 2;
     -webkit-order: 1;
-      -ms-flex-order: 1;
-      order: 1;
-  }
+        -ms-flex-order: 1;
+            order: 1; }
     .choseDateRange.dropDownDateRange .item.active {
       -webkit-box-ordinal-group: 1;
       -webkit-order: 0;
-        -ms-flex-order: 0;
-        order: 0;
+          -ms-flex-order: 0;
+              order: 0;
       background: none;
       color: #000000; }
   .choseDateRange.dropDownDateRange .selectArrow {
@@ -3473,8 +3464,8 @@ label._customCHeckbox input[type="checkbox"] {
       padding: 3px !important;
       line-height: 13px !important;
       -webkit-transform: translate(0, -50%);
-        -ms-transform: translate(0, -50%);
-        transform: translate(0, -50%);
+          -ms-transform: translate(0, -50%);
+              transform: translate(0, -50%);
       background: none; }
       .newTasksContainer .showSelect .removeSelect:hover {
         background: none;
@@ -3524,8 +3515,8 @@ label._customCHeckbox input[type="checkbox"] {
     background: #f2f2f2;
     -webkit-flex-grow: 1;
     -webkit-box-flex: 1;
-      -ms-flex-positive: 1;
-      flex-grow: 1;
+        -ms-flex-positive: 1;
+            flex-grow: 1;
     width: 10px; }
     .tabListWrap .tabListItem.active {
       background: #3e88b9; }
@@ -3816,8 +3807,8 @@ label._customCHeckbox input[type="checkbox"] {
   top: 50%;
   right: 0;
   -webkit-transform: translateY(-50%);
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
+      -ms-transform: translateY(-50%);
+          transform: translateY(-50%);
   font-weight: bold;
   font-size: 0.8em;
   padding: 0 0.3em 0.2em;
