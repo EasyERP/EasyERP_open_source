@@ -2158,7 +2158,7 @@ label._customCHeckbox input[type="checkbox"] {
   ._contractJobsListItem ._contractJobsStatusBlock.finished {
     background-color: #4BCB81; }
   ._contractJobsListItem ._contractJobsStatusBlock.inProgress {
-    background-color: #4BCB81; }
+    background-color: #3e88b9; }
 ._contractJobsListItem ._contractJobsJobBlock > div {
   line-height: 20px;
   text-overflow: ellipsis;
@@ -2175,6 +2175,8 @@ label._customCHeckbox input[type="checkbox"] {
   padding: 10px;
   text-align: left;
   vertical-align: top; }
+  .list tbody tr._contractJobsListItem td.contractCell {
+    text-align: center; }
 
 .list tbody td.contractCell {
   text-align: center; }
@@ -3445,6 +3447,14 @@ label._customCHeckbox input[type="checkbox"] {
     left: 0; }
   .newSelectList.taskPriority {
     left: -15px; }
+
+.dropDown._contractJobsFilter {
+  position: fixed;
+  top: 48px;
+  right: 13px; }
+  .dropDown._contractJobsFilter > ul {
+    left: auto;
+    right: 0; }
 
 .notFoundItems {
   text-align: center;

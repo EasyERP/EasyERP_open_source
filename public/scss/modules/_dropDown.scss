@@ -181,7 +181,6 @@
     }
 
     &:hover {
-      //border: 0 !important;
       color: #000 !important;
     }
   }
@@ -192,5 +191,17 @@
 
   &.taskPriority {
     left: -15px;
+  }
+}
+
+.dropDown {
+  &._contractJobsFilter {
+    position: fixed;
+    top: 48px;
+    right: 13px;
+    > ul {
+      left: auto;
+      right: 0;
+    }
   }
 }
