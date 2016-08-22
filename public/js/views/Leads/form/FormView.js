@@ -438,6 +438,9 @@ define([
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
+                yearRange  : '-100y:c+nn',
+                maxDate    : '-18y',
+                minDate    : null,
                 onSelect   : function (dateText) {
                     self.modelChanged['dateBirth'] = new Date(dateText);
                     $(this).closest('.propertyFormList').addClass('active');
