@@ -1691,7 +1691,7 @@ td.checkboxRow {
 .dropDown {
   position: relative;
 
-  ul {
+  > ul {
     display: none;
     position: absolute;
     top: 28px;
@@ -1700,18 +1700,15 @@ td.checkboxRow {
     border: 1px solid #bebebe;
     border-radius: 3px;
     z-index: 1;
-    box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12);
+    box-shadow: 5px 5px rgba(102, 102, 102, 0.1);
 
-    li {
+    > li {
       position: relative;
       min-width: 125px;
       padding: 0 22px 0 12px;
       line-height: 32px;
       cursor: pointer;
-
-      //&:nth-child(n+2) {
-      //  border-top: 1px solid #bebebe;
-      //}
+      white-space: nowrap;
 
       &:hover {
         background-color: #7eadcc;
