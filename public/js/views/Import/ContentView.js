@@ -71,6 +71,7 @@ define([
 
         cancelStage: function () {
             App.currentUser.imports = {};
+            App.currentUser.checkedComboImport = 'Persons';
 
             this.stage = 1;
 
@@ -134,8 +135,6 @@ define([
             }
 
             if (this.stage === 1) {
-
-
                 this.$el.find('.stageBtnBack').hide();
                 this.$el.find('#cancelBtn').hide();
                 $nextBtn.addClass('btnDisable');
@@ -149,6 +148,10 @@ define([
                 this.listenTo(this.childView, 'uploadCompleted', this.enabledNextBtn);
 
             } else if (this.stage === 2) {
+                //if (this.childView) {
+                //    this.childView.updateUser();
+                //}
+
                 this.$el.find('.stageBtnBack').show();
                 this.$el.find('#cancelBtn').show();
                 this.enabledNextBtn();
@@ -156,7 +159,6 @@ define([
                 this.childView = new MappingContentView({
                     timeStamp: this.timeStamp,
                     fileName : this.fileName
-
                 });
 
                 this.updateCurrentUser({

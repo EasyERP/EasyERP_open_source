@@ -32,6 +32,8 @@ define([
             this.fileName = options.fileName;
             this.entity = 'Customers';
             this.comparingField = 'email';
+            this.checkedCombobox = App.currentUser.checkedComboImport || 'Persons';
+            this.checkedItem = App.currentUser.checkedItemImport || 'email';
 
             this.mergeFields = {
                 Opportunities: {
@@ -85,6 +87,7 @@ define([
             var $target = $(e.target);
 
             this.comparingField = $target.data('imp');
+            App.currentUser.checkedItemImport = this.comparingField;
 
             thisEl.find('.item').removeClass('active');
             $target.addClass('active');
@@ -92,18 +95,24 @@ define([
 
         changeCombobox: function (e) {
             var thisEl = this.$el;
-            var self = this;
             var $target = $(e.target);
             var $combobox = $('#changeTableCombobox');
             var dropDownAttr = $target.data('table');
 
-            this.entity = $target.val();
+            App.currentUser.checkedComboImport = $target.val();
+            this.entity = dropDownAttr;
 
             $combobox.html('');
 
+            this.drowingCombobox($combobox ,dropDownAttr, this);
+
+        },
+
+        drowingCombobox: function($combobox, dropDownAttr, self) {
             _.each(this.mergeFields[dropDownAttr].names, function (item, key) {
-                $combobox.append('<div date-imp="' + self.mergeFields[dropDownAttr].items[key] + '" class="item">' + item + '</div>');
+                $combobox.append('<div data-imp="' + self.mergeFields[dropDownAttr].items[key] + '" class="item">' + item + '</div>');
             });
+
             $combobox.append('<span class="selectArrow"></span>');
         },
 
@@ -122,9 +131,8 @@ define([
         },
 
         importFiles: function (e) {
-            var timeStamp = +(new Date());
-            var currentUser = App.currentUser;
             var $thisEl = this.$el;
+            var timeStamp = +(new Date());
             var fileName;
             var userModel;
             var importObj;
@@ -133,10 +141,29 @@ define([
                 this.importView.undelegateEvents();
             }
 
-            fileName = $thisEl.find('#inputAttach')[0].files[0].name;
+            this.fileName = $thisEl.find('#inputAttach')[0].files[0].name;
+
+            this.updateUser();
+
+            this.importView = new AttachView({el: '#forImport', timeStamp: timeStamp});
+
+            this.importView.sendToServer(e, null, this);
+
+            this.changingStatus();
+
+            this.listenTo(this.importView, 'uploadCompleted', function () {
+                this.trigger('uploadCompleted');
+            });
+        },
+
+        updateUser: function() {
+            var currentUser = App.currentUser;
+            var timeStamp = +(new Date());
+            var userModel;
+            var importObj;
 
             importObj = {
-                fileName      : fileName,
+                fileName      : this.fileName,
                 timeStamp     : +timeStamp,
                 stage         : 1,
                 type          : this.entity,
@@ -155,15 +182,6 @@ define([
 
             App.currentUser.imports = importObj;
 
-            this.importView = new AttachView({el: '#forImport', timeStamp: timeStamp});
-
-            this.importView.sendToServer(e, null, this);
-
-            this.changingStatus();
-
-            this.listenTo(this.importView, 'uploadCompleted', function () {
-                this.trigger('uploadCompleted');
-            });
         },
 
         changingStatus: function() {
@@ -178,12 +196,32 @@ define([
 
                 $attachFileName.html('You have uploaded file ' + '<span></span>');
                 $attachFileName.find('span').html(App.currentUser.imports.fileName);
+            } else {
+                $('#fileName').text('');
             }
         },
 
         render: function () {
             var $thisEl = this.$el;
+            var $combobox;
+
+            this.entity = 'Opportunities';
+
+            if (this.checkedCombobox === 'Persons' || this.checkedCombobox === 'Companies') {
+                this.entity = 'Customers';
+            } else if (this.checkedCombobox === 'Employees') {
+                this.entity = 'Opportunities';
+            }
+
             $thisEl.html(this.contentTemplate({fileName: this.fileName}));
+
+            $combobox = $('#changeTableCombobox');
+            $thisEl.find('.changeTableBtn[value="' + this.checkedCombobox + '"]').click();
+            this.drowingCombobox($combobox, this.entity, this);
+            //$thisEl.find('.item[data-imp="' + this.checkedItem + '"]').click();
+            $thisEl.find('.item').removeClass('active');
+            $thisEl.find('.item[data-imp="' + this.checkedItem + '"]').addClass('active');
+
 
             $thisEl.find('.importContainer').on('drop', function (e) {
                 if (e.originalEvent.dataTransfer && e.originalEvent.dataTransfer.files.length) {
@@ -194,6 +232,7 @@ define([
                     $thisEl.find('#inputAttach')[0].files = e.originalEvent.dataTransfer.files;
                 }
             });
+
 
             $thisEl.find('.importContainer').on('dragover', function (e) {
                 e.preventDefault();
