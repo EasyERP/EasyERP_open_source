@@ -100,14 +100,6 @@ var Filters = function (models) {
                 as          : 'salesManager'
             }
         }, {
-            $project: {
-                project        : 1,
-                workflow       : 1,
-                customer       : 1,
-                projectManagers: 1,
-                salesManager   : {$arrayElemAt: ['$salesManager', 0]}
-            }
-        }, {
             $lookup: {
                 from        : 'Employees',
                 localField  : 'projectManagers.employeeId',
@@ -116,25 +108,29 @@ var Filters = function (models) {
             }
         }, {
             $project: {
+                project       : 1,
+                workflow      : 1,
+                customer      : 1,
+                projectManager: {$arrayElemAt: ['$projectManager', 0]},
+                salesManager  : {$arrayElemAt: ['$salesManager', 0]}
+            }
+        }, {
+            $project: {
                 project     : 1,
                 workflow    : 1,
                 customer    : 1,
                 salesManager: {
                     _id : '$salesManager._id',
-                    name: '$salesManager.name'
+                    name: {
+                        $concat: ['$salesManager.name.first', ' ', '$salesManager.name.last']
+                    }
                 },
 
-                projectManager: {$arrayElemAt: ['$projectManager', 0]}
-            }
-        }, {
-            $project: {
-                project       : 1,
-                workflow      : 1,
-                customer      : 1,
-                salesManager  : 1,
                 projectManager: {
                     _id : '$projectManager._id',
-                    name: '$projectManager.name'
+                    name: {
+                        $concat: ['$projectManager.name.first', ' ', '$projectManager.name.last']
+                    }
                 }
             }
         }, {
@@ -151,21 +147,49 @@ var Filters = function (models) {
                 customer: {
                     $addToSet: {
                         _id : '$customer._id',
-                        name: {$concat: ['$customer.name.first', ' ', '$customer.name.last']}
+                        name: {
+                            $concat: ['$customer.name.first', ' ', '$customer.name.last']
+                        }
                     }
                 },
 
                 projectManager: {
                     $addToSet: {
-                        _id : '$projectManager._id',
-                        name: {$concat: ['$projectManager.name.first', ' ', '$projectManager.name.last']}
+                        _id: {
+                            $cond: {
+                                if  : {$eq: ['$projectManager.name', null]},
+                                then: 'null',
+                                else: '$projectManager._id'
+                            }
+                        },
+
+                        name: {
+                            $cond: {
+                                if  : {$eq: ['$projectManager.name', null]},
+                                then: 'Empty',
+                                else: '$projectManager.name'
+                            }
+                        }
                     }
                 },
 
                 salesManager: {
                     $addToSet: {
-                        _id : '$salesManager._id',
-                        name: {$concat: ['$salesManager.name.first', ' ', '$salesManager.name.last']}
+                        _id: {
+                            $cond: {
+                                if  : {$eq: ['$salesManager.name', null]},
+                                then: 'null',
+                                else: '$salesManager._id'
+                            }
+                        },
+
+                        name: {
+                            $cond: {
+                                if  : {$eq: ['$salesManager.name', null]},
+                                then: 'Empty',
+                                else: '$salesManager.name'
+                            }
+                        }
                     }
                 },
 
@@ -176,7 +200,8 @@ var Filters = function (models) {
                     }
                 }
             }
-        }];
+        }
+        ];
 
         aggregation = Jobs.aggregate(pipeLine);
 
