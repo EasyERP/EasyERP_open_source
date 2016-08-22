@@ -3,9 +3,7 @@
   margin-left: auto;
   margin-right: auto;
   padding-left: 12px;
-  padding-left: 12px;
   padding-left: 0.75rem;
-  padding-right: 12px;
   padding-right: 12px;
   padding-right: 0.75rem; }
 
@@ -60,9 +58,7 @@
 
 .row {
   margin-left: -15px;
-  margin-left: -15px;
   margin-left: -0.9375rem;
-  margin-right: -15px;
   margin-right: -15px;
   margin-right: -0.9375rem; }
 
@@ -73,9 +69,7 @@
   position: relative;
   box-sizing: border-box;
   padding-left: 15px;
-  padding-left: 15px;
   padding-left: 0.9375rem;
-  padding-right: 15px;
   padding-right: 15px;
   padding-right: 0.9375rem; }
 
@@ -1884,29 +1878,33 @@ label._customCHeckbox input[type="checkbox"] {
 .chart-tabs:after {
   clear: both; }
 
-.ui-dialog-buttonpane {
-  padding: 0 0 10px !important;
-  margin-top: 0 !important;
-  margin-right: 20px !important;
-  margin-left: 20px !important; }
-.ui-dialog .form-holder {
-  padding: 15px 20px 0; }
-  .ui-dialog .form-holder:before, .ui-dialog .form-holder:after {
-    content: " ";
-    display: table; }
-  .ui-dialog .form-holder:after {
-    clear: both; }
-  .ui-dialog .form-holder form {
-    max-width: 100%; }
-.ui-dialog .inner {
-  position: relative;
-  padding: 5px 0;
-  background-color: #ffffff; }
-.ui-dialog .attach_file {
-  position: absolute;
-  bottom: 25px;
-  right: 5px;
-  font-size: 16px; }
+.ui-dialog {
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 100%; }
+  .ui-dialog-buttonpane {
+    padding: 0 0 10px !important;
+    margin-top: 0 !important;
+    margin-right: 20px !important;
+    margin-left: 20px !important; }
+  .ui-dialog .form-holder {
+    padding: 15px 20px 0; }
+    .ui-dialog .form-holder:before, .ui-dialog .form-holder:after {
+      content: " ";
+      display: table; }
+    .ui-dialog .form-holder:after {
+      clear: both; }
+    .ui-dialog .form-holder form {
+      max-width: 100%; }
+  .ui-dialog .inner {
+    position: relative;
+    padding: 5px 0;
+    background-color: #ffffff; }
+  .ui-dialog .attach_file {
+    position: absolute;
+    bottom: 25px;
+    right: 5px;
+    font-size: 16px; }
 
 .mainTabs ul.dialog-tabs {
   padding-top: 10px; }
@@ -2192,6 +2190,9 @@ label._customCHeckbox input[type="checkbox"] {
   margin-left: 5px;
   display: inline-block; }
 
+.current-selected {
+  display: inline-block; }
+
 .noteWrapper .buttons {
   margin-top: 10px !important; }
   .noteWrapper .buttons .btn + .btn {
@@ -2233,8 +2234,7 @@ label._customCHeckbox input[type="checkbox"] {
     .ui-dialog ._salesModal ._modalLabel label {
       color: #7f7f80;
       font-weight: bold; }
-  .ui-dialog ._salesModal ._modalSelect a,
-  .ui-dialog ._salesModal ._modalSelect input {
+  .ui-dialog ._salesModal ._modalSelect > a, .ui-dialog ._salesModal ._modalSelect > input {
     display: block;
     padding: 5px;
     width: 100% !important;
@@ -2243,8 +2243,7 @@ label._customCHeckbox input[type="checkbox"] {
     border: 1px solid #c8c8d3;
     border-radius: 3px;
     cursor: pointer; }
-    .ui-dialog ._salesModal ._modalSelect a:hover,
-    .ui-dialog ._salesModal ._modalSelect input:hover {
+    .ui-dialog ._salesModal ._modalSelect > a:hover, .ui-dialog ._salesModal ._modalSelect > input:hover {
       text-decoration: none; }
 
 .dropDownDateRangeContainer {
@@ -2749,7 +2748,60 @@ label._customCHeckbox input[type="checkbox"] {
 .chartTopBox ._filterDropDownWrap {
   margin-top: 9px; }
 
+._modalList {
+  position: relative; }
+
+.newSelectList {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  border: solid 1px #7f7f80;
+  background-color: #fff;
+  z-index: 100; }
+  .newSelectList li {
+    margin: 0;
+    padding: 3px 16px 5px;
+    cursor: pointer;
+    font-size: 12px;
+    text-align: left;
+    color: #4d5a75; }
+    .newSelectList li.testing, .newSelectList li.analysis {
+      background-color: #D9FFC8 !important; }
+    .newSelectList li.merge {
+      color: #C00 !important;
+      background-color: #FFE3E3 !important; }
+    .newSelectList li.design {
+      color: #000 !important;
+      background-color: #FFEA73 !important; }
+    .newSelectList li.cancelled {
+      color: #FFF !important;
+      background-color: #C00 !important; }
+    .newSelectList li.done {
+      color: #000 !important;
+      background-color: #BEF624 !important; }
+    .newSelectList li.selected {
+      color: #f3f3f3;
+      background-color: #545454; }
+    .newSelectList li:hover {
+      border: 0 !important;
+      color: #7eadcc !important; }
+  .newSelectList.stage {
+    left: 0; }
+  .newSelectList.taskPriority {
+    left: -15px; }
+
 .notFoundItems {
   text-align: center;
   margin: 100px 0;
   font-size: 20px; }
+
+._projectAttachField .attachments {
+  margin-top: 15px; }
+
+._projectTableLeftAlign th,
+._projectTableLeftAlign td {
+  text-align: left !important; }
+
+._projectTableVisible td {
+  overflow: visible;
+  position: relative; }

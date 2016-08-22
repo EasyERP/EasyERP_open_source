@@ -1,0 +1,19 @@
+._projectAttachField {
+  .attachments {
+    margin-top: 15px;
+  }
+}
+
+._projectTableLeftAlign {
+  th,
+  td {
+    text-align: left !important;
+  }
+}
+
+._projectTableVisible {
+  td {
+    overflow: visible;
+    position: relative;
+  }
+}
