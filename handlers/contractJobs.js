@@ -22,6 +22,12 @@ var Countries = function (models) {
         var startDate = data.startDate;
         var endDate = data.endDate;
         var matchObject = {};
+        var sort = data.sort || {_id: -1};
+        var sortKeys = Object.keys(sort);
+
+        sortKeys.forEach(function (el) {
+            sort[el] = parseInt(sort[el], 10);
+        });
 
         if (filter && typeof filter === 'object') {
             // optionsObject.$and = caseFilter(filter);
@@ -141,9 +147,7 @@ var Countries = function (models) {
                 }, {
                     $match: filterObject
                 }, {
-                    $sort: {
-                        _id: -1
-                    }
+                    $sort: sort
                 }, {
                     $skip: skip
                 }, {

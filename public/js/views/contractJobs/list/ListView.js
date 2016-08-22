@@ -18,7 +18,9 @@ define([
         contentType      : 'contractJobs',
 
         events: {
-            'click .invoice': 'showInvoice'
+            'click .invoice': 'showInvoice',
+            'click #sortBy' : 'openSortDrop'
+
         },
 
         initialize: function (options) {
@@ -44,7 +46,7 @@ define([
             if (!this.filter.date) {
                 this.filter.date = {
                     key  : 'date',
-                    type: 'date',
+                    type : 'date',
                     value: [dateRange.startDate, dateRange.endDate]
                 };
 
@@ -56,6 +58,14 @@ define([
             custom.cacheToApp('contractJobs.filter', this.filter);
 
             ListViewBase.prototype.initialize.call(this, options);
+        },
+
+        openSortDrop: function (e) {
+            var $target = $(e.target);
+
+            e.preventDefault();
+
+            $target.closest('.dropDown').toggleClass('open');
         },
 
         showInvoice: function (e) {
@@ -98,7 +108,7 @@ define([
 
             this.filter.date = {
                 key  : 'date',
-                type: 'date',
+                type : 'date',
                 value: [stDate, enDate]
             };
 
