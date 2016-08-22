@@ -48,6 +48,7 @@ define([
         events: {
             'click .importBtn'   : 'importFile',
             'change .inputAttach': 'importFiles',
+            'click #cancelBtn'   : 'cancelStage',
             'click .stageBtn'    : 'selectStage'
         },
 
@@ -66,6 +67,12 @@ define([
 
             this.render();
             this.selectStage();
+        },
+
+        cancelStage: function () {
+            App.currentUser.imports = {};
+
+            this.stage = 1;
         },
 
         updateCurrentUser: function (options, callback) {
@@ -101,6 +108,7 @@ define([
             var $target;
             var url = '/importFile/preview';
             var self = this;
+            var $nextBtn = this.$el.find('.stageBtnNext');
 
             if (e) {
                 $target = $(e.target);
@@ -122,7 +130,12 @@ define([
             }
 
             if (this.stage === 1) {
+
+
                 this.$el.find('.stageBtnBack').hide();
+                this.$el.find('#cancelBtn').hide();
+                $nextBtn.addClass('btnDisable');
+                $nextBtn.prop('disabled', true);
                 this.childView = new UploadView({fileName: this.fileName});
 
                 if (this.timeStamp) {
@@ -133,6 +146,7 @@ define([
 
             } else if (this.stage === 2) {
                 this.$el.find('.stageBtnBack').show();
+                this.$el.find('#cancelBtn').show();
                 this.enabledNextBtn();
 
                 this.childView = new MappingContentView({
