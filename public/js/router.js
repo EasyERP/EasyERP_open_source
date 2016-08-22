@@ -504,7 +504,6 @@ define([
                         url += '/c=' + count;
                     }
 
-
                     custom.setCurrentVT('list');
 
                     context.changeView(contentview);
@@ -806,7 +805,7 @@ define([
                     var topbarView = new topBarView({actionType: "Content"});
 
                     topbarView.bind('backToSettingsEvent', contentview.backToSettings, contentview);
-                    
+
                     self.changeView(contentview);
                     self.changeTopBarView(topbarView);
                 });
@@ -1091,6 +1090,10 @@ define([
                 }
                 if (isNaN(count)) {
                     count = CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE;
+                }
+
+                if (contentType === 'contractJobs') {
+                    count = 10;
                 }
 
                 if (!filter) {
@@ -1535,7 +1538,7 @@ define([
                 require([contentViewUrl, topBarViewUrl, collectionUrl], function (contentView, topBarView, workflowsCollection) {
                     var startTime = new Date();
 
-                    App.filtersObject.filter = filter;
+                    App.filtersObject.filter = JSON.parse(filter);
 
                     var collection = new workflowsCollection({id: contentType});
 
@@ -1565,6 +1568,10 @@ define([
                         }
 
                         url = encodeURI(url);
+
+                        if (filter) {
+                            url += '/filter=' + encodeURI(JSON.stringify(filter));
+                        }
 
                         Backbone.history.navigate(url, {replace: true});
                     }

@@ -226,6 +226,10 @@ define([
                 self.responseObj['#salesPersonDd'] = employees;
             });
 
+            dataService.getData('/countries/getForDD', {}, function (countries) {
+                self.responseObj['#country'] = countries.data;
+            });
+
             this.formProperty = new PersonFormProperty({
                 parentModel: this.formModel,
                 attribute  : 'company',

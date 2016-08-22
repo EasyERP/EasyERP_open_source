@@ -106,6 +106,7 @@ module.exports = (function () {
             currency: {type: String, default: ''}
         },
 
+        jobPosition     : {type: String, default: ''},
         creationDate    : {type: Date, default: Date.now},
         tempCompanyField: {type: String, default: ''},
         company         : {type: ObjectId, ref: 'Customers', default: null},

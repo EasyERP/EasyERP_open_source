@@ -25,7 +25,7 @@ $base-border : $white;
 // Buttons ---------------
 $btnBorderColor: map-get($erp-colors, 'light-gray');
 $btnTextColor: map-get($erp-colors, 'lighter-gray');
-$btnBgColor: map-get($erp-colors, 'darker-gray');
+$btnBgColor: map-get($erp-colors, 'white');
 // -----------------------
 
 // Header ----------------
@@ -110,4 +110,9 @@ $payroll-font-gray: map-get($erp-colors, 'light-gray');
 $payroll-font-darkgray: map-get($erp-colors, 'dark-gray');
 $payroll-font-indigo2: map-get($erp-colors, 'indigo2');
 $payroll-font-indigo3: map-get($erp-colors, 'indigo3');
+// -----------------------
+
+// Contract jobs----------
+$contractJobs-green-bg: map-get($erp-colors, 'green');
+$contractJobs-blue-bg: map-get($erp-colors, 'blue');
 // -----------------------

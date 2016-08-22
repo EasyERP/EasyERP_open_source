@@ -54,7 +54,9 @@
                                     <dt><label for="zip">Zip </label></dt>
                                     <dd><input type="text" name="zip" id="zip" value="<%=model.address.zip%>" placeholder="Zip" maxlength="32" /></dd>
                                     <dt><label for="country">Country </label></dt>
-                                    <dd><input type="text" name="country" id="country" value="<%=model.address.country%>" placeholder="Country" maxlength="32" /></dd>
+                                    <dd>
+                                        <a class="current-selected" name="country"  data-id="address_country" id="country" data-value="<%=model.address.country%>"><%=model.address.country || 'Select'%></a>
+                                    </dd>
                                 </dl>
 
                             </div>

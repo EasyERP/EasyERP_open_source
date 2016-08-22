@@ -7,8 +7,8 @@
 <div class="person-info">
     <div class="propertyFormList">
         <label>Name</label>
-        <div  class="inputBox">
-            <input class="editable"  id="name" value="<%=model.name%>"/>
+        <div class="inputBox">
+            <input class="editable" id="name" value="<%=model.name%>"/>
         </div>
     </div>
     <div class="propertyFormList">
@@ -30,7 +30,8 @@
     <div class="propertyFormList">
         <label>Priority</label>
         <div class="inputBox _newSelectListWrap">
-            <a class="current-selected assignName"  href="javascript:;" id="priorityDd"  data-id="priority"><%= model.priority%></a>
+            <a class="current-selected assignName" href="javascript:;" id="priorityDd" data-id="priority"><%=
+                model.priority%></a>
         </div>
     </div>
     <div class="propertyFormList">
@@ -52,7 +53,8 @@
     <div class="propertyFormList">
         <label></label>
         <div class="inputBox _newSelectListWrap">
-            <a class="current-selected assignName"  href="javascript:;" id="customerDd"  data-id="customer"><%=model.customer ? model.customer.fullName : 'Select'%></a>
+            <a class="current-selected assignName" href="javascript:;" id="customerDd" data-id="customer"><%=model.customer
+                ? model.customer.fullName : 'Select'%></a>
         </div>
     </div>
     <div class="propertyFormList">
@@ -68,7 +70,13 @@
         </div>
     </div>
     <div class="propertyFormList">
-        <label>Bate of Birth</label>
+        <label>Job Position</label>
+        <div class="inputBox">
+            <input class="editable" id="jobPosition" value="<%=model.jobPosition%>"/>
+        </div>
+    </div>
+    <div class="propertyFormList">
+        <label>Date of Birth</label>
         <div class="inputBox">
             <input class="extrainfo" type="text" name="Date of Birth" id="dateBirth"
                    value="<%=model.dateBirth || ''%>"
@@ -126,7 +134,8 @@
     <div class="propertyFormList">
         <label></label>
         <div class="inputBox _newSelectListWrap">
-            <a class="current-selected assignName"  href="javascript:;" id="companyDd"  data-id="company"><%=model.company ? model.company.fullName : 'Select'%></a>
+            <a class="current-selected assignName" href="javascript:;" id="companyDd" data-id="company"><%=model.company
+                ? model.company.fullName : 'Select'%></a>
         </div>
     </div>
 
@@ -163,8 +172,9 @@
     </div>
     <div class="propertyFormList">
         <label>Country</label>
-        <div class="inputBox">
-            <input class="editable" id="address_country" value="<%=model.address.country%>"/>
+        <div class="inputBox _newSelectListWrap">
+            <a class="current-selected" href="javascript:;" id="address_country" data-id="address_country"
+               data-value="<%=model.address.country%>"><%=model.address.country || 'Select'%></a>
         </div>
     </div>
 

@@ -81,6 +81,12 @@
                             </div>
                         </div>
                         <div class="propertyFormList">
+                            <label>Job Position</label>
+                            <div class="inputBox">
+                                <input class="editable" id="jobPosition" value="<%=model.jobPosition%>"/>
+                            </div>
+                        </div>
+                        <div class="propertyFormList">
                             <label>Date of Birth</label>
                             <div class="inputBox">
                                 <input class="extrainfo" type="text" name="Date of Birth" id="dateBirth"
@@ -180,8 +186,10 @@
                         </div>
                         <div class="propertyFormList">
                             <label>Country</label>
-                            <div class="inputBox">
-                                <input class="editable" id="address_country" value="<%=model.address.country%>"/>
+                            <div class="inputBox _newSelectListWrap">
+                                <a class="current-selected" href="javascript:;" id="address_country"
+                                   data-id="address_country"
+                                   data-value="<%=model.address.country%>"><%=model.address.country || 'Select'%></a>
                             </div>
                         </div>
 

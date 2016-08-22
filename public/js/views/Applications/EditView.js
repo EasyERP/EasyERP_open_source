@@ -582,7 +582,7 @@
 
             $thisEl.find('dd').find('.homeAddress').each(function (index, addressLine) {
                 $el = $(addressLine);
-                homeAddress[$el.attr('name')] = $.trim($el.val());
+                homeAddress[$el.attr('name')] = $.trim($el.val()) || $el.attr('data-id');
             });
 
             $tr = $jobTrs;
@@ -675,11 +675,11 @@
                 jobType    : jobType,
                 marital    : marital,
                 workAddress: {
-                    street : $.trim($thisEl.find('#street').val()),
-                    city   : $.trim($thisEl.find('#city').val()),
-                    state  : $.trim($thisEl.find('#state').val()),
-                    zip    : $.trim($thisEl.find('#zip').val()),
-                    country: $.trim($thisEl.find('#country').val())
+                    street : $.trim($thisEl.find('#applicationsEditStreet').val()),
+                    city   : $.trim($thisEl.find('#applicationsEditCity').val()),
+                    state  : $.trim($thisEl.find('#applicationsEditState').val()),
+                    zip    : $.trim($thisEl.find('#applicationsEditZip').val()),
+                    country: $thisEl.find('#applicationsEditCountry').attr('data-id')
                 },
 
                 social: {
@@ -988,6 +988,7 @@
             populate.get('#relatedUsersDd', CONSTANTS.URLS.USERS_FOR_DD, {}, 'login', this, false, true);
             populate.get('#payrollStructureTypeDd', CONSTANTS.URLS.PAYROLLSTRUCTURETYPES_FORDD, {}, 'name', this, true);
             populate.get('#scheduledPayDd', CONSTANTS.URLS.SCHEDULEDPAY_FORDD, {}, 'name', this, true);
+            populate.get('#applicationsEditCountry', CONSTANTS.URLS.COUNTRIES, {}, '_id', this);
 
             common.canvasDraw({model: this.currentModel.toJSON()}, this);
 

@@ -350,6 +350,35 @@
             array: ['name', 'customer', 'workflow', 'salesManager', 'projectManager']
         },
 
+        contractJobs: {
+            project: {
+                displayName: 'Project Name',
+                backend    : 'project._id'
+            },
+
+            customer: {
+                displayName: 'Contact',
+                backend    : 'project.customer'
+            },
+
+            workflow: {
+                displayName: 'Status',
+                backend    : 'workflow._id'
+            },
+
+            salesManager: {
+                displayName: 'Sales Manager',
+                backend    : 'salesManager.employeeId'
+            },
+
+            projectManager: {
+                displayName: 'Project Manager',
+                backend    : 'projectManager.employeeId'
+            },
+
+            array: ['project', 'customer', 'workflow', 'salesManager', 'projectManager']
+        },
+
         Leads: {
             contactName: {
                 displayName: 'Contact Name',

@@ -23,7 +23,7 @@ MongoClient.connect(url, function (err, db) {
 
     function childModule(callback) {
         var module = {
-            _id: 111,
+            _id: 112,
             mname: 'Dashboard',
             href: 'reportsDashboard',
             sequence: 0,

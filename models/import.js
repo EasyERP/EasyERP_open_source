@@ -6,6 +6,7 @@ module.exports = (function () {
         user     : {type: ObjectId, default: null, ref: 'Users'},
         date     : {type: Date, default: Date.now},
         result   : JSON,
+        filePath : {type: String, default: ''},
         fileName : {type: String, default: ''},
         timeStamp: {type: Number}
     }, {collection: 'Imports'});

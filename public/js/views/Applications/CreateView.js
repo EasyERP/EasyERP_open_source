@@ -104,11 +104,11 @@ define([
             var marital = $thisEl.find('#maritalDd').attr('data-id');
 
             var workAddress = {
-                street : $.trim($thisEl.find('#street').val()),
-                city   : $.trim($thisEl.find('#city').val()),
-                state  : $.trim($thisEl.find('#state').val()),
-                zip    : $.trim($thisEl.find('#zip').val()),
-                country: $.trim($thisEl.find('#country').val())
+                street : $.trim($thisEl.find('#applicationsCreateStreet').val()),
+                city   : $.trim($thisEl.find('#applicationsCreateCity').val()),
+                state  : $.trim($thisEl.find('#applicationsCreateState').val()),
+                zip    : $.trim($thisEl.find('#applicationsCreateZip').val()),
+                country: $thisEl.find('#applicationsCreateCountry').attr('data-id')
             };
 
             var social = {
@@ -198,7 +198,7 @@ define([
 
             $thisEl.find('dd').find('.homeAddress').each(function () {
                 var elem = $(this);
-                homeAddress[elem.attr('name')] = $.trim(elem.val());
+                homeAddress[elem.attr('name')] = $.trim(elem.val()) || elem.attr('data-id');
             });
 
             $thisEl.find('.groupsAndUser tr').each(function () {
@@ -328,6 +328,7 @@ define([
             populate.get('#jobPositionDd', CONSTANTS.URLS.JOBPOSITIONS_FORDD, {}, 'name', this);
             populate.get('#jobTypeDd', CONSTANTS.URLS.JOBPOSITIONS_JOBTYPE, {}, '_id', this);
             populate.get('#nationality', CONSTANTS.URLS.EMPLOYEES_NATIONALITY, {}, '_id', this);
+            populate.get('#applicationsCreateCountry', CONSTANTS.URLS.COUNTRIES, {}, '_id', this);
             populate.get2name('#projectManagerDD', CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this);
             populate.get('#relatedUsersDd', CONSTANTS.URLS.USERS_FOR_DD, {}, 'login', this, false, true);
             populate.get('#weeklySchedulerDd', '/weeklyScheduler/forDd', {}, 'name', this, true);

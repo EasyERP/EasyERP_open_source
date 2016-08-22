@@ -603,7 +603,7 @@ define([
 
             $thisEl.find('dd').find('.homeAddress').each(function (index, addressLine) {
                 var $el = $thisEl.find(addressLine);
-                homeAddress[$el.attr('name')] = $.trim($el.val());
+                homeAddress[$el.attr('name')] = $.trim($el.val()) || $el.attr('data-id');
             });
 
             haveSalary = !!$jobTrs.find('td[data-id="salary"]').length;
@@ -934,6 +934,7 @@ define([
             populate.get('#departmentsDd', CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, 'name', this);
             populate.get('#payrollStructureTypeDd', CONSTANTS.URLS.PAYROLLSTRUCTURETYPES_FORDD, {}, 'name', this);
             populate.get('#scheduledPayDd', CONSTANTS.URLS.SCHEDULEDPAY_FORDD, {}, 'name', this);
+            populate.get('#employeeEditCountry', CONSTANTS.URLS.COUNTRIES, {}, '_id', this);
 
             common.canvasDraw({model: this.currentModel.toJSON()}, this);
 

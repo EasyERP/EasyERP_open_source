@@ -13,6 +13,11 @@ module.exports = (function () {
             default: ''
         },
 
+        filePath: {
+            type   : String,
+            default: ''
+        },
+
         user: {
             type   : ObjectId,
             ref    : 'Users',

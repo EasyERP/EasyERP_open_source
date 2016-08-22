@@ -141,7 +141,7 @@ define([
         chooseOption: function (e) {
             var $target = $(e.target);
             var holder = $target.parents('.inputBox').find('.current-selected');
-            var type = $target.closest('a').attr('data-id');
+            var type = $target.closest('a').attr('data-id').replace('_', '.');
             var text = $target.text();
             var id = $target.attr('id');
 
@@ -247,7 +247,8 @@ define([
                 context.$el.find('#address_city').val(customer.address.city);
                 context.$el.find('#address_state').val(customer.address.state);
                 context.$el.find('#address_zip').val(customer.address.zip);
-                context.$el.find('#address_country').val(customer.address.country);
+                context.$el.find('#address_country').attr('data-id', customer.address.country);
+                context.$el.find('#address_country').text(customer.address.country);
                 context.$el.find('#tempCompanyField').val(customer.name.first);
                 context.modelChanged.address = {
                     street : customer.address.street,
@@ -377,6 +378,10 @@ define([
                 self.responseObj['#companyDd'] = employees;
             });
 
+            dataService.getData('/countries/getForDd', {}, function (countries) {
+
+                self.responseObj['#address_country'] = countries.data;
+            });
             this.renderTags();
 
             this.editorView = new EditorView({
@@ -433,6 +438,9 @@ define([
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
+                yearRange  : '-100y:c+nn',
+                maxDate    : '-18y',
+                minDate    : null,
                 onSelect   : function (dateText) {
                     self.modelChanged['dateBirth'] = new Date(dateText);
                     $(this).closest('.propertyFormList').addClass('active');

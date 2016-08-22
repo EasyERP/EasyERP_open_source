@@ -70,6 +70,7 @@ define([], function () {
         CASHBOOK          : 'cashBook', // cash book
         CASHTRANSFER      : 'cashTransfer',
         REPORTSDASHBOARD  : 'reportsDashboard',
+        CONTRACTJOBS      : 'contractJobs',
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
@@ -181,6 +182,7 @@ define([], function () {
             APPLICATIONS_WFLENGTH      : '/applications/getApplicationsLengthByWorkflows',
             APPLICATIONS_KANBAN        : '/applications/',
             EMPLOYEES_NATIONALITY      : '/employees/nationality',
+            COUNTRIES                  : '/countries/getForDd',
             JOBPOSITIONS_JOBTYPE       : '/jobPositions/jobType',
             JOBPOSITIONS_FORDD         : '/jobPositions/getForDd',
             DEPARTMENTS_FORDD          : '/departments/getForDD',
@@ -202,6 +204,7 @@ define([], function () {
             PAYROLLSTRUCTURETYPES_FORDD: '/payrollStructureTypes/forDd',
             PAYMENT_METHOD_DD          : 'paymentMethod/',
             DEALTASKS                  : '/DealTasks/',
+            CONTRACTJOBS               : '/contractJobs/'
         },
 
         MID: {

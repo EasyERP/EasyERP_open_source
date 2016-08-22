@@ -46,7 +46,8 @@ define([
                     context.$el.find('#city').val(customer.address.city);
                     context.$el.find('#state').val(customer.address.state);
                     context.$el.find('#zip').val(customer.address.zip);
-                    context.$el.find('#country').val(customer.address.country);
+                    context.$el.find('#country').attr('data-id', customer.address.country);
+                    context.$el.find('#country').text(customer.address.country);
 
                 }, this);
             } else {
@@ -133,6 +134,7 @@ define([
             var first = $.trim($thisEl.find('#first').val());
             var last = $.trim($thisEl.find('#last').val());
             var tempCompany = $.trim($thisEl.find('#company').val());
+            var jobPosition = $.trim($thisEl.find('#jobPosition').val());
             var company = $thisEl.find('#companyDd').attr('data-id');
 
             var contactName = {
@@ -182,7 +184,7 @@ define([
             }
             $thisEl.find('._modalSelect').find('.address').each(function () {
                 var el = $(this);
-                address[el.attr('name')] = $.trim(el.val());
+                address[el.attr('name')] = $.trim(el.val() || el.text());
             });
             $thisEl.find('.groupsAndUser tr').each(function () {
                 if ($(this).data('type') === 'targetUsers') {
@@ -200,6 +202,7 @@ define([
                     LI: LI.replace('linkedin', '[]'),
                     FB: FB
                 },
+                jobPosition     : jobPosition,
                 dateBirth       : dateBirth,
                 company         : company,
                 campaign        : $('#campaignDd').attr('data-id'),
@@ -302,6 +305,7 @@ define([
             populate.getWorkflow('#workflowsDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'Leads'}, 'name', this, true);
             populate.get2name('#customerDd', CONSTANTS.URLS.CUSTOMERS, {type: 'Person'}, this, true, true);
             populate.get2name('#companyDd', CONSTANTS.URLS.CUSTOMERS, {type: 'Company'}, this, true, true);
+            populate.get('#country', CONSTANTS.URLS.COUNTRIES, {}, 'name', this, true);
             populate.get('#sourceDd', '/employees/sources', {}, 'name', this, true, true);
             populate.get('#campaignDd', '/Campaigns', {}, 'name', this, true, true);
             dataService.getData('/employees/getForDD', {isEmployee: true}, function (employees) {
@@ -316,9 +320,11 @@ define([
             this.$el.find('#dateBirthOnCreate').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
-                changeYear : true
+                changeYear : true,
+                yearRange  : '-100y:c+nn',
+                maxDate    : '-18y',
+                minDate    : null
             });
-
 
             this.$el.find('#expectedClosingDate').datepicker({
                 dateFormat : 'd M, yy',

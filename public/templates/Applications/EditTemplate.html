@@ -539,12 +539,7 @@
                                     <dt>
                                         <label for="applicationsEditCountry">Country</label>
                                     </dt>
-                                    <dd><input type="text"
-                                               class="homeAddress"
-                                               name="country"
-                                               id="applicationsEditCountry"
-                                               value="<%=model.homeAddress.country%>"
-                                               maxlength="32"/></dd>
+                                    <dd><a class="homeAddress current-selected" name="country" data-id="<%=model.homeAddress.country%>" id="applicationsEditCountry"><%=model.homeAddress.country || 'Select'%></a></dd>
                                 </dl>
                             </div>
                             <div class="clearfix">

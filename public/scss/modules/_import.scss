@@ -47,13 +47,22 @@
   }
 }
 
+._importShowConflicts {
+  padding: 25px 0;
+  text-align: center;
+
+  h2 {
+    font-size: 20px;
+  }
+}
+
 ._loadHistoryTopTableContainer {
   width: 100%;
 }
 
-._contentBlock,
+._contentBlockInner,
 ._tabsBlock {
-  height: calc(100vh - 205px);
+  height: calc(100vh - 325px);
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -180,6 +189,13 @@
       }
     }
   }
+
+  &._withOutBorder {
+    ._rowItem {
+      border: none;
+      font-weight: bold;
+    }
+  }
   
   ._rowItem {
     position: relative;
@@ -281,8 +297,7 @@
     }
   }
   
-  label,
-  .dropDownDateRangeContainer {
+  label {
     display: inline-block;
     vertical-align: middle;
     text-align: center;
@@ -316,6 +331,10 @@
     a {
       color: #00a2d0;
     }
+  }
+
+  ._importSearchDublicate {
+    margin-bottom: 10px;
   }
 }
 
@@ -509,5 +528,13 @@
 
   ._importWithOutConflict {
     margin-bottom: 25px;
+  }
+}
+
+._importButtonsGroup {
+  padding-right: 15px;
+
+  button + button {
+    margin-right: 15px;
   }
 }
