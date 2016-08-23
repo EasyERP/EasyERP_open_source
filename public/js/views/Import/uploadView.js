@@ -109,8 +109,14 @@ define([
         },
 
         drowingCombobox: function($combobox, dropDownAttr, self) {
+            var change = true;
+
             _.each(this.mergeFields[dropDownAttr].names, function (item, key) {
                 $combobox.append('<div data-imp="' + self.mergeFields[dropDownAttr].items[key] + '" class="item">' + item + '</div>');
+                if (change) {
+                    self.comparingField = self.mergeFields[dropDownAttr].items[key];
+                    change = false;
+                }
             });
 
             $combobox.append('<span class="selectArrow"></span>');
@@ -143,7 +149,7 @@ define([
 
             this.updateUser();
 
-            this.importView = new AttachView({el: '#forImport', timeStamp: timeStamp});
+            this.importView = new AttachView({el: '#forImport', import   : true, timeStamp: timeStamp});
 
             this.importView.sendToServer(e, null, this);
 
