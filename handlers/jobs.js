@@ -1339,6 +1339,13 @@ var Module = function (models, event) {
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
         var query = req.query;
         var _id = query._id || null;
+        var filter = query.filter;
+        var matchObject = {};
+        var filterMapper = new FilterMapper();
+
+        if (filter && typeof filter === 'object') {
+            matchObject = filterMapper.mapFilter(filter, 'projectsDashboard'); // caseFilter(filter);
+        }
 
         if (_id) {
             ProjectMemberModel.aggregate([{
@@ -1404,7 +1411,8 @@ var Module = function (models, event) {
                     'jobs.invoice'  : {$arrayElemAt: ['$jobs.invoice', 0]},
                     'jobs.quotation': {$arrayElemAt: ['$jobs.quotation', 0]},
                     'jobs.project'  : {$arrayElemAt: ['$jobs.project', 0]},
-                    'jobs.name'     : '$jobs.name'
+                    'jobs.name'     : '$jobs.name',
+                    workflow        : '$jobs.workflow'
                 }
             }, {
                 $lookup: {
@@ -1415,6 +1423,9 @@ var Module = function (models, event) {
                 }
             }, {
                 $project: {
+                    workflow           : 1,
+                    'project._id'      : '$jobs.project._id',
+                    customer           : {$arrayElemAt: ['$jobs.customer', 0]},
                     'jobs.invoice'     : 1,
                     'jobs.quotation'   : 1,
                     'jobs.project._id' : '$jobs.project._id',
@@ -1422,6 +1433,8 @@ var Module = function (models, event) {
                     'jobs.customer'    : {$arrayElemAt: ['$jobs.customer', 0]},
                     'jobs.name'        : 1
                 }
+            }, {
+                $match: matchObject
             }, {
                 $project: {
                     'jobs.invoice'      : 1,
@@ -1517,8 +1530,14 @@ var Module = function (models, event) {
                     'jobs.project._id'  : '$_id',
                     'jobs.customer.name': {$concat: ['$customer.name.first', ' ', '$customer.name.last']},
                     'jobs.customer._id' : '$customer._id',
-                    'jobs.name'         : 1
+                    'jobs.name'         : 1,
+                    'jobs.workflow'     : 1,
+                    'project._id'       : '$_id',
+                    'customer._id'      : '$customer._id',
+                    workflow            : '$jobs.workflow'
                 }
+            }, {
+                $match: matchObject
             }, {
                 $sort: {
                     'jobs.project.name': 1
@@ -1540,6 +1559,14 @@ var Module = function (models, event) {
 
     this.getForProjectsDashboard = function (req, res, next) {
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
+        var query = req.query;
+        var filter = query.filter;
+        var matchObject = {};
+        var filterMapper = new FilterMapper();
+
+        if (filter && typeof filter === 'object') {
+            matchObject = filterMapper.mapFilter(filter, 'projectsDashboard'); // caseFilter(filter);
+        }
 
         JobsModel.aggregate([{
             $lookup: {
@@ -1549,7 +1576,16 @@ var Module = function (models, event) {
                 as          : 'projectMembers'
             }
         }, {
+            $lookup: {
+                from        : 'Project',
+                localField  : 'project',
+                foreignField: '_id',
+                as          : 'project'
+            }
+        }, {
             $project: {
+                workflow      : 1,
+                project       : {$arrayElemAt: ['$project', 0]},
                 projectManager: {
                     $filter: {
                         input: '$projectMembers',
@@ -1569,9 +1605,21 @@ var Module = function (models, event) {
                 }
             }
         }, {
+            $lookup: {
+                from        : 'Customers',
+                localField  : 'project.customer',
+                foreignField: '_id',
+                as          : 'customer'
+            }
+        }, {
             $project: {
+                workflow      : 1,
+                customer      : {$arrayElemAt: ['$customer', 0]},
+                'project._id' : 1,
                 projectManager: {$arrayElemAt: ['$projectManager', 0]}
             }
+        }, {
+            $match: matchObject
         }, {
             $lookup: {
                 from        : 'Employees',

@@ -2,11 +2,12 @@ define([
     'jQuery',
     'Underscore',
     'views/listViewBase',
-    'text!templates/journal/list/ListHeader.html',
-    'text!templates/journal/list/ListTemplate.html',
+    'text!templates/projectsDashboard/list/ListHeader.html',
+    'text!templates/projectsDashboard/list/ListTemplate.html',
+    'views/projectsDashboard/list/ListItemView',
     'collections/projectsDashboard/filterCollection',
     'async',
-    'helpers', 
+    'helpers',
     'dataService'
 ], function ($, _, listViewBase, listHeaderTemplate, listTemplate, ListItemView, contentCollection, async, helpers, dataService) {
     'use strict';
@@ -30,7 +31,7 @@ define([
             this.page = options.collection.currentPage;
             this.contentCollection = contentCollection;
 
-            this.render();
+            listViewBase.prototype.initialize.call(this, options);
         },
 
         events: {
@@ -61,7 +62,8 @@ define([
 
             async.each(asyncKeys, function (asyncId, cb) {
                 dataService.getData('jobs/getAsyncData', {
-                    _id: asyncId
+                    _id: asyncId,
+                    filter: self.filter
                 }, function (result) {
                     var items = result.data;
                     var totalSum = 0;
@@ -87,6 +89,31 @@ define([
             });
         },
 
+        showMoreContent: function (newModels) {
+            var $holder = this.$el;
+            var itemView;
+            var asyncKeys = [];
+
+            $holder.find('#listTable').empty();
+
+            itemView = new this.ListItemView({
+                collection : newModels,
+                page       : this.collection.currentPage,
+                itemsNumber: this.collection.pageSize
+            });
+
+            $holder.append(itemView.render());
+
+            newModels.toJSON().forEach(function (el) {
+                asyncKeys.push(el._id._id || null);
+            });
+
+            this.asyncRenderInfo(asyncKeys);
+
+            itemView.undelegateEvents();
+        },
+
+
         render: function () {
             var $currentEl;
             var itemView;
@@ -107,15 +134,11 @@ define([
 
             $currentEl.append(itemView.render());// added two parameters page and items number
 
-            this.renderPagination($currentEl, this);
-
-            this.collection.forEach(function (el) {
+            this.collection.toJSON().forEach(function (el) {
                 asyncKeys.push(el._id._id || null);
             });
 
             this.asyncRenderInfo(asyncKeys);
-
-            $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         }
 
     });

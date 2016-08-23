@@ -1,7 +1,7 @@
 ﻿define([
     'Backbone',
     'collections/parent',
-    'models/EmployeeDashboardItem',
+    'models/hiredFired',
     'dataService',
     'constants'
 ], function (Backbone, Parent, Model, dataService, CONSTANTS) {

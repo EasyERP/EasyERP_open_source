@@ -93,7 +93,7 @@ var Filters = function (models) {
                     return next(err);
                 }
 
-                res.status(200).send(jobs.length ? result.concat(jobs[0]) : result);
+                res.status(200).send(jobs.length ? _.extend(result, jobs[0]) : result);
             });
         });
     };
