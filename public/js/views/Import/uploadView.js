@@ -210,7 +210,7 @@ define([
             if (this.checkedCombobox === 'Persons' || this.checkedCombobox === 'Companies') {
                 this.entity = 'Customers';
             } else if (this.checkedCombobox === 'Employees') {
-                this.entity = 'Opportunities';
+                this.entity = 'Employees';
             }
 
             $thisEl.html(this.contentTemplate({fileName: this.fileName}));

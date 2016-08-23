@@ -4,10 +4,11 @@ define([
     'Underscore',
     'text!templates/Import/FieldsTemplate.html',
     'constants/importMapping',
+    'constants/mappingFields',
     'constants',
     'dataService',
     'common'
-], function (Backbone, $, _, ContentTemplate, importMapping, CONSTANTS, dataService, common) {
+], function (Backbone, $, _, ContentTemplate, importMapping, mappingFields, CONSTANTS, dataService, common) {
     'use strict';
 
     var mappingContentView = Backbone.View.extend({
@@ -120,7 +121,7 @@ define([
 
                     self.$el.find('.fieldsItems[data-tab=' + droppableParentName + ']')
                         .find('ul')
-                        .append('<li><div class="fieldItem" data-parent="' + droppableParentName + '" style="cursor: pointer"  data-name="' + droppableName + '">' + droppableName + '</div></li>')
+                        .append('<li><div class="fieldItem" data-parent="' + droppableParentName + '" style="cursor: pointer"  data-name="' + droppableName + '">' + mappingFields[droppableParentName][droppableName] + '</div></li>')
                         .find('div[data-name="' + droppableName + '"]')
                         .draggable({
                             revert: true,
@@ -163,7 +164,7 @@ define([
                     self.logFile[droppableName] = draggableName;
                     $droppable.removeClass('empty');
                     $droppable.closest('.contentBlockRow').removeClass('emptyRow');
-                    $droppable.text(draggableName);
+                    $droppable.text(mappingFields[draggableParentName][draggableName]);
                     $droppable.data('name', draggableName);
                     //$draggable.removeClass('borderField');
 
@@ -191,7 +192,7 @@ define([
                         $droppable.data('parent', draggableParentName);
                         $draggable.data('parent', droppableParentName);
 
-                        $draggable.text(droppableName);
+                        $draggable.text(mappingFields[droppableParentName][droppableName]);
                         $draggable.data('name', droppableName);
                     } else {
                         $draggable.draggable({
@@ -248,7 +249,8 @@ define([
 
             $thisEl.html(this.contentTemplate({
                 content: data,
-                fields : self.unmappedData
+                fields : self.unmappedData,
+                mappingFields: mappingFields
             }));
 
             this.draggableDBFields();
