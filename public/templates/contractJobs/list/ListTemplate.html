@@ -67,7 +67,7 @@
 <!--
         <div class="semiBold money"><%=currencySplitter((el.revenue/100).toFixed(2))%></div>
 -->
-        <div><span>Quoted: </span><span><%=el.invoice && el.invoice.name ? 0.00 : currencySplitter((el.revenue/100).toFixed(2))%></span>
+        <div><span>Quoted: </span><span class="money"><%=el.invoice && el.invoice.name ? 0.00 : currencySplitter((el.revenue/100).toFixed(2))%></span>
         </div>
         <%if (proformaSum) {%>
         <div><span>Proformed: </span><span class="money"><%=currencySplitter((proformaSum/100).toFixed(2))%></span>
