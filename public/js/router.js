@@ -135,8 +135,7 @@ define([
                 name   : 'DashBoard Vacation',
                 message: 'DashBoard Vacation',
                 email  : currentUser.email,
-                login  : currentUser.login,
-                server : CONSTANTS.SERVER_TYPE
+                login  : currentUser.login
             });
 
             filter = filter || custom.retriveFromCash('DashVacation.filter');

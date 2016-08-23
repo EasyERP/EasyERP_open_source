@@ -82,6 +82,9 @@ module.exports = function (app, mainDb) {
     var async = require('async');
     var redisStore = require('../helpers/redisClient');
 
+    var tracker = require('../helpers/tracker.js');
+    var geoip = require('geoip-lite');
+
     var sessionValidator = function (req, res, next) {
         var session = req.session;
         var month = 2678400000;
@@ -324,6 +327,23 @@ module.exports = function (app, mainDb) {
         var geo = geoip.lookup(ip);
 
         res.status(200).send(geo);
+    });
+
+    app.post('/track', function (req, res) {
+        var body = req.body;
+        var ip = req.headers ? req.headers['x-real-ip'] : req.ip;
+        var geo = geoip.lookup(ip);
+
+        ip = ip || '127.0.0.1';
+
+        body.ip = ip;
+        body.country = (!body.country && geo) ? geo.country : '';
+        body.city = (!body.city && geo) ? geo.city : '';
+        body.region = (!body.region && geo) ? geo.region : '';
+
+        body.server = process.env.SERVER_PLATFORM;
+
+        tracker.track(body);
     });
 
     function notFound(req, res, next) {
