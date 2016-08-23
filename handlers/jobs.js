@@ -12,6 +12,7 @@ var Module = function (models, event) {
     var jobsInvoiceSchema = mongoose.Schemas.wTrackInvoice;
     var ProjectSchema = mongoose.Schemas.Project;
     var PaymentSchema = mongoose.Schemas.Payment;
+    var ProjectMembersSchema = mongoose.Schemas.ProjectMember;
     var journalEntrySchema = mongoose.Schemas.journalEntry;
     var CONSTANTS = require('../constants/mainConstants.js');
     var exporter = require('../helpers/exporter/exportDecorator');
@@ -1330,6 +1331,136 @@ var Module = function (models, event) {
 
                 }
             );
+    };
+
+    this.getAsyncData = function (req, res, next) {
+        var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
+        var ProjectMemberModel = models.get(req.session.lastDb, 'ProjectMember', ProjectMembersSchema);
+        var query = req.query;
+        var _id = query._id || null;
+
+        ProjectMemberModel.aggregate([{
+            $match: {
+                employeeId       : objectId(_id),
+                projectPositionId: objectId(CONSTANTS.PROJECTSMANAGER)
+            }
+        }, {
+            $lookup: {
+                from        : 'jobs',
+                localField  : 'projectId',
+                foreignField: 'project',
+                as          : 'jobs'
+            }
+        }, {
+            $project: {
+                projectId: 1,
+                startDate: 1,
+                endDate  : 1,
+                jobs     : {
+                    $filter: {
+                        input: '$jobs',
+                        as   : 'job',
+                        cond : {
+                            $or: [{
+                                $and: [{
+                                    $gte: ['$$job.createdBy.date', '$startDate']
+                                }, {
+                                    $lte: ['$$job.createdBy.date', '$endDate']
+                                }]
+                            }, {$eq: ['$startDate', null]},
+                                {$eq: ['$endDate', null]}
+                            ]
+                        }
+                    }
+                }
+            }
+        }, {$unwind: '$jobs'},
+            {
+            $group: {
+                _id : null,
+                jobs: {$addToSet: '$jobs'}
+            }
+        }], function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({data: result[0] ? result[0].jobs : []});
+        });
+    };
+
+    this.getForProjectsDashboard = function (req, res, next) {
+        var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
+
+        JobsModel.aggregate([{
+            $lookup: {
+                from        : 'projectMembers',
+                localField  : 'project',
+                foreignField: 'projectId',
+                as          : 'projectMembers'
+            }
+        }, {
+            $project: {
+                projectManager: {
+                    $filter: {
+                        input: '$projectMembers',
+                        as   : 'projectMember',
+                        cond : {
+                            $and: [{
+                                $eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.PROJECTSMANAGER)]
+                            }, {
+                                $or: [{
+                                    $max: '$$projectMember.startDate'
+                                }, {
+                                    $eq: ['$$projectMember.startDate', null]
+                                }]
+                            }]
+                        }
+                    }
+                }
+            }
+        }, {
+            $project: {
+                projectManager: {$arrayElemAt: ['$projectManager', 0]}
+            }
+        }, {
+            $lookup: {
+                from        : 'Employees',
+                localField  : 'projectManager.employeeId',
+                foreignField: '_id',
+                as          : 'projectManagerEmployee'
+            }
+        }, {
+            $project: {
+                projectManager: {$arrayElemAt: ['$projectManagerEmployee', 0]}
+            }
+        }, {
+            $lookup: {
+                from        : 'JobPosition',
+                localField  : 'projectManager.jobPosition',
+                foreignField: '_id',
+                as          : 'projectManager.jobPosition'
+            }
+        }, {
+            $project: {
+                'projectManager.jobPosition': {$arrayElemAt: ['$projectManager.jobPosition', 0]},
+                'projectManager.name'       : {$concat: ['$projectManager.name.first', ' ', '$projectManager.name.last']},
+                'projectManager._id'        : 1
+            }
+        }, {
+            $group: {
+                _id      : '$projectManager',
+                jobsCount: {$sum: 1}
+            }
+        }, {
+            $sort: {jobsCount: -1}
+        }], function (err, jobs) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({data: jobs});
+        });
     };
 
     this.getForOverview = function (req, res, next) {
