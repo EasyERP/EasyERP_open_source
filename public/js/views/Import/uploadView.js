@@ -36,6 +36,14 @@ define([
             this.checkedItem = App.currentUser.checkedItemImport || 'email';
 
             this.mergeFields = {
+                Invoice: {
+                    names: [
+                        'Invoice Number'
+                    ],
+                    items: [
+                        'name'
+                    ]
+                } ,
                 Opportunities: {
                     names: [
                         'First Name',
@@ -204,17 +212,44 @@ define([
             }
         },
 
+        checkEntity: function () {
+            switch (this.checkedCombobox) {
+                case 'Opportunities': {
+                    this.entity = 'Opportunities';
+                    break;
+                }
+                case 'Employees': {
+                    this.entity = 'Employees';
+                    break;
+                }
+                case 'Leads': {
+                    this.entity = 'Opportunities';
+                    break;
+                }
+                case 'Invoice': {
+                    this.entity = 'Invoice';
+                    break;
+                }
+                default: {
+                    this.entity = 'Customers';
+                    break;
+                }
+            }
+        },
+
         render: function () {
             var $thisEl = this.$el;
             var $combobox;
 
-            this.entity = 'Opportunities';
+            //this.entity = 'Opportunities';
 
-            if (this.checkedCombobox === 'Persons' || this.checkedCombobox === 'Companies') {
+            /*if (this.checkedCombobox === 'Persons' || this.checkedCombobox === 'Companies') {
                 this.entity = 'Customers';
             } else if (this.checkedCombobox === 'Employees') {
                 this.entity = 'Employees';
-            }
+            }*/
+
+            this.checkEntity();
 
             $thisEl.html(this.contentTemplate({fileName: this.fileName}));
 

@@ -9,7 +9,8 @@ var Module = function (models) {
     var schemaObj = {
         Customers    : mongoose.Schemas.Customer,
         Opportunities: mongoose.Schemas.Opportunitie,
-        Employees    : mongoose.Schemas.Employee
+        Employees    : mongoose.Schemas.Employee,
+        Invoice      : mongoose.Schemas.Invoice
     };
 
     var exportMap = require('../helpers/csvMap');
