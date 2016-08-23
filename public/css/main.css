@@ -1737,12 +1737,15 @@ body {
 .salary-list tbody#listTable .subRow:hover {
   background-color: transparent;
 }
-.list {
+.list,
+.list2 {
   font-family: 'OpenSans Regular', sans-serif, Verdana;
   width: 100%;
 }
 .list td,
-.list th {
+.list2 td,
+.list th,
+.list2 th {
   height: 23px;
   padding: 0 6px;
   white-space: nowrap;
@@ -1751,50 +1754,65 @@ body {
   color: #000000;
   font-size: 12px;
 }
-.list thead tr {
+.list thead tr,
+.list2 thead tr {
   border: none;
   height: 30px;
   vertical-align: middle;
 }
-.list thead th {
+.list thead th,
+.list2 thead th {
   font-family: 'OpenSans SemiBold', sans-serif, Verdana;
   text-align: right;
 }
-.list tbody td {
+.list tbody td,
+.list2 tbody td {
   text-align: right;
   height: 45px;
 }
-.list tbody td.changeContent {
+.list tbody td.changeContent,
+.list2 tbody td.changeContent {
   border-top: 2px solid #5cb85c;
   border-bottom: 2px solid #5cb85c;
 }
-.list tbody tr:last-child {
+.list tbody tr:last-child,
+.list2 tbody tr:last-child {
   border-bottom: 1px solid #d7d7d7;
 }
 .list tbody tr,
-.list thead tr {
+.list2 tbody tr,
+.list thead tr,
+.list2 thead tr {
   border-top: 1px solid #d7d7d7;
 }
-.list tfoot td {
+.list tfoot td,
+.list2 tfoot td {
   text-align: right;
 }
 .list thead tr,
-.list tfoot tr {
+.list2 thead tr,
+.list tfoot tr,
+.list2 tfoot tr {
   background: inherit !important;
 }
-.list .notForm input {
+.list .notForm input,
+.list2 .notForm input {
   margin-top: 3px;
   cursor: pointer;
   display: inline-block;
   vertical-align: top;
 }
 .list .oe_sortable,
-.list .oe_sortable_sub {
+.list2 .oe_sortable,
+.list .oe_sortable_sub,
+.list2 .oe_sortable_sub {
   cursor: pointer;
   position: relative;
 }
 .list .oe_sortable .arrow,
-.list .oe_sortable_sub .arrow {
+.list2 .oe_sortable .arrow,
+.list .oe_sortable_sub .arrow,
+.list2 .oe_sortable_sub .arrow {
   display: none;
   text-align: center;
   cursor: pointer;
@@ -1804,47 +1822,66 @@ body {
   right: -8px;
 }
 .list .oe_sortable.sortUp .up,
+.list2 .oe_sortable.sortUp .up,
 .list .oe_sortable_sub.sortUp .up,
+.list2 .oe_sortable_sub.sortUp .up,
 .list .oe_sortable.sortUp .down,
-.list .oe_sortable_sub.sortUp .down {
+.list2 .oe_sortable.sortUp .down,
+.list .oe_sortable_sub.sortUp .down,
+.list2 .oe_sortable_sub.sortUp .down {
   display: inline-block;
 }
 .list .oe_sortable.sortUp .up:before,
+.list2 .oe_sortable.sortUp .up:before,
 .list .oe_sortable_sub.sortUp .up:before,
+.list2 .oe_sortable_sub.sortUp .up:before,
 .list .oe_sortable.sortUp .down:before,
-.list .oe_sortable_sub.sortUp .down:before {
+.list2 .oe_sortable.sortUp .down:before,
+.list .oe_sortable_sub.sortUp .down:before,
+.list2 .oe_sortable_sub.sortUp .down:before {
   content: "\f176";
 }
 .list .oe_sortable.sortDn .down:before,
-.list .oe_sortable_sub.sortDn .down:before {
+.list2 .oe_sortable.sortDn .down:before,
+.list .oe_sortable_sub.sortDn .down:before,
+.list2 .oe_sortable_sub.sortDn .down:before {
   -webkit-transform: rotate(90deg);
   transform: rotate(90deg);
 }
-.list .enableTableOdd tr:not(.innerRow):hover {
+.list .enableTableOdd tr:not(.innerRow):hover,
+.list2 .enableTableOdd tr:not(.innerRow):hover {
   background-color: #ededed;
 }
-.list .centerCell {
+.list .centerCell,
+.list2 .centerCell {
   text-align: center;
 }
-.list .leftBorderNone {
+.list .leftBorderNone,
+.list2 .leftBorderNone {
   border-left: none;
 }
-.list .cancelled a {
+.list .cancelled a,
+.list2 .cancelled a {
   text-decoration: line-through;
 }
-.list.enable_hover tbody tr:hover {
+.list.enable_hover tbody tr:hover,
+.list2.enable_hover tbody tr:hover {
   background-color: #d9d9d9;
 }
-.list .overtime {
+.list .overtime,
+.list2 .overtime {
   background-color: #ffe332 !important;
 }
-.list thead th:first-of-type {
+.list thead th:first-of-type,
+.list2 thead th:first-of-type {
   width: 15%;
 }
-.list .datepicker {
+.list .datepicker,
+.list2 .datepicker {
   width: 90%;
 }
-.list .datepicker.notVisible {
+.list .datepicker.notVisible,
+.list2 .datepicker.notVisible {
   display: none;
 }
 .ui-dialog .list2 thead td,
@@ -3313,9 +3350,6 @@ select:not([type="checkbox"]) {
 }
 .icon:hover {
   text-decoration: none;
-}
-#thumbBtn {
-  font-size: 14px;
 }
 .icon-btn {
   display: block;
@@ -8363,8 +8397,6 @@ textarea#editInput {
 }
 .btn-list li a {
   display: block;
-  line-height: 20px;
-  font-size: 19px !important;
   text-align: center;
 }
 .btn-list li a.fa {

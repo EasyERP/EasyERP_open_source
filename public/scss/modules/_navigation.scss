@@ -1,0 +1,12 @@
+.template-switcher {
+  > .btn-list {
+    [class^="icon-"],
+    [class*=" icon-"] {
+      font-size: 15px;
+
+      &.icon-kanban {
+        font-size: 21px;
+      }
+    }
+  }
+}

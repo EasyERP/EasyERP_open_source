@@ -9,13 +9,13 @@
 <div id="template-switcher" class="template-switcher right">
     <ul class="btn-list">
         <li><a href="javascript:;"
-               class="changeContentView icon icon-btn dark <%= (viewType == 'kanban') ? 'selected' : ''%>"
-               data-view-type="kanban" id="kanbanBtn">r</a></li>
+               class="changeContentView icon-kanban <%= (viewType == 'kanban') ? 'selected' : ''%>"
+               data-view-type="kanban" id="kanbanBtn"></a></li>
         <li><a href="javascript:;"
-               class="changeContentView icon icon-btn dark <%= (viewType == 'list') ? 'selected' : ''%>"
-               data-view-type="list" id="listBtn">i</a></li>
+               class="changeContentView icon-list5 <%= (viewType == 'list') ? 'selected' : ''%>"
+               data-view-type="list" id="listBtn"></a></li>
         <li><a href="javascript:;"
-               class="changeContentView fa fa-list <%= (viewType == 'datelist') ? 'selected' : ''%>"
+               class="changeContentView icon-menu <%= (viewType == 'datelist') ? 'selected' : ''%>"
                data-view-type="datelist" id="dateListBtn"></a></li>
     </ul>
 </div>
