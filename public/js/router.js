@@ -96,7 +96,7 @@ define([
             'easyErp/invoiceCharts(/filter=:filter)'                                                        : 'invoiceCharts',
             'easyErp/HrDashboard'                                                                           : 'hrDashboard',
             'easyErp/projectDashboard'                                                                      : 'goToProjectDashboard',
-            'easyErp/projectsDashboard'                                                                     : 'goToProjectsDashboard',
+           // 'easyErp/projectsDashboard'                                                                     : 'goToProjectsDashboard',
             // "easyErp/jobsDashboard(/filter=:filter)"                                                        : "goToJobsDashboard",
             'easyErp/:contentType'                                                                          : 'getList',
             '*any'                                                                                          : 'any'

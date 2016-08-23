@@ -385,7 +385,7 @@
                 backend    : 'contactName',
                 type       : 'string'
             },
-            source: {
+            source     : {
                 displayName: 'Source',
                 backend    : 'source',
                 type       : 'string'
@@ -854,6 +854,26 @@
             },
 
             array: ['project', 'salesManager', 'type']
+        },
+
+        projectsDashboard: {
+            customer: {
+                displayName: 'Customer',
+                backend    : 'customer._id'
+            },
+
+            name: {
+                displayName: 'Project',
+                backend    : 'project._id'
+            },
+
+            workflow: {
+                displayName: 'Status',
+                backend    : 'workflow'
+            },
+
+            array: ['workflow', 'name', 'customer']
+
         }
     };
 

@@ -9,6 +9,95 @@ var Filters = function (models) {
     var CONSTANTS = require('../constants/mainConstants.js');
     var moment = require('../public/js/libs/moment/moment');
 
+    this.getProjectsDashboardFilters = function (req, res, next) {
+        var lastDB = req.session.lastDb;
+        var ProjectSchema = mongoose.Schemas.Project;
+        var jobsSchema = mongoose.Schemas.jobs;
+        var Project = models.get(lastDB, 'Project', ProjectSchema);
+        var Jobs = models.get(lastDB, 'jobs', jobsSchema);
+        var pipeLine;
+        var aggregation;
+        var pipeLineJobs;
+
+        pipeLineJobs = [{
+            $lookup: {
+                from        : 'workflows',
+                localField  : 'workflow',
+                foreignField: '_id',
+                as          : 'workflow'
+            }
+        }, {
+            $project: {
+                workflow: {$arrayElemAt: ['$workflow', 0]}
+            }
+        }, {
+            $group: {
+                _id: null,
+
+                workflow: {
+                    $addToSet: {
+                        _id : '$workflow._id',
+                        name: '$workflow.name'
+                    }
+                }
+            }
+        }];
+
+        pipeLine = [{
+            $lookup: {
+                from        : 'Customers',
+                localField  : 'customer',
+                foreignField: '_id',
+                as          : 'customer'
+            }
+        }, {
+            $project: {
+                name    : 1,
+                customer: {$arrayElemAt: ['$customer', 0]}
+            }
+        }, {
+            $group: {
+                _id: null,
+
+                customer: {
+                    $addToSet: {
+                        _id : '$customer._id',
+                        name: {$concat: ['$customer.name.first', ' ', '$customer.name.last']}
+                    }
+                },
+
+                name: {
+                    $addToSet: {
+                        _id : '$_id',
+                        name: '$name'
+                    }
+                }
+            }
+        }];
+
+        aggregation = Project.aggregate(pipeLine);
+
+        aggregation.options = {
+            allowDiskUse: true
+        };
+
+        aggregation.exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            result = result.length ? result[0] : {};
+
+            Jobs.aggregate(pipeLineJobs, function (err, jobs) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send(jobs.length ? result.concat(jobs[0]) : result);
+            });
+        });
+    };
+
     this.getContarctJobsFilters = function (req, res, next) {
         var lastDB = req.session.lastDb;
         var jobsSchema = mongoose.Schemas.jobs;

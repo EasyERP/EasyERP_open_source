@@ -1,0 +1,9 @@
+<%collection.forEach(function (el){%>
+<tr data-id="<%=!el._id.name ? 'null' : el._id._id%>" class="mainTr">
+    <td class="expand centerCell">+</td>
+    <td><%=el._id && el._id.name ? el._id.name : 'Empty'%></td>
+    <td><%=el._id && el._id.jobPosition? el._id.jobPosition.name : ''%></td>
+    <td class="sum money"></td>
+    <td><%=el.jobsCount%></td>
+</tr>
+<%})%>
