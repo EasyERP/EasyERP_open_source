@@ -32,11 +32,7 @@ define([
         $(document).on('keypress', '.onlyNumber', function (e) {
             var charCode = (e.which) ? e.which : e.keyCode;
 
-            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-                return false;
-            }
-
-            return true;
+            return !(charCode > 31 && (charCode < 48 || charCode > 57));
         });
 
         $(window).on('resize', function (e) {
@@ -190,8 +186,16 @@ define([
 
         invoiceCharts: function (filter) {
             var self = this;
+            var currentUser = App.currentUser || {};
 
             FlurryAgent.logEvent('Invoice Charts', {filter: filter});
+
+            tracker.track({
+                name   : 'Invoice Charts',
+                message: 'Invoice Charts',
+                email  : currentUser.email,
+                login  : currentUser.login
+            });
 
             if (filter) {
                 filter = decodeURIComponent(filter);
@@ -250,8 +254,16 @@ define([
 
         hrDashboard: function () {
             var self = this;
+            var currentUser = App.currentUser || {};
 
             FlurryAgent.logEvent('HR Dashboard');
+
+            tracker.track({
+                name   : 'HR Dashboard',
+                message: 'HR Dashboard',
+                email  : currentUser.email,
+                login  : currentUser.login
+            });
 
             if (!this.isAuth) {
                 this.checkLogin(function (success) {
@@ -299,8 +311,16 @@ define([
 
         revenue: function (filter) {
             var self = this;
+            var currentUser = App.currentUser || {};
 
             FlurryAgent.logEvent('Revenue', {filter: filter});
+
+            tracker.track({
+                name   : 'Revenue',
+                message: 'Revenue',
+                email  : currentUser.email,
+                login  : currentUser.login
+            });
 
             if (filter) {
                 filter = decodeURIComponent(filter);
@@ -362,8 +382,16 @@ define([
 
         settingsEmployee: function (filter) {
             var self = this;
+            var currentUser = App.currentUser || {};
 
             FlurryAgent.logEvent('Settings Employee', {filter: filter});
+
+            tracker.track({
+                name   : 'Settings Employee',
+                message: 'Settings Employee',
+                email  : currentUser.email,
+                login  : currentUser.login
+            });
 
             if (filter) {
                 filter = decodeURIComponent(filter);
@@ -416,8 +444,16 @@ define([
 
         hours: function () {
             var self = this;
+            var currentUser = App.currentUser || {};
 
             FlurryAgent.logEvent('Hours');
+
+            tracker.track({
+                name   : 'Hours',
+                message: 'Hours',
+                email  : currentUser.email,
+                login  : currentUser.login
+            });
 
             if (!this.isAuth) {
                 this.checkLogin(function (success) {
@@ -456,8 +492,16 @@ define([
 
         attendance: function () {
             var self = this;
+            var currentUser = App.currentUser || {};
 
             FlurryAgent.logEvent('Attendance');
+
+            tracker.track({
+                name   : 'Attendance',
+                message: 'Attendance',
+                email  : currentUser.email,
+                login  : currentUser.login
+            });
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -489,8 +533,16 @@ define([
 
         goToImport: function (page, count) {
             var self = this;
+            var currentUser = App.currentUser || {};
 
             FlurryAgent.logEvent('Import', {page: page, count: count});
+
+            tracker.track({
+                name   : 'Import',
+                message: 'Import',
+                email  : currentUser.email,
+                login  : currentUser.login
+            });
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -533,8 +585,16 @@ define([
 
         goToProfiles: function () {
             var self = this;
+            var currentUser = App.currentUser || {};
 
             FlurryAgent.logEvent('Profiles');
+
+            tracker.track({
+                name   : 'Profiles',
+                message: 'Profiles',
+                email  : currentUser.email,
+                login  : currentUser.login
+            });
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -585,8 +645,16 @@ define([
 
         goToAccounts: function () {
             var self = this;
+            var currentUser = App.currentUser || {};
 
             FlurryAgent.logEvent('Accounts');
+
+            tracker.track({
+                name   : 'Accounts',
+                message: 'Accounts',
+                email  : currentUser.email,
+                login  : currentUser.login
+            });
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -620,8 +688,16 @@ define([
 
         productSettings: function () {
             var self = this;
+            var currentUser = App.currentUser || {};
 
             FlurryAgent.logEvent('productSettings');
+
+            tracker.track({
+                name   : 'productSettings',
+                message: 'productSettings',
+                email  : currentUser.email,
+                login  : currentUser.login
+            });
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -675,8 +751,16 @@ define([
 
         goToProduct: function (countPerPage, filter) {
             var self = this;
+            var currentUser = App.currentUser || {};
 
             FlurryAgent.logEvent('Products');
+
+            tracker.track({
+                name   : 'Products',
+                message: 'Products',
+                email  : currentUser.email,
+                login  : currentUser.login
+            });
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -769,8 +853,16 @@ define([
 
         goToUserPages: function () {
             var self = this;
+            var currentUser = App.currentUser || {};
 
             FlurryAgent.logEvent('UserPage');
+
+            tracker.track({
+                name   : 'UserPage',
+                message: 'UserPage',
+                email  : currentUser.email,
+                login  : currentUser.login
+            });
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -808,8 +900,16 @@ define([
 
         goToPayrollDashboard: function () {
             var self = this;
+            var currentUser = App.currentUser || {};
 
             FlurryAgent.logEvent('Payroll Dashboard');
+
+            tracker.track({
+                name   : 'Payroll Dashboard',
+                message: 'Payroll Dashboard',
+                email  : currentUser.email,
+                login  : currentUser.login
+            });
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -847,8 +947,16 @@ define([
 
         goToReportsDashboard: function () {
             var self = this;
+            var currentUser = App.currentUser || {};
 
             FlurryAgent.logEvent('Reports Dashboard');
+
+            tracker.track({
+                name   : 'Reports Dashboard',
+                message: 'Reports Dashboard',
+                email  : currentUser.email,
+                login  : currentUser.login
+            });
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -883,8 +991,16 @@ define([
 
         goToDashboard: function () {
             var self = this;
+            var currentUser = App.currentUser || {};
 
             FlurryAgent.logEvent('Dashboard');
+
+            tracker.track({
+                name   : 'Dashboard',
+                message: 'Dashboard',
+                email  : currentUser.email,
+                login  : currentUser.login
+            });
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -920,8 +1036,16 @@ define([
 
         goToProjectDashboard: function () {
             var self = this;
+            var currentUser = App.currentUser || {};
 
             FlurryAgent.logEvent('Project Dashboard');
+
+            tracker.track({
+                name   : 'Project Dashboard',
+                message: 'Project Dashboard',
+                email  : currentUser.email,
+                login  : currentUser.login
+            });
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -1003,8 +1127,16 @@ define([
 
         goToWorkflows: function () {
             var self = this;
+            var currentUser = App.currentUser || {};
 
             FlurryAgent.logEvent('Workflows');
+
+            tracker.track({
+                name   : 'Workflows',
+                message: 'Workflows',
+                email  : currentUser.email,
+                login  : currentUser.login
+            });
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -1100,8 +1232,10 @@ define([
             function goList(context) {
                 var self = context;
                 var currentContentType = context.testContent(contentType);
+                var currentUser = App.currentUser || {};
                 var location = window.location.hash;
                 var startTime = new Date();
+                var message;
                 var url;
                 var savedFilter;
                 var startDate;
@@ -1120,12 +1254,30 @@ define([
                         url += '/' + parrentContentId;
                     }
 
-                    FlurryAgent.logEvent(contentType + ' List');
+                    message = contentType + ' List';
+
+                    FlurryAgent.logEvent(message);
+
+                    tracker.track({
+                        name   : message,
+                        message: message,
+                        email  : currentUser.email,
+                        login  : currentUser.login
+                    });
 
                     return Backbone.history.navigate(url, {replace: true});
                 }
 
-                FlurryAgent.logEvent(contentType + ' List');
+                message = contentType + ' List';
+
+                FlurryAgent.logEvent(message);
+
+                tracker.track({
+                    name   : message,
+                    message: message,
+                    email  : currentUser.email,
+                    login  : currentUser.login
+                });
 
                 contentViewUrl = 'views/' + contentType + '/list/ListView';
                 topBarViewUrl = 'views/' + contentType + '/TopBarView';
@@ -1334,6 +1486,7 @@ define([
                 var currentContentType = context.testContent(contentType);
                 var location = window.location.hash;
                 var startTime = new Date();
+                var currentUser = App.currentUser || {};
                 var url;
                 var savedFilter;
                 var startDate;
@@ -1344,7 +1497,16 @@ define([
                 var navigatePage;
                 var count;
 
-                FlurryAgent.logEvent(contentType + ' TForm');
+                var message = contentType + ' TForm';
+
+                FlurryAgent.logEvent(message);
+
+                tracker.track({
+                    name   : message,
+                    message: message,
+                    email  : currentUser.email,
+                    login  : currentUser.login
+                });
 
                 contentViewUrl = 'views/' + contentType + '/form/ContentView';
                 topBarViewUrl = 'views/' + contentType + '/TopBarView';
@@ -1479,11 +1641,13 @@ define([
 
             function goForm(context) {
                 var currentContentType = context.testContent(contentType);
+                var currentUser = App.currentUser || {};
                 var self = context;
                 var startTime = new Date();
                 var contentFormModelUrl;
                 var contentFormViewUrl;
                 var topBarViewUrl;
+                var message;
                 var url;
 
                 if (contentType !== currentContentType) {
@@ -1497,7 +1661,16 @@ define([
                     Backbone.history.navigate(url, {replace: true});
                 }
 
-                FlurryAgent.logEvent(contentType + ' Form');
+                message = contentType + ' Form';
+
+                FlurryAgent.logEvent(message);
+
+                tracker.track({
+                    name   : message,
+                    message: message,
+                    email  : currentUser.email,
+                    login  : currentUser.login
+                });
 
                 if (context.mainView === null) {
                     context.main(contentType);
@@ -1574,16 +1747,27 @@ define([
 
             function goKanban(context) {
                 var currentContentType = context.testContent(contentType);
+                var currentUser = App.currentUser || {};
                 var self = context;
                 var contentViewUrl;
                 var topBarViewUrl;
                 var collectionUrl;
+                var message;
 
                 if (contentType !== currentContentType) {
                     contentType = currentContentType;
                 }
 
-                FlurryAgent.logEvent(contentType + ' Kanban');
+                message = contentType + ' Kanban';
+
+                FlurryAgent.logEvent(message);
+
+                tracker.track({
+                    name   : message,
+                    message: message,
+                    email  : currentUser.email,
+                    login  : currentUser.login
+                });
 
                 contentViewUrl = 'views/' + contentType + '/kanban/KanbanView';
                 topBarViewUrl = 'views/' + contentType + '/TopBarView';
@@ -1665,6 +1849,7 @@ define([
 
             function goThumbnails(context) {
                 var self = context;
+                var currentUser = App.currentUser || {};
                 var location = window.location.hash;
                 var currentContentType = context.testContent(contentType);
                 var startTime = new Date();
@@ -1672,6 +1857,7 @@ define([
                 var topBarViewUrl;
                 var contentViewUrl;
                 var collectionUrl;
+                var message;
                 var url;
 
                 if (countPerPage) {
@@ -1691,7 +1877,16 @@ define([
 
                 topBarViewUrl = 'views/' + contentType + '/TopBarView';
 
-                FlurryAgent.logEvent(contentType + ' Thumbnails');
+                message = contentType + ' Thumbnails';
+
+                FlurryAgent.logEvent(message);
+
+                tracker.track({
+                    name   : message,
+                    message: message,
+                    email  : currentUser.email,
+                    login  : currentUser.login
+                });
 
                 if (!filter) {
 
