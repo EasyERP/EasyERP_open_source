@@ -532,7 +532,9 @@
 }
 
 ._importButtonsGroup {
-  width: 100%;
+  &.left{
+    width: 100%;
+  }
   &.right{
     padding-right: 15px;
   }
