@@ -4,7 +4,7 @@
     <%var proformaSum = 0;%>
     <%if (el.proforma && el.proforma.length){ %>
     <%el.proforma.forEach(function(elem) {%>
-    <%if (elem.sourceDocument === el.quotation._id) {%>
+    <%if (el.quotation && elem.sourceDocument === el.quotation._id) {%>
     <% elem.products.forEach(function (prod) {%>
     <% proformaSum += elem.paymentInfo.total / elem.currency.rate;%>
     <% proformaPaid += (elem.paymentInfo.total - elem.paymentInfo.balance) / elem.currency.rate;%>
