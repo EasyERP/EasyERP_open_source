@@ -1889,6 +1889,11 @@ h3 {
   ._multiEllipsis ._ellipsisCloseBtn {
     display: none; }
 
+#pmsTable .list {
+  background-color: #b3e6bb; }
+  #pmsTable .list td {
+    height: 30px !important; }
+
 label._customCHeckbox input[type="checkbox"] {
   position: absolute;
   left: -9999px;
