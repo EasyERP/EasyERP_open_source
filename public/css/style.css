@@ -4127,3 +4127,6 @@ label._customCHeckbox input[type="checkbox"] {
   .template-switcher > .btn-list [class^="icon-"].icon-kanban,
   .template-switcher > .btn-list [class*=" icon-"].icon-kanban {
     font-size: 21px; }
+
+.sideMenu nav .root .icons {
+  clear: both; }
