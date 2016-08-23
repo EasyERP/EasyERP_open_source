@@ -1,96 +1,106 @@
-// Typography style
-html {
-  font-size: 100%;
-  -webkit-text-size-adjust: 100%;
-  -moz-text-size-adjust: 100%;
-  -ms-text-size-adjust: 100%;
-}
+//// Typography style
+//html {
+//  font-size: 100%;
+//  -webkit-text-size-adjust: 100%;
+//  -moz-text-size-adjust: 100%;
+//  -ms-text-size-adjust: 100%;
+//}
+//
+//body, h1, h2, h3, h4, h5, h6 {
+//  font-size-adjust: 0.5;
+//}
+//
+//body {
+//  font-family: $base-font-family;
+//}
+//
+//h1, h2, h3, h4, h5, h6 {
+//  font-family: $bold-font-family;
+//}
+//
+//body {
+//  @include default-font-size($size-body);
+//}
+//
+//h1 {
+//  @include default-font-size($size-h1);
+//  @include default-margin($size-h1);
+//}
+//
+//h2 {
+//  @include default-font-size($size-h2);
+//  @include default-margin($size-h2);
+//}
+//
+//h3 {
+//  @include default-font-size($size-h3);
+//  @include default-margin($size-h3);
+//}
+//
+//h4 {
+//  @include default-font-size($size-h4);
+//  @include default-margin($size-h4);
+//}
+//
+//h5 {
+//  @include default-font-size($size-h5);
+//  @include default-margin($size-h5);
+//}
+//
+//h6 {
+//  @include default-font-size($size-h6);
+//  @include default-margin($size-h6);
+//}
+//
+//blockquote, q {
+//  @include default-font-size($size-q);
+//}
+//
+//@media print {
+//  body {
+//    font-size: 12pt;
+//  }
+//
+//  h1, h2, h3, h4, h5, h6 {
+//    line-height: 1.25;
+//  }
+//
+//  h1 {
+//    font-size: 36pt;
+//  }
+//
+//  h2 {
+//    font-size: 24pt;
+//  }
+//
+//  h3 {
+//    font-size: 18pt;
+//  }
+//
+//  h4 {
+//    font-size: 14pt;
+//  }
+//
+//  h5 {
+//    font-size: 12pt;
+//  }
+//
+//  h6 {
+//    font-size: 10.5pt;
+//  }
+//
+//  blockquote, q {
+//    font-size: 24pt;
+//    line-height: 1.4583;
+//  }
+//}
+//
 
-body, h1, h2, h3, h4, h5, h6 {
-  font-size-adjust: 0.5;
-}
-
-body {
-  font-family: $base-font-family;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: $bold-font-family;
-}
-
-body {
-  @include default-font-size($size-body);
-}
-
-h1 {
-  @include default-font-size($size-h1);
-  @include default-margin($size-h1);
-}
-
-h2 {
-  @include default-font-size($size-h2);
-  @include default-margin($size-h2);
-}
-
-h3 {
-  @include default-font-size($size-h3);
-  @include default-margin($size-h3);
-}
-
-h4 {
-  @include default-font-size($size-h4);
-  @include default-margin($size-h4);
-}
-
-h5 {
-  @include default-font-size($size-h5);
-  @include default-margin($size-h5);
-}
-
-h6 {
-  @include default-font-size($size-h6);
-  @include default-margin($size-h6);
-}
-
-blockquote, q {
-  @include default-font-size($size-q);
-}
-
-@media print {
-  body {
-    font-size: 12pt;
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    line-height: 1.25;
-  }
-
-  h1 {
-    font-size: 36pt;
-  }
-
-  h2 {
-    font-size: 24pt;
-  }
-
-  h3 {
-    font-size: 18pt;
-  }
-
-  h4 {
-    font-size: 14pt;
-  }
-
-  h5 {
-    font-size: 12pt;
-  }
-
-  h6 {
-    font-size: 10.5pt;
-  }
-
-  blockquote, q {
-    font-size: 24pt;
-    line-height: 1.4583;
-  }
+h3{
+  color: #3e88b9;
+  font-size: 18px;
+  line-height: 24px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }

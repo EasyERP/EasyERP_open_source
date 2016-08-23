@@ -6,8 +6,8 @@
     <td class="startDateManager"><%= elem.startDate ? utcDateToLocaleDate(elem.startDate) : 'From start of project'%></td>
     <td class="endDateManager"><%= elem.endDate ? utcDateToLocaleDate(elem.endDate) : 'To end of project'%></td>
 
-    <td data-id="<%=elem.employeeId ? elem.employeeId._id : ''%>" data-content="employee"> <%=elem.employeeId ? elem.employeeId.fullName : ''%></td>
-    <td data-id="<%=elem.projectPositionId ? elem.projectPositionId._id : ''%>" data-content="projectPosition"><%=elem.projectPositionId ? elem.projectPositionId.name : ''%></td>
-    <td data-id="<%=elem.bonusId ? elem.bonusId._id : ''%>" data-content="bonus"> <%=elem.bonusId ? elem.bonusId.name : ''%></td>
+    <td data-id="<%=elem.employeeId ? elem.employeeId._id : ''%>" data-content="employee"><a><%=elem.employeeId ? elem.employeeId.fullName : ''%></a></td>
+    <td data-id="<%=elem.projectPositionId ? elem.projectPositionId._id : ''%>" data-content="projectPosition"><a><%=elem.projectPositionId ? elem.projectPositionId.name : ''%></a></td>
+    <td data-id="<%=elem.bonusId ? elem.bonusId._id : ''%>" data-content="bonus"><a> <%=elem.bonusId ? elem.bonusId.name : ''%></a></td>
 
 </tr>

@@ -108,9 +108,12 @@ define([
             var self = this;
             var $curEl = this.$el;
             var $filterValues = $curEl.find('#searchFilterContainer');
-            var filterKeys = filter ? Object.keys(filter) : [];
+            var filterKeys;
             var groupName;
             var defaultFilterName = App.storage.find(this.contentType + '.savedFilter');
+            
+
+            filterKeys = filter ? Object.keys(filter) : [];
 
             $filterValues.empty();
 

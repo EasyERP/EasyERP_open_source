@@ -11,3 +11,12 @@ $first: 1;
     font-weight: map-get($base-font-weight, $i);
   }
 }
+
+@font-face {
+  font-family: 'Icons';
+  src: url("../font/easyERP.eot");
+  src: url("../font/easyERP.eot?#iefix") format('embedded-opentype'),
+  url("../font/easyERP.woff") format('woff'),
+  url("../font/easyERP.ttf") format('truetype'),
+  url("../font/easyERP.svg#quartzregular") format('svg');
+}
