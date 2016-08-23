@@ -2377,14 +2377,14 @@ label._customCHeckbox input[type="checkbox"] {
   ._finishImportContainer ._importWithOutConflict {
     margin-bottom: 25px; }
 
-._importButtonsGroup {
+._importButtonsGroup.left {
   width: 100%; }
-  ._importButtonsGroup.right {
-    padding-right: 15px; }
-  ._importButtonsGroup button {
-    margin-right: -4px; }
-  ._importButtonsGroup button + button {
-    margin-left: 15px; }
+._importButtonsGroup.right {
+  padding-right: 15px; }
+._importButtonsGroup button {
+  margin-right: -4px; }
+._importButtonsGroup button + button {
+  margin-left: 15px; }
 
 .propertyContainer a:hover {
   text-decoration: none; }
