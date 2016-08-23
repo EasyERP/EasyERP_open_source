@@ -49,7 +49,8 @@ define([
             'click .importBtn'   : 'importFile',
             'change .inputAttach': 'importFiles',
             'click #cancelBtn'   : 'cancelStage',
-            'click .stageBtn'    : 'selectStage'
+            'click .stageBtn'    : 'selectStage',
+            'click .saveChanges' : 'saveChanges'
         },
 
         initialize: function (options) {
@@ -148,9 +149,9 @@ define([
                 this.listenTo(this.childView, 'uploadCompleted', this.enabledNextBtn);
 
             } else if (this.stage === 2) {
-                //if (this.childView) {
-                //    this.childView.updateUser();
-                //}
+                if (this.childView) {
+                    this.childView.updateUser();
+                }
 
                 this.$el.find('.stageBtnBack').show();
                 this.$el.find('#cancelBtn').show();

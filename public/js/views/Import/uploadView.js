@@ -133,15 +133,13 @@ define([
         importFiles: function (e) {
             var $thisEl = this.$el;
             var timeStamp = +(new Date());
-            var fileName;
-            var userModel;
-            var importObj;
 
             if (this.importView) {
                 this.importView.undelegateEvents();
             }
 
             this.fileName = $thisEl.find('#inputAttach')[0].files[0].name;
+            this.timeStamp = +timeStamp;
 
             this.updateUser();
 
@@ -158,19 +156,19 @@ define([
 
         updateUser: function() {
             var currentUser = App.currentUser;
-            var timeStamp = +(new Date());
+            //var timeStamp = +(new Date());
             var userModel;
             var importObj;
 
             importObj = {
                 fileName      : this.fileName,
-                timeStamp     : +timeStamp,
+                timeStamp     : +this.timeStamp,
                 stage         : 1,
                 type          : this.entity,
                 comparingField: this.comparingField
             };
 
-            this.timeStamp = +timeStamp;
+            //
             userModel = new UserModel(currentUser);
 
             userModel.save({
@@ -192,7 +190,6 @@ define([
             if (App.currentUser && App.currentUser.imports && App.currentUser.imports.fileName) {
                 $attachFileName = $thisEl.find('.attachFileName');
                 $importBtn.text('Import another file');
-                //$attachFileName.find('span').html($thisEl.find('#inputAttach')[0].files[0].name);
 
                 $attachFileName.html('You have uploaded file ' + '<span></span>');
                 $attachFileName.find('span').html(App.currentUser.imports.fileName);
@@ -218,7 +215,6 @@ define([
             $combobox = $('#changeTableCombobox');
             $thisEl.find('.changeTableBtn[value="' + this.checkedCombobox + '"]').click();
             this.drowingCombobox($combobox, this.entity, this);
-            //$thisEl.find('.item[data-imp="' + this.checkedItem + '"]').click();
             $thisEl.find('.item').removeClass('active');
             $thisEl.find('.item[data-imp="' + this.checkedItem + '"]').addClass('active');
 
