@@ -62,27 +62,6 @@
   [class*=" icon-"]:before {
     font-family: 'erp-icons' !important; }
 
-.icon-Sales:before {
-  content: "\e00b"; }
-
-.icon-Project:before {
-  content: "\e02d"; }
-
-.icon-HR:before {
-  content: "\e001"; }
-
-.icon-Accounting {
-  content: "\e04b"; }
-
-.icon-Payroll {
-  content: "\e025"; }
-
-.icon-Expenses {
-  content: "\e077"; }
-
-.icon-Settings {
-  content: "\e09a"; }
-
 * {
   box-sizing: border-box; }
   *:before, *:after {
@@ -3906,10 +3885,10 @@ label._customCHeckbox input[type="checkbox"] {
       position: relative;
       font-family: "OpenSans SemiBold", sans-serif; }
       ._filterDropDownBody .filterValues.checkedValue:before {
-        font-family: FontAwesome;
+        font-family: 'erp-icons';
         position: absolute;
         left: 6px;
-        content: "\f00c"; }
+        content: "\e904"; }
   ._filterDropDownBody .listLine {
     margin: 7px 0;
     height: 1px;

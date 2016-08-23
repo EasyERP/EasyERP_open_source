@@ -3009,8 +3009,9 @@ input::-ms-clear {
   height: 2em;
   line-height: 2em;
   text-align: center;
-  font-family: 'FontAwesome';
+  font-family: 'erp-icons';
   font-size: 14px;
+  cursor: pointer;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:hover,
 .ui-datepicker .ui-datepicker-header .ui-datepicker-next:hover {
@@ -3030,19 +3031,18 @@ input::-ms-clear {
   top: 50%;
   right: auto;
   bottom: auto;
-  cursor: pointer;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-prev {
   left: 2px;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:before {
-  content: '\f104';
+  content: '\38';
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-next {
   right: 2px;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-next:before {
-  content: '\f105';
+  content: '\39';
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title {
   margin: 0 2.3em;
@@ -4823,16 +4823,9 @@ table#workflows tr td.edit-status {
 }
 .sideMenu nav .root .icons {
   padding: 0 11px;
-  display: inline-block;
-  font: normal normal normal 14px simple-line-icons;
   font-size: inherit;
   text-rendering: auto;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   transform: translate(0, 0);
-  font-style: normal;
-  font-variant: normal;
-  text-transform: none;
 }
 .sideMenu nav .root > a,
 .sideMenu nav .root .icons {
@@ -4845,29 +4838,29 @@ table#workflows tr td.edit-status {
   text-shadow: none;
   font-weight: 300;
 }
+.sideMenu nav .root .icons {
+  line-height: 38px;
+}
 .sideMenu nav .root .icon-Sales:before {
   content: "\e043";
-}
-.sideMenu nav .root .icon-HR:before {
-  content: "\e001";
 }
 .sideMenu nav .root .icon-Project:before {
   content: "\e02d";
 }
-.sideMenu nav .root .icon-Settings:before {
-  content: "\e09a";
+.sideMenu nav .root .icon-HR:before {
+  content: "\e001";
 }
 .sideMenu nav .root .icon-Accounting:before {
   content: "\e04b";
 }
-.sideMenu nav .root .icon-Expenses:before {
-  content: "\e077";
-}
 .sideMenu nav .root .icon-Payroll:before {
   content: "\e025";
 }
-.sideMenu nav .root .icon-Purchases:before {
-  content: "\e04e";
+.sideMenu nav .root .icon-Expenses:before {
+  content: "\e077";
+}
+.sideMenu nav .root .icon-Settings:before {
+  content: "\e09a";
 }
 .sideMenu nav .root:hover,
 .sideMenu nav .root.opened {
@@ -4906,10 +4899,10 @@ table#workflows tr td.edit-status {
   width: 30px;
   text-align: center;
   display: inline;
-  font-size: 16px;
-  font-family: 'FontAwesome';
+  font-size: 12px;
+  font-family: 'erp-icons';
   height: auto;
-  content: "\f104";
+  content: "\37";
   font-weight: 300;
   text-shadow: none;
   position: absolute;
@@ -4926,7 +4919,7 @@ table#workflows tr td.edit-status {
   display: block;
 }
 .sideMenu nav .root.opened:before {
-  transform: rotate(-90deg);
+  transform: rotate(90deg);
 }
 .sideMenu .logo {
   position: absolute;
@@ -5597,8 +5590,9 @@ ul.dialog-tabs li.right button {
   height: 2em;
   line-height: 2em;
   text-align: center;
-  font-family: 'FontAwesome';
+  font-family: 'erp-icons';
   font-size: 14px;
+  cursor: pointer;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:hover,
 .ui-datepicker .ui-datepicker-header .ui-datepicker-next:hover {
@@ -5618,19 +5612,18 @@ ul.dialog-tabs li.right button {
   top: 50%;
   right: auto;
   bottom: auto;
-  cursor: pointer;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-prev {
   left: 2px;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:before {
-  content: '\f104';
+  content: '\38';
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-next {
   right: 2px;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-next:before {
-  content: '\f105';
+  content: '\39';
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title {
   margin: 0 2.3em;
@@ -9219,12 +9212,12 @@ input:not([type="checkbox"]).inputBordered:focus {
   display: block;
 }
 .topbarHolder .loginPanel .dropdownButton:after {
-  content: "\f107";
+  content: "\37";
   display: inline-block;
   float: right;
-  font-size: 13px;
-  font-family: FontAwesome;
-  line-height: 20px;
+  font-size: 12px;
+  font-family: 'erp-icons';
+  line-height: 24px;
   color: #fff;
   width: 20px;
   text-align: center;
