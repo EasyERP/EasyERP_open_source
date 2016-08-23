@@ -229,8 +229,7 @@ define([], function () {
         DEFAULT_SCREEN_WIDTH: 1349,
         PAGINATION_ARRAY    : [25, 50, 100, 200],
 
-        /*TRACKER_URL: 'http://projects.thinkmobiles.com:8091',*/
-        TRACKER_URL: 'http://localhost:8091',
+        TRACKER_URL: 'http://projects.thinkmobiles.com:8091',
         SERVER_TYPE: 'production'
     };
 });
