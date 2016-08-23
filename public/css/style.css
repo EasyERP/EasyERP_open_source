@@ -2378,9 +2378,13 @@ label._customCHeckbox input[type="checkbox"] {
     margin-bottom: 25px; }
 
 ._importButtonsGroup {
-  padding-right: 15px; }
+  width: 100%; }
+  ._importButtonsGroup.right {
+    padding-right: 15px; }
+  ._importButtonsGroup button {
+    margin-right: -4px; }
   ._importButtonsGroup button + button {
-    margin-right: 15px; }
+    margin-left: 15px; }
 
 .propertyContainer a:hover {
   text-decoration: none; }

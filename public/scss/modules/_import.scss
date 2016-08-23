@@ -532,9 +532,14 @@
 }
 
 ._importButtonsGroup {
-  padding-right: 15px;
-
+  width: 100%;
+  &.right{
+    padding-right: 15px;
+  }
+  button{
+    margin-right: -4px;
+  }
   button + button {
-    margin-right: 15px;
+    margin-left: 15px;
   }
 }
