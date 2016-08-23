@@ -28,7 +28,7 @@
                     <% if (data.keys.length) { %>
                         <% _.each(data.keys, function(item){ %>
                             <td>
-                                <%= item %>
+                                <%= mappingFields[data.type][item] %>
                             </td>
                         <% }) %>
                     <% } %>
