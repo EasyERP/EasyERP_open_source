@@ -38,7 +38,9 @@ define([
 
         events: {
             'click .checkbox'                                : 'checked',
+/*
             'click  .list tbody td': 'goToEditDialog',
+*/
             'click #removeProforma'                          : 'deleteItems',
             'click #saveProforma'                            : 'saveItems',
             'click .selectList'                              : 'showSelects',
@@ -164,7 +166,7 @@ define([
 
         },
 
-        goToEditDialog: function (e) {
+        gotoForm: function (e) {
             var self = this;
             var id = $(e.target).closest('tr').data('id');
             var model = new InvoiceModel({validate: false});
