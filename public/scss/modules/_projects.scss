@@ -16,4 +16,14 @@
     overflow: visible;
     position: relative;
   }
+
+  &._tableAlignLeft {
+    thead,
+    tbody {
+      td,
+      th {
+        text-align: left;
+      }
+    }
+  }
 }

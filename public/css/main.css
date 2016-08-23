@@ -11774,7 +11774,8 @@ ul.dialog-tabs li.right button {
 .form-holder form .inner {
   margin-top: 0;
 }
-.form-holder form input:not([type=checkbox]) {
+.form-holder form input:not([type="checkbox"]),
+.form-holder form input:not([type="radio"]) {
   border: 1px solid #7f7f80;
   width: 100%;
   max-width: 280px;
@@ -11785,11 +11786,13 @@ ul.dialog-tabs li.right button {
   box-sizing: border-box;
   color: #000000;
 }
-.form-holder form input:not([type=checkbox]):focus {
+.form-holder form input:not([type="checkbox"]):focus,
+.form-holder form input:not([type="radio"]):focus {
   outline: medium none;
   border: 1px solid #3e88b9;
 }
-.form-holder form input:not([type=checkbox])#editInput {
+.form-holder form input:not([type="checkbox"])#editInput,
+.form-holder form input:not([type="radio"])#editInput {
   padding: 2px 6px;
 }
 .form-holder form .canReadAndWrite {
@@ -11804,6 +11807,7 @@ ul.dialog-tabs li.right button {
   display: block;
   float: left;
   height: 16px;
+  width: 16px;
 }
 .form-holder form .canReadAndWrite input[type=radio]:focus {
   box-shadow: none !important;
