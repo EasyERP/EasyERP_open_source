@@ -149,7 +149,7 @@ define([
                 this.listenTo(this.childView, 'uploadCompleted', this.enabledNextBtn);
 
             } else if (this.stage === 2) {
-                if (this.childView) {
+                if (this.childView && this.childView.updateUser) {
                     this.childView.updateUser();
                 }
 
