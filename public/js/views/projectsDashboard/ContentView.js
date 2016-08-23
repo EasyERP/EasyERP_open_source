@@ -49,21 +49,36 @@ define([
         },
 
         asyncRenderInfo: function (asyncKeys) {
+            var self = this;
             var body = this.$el.find('#pmsBody');
+            var total = 0;
 
-            async.each(asyncKeys, function (asyncId) {
+            async.each(asyncKeys, function (asyncId, cb) {
                 dataService.getData('jobs/getAsyncData', {
                     _id: asyncId
                 }, function (result) {
                     var items = result.data;
+                    var totalSum = 0;
                     var mainTr = body.find('[data-id="' + asyncId + '"]');
+
+                    if (!asyncId) {
+                        mainTr = body.find('[data-id="null"]');
+                    }
                     items.forEach(function (el) {
-                        mainTr.after("<tr data-main='" + asyncId + "' class='hidden'><td>" + el.name + "</td></tr>");
+                        totalSum += el.quotation ? el.quotation.paymentInfo.total / el.quotation.currency.rate : 0;
+                        mainTr.after("<tr data-main='" + asyncId + "' class='hidden'><td><a href='" + '#easyErp/Projects/form/' + el.project._id + "'>" + el.project.name + "</a></td><td>" + (el.customer ? el.customer.name : '') + "</td><td>" + el.name + "</td><td class='money'>" + (el.quotation ? helpers.currencySplitter((el.quotation.paymentInfo.total / el.quotation.currency.rate / 100).toFixed(2)) : 0) + "</td></tr>");
                     });
+
+                    mainTr.find('.sum').text(helpers.currencySplitter((totalSum / 100).toFixed(2)));
+
+                    total += totalSum;
+
+                    cb(null, result);
                 });
 
+            }, function () {
+                self.$el.find('#totalSum').text(helpers.currencySplitter((total / 100).toFixed(2)));
             });
-
         },
 
         backToSettings: function () {

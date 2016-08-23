@@ -1336,57 +1336,206 @@ var Module = function (models, event) {
     this.getAsyncData = function (req, res, next) {
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
         var ProjectMemberModel = models.get(req.session.lastDb, 'ProjectMember', ProjectMembersSchema);
+        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
         var query = req.query;
         var _id = query._id || null;
 
-        ProjectMemberModel.aggregate([{
-            $match: {
-                employeeId       : objectId(_id),
-                projectPositionId: objectId(CONSTANTS.PROJECTSMANAGER)
-            }
-        }, {
-            $lookup: {
-                from        : 'jobs',
-                localField  : 'projectId',
-                foreignField: 'project',
-                as          : 'jobs'
-            }
-        }, {
-            $project: {
-                projectId: 1,
-                startDate: 1,
-                endDate  : 1,
-                jobs     : {
-                    $filter: {
-                        input: '$jobs',
-                        as   : 'job',
-                        cond : {
-                            $or: [{
-                                $and: [{
-                                    $gte: ['$$job.createdBy.date', '$startDate']
-                                }, {
-                                    $lte: ['$$job.createdBy.date', '$endDate']
-                                }]
-                            }, {$eq: ['$startDate', null]},
-                                {$eq: ['$endDate', null]}
-                            ]
+        if (_id) {
+            ProjectMemberModel.aggregate([{
+                $match: {
+                    employeeId       : objectId(_id),
+                    projectPositionId: objectId(CONSTANTS.PROJECTSMANAGER)
+                }
+            }, {
+                $lookup: {
+                    from        : 'jobs',
+                    localField  : 'projectId',
+                    foreignField: 'project',
+                    as          : 'jobs'
+                }
+            }, {
+                $project: {
+                    projectId: 1,
+                    startDate: 1,
+                    endDate  : 1,
+                    jobs     : {
+                        $filter: {
+                            input: '$jobs',
+                            as   : 'job',
+                            cond : {
+                                $or: [{
+                                    $and: [{
+                                        $gte: ['$$job.createdBy.date', '$startDate']
+                                    }, {
+                                        $lte: ['$$job.createdBy.date', '$endDate']
+                                    }]
+                                }, {$eq: ['$startDate', null]},
+                                    {$eq: ['$endDate', null]}
+                                ]
+                            }
                         }
                     }
                 }
-            }
-        }, {$unwind: '$jobs'},
-            {
-            $group: {
-                _id : null,
-                jobs: {$addToSet: '$jobs'}
-            }
-        }], function (err, result) {
-            if (err) {
-                return next(err);
-            }
+            }, {
+                $unwind: '$jobs'
+            }, {
+                $lookup: {
+                    from        : 'Project',
+                    localField  : 'jobs.project',
+                    foreignField: '_id',
+                    as          : 'jobs.project'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Invoice',
+                    localField  : 'jobs.invoice',
+                    foreignField: '_id',
+                    as          : 'jobs.invoice'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Quotation',
+                    localField  : 'jobs.quotation',
+                    foreignField: '_id',
+                    as          : 'jobs.quotation'
+                }
+            }, {
+                $project: {
+                    'jobs.invoice'  : {$arrayElemAt: ['$jobs.invoice', 0]},
+                    'jobs.quotation': {$arrayElemAt: ['$jobs.quotation', 0]},
+                    'jobs.project'  : {$arrayElemAt: ['$jobs.project', 0]},
+                    'jobs.name'     : '$jobs.name'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Customers',
+                    localField  : 'jobs.project.customer',
+                    foreignField: '_id',
+                    as          : 'jobs.customer'
+                }
+            }, {
+                $project: {
+                    'jobs.invoice'     : 1,
+                    'jobs.quotation'   : 1,
+                    'jobs.project._id' : '$jobs.project._id',
+                    'jobs.project.name': '$jobs.project.name',
+                    'jobs.customer'    : {$arrayElemAt: ['$jobs.customer', 0]},
+                    'jobs.name'        : 1
+                }
+            }, {
+                $project: {
+                    'jobs.invoice'      : 1,
+                    'jobs.quotation'    : 1,
+                    'jobs.project'      : 1,
+                    'jobs.customer._id' : '$jobs.customer._id',
+                    'jobs.customer.name': {$concat: ['$jobs.customer.name.first', ' ', '$jobs.customer.name.last']},
+                    'jobs.name'         : 1
+                }
+            }, {
+                $sort: {
+                    'jobs.project.name': 1
+                }
+            }, {
+                $group: {
+                    _id : null,
+                    jobs: {$push: '$jobs'}
+                }
+            }], function (err, result) {
+                if (err) {
+                    return next(err);
+                }
 
-            res.status(200).send({data: result[0] ? result[0].jobs : []});
-        });
+                res.status(200).send({data: result[0] ? result[0].jobs : []});
+            });
+        } else {
+            Project.aggregate([{
+                $lookup: {
+                    from        : 'projectMembers',
+                    localField  : 'project',
+                    foreignField: 'projectId',
+                    as          : 'projectMembers'
+                }
+            }, {
+                $project: {
+                    name          : 1,
+                    customer      : 1,
+                    projectManager: {
+                        $filter: {
+                            input: '$projectMembers',
+                            as   : 'projectMember',
+                            cond : {
+                                $and: [{
+                                    $eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.PROJECTSMANAGER)]
+                                }, {
+                                    $or: [{
+                                        $max: '$$projectMember.startDate'
+                                    }, {
+                                        $eq: ['$$projectMember.startDate', null]
+                                    }]
+                                }]
+                            }
+                        }
+                    }
+                }
+            }, {
+                $match: {
+                    projectManager: []
+                }
+            }, {
+                $lookup: {
+                    from        : 'Customers',
+                    localField  : 'customer',
+                    foreignField: '_id',
+                    as          : 'customer'
+                }
+            }, {
+                $lookup: {
+                    from        : 'jobs',
+                    localField  : '_id',
+                    foreignField: 'project',
+                    as          : 'jobs'
+                }
+            }, {
+                $project: {
+                    jobs    : 1,
+                    name    : 1,
+                    customer: {$arrayElemAt: ['$customer', 0]}
+                }
+            }, {
+                $unwind: '$jobs'
+            }, {
+                $lookup: {
+                    from        : 'Quotation',
+                    localField  : 'jobs.quotation',
+                    foreignField: '_id',
+                    as          : 'jobs.quotation'
+                }
+            }, {
+                $project: {
+                    'jobs.quotation'    : {$arrayElemAt: ['$jobs.quotation', 0]},
+                    'jobs.project.name' : '$name',
+                    'jobs.project._id'  : '$_id',
+                    'jobs.customer.name': {$concat: ['$customer.name.first', ' ', '$customer.name.last']},
+                    'jobs.customer._id' : '$customer._id',
+                    'jobs.name'         : 1
+                }
+            }, {
+                $sort: {
+                    'jobs.project.name': 1
+                }
+            }, {
+                $group: {
+                    _id : null,
+                    jobs: {$push: '$jobs'}
+                }
+            }], function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send({data: result[0] ? result[0].jobs : []});
+            });
+        }
     };
 
     this.getForProjectsDashboard = function (req, res, next) {
