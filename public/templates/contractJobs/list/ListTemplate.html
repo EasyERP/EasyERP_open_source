@@ -1,7 +1,21 @@
 <%collection.forEach(function (el){%>
 <tr class="_contractJobsListItem">
+    <%var proformaPaid = 0;%>
+    <%var proformaSum = 0;%>
+    <%if (el.proforma && el.proforma.length){ %>
+    <%el.proforma.forEach(function(elem) {%>
+    <%if (elem.sourceDocument === el.quotation._id) {%>
+    <% elem.products.forEach(function (prod) {%>
+    <% proformaSum += elem.paymentInfo.total / elem.currency.rate;%>
+    <% proformaPaid += (elem.paymentInfo.total - elem.paymentInfo.balance) / elem.currency.rate;%>
+
+    <%})%>
+    <%}%>
+    <%});%>
+    <%}%>
     <% var adr = (el.jobPrice/(100 * (el.totalWorked - el.totalQAWorked - el.totalDesignWorked)))%>
     <% var tadr = (el.jobPrice/(100 * el.totalWorked))%>
+    <%var paymentsInvoice = el.invoice && el.invoice.paymentInfo ? (el.invoice.paymentInfo.total-el.invoice.paymentInfo.balance) / el.invoice.currency.rate : 0; %>
     <td class="_contractJobsStatusBlock <%=el.workflow.name === 'Finished' ? 'finished' : 'inProgress'%> contractCell">
         <span><%=el.workflow ? el.workflow.name : ''%></span></td>
     <td class="_contractJobsJobBlock">
@@ -49,19 +63,30 @@
         <div><span class="semiBold">Due Date: </span><span><%=el.invoice && el.invoice.dueDate ? utcDateToLocaleDate(new Date(el.invoice.dueDate)) : ''%></span>
         </div>
         <%}%>
-    </td>
-    <td class="_contractJobsRevenueBlock">
         <%if (el.revenue) {%>
         <div class="semiBold money"><%=currencySplitter((el.revenue/100).toFixed(2))%></div>
         <div><span>Quoted: </span><span><%=el.invoice && el.invoice.name ? 0.00 : currencySplitter((el.revenue/100).toFixed(2))%></span>
         </div>
-        <%if (el.proforma && el.proforma.sum && !el.invoice && !el.invoice._id) {%>
-        <div><span>Proformed: </span><span class="money"><%=currencySplitter((el.proforma.sum/100).toFixed(2))%></span>
+        <%if (proformaSum) {%>
+        <div><span>Proformed: </span><span class="money"><%=currencySplitter((proformaSum/100).toFixed(2))%></span>
         </div>
         <%}%>
         <div><span>Invoiced: </span><span class="money"><%=el.invoice && el.invoice.name ? currencySplitter((el.revenue/100).toFixed(2)) : 0.00%></span>
         </div>
         <%}%>
+    </td>
+    <td class="_contractJobsRevenueBlock">
+        <div><span>Total: </span><span class="money"><%=currencySplitter(((proformaPaid + paymentsInvoice)/100).toFixed(2))%></span>
+        </div>
+        <%if (paymentsInvoice) {%>
+        <div><span>By Invoice: </span><span
+                class="money"><%=currencySplitter(((paymentsInvoice)/100).toFixed(2))%></span></div>
+        <%}%>
+        <%if (proformaPaid) {%>
+        <div><span>By Proforma: </span><span
+                class="money"><%=currencySplitter(((proformaPaid)/100).toFixed(2))%></span></div>
+        <%}%>
+
     </td>
     <td class="_contractJobsCostBlock">
         <div class="semiBold money"><%=currencySplitter(((el.costMaterials + el.costLabour)/100).toFixed(2))%></div>
@@ -74,12 +99,17 @@
     </td>
     <%if (isFinite(((el.revenue - (el.costMaterials +el.costLabour)) / (el.costMaterials + el.costLabour)) * 100)){%>
     <td class="_contractJobsProfitBlock">
-        <div class="money"><%=currencySplitter(((el.revenue - (el.costMaterials +el.costLabour))/100).toFixed(2))%></div>
-        <div class="percent"><%=currencySplitter((((el.revenue - (el.costMaterials +el.costLabour)) / (el.costMaterials +el.costLabour)) * 100).toFixed(2))%> %</div>
+        <div class="money"><%=currencySplitter(((el.revenue - (el.costMaterials +el.costLabour))/100).toFixed(2))%>
+        </div>
+        <div class="percent"><%=currencySplitter((((el.revenue - (el.costMaterials +el.costLabour)) / (el.costMaterials
+            +el.costLabour)) * 100).toFixed(2))%> %
+        </div>
     </td>
-    <%} else if ((((el.revenue - (el.costMaterials +el.costLabour)) / (el.costMaterials + el.costLabour)) * 100) > 0) {%>
+    <%} else if ((((el.revenue - (el.costMaterials +el.costLabour)) / (el.costMaterials + el.costLabour)) * 100) > 0)
+    {%>
     <td class="_contractJobsProfitBlock percent">
-        <div class="money"><%=currencySplitter(((el.revenue - (el.costMaterials +el.costLabour))/100).toFixed(2))%></div>
+        <div class="money"><%=currencySplitter(((el.revenue - (el.costMaterials +el.costLabour))/100).toFixed(2))%>
+        </div>
         <div class="percent">100 %</div>
     </td>
     <%} else {%>
