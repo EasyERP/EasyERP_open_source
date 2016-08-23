@@ -2208,7 +2208,6 @@ label._customCHeckbox input[type="checkbox"] {
       z-index: 10; }
 
 ._importTabs .tabListItem span {
-  display: inline-block !important;
   color: #ffffff;
   line-height: 12px; }
 ._importTabs .tabListItem ._importStep {
