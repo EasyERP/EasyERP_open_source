@@ -341,6 +341,7 @@ module.exports = function (app, mainDb) {
         body.city = (!body.city && geo) ? geo.city : '';
         body.region = (!body.region && geo) ? geo.region : '';
 
+        body.registrType = process.env.registrType;
         body.server = process.env.SERVER_PLATFORM;
 
         tracker.track(body);
