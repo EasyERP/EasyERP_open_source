@@ -8,9 +8,10 @@ define([
     'helpers/eventsBinder',
     'custom',
     'common',
-    'constants'
+    'constants',
+    'tracker'
 
-], function (Backbone, _, $, mainView, loginView, dataService, eventsBinder, custom, common, CONSTANTS) {
+], function (Backbone, _, $, mainView, loginView, dataService, eventsBinder, custom, common, CONSTANTS, tracker) {
     'use strict';
     var bindDefaultUIListeners = function () {
         $(document).on('keydown', '.ui-dialog', function (e) {
@@ -126,8 +127,17 @@ define([
 
         dashBoardVacation: function (filter) {
             var self = this;
+            var currentUser = App.currentUser || {};
 
             FlurryAgent.logEvent('DashBoard Vacation', {filter: filter});
+
+            tracker.track({
+                name   : 'DashBoard Vacation',
+                message: 'DashBoard Vacation',
+                email  : currentUser.email,
+                login  : currentUser.login,
+                server : CONSTANTS.SERVER_TYPE
+            });
 
             filter = filter || custom.retriveFromCash('DashVacation.filter');
 
