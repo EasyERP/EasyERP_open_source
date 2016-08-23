@@ -2,10 +2,7 @@
   width: 100%;
   margin-left: auto;
   margin-right: auto;
-  padding-left: 12px;
-  padding-left: 0.75rem;
-  padding-right: 12px;
-  padding-right: 0.75rem; }
+  padding: 0 15px; }
 
 .clearfix:before, .container:before, .container-full:before, .row:before, .flex #thumbnailContent:before, .clearfix:after, .container:after, .container-full:after, .row:after, .flex #thumbnailContent:after {
   content: " ";
@@ -1949,15 +1946,22 @@ label._customCHeckbox input[type="checkbox"] {
 .internal_Notes {
   min-height: 100px; }
 
-.dashboard-card {
-  background-color: #fff;
-  border: 1px solid #d8dde6;
-  border-radius: 4px;
-  margin-top: 16px;
-  padding: 20px;
-  width: 100%; }
-  .dashboard-card .card-title {
-    color: #536786; }
+.dasboard-card-wrap {
+  background-color: #f2f5fa;
+  display: table;
+  height: 100%; }
+  .dasboard-card-wrap + #timeRecivingDataFromServer {
+    background-color: #f2f5fa; }
+  .dasboard-card-wrap .dashboard-card {
+    background-color: #fff;
+    border: 1px solid #d8dde6;
+    border-radius: 4px;
+    margin-top: 16px;
+    padding: 20px;
+    float: left;
+    width: 100%; }
+    .dasboard-card-wrap .dashboard-card .card-title {
+      color: #536786; }
 
 /*
 

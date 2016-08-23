@@ -1,15 +1,25 @@
-.dashboard-card {
-  background-color: #fff;
-  border: 1px solid rgb(216, 221, 230);
-  border-radius: 4px;
-  margin-top: 16px;
-  padding: 20px;
-  //float: left;
-  width: 100%;
-  .card-title{
-    color: #536786;
+.dasboard-card-wrap{
+  background-color: #f2f5fa;
+  display: table;
+  height: 100%;
+  &+#timeRecivingDataFromServer{
+    background-color: #f2f5fa;
+  }
+  .dashboard-card {
+    background-color: #fff;
+    border: 1px solid rgb(216, 221, 230);
+    border-radius: 4px;
+    margin-top: 16px;
+    padding: 20px;
+    float: left;
+    width: 100%;
+    .card-title{
+      color: #536786;
+    }
   }
 }
+
+
 
 
 
