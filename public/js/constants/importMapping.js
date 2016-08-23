@@ -199,6 +199,38 @@
             'social.LI',
             'skype',
             'reason'
+        ],
+        Invoice : [
+            'ID',
+            'forSales',
+            'supplier._id',
+            'supplier.name',
+            'sourceDocument',
+            'supplierInvoiceNumberr',
+            'paymentReference',
+            'invoiceDate',
+            'dueDate',
+            'paymentDate',
+            'account',
+            'journal',
+            'salesPerson._id',
+            'salesPerson.name',
+            'paymentTerms',
+            'paymentInfo',
+            'payments',
+            'products',
+            'workflow._id',
+            'workflow.name',
+            'workflow.status',
+            'whoCanRW',
+            'groups.owner',
+            'groups.users',
+            'groups.group',
+            'creationDate',
+            'createdBy.user',
+            'createdBy.date',
+            'editedBy.user',
+            'editedBy.date'
         ]
     };
 
