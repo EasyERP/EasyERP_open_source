@@ -128,12 +128,12 @@ define([
 
             // FlurryAgent.logEvent('DashBoard Vacation', {filter: filter});
 
-            tracker.track({
+            /* tracker.track({
                 name   : 'DashBoard Vacation',
                 message: 'DashBoard Vacation',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             }); */
 
             filter = filter || custom.retriveFromCash('DashVacation.filter');
 
@@ -191,12 +191,12 @@ define([
 
             // FlurryAgent.logEvent('Invoice Charts', {filter: filter});
 
-            tracker.track({
+            /*tracker.track({
                 name   : 'Invoice Charts',
                 message: 'Invoice Charts',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             });*/
 
             if (filter) {
                 filter = decodeURIComponent(filter);
@@ -259,12 +259,12 @@ define([
 
             // FlurryAgent.logEvent('HR Dashboard');
 
-            tracker.track({
+            /* tracker.track({
                 name   : 'HR Dashboard',
                 message: 'HR Dashboard',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             });*/
 
             if (!this.isAuth) {
                 this.checkLogin(function (success) {
@@ -316,12 +316,12 @@ define([
 
             // FlurryAgent.logEvent('Revenue', {filter: filter});
 
-            tracker.track({
+            /*tracker.track({
                 name   : 'Revenue',
                 message: 'Revenue',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             });*/
 
             if (filter) {
                 filter = decodeURIComponent(filter);
@@ -387,12 +387,12 @@ define([
 
             // FlurryAgent.logEvent('Settings Employee', {filter: filter});
 
-            tracker.track({
+            /*tracker.track({
                 name   : 'Settings Employee',
                 message: 'Settings Employee',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             });*/
 
             if (filter) {
                 filter = decodeURIComponent(filter);
@@ -449,12 +449,12 @@ define([
 
             // FlurryAgent.logEvent('Hours');
 
-            tracker.track({
+            /*tracker.track({
                 name   : 'Hours',
                 message: 'Hours',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             });*/
 
             if (!this.isAuth) {
                 this.checkLogin(function (success) {
@@ -497,12 +497,12 @@ define([
 
             // FlurryAgent.logEvent('Attendance');
 
-            tracker.track({
+            /*tracker.track({
                 name   : 'Attendance',
                 message: 'Attendance',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             });*/
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -538,12 +538,12 @@ define([
 
             // FlurryAgent.logEvent('Import', {page: page, count: count});
 
-            tracker.track({
+            /*tracker.track({
                 name   : 'Import',
                 message: 'Import',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             });*/
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -590,12 +590,12 @@ define([
 
             // FlurryAgent.logEvent('Profiles');
 
-            tracker.track({
+            /*tracker.track({
                 name   : 'Profiles',
                 message: 'Profiles',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             });*/
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -650,12 +650,12 @@ define([
 
             // FlurryAgent.logEvent('Accounts');
 
-            tracker.track({
+            /*tracker.track({
                 name   : 'Accounts',
                 message: 'Accounts',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             });*/
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -693,12 +693,12 @@ define([
 
             // FlurryAgent.logEvent('productSettings');
 
-            tracker.track({
+            /*tracker.track({
                 name   : 'productSettings',
                 message: 'productSettings',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             });*/
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -756,12 +756,12 @@ define([
 
             // FlurryAgent.logEvent('Products');
 
-            tracker.track({
+            /*tracker.track({
                 name   : 'Products',
                 message: 'Products',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             });*/
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -858,12 +858,12 @@ define([
 
             // FlurryAgent.logEvent('UserPage');
 
-            tracker.track({
+            /*tracker.track({
                 name   : 'UserPage',
                 message: 'UserPage',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             });*/
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -905,12 +905,12 @@ define([
 
             // FlurryAgent.logEvent('Payroll Dashboard');
 
-            tracker.track({
+            /*tracker.track({
                 name   : 'Payroll Dashboard',
                 message: 'Payroll Dashboard',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             });*/
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -952,12 +952,12 @@ define([
 
             // FlurryAgent.logEvent('Reports Dashboard');
 
-            tracker.track({
+            /*tracker.track({
                 name   : 'Reports Dashboard',
                 message: 'Reports Dashboard',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             });*/
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -996,12 +996,12 @@ define([
 
             // FlurryAgent.logEvent('Dashboard');
 
-            tracker.track({
+            /*tracker.track({
                 name   : 'Dashboard',
                 message: 'Dashboard',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             });*/
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -1078,12 +1078,12 @@ define([
 
             // FlurryAgent.logEvent('Project Dashboard');
 
-            tracker.track({
+            /*tracker.track({
                 name   : 'Project Dashboard',
                 message: 'Project Dashboard',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             });*/
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -1169,12 +1169,12 @@ define([
 
             // FlurryAgent.logEvent('Workflows');
 
-            tracker.track({
+            /*tracker.track({
                 name   : 'Workflows',
                 message: 'Workflows',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             });*/
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -1296,12 +1296,12 @@ define([
 
                     // FlurryAgent.logEvent(message);
 
-                    tracker.track({
+                    /*tracker.track({
                         name   : message,
                         message: message,
                         email  : currentUser.email,
                         login  : currentUser.login
-                    });
+                     });*/
 
                     return Backbone.history.navigate(url, {replace: true});
                 }
@@ -1310,12 +1310,12 @@ define([
 
                 // FlurryAgent.logEvent(message);
 
-                tracker.track({
+                /*tracker.track({
                     name   : message,
                     message: message,
                     email  : currentUser.email,
                     login  : currentUser.login
-                });
+                 });*/
 
                 contentViewUrl = 'views/' + contentType + '/list/ListView';
                 topBarViewUrl = 'views/' + contentType + '/TopBarView';
@@ -1539,12 +1539,12 @@ define([
 
                 // FlurryAgent.logEvent(message);
 
-                tracker.track({
+                /*tracker.track({
                     name   : message,
                     message: message,
                     email  : currentUser.email,
                     login  : currentUser.login
-                });
+                 });*/
 
                 contentViewUrl = 'views/' + contentType + '/form/ContentView';
                 topBarViewUrl = 'views/' + contentType + '/TopBarView';
@@ -1703,12 +1703,12 @@ define([
 
                 // FlurryAgent.logEvent(message);
 
-                tracker.track({
+                /*tracker.track({
                     name   : message,
                     message: message,
                     email  : currentUser.email,
                     login  : currentUser.login
-                });
+                 });*/
 
                 if (context.mainView === null) {
                     context.main(contentType);
@@ -1800,12 +1800,12 @@ define([
 
                 // FlurryAgent.logEvent(message);
 
-                tracker.track({
+                /*tracker.track({
                     name   : message,
                     message: message,
                     email  : currentUser.email,
                     login  : currentUser.login
-                });
+                 });*/
 
                 contentViewUrl = 'views/' + contentType + '/kanban/KanbanView';
                 topBarViewUrl = 'views/' + contentType + '/TopBarView';
@@ -1919,12 +1919,12 @@ define([
 
                 // FlurryAgent.logEvent(message);
 
-                tracker.track({
+                /*tracker.track({
                     name   : message,
                     message: message,
                     email  : currentUser.email,
                     login  : currentUser.login
-                });
+                 });*/
 
                 if (!filter) {
 
