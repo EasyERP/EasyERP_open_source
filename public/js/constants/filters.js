@@ -872,7 +872,13 @@
                 backend    : 'workflow'
             },
 
-            array: ['workflow', 'name', 'customer']
+            type: {
+                displayName: 'Type',
+                backend    : 'type',
+                type       : 'string'
+            },
+
+            array: ['workflow', 'name', 'customer', 'type']
 
         }
     };

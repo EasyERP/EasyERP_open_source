@@ -72,11 +72,10 @@
   }
 }
 
-
-#pmsTable .list{
-  background-color: hsl( 130 , 50%, 80%);
+._pms-tr {
+  background-color: #f1f3f1;
   td {
-    height: 30px !important;
+    height: 25px !important;
   }
 }
 

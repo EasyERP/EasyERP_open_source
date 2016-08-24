@@ -1412,7 +1412,8 @@ var Module = function (models, event) {
                     'jobs.quotation': {$arrayElemAt: ['$jobs.quotation', 0]},
                     'jobs.project'  : {$arrayElemAt: ['$jobs.project', 0]},
                     'jobs.name'     : '$jobs.name',
-                    workflow        : '$jobs.workflow'
+                    workflow        : '$jobs.workflow',
+                    type            : '$jobs.type'
                 }
             }, {
                 $lookup: {
@@ -1424,6 +1425,7 @@ var Module = function (models, event) {
             }, {
                 $project: {
                     workflow           : 1,
+                    type               : 1,
                     'project._id'      : '$jobs.project._id',
                     customer           : {$arrayElemAt: ['$jobs.customer', 0]},
                     'jobs.invoice'     : 1,
@@ -1534,7 +1536,8 @@ var Module = function (models, event) {
                     'jobs.workflow'     : 1,
                     'project._id'       : '$_id',
                     'customer._id'      : '$customer._id',
-                    workflow            : '$jobs.workflow'
+                    workflow            : '$jobs.workflow',
+                    type                : '$jobs.type'
                 }
             }, {
                 $match: matchObject
@@ -1585,6 +1588,7 @@ var Module = function (models, event) {
         }, {
             $project: {
                 workflow      : 1,
+                type          : 1,
                 project       : {$arrayElemAt: ['$project', 0]},
                 projectManager: {
                     $filter: {
@@ -1614,6 +1618,7 @@ var Module = function (models, event) {
         }, {
             $project: {
                 workflow      : 1,
+                type          : 1,
                 customer      : {$arrayElemAt: ['$customer', 0]},
                 'project._id' : 1,
                 projectManager: {$arrayElemAt: ['$projectManager', 0]}

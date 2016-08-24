@@ -28,7 +28,8 @@ var Filters = function (models) {
             }
         }, {
             $project: {
-                workflow: {$arrayElemAt: ['$workflow', 0]}
+                workflow: {$arrayElemAt: ['$workflow', 0]},
+                type    : 1
             }
         }, {
             $group: {
@@ -38,6 +39,13 @@ var Filters = function (models) {
                     $addToSet: {
                         _id : '$workflow._id',
                         name: '$workflow.name'
+                    }
+                },
+
+                type: {
+                    $addToSet: {
+                        _id : '$type',
+                        name: '$type'
                     }
                 }
             }

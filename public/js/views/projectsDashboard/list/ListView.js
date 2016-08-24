@@ -52,7 +52,7 @@ define([
                 $tr.find('.expand').text('+');
             }
 
-            childTr.toggleClass();
+            childTr.toggleClass('hidden');
         },
 
         asyncRenderInfo: function (asyncKeys) {
