@@ -2535,7 +2535,7 @@ var Module = function (models, event) {
         var optionsObject = [];
         var filter = data.filter || {};
         var key;
-
+        var filterForOpps = {};
         var filterMapper = new FilterMapper();
 
         if (filter) {
@@ -2553,7 +2553,17 @@ var Module = function (models, event) {
                 break;
         }
 
-        optionsObject.push(filterObj);
+        if (contentType === 'Opportunities') {
+            Object.keys(filterObj).forEach(function (el) {
+                filterForOpps[el + '._id'] = filterObj[el];
+            });
+
+            optionsObject.push(filterForOpps);
+
+        } else {
+            optionsObject.push(filterObj);
+
+        }
 
         accessRollSearcher = function (cb) {
             accessRoll(req, Opportunities, cb);
@@ -2602,11 +2612,8 @@ var Module = function (models, event) {
             switch (contentType) {
 
                 case ('Opportunities'):
+
                     aggregateQuery.push({
-                        $match: {
-                            $and: optionsObject
-                        }
-                    }, {
                         $lookup: {
                             from        : 'Customers',
                             localField  : 'customer',
@@ -2627,6 +2634,10 @@ var Module = function (models, event) {
                             'editedBy.user': {$arrayElemAt: ['$editedBy.user', 0]},
                             'editedBy.date': 1,
                             isOpportunitie : 1
+                        }
+                    }, {
+                        $match: {
+                            $and: optionsObject
                         }
                     }, {
                         $group: {
@@ -2963,7 +2974,7 @@ var Module = function (models, event) {
             attachments     : 1,
             dateBirth       : 1,
             jobPosition     : 1
-    });
+        });
 
         query
             .populate('company')

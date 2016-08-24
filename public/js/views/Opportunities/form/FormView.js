@@ -33,7 +33,7 @@ define([
             click                                              : 'hideNewSelect',
             'click #tabList a'                                 : 'switchTab',
             'keyup .editable'                                  : 'setChangeValueToModel',
-            'keypress .dealTitlePrice'                        : 'keypress',
+            'keypress .dealTitlePrice'                         : 'keypress',
             'click #cancelBtn'                                 : 'cancelChanges',
             'click #saveBtn'                                   : 'saveChanges',
             'click .tabListItem'                               : 'changeWorkflow',
@@ -177,13 +177,13 @@ define([
                         self.modelChanged = {};
                         self.hideButtons();
 
-                        if (sendEvent){
+                        if (sendEvent) {
 
                             if (changedAttrs.hasOwnProperty('salesPerson')) {
                                 changedAttrs.salesPerson = $thisEl.find('#salesPersonDd').text().trim();
                             }
 
-                            if(changedAttrs.hasOwnProperty('workflow')) {
+                            if (changedAttrs.hasOwnProperty('workflow')) {
                                 changedAttrs.workflow = $thisEl.find('.tabListItem.active span').text().trim();
                             }
 
