@@ -126,7 +126,7 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('DashBoard Vacation', {filter: filter});
+            // FlurryAgent.logEvent('DashBoard Vacation', {filter: filter});
 
             tracker.track({
                 name   : 'DashBoard Vacation',
@@ -189,7 +189,7 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Invoice Charts', {filter: filter});
+            // FlurryAgent.logEvent('Invoice Charts', {filter: filter});
 
             tracker.track({
                 name   : 'Invoice Charts',
@@ -257,7 +257,7 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('HR Dashboard');
+            // FlurryAgent.logEvent('HR Dashboard');
 
             tracker.track({
                 name   : 'HR Dashboard',
@@ -314,7 +314,7 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Revenue', {filter: filter});
+            // FlurryAgent.logEvent('Revenue', {filter: filter});
 
             tracker.track({
                 name   : 'Revenue',
@@ -385,7 +385,7 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Settings Employee', {filter: filter});
+            // FlurryAgent.logEvent('Settings Employee', {filter: filter});
 
             tracker.track({
                 name   : 'Settings Employee',
@@ -447,7 +447,7 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Hours');
+            // FlurryAgent.logEvent('Hours');
 
             tracker.track({
                 name   : 'Hours',
@@ -495,7 +495,7 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Attendance');
+            // FlurryAgent.logEvent('Attendance');
 
             tracker.track({
                 name   : 'Attendance',
@@ -536,7 +536,7 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Import', {page: page, count: count});
+            // FlurryAgent.logEvent('Import', {page: page, count: count});
 
             tracker.track({
                 name   : 'Import',
@@ -588,7 +588,7 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Profiles');
+            // FlurryAgent.logEvent('Profiles');
 
             tracker.track({
                 name   : 'Profiles',
@@ -648,7 +648,7 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Accounts');
+            // FlurryAgent.logEvent('Accounts');
 
             tracker.track({
                 name   : 'Accounts',
@@ -691,7 +691,7 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('productSettings');
+            // FlurryAgent.logEvent('productSettings');
 
             tracker.track({
                 name   : 'productSettings',
@@ -754,7 +754,7 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Products');
+            // FlurryAgent.logEvent('Products');
 
             tracker.track({
                 name   : 'Products',
@@ -856,7 +856,7 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('UserPage');
+            // FlurryAgent.logEvent('UserPage');
 
             tracker.track({
                 name   : 'UserPage',
@@ -903,7 +903,7 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Payroll Dashboard');
+            // FlurryAgent.logEvent('Payroll Dashboard');
 
             tracker.track({
                 name   : 'Payroll Dashboard',
@@ -950,7 +950,7 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Reports Dashboard');
+            // FlurryAgent.logEvent('Reports Dashboard');
 
             tracker.track({
                 name   : 'Reports Dashboard',
@@ -994,7 +994,7 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Dashboard');
+            // FlurryAgent.logEvent('Dashboard');
 
             tracker.track({
                 name   : 'Dashboard',
@@ -1038,7 +1038,7 @@ define([
         goToProjectsDashboard: function () {
             var self = this;
 
-            FlurryAgent.logEvent('Projects Dashboard');
+            // FlurryAgent.logEvent('Projects Dashboard');
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -1076,7 +1076,7 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Project Dashboard');
+            // FlurryAgent.logEvent('Project Dashboard');
 
             tracker.track({
                 name   : 'Project Dashboard',
@@ -1167,7 +1167,7 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Workflows');
+            // FlurryAgent.logEvent('Workflows');
 
             tracker.track({
                 name   : 'Workflows',
@@ -1294,7 +1294,7 @@ define([
 
                     message = contentType + ' List';
 
-                    FlurryAgent.logEvent(message);
+                    // FlurryAgent.logEvent(message);
 
                     tracker.track({
                         name   : message,
@@ -1308,7 +1308,7 @@ define([
 
                 message = contentType + ' List';
 
-                FlurryAgent.logEvent(message);
+                // FlurryAgent.logEvent(message);
 
                 tracker.track({
                     name   : message,
@@ -1537,7 +1537,7 @@ define([
 
                 var message = contentType + ' TForm';
 
-                FlurryAgent.logEvent(message);
+                // FlurryAgent.logEvent(message);
 
                 tracker.track({
                     name   : message,
@@ -1701,7 +1701,7 @@ define([
 
                 message = contentType + ' Form';
 
-                FlurryAgent.logEvent(message);
+                // FlurryAgent.logEvent(message);
 
                 tracker.track({
                     name   : message,
@@ -1798,7 +1798,7 @@ define([
 
                 message = contentType + ' Kanban';
 
-                FlurryAgent.logEvent(message);
+                // FlurryAgent.logEvent(message);
 
                 tracker.track({
                     name   : message,
@@ -1917,7 +1917,7 @@ define([
 
                 message = contentType + ' Thumbnails';
 
-                FlurryAgent.logEvent(message);
+                // FlurryAgent.logEvent(message);
 
                 tracker.track({
                     name   : message,
