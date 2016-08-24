@@ -126,14 +126,14 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('DashBoard Vacation', {filter: filter});
+            // FlurryAgent.logEvent('DashBoard Vacation', {filter: filter});
 
-            tracker.track({
+            /* tracker.track({
                 name   : 'DashBoard Vacation',
                 message: 'DashBoard Vacation',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             }); */
 
             filter = filter || custom.retriveFromCash('DashVacation.filter');
 
@@ -189,14 +189,14 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Invoice Charts', {filter: filter});
+            // FlurryAgent.logEvent('Invoice Charts', {filter: filter});
 
-            tracker.track({
+            /*tracker.track({
                 name   : 'Invoice Charts',
                 message: 'Invoice Charts',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             });*/
 
             if (filter) {
                 filter = decodeURIComponent(filter);
@@ -257,14 +257,14 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('HR Dashboard');
+            // FlurryAgent.logEvent('HR Dashboard');
 
-            tracker.track({
+            /* tracker.track({
                 name   : 'HR Dashboard',
                 message: 'HR Dashboard',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             });*/
 
             if (!this.isAuth) {
                 this.checkLogin(function (success) {
@@ -314,14 +314,14 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Revenue', {filter: filter});
+            // FlurryAgent.logEvent('Revenue', {filter: filter});
 
-            tracker.track({
+            /*tracker.track({
                 name   : 'Revenue',
                 message: 'Revenue',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             });*/
 
             if (filter) {
                 filter = decodeURIComponent(filter);
@@ -385,14 +385,14 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Settings Employee', {filter: filter});
+            // FlurryAgent.logEvent('Settings Employee', {filter: filter});
 
-            tracker.track({
+            /*tracker.track({
                 name   : 'Settings Employee',
                 message: 'Settings Employee',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             });*/
 
             if (filter) {
                 filter = decodeURIComponent(filter);
@@ -447,14 +447,14 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Hours');
+            // FlurryAgent.logEvent('Hours');
 
-            tracker.track({
+            /*tracker.track({
                 name   : 'Hours',
                 message: 'Hours',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             });*/
 
             if (!this.isAuth) {
                 this.checkLogin(function (success) {
@@ -495,14 +495,14 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Attendance');
+            // FlurryAgent.logEvent('Attendance');
 
-            tracker.track({
+            /*tracker.track({
                 name   : 'Attendance',
                 message: 'Attendance',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             });*/
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -536,14 +536,14 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Import', {page: page, count: count});
+            // FlurryAgent.logEvent('Import', {page: page, count: count});
 
-            tracker.track({
+            /*tracker.track({
                 name   : 'Import',
                 message: 'Import',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             });*/
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -588,14 +588,14 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Profiles');
+            // FlurryAgent.logEvent('Profiles');
 
-            tracker.track({
+            /*tracker.track({
                 name   : 'Profiles',
                 message: 'Profiles',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             });*/
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -648,14 +648,14 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Accounts');
+            // FlurryAgent.logEvent('Accounts');
 
-            tracker.track({
+            /*tracker.track({
                 name   : 'Accounts',
                 message: 'Accounts',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             });*/
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -691,14 +691,14 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('productSettings');
+            // FlurryAgent.logEvent('productSettings');
 
-            tracker.track({
+            /*tracker.track({
                 name   : 'productSettings',
                 message: 'productSettings',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             });*/
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -754,14 +754,14 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Products');
+            // FlurryAgent.logEvent('Products');
 
-            tracker.track({
+            /*tracker.track({
                 name   : 'Products',
                 message: 'Products',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             });*/
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -856,14 +856,14 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('UserPage');
+            // FlurryAgent.logEvent('UserPage');
 
-            tracker.track({
+            /*tracker.track({
                 name   : 'UserPage',
                 message: 'UserPage',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             });*/
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -903,14 +903,14 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Payroll Dashboard');
+            // FlurryAgent.logEvent('Payroll Dashboard');
 
-            tracker.track({
+            /*tracker.track({
                 name   : 'Payroll Dashboard',
                 message: 'Payroll Dashboard',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             });*/
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -950,14 +950,14 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Reports Dashboard');
+            // FlurryAgent.logEvent('Reports Dashboard');
 
-            tracker.track({
+            /*tracker.track({
                 name   : 'Reports Dashboard',
                 message: 'Reports Dashboard',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             });*/
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -994,14 +994,14 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Dashboard');
+            // FlurryAgent.logEvent('Dashboard');
 
-            tracker.track({
+            /*tracker.track({
                 name   : 'Dashboard',
                 message: 'Dashboard',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             });*/
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -1038,7 +1038,7 @@ define([
         goToProjectsDashboard: function () {
             var self = this;
 
-            FlurryAgent.logEvent('Projects Dashboard');
+            // FlurryAgent.logEvent('Projects Dashboard');
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -1076,14 +1076,14 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Project Dashboard');
+            // FlurryAgent.logEvent('Project Dashboard');
 
-            tracker.track({
+            /*tracker.track({
                 name   : 'Project Dashboard',
                 message: 'Project Dashboard',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             });*/
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -1167,14 +1167,14 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Workflows');
+            // FlurryAgent.logEvent('Workflows');
 
-            tracker.track({
+            /*tracker.track({
                 name   : 'Workflows',
                 message: 'Workflows',
                 email  : currentUser.email,
                 login  : currentUser.login
-            });
+             });*/
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -1294,28 +1294,28 @@ define([
 
                     message = contentType + ' List';
 
-                    FlurryAgent.logEvent(message);
+                    // FlurryAgent.logEvent(message);
 
-                    tracker.track({
+                    /*tracker.track({
                         name   : message,
                         message: message,
                         email  : currentUser.email,
                         login  : currentUser.login
-                    });
+                     });*/
 
                     return Backbone.history.navigate(url, {replace: true});
                 }
 
                 message = contentType + ' List';
 
-                FlurryAgent.logEvent(message);
+                // FlurryAgent.logEvent(message);
 
-                tracker.track({
+                /*tracker.track({
                     name   : message,
                     message: message,
                     email  : currentUser.email,
                     login  : currentUser.login
-                });
+                 });*/
 
                 contentViewUrl = 'views/' + contentType + '/list/ListView';
                 topBarViewUrl = 'views/' + contentType + '/TopBarView';
@@ -1537,14 +1537,14 @@ define([
 
                 var message = contentType + ' TForm';
 
-                FlurryAgent.logEvent(message);
+                // FlurryAgent.logEvent(message);
 
-                tracker.track({
+                /*tracker.track({
                     name   : message,
                     message: message,
                     email  : currentUser.email,
                     login  : currentUser.login
-                });
+                 });*/
 
                 contentViewUrl = 'views/' + contentType + '/form/ContentView';
                 topBarViewUrl = 'views/' + contentType + '/TopBarView';
@@ -1701,14 +1701,14 @@ define([
 
                 message = contentType + ' Form';
 
-                FlurryAgent.logEvent(message);
+                // FlurryAgent.logEvent(message);
 
-                tracker.track({
+                /*tracker.track({
                     name   : message,
                     message: message,
                     email  : currentUser.email,
                     login  : currentUser.login
-                });
+                 });*/
 
                 if (context.mainView === null) {
                     context.main(contentType);
@@ -1798,14 +1798,14 @@ define([
 
                 message = contentType + ' Kanban';
 
-                FlurryAgent.logEvent(message);
+                // FlurryAgent.logEvent(message);
 
-                tracker.track({
+                /*tracker.track({
                     name   : message,
                     message: message,
                     email  : currentUser.email,
                     login  : currentUser.login
-                });
+                 });*/
 
                 contentViewUrl = 'views/' + contentType + '/kanban/KanbanView';
                 topBarViewUrl = 'views/' + contentType + '/TopBarView';
@@ -1917,14 +1917,14 @@ define([
 
                 message = contentType + ' Thumbnails';
 
-                FlurryAgent.logEvent(message);
+                // FlurryAgent.logEvent(message);
 
-                tracker.track({
+                /*tracker.track({
                     name   : message,
                     message: message,
                     email  : currentUser.email,
                     login  : currentUser.login
-                });
+                 });*/
 
                 if (!filter) {
 
