@@ -76,6 +76,7 @@ module.exports = function (models) {
      * */
     router.get('/Employees', handler.getEmployeesFilters);
     router.get('/contractJobs', handler.getContarctJobsFilters);
+    router.get('/projectsDashboard', handler.getProjectsDashboardFilters);
 
     /**
      *@api {get} /filter/Persons Request filter for Persons

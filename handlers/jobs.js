@@ -12,6 +12,7 @@ var Module = function (models, event) {
     var jobsInvoiceSchema = mongoose.Schemas.wTrackInvoice;
     var ProjectSchema = mongoose.Schemas.Project;
     var PaymentSchema = mongoose.Schemas.Payment;
+    var ProjectMembersSchema = mongoose.Schemas.ProjectMember;
     var journalEntrySchema = mongoose.Schemas.journalEntry;
     var CONSTANTS = require('../constants/mainConstants.js');
     var exporter = require('../helpers/exporter/exportDecorator');
@@ -1330,6 +1331,338 @@ var Module = function (models, event) {
 
                 }
             );
+    };
+
+    this.getAsyncData = function (req, res, next) {
+        var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
+        var ProjectMemberModel = models.get(req.session.lastDb, 'ProjectMember', ProjectMembersSchema);
+        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+        var query = req.query;
+        var _id = query._id || null;
+        var filter = query.filter;
+        var matchObject = {};
+        var filterMapper = new FilterMapper();
+
+        if (filter && typeof filter === 'object') {
+            matchObject = filterMapper.mapFilter(filter, 'projectsDashboard'); // caseFilter(filter);
+        }
+
+        if (_id) {
+            ProjectMemberModel.aggregate([{
+                $match: {
+                    employeeId       : objectId(_id),
+                    projectPositionId: objectId(CONSTANTS.PROJECTSMANAGER)
+                }
+            }, {
+                $lookup: {
+                    from        : 'jobs',
+                    localField  : 'projectId',
+                    foreignField: 'project',
+                    as          : 'jobs'
+                }
+            }, {
+                $project: {
+                    projectId: 1,
+                    startDate: 1,
+                    endDate  : 1,
+                    jobs     : {
+                        $filter: {
+                            input: '$jobs',
+                            as   : 'job',
+                            cond : {
+                                $or: [{
+                                    $and: [{
+                                        $gte: ['$$job.createdBy.date', '$startDate']
+                                    }, {
+                                        $lte: ['$$job.createdBy.date', '$endDate']
+                                    }]
+                                }, {$eq: ['$startDate', null]},
+                                    {$eq: ['$endDate', null]}
+                                ]
+                            }
+                        }
+                    }
+                }
+            }, {
+                $unwind: '$jobs'
+            }, {
+                $lookup: {
+                    from        : 'Project',
+                    localField  : 'jobs.project',
+                    foreignField: '_id',
+                    as          : 'jobs.project'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Invoice',
+                    localField  : 'jobs.invoice',
+                    foreignField: '_id',
+                    as          : 'jobs.invoice'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Quotation',
+                    localField  : 'jobs.quotation',
+                    foreignField: '_id',
+                    as          : 'jobs.quotation'
+                }
+            }, {
+                $project: {
+                    'jobs.invoice'  : {$arrayElemAt: ['$jobs.invoice', 0]},
+                    'jobs.quotation': {$arrayElemAt: ['$jobs.quotation', 0]},
+                    'jobs.project'  : {$arrayElemAt: ['$jobs.project', 0]},
+                    'jobs.name'     : '$jobs.name',
+                    workflow        : '$jobs.workflow',
+                    type            : '$jobs.type'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Customers',
+                    localField  : 'jobs.project.customer',
+                    foreignField: '_id',
+                    as          : 'jobs.customer'
+                }
+            }, {
+                $project: {
+                    workflow           : 1,
+                    type               : 1,
+                    'project._id'      : '$jobs.project._id',
+                    customer           : {$arrayElemAt: ['$jobs.customer', 0]},
+                    'jobs.invoice'     : 1,
+                    'jobs.quotation'   : 1,
+                    'jobs.project._id' : '$jobs.project._id',
+                    'jobs.project.name': '$jobs.project.name',
+                    'jobs.customer'    : {$arrayElemAt: ['$jobs.customer', 0]},
+                    'jobs.name'        : 1
+                }
+            }, {
+                $match: matchObject
+            }, {
+                $project: {
+                    'jobs.invoice'      : 1,
+                    'jobs.quotation'    : 1,
+                    'jobs.project'      : 1,
+                    'jobs.customer._id' : '$jobs.customer._id',
+                    'jobs.customer.name': {$concat: ['$jobs.customer.name.first', ' ', '$jobs.customer.name.last']},
+                    'jobs.name'         : 1
+                }
+            }, {
+                $sort: {
+                    'jobs.project.name': 1
+                }
+            }, {
+                $group: {
+                    _id : null,
+                    jobs: {$push: '$jobs'}
+                }
+            }], function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send({data: result[0] ? result[0].jobs : []});
+            });
+        } else {
+            Project.aggregate([{
+                $lookup: {
+                    from        : 'projectMembers',
+                    localField  : 'project',
+                    foreignField: 'projectId',
+                    as          : 'projectMembers'
+                }
+            }, {
+                $project: {
+                    name          : 1,
+                    customer      : 1,
+                    projectManager: {
+                        $filter: {
+                            input: '$projectMembers',
+                            as   : 'projectMember',
+                            cond : {
+                                $and: [{
+                                    $eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.PROJECTSMANAGER)]
+                                }, {
+                                    $or: [{
+                                        $max: '$$projectMember.startDate'
+                                    }, {
+                                        $eq: ['$$projectMember.startDate', null]
+                                    }]
+                                }]
+                            }
+                        }
+                    }
+                }
+            }, {
+                $match: {
+                    projectManager: []
+                }
+            }, {
+                $lookup: {
+                    from        : 'Customers',
+                    localField  : 'customer',
+                    foreignField: '_id',
+                    as          : 'customer'
+                }
+            }, {
+                $lookup: {
+                    from        : 'jobs',
+                    localField  : '_id',
+                    foreignField: 'project',
+                    as          : 'jobs'
+                }
+            }, {
+                $project: {
+                    jobs    : 1,
+                    name    : 1,
+                    customer: {$arrayElemAt: ['$customer', 0]}
+                }
+            }, {
+                $unwind: '$jobs'
+            }, {
+                $lookup: {
+                    from        : 'Quotation',
+                    localField  : 'jobs.quotation',
+                    foreignField: '_id',
+                    as          : 'jobs.quotation'
+                }
+            }, {
+                $project: {
+                    'jobs.quotation'    : {$arrayElemAt: ['$jobs.quotation', 0]},
+                    'jobs.project.name' : '$name',
+                    'jobs.project._id'  : '$_id',
+                    'jobs.customer.name': {$concat: ['$customer.name.first', ' ', '$customer.name.last']},
+                    'jobs.customer._id' : '$customer._id',
+                    'jobs.name'         : 1,
+                    'jobs.workflow'     : 1,
+                    'project._id'       : '$_id',
+                    'customer._id'      : '$customer._id',
+                    workflow            : '$jobs.workflow',
+                    type                : '$jobs.type'
+                }
+            }, {
+                $match: matchObject
+            }, {
+                $sort: {
+                    'jobs.project.name': 1
+                }
+            }, {
+                $group: {
+                    _id : null,
+                    jobs: {$push: '$jobs'}
+                }
+            }], function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send({data: result[0] ? result[0].jobs : []});
+            });
+        }
+    };
+
+    this.getForProjectsDashboard = function (req, res, next) {
+        var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
+        var query = req.query;
+        var filter = query.filter;
+        var matchObject = {};
+        var filterMapper = new FilterMapper();
+
+        if (filter && typeof filter === 'object') {
+            matchObject = filterMapper.mapFilter(filter, 'projectsDashboard'); // caseFilter(filter);
+        }
+
+        JobsModel.aggregate([{
+            $lookup: {
+                from        : 'projectMembers',
+                localField  : 'project',
+                foreignField: 'projectId',
+                as          : 'projectMembers'
+            }
+        }, {
+            $lookup: {
+                from        : 'Project',
+                localField  : 'project',
+                foreignField: '_id',
+                as          : 'project'
+            }
+        }, {
+            $project: {
+                workflow      : 1,
+                type          : 1,
+                project       : {$arrayElemAt: ['$project', 0]},
+                projectManager: {
+                    $filter: {
+                        input: '$projectMembers',
+                        as   : 'projectMember',
+                        cond : {
+                            $and: [{
+                                $eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.PROJECTSMANAGER)]
+                            }, {
+                                $or: [{
+                                    $max: '$$projectMember.startDate'
+                                }, {
+                                    $eq: ['$$projectMember.startDate', null]
+                                }]
+                            }]
+                        }
+                    }
+                }
+            }
+        }, {
+            $lookup: {
+                from        : 'Customers',
+                localField  : 'project.customer',
+                foreignField: '_id',
+                as          : 'customer'
+            }
+        }, {
+            $project: {
+                workflow      : 1,
+                type          : 1,
+                customer      : {$arrayElemAt: ['$customer', 0]},
+                'project._id' : 1,
+                projectManager: {$arrayElemAt: ['$projectManager', 0]}
+            }
+        }, {
+            $match: matchObject
+        }, {
+            $lookup: {
+                from        : 'Employees',
+                localField  : 'projectManager.employeeId',
+                foreignField: '_id',
+                as          : 'projectManagerEmployee'
+            }
+        }, {
+            $project: {
+                projectManager: {$arrayElemAt: ['$projectManagerEmployee', 0]}
+            }
+        }, {
+            $lookup: {
+                from        : 'JobPosition',
+                localField  : 'projectManager.jobPosition',
+                foreignField: '_id',
+                as          : 'projectManager.jobPosition'
+            }
+        }, {
+            $project: {
+                'projectManager.jobPosition': {$arrayElemAt: ['$projectManager.jobPosition', 0]},
+                'projectManager.name'       : {$concat: ['$projectManager.name.first', ' ', '$projectManager.name.last']},
+                'projectManager._id'        : 1
+            }
+        }, {
+            $group: {
+                _id      : '$projectManager',
+                jobsCount: {$sum: 1}
+            }
+        }, {
+            $sort: {jobsCount: -1}
+        }], function (err, jobs) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({data: jobs});
+        });
     };
 
     this.getForOverview = function (req, res, next) {

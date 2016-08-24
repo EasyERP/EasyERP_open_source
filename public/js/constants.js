@@ -71,6 +71,7 @@ define([], function () {
         CASHTRANSFER      : 'cashTransfer',
         REPORTSDASHBOARD  : 'reportsDashboard',
         CONTRACTJOBS      : 'contractJobs',
+        PROJECTSDASHBOARD : 'projectsDashboard',
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
@@ -204,7 +205,8 @@ define([], function () {
             PAYROLLSTRUCTURETYPES_FORDD: '/payrollStructureTypes/forDd',
             PAYMENT_METHOD_DD          : 'paymentMethod/',
             DEALTASKS                  : '/DealTasks/',
-            CONTRACTJOBS               : '/contractJobs/'
+            CONTRACTJOBS               : '/contractJobs/',
+            PROJECTSDASHBOARD          : '/projectsDashboard/'
         },
 
         MID: {

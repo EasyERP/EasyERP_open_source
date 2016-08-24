@@ -93,6 +93,7 @@ define([
             'easyErp/invoiceCharts(/filter=:filter)'                                                        : 'invoiceCharts',
             'easyErp/HrDashboard'                                                                           : 'hrDashboard',
             'easyErp/projectDashboard'                                                                      : 'goToProjectDashboard',
+           // 'easyErp/projectsDashboard'                                                                     : 'goToProjectsDashboard',
             // "easyErp/jobsDashboard(/filter=:filter)"                                                        : "goToJobsDashboard",
             'easyErp/:contentType'                                                                          : 'getList',
             '*any'                                                                                          : 'any'
@@ -1020,6 +1021,43 @@ define([
                     context.main("Dashboard");
                 } else {
                     context.mainView.updateMenu("Dashboard");
+                }
+
+                require([contentViewUrl, topBarViewUrl], function (contentView, topBarView) {
+
+                    custom.setCurrentVT('list');
+
+                    var contentview = new contentView({startTime: startTime});
+                    var topbarView = new topBarView({actionType: "Content"});
+                    self.changeView(contentview);
+                    self.changeTopBarView(topbarView);
+                });
+            }
+        },
+
+        goToProjectsDashboard: function () {
+            var self = this;
+
+            FlurryAgent.logEvent('Projects Dashboard');
+
+            this.checkLogin(function (success) {
+                if (success) {
+                    goProjectDashboard(self);
+                } else {
+                    self.redirectTo();
+                }
+            });
+
+            function goProjectDashboard(context) {
+                var startTime = new Date();
+                var contentViewUrl = "views/projectsDashboard/ContentView";
+                var topBarViewUrl = "views/projectsDashboard/TopBarView";
+                var self = context;
+
+                if (context.mainView === null) {
+                    context.main("projectsDashboard");
+                } else {
+                    context.mainView.updateMenu("projectsDashboard");
                 }
 
                 require([contentViewUrl, topBarViewUrl], function (contentView, topBarView) {

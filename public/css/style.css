@@ -1905,6 +1905,11 @@ h3 {
   ._multiEllipsis ._ellipsisCloseBtn {
     display: none; }
 
+._pms-tr {
+  background-color: #f1f3f1; }
+  ._pms-tr td {
+    height: 25px !important; }
+
 label._customCHeckbox input[type="checkbox"] {
   position: absolute;
   left: -9999px;

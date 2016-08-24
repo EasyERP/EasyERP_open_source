@@ -77,6 +77,7 @@ module.exports = function (app, mainDb) {
     var cashTransferRouter = require('./cashTransfer')(models, event);
     var countriesRouter = require('./countries')(models);
     var contractJobsRouter = require('./contractJobs')(models);
+    var projectsDashboardRouter = require('./projectsDashboard')(models);
 
     var logger = require('../helpers/logger');
     var async = require('async');
@@ -193,6 +194,7 @@ module.exports = function (app, mainDb) {
     app.use('/cashTransfer', cashTransferRouter);
     app.use('/countries', countriesRouter);
     app.use('/contractJobs', contractJobsRouter);
+    app.use('/projectsDashboard', projectsDashboardRouter);
 
     /**
      *@api {get} /getDBS/ Request DBS

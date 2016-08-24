@@ -7,6 +7,8 @@ module.exports = function (models, event) {
 
     router.get('/', handler.getData);
     router.get('/getForOverview', handler.getForOverview);
+    router.get('/getForProjectsDashboard', handler.getForProjectsDashboard);
+    router.get('/getAsyncData', handler.getAsyncData);
 
     /**
      *@api {get} /jobs/getForDD/ Request Jobs for dropDown
