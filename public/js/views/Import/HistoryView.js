@@ -20,17 +20,6 @@ define([
         ListItemView   : ListItemView,
 
         initialize: function (options) {
-            this.keys = [
-                'date',
-                'user',
-                'type',
-                'status',
-                'fileName',
-                'filePath',
-                'reportFile',
-                'reportFileName'
-            ];
-
             this.headers = {
                 date: 'Date of import',
                 user: 'User',
@@ -52,14 +41,22 @@ define([
             var itemView;
 
             $thisEl.html(this.historyTemplate({
-                history: this.collection.toJSON(),
-                keys: this.keys,
+                history: this.collection,
+                keys: [
+                    'date',
+                    'user',
+                    'type',
+                    'status',
+                    'fileName',
+                    'filePath',
+                    'reportFile',
+                    'reportFileName'
+                ],
                 headers: this.headers
             }));
 
             itemView = new this.ListItemView({
-                collection: this.collection,
-                keys: this.keys
+                collection: this.collection
             });
 
             itemView.render();

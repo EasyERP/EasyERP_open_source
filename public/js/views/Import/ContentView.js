@@ -74,7 +74,7 @@ define([
             App.currentUser.imports = {};
             App.currentUser.checkedComboImport = 'Persons';
 
-            this.stage = 0;
+            this.stage = 1;
 
             this.updateCurrentUser({
                 stage: this.stage
@@ -112,7 +112,6 @@ define([
             var $thisEl = this.$el;
             var data;
             var $target;
-            var url = '/importFile/preview';
             var self = this;
             var $nextBtn = this.$el.find('.stageBtnNext');
 
@@ -120,7 +119,7 @@ define([
                 $target = $(e.target);
                 e.preventDefault();
 
-                if ($target.hasClass('left')) {
+                if ($target.hasClass('back')) {
                     this.stage = this.stage > 1 ? --this.stage : 1;
 
                 } else {

@@ -395,9 +395,10 @@ var Module = function (models) {
     function compearingForMerge(savedItems, importedItems, compareFiled, callback) {
         var itemsToSave = [];
         var conflictSavedItems = [];
+        var conflictItemsIndex = [];
         var savedItem;
         var jsonSavedItem;
-        var conflictItemsIndex = [];
+        var jsonSavedItemId;
 
         if (!compareFiled) {
             return callback(null, importedItems, []);
@@ -422,8 +423,10 @@ var Module = function (models) {
                 if (importedItems[i][compareFiled] && jsonSavedItem[compareFiled] && importedItems[i][compareFiled].trim() === jsonSavedItem[compareFiled].trim()) {
                     conflictItemsIndex.push(i);
                     jsonSavedItem.isExists = true;
-                    if (conflictSavedItems.indexOf(jsonSavedItem.id.toString()) === -1) {
-                        conflictSavedItems.push(jsonSavedItem.id.toString());
+                    jsonSavedItemId = jsonSavedItem.id || jsonSavedItem._id;
+
+                    if (conflictSavedItems.indexOf(jsonSavedItemId.toString()) === -1) {
+                        conflictSavedItems.push(jsonSavedItemId.toString());
                     }
                 }
             }
