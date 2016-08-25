@@ -12,7 +12,10 @@ var connectOptions = {
     j   : true
 };
 
-var dateConstant = new Date() - new Date("2016-05-25T07:52:37.476Z");
+// var dateConstant = new Date() - new Date("2016-05-25T07:52:37.476Z");
+var dateConstant = moment(new Date()).subtract(1, 'months');
+
+dateConstant = new Date(dateConstant);
 
 //var dbObject = mongoose.createConnection('45.32.153.74', 'CRM');
 var dbObject = mongoose.createConnection('localhost', 'CRM');
