@@ -35,7 +35,7 @@ define([
 
         setInterval(function () {
             App.Tracker.send.call(App.Tracker);
-        }, 30000);
+        }, 60000);
 
         return App.Tracker;
     }

@@ -166,6 +166,7 @@ define([
 
         $(window).on('beforeunload', function (e) {
             var currentUser = App.currentUser || {};
+            var $target = $(e.target.activeElement);
 
             tracker.track({
                 date     : new Date(),
@@ -185,8 +186,6 @@ define([
             });
 
             App.Tracker.send.call(App.Tracker);
-
-            return 'You sure you want to leave?';
         });
     };
 

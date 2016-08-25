@@ -332,6 +332,7 @@ module.exports = function (app, mainDb) {
     });
 
     app.post('/track', function (req, res) {
+        var RegExp = /production|test_demo/;
         var body = req.body;
         var ip = req.headers ? req.headers['x-real-ip'] : req.ip;
         var geo = geoip.lookup(ip);
@@ -348,7 +349,9 @@ module.exports = function (app, mainDb) {
 
         res.status(200).send();
 
-        tracker.track(body);
+        if (!RegExp.test(process.env.SERVER_TYPE)) {
+            tracker.track(body);
+        }
     });
 
     function notFound(req, res, next) {
