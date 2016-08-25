@@ -61,6 +61,17 @@ define([
             App.preloaderShowFlag = false;
             $('#loading').hide();
         };
+
+        var currentUser = App.currentUser || {};
+
+        tracker.track({
+            date     : new Date(),
+            eventType: 'userFlow',
+            name     : 'sessionStart',
+            message  : 'sessionStart',
+            email    : currentUser.email,
+            login    : currentUser.login
+        });
     };
 
     var applyDefaults = function () {
@@ -166,7 +177,6 @@ define([
 
         $(window).on('beforeunload', function (e) {
             var currentUser = App.currentUser || {};
-            var $target = $(e.target.activeElement);
 
             tracker.track({
                 date     : new Date(),
