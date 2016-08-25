@@ -346,6 +346,8 @@ module.exports = function (app, mainDb) {
         body.registrType = process.env.SERVER_TYPE;
         body.server = process.env.SERVER_PLATFORM;
 
+        res.status(200).send();
+
         tracker.track(body);
     });
 
