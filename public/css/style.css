@@ -2283,6 +2283,11 @@ label._customCHeckbox input[type="checkbox"] {
 .payRoll-list-wrap {
   border-top: 1px solid #d7d7d7; }
 
+.payRollHolder + .payRoll-list > thead tr {
+  border-top: 0; }
+.payRollHolder + .payRoll-list > tbody tr:last-child {
+  border-bottom: 0; }
+
 .payRoll-list {
   width: 100%;
   min-width: 100%;
@@ -2293,12 +2298,17 @@ label._customCHeckbox input[type="checkbox"] {
     white-space: nowrap;
     text-overflow: ellipsis;
     vertical-align: middle; }
-  .payRoll-list tbody tr, .payRoll-list thead tr {
+  .payRoll-list tr thead tr {
+    border-top: none;
+    border-bottom: 1px solid #d7d7d7; }
+  .payRoll-list tbody > tr {
     border-top: none; }
-  .payRoll-list tbody tr {
-    border-top: 1px solid #d7d7d7; }
-    .payRoll-list tbody tr:first-child, .payRoll-list tbody tr:last-child {
+    .payRoll-list tbody > tr thead tr {
       border-top: 0; }
+    .payRoll-list tbody > tr tr {
+      border-top: 1px solid #d7d7d7; }
+      .payRoll-list tbody > tr tr:last-child {
+        border-bottom: 0; }
   .payRoll-list tfoot {
     margin-right: 17px; }
     .payRoll-list tfoot td {
