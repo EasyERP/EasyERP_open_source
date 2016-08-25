@@ -74,7 +74,7 @@ define([
                     }
                     items.forEach(function (el) {
                         totalSum += el.quotation ? el.quotation.paymentInfo.total / (el.quotation.currency.rate || 1) : 0;
-                        mainTr.after("<tr data-main='" + asyncId + "' class='hidden _pms-tr'><td><a href='" + '#easyErp/Projects/form/' + el.project._id + "'>" + el.project.name + "</a></td><td>" + (el.customer ? el.customer.name : '') + "</td><td>" + el.name + "</td><td class='money'>" + (el.quotation ? helpers.currencySplitter((el.quotation.paymentInfo.total / el.quotation.currency.rate || 1 / 100).toFixed(2)) : 0) + "</td></tr>");
+                        mainTr.after("<tr data-main='" + asyncId + "' class='hidden _pms-tr'><td><a href='" + '#easyErp/Projects/form/' + el.project._id + "'>" + el.project.name + "</a></td><td>" + (el.customer ? el.customer.name : '') + "</td><td>" + el.name + "</td><td class='money'>" + (el.quotation ? helpers.currencySplitter((el.quotation.paymentInfo.total / (el.quotation.currency.rate || 1) / 100).toFixed(2)) : 0) + "</td></tr>");
                     });
 
                     mainTr.find('.sum').text(helpers.currencySplitter((totalSum / 100).toFixed(2)));
