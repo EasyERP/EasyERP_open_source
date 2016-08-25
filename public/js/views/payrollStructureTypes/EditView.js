@@ -20,7 +20,7 @@ define([
         componentObject  : {},
 
         events: {
-            'click .fa-plus'                                   : 'create',
+            'click .createBtn'                                 : 'create',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
             'click .selected'                                  : 'showNewSelect',
             'click .fa-trash-o'                                : 'remove'
