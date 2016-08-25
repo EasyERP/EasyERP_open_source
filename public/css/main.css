@@ -3478,8 +3478,8 @@ a.red:hover {
   color: #dbdbdb;
 }
 .attachContainer li .deleteAttach {
-  float: right;
   display: none;
+  float: right;
 }
 .attachContainer li .deleteAttach .calculateTotal {
   width: 50%;

@@ -329,23 +329,33 @@ h3 {
   position: relative;
   box-sizing: border-box;
   padding-left: 15px;
+  padding-right: 15px;
+  padding-left: 15px;
   padding-left: 0.9375rem;
   padding-right: 15px;
   padding-right: 0.9375rem; }
 
 @media (max-width: 543px) {
   .container {
+    padding-left: 12px;
+    padding-right: 12px;
     padding-left: 0.75rem;
     padding-right: 0.75rem; }
     .container-full {
+      padding-left: 12px;
+      padding-right: 12px;
       padding-left: 0.75rem;
       padding-right: 0.75rem; }
 
   .row {
+    margin-left: -12px;
+    margin-right: -12px;
     margin-left: -0.75rem;
     margin-right: -0.75rem; }
 
   .col {
+    padding-left: 12px;
+    padding-right: 12px;
     padding-left: 0.75rem;
     padding-right: 0.75rem; } }
 .xs-1 {
@@ -2368,13 +2378,13 @@ label._customCHeckbox input[type="checkbox"] {
 @media (min-width: 920px) {
   table.payRoll-list #payRoll-Table .scrollit {
     height: calc(100vh - 290px); } }
-.dasboard-card-wrap {
+.dashboard-card-wrap {
   background-color: #f2f5fa;
   display: table;
   height: 100%; }
-  .dasboard-card-wrap + #timeRecivingDataFromServer {
+  .dashboard-card-wrap + #timeRecivingDataFromServer {
     background-color: #f2f5fa; }
-  .dasboard-card-wrap .dashboard-card {
+  .dashboard-card-wrap .dashboard-card {
     background-color: #fff;
     border: 1px solid #d8dde6;
     border-radius: 4px;
@@ -2382,7 +2392,7 @@ label._customCHeckbox input[type="checkbox"] {
     padding: 20px;
     float: left;
     width: 100%; }
-    .dasboard-card-wrap .dashboard-card .card-title {
+    .dashboard-card-wrap .dashboard-card .card-title {
       color: #536786; }
 
 /*
