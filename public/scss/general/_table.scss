@@ -18,14 +18,18 @@
 
 
   }
-  tbody tr, thead tr{
+  thead tr{
     border-top: none;
+    border-bottom: 1px solid #d7d7d7;
   }
 
-  tbody tr{
+  tbody tr tr{
     border-top: 1px solid #d7d7d7;
-    &:first-child, &:last-child{
-      border-top: 0;
+    &:first-child{
+     border-top: 0;
+    }
+    &:last-child{
+     border-bottom: 0;
     }
   }
 
