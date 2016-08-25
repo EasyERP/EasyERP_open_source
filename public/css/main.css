@@ -2365,70 +2365,6 @@ body {
   text-align: left;
 }
 /*== temp files==*/
-.payRoll-list {
-  width: 100%;
-  min-width: 100%;
-  border-spacing: 0;
-  border-collapse: collapse;
-  table-layout: fixed;
-}
-.payRoll-list th,
-.payRoll-list td {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  border: 1px solid white;
-  vertical-align: middle;
-}
-.payRoll-list th {
-  border-color: transparent;
-}
-.payRoll-list tfoot {
-  margin-right: 17px;
-}
-.payRoll-list tfoot td {
-  border-color: transparent;
-  padding-right: 20px;
-}
-.payRoll-list tbody tr:hover {
-  background: none;
-}
-.payRoll-list #payRoll-Table {
-  padding: 0;
-}
-.payRoll-list #payRoll-Table .datePicker {
-  padding: 0;
-}
-.payRoll-list #payRoll-Table .datePicker input:not([disabled]) {
-  outline: 1px solid #66b5d4 !important;
-}
-.payRoll-list #payRoll-Table .datePicker input:focus {
-  outline: 1px solid #66b5d4 !important;
-}
-.payRoll-list #payRoll-Table .scrollit {
-  display: block;
-  height: calc(100vh - 2010px);
-  overflow-x: hidden;
-}
-.payRollHolder {
-  margin-top: 0 !important;
-}
-.totalContainer {
-  margin: 15px 20px 0 0;
-  text-align: right;
-  color: #000000;
-  font-size: 17px;
-}
-.borders col {
-  border: 1px solid;
-}
-#searchContainer.payRoll {
-  margin: 0 0 10px;
-}
-@media (min-width: 920px) {
-  table.payRoll-list #payRoll-Table .scrollit {
-    height: calc(100vh - 290px);
-  }
-}
 tr.redBorder {
   background-color: red;
 }
@@ -8098,10 +8034,8 @@ textarea#editInput {
   width: 70% !important;
   margin: 0 auto;
   padding-top: 25px !important;
-  overflow: hidden;
 }
 .payRoll-expenses .payRoll-name {
-  float: left;
   padding-right: 5px;
 }
 .payRoll-expenses .payRoll-edit {
