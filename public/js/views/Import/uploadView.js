@@ -36,6 +36,14 @@ define([
             this.checkedItem = App.currentUser.checkedItemImport || 'email';
 
             this.mergeFields = {
+                Quotation: {
+                    names: [
+                        'Number'
+                    ],
+                    items: [
+                        'name'
+                    ]
+                },
                 Invoice: {
                     names: [
                         'Invoice Number'

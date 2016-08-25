@@ -10,7 +10,8 @@ var Module = function (models) {
         Customers    : mongoose.Schemas.Customer,
         Opportunities: mongoose.Schemas.Opportunitie,
         Employees    : mongoose.Schemas.Employee,
-        Invoice      : mongoose.Schemas.Invoice
+        Invoice      : mongoose.Schemas.Invoice,
+        Ouotation    : mongoose.Schemas.Quotation
     };
 
     var exportMap = require('../helpers/csvMap');
@@ -627,8 +628,6 @@ var Module = function (models) {
                     skipped = userImports.skipped;
                     importedCount = userImports.importedCount;
                     type = userImports.type;
-                    //importFileName = userImports.fileName;
-                    //importFile = userImports.filePath;
 
                     wCb(null, userImports);
                 });
@@ -639,7 +638,6 @@ var Module = function (models) {
                     var mapResult;
                     var type = userImports.type;
 
-                    //console.log(importData);
                     importFileName = importData[0].fileName;
                     importFilePath = importData[0].filePath;
 
