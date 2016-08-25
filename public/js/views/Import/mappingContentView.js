@@ -116,7 +116,7 @@ define([
             var self = this;
 
             if ((isItClass) && (isDropable)) {
-                if (droppableParentName === 'Customers' || droppableParentName === 'Invoice' || droppableParentName === 'Opportunities' || droppableParentName === 'Employees') {
+                if (droppableParentName === 'Customers' || droppableParentName === 'Quotation' || droppableParentName === 'Invoice' || droppableParentName === 'Opportunities' || droppableParentName === 'Employees') {
                     delete self.logFile[self.findKeyByValue(self.logFile, droppableName)];
 
                     self.$el.find('.fieldsItems[data-tab=' + droppableParentName + ']')
