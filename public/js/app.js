@@ -61,17 +61,6 @@ define([
             App.preloaderShowFlag = false;
             $('#loading').hide();
         };
-
-        var currentUser = App.currentUser || {};
-
-        tracker.track({
-            date     : new Date(),
-            eventType: 'userFlow',
-            name     : 'sessionStart',
-            message  : 'sessionStart',
-            email    : currentUser.email,
-            login    : currentUser.login
-        });
     };
 
     var applyDefaults = function () {
@@ -179,12 +168,11 @@ define([
             var currentUser = App.currentUser || {};
 
             tracker.track({
-                date     : new Date(),
-                eventType: 'userFlow',
-                name     : 'sessionEnd',
-                message  : 'sessionEnd',
-                email    : currentUser.email,
-                login    : currentUser.login
+                date   : new Date(),
+                name   : 'sessionEnd',
+                message: 'sessionEnd',
+                email  : currentUser.email,
+                login  : currentUser.login
             });
             tracker.track({
                 date     : new Date(),
