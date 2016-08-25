@@ -1997,11 +1997,17 @@ input::-ms-clear {
   height: 17px;
   border-radius: 17px;
   border: 1px solid #7f7f80;
-  font-family: Icons;
   line-height: 19px;
   margin: 0 2px 0 4px;
   cursor: pointer;
   color: #2c3e50;
+}
+.kanban .column .columnNameDiv .columnName .fold-unfold:before {
+  font-size: 16px;
+  line-height: 14px;
+  display: block;
+  text-align: center;
+  padding-right: 1px;
 }
 .kanban .column .columnNameDiv .columnName .text {
   color: #3e88b9;
@@ -3472,8 +3478,8 @@ a.red:hover {
   color: #dbdbdb;
 }
 .attachContainer li .deleteAttach {
-  float: right;
   display: none;
+  float: right;
 }
 .attachContainer li .deleteAttach .calculateTotal {
   width: 50%;
@@ -3483,35 +3489,22 @@ a.red:hover {
   border-top: 1px solid grey;
 }
 .attachContainer li:before {
-  font-size: 20px;
-  font-family: Icons;
-  text-decoration: none;
-  display: block;
-  line-height: 28px;
-  display: block !important;
-  content: 'h';
-  width: auto;
+  content: "\e093";
   position: absolute;
-  left: 2px;
-  top: auto;
-  right: auto;
-  bottom: -2px;
-  line-height: 24px;
-  font-size: 28px;
-  font-weight: 200;
+  left: 0;
+  bottom: 0;
+  font-family: 'erp-icons' !important;
+  font-size: 22px;
   color: #dbdbdb;
-}
-.attachContainer li:before:hover {
-  text-decoration: none;
 }
 .attachContainer li:hover {
   background-color: #ffffff;
 }
 .attachContainer li:hover .deleteAttach {
-  float: right;
   display: block;
-  line-height: 22px;
   padding-right: 10px;
+  float: right;
+  line-height: 22px;
 }
 .attachContainer li:hover .deleteAttach .calculateTotal {
   width: 50%;
@@ -7412,6 +7405,10 @@ textarea#editInput {
 }
 .pagination .nextPrev {
   float: right;
+}
+.pagination .nextPrev button:before {
+  font-size: 18px;
+  line-height: 18px;
 }
 .pagination .nextPrev div,
 .pagination .nextPrev button {

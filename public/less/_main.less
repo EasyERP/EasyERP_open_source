@@ -577,12 +577,17 @@ input::-ms-clear {
           height: 17px;
           border-radius: 17px;
           border: 1px solid @border-color-main;
-          font-family: Icons;
           line-height: 19px;
-          //
           margin: 0 2px 0 4px;
           cursor: pointer;
           color: @fold-color;
+          &:before {
+            font-size: 16px;
+            line-height: 14px;
+            display: block;
+            text-align: center;
+            padding-right: 1px;
+          }
         }
         .text {
           color: @bg-main-menu-selected;
@@ -2298,33 +2303,26 @@ button.red, a.red {
     color: @mainBlack-color;
 
     .deleteAttach {
+      display: none;
       float: right;
 
       .calculateTotal {
+        width: 50%;
+        text-align: right;
+
         .totalAmount {
           border-top: 1px solid grey;
         }
-        width: 50%;
-        text-align: right;
       }
-      display: none;
     }
 
     &:before {
-      .icon;
-      display: block !important;
-      content: 'h';
-      width: auto;
+      content: "\e093";
       position: absolute;
-      left: 2px;
-      top: auto;
-      right: auto;
-      bottom: -2px;
-
-
-      line-height: 24px;
-      font-size: 28px;
-      font-weight: 200;
+      left: 0;
+      bottom: 0;
+      font-family: 'erp-icons' !important;
+      font-size: 22px;
       color: @mainBlack-color;
     }
 
@@ -2332,23 +2330,19 @@ button.red, a.red {
       background-color: @bg-hover-drop-down-color;
 
       .deleteAttach {
-        //.right;
+        display: block;
+        padding-right: 10px;
         float: right;
+        line-height: 22px;
 
         .calculateTotal {
-          .totalAmount {
-            border-top: 1px solid grey;
-            label, span {
-              //
-            }
-          }
           width: 50%;
           text-align: right;
-        }
 
-        display: block;
-        line-height: 22px;
-        padding-right: 10px;
+          .totalAmount {
+            border-top: 1px solid grey;
+          }
+        }
       }
     }
   }
