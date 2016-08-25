@@ -217,7 +217,7 @@
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
-
+    cursor: pointer;
     position: relative;
     padding: 8px 20px 8px 30px;
     background-color: #f7f7f7;
@@ -461,7 +461,7 @@
       background-color: $contractJobs-green-bg;
     }
     &.inProgress {
-      background-color: $contractJobs-green-bg;
+      background-color: $contractJobs-blue-bg;
     }
   }
   ._contractJobsJobBlock {
@@ -517,11 +517,14 @@
   }
 }
 
-
 .list tbody tr._contractJobsListItem td {
   padding: 10px;
   text-align: left;
   vertical-align: top;
+
+  &.contractCell {
+    text-align: center;
+  }
 }
 
 

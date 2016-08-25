@@ -2,8 +2,7 @@
 
 .btn {
   display: inline-block;
-  //height: 32px;
-  padding: 0 12px!important;
+  padding: 0 12px !important;
   margin-bottom: 0;
   font-weight: 400;
   text-align: center;
@@ -11,24 +10,26 @@
   touch-action: manipulation;
   cursor: pointer;
   white-space: nowrap;
-  font-size: 14px;
-  //line-height: 30px!important;
+  font-size: 13px;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  border-radius: 0;
   border: 1px solid $btnBorderColor;
   background-color: $btnBgColor;
   outline: 0!important;
   box-shadow: none!important;
-  height: 26px;
-  line-height: 22px!important;
+  height: 32px;
+  line-height: 30px!important;
   border-radius: 3px;
+  min-width: 70px;
 
-  span, a {
-    padding: 0 !important;
-    color: $black;
+  &.plus {
+    &:before {
+      content: "\f067";
+      margin-right: 6px;
+      font-family: 'FontAwesome';
+    }
   }
 
   &:hover {
@@ -36,18 +37,17 @@
     background: $btnTextColor;
     background-position: 0;
     text-decoration: none;
+    transition: all .3s;
+
     span, a {
       color: $black;
+      text-decoration: none;
     }
   }
 
-  &.btnRounded {
-    border-radius: 3px;
-  }
-
-  &:hover {
-    -webkit-transition: all .3s;
-    transition: all .3s;
+  &.slim {
+    height: 26px;
+    line-height: 24px !important;
   }
 
   &.green {
@@ -63,30 +63,28 @@
   }
 
   &.blue {
-    color: #FFF;
-    background-color: #3e88b9;
-    border-color: #3e88b9;
-    &:hover {
-      background-color: #4d5a75;
-      border-color: #4d5a75;
-      text-decoration: none;
+    color: #fff !important;
+    background-color: #7eadcc !important;
+    border-color: #7eadcc !important;
+
+    &.plus {
+      &:before {
+        color: #fff;
+      }
     }
+
+    //&:hover {
+    //  background-color: #4d5a75 !important;
+    //  border-color: #4d5a75 !important;
+    //  text-decoration: none !important;
+    //}
   }
 
-  &Blue {
-    border: 0 !important;
-
-    &.slim {
-      height: 26px;
-      line-height: 26px !important;
-    }
-  }
-
-  &Rounded {
+  &.border {
     background-color: #fff;
     color: #000;
 
-    &.green {
+    &Green {
       background-color: #fff;
       border-color: #32c5d2;
       color: #32c5d2;
@@ -98,7 +96,7 @@
       }
     }
 
-    &.blue {
+    &Blue {
       background-color: #fff;
       border-color: #3e88b9;
       color: #3e88b9;
@@ -164,6 +162,11 @@
       background: none;
     }
   }
+
+  span, a {
+    padding: 0 !important;
+    color: $black;
+  }
 }
 
 .editorTab {
@@ -185,8 +188,17 @@
   }
 }
 
+.backToSettings{
+  position: absolute;
+  right: 12px;
+  top: 6px;
+}
 
+.closePayrollList{
+  float: right;
+  right: 55px;
+}
 
-
-
-
+.quotationsButtonsWrap {
+  margin-bottom: 10px;
+}

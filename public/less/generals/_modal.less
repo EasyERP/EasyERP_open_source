@@ -1,23 +1,69 @@
-.dialog(@background: @dialog-bg, @color: @mainText-color, @borderColor: @border-color-main) {
-  background: @background;
-  color: @color;
+.ui-dialog {
+  background: @dialog-bg;
+  color: @mainText-color;
   z-index: 1000;
   margin: 0 auto;
   left: 50%;
   top: 50%;
-  .border-radius(0px);
+  border-radius: 0;
 
   .ui-widget-content {
     border: none;
     a {
       color: @tilte-color;
+      &.editTags {
+        color: #000;
+        &:hover {
+          text-decoration: none;
+        }
+      }
     }
   }
 
   .avatar {
-    .avatar(140px, 5px, 5px, 5px, 0);
-    .box-shadow;
-    border: @thin-border @borderColor;
+    display: block;
+    float: left;
+    overflow: hidden;
+    position: relative;
+    width: 140px;
+    height: 140px;
+    margin: 5px 5px 5px 0;
+
+    img {
+      height: auto;
+      width: 100%;
+    }
+
+    canvas {
+      height: auto;
+      width: 100%;
+    }
+
+    .upload {
+      overflow: hidden;
+      font-size: 15px;
+      line-height: 18px;
+      text-align: center;
+      display: block;
+      position: absolute;
+      height: 0;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      color: #fff;
+
+      input {
+        position: absolute;
+        top: 0;
+        height: 20px;
+        opacity: 0;
+        background: rgba(0, 0, 0, 0.5);
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        left:0;
+      }
+    }
+    border: @thin-border @border-color-main;
   }
 
   .ui-dialog-content {
@@ -85,7 +131,7 @@
 
   .inner {
     padding: 5px;
-    background: @background;
+    background: @dialog-bg;
   }
 
   .form-holder {
@@ -97,26 +143,8 @@
     }
   }
 
-  /*.app-empty-info {
-    .dl-auto(200px, 100%);
-    margin-top: -3px;
-
-    dd {
-      display: none;
-    }
-
-    dt {
-      margin-top: 11px;
-
-      input {
-        width: 95% !important;
-      }
-    }
-  }*/
-
   .person-info-h3 {
     width: auto;
-    //.dl-auto(auto, 50%);
     max-width: auto;
     clear: none;
 
@@ -140,25 +168,10 @@
 
   }
 
-  /*.summary-info {
-    width: 50%;
-    .dl-auto(none, 30%);
-    height: 30px;
-
-    #summary {
-      width: 89% !important;
-    }
-  }*/
-
   input {
-    -moz-border-radius: 0;
-    -webkit-border-radius: 0;
     border-radius: 0;
-    border: 1px solid #E2E9EF;
-    border-top: 1px solid #CBD3E2;
     max-width: 280px;
     height: 20px;
-    font-family: Arial, Helvetica, sans-serif;
     font-size: 12px;
     border: @thin-border @list-border-color;
     line-height: 20px;
@@ -196,8 +209,8 @@
 
   .ui-dialog-buttonpane {
     border: @thin-border @border-color-main;
-    background: @background;
-    color: @color;
+    background: @dialog-bg;
+    color: @mainText-color;
     text-align: left;
     border-width: 1px 0 0;
     background-image: none;
@@ -222,13 +235,43 @@
       text-align: center;
 
       button {
-        margin: .5em .4em .5em 0;
         line-height: normal;
+        display: inline-block;
+        padding: 0 12px !important;
+        margin-bottom: 0;
+        font-weight: 400;
+        text-align: center;
+        vertical-align: middle;
+        -ms-touch-action: manipulation;
+        touch-action: manipulation;
+        cursor: pointer;
+        white-space: nowrap;
+        font-size: 14px;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        border: 1px solid #c8c8d3;
+        background-color: #ffffff;
+        outline: 0 !important;
+        box-shadow: none !important;
+        height: 26px;
+        line-height: 22px !important;
+        border-radius: 3px;
+        &:first-child {
+          background: #3291c8;
+          color: #ffffff;
+          border-color: transparent;
+          span {
+            color: #fff;
+          }
+        }
       }
     }
   }
 
-  .ui-helper-clearfix:before, .ui-helper-clearfix:after {
+  .ui-helper-clearfix:before,
+  .ui-helper-clearfix:after {
     content: "";
     display: table;
     border-collapse: collapse;
@@ -263,3 +306,6 @@
   }
 
 }
+
+
+

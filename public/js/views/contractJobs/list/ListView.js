@@ -60,6 +60,77 @@ define([
             ListViewBase.prototype.initialize.call(this, options);
         },
 
+        goSort: function (e) {
+            var filter = this.filter || custom.retriveFromCash('contractJobs.filter');
+            var target$;
+            var currentParrentSortClass;
+            var sortClass;
+            var sortConst;
+            var sortBy;
+            var sortObject;
+            var data;
+            var el = 'th';
+
+            this.startTime = new Date();
+
+            if ($(e.target).closest('th') && $(e.target).closest('th').length) {
+                target$ = $(e.target).closest('th');
+            } else {
+                target$ = $(e.target).closest('li');
+                el = 'li';
+            }
+
+            currentParrentSortClass = target$.attr('class');
+            sortClass = currentParrentSortClass.split(' ')[1];
+            sortConst = 1;
+            sortBy = target$.data('sort').split(' ');
+            sortObject = {};
+
+            if (!sortClass) {
+                target$.addClass('sortUp');
+                sortClass = 'sortUp';
+            }
+
+            switch (sortClass) {
+                case 'sortDn':
+                    target$.parent().find(el).removeClass('sortDn').removeClass('sortUp');
+                    target$.removeClass('sortDn').addClass('sortUp');
+                    sortConst = 1;
+                    break;
+                case 'sortUp':
+                    target$.parent().find(el).removeClass('sortDn').removeClass('sortUp');
+                    target$.removeClass('sortUp').addClass('sortDn');
+                    sortConst = -1;
+                    break;
+                // skip default case
+            }
+
+            sortBy.forEach(function (sortField) {
+                sortObject[sortField] = sortConst;
+            });
+
+            data = {
+                sort: sortObject
+            };
+
+            data.filter = filter;
+
+            if (this.viewType) {
+                data.viewType = this.viewType;
+            }
+            if (this.parrentContentId) {
+                data.parrentContentId = this.parrentContentId;
+            }
+            if (this.contentType) {
+                data.contentType = this.contentType;
+            }
+
+            data.page = 1;
+
+            this.changeLocationHash(null, this.collection.pageSize);
+            this.collection.getFirstPage(data);
+        },
+
         openSortDrop: function (e) {
             var $target = $(e.target);
 

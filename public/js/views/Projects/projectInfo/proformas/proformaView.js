@@ -37,12 +37,14 @@ define([
         template: _.template(invoiceTemplate),
 
         events: {
-            'click .checkbox'                                : 'checked',
-            'click  .list tbody td': 'goToEditDialog',
-            'click #removeProforma'                          : 'deleteItems',
-            'click #saveProforma'                            : 'saveItems',
-            'click .selectList'                              : 'showSelects',
-            'click .newSelectList li'                        : 'chooseOption'
+            'click .checkbox'        : 'checked',
+            /*
+             'click  .list tbody td': 'goToEditDialog',
+             */
+            'click #removeProforma'  : 'deleteItems',
+            'click #saveProforma'    : 'saveItems',
+            'click .selectList'      : 'showSelects',
+            'click .newSelectList li': 'chooseOption'
         },
 
         deleteItems: function (e) {
@@ -164,7 +166,7 @@ define([
 
         },
 
-        goToEditDialog: function (e) {
+        gotoForm: function (e) {
             var self = this;
             var id = $(e.target).closest('tr').data('id');
             var model = new InvoiceModel({validate: false});
