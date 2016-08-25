@@ -4213,7 +4213,6 @@ label._customCHeckbox input[type="checkbox"] {
 
 ._newSelectListWrap {
   position: relative;
-  display: inline-block;
   cursor: pointer; }
 
 .newSelectList {

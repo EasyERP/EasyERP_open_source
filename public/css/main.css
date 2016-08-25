@@ -4167,6 +4167,9 @@ table#workflows tr td.edit-status {
 #top-bar:empty {
   display: none !important;
 }
+#top-bar > .btnsBlock {
+  margin-top: 6px;
+}
 .dashBoardVocationSearch {
   margin-top: 7px !important;
   /*only for DashBoard vocation*/
