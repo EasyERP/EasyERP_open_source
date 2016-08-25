@@ -28,7 +28,7 @@ define([
 
         events: {
             'change #workflowNames': 'changeWorkflows',
-            'click .fa-paperclip'  : 'clickInput'
+            'click .icon-attach'   : 'clickInput'
         },
 
         clickInput: function () {

@@ -37,7 +37,7 @@ define([
             'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
             'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect',
             'click .details'                                                  : 'showDetailsBox',
-            'click .fa-paperclip'                                             : 'clickInput'
+            'click .icon-attach'                                              : 'clickInput'
         },
 
         clickInput: function () {

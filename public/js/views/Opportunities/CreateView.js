@@ -28,7 +28,7 @@ define([
             this.render();
         },
         events    : {
-            'click .fa-paperclip': 'clickInput'
+            'click .icon-attach': 'clickInput'
         },
 
         clickInput: function () {
