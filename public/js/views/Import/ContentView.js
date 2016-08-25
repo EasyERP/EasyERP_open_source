@@ -74,7 +74,7 @@ define([
             App.currentUser.imports = {};
             App.currentUser.checkedComboImport = 'Persons';
 
-            this.stage = 1;
+            this.stage = 0;
 
             this.updateCurrentUser({
                 stage: this.stage
