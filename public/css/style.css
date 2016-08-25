@@ -1843,9 +1843,7 @@ h3 {
   display: -ms-flexbox;
   display: flex; }
   #createBtnHolder .export li .btn {
-    margin-right: 10px;
-    height: 26px;
-    line-height: 22px !important; }
+    margin-right: 10px; }
   #createBtnHolder .export li:last-child .btn {
     margin-right: 0px; }
 
@@ -2397,6 +2395,13 @@ label._customCHeckbox input[type="checkbox"] {
 @media (min-width: 920px) {
   table.payRoll-list #payRoll-Table .scrollit {
     height: calc(100vh - 290px); } }
+.vacation-list thead #caption ._newSelectListWrap {
+  border: none; }
+  .vacation-list thead #caption ._newSelectListWrap a {
+    font-size: 16px;
+    line-height: 14px;
+    padding: 2px; }
+
 .dashboard-card-wrap {
   background-color: #f2f5fa;
   display: table;

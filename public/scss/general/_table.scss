@@ -133,12 +133,6 @@
   }
 }
 
-//.borders {
-//  col {
-//    border: 1px solid;
-//  }
-//}
-
 #searchContainer {
   &.payRoll {
     margin: 0 0 10px;
@@ -154,4 +148,15 @@
     }
   }
 }
+.vacation-list thead #caption{
+  ._newSelectListWrap{
+    border:none;
+    a{
+      font-size: 16px;
+      line-height: 14px;
+      padding: 2px;
+    }
+  }
+}
+
 
