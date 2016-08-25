@@ -156,6 +156,9 @@ var Module = function (models) {
             reportFileName: options.reportFileName
         };
 
+        //console.log('- write History -');
+        //console.dir(importHistoryObj);
+
         var importHistory = new ImportHistoryModel(importHistoryObj);
 
         importHistory.save(function (err) {
@@ -638,6 +641,8 @@ var Module = function (models) {
                     var mapResult;
                     var type = userImports.type;
 
+                    //console.log('import merged data');
+                    //console.dir(importData);
                     importFileName = importData[0].fileName;
                     importFilePath = importData[0].filePath;
 

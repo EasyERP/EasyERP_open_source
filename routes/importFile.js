@@ -40,7 +40,10 @@ module.exports = function (models) {
         var fileName;
         var timeStamp;
         var dir = path.join('importFiles', userId);
+        var ImportModel = models.get(req.session.lastDb, 'Imports', ImportSchema);
 
+
+        ImportModel.remove({user: userId}, function () {});
 
         uploader.postFile(dir, files.attachfile, {userId: userId}, function (err, file) {
             if (err) {
@@ -508,14 +511,18 @@ module.exports = function (models) {
         }
 
         function saveItemToTemporaryDb(objectToDb, callback) {
+            var importModel;
             var ImportModel = models.get(req.session.lastDb, 'Imports', ImportSchema);
-            var importModel = new ImportModel({
+
+
+            importModel = new ImportModel({
                 user     : userId,
                 result   : objectToDb,
                 fileName : fileName,
                 filePath : filePath,
                 timeStamp: +timeStamp
             });
+
 
             importModel.save(callback);
         }
