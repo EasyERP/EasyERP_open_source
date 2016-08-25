@@ -1,0 +1,130 @@
+.payRoll-list {
+  width: 100%;
+  min-width: 100%;
+  border-spacing: 0;
+  border-collapse: collapse;
+  table-layout: fixed;
+
+  th, td {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    border: 1px solid transparent;
+    border-top: none;
+    vertical-align: middle;
+  }
+  thead > tr{
+    border-top: none;
+  }
+
+  tfoot {
+    margin-right: 17px;
+    td {
+      border-color: transparent;
+      padding-right: 20px;
+    }
+  }
+  tbody {
+    tr:hover {
+      background: none;
+    }
+  }
+
+  #payRoll-Table {
+    padding: 0;
+    .datePicker {
+      padding: 0;
+      input {
+        &:not([disabled]) {
+          outline: 1px solid #66b5d4 !important;
+        }
+        &:focus {
+          outline: 1px solid #66b5d4 !important;
+        }
+      }
+    }
+    .mainRow td{
+      border:none;
+    }
+    #payRoll-TableBody {
+      td{
+        border-top: 1px solid #d7d7d7;
+      }
+    }
+    .scrollit {
+      display: block;
+      height: calc(100vh - 2010px);
+      overflow-x: hidden;
+    }
+  }
+
+  ._payRoll-TableBody
+    td{
+      border: 1px solid #d7d7d7;
+    }
+}
+
+.payRoll-expenses{
+  dd, dt{
+    display: inline-block;
+    line-height: 23px;
+    width: 40%;
+    float: left;
+  }
+  dd + dt{
+    clear: both;
+  }
+  dd {
+    width: 60%;
+  }
+}
+
+
+.payRollHolder {
+  margin-top: 0 !important;
+}
+
+
+.totalContainer {
+  margin: 15px 20px 0 0;
+  text-align: right;
+
+  color: #000000;
+  font-size: 14px;
+  dd, dt{
+    display: inline-block;
+    line-height: 23px;
+    font-size: 14px;
+    //width: 40%;
+    //float: left;
+  }
+  dd{
+    width: 65%;
+    .newSelectList{
+      left: 50%;
+      margin-left: -100%;
+    }
+  }
+}
+
+//.borders {
+//  col {
+//    border: 1px solid;
+//  }
+//}
+
+#searchContainer {
+  &.payRoll {
+    margin: 0 0 10px;
+  }
+}
+
+@media (min-width: 920px) {
+  table.payRoll-list {
+    #payRoll-Table {
+      .scrollit {
+        height: calc(100vh - 290px);
+      }
+    }
+  }
+}
+
