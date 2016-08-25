@@ -4211,7 +4211,7 @@ table#workflows tr td.edit-status {
 #top-bar h3 {
   line-height: 40px;
   padding: 0 10px;
-  color: #666666 !important;
+  color: #666666  !important;
   font-family: 'OpenSans Regular', sans-serif, Verdana;
   font-weight: normal;
   float: left;
@@ -4221,10 +4221,7 @@ table#workflows tr td.edit-status {
   border-bottom: 0;
 }
 #top-bar #reconcileDate {
-  color: #000000;
-}
-#top-bar:empty {
-  display: none !important;
+  color: #333;
 }
 #top-bar > .btnsBlock {
   margin-top: 6px;
@@ -4242,7 +4239,7 @@ table#workflows tr td.edit-status {
 .projectInfoTopBar h3 {
   line-height: 40px;
   padding: 0 10px;
-  color: #666666 !important;
+  color: #666666  !important;
   font-family: 'OpenSans Regular', sans-serif, Verdana;
   font-weight: normal;
   float: left;
@@ -4252,10 +4249,7 @@ table#workflows tr td.edit-status {
   border-bottom: 0;
 }
 .projectInfoTopBar #reconcileDate {
-  color: #000000;
-}
-.projectInfoTopBar:empty {
-  display: none !important;
+  color: #333;
 }
 .noPadding {
   padding: 0 !important;
