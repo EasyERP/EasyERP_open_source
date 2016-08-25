@@ -3838,6 +3838,7 @@ body {
   height: calc(100% - 40px);
   width: 100%;
   flex-grow: 1;
+  overflow: auto;
 }
 #startLetter {
   height: 20px;
@@ -5172,124 +5173,6 @@ ul.dialog-tabs li.right button {
 }
 .thumbnailwithavatar .company {
   color: #000000;
-}
-.list {
-  font-family: 'OpenSans Regular', sans-serif, Verdana;
-  width: 100%;
-}
-.list td,
-.list th {
-  height: 23px;
-  padding: 0 6px;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  box-sizing: border-box;
-  color: #000000;
-  font-size: 12px;
-}
-.list thead tr {
-  border: none;
-  height: 30px;
-  vertical-align: middle;
-}
-.list thead th {
-  font-family: 'OpenSans SemiBold', sans-serif, Verdana;
-  text-align: right;
-}
-.list tbody td {
-  text-align: right;
-  height: 45px;
-}
-.list tbody td.changeContent {
-  border-top: 2px solid #5cb85c;
-  border-bottom: 2px solid #5cb85c;
-}
-.list tbody tr:last-child {
-  border-bottom: 1px solid #d7d7d7;
-}
-.list tbody tr,
-.list thead tr {
-  border-top: 1px solid #d7d7d7;
-}
-.list tfoot td {
-  text-align: right;
-}
-.list thead tr,
-.list tfoot tr {
-  background: inherit !important;
-}
-.list .notForm input {
-  margin-top: 3px;
-  cursor: pointer;
-  display: inline-block;
-  vertical-align: top;
-}
-.list .oe_sortable,
-.list .oe_sortable_sub {
-  cursor: pointer;
-  position: relative;
-}
-.list .oe_sortable .arrow,
-.list .oe_sortable_sub .arrow {
-  display: none;
-  text-align: center;
-  cursor: pointer;
-  font-family: FontAwesome;
-  position: absolute;
-  top: 2px;
-  right: -8px;
-}
-.list .oe_sortable.sortUp .up,
-.list .oe_sortable_sub.sortUp .up,
-.list .oe_sortable.sortUp .down,
-.list .oe_sortable_sub.sortUp .down {
-  display: inline-block;
-}
-.list .oe_sortable.sortUp .up:before,
-.list .oe_sortable_sub.sortUp .up:before,
-.list .oe_sortable.sortUp .down:before,
-.list .oe_sortable_sub.sortUp .down:before {
-  content: "\f176";
-}
-.list .oe_sortable.sortDn .down:before,
-.list .oe_sortable_sub.sortDn .down:before {
-  -webkit-transform: rotate(90deg);
-  transform: rotate(90deg);
-}
-.list .enableTableOdd tr:not(.innerRow):hover {
-  background-color: #ededed;
-}
-.list .centerCell {
-  text-align: center;
-}
-.list .leftBorderNone {
-  border-left: none;
-}
-.list .cancelled a {
-  text-decoration: line-through;
-}
-.list.enable_hover tbody tr:hover {
-  background-color: #d9d9d9;
-}
-.list .overtime {
-  background-color: #ffe332 !important;
-}
-.list thead th:first-of-type {
-  width: 15%;
-}
-.list .datepicker {
-  width: 90%;
-}
-.list .datepicker.notVisible {
-  display: none;
-}
-.list .blue {
-  color: #3e88b9;
-  font-size: 15px;
-  font-family: 'OpenSans Bold', sans-serif, Verdana;
-}
-.list tr td.centerCell {
-  text-align: center;
 }
 .thumbnail {
   float: left;
@@ -7848,9 +7731,6 @@ textarea#editInput {
 }
 #searchContainer .filter-check-list {
   margin-top: -1px;
-}
-.content-holder {
-  overflow: auto;
 }
 .removeValues {
   cursor: pointer;
