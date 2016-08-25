@@ -1743,6 +1743,8 @@ h3 {
     content: "\e90f";
     margin-right: 6px;
     font-family: "erp-icons"; }
+  .btn.icon-download:before {
+    font-size: 18px; }
   .btn:hover {
     cursor: pointer;
     background: #f2f2f2;
@@ -1823,6 +1825,16 @@ h3 {
   .btn span, .btn a {
     padding: 0 !important;
     color: #000000; }
+
+.btnsBlock:after {
+  content: '';
+  display: table;
+  clear: both; }
+.btnsBlock .btn {
+  float: left;
+  margin-right: 10px; }
+  .btnsBlock .btn:last-child {
+    margin-right: 0; }
 
 .editorTab .btn {
   min-width: 66px; }

@@ -32,6 +32,12 @@
     }
   }
 
+  &.icon-download {
+    &:before {
+      font-size: 18px;
+    }
+  }
+
   &:hover {
     cursor: pointer;
     background: $btnTextColor;
@@ -166,6 +172,21 @@
   span, a {
     padding: 0 !important;
     color: $black;
+  }
+}
+
+.btnsBlock {
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+  .btn {
+    float: left;
+    margin-right: 10px;
+    &:last-child {
+      margin-right: 0;
+    }
   }
 }
 
