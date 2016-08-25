@@ -125,6 +125,7 @@
 }
 
 
+
 .selectCompany {
   .addCompanyBtn {
     width: 100%;
@@ -417,6 +418,10 @@
     margin-left: 5px;
     display: inline-block;
   }
+}
+
+.current-selected {
+  display: inline-block;
 }
 
 .noteWrapper  {
