@@ -67,13 +67,13 @@ define([
                 Customers    : {
                     names: [
                         'Email',
-                        'First Name',
+                        'Last Name',
                         'Site',
                         'Phone'
                     ],
                     items: [
                         'email',
-                        'name.first',
+                        'name.last',
                         'website',
                         'phones.phone'
                     ]
