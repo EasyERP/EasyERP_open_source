@@ -1992,6 +1992,27 @@ label._customCHeckbox input[type="checkbox"] {
 .icon-list4:before {
   content: "\f0c9"; }
 
+.icon-building:before {
+  content: "\f0f7"; }
+
+.icon-cheveronL:before {
+  content: "\f100"; }
+
+.icon-cheveronR:before {
+  content: "\f101"; }
+
+.icon-arrow-left2:before {
+  content: "\f104"; }
+
+.icon-arrow-right2:before {
+  content: "\f105"; }
+
+.icon-arrow-up2:before {
+  content: "\f106"; }
+
+.icon-arrow-down2:before {
+  content: "\f107"; }
+
 .icon-circle:before {
   content: "\f10c"; }
 
@@ -2003,15 +2024,6 @@ label._customCHeckbox input[type="checkbox"] {
 
 .icon-transfer2:before {
   content: "\30"; }
-
-.icon-arrow-down2:before {
-  content: "\37"; }
-
-.icon-arrow-left2:before {
-  content: "\38"; }
-
-.icon-arrow-right2:before {
-  content: "\39"; }
 
 .icon-facebook2:before {
   content: "\66"; }
@@ -2025,11 +2037,11 @@ label._customCHeckbox input[type="checkbox"] {
 .icon-kanban:before {
   content: "\72"; }
 
-.icon-skype2:before {
+.icon-skype-black:before {
   content: "\73"; }
 
-.icon-arrow-up2:before {
-  content: "\76"; }
+.icon-plus-black:before {
+  content: "\e921"; }
 
 .icon-down-arrow2:before {
   content: "\e91b"; }
@@ -2088,16 +2100,10 @@ label._customCHeckbox input[type="checkbox"] {
 .icon-close2:before {
   content: "\e905"; }
 
-.icon-chevronR:before {
-  content: "\e906"; }
-
-.icon-chevronL:before {
-  content: "\e907"; }
-
 .icon-download:before {
   content: "\e908"; }
 
-.icon-filter-icon:before {
+.icon-filter:before {
   content: "\e909"; }
 
 .icon-filter2:before {
