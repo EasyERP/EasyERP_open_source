@@ -2,10 +2,8 @@
   width: 100%;
   margin-left: auto;
   margin-right: auto;
-  padding-left: 12px;
-  padding-left: 0.75rem;
-  padding-right: 12px;
-  padding-right: 0.75rem; }
+    padding: 0 15px;
+}
 
 .clearfix:before, .container:before, .container-full:before, .row:before, .flex #thumbnailContent:before, .clearfix:after, .container:after, .container-full:after, .row:after, .flex #thumbnailContent:after {
   content: " ";
@@ -2327,11 +2325,9 @@ td {
     width: 40%;
     float: left;
 }
-
 .payRoll-expenses dd + dt {
     clear: both;
 }
-
 .payRoll-expenses dd {
     width: 60%;
 }
@@ -2371,6 +2367,107 @@ td {
         height: calc(100vh - 290px);
     }
 }
+
+.dasboard-card-wrap {
+    background-color: #f2f5fa;
+    display: table;
+    height: 100%;
+}
+
+.dasboard-card-wrap + #timeRecivingDataFromServer {
+    background-color: #f2f5fa;
+}
+
+.dasboard-card-wrap .dashboard-card {
+    background-color: #fff;
+    border: 1px solid #d8dde6;
+    border-radius: 4px;
+    margin-top: 16px;
+    padding: 20px;
+    float: left;
+    width: 100%;
+}
+
+.dasboard-card-wrap .dashboard-card .card-title {
+    color: #536786;
+}
+
+/*
+
+.textLightGrey {
+  color: #c5c7c7;
+}
+.textBlue {
+  color: #27a0cd;
+}
+
+._multiEllipsis {
+  overflow: hidden;
+  height: 37px;
+  line-height: 25px;
+
+  &:before {
+    content: "";
+    float: left;
+    width: 5px;
+    height: 38px;
+  }
+  &.open {
+    height: auto;
+    ._ellipsisShowMore {
+      display: none;
+    }
+    ._ellipsisCloseBtn {
+      display: block;
+      float: right;
+      background-color: #7eadcc;
+      color: #fff;
+      font-size: 12px;
+      height: 20px;
+      line-height: 20px;
+      padding: 0 10px;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+  }
+
+  > *:first-child {
+    float: right;
+    width: 100%;
+    margin-left: -5px;
+  }
+
+  > p {
+    -ms-word-break: break-all;
+    word-break: break-all;
+  }
+
+  ._ellipsisShowMore {
+    display: block;
+    box-sizing: content-box;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    position: relative;
+    top: -14px;
+    height: 14px;
+    left: 100%;
+    float: right;
+    width: 68px;
+    padding-right: 5px;
+    margin-left: -68px;
+    background-color: #7eadcc;
+    color: #fff;
+    line-height: 13px;
+    font-size: 10px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 3px;
+  }
+  ._ellipsisCloseBtn {
+    display: none;
+  }
+}
+*/
 .flex {
   display: -webkit-box;
   display: -webkit-flex;
