@@ -192,6 +192,7 @@ define([
             var sortBy;
             var sortObject;
             var data;
+            var el = 'th';
 
             this.startTime = new Date();
 
@@ -203,7 +204,15 @@ define([
                 });
             }
 
-            target$ = $(e.target).closest('th');
+            // target$ = $(e.target).closest('th');
+
+            if ($(e.target).closest('th') && $(e.target).closest('th').length) {
+                target$ = $(e.target).closest('th');
+            } else {
+                target$ = $(e.target).closest('li');
+                el = 'li';
+            }
+
             currentParrentSortClass = target$.attr('class');
             sortClass = currentParrentSortClass.split(' ')[1];
             sortConst = 1;
@@ -217,12 +226,12 @@ define([
 
             switch (sortClass) {
                 case 'sortDn':
-                    target$.parent().find('th').removeClass('sortDn').removeClass('sortUp');
+                    target$.parent().find(el).removeClass('sortDn').removeClass('sortUp');
                     target$.removeClass('sortDn').addClass('sortUp');
                     sortConst = 1;
                     break;
                 case 'sortUp':
-                    target$.parent().find('th').removeClass('sortDn').removeClass('sortUp');
+                    target$.parent().find(el).removeClass('sortDn').removeClass('sortUp');
                     target$.removeClass('sortUp').addClass('sortDn');
                     sortConst = -1;
                     break;
@@ -632,7 +641,6 @@ define([
             var newRows = this.$el.find('#false');
             var itemsNumber = $(e.target).text();
             var filter = this.filter;
-
 
             this.startTime = new Date();
 

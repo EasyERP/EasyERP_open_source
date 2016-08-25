@@ -1,6 +1,6 @@
 <div class="form-holder">
     <% if(!isPaid){%>
-        <span class="btn btnSave btnRounded saveBtn positioned">Save</span>
+        <span class="btn btnSave  saveBtn positioned">Save</span>
     <%}%>
     <form method="post" action="" class="form" id="invoiceForm">
         <fieldset>
@@ -24,10 +24,10 @@
                         </button>
                         <%} else {%>
                         <%if(isFinancial){%>
-                        <button class="btn sendEmail" style="display: none;">
+                        <button class="btn sendEmail">
                             <span>Send email</span>
                         </button>
-                        <button class="btn newPayment" style="display: none;">
+                        <button class="btn newPayment">
                             <span>Pay</span>
                         </button>
                         <button class="btn approve">
@@ -50,10 +50,10 @@
                         </button>
                         <%} else {%>
                         <%if(isFinancial){%>
-                        <button class="btn sendEmail" style="display: none;">
+                        <button class="btn sendEmail">
                             <span>Send email</span>
                         </button>
-                        <button class="btn newPayment" style="display: none;">
+                        <button class="btn newPayment">
                             <span>Pay</span>
                         </button>
                         <button class="btn approve">
@@ -127,6 +127,12 @@
                                     placeholder="Due Date" readonly />
                                 </dd>
 
+                                <dt><label for="journal">Journal</label></dt>
+                                <dd class="_newSelectListWrap">
+                                    <a id="journal" class="<%= model.approved ? '' : 'current-selected'%>" href="javascript:;"><%= model.journal && model.journal._id ?
+                                        model.journal.name : 'Select'%></a>
+                                </dd>
+
                                 <dt><label for="currencyDd">Currency</label></dt>
                                 <dd>
                                     <a id="currencyDd"
@@ -170,6 +176,12 @@
                                 <dt><label for="d_date">Due Date </label></dt>
                                 <dd>
                                     <span id="d_date"><%=(model.dueDate) ? model.dueDate : ''%></span>
+                                </dd>
+
+                                <dt><label for="journal">Journal</label></dt>
+                                <dd class="_newSelectListWrap">
+                                    <a id="journal" class="<%= model.approved ? '' : 'current-selected'%>" href="javascript:;"><%= model.journal && model.journal._id ?
+                                        model.journal.name : 'Select'%></a>
                                 </dd>
 
                                 <dt><label for="currencyDd">Currency</label></dt>
@@ -327,7 +339,7 @@
                                     <div class="half-block left">
                                         <dl class="opp-info">
                                             <dt><label for="paymentMethod">Bank Account</label></dt>
-                                            <dd>
+                                            <dd class="_newSelectListWrap">
                                                 <a id="paymentMethod" class="current-selected" href="javascript:;"><%=model.paymentMethod || 'Select'%></a>
                                             </dd>
 
@@ -339,7 +351,7 @@
                                             </dd>-->
 
                                             <dt><label for="paymentTerm">Payment Terms</label></dt>
-                                            <dd>
+                                            <dd class="_newSelectListWrap">
                                                 <a id="paymentTerm" class="current-selected" href="javascript:;"><% if (model.paymentTerms) { %>
                                                         <%=model.paymentTerms.name || 'Select'%>
                                                     <% } else { %>

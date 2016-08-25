@@ -184,6 +184,7 @@
             headers   : options.headers,
             attributes: options.attributes
         };
+
         wb = new Workbook();
         ws = sheetFromJson(data, opts);
         wb.SheetNames.push(options.sheetName);

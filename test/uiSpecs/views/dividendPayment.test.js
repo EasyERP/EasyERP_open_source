@@ -488,7 +488,7 @@ define([
 
                     expect(deleteSpy.calledTwice).to.be.true;
                     expect(ajaxSecondResponse).to.have.property('type', 'GET');
-                    expect(ajaxSecondResponse).to.have.property('url', '/payment/');
+                    expect(ajaxSecondResponse).to.have.property('url', '/payments/');
                 });
 
                 it('Try to sort ListView', function () {

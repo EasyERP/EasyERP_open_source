@@ -1,11 +1,11 @@
 define([
     'jQuery',
     'Underscore',
-    'views/Proforma/list/ListView',
+    'views/proforma/list/ListView',
     'text!templates/Projects/projectInfo/proformaTemplate.html',
-    'views/Proforma/EditView',
-    'views/Proforma/list/ListItemView',
-    'collections/Proforma/filterCollection',
+    'views/proforma/EditView',
+    'views/proforma/list/ListItemView',
+    'collections/proforma/filterCollection',
     'models/InvoiceModel',
     'common',
     'helpers',
@@ -37,12 +37,14 @@ define([
         template: _.template(invoiceTemplate),
 
         events: {
-            'click .checkbox'                                : 'checked',
-            'click  .list tbody td': 'goToEditDialog',
-            'click #removeProforma'                          : 'deleteItems',
-            'click #saveProforma'                            : 'saveItems',
-            'click .selectList'                              : 'showSelects',
-            'click .newSelectList li'                        : 'chooseOption'
+            'click .checkbox'        : 'checked',
+            /*
+             'click  .list tbody td': 'goToEditDialog',
+             */
+            'click #removeProforma'  : 'deleteItems',
+            'click #saveProforma'    : 'saveItems',
+            'click .selectList'      : 'showSelects',
+            'click .newSelectList li': 'chooseOption'
         },
 
         deleteItems: function (e) {
@@ -164,7 +166,7 @@ define([
 
         },
 
-        goToEditDialog: function (e) {
+        gotoForm: function (e) {
             var self = this;
             var id = $(e.target).closest('tr').data('id');
             var model = new InvoiceModel({validate: false});

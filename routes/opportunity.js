@@ -72,7 +72,7 @@ HTTP/1.1 200 OK
      }
 ]
      */
-    router.get('/getForDd', authStackMiddleware, accessStackMiddleware, handler.getForDd);
+    router.get('/getForDd', authStackMiddleware, handler.getForDd);
 
     router.get('/getFilterValues', authStackMiddleware, accessStackMiddleware, handler.getFilterValues);
 

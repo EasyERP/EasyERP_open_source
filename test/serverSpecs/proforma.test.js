@@ -283,7 +283,7 @@ describe('Invoice Specs', function () {
             };
 
             aggent
-                .get('Proforma/')
+                .get('proforma/')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {

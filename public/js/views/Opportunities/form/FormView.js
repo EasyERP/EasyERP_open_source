@@ -12,8 +12,9 @@ define([
     'views/Tags/TagView',
     'constants',
     'dataService',
-    'views/selectView/selectView'
-], function (Backbone, _, $, OpportunitiesFormTemplate, workflowProgress, aboutTemplate, EditorView, AttachView, CompanyFormProperty, ContactFormProperty, TagView, constants, dataService, SelectView) {
+    'views/selectView/selectView',
+    'helpers/keyValidator'
+], function (Backbone, _, $, OpportunitiesFormTemplate, workflowProgress, aboutTemplate, EditorView, AttachView, CompanyFormProperty, ContactFormProperty, TagView, constants, dataService, SelectView, keyValidator) {
     'use strict';
 
     var FormOpportunitiesView = Backbone.View.extend({
@@ -32,6 +33,7 @@ define([
             click                                              : 'hideNewSelect',
             'click #tabList a'                                 : 'switchTab',
             'keyup .editable'                                  : 'setChangeValueToModel',
+            'keypress .dealTitlePrice'                         : 'keypress',
             'click #cancelBtn'                                 : 'cancelChanges',
             'click #saveBtn'                                   : 'saveChanges',
             'click .tabListItem'                               : 'changeWorkflow',
@@ -52,6 +54,10 @@ define([
                 display: 'block'
             }, 250);
 
+        },
+
+        keypress: function (e) {
+            return keyValidator(e);
         },
 
         hideEdit: function () {
@@ -171,13 +177,13 @@ define([
                         self.modelChanged = {};
                         self.hideButtons();
 
-                        if (sendEvent){
+                        if (sendEvent) {
 
                             if (changedAttrs.hasOwnProperty('salesPerson')) {
                                 changedAttrs.salesPerson = $thisEl.find('#salesPersonDd').text().trim();
                             }
 
-                            if(changedAttrs.hasOwnProperty('workflow')) {
+                            if (changedAttrs.hasOwnProperty('workflow')) {
                                 changedAttrs.workflow = $thisEl.find('.tabListItem.active span').text().trim();
                             }
 

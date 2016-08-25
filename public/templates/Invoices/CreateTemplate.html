@@ -14,9 +14,9 @@
                     <div class="dialog-tabs-item mainTabs active">
                         <div class="half-block left">
                             <dl class="opp-info">
-                                <dt><label for="supplier">Supplier</label></dt>
-                                <dd>
-                                    <a id="supplier" href="javascript:;" class="current-selected">Select</a>
+                                <dt><label for="supplier_Create">Supplier</label></dt>
+                                <dd class="_newSelectListWrap">
+                                    <a id="supplier_Create" href="javascript:;" class="current-selected">Select</a>
                                 </dd>
 
                                 <!--<dt><label for="source_document">Source Document</label></dt>-->
@@ -35,27 +35,27 @@
                         <div class="half-block left">
                             <dl class="opp-info">
 
-                                <dt><label for="invoice_date">Invoice Date</label></dt>
+                                <dt><label for="invoice_date_Create">Invoice Date</label></dt>
                                 <dd>
-                                    <input class="extrainfo" type="text" name="invoiceDate" id="invoice_date" value=""
+                                    <input class="extrainfo" type="text" name="invoiceDate" id="invoice_date_Create" value=""
                                            readonly="" placeholder="Invoice Date">
                                 </dd>
 
-                                <dt><label for="due_date">Due Date</label></dt>
+                                <dt><label for="due_date_Create">Due Date</label></dt>
                                 <dd>
-                                    <input class="extrainfo" type="text" name="dueDate" id="due_date" value=""
+                                    <input class="extrainfo" type="text" name="dueDate" id="due_date_Create" value=""
                                            readonly="" placeholder="Due Date">
                                 </dd>
 
 
-                                <!--<dt><label for="journal">Journal</label></dt>-->
-                                <!--<dd>-->
-                                    <!--<a id="journal" href="javascript:;">Select</a>-->
-                                <!--</dd>-->
+                                <dt><label for="journal_Create">Journal</label></dt>
+                                <dd class="_newSelectListWrap">
+                                    <a id="journal_Create" href="javascript:;" class="current-selected" >Select</a>
+                                </dd>
 
-                                <dt><label for="currencyDd">Currency</label></dt>
-                                <dd>
-                                    <a id="currencyDd" class="current-selected" href="javascript:;">Select</a>
+                                <dt><label for="currencyDd_Create">Currency</label></dt>
+                                <dd class="_newSelectListWrap">
+                                    <a id="currencyDd_Create" class="current-selected" href="javascript:;">Select</a>
                                 </dd>
 
                             </dl>
@@ -84,9 +84,9 @@
                                                 <a id="bank_account" href="javascript:;">Select</a>
                                             </dd>
 
-                                            <dt><label for="payment_terms">Payment Terms</label></dt>
-                                            <dd>
-                                                <a id="payment_terms" class="current-selected" href="javascript:;">Select</a>
+                                            <dt><label for="payment_terms_Create">Payment Terms</label></dt>
+                                            <dd class="_newSelectListWrap">
+                                                <a id="payment_terms_Create" class="current-selected" href="javascript:;">Select</a>
                                             </dd>
                                         </dl>
                                     </div>
@@ -113,7 +113,7 @@
                                         <legend>Note</legend>
                                     </h3>
                                     <div class="area_holder">
-                                 <textarea id="internalNotes" placeholder="Internal notes..." maxlength="500"
+                                 <textarea id="internalNotes" class="internal_Notes" placeholder="Internal notes..." maxlength="500"
                                            class="opp-internal-create"></textarea>
                                         <a href="javascript:;" class="attach_file">
                                             <i class="fa fa-paperclip" aria-hidden="true"></i>

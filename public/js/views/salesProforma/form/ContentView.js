@@ -6,9 +6,9 @@ define([
     'text!templates/salesProforma/form/ContentTemplate.html',
     'text!templates/salesProforma/form/ListItemTemplate.html',
     'models/InvoiceModel',
-    'views/Proforma/form/FormView',
-    //'views/Proforma/CreateView',
-    'views/Proforma/list/ListItemView',
+    'views/proforma/form/FormView',
+    //'views/proforma/CreateView',
+    'views/proforma/list/ListItemView',
     'views/Filter/filterView',
     'helpers',
     'common',
@@ -21,7 +21,7 @@ define([
         contentTemplate: _.template(ContentTemplate),
         //CreateView     : CreateView,
         ListItemView   : ListItemView,
-        listUrl        : 'easyErp/Proforma/list/',
+        listUrl        : 'easyErp/salesProforma/list/',
         contentType    : CONSTANTS.SALESPROFORMA, // needs in view.prototype.changeLocationHash
         viewType       : 'tform', // needs in view.prototype.changeLocationHash
         hasPagination  : true,

@@ -1,0 +1,47 @@
+<!--<div class="formContentTitle">-->
+    <!--<span class="closeBtn"></span>-->
+<!--</div>-->
+<span class="closeBtn closePayrollList"></span>
+
+<div class="_payrollListWrap">
+    <div class="<%=weeklyScheduler.length ? 'checked' : ''%> _payrollListItem _weeklyItem">
+        <div class="_payrollListImage"></div>
+        <div class="_payrollListBody">
+            <span class="_payrollListSteps">Step 1 of 5</span>
+            <a href="#easyErp/settingsEmployee" class="_payrollListAction">Weekly Scheduler</a>
+            <p class="_payrollListDescription">Set up your weekly scheduler</p>
+        </div>
+    </div>
+    <div class="<%=scheduledPay.length ? 'checked' : ''%> _payrollListItem _payItem">
+        <div class="_payrollListImage"></div>
+        <div class="_payrollListBody">
+            <span class="_payrollListSteps">Step 2 of 5</span>
+            <a href="#easyErp/settingsEmployee" class="_payrollListAction">Scheduled Pay</a>
+            <p class="_payrollListDescription">Set up your Scheduled Pay</p>
+        </div>
+    </div>
+    <div class="<%=payrollStructure.length ? 'checked' : ''%> _payrollListItem _structureItem">
+        <div class="_payrollListImage"></div>
+        <div class="_payrollListBody">
+            <span class="_payrollListSteps">Step 3 of 5</span>
+            <a href="#easyErp/settingsEmployee" class="_payrollListAction">Payroll Structure Types</a>
+            <p class="_payrollListDescription">Set up your Payroll Structure Types</p>
+        </div>
+    </div>
+    <div class="<%=bankAccounts.length ? 'checked' : ''%> _payrollListItem _bankItem">
+        <div class="_payrollListImage"></div>
+        <div class="_payrollListBody">
+            <span class="_payrollListSteps">Step 4 of 5</span>
+            <a href="#easyErp/Accounts" class="_payrollListAction">Bank Accounts</a>
+            <p class="_payrollListDescription">Set up your Bank Accounts</p>
+        </div>
+    </div>
+    <div class="<%=employees.length ? 'checked' : ''%> _payrollListItem _employeesItem">
+        <div class="_payrollListImage"></div>
+        <div class="_payrollListBody">
+            <span class="_payrollListSteps">Step 5 of 5</span>
+            <a href="#easyErp/Employees" class="_payrollListAction">Employees</a>
+            <p class="_payrollListDescription">Add your Employees</p>
+        </div>
+    </div>
+</div>

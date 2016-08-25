@@ -9,7 +9,7 @@ define([
     'views/Products/InvoiceOrder/ProductItems',
     'views/Projects/projectInfo/orders/orderView',
     'collections/Quotations/filterCollection',
-    'collections/Proforma/filterCollection',
+    'collections/proforma/filterCollection',
     'common',
     'custom',
     'dataService',

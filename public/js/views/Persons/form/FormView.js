@@ -28,9 +28,9 @@ define([
     'use strict';
 
     var personTasksView = Backbone.View.extend({
-        el: '#content-holder',
-
-        initialize: function (options) {
+        el         : '#content-holder',
+        responseObj: {},
+        initialize : function (options) {
 
             App.currentPerson = options.model.get('id');
 
@@ -85,6 +85,10 @@ define([
 
             $target.closest('.propertyFormList').addClass('active');
 
+            if (property === 'social.LI') {
+                value = value.replace('linkedin', '[]');
+            }
+
             this.modelChanged[property] = value;
             this.showButtons();
         },
@@ -134,7 +138,7 @@ define([
         chooseOption: function (e) {
             var $target = $(e.target);
             var holder = $target.parents('.inputBox').find('.current-selected');
-            var type = $target.closest('a').attr('data-id');
+            var type = $target.closest('a').attr('data-id').replace('_', '.');
             var text = $target.text();
             var id = $target.attr('id');
 
@@ -160,7 +164,7 @@ define([
                         Backbone.history.fragment = '';
                         Backbone.history.navigate(window.location.hash, {trigger: true});
                     } else {
-                        self.editorView.renderTimeline();
+                        // self.editorView.renderTimeline();
                         self.renderAbout();
                         self.modelChanged = {};
                         self.hideButtons();
@@ -208,6 +212,9 @@ define([
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
+                yearRange  : '-100y:c+nn',
+                maxDate    : '-18y',
+                minDate    : null,
                 onSelect   : function (dateText) {
                     self.modelChanged.dateBirth = new Date(dateText);
                     self.showButtons();
@@ -226,6 +233,10 @@ define([
             this.formProperty = new CompanyFormProperty({
                 data    : formModel.company,
                 saveDeal: self.saveModel
+            });
+
+            dataService.getData('/countries/getForDD', {}, function (countries) {
+                self.responseObj['#country'] = countries.data;
             });
 
             $thisEl.find('#companyHolder').html(
@@ -254,6 +265,9 @@ define([
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
+                yearRange  : '-100y:c+nn',
+                maxDate    : '-18y',
+                minDate    : null,
                 onSelect   : function (dateText) {
                     self.modelChanged.dateBirth = new Date(dateText);
                     self.showButtons();

@@ -1,7 +1,7 @@
 define([
     'modules',
     'text!fixtures/index.html',
-    'collections/Product/ProductCategories',
+    'collections/Products/ProductCategories',
     'views/main/MainView',
     'views/settingsProduct/ContentView',
     'views/settingsProduct/TopBarView',

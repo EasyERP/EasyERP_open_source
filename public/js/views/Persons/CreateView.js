@@ -22,6 +22,7 @@ define([
             this.mId = CONSTANTS.MID[this.contentType];
 
             this.saveDeal = options.saveDeal;
+            this.company = options.company;
 
             _.bindAll(this, 'saveItem', 'render');
             this.model = new PersonModel();
@@ -71,7 +72,7 @@ define([
             whoCanRW = this.$el.find('[name="whoCanRW"]:checked').val();
 
             data = {
-                name: {
+                name      : {
                     first: $.trim(thisEl.find('#firstName').val()),
                     last : $.trim(thisEl.find('#lastName').val())
                 },
@@ -84,7 +85,7 @@ define([
                     city   : $.trim($('#cityInput').val()),
                     state  : $.trim($('#stateInput').val()),
                     zip    : $.trim($('#zipInput').val()),
-                    country: $.trim(this.$el.find('#countryInputCreate').val())
+                    country: $.trim(this.$el.find('#countryInputCreate').text())
                 },
 
                 website    : $.trim($('#websiteInput').val()),
@@ -122,8 +123,6 @@ define([
                 whoCanRW: whoCanRW
             };
 
-            data.isHidden = this.saveDeal ? true : false;
-
             model = new PersonModel();
             model.save(data, {
                 headers: {
@@ -136,7 +135,7 @@ define([
                     self.hideDialog();
 
                     if (self.saveDeal && (typeof self.saveDeal === 'function')) {
-                        self.saveDeal({customer : res.id}, 'formProperty');
+                        self.saveDeal({customer: res.id}, 'formProperty');
                     } else {
                         Backbone.history.fragment = '';
 
@@ -195,7 +194,8 @@ define([
                 }).render().el
             );
 
-            populate.getCompanies('#companiesDd', '/customers/getCompaniesForDd', {}, this, false, true, (this.models) ? this.models._id : null);
+            populate.get('#countryInputCreate', '/countries/getForDD', {}, 'name', this);
+            populate.getCompanies('#companiesDd', '/customers/getCompaniesForDd', {}, this, false, true, this.company);
             common.canvasDraw({model: personModel.toJSON()}, this);
             this.$el.find('.dateBirth').datepicker({
                 dateFormat : 'd M, yy',

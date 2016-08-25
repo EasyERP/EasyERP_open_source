@@ -2,7 +2,7 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
-    'text!templates/Product/EditTemplate.html',
+    'text!templates/Products/EditTemplate.html',
     'views/Notes/AttachView',
     'views/dialogViewBase',
     'common',

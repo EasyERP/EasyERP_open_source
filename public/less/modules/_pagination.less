@@ -9,9 +9,7 @@
 
   & > div {
     float: left;
-    //color: @mainText-color;
     padding: 0 5px;
-    //box-sizing: border-box;
   }
 
   .countOnPage {
@@ -66,13 +64,13 @@
     float: right;
     div, button {
       float: left;
-      line-height: 20px;
     }
     span {
       padding: 0 3px;
+      line-height: 20px;
     }
-    #firstShowPage, #lastShowPage,
-    #previousPage, #nextPage, .currentPageList, #currentShowPage {
+    .first_ShowPage, .last_ShowPage,
+    .previous_Page, .next_Page, .currentPageList, .current_ShowPage {
       border: @thin-border @pagination-border;
       background: transparent;
       line-height: 14px;
@@ -81,7 +79,6 @@
       height: 20px;
       display: block;
       text-align: center;
-      padding: 2px;
       &:hover {
         color: lighten(@mainText-color, 50%);
       }
@@ -92,28 +89,28 @@
       }
     }
 
-    #currentShowPage {
+    .current_ShowPage {
       width: 30px;
       margin: 0 -2px 0 5px;
       font-size: 12px;
       color: @mainText-color !important;
       &:focus {
-        .box-shadow(0, 0, 5px, @border-color-selected);
+        box-shadow: 0 0 5px @border-color-selected;
         outline: medium none;
-        //border: @thin-border @pagination-border !important;
       }
     }
 
-    #firstShowPage, #lastShowPage {
+    .first_ShowPage, .last_ShowPage {
       width: 30px;
     }
 
-    #previousPage, #nextPage {
+    .previous_Page, .next_Page {
       margin: 0 3px;
     }
 
     .currentPageList {
       margin: 0 5px;
+      width: 26px;
     }
 
     .allPage {
@@ -181,33 +178,13 @@
     &.fa-angle-right,
     &.fa-angle-up{
       &:before {
-        position: absolute;
-        top: -6px;
+        top:2px;
       }
     }
 
-    &.fa-angle-double-left,
-    &.fa-angle-left {
-      &:before {
-        left: 9px;
-      }
-    }
-    &.fa-angle-right {
-      &:before {
-        left: 10px;
-      }
-    }
-    &.fa-angle-double-right {
-      &:before {
-        left: 11px;
-      }
-    }
+
     &.fa-angle-up {
       position: relative;
-
-      &:before {
-        left: 7px;
-      }
     }
   }
 }

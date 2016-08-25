@@ -23,14 +23,179 @@ var TCard = function (event, models) {
     var FilterMapper = require('../helpers/filterMapper');
     var filterMapper = new FilterMapper();
 
-    // var exportDecorator = require('../helpers/exporter/exportDecorator');
+    var exporter = require('../helpers/exporter/exportDecorator');
+    var exportMap = require('../helpers/csvMap').wTrack;
+
     var overTimeHelper = require('../helpers/tCard');
-    // var exportMap = require('../helpers/csvMap').wTrack;
 
     var JournalEntryHandler = require('./journalEntry');
     var journalEntry = new JournalEntryHandler(models);
 
-    /* exportDecorator.addExportFunctionsToHandler(this, function (req) {
+    var lookupForWTrackArrayBeforeFilter = [{
+        $lookup: {
+            from        : 'Project',
+            localField  : 'project',
+            foreignField: '_id',
+            as          : 'project'
+        }
+    }, {
+        $lookup: {
+            from        : 'Employees',
+            localField  : 'employee',
+            foreignField: '_id',
+            as          : 'employee'
+        }
+    }, {
+        $lookup: {
+            from        : 'Department',
+            localField  : 'department',
+            foreignField: '_id',
+            as          : 'department'
+        }
+    }, {
+        $lookup: {
+            from        : 'Users',
+            localField  : 'createdBy.user',
+            foreignField: '_id',
+            as          : 'createdBy.user'
+        }
+    }, {
+        $lookup: {
+            from        : 'Users',
+            localField  : 'editedBy.user',
+            foreignField: '_id',
+            as          : 'editedBy.user'
+        }
+    }, {
+        $project: {
+            project         : {$arrayElemAt: ['$project', 0]},
+            employee        : {$arrayElemAt: ['$employee', 0]},
+            department      : {$arrayElemAt: ['$department', 0]},
+            'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]},
+            'editedBy.user' : {$arrayElemAt: ['$editedBy.user', 0]},
+            month           : 1,
+            year            : 1,
+            week            : 1,
+            worked          : 1,
+            _type           : 1,
+            1               : 1,
+            2               : 1,
+            3               : 1,
+            4               : 1,
+            5               : 1,
+            6               : 1,
+            7               : 1,
+            'editedBy.date' : 1,
+            'createdBy.date': 1
+        }
+    }, {
+        $lookup: {
+            from        : 'Customers',
+            localField  : 'project.customer',
+            foreignField: '_id',
+            as          : 'customer'
+        }
+    }, {
+        $project: {
+            1                    : 1,
+            2                    : 1,
+            3                    : 1,
+            4                    : 1,
+            5                    : 1,
+            6                    : 1,
+            7                    : 1,
+            'project.projectName': '$project.name',
+            'project.customer'   : {$arrayElemAt: ['$customer', 0]},
+            'employee.name'      : {$concat: ['$employee.name.first', ' ', '$employee.name.last']},
+            department           : 1,
+            'createdBy.user'     : '$createdBy.user.login',
+            'editedBy.user'      : '$editedBy.user.login',
+            _type                : 1,
+            year                 : 1,
+            month                : 1,
+            week                 : 1,
+            worked               : 1,
+            'editedBy.date'      : 1,
+            'createdBy.date'     : 1,
+            'employee._id'       : '$employee._id',
+            'project._id'        : '$project._id'
+        }
+    }, {
+        $project: {
+            1                      : 1,
+            2                      : 1,
+            3                      : 1,
+            4                      : 1,
+            5                      : 1,
+            6                      : 1,
+            7                      : 1,
+            'project.projectName'  : 1,
+            'project.customer.Name': {$concat: ['$project.customer.name.first', ' ', '$project.customer.name.last']},
+            'employee.name'        : 1,
+            department             : 1,
+            'createdBy.user'       : 1,
+            'editedBy.user'        : 1,
+            _type                  : 1,
+            year                   : 1,
+            month                  : 1,
+            week                   : 1,
+            worked                 : 1,
+            'editedBy.date'        : 1,
+            'createdBy.date'       : 1,
+            'employee._id'         : 1,
+            'customer._id'         : '$project.customer._id',
+            'project._id'          : 1
+        }
+    }];
+
+    var lookupForWTrackArrayAfterFilter = [{
+        $project: {
+            1                      : 1,
+            2                      : 1,
+            3                      : 1,
+            4                      : 1,
+            5                      : 1,
+            6                      : 1,
+            7                      : 1,
+            'project.projectName'  : 1,
+            'project.customer.Name': 1,
+            'employee.name'        : 1,
+            'department.name'      : '$department.name',
+            'createdBy.user'       : 1,
+            'editedBy.user'        : 1,
+            year                   : 1,
+            month                  : 1,
+            week                   : 1,
+            worked                 : 1,
+            'editedBy.date'        : 1,
+            'createdBy.date'       : 1
+        }
+    }, {
+        $project: {
+            1                      : 1,
+            2                      : 1,
+            3                      : 1,
+            4                      : 1,
+            5                      : 1,
+            6                      : 1,
+            7                      : 1,
+            'project.projectName'  : 1,
+            'project.customer.Name': 1,
+            'employee.name'        : 1,
+            'department.name'      : 1,
+            'createdBy.user'       : 1,
+            'editedBy.user'        : 1,
+            year                   : 1,
+            month                  : 1,
+            week                   : 1,
+            worked                 : 1,
+            'editedBy.date'        : 1,
+            'createdBy.date'       : 1
+        }
+    }
+    ];
+
+    /* exporter.addExportFunctionsToHandler(this, function (req) {
      return models.get(req.session.lastDb, 'wTrack', wTrackSchema);
      }, exportMap, "wTrack");*/
 
@@ -1984,6 +2149,122 @@ var TCard = function (event, models) {
 
             res.status(200).send(result);
         });
+    };
+
+    this.exportToXlsx = function (req, res, next) {
+        var dbName = req.session.lastDb;
+        var WTrack = models.get(dbName, 'wTrack', wTrackSchema);
+
+        var filter = req.query.filter ? JSON.parse(req.query.filter) : JSON.stringify({});
+        var type = req.query.type || 'wTrack';
+        var filterObj = {};
+        var options;
+        var filterMapper = new FilterMapper();
+
+        if (filter && typeof filter === 'object') {
+            filterObj = filterMapper.mapFilter(filter, type);
+        }
+
+        options = {
+            res         : res,
+            next        : next,
+            Model       : WTrack,
+            map         : exportMap,
+            returnResult: true,
+            fileName    : type
+        };
+
+        function lookupForWTrack(cb) {
+            var query = [];
+            var i;
+
+            for (i = 0; i < lookupForWTrackArrayBeforeFilter.length; i++) {
+                query.push(lookupForWTrackArrayBeforeFilter[i]);
+            }
+
+            query.push({$match: filterObj});
+
+            for (i = 0; i < lookupForWTrackArrayAfterFilter.length; i++) {
+                query.push(lookupForWTrackArrayAfterFilter[i]);
+            }
+
+            options.query = query;
+            options.cb = cb;
+
+            exporter.exportToXlsx(options);
+        }
+
+        async.parallel([lookupForWTrack], function (err, result) {
+            var resultArray = result[0];
+
+            exporter.exportToXlsx({
+                res        : res,
+                next       : next,
+                Model      : WTrack,
+                resultArray: resultArray,
+                map        : exportMap,
+                fileName   : type
+            });
+        });
+
+    };
+
+    this.exportToCsv = function (req, res, next) {
+        var dbName = req.session.lastDb;
+        var WTrack = models.get(dbName, 'wTrack', wTrackSchema);
+
+        var filter = req.query.filter ? JSON.parse(req.query.filter) : JSON.stringify({});
+        var type = req.query.type || 'wTrack';
+        var filterObj = {};
+        var options;
+        var filterMapper = new FilterMapper();
+
+        if (filter && typeof filter === 'object') {
+            filterObj = filterMapper.mapFilter(filter, type);
+        }
+
+        options = {
+            res         : res,
+            next        : next,
+            Model       : WTrack,
+            map         : exportMap,
+            returnResult: true,
+            fileName    : type
+        };
+
+        function lookupForWTrack(cb) {
+            var query = [];
+            var i;
+
+            for (i = 0; i < lookupForWTrackArrayBeforeFilter.length; i++) {
+                query.push(lookupForWTrackArrayBeforeFilter[i]);
+            }
+
+            query.push({$match: filterObj});
+
+            for (i = 0; i < lookupForWTrackArrayAfterFilter.length; i++) {
+                query.push(lookupForWTrackArrayAfterFilter[i]);
+            }
+
+            options.query = query;
+            options.cb = cb;
+
+            exporter.exportToCsv(options);
+        }
+
+        async.parallel([lookupForWTrack], function (err, result) {
+            var resultArray = result[0];
+
+            exporter.exportToCsv({
+                res        : res,
+                next       : next,
+                Model      : WTrack,
+                resultArray: resultArray,
+                map        : exportMap,
+                fileName   : type
+            });
+        });
+
     };
 
 };

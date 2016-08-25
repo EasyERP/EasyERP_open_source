@@ -78,7 +78,20 @@ module.exports = (function () {
         ],
 
         ID             : Number,
-        relatedEmployee: {type: ObjectId, ref: 'Employees', default: null}
+        relatedEmployee: {type: ObjectId, ref: 'Employees', default: null},
+        imports        : {
+            fileName       : {type: String, default: ''},
+            filePath       : {type: String, default: ''},
+            timeStamp      : {type: Number},
+            stage          : {type: Number, default: 1},
+            map            : {type: JSON},
+            unMap          : {type: JSON},
+            type           : {type: String, default: ''},
+            comparingField : {type: String, default: ''},
+            skipped        : {type: Array},
+            conflictedItems: {type: Array},
+            importedCount  : {type: Number, default: 0}
+        }
     }, {collection: 'Users'});
 
     mongoose.model('Users', userSchema);

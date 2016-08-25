@@ -2,19 +2,31 @@
 <tr data-id="<%=lead._id%>" class="stage-<%=(lead.workflow) ? lead.workflow.status.toLowerCase() : ''%>">
     <td class="notForm"><input type="checkbox" value="<%=lead._id%>" class="checkbox listCB"/></td>
     <td><span class="blue"><%=lead.name%></span></td>
+    <td>
+        <div class="_tagsCellWrap">
+            <%lead.tags = lead.tags || [];%>
+            <%lead.tags.forEach(function (tag){%>
+            <span data-id="<%=tag._id%>" data-color="<%=tag.color%>" class="_tagSmall"><%=tag.name%></span>
+            <%});%>
+        </div>
+    </td>
+    <td class="_priorityCell">
+        <div class="<%=lead.priority%>"></div>
+    </td>
     <!--<td><%= lead.contactName || ''%></td>-->
     <!--    <td><%=lead.email%></td>-->
-   <!-- <td><%=lead.social.LI%></td>
-    <td><%=lead.address.country%></td>-->
+    <!-- <td><%=lead.social.LI%></td>
+     <td><%=lead.address.country%></td>-->
     <td><%=lead.source%></td>
 
     <td id='<%=lead._id%>' class="centerCell <%= (lead.workflow && lead.workflow.name === 'Cancelled') ? 'cancelled' : ''%>">
-        <a href="javascript:;" class="stageSelect blue"><%= (lead.workflow ) ? lead.workflow.name : ''%></a>
+        <div class="_newSelectListWrap">
+            <a href="javascript:;" class="stageSelect blue"><%= (lead.workflow ) ? lead.workflow.name : ''%></a>
+        </div>
     </td>
     <td><%=lead.salesPerson && lead.salesPerson.name ? lead.salesPerson.name.first + ' ' + lead.salesPerson.name.last: ''%></td>
     <td><%=(lead.editedBy&&lead.editedBy.date)?( lead.editedBy.date + ((lead.editedBy.user) ?(' (' +
         lead.editedBy.user + ')') : '')):''%>
     </td>
-
 </tr>
 <% }) %>

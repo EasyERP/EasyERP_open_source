@@ -13,7 +13,7 @@ define([
     'views/salesOrders/EditView',
     'views/salesQuotations/EditView',
     'views/salesInvoices/EditView',
-    'views/Proforma/EditView',
+    'views/proforma/EditView',
     'views/Projects/EditView',
     'views/Notes/NoteView',
     'views/Notes/AttachView',
@@ -32,7 +32,7 @@ define([
     'collections/salesInvoices/filterCollection',
     'collections/customerPayments/filterCollection',
     'collections/Jobs/filterCollection',
-    'collections/Proforma/filterCollection',
+    'collections/proforma/filterCollection',
     'collections/projectMembers/editCollection',
     'models/QuotationModel',
     'models/InvoiceModel',
@@ -127,7 +127,6 @@ define([
             var eventChannel = {};
 
             _.extend(eventChannel, Backbone.Events);
-
             App.projectInfo = App.projectInfo || {};
             App.projectInfo.projectId = options.model.get('_id');
 
@@ -495,7 +494,8 @@ define([
                 $('#subRow-holder' + jobId).append(template({
                     jobStatus       : job.type,
                     jobItem         : job,
-                    currencySplitter: helpers.currencySplitter
+                    currencySplitter: helpers.currencySplitter,
+                    currencyClass   : helpers.currencyClass
                 }));
 
             }
@@ -838,7 +838,8 @@ define([
             container.html(template({
                 jobs            : projectTeam,
                 currencySplitter: helpers.currencySplitter,
-                contentType     : self.contentType
+                contentType     : self.contentType,
+                currencyClass   : helpers.currencyClass
             }));
 
             this.getInvoiceStats();
@@ -1268,40 +1269,62 @@ define([
             var jobSum = 0;
             var jobsCount = 0;
             var tempSum = 0;
+            var classCurrency = 'dollar';
 
-            ordersCollectionJSON.forEach(function (element) {
-                if (element.paymentInfo) {
-                    tempSum = parseFloat(element.paymentInfo.total);
-                    if (element.currency && element.currency.rate) {
-                        tempSum /= element.currency.rate;
-                    }
-                    orderSum += tempSum;
-                }
-            });
-
-            qCollectionJSON.forEach(function (element) {
-                if (element.paymentInfo) {
-                    tempSum = parseFloat(element.paymentInfo.total);
-                    if (element.currency && element.currency.rate) {
-                        tempSum /= element.currency.rate;
-                    }
-                    sum += tempSum;
-                }
-            });
+            /*ordersCollectionJSON.forEach(function (element) {
+             if (element.paymentInfo) {
+             tempSum = parseFloat(element.paymentInfo.total);
+             if (element.currency && element.currency.rate) {
+             tempSum /= element.currency.rate;
+             }
+             orderSum += tempSum;
+             }
+             });
+             */
+            /* qCollectionJSON.forEach(function (element) {
+             if (element.paymentInfo) {
+             tempSum = parseFloat(element.paymentInfo.total);
+             if (element.currency && element.currency.rate) {
+             tempSum /= element.currency.rate;
+             }
+             sum += tempSum;
+             }
+             });*/
 
             jobsCollection.forEach(function (element) {
                 if (element.type === 'Not Quoted') {
+                    if (element.quotation && element.quotation.currency._id) {
+                        classCurrency = element.quotation.currency._id;
+                    }
                     if (element.budget.budgetTotal && (element.budget.budgetTotal.revenueSum !== 0)) {
                         jobSum += parseFloat(element.budget.budgetTotal.revenueSum);
                         jobSum /= 100;
                         jobsCount++;
                     }
+                } else if (element.type === 'Quoted') {
+                    if (element.quotation && element.quotation.currency._id) {
+                        classCurrency = element.quotation.currency._id;
+                    }
+                    sum += parseFloat(element.revenueTotal);
+                    sum /= 100;
+                } else if (element.type === 'Ordered') {
+                    tempSum = parseFloat(element.revenueTotal);
+                    if (element.quotation && element.quotation.currency._id) {
+                        classCurrency = element.quotation.currency._id;
+                    }
+                    orderSum = tempSum / 100;
+                } else if (element.type === 'Invoiced') {
+                    tempSum = parseFloat(element.revenueTotal);
+                    if (element.quotation && element.quotation.currency._id) {
+                        classCurrency = element.quotation.currency._id;
+                    }
+                    orderSum = tempSum / 100;
                 }
             });
 
             this.proformValues.quotations = {
                 count: qCollectionJSON.length,
-                sum  : sum
+                sum  : qCollectionJSON.length ? sum : 0
             };
 
             this.proformValues.orders = {
@@ -1317,7 +1340,8 @@ define([
             proformContainer.html(this.proformRevenue({
                 proformValues   : self.proformValues,
                 currencySplitter: helpers.currencySplitter,
-                currencyClass   : helpers.currencyClass
+                currencyClass   : helpers.currencyClass,
+                classCurrency   : classCurrency
             }));
 
             if (typeof cb === 'function') {
@@ -1516,7 +1540,8 @@ define([
             }).render().el;
 
             $thisEl.html(templ({
-                model: formModel
+                model        : formModel,
+                currencyClass: helpers.currencyClass
             }));
 
             App.projectInfo = App.projectInfo || {};
@@ -1602,6 +1627,7 @@ define([
                 $('#top-bar-createBtn').remove();
             });
 
+            $('ul.export').hide();
             $('#top-bar-deleteBtn').hide();
             $('#createQuotation').show();
 

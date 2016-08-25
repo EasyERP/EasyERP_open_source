@@ -57,7 +57,10 @@ define([
             var count = this.collection.pageSize;
             var url;
             var filter;
-            e.preventDefault();
+
+            if (e) {
+                e.preventDefault();
+            }
 
             url = this.listUrl + 'p=' + currentPage + '/c=' + count;
 
@@ -187,7 +190,6 @@ define([
             model = new this.ContentModel();
             model.urlRoot = model.url() + modelId;
 
-
             model.fetch({
                 success: function (model) {
 
@@ -222,7 +224,7 @@ define([
 
         changeList: function (options) {
             var $thisEl = this.$el;
-            var $currentEl = $thisEl.find('[data-id="' + this.selectedId +  '"]');
+            var $currentEl = $thisEl.find('[data-id="' + this.selectedId + '"]');
 
             for (var i in options) {
                 $currentEl.find('[data-key="' + i + '"]').html(options[i]);

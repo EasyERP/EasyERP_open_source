@@ -115,7 +115,7 @@ HTTP/1.1 200 OK
         ]
  }
      */
-    router.get('/getForDd', accessStackMiddleware, handler.getForDd);
+    router.get('/getForDd', handler.getForDd);
 
     /**
      *@api {post} /chartOfAccount/ Request for creating new Chart Of Account

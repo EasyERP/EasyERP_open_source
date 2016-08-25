@@ -10,7 +10,6 @@ module.exports = function (models, event) {
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
     router.use(authStackMiddleware);
-    router.use(accessStackMiddleware);
 
     /**
      *@api {get} /orders/ Request Orders
@@ -111,7 +110,7 @@ HTTP/1.1 200 OK
     }
 }
      */
-    router.get('/', handler.getByViewType);
+    router.get('/', accessStackMiddleware, handler.getByViewType);
 
     router.get('/:id', handler.getById);
     
@@ -138,9 +137,9 @@ HTTP/1.1 200 OK
      */
     router.get('/getFilterValues', handler.getFilterValues);
 
-    router.patch('/:id', handler.putchModel);
+    router.patch('/:id', accessStackMiddleware, handler.putchModel);
 
-    router.delete('/:id', handler.remove);
+    router.delete('/:id', accessStackMiddleware, handler.remove);
 
     return router;
 };

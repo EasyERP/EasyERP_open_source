@@ -18,7 +18,7 @@
                                 <!--				<dt><label for="currentNumberEmployees">Current Number of Employees</label></dt><dd><label><%= model.numberOfEmployees %></label></dd>-->
                                 <!--				<dt><label for="totalForecastedEmployees">Total Forecasted Employees</label></dt><dd><label>2</label></dd>-->
                                 <dt><label for="departmentDd">Department</label></dt>
-                                <dd>
+                                <dd class="_newSelectListWrap">
                                     <a id="departmentDd" data-id="<%=(model.department) ? model.department._id : ''%>"
                                        class="current-selected" href="javascript:;"><%=(model.department && model.department.name)?model.department.name:'Select'%></a>
                                 </dd>
@@ -31,7 +31,7 @@
                                            id="expectedRecruitment" value="<%=model.expectedRecruitment%>"
                                            maxlength="4"/></dd>
                                 <dt><label for="workflowsDd">Stage</label></dt>
-                                <dd>
+                                <dd class="_newSelectListWrap">
                                     <a id="workflowsDd" data-id="<%=(model.workflow) ? model.workflow._id : ''%>"
                                        class="current-selected" href="javascript:;"><%=(model.workflow)?model.workflow.name:'Undefinded'%></a>
                                 </dd>

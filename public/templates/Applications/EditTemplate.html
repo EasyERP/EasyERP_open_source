@@ -161,7 +161,7 @@
                                     <dt>
                                         <label for="sourceDd">Source </label>
                                     </dt>
-                                    <dd>
+                                    <dd class="_newSelectListWrap">
                                         <a id="sourceDd"
                                            class="current-selected"
                                            href="javascript:;"
@@ -231,7 +231,7 @@
                                     <dt>
                                         <label for="sourceDd">Source </label>
                                     </dt>
-                                    <dd>
+                                    <dd class="_newSelectListWrap">
                                         <a id="sourceDd"
                                            data-id="<%=model.source?model.source:''%>"
                                            class="current-selected"
@@ -261,7 +261,7 @@
                                     <dt>
                                         <label for="workflowsDd">Stage</label>
                                     </dt>
-                                    <dd id="selectWorkflow">
+                                    <dd id="selectWorkflow" class="_newSelectListWrap">
                                         <a id="workflowsDd" data-id="<%=(model.workflow) ? model.workflow._id : ''%>"
                                            class="current-selected" href="javascript:;"><%=(model.workflow)?model.workflow.name:'Select workflow'%></a>
                                     </dd>
@@ -269,7 +269,7 @@
                                     <dt>
                                         <label for="relatedUsersDd">Related User</label>
                                     </dt>
-                                    <dd>
+                                    <dd class="_newSelectListWrap">
                                         <a id="relatedUsersDd"
                                            data-id="<%=model.relatedUser?model.relatedUser._id:''%>"
                                            class="current-selected"
@@ -294,7 +294,7 @@
 
                                     <dt>
                                         <label for="jobPositionDd">Job position</label></dt>
-                                    <dd>
+                                    <dd class="_newSelectListWrap">
                                         <a id="jobPositionDd"
                                            class="current-selected"
                                            href="javascript:;"
@@ -306,7 +306,7 @@
                                     <dt>
                                         <label for="departmentsDd">Department</label>
                                     </dt>
-                                    <dd>
+                                    <dd class="_newSelectListWrap">
                                         <a id="departmentsDd"
                                            class="current-selected"
                                            href="javascript:;"
@@ -318,7 +318,7 @@
                                     <dt>
                                         <label for="projectManagerDD">Manager</label>
                                     </dt>
-                                    <dd>
+                                    <dd class="_newSelectListWrap">
                                         <a id="projectManagerDD"
                                            class="current-selected"
                                            href="javascript:;"
@@ -330,7 +330,7 @@
                                     <dt>
                                         <label for="jobTypeDd">Job type</label>
                                     </dt>
-                                    <dd>
+                                    <dd class="_newSelectListWrap">
                                         <a id="jobTypeDd"
                                            class="current-selected"
                                            href="javascript:;"
@@ -342,7 +342,7 @@
                                     <dt>
                                         <label for="weeklySchedulerDd">Weekly Scheduler</label>
                                     </dt>
-                                    <dd>
+                                    <dd class="_newSelectListWrap">
                                         <a id="weeklySchedulerDd" class="current-selected"
                                            data-id="<%=model.weeklyScheduler ? model.weeklyScheduler._id : ''%>"
                                            href="javascript:;">
@@ -353,7 +353,7 @@
                                     <dt>
                                         <label for="payrollStructureTypeDd">Contract</label>
                                     </dt>
-                                    <dd>
+                                    <dd class="_newSelectListWrap">
                                         <a id="payrollStructureTypeDd" class="current-selected"
                                            data-id="<%=model.payrollStructureType ? model.payrollStructureType._id : ''%>"
                                            href="javascript:;">
@@ -364,7 +364,7 @@
                                     <dt>
                                         <label for="scheduledPayDd">Scheduled Pay</label>
                                     </dt>
-                                    <dd>
+                                    <dd class="_newSelectListWrap">
                                         <a id="scheduledPayDd" class="current-selected"
                                            data-id="<%=model.scheduledPay ? model.scheduledPay._id : ''%>"
                                            href="javascript:;">
@@ -394,7 +394,7 @@
                                     <dt>
                                         <label for="workflowsDd">Stage</label>
                                     </dt>
-                                    <dd id="selectWorkflow">
+                                    <dd id="selectWorkflow" class="_newSelectListWrap">
                                         <a id="workflowsDd" data-id="<%=(model.workflow) ? model.workflow._id : ''%>"
                                            class="current-selected" href="javascript:;"><%=(model.workflow)?model.workflow.name:'Select workflow'%></a>
                                     </dd>
@@ -402,7 +402,7 @@
                                     <dt>
                                         <label for="relatedUsersDd">Related User</label>
                                     </dt>
-                                    <dd>
+                                    <dd class="_newSelectListWrap">
                                         <a id="relatedUsersDd"
                                            data-id="<%=model.relatedUser?model.relatedUser._id:''%>"
                                            class="current-selected"
@@ -456,7 +456,7 @@
                             <div class="half-block left">
                                 <dl class="edit-employee-info">
                                     <dt><label for="nationality">Nationality</label></dt>
-                                    <dd>
+                                    <dd class="_newSelectListWrap">
                                         <a id="nationality" data-id="<%=model.nationality?model.nationality:''%>"
                                            class="current-selected" href="javascript:;"><%=model.nationality?(model.nationality):'Select'%></a>
                                     </dd>
@@ -539,12 +539,7 @@
                                     <dt>
                                         <label for="applicationsEditCountry">Country</label>
                                     </dt>
-                                    <dd><input type="text"
-                                               class="homeAddress"
-                                               name="country"
-                                               id="applicationsEditCountry"
-                                               value="<%=model.homeAddress.country%>"
-                                               maxlength="32"/></dd>
+                                    <dd><a class="homeAddress current-selected" name="country" data-id="<%=model.homeAddress.country%>" id="applicationsEditCountry"><%=model.homeAddress.country || 'Select'%></a></dd>
                                 </dl>
                             </div>
                             <div class="clearfix">
@@ -558,7 +553,7 @@
                                 <dl class="edit-employee-info">
                                     <dt>
                                         <label for="genderDd">Gender</label>
-                                    <dd>
+                                    <dd class="_newSelectListWrap">
                                         <a id="genderDd"
                                            data-id="<%=model.gender?model.gender:''%>"
                                            class="current-selected"
@@ -575,7 +570,7 @@
                                 <dl class="edit-employee-info">
                                     <dt>
                                         <label for="maritalDd">Marital status</label>
-                                    <dd>
+                                    <dd class="_newSelectListWrap">
                                         <a id="maritalDd"
                                            data-id="<%=model.marital?model.marital:''%>"
                                            class="current-selected"

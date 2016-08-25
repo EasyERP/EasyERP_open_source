@@ -34,6 +34,7 @@ define([
         contentType      : 'Applications',
         formUrl          : '#easyErp/Applications/',
         hasPagination    : true,
+        type             : 'Applications',
 
         events: {
             'click .stageSelect'     : 'showNewSelect',

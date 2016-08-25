@@ -103,6 +103,8 @@
       > input {
         height: 26px;
         width: 100%;
+        border: 0;
+        border-bottom: 1px solid #c8c8d3;
         cursor: pointer;
       }
       &:after {
@@ -125,18 +127,25 @@
   position: relative;
 }
 
+._newSelectListWrap {
+  position: relative;
+}
+
 .newSelectList {
   position: absolute;
   top: 100%;
   left: 0;
   border: solid 1px #7f7f80;
   background-color: #fff;
+  box-shadow: 5px 5px rgba(102, 102, 102, 0.1);
   z-index: 100;
 
   li {
+    width: 100%;
     margin: 0;
-    padding: 3px 16px 5px;
+    padding: 0 16px;
     cursor: pointer;
+    line-height: 20px;
     font-size: 12px;
     text-align: left;
     color: #4d5a75;
@@ -172,8 +181,7 @@
     }
 
     &:hover {
-      border: 0 !important;
-      color: #7eadcc !important;
+      color: #000 !important;
     }
   }
 
@@ -183,5 +191,17 @@
 
   &.taskPriority {
     left: -15px;
+  }
+}
+
+.dropDown {
+  &._contractJobsFilter {
+    position: fixed;
+    top: 48px;
+    right: 13px;
+    > ul {
+      left: auto;
+      right: 0;
+    }
   }
 }

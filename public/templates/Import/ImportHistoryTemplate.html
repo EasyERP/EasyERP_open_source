@@ -1,0 +1,23 @@
+<div class="tableResponsive">
+    <table class="list _importLoadHistory">
+        <thead>
+        <tr>
+            <% if (history.length) { %>
+                <% _.each(keys, function(item, key){ %>
+                    <% if (item !== '_id' && item !== 'reportFile' && item !== 'filePath') { %>
+                        <td>
+                            <%= headers[item] %>
+                        </td>
+                    <% } else { %>
+                        <td></td>
+                    <% } %>
+                <% }) %>
+            <% } %>
+        </tr>
+        </thead>
+
+        <tbody id="listTable">
+
+        </tbody>
+    </table>
+</div>

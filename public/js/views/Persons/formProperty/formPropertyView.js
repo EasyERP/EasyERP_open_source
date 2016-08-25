@@ -18,14 +18,11 @@ define([
         initialize: function (options) {
             this.data = options.data;
             this.saveDeal = options.saveDeal;
-            this.isLead = options.isLead;
         },
 
         addProperty: function () {
             new FilterView({
-                attribute: this.attribute,
-                saveDeal : this.saveDeal,
-                isLead   : this.isLead
+                saveDeal : this.saveDeal
             });
         },
 
@@ -33,19 +30,11 @@ define([
             var saveObject = {
                 customer : null
             };
-            var model = new PersonsModel(this.data);
-
-            var self = this;
 
             e.preventDefault();
 
-            if (this.isLead && this.data.isHidden){
-                model.destroy({success : function (){
-                    self.saveDeal(saveObject, 'formProperty');
-                }});
-            } else {
-                this.saveDeal(saveObject, 'formProperty');
-            }
+            this.saveDeal(saveObject, 'formProperty');
+
         },
 
         render: function () {

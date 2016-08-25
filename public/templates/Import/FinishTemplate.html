@@ -1,0 +1,34 @@
+<div class="_finishImportContainer">
+    <h3 class="_finishImportTitle">
+        Import finished!
+    </h3>
+
+    <div class="_finishList">
+        <span>
+            <%= data.imported %>
+            items added
+        </span>
+        <span>
+            <%= data.skippedArray %>
+            Skipped
+        </span>
+        <span>
+            <%= data.mergedCount %>
+            merged
+        </span>
+    </div>
+
+
+    <div>
+        <% if (data.linkToFile) { %>
+        <a href='<%= data.linkToFile  %>' class="btn ">
+            Download skip file
+            <!--<%= data.linkName %>-->
+        </a>
+        <% } %>
+        <a href='#easyErp/import' class="btn ">
+            Back to start page
+            <!--<%= data.linkName %>-->
+        </a>
+    </div>
+</div>

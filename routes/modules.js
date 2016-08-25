@@ -74,7 +74,7 @@ HTTP/1.1 200 OK
      ...
 ]
      */
-    router.get('/', cacheRetriver, handler.getAllModulesByProfile);
+    router.get('/', /*cacheRetriver,*/ handler.getAllModulesByProfile);
 
     return router;
 };

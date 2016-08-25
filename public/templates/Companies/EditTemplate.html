@@ -38,7 +38,7 @@
                                     <dd><input type="text" name="mobile" id="mobile" value="<%=model.phones.mobile%>" placeholder="Mobile Number" maxlength="20" /></dd>
                                 </dl>
                                 <dt><label for="employeesDd">Assigned to</label></dt>
-                                <dd>
+                                <dd class="_newSelectListWrap">
                                     <a id="employeesDd" data-id="<%=(model.salesPurchases.salesPerson)?model.salesPurchases.salesPerson._id:''%>" class="current-selected" href="javascript:;"><%=(model.salesPurchases.salesPerson)?(model.salesPurchases.salesPerson.name.first+" "+model.salesPurchases.salesPerson.name.last):"Select"%></a>
                                 </dd>
                             </div>
@@ -54,7 +54,9 @@
                                     <dt><label for="zip">Zip </label></dt>
                                     <dd><input type="text" name="zip" id="zip" value="<%=model.address.zip%>" placeholder="Zip" maxlength="32" /></dd>
                                     <dt><label for="country">Country </label></dt>
-                                    <dd><input type="text" name="country" id="country" value="<%=model.address.country%>" placeholder="Country" maxlength="32" /></dd>
+                                    <dd>
+                                        <a class="current-selected" name="country"  data-id="address_country" id="country" data-value="<%=model.address.country%>"><%=model.address.country || 'Select'%></a>
+                                    </dd>
                                 </dl>
 
                             </div>

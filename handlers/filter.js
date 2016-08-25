@@ -9,6 +9,314 @@ var Filters = function (models) {
     var CONSTANTS = require('../constants/mainConstants.js');
     var moment = require('../public/js/libs/moment/moment');
 
+    this.getProjectsDashboardFilters = function (req, res, next) {
+        var lastDB = req.session.lastDb;
+        var ProjectSchema = mongoose.Schemas.Project;
+        var jobsSchema = mongoose.Schemas.jobs;
+        var Project = models.get(lastDB, 'Project', ProjectSchema);
+        var Jobs = models.get(lastDB, 'jobs', jobsSchema);
+        var pipeLine;
+        var aggregation;
+        var pipeLineJobs;
+
+        pipeLineJobs = [{
+            $lookup: {
+                from        : 'workflows',
+                localField  : 'workflow',
+                foreignField: '_id',
+                as          : 'workflow'
+            }
+        }, {
+            $project: {
+                workflow: {$arrayElemAt: ['$workflow', 0]},
+                type    : 1
+            }
+        }, {
+            $group: {
+                _id: null,
+
+                workflow: {
+                    $addToSet: {
+                        _id : '$workflow._id',
+                        name: '$workflow.name'
+                    }
+                },
+
+                type: {
+                    $addToSet: {
+                        _id : '$type',
+                        name: '$type'
+                    }
+                }
+            }
+        }];
+
+        pipeLine = [{
+            $lookup: {
+                from        : 'Customers',
+                localField  : 'customer',
+                foreignField: '_id',
+                as          : 'customer'
+            }
+        }, {
+            $project: {
+                name    : 1,
+                customer: {$arrayElemAt: ['$customer', 0]}
+            }
+        }, {
+            $group: {
+                _id: null,
+
+                customer: {
+                    $addToSet: {
+                        _id : '$customer._id',
+                        name: {$concat: ['$customer.name.first', ' ', '$customer.name.last']}
+                    }
+                },
+
+                name: {
+                    $addToSet: {
+                        _id : '$_id',
+                        name: '$name'
+                    }
+                }
+            }
+        }];
+
+        aggregation = Project.aggregate(pipeLine);
+
+        aggregation.options = {
+            allowDiskUse: true
+        };
+
+        aggregation.exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            result = result.length ? result[0] : {};
+
+            Jobs.aggregate(pipeLineJobs, function (err, jobs) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send(jobs.length ? _.extend(result, jobs[0]) : result);
+            });
+        });
+    };
+
+    this.getContarctJobsFilters = function (req, res, next) {
+        var lastDB = req.session.lastDb;
+        var jobsSchema = mongoose.Schemas.jobs;
+        var Jobs = models.get(lastDB, 'jobs', jobsSchema);
+        var pipeLine;
+        var aggregation;
+
+        pipeLine = [{
+            $lookup: {
+                from        : 'workflows',
+                localField  : 'workflow',
+                foreignField: '_id',
+                as          : 'workflow'
+            }
+        }, {
+            $lookup: {
+                from        : 'projectMembers',
+                localField  : 'project',
+                foreignField: 'projectId',
+                as          : 'projectMembers'
+            }
+        }, {
+            $lookup: {
+                from        : 'Project',
+                localField  : 'project',
+                foreignField: '_id',
+                as          : 'project'
+            }
+        }, {
+            $project: {
+                name           : 1,
+                project        : {$arrayElemAt: ['$project', 0]},
+                workflow       : {$arrayElemAt: ['$workflow', 0]},
+                customer       : {$arrayElemAt: ['$customer', 0]},
+                projectManagers: {
+                    $filter: {
+                        input: '$projectMembers',
+                        as   : 'projectMember',
+                        cond : {
+                            $and: [{
+                                $eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.PROJECTSMANAGER)]
+                            }]
+                        }
+                    }
+                },
+
+                salesManagers: {
+                    $filter: {
+                        input: '$projectMembers',
+                        as   : 'projectMember',
+                        cond : {
+                            $and: [{
+                                $eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALESMANAGER)]
+                            }]
+                        }
+                    }
+                }
+            }
+        }, {
+            $lookup: {
+                from        : 'Customers',
+                localField  : 'project.customer',
+                foreignField: '_id',
+                as          : 'customer'
+            }
+        }, {
+            $project: {
+                project        : 1,
+                workflow       : 1,
+                customer       : {$arrayElemAt: ['$customer', 0]},
+                projectManagers: 1,
+                salesManagers  : 1
+            }
+        }, {
+            $unwind: {
+                path                      : '$projectManagers',
+                preserveNullAndEmptyArrays: true
+            }
+        }, {
+            $unwind: {
+                path                      : '$salesManagers',
+                preserveNullAndEmptyArrays: true
+            }
+        }, {
+            $lookup: {
+                from        : 'Employees',
+                localField  : 'salesManagers.employeeId',
+                foreignField: '_id',
+                as          : 'salesManager'
+            }
+        }, {
+            $lookup: {
+                from        : 'Employees',
+                localField  : 'projectManagers.employeeId',
+                foreignField: '_id',
+                as          : 'projectManager'
+            }
+        }, {
+            $project: {
+                project       : 1,
+                workflow      : 1,
+                customer      : 1,
+                projectManager: {$arrayElemAt: ['$projectManager', 0]},
+                salesManager  : {$arrayElemAt: ['$salesManager', 0]}
+            }
+        }, {
+            $project: {
+                project     : 1,
+                workflow    : 1,
+                customer    : 1,
+                salesManager: {
+                    _id : '$salesManager._id',
+                    name: {
+                        $concat: ['$salesManager.name.first', ' ', '$salesManager.name.last']
+                    }
+                },
+
+                projectManager: {
+                    _id : '$projectManager._id',
+                    name: {
+                        $concat: ['$projectManager.name.first', ' ', '$projectManager.name.last']
+                    }
+                }
+            }
+        }, {
+            $group: {
+                _id: null,
+
+                workflow: {
+                    $addToSet: {
+                        _id : '$workflow._id',
+                        name: '$workflow.name'
+                    }
+                },
+
+                customer: {
+                    $addToSet: {
+                        _id : '$customer._id',
+                        name: {
+                            $concat: ['$customer.name.first', ' ', '$customer.name.last']
+                        }
+                    }
+                },
+
+                projectManager: {
+                    $addToSet: {
+                        _id: {
+                            $cond: {
+                                if  : {$eq: ['$projectManager.name', null]},
+                                then: 'null',
+                                else: '$projectManager._id'
+                            }
+                        },
+
+                        name: {
+                            $cond: {
+                                if  : {$eq: ['$projectManager.name', null]},
+                                then: 'Empty',
+                                else: '$projectManager.name'
+                            }
+                        }
+                    }
+                },
+
+                salesManager: {
+                    $addToSet: {
+                        _id: {
+                            $cond: {
+                                if  : {$eq: ['$salesManager.name', null]},
+                                then: 'null',
+                                else: '$salesManager._id'
+                            }
+                        },
+
+                        name: {
+                            $cond: {
+                                if  : {$eq: ['$salesManager.name', null]},
+                                then: 'Empty',
+                                else: '$salesManager.name'
+                            }
+                        }
+                    }
+                },
+
+                project: {
+                    $addToSet: {
+                        _id : '$project._id',
+                        name: '$project.name'
+                    }
+                }
+            }
+        }
+        ];
+
+        aggregation = Jobs.aggregate(pipeLine);
+
+        aggregation.options = {
+            allowDiskUse: true
+        };
+
+        aggregation.exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            result = result.length ? result[0] : {};
+
+            res.status(200).send(result);
+        });
+    };
+
     this.getEmployeesFilters = function (req, res, next) {
         var query = {isEmployee: true}; // = req.query ? req.query.filter || req.query : {};
         var lastDB = req.session.lastDb;
@@ -63,22 +371,19 @@ var Filters = function (models) {
                 }
             }, {
                 $group: {
-                    _id: null,
-
-                    name: {
+                    _id        : null,
+                    name       : {
                         $addToSet: {
                             _id : '$_id',
                             name: {$ifNull: ['$name', 'None']}
                         }
                     },
-
-                    department: {
+                    department : {
                         $addToSet: {
                             _id : '$department._id',
                             name: {$ifNull: ['$department.name', 'None']}
                         }
                     },
-
                     jobPosition: {
                         $addToSet: {
                             _id : '$jobPosition._id',
@@ -87,8 +392,7 @@ var Filters = function (models) {
                             }
                         }
                     },
-
-                    manager: {
+                    manager    : {
                         $addToSet: {
                             _id : '$manager._id',
                             name: {
@@ -122,6 +426,7 @@ var Filters = function (models) {
         var Task = models.get(lastDB, 'DealTasks', TaskSchema);
         var pipeLine;
         var aggregation;
+        var notNullQuery = {$and: [{$ne: ['$$element.name', null]}, {$ne: ['$$element.name', '']}]};
 
         pipeLine = [{
             $lookup: {
@@ -166,13 +471,13 @@ var Filters = function (models) {
                     deal    : {
                         $addToSet: {
                             _id : '$deal._id',
-                            name: '$deal.name'
+                            name: {$ifNull: ['$deal.name', '']}
                         }
                     },
                     category: {
                         $addToSet: {
                             _id : '$category._id',
-                            name: '$category.name'
+                            name: {$ifNull: ['$category.name', '']}
                         }
                     },
                     name    : {
@@ -202,6 +507,44 @@ var Filters = function (models) {
                         }
                     }
                 }
+            }, {
+                $project: {
+                    deal      : {
+                        $filter: {
+                            input: '$deal',
+                            as   : 'element',
+                            cond : notNullQuery
+                        }
+                    },
+                    category  : {
+                        $filter: {
+                            input: '$category',
+                            as   : 'element',
+                            cond : notNullQuery
+                        }
+                    },
+                    name      : {
+                        $filter: {
+                            input: '$name',
+                            as   : 'element',
+                            cond : notNullQuery
+                        }
+                    },
+                    assignedTo: {
+                        $filter: {
+                            input: '$assignedTo',
+                            as   : 'element',
+                            cond : notNullQuery
+                        }
+                    },
+                    workflow  : {
+                        $filter: {
+                            input: '$workflow',
+                            as   : 'element',
+                            cond : notNullQuery
+                        }
+                    }
+                }
             }];
 
         aggregation = Task.aggregate(pipeLine);
@@ -227,7 +570,7 @@ var Filters = function (models) {
         var Customer = models.get(lastDB, 'Customers', CustomerSchema);
         var aggregation;
         var pipeLine;
-        var query = {type: 'Person', isHidden: false};
+        var query = {type: 'Person'};
 
         pipeLine = [{
             $match: query
@@ -314,7 +657,8 @@ var Filters = function (models) {
         var Customer = models.get(lastDB, 'Customers', CustomerSchema);
         var aggregation;
         var pipeLine;
-        var query = {type: 'Company', isHidden: false};
+        var query = {type: 'Company'};
+        var notNullQuery = {$and: [{$ne: ['$$element.name', null]}, {$ne: ['$$element.name', '']}]};
 
         pipeLine = [{
             $match: query
@@ -347,6 +691,23 @@ var Filters = function (models) {
                     $addToSet: {
                         _id : '$address.country',
                         name: {$ifNull: ['$address.country', 'None']}
+                    }
+                }
+            }
+        }, {
+            $project: {
+                country: {
+                    $filter: {
+                        input: '$country',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                name   : {
+                    $filter: {
+                        input: '$name',
+                        as   : 'element',
+                        cond : notNullQuery
                     }
                 }
             }
@@ -819,6 +1180,7 @@ var Filters = function (models) {
         var wTrackInvoice = models.get(lastDB, 'wTrackInvoice', wTrackInvoiceSchema);
         var pipeLine;
         var aggregation;
+        var notNullQuery = {$and: [{$ne: ['$$element.name', null]}, {$ne: ['$$element.name', '']}]};
 
         pipeLine = [{
             $match: {
@@ -892,14 +1254,14 @@ var Filters = function (models) {
                 workflow: {
                     $addToSet: {
                         _id : '$workflow._id',
-                        name: '$workflow.name'
+                        name: {$ifNull: ['$workflow.name', '']}
                     }
                 },
 
                 project: {
                     $addToSet: {
                         _id : '$project._id',
-                        name: '$project.name'
+                        name: {$ifNull: ['$project.name', '']}
                     }
                 },
 
@@ -916,6 +1278,37 @@ var Filters = function (models) {
                     $addToSet: {
                         _id : '$supplier._id',
                         name: {$concat: ['$supplier.name.first', ' ', '$supplier.name.last']}
+                    }
+                }
+            }
+        }, {
+            $project: {
+                salesPerson: {
+                    $filter: {
+                        input: '$salesPerson',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                supplier   : {
+                    $filter: {
+                        input: '$supplier',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                project    : {
+                    $filter: {
+                        input: '$project',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                workflow   : {
+                    $filter: {
+                        input: '$workflow',
+                        as   : 'element',
+                        cond : notNullQuery
                     }
                 }
             }
@@ -944,6 +1337,7 @@ var Filters = function (models) {
         var Proforma = models.get(lastDB, 'Proforma', ProformaSchema);
         var pipeLine;
         var aggregation;
+        var notNullQuery = {$and: [{$ne: ['$$element.name', null]}, {$ne: ['$$element.name', '']}]};
 
         pipeLine = [{
             $match: {
@@ -1031,7 +1425,7 @@ var Filters = function (models) {
                 project: {
                     $addToSet: {
                         _id : '$project._id',
-                        name: '$project.name'
+                        name: {$ifNull: ['$project.name', '']}
                     }
                 },
 
@@ -1050,6 +1444,37 @@ var Filters = function (models) {
                         name: {
                             $concat: ['$supplier.name.first', ' ', '$supplier.name.last']
                         }
+                    }
+                }
+            }
+        }, {
+            $project: {
+                salesPerson: {
+                    $filter: {
+                        input: '$salesPerson',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                supplier   : {
+                    $filter: {
+                        input: '$supplier',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                project    : {
+                    $filter: {
+                        input: '$project',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                workflow   : {
+                    $filter: {
+                        input: '$workflow',
+                        as   : 'element',
+                        cond : notNullQuery
                     }
                 }
             }
@@ -1399,6 +1824,7 @@ var Filters = function (models) {
             forSales: false,
             isOrder : false
         };
+        var notNullQuery = {$and: [{$ne: ['$$element.name', null]}, {$ne: ['$$element.name', '']}]};
 
         pipeLine = [{
             $match: query
@@ -1437,6 +1863,23 @@ var Filters = function (models) {
                     $addToSet: {
                         _id : '$workflow._id',
                         name: '$workflow.name'
+                    }
+                }
+            }
+        }, {
+            $project: {
+                supplier: {
+                    $filter: {
+                        input: '$supplier',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                workflow: {
+                    $filter: {
+                        input: '$workflow',
+                        as   : 'element',
+                        cond : notNullQuery
                     }
                 }
             }
@@ -1597,6 +2040,7 @@ var Filters = function (models) {
             forSales: true,
             isOrder : true
         };
+        var notNullQuery = {$and: [{$ne: ['$$element.name', null]}, {$ne: ['$$element.name', '']}]};
 
         pipeLine = [{
             $match: query
@@ -1667,7 +2111,7 @@ var Filters = function (models) {
                 project: {
                     $addToSet: {
                         _id : '$project._id',
-                        name: '$project.name'
+                        name: {$ifNull: ['$project.name', '']}
                     }
                 },
 
@@ -1688,11 +2132,41 @@ var Filters = function (models) {
                         }
                     }
                 },
-
-                workflow: {
+                workflow    : {
                     $addToSet: {
                         _id : '$workflow._id',
-                        name: '$workflow.name'
+                        name: {$ifNull: ['$workflow.name', '']}
+                    }
+                }
+            }
+        }, {
+            $project: {
+                salesManager: {
+                    $filter: {
+                        input: '$salesManager',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                supplier    : {
+                    $filter: {
+                        input: '$supplier',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                project     : {
+                    $filter: {
+                        input: '$project',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                workflow    : {
+                    $filter: {
+                        input: '$workflow',
+                        as   : 'element',
+                        cond : notNullQuery
                     }
                 }
             }
@@ -1725,6 +2199,7 @@ var Filters = function (models) {
             forSales: false,
             isOrder : true
         };
+        var notNullQuery = {$and: [{$ne: ['$$element.name', null]}, {$ne: ['$$element.name', '']}]};
 
         pipeLine = [{
             $match: query
@@ -1781,6 +2256,37 @@ var Filters = function (models) {
                     }
                 }
             }
+        }, {
+            $project: {
+                salesManager: {
+                    $filter: {
+                        input: '$salesManager',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                supplier    : {
+                    $filter: {
+                        input: '$supplier',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                project     : {
+                    $filter: {
+                        input: '$project',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                workflow    : {
+                    $filter: {
+                        input: '$workflow',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                }
+            }
         }];
 
         aggregation = Quotation.aggregate(pipeLine);
@@ -1809,6 +2315,7 @@ var Filters = function (models) {
         var query = {
             isOpportunitie: false
         };
+        var notNullQuery = {$and: [{$ne: ['$$element.name', null]}, {$ne: ['$$element.name', '']}]};
 
         pipeLine = [{
             $match: query
@@ -1828,13 +2335,6 @@ var Filters = function (models) {
             }
         }, {
             $lookup: {
-                from        : 'Customers',
-                localField  : 'customer',
-                foreignField: '_id',
-                as          : 'customer'
-            }
-        }, {
-            $lookup: {
                 from        : 'Users',
                 localField  : 'createdBy.user',
                 foreignField: '_id',
@@ -1844,22 +2344,20 @@ var Filters = function (models) {
             $project: {
                 workflow        : {$arrayElemAt: ['$workflow', 0]},
                 source          : 1,
+                contactName     : {$concat: ['$contactName.first', ' ', '$contactName.last']},
                 salesPerson     : {$arrayElemAt: ['$salesPerson', 0]},
-                customer        : {$arrayElemAt: ['$customer', 0]},
                 'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]}
             }
         }, {
             $project: {
                 workflow   : 1,
                 source     : 1,
-                contactName: {
-                    _id : '$customer._id',
-                    name: {$concat: ['$customer.name.first', ' ', '$customer.name.last']}
-                },
+                contactName: 1,
                 salesPerson: {
                     _id : '$salesPerson._id',
                     name: {$concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']}
                 },
+
                 createdBy: {
                     _id : {$ifNull: ['$createdBy.user._id', 'None']},
                     name: {$ifNull: ['$createdBy.user.login', 'None']}
@@ -1867,18 +2365,18 @@ var Filters = function (models) {
             }
         }, {
             $group: {
-                _id: null,
+                _id        : null,
                 contactName: {
                     $addToSet: {
-                        _id : '$contactName._id',
+                        _id : '$contactName',
                         name: {
                             $cond: {
                                 if: {
-                                    $eq: ['$contactName.name', ' ']
+                                    $eq: ['$contactName', ' ']
                                 },
 
                                 then: 'None',
-                                else: '$contactName.name'
+                                else: '$contactName'
                             }
                         }
                     }
@@ -1912,6 +2410,38 @@ var Filters = function (models) {
                     }
                 }
             }
+        }, {
+            $project: {
+                workflow   : {
+                    $filter: {
+                        input: '$workflow',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                source     : {
+                    $filter: {
+                        input: '$source',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                contactName: {
+                    $filter: {
+                        input: '$contactName',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                salesPerson: {
+                    $filter: {
+                        input: '$salesPerson',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                createdBy  : 1
+            }
         }];
 
         aggregation = Opportunities.aggregate(pipeLine);
@@ -1940,6 +2470,7 @@ var Filters = function (models) {
         var query = {
             isOpportunitie: true
         };
+        var notNullQuery = {$and: [{$ne: ['$$element.name', null]}, {$ne: ['$$element.name', '']}]};
 
         pipeLine = [{
             $match: query
@@ -1992,6 +2523,30 @@ var Filters = function (models) {
                     $addToSet: {
                         _id : '$salesPerson._id',
                         name: {$concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']}
+                    }
+                }
+            }
+        }, {
+            $project: {
+                customer   : {
+                    $filter: {
+                        input: '$customer',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                workflow   : {
+                    $filter: {
+                        input: '$workflow',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+                salesPerson: {
+                    $filter: {
+                        input: '$salesPerson',
+                        as   : 'element',
+                        cond : notNullQuery
                     }
                 }
             }

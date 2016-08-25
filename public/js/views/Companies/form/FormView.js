@@ -87,6 +87,10 @@ define([
 
             $target.closest('.propertyFormList').addClass('active');
 
+            if ( property === 'social.LI' ){
+                value = value.replace('linkedin', '[]');
+            }
+
             this.modelChanged[property] = value;
             this.showButtons();
         },
@@ -220,6 +224,10 @@ define([
                 });
 
                 self.responseObj['#salesPersonDd'] = employees;
+            });
+
+            dataService.getData('/countries/getForDD', {}, function (countries) {
+                self.responseObj['#country'] = countries.data;
             });
 
             this.formProperty = new PersonFormProperty({

@@ -6,7 +6,7 @@
                 <input id="paymentMethodName" value="<%=model.name%>">
             </dd>
             <dt><label for="currency">Currency</label></dt>
-            <dd>
+            <dd class="_newSelectListWrap">
                 <a href="javascript:;" class="current-selected" id="currency" data-id="<%=model.currency%>"><%=model.currency%></a>
             </dd>
         </dl>
@@ -27,7 +27,7 @@
                 <input id="account" value="<%=model.account%>">
             </dd>
             <dt><label for="chartAccount">Chart of Account</label></dt>
-            <dd>
+            <dd class="_newSelectListWrap">
                 <a href="javascript:;" class="current-selected" id="chartAccount" data-id="<%=model.chartAccount ? model.chartAccount._id : null%>"><%=model.chartAccount ? model.chartAccount.name : 'Select'%></a>
             </dd>
         </dl>

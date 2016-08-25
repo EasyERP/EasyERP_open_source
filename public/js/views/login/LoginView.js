@@ -142,6 +142,8 @@ define([
 
                 success: function () {
                     Custom.runApplication(true);
+
+                    FlurryAgent.logEvent('login', data);
                 },
 
                 error: function () {

@@ -64,6 +64,9 @@
     color: $property-link-color;
   }
 }
+.separateBlock {
+  text-align: center;
+}
 
 .propertyFormList {
   display: table !important;
@@ -337,6 +340,7 @@
   margin-bottom: 20px;
 }
 
+
 .largeBtn {
   width: 100%;
   padding: 14px 20px !important;
@@ -400,7 +404,11 @@
     border: none !important;
     text-align: right;
     cursor: pointer;
-    margin-top: 8px !important;
+    //margin-top: 8px !important;
+
+    ._taskDueDate {
+
+    }
   }
 
   .current-selected {
@@ -462,7 +470,8 @@
 }
 
 .ui-dialog {
-  ._salesModal {
+
+  ._listModal {
     padding: 10px 20px;
 
     .modal_title {
@@ -490,6 +499,7 @@
         width: 100% !important;
         max-width: 100% !important;
         min-height: 35px;
+        line-height: 22px;
         border: 1px solid $sales-modal-select-border-color;
         border-radius: 3px;
         cursor: pointer;

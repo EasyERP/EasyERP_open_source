@@ -2774,7 +2774,7 @@ define([
 
                 it('Try to save payment with 400 status error response', function () {
                     var $saveBtn = $('#create-payment-dialog');
-                    var paymentUrl = '/payment/';
+                    var paymentUrl = '/payments/';
                     var $dialog = $('.ui-dialog');
                     var $amountInput = $dialog.find('#paidAmount');
 
@@ -2788,7 +2788,7 @@ define([
 
                 it('Try to save payment with 400 status error response', function () {
                     var $saveBtn = $('#create-payment-dialog');
-                    var paymentUrl = '/payment/';
+                    var paymentUrl = '/payments/';
                     var $dialog = $('.ui-dialog');
                     var $amountInput = $dialog.find('#paidAmount');
 

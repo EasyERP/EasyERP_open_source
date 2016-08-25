@@ -8,12 +8,14 @@
         <a href="/#easyErp/Projects/form/<%= task.project._id%>" data-id="<%=task.project._id%>" class="project"><%=task.project.name%></a>
     </td>
     <td id='stages_<%=task._id%>'>
-        <a href="javascripet:;" class="stageSelect"><%=(task.workflow) ? task.workflow.name : 'Undefinded'%></a>
+        <div class="_newSelectListWrap">
+            <a href="javascripet:;" class="stageSelect"><%=(task.workflow) ? task.workflow.name : 'Undefinded'%></a>
+        </div>
     </td>
     <td><%=(task.assignedTo) ? task.assignedTo.name.first + ' ' + task.assignedTo.name.last : ''%></td>
     <td><%=task.estimated%></td>
     <td><%=task.logged%></td>
-    <td id='type_<%=task._id%>'>
+    <td id='type_<%=task._id%>' class="_newSelectListWrap">
         <a id="<%=task._id%>" class="stageSelectType" href="javascript:;"><%=task.type%></a>
         <ul class="newSelectList hidden">
             <li class="Task" id="Task">Task</li>

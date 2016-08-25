@@ -10,7 +10,7 @@
             <div class="noteBody">
                 <%if (val.task){%>
                 <div class="itemCircle">
-                    <span class="fa fa-circle-o" aria-hidden="true"></span>
+                    <span class="fa <%=val.task.workflow.status === 'Done' ? 'fa-check-circle-o' : 'fa-circle-o'  %>" aria-hidden="true"></span>
                 </div>
                 <div class="noteType task noteTopBox clearfix" id="<%= val.task._id%>">
                     <span class="noteUserTitle"><b><%= login %></b> created task</span>
@@ -58,9 +58,9 @@
                 <%}%>
             </div>
             <div class="noteBtnBlock">
-                <a href="javascript:;" data-type="edit" class="editDelNote btn btnBlue editNote">Edit</a>
+                <a href="javascript:;" data-type="edit" class="editDelNote btn btnSave editNote">Edit</a>
 
-                <a href="javascript:;" data-type="del" class="editDelNote btn btnBlue">Del</a>
+                <a href="javascript:;" data-type="del" class="editDelNote btn btnSave">Del</a>
             </div>
         </div>
     </div>

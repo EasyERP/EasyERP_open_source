@@ -27,7 +27,7 @@ var Employee = function (event, models) {
     var CONSTANTS = require('../constants/mainConstants.js');
     var RESPONSES = require('../constants/responses');
 
-    var exportDecorator = require('../helpers/exporter/exportDecorator');
+    var exporter = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Employees;
 
     var accessRoll = require('../helpers/accessRollHelper.js')(models);
@@ -41,27 +41,223 @@ var Employee = function (event, models) {
 
     var FilterMapper = require('../helpers/filterMapper');
 
-    this.exportToXlsx = function (req, res, next) {
-        var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
-        var filter = req.params.filter;
-        var filterObj = {};
-        var type = req.query.type;
-        var options;
-        var query = [];
+    var lookupForEmployeeArray = [
+        {
+            $lookup: {
+                from        : 'Department',
+                localField  : 'department',
+                foreignField: '_id',
+                as          : 'department'
+            }
+        }, {
+            $lookup: {
+                from        : 'JobPosition',
+                localField  : 'jobPosition',
+                foreignField: '_id',
+                as          : 'jobPosition'
+            }
+        }, {
+            $lookup: {
+                from        : 'Employees',
+                localField  : 'manager',
+                foreignField: '_id',
+                as          : 'manager'
+            }
+        }, {
+            $lookup: {
+                from        : 'Users',
+                localField  : 'createdBy.user',
+                foreignField: '_id',
+                as          : 'createdBy.user'
+            }
+        }, {
+            $lookup: {
+                from        : 'Users',
+                localField  : 'editedBy.user',
+                foreignField: '_id',
+                as          : 'editedBy.user'
+            }
+        }, {
+            $project: {
+                isEmployee      : 1,
+                name            : 1,
+                workAddress     : 1,
+                workEmail       : 1,
+                personalEmail   : 1,
+                workPhones      : 1,
+                skype           : 1,
+                department      : {$arrayElemAt: ['$department', 0]},
+                jobPosition     : {$arrayElemAt: ['$jobPosition', 0]},
+                manager         : {$arrayElemAt: ['$manager', 0]},
+                nationality     : 1,
+                identNo         : 1,
+                passportNo      : 1,
+                bankAccountNo   : 1,
+                homeAddress     : 1,
+                dateBirth       : 1,
+                age             : 1,
+                daysForBirth    : 1,
+                source          : 1,
+                otherInfo       : 1,
+                expectedSalary  : 1,
+                proposedSalary  : 1,
+                'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]},
+                'createdBy.date': 1,
+                'editedBy.user' : {$arrayElemAt: ['$editedBy.user', 0]},
+                'editedBy.date' : 1,
+                marital         : 1,
+                gender          : 1,
+                jobType         : 1,
+                social          : 1
+            }
+        }, {
+            $project: {
+                isEmployee      : 1,
+                name            : 1,
+                workAddress     : 1,
+                workEmail       : 1,
+                personalEmail   : 1,
+                workPhones      : 1,
+                skype           : 1,
+                department      : 1,
+                jobPosition     : 1,
+                'manager.name'  : {$concat: ['$manager.name.first', ' ', '$manager.name.last']},
+                'manager._id'   : '$manager._id',
+                nationality     : 1,
+                identNo         : 1,
+                passportNo      : 1,
+                bankAccountNo   : 1,
+                homeAddress     : 1,
+                dateBirth       : 1,
+                age             : 1,
+                daysForBirth    : 1,
+                source          : 1,
+                otherInfo       : 1,
+                expectedSalary  : 1,
+                proposedSalary  : 1,
+                'createdBy.user': '$createdBy.user.login',
+                'createdBy.date': 1,
+                'editedBy.user' : '$editedBy.user.login',
+                'editedBy.date' : 1,
+                marital         : 1,
+                gender          : 1,
+                jobType         : 1,
+                social          : 1
+            }
+        }
 
-        // filter = JSON.parse(filter); //ToDo uncomment when Modules move to handler
-        //
-        // if (filter) {
-        //    filterObj.$and = caseFilter(filter);
-        // }
+    ];
+
+    this.exportToXlsx = function (req, res, next) {
+        var dbName = req.session.lastDb;
+        var Model = models.get(dbName, 'Employees', EmployeeSchema);
+
+        var filter = req.query.filter ? JSON.parse(req.query.filter) : JSON.stringify({});
+        var type = req.query.type;
+        var filterObj = {};
+        var options;
+        var filterMapper = new FilterMapper();
+
+        if (filter && typeof filter === 'object') {
+            filterObj = filterMapper.mapFilter(filter, 'Employees');
+        }
 
         options = {
-            res     : res,
-            next    : next,
-            Model   : Model,
-            map     : exportMap,
-            fileName: 'Employees'
+            res         : res,
+            next        : next,
+            Model       : Model,
+            map         : exportMap,
+            returnResult: true,
+            fileName    : type
         };
+
+        function lookupForEmployee(cb) {
+            var query = [];
+            var i;
+
+            query.push({$match: {isEmployee: type === 'Employees' ? true : false}});
+
+            for (i = 0; i < lookupForEmployeeArray.length; i++) {
+                query.push(lookupForEmployeeArray[i]);
+            }
+
+            query.push({$match: filterObj});
+
+            options.query = query;
+            options.cb = cb;
+
+            exporter.exportToXlsx(options);
+        }
+
+        async.parallel([lookupForEmployee], function (err, result) {
+            var resultArray = result[0];
+
+            exporter.exportToXlsx({
+                res        : res,
+                next       : next,
+                Model      : Model,
+                resultArray: resultArray,
+                map        : exportMap,
+                fileName   : type
+            });
+        });
+
+    };
+
+    this.exportToCsv = function (req, res, next) {
+        var dbName = req.session.lastDb;
+        var Model = models.get(dbName, 'Employees', EmployeeSchema);
+
+        var filter = req.query.filter ? JSON.parse(req.query.filter) : JSON.stringify({});
+        var type = req.query.type;
+        var filterObj = {};
+        var options;
+        var filterMapper = new FilterMapper();
+
+        if (filter && typeof filter === 'object') {
+            filterObj = filterMapper.mapFilter(filter, 'Employees');
+        }
+
+        options = {
+            res         : res,
+            next        : next,
+            Model       : Model,
+            map         : exportMap,
+            returnResult: true,
+            fileName    : type
+        };
+
+        function lookupForEmployee(cb) {
+            var query = [];
+            var i;
+
+            query.push({$match: {isEmployee: type === 'Employees' ? true : false}});
+
+            for (i = 0; i < lookupForEmployeeArray.length; i++) {
+                query.push(lookupForEmployeeArray[i]);
+            }
+
+            query.push({$match: filterObj});
+
+            options.query = query;
+            options.cb = cb;
+
+            exporter.exportToCsv(options);
+        }
+
+        async.parallel([lookupForEmployee], function (err, result) {
+            var resultArray = result[0];
+
+            exporter.exportToCsv({
+                res        : res,
+                next       : next,
+                Model      : Model,
+                resultArray: resultArray,
+                map        : exportMap,
+                fileName   : type
+            });
+        });
+
     };
 
     function accessEmployeeSalary(profileId) {
@@ -683,7 +879,9 @@ var Employee = function (event, models) {
         }, {
             $project: {
                 employees: {
-                    name: {$concat: ['$employees.name.first', ' ', '$employees.name.last']},
+                    name: {
+                        $concat: ['$employees.name.first', ' ', '$employees.name.last']
+                    },
                     _id : '$employees._id'
                 },
 
@@ -709,7 +907,12 @@ var Employee = function (event, models) {
             $group: {
                 _id        : '$parentDepartment',
                 departments: {
-                    $push: {_id: '$_id', name: '$name', employees: '$employees', parentDepartment: '$parentDepartment'}
+                    $push: {
+                        _id: '$_id',
+                        name: '$name',
+                        employees: '$employees',
+                        parentDepartment: '$parentDepartment'
+                    }
                 }
             }
         }, {
@@ -723,7 +926,9 @@ var Employee = function (event, models) {
             $project: {
                 _id        : 1,
                 departments: 1,
-                selfData   : {$arrayElemAt: ['$parent', 0]}
+                selfData   : {
+                    $arrayElemAt: ['$parent', 0]
+                }
             }
         }, {
             $lookup: {
@@ -2081,7 +2286,6 @@ var Employee = function (event, models) {
 
             return next(err);
         }
-
 
         uploader.postFile(dir, files, {userId: req.session.uName}, function (err, file) {
             if (err) {

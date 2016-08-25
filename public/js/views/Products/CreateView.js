@@ -2,7 +2,7 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
-    'text!templates/Product/CreateTemplate.html',
+    'text!templates/Products/CreateTemplate.html',
     'views/dialogViewBase',
     'models/ProductModel',
     'common',
@@ -193,7 +193,7 @@ define([
 
             this.attachView = new AttachView({
                 model      : new ProductModel,
-                url        : '/product/uploadProductFiles',
+                url        : '/products/uploadProductFiles',
                 isCreate   : true,
                 contentType: CONSTANTS.PRODUCTS
             });

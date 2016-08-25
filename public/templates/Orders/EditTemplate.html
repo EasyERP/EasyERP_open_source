@@ -59,7 +59,7 @@
                                     </dd>-->
 
                                     <dt><label for="currencyDd">Currency</label></dt>
-                                    <dd>
+                                    <dd class="_newSelectListWrap">
                                         <a id="currencyDd" class="current-selected"
                                            data-id="<%= model.currency && model.currency._id ? model.currency._id._id : null%>"
                                            href="javascript:;"><%= model.currency && model.currency._id ?
@@ -91,7 +91,7 @@
                                                        value="<%=model.expectedDate%>" readonly/>
                                             </dd>
                                             <dt><label for="destination">Destination</label></dt>
-                                            <dd>
+                                            <dd class="_newSelectListWrap _newSelectListWrap">
                                                 <%if(model.destination){%>
                                                 <a id="destination" class="current-selected"
                                                    href="javascript:;" data-id="<%=model.destination._id%>"><%=model.destination.name%></a>
@@ -100,7 +100,7 @@
                                                    data-id="">Select</a>
                                                 <%}%>
                                             <dt><label for="incoterm">Incoterm</label></dt>
-                                            <dd>
+                                            <dd class="_newSelectListWrap _newSelectListWrap">
                                                 <%if(model.incoterm){%>
                                                 <a id="incoterm" class="current-selected" href="javascript:;"
                                                    data-id="<%= model.incoterm._id%>"><%=model.incoterm.name %></a>
@@ -115,7 +115,7 @@
                                     <div class="half-block left">
                                         <dl class="quotation-info">
                                             <dt><label for="invoicingControl">Invoicing Control</label></dt>
-                                            <dd>
+                                            <dd class="_newSelectListWrap _newSelectListWrap">
                                                 <%if(model.invoiceControl){%>
                                                 <a id="invoicingControl" class="current-selected" href="javascript:;"
                                                    data-id="<%= model.invoiceControl._id %>"><%=model.invoiceControl.name%></a>
@@ -139,7 +139,7 @@
                                                 <%}%>
                                             </dd>-->
                                             <dt><label for="fiscalPosition">Fiscal Position</label></dt>
-                                            <dd>
+                                            <dd class="_newSelectListWrap">
                                                 <a id="fiscalPosition" class="current-selected" href="javascript:;">Fiscal
                                                     Position</a>
                                             </dd>

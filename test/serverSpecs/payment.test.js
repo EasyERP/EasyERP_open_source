@@ -85,7 +85,7 @@ describe('Payment Specs', function () {
                 }];
 
                 aggent
-                    .post('payment/salary')
+                    .post('payments/salary')
                     .send(body)
                     .expect(201)
                     .end(function (err, res) {
@@ -119,7 +119,7 @@ describe('Payment Specs', function () {
                 var body = {};
 
                 aggent
-                    .post('payment/salary')
+                    .post('payments/salary')
                     .send(body)
                     .expect(400, done);
             });
@@ -136,7 +136,7 @@ describe('Payment Specs', function () {
                 }];
 
                 aggent
-                    .patch('payment/salary')
+                    .patch('payments/salary')
                     .send(body)
                     .expect(200, done);
             });
@@ -148,7 +148,7 @@ describe('Payment Specs', function () {
                 }];
 
                 aggent
-                    .patch('payment/salary')
+                    .patch('payments/salary')
                     .send(body)
                     .expect(400, done);
             });
@@ -156,7 +156,7 @@ describe('Payment Specs', function () {
             it('should get salary payOut by id', function (done) {
 
                 aggent
-                    .get('payment/')
+                    .get('payments/')
                     .query({id: id, viewType: 'form'})
                     .expect(200)
                     .end(function (err, res) {
@@ -196,7 +196,7 @@ describe('Payment Specs', function () {
                 };
 
                 aggent
-                    .get('payment/')
+                    .get('payments/')
                     .query(query)
                     .expect(200)
                     .end(function (err, res) {
@@ -219,7 +219,7 @@ describe('Payment Specs', function () {
 
             it('should delete salary payment', function (done) {
                 aggent
-                    .delete('payment/' + id)
+                    .delete('payments/' + id)
                     .set('type', 'salary')
                     .expect(200, done);
             });
@@ -401,7 +401,7 @@ describe('Payment Specs', function () {
             /*it('should get payments by project', function (done) {
 
                 aggent
-                    .get('payment/getForProject')
+                    .get('payments/getForProject')
                     .query({'data[0]': paymentId})
                     .expect(200)
                     .end(function (err, res) {
@@ -432,7 +432,7 @@ describe('Payment Specs', function () {
 
             it('should delete Payment', function (done) {
                 aggent
-                    .delete('payment/' + paymentId)
+                    .delete('payments/' + paymentId)
                     .set('type', 'customers')
                     .expect(200, done);
             });
@@ -476,7 +476,7 @@ describe('Payment Specs', function () {
                 };
 
                 aggent
-                    .post('payment/supplier')
+                    .post('payments/supplier')
                     .send(body)
                     .expect(200)
                     .end(function (err, res) {
@@ -499,14 +499,14 @@ describe('Payment Specs', function () {
                 var body = {};
 
                 aggent
-                    .post('payment/supplier')
+                    .post('payments/supplier')
                     .send(body)
                     .expect(400, done);
             });
 
             it('should delete payOut', function (done) {
                 aggent
-                    .delete('payment/' + payOutId)
+                    .delete('payments/' + payOutId)
                     .set('type', 'supplier')
                     .expect(200, done);
             });
@@ -554,7 +554,7 @@ describe('Payment Specs', function () {
             };
 
             aggent
-                .post('payment/supplier')
+                .post('payments/supplier')
                 .send(body)
                 .expect(403, done);
         });
@@ -565,7 +565,7 @@ describe('Payment Specs', function () {
         it('should fail get payments by viewType', function (done) {
 
             aggent
-                .get('payment/salary/')
+                .get('payments/salary/')
                 .expect(404, done);
         });
 

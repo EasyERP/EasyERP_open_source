@@ -82,7 +82,7 @@
                                                placeholder="Proposed Salary"
                                                id="proposedSalary"
                                                maxlength="32"
-                                            />
+                                    />
                                     </dd>
 
                                     <dt>
@@ -140,7 +140,7 @@
                                     <dt>
                                         <label for="sourceDd">Source </label>
                                     </dt>
-                                    <dd>
+                                    <dd class="_newSelectListWrap">
                                         <a id="sourceDd"
                                            class="current-selected"
                                            href="javascript:;">
@@ -171,7 +171,7 @@
 
                                     <dt>
                                         <label for="jobPositionDd">Job position</label></dt>
-                                    <dd>
+                                    <dd class="_newSelectListWrap">
                                         <a id="jobPositionDd"
                                            class="current-selected"
                                            href="javascript:;">
@@ -182,7 +182,7 @@
                                     <dt>
                                         <label for="departmentDd">Department</label>
                                     </dt>
-                                    <dd>
+                                    <dd class="_newSelectListWrap">
                                         <a id="departmentDd"
                                            class="current-selected"
                                            href="javascript:;">
@@ -194,7 +194,7 @@
                                     <dt>
                                         <label for="projectManagerDD">Manager</label>
                                     </dt>
-                                    <dd>
+                                    <dd class="_newSelectListWrap">
                                         <a id="projectManagerDD"
                                            class="current-selected"
                                            href="javascript:;">
@@ -205,7 +205,7 @@
                                     <dt>
                                         <label for="jobTypeDd">Job type</label>
                                     </dt>
-                                    <dd>
+                                    <dd class="_newSelectListWrap">
                                         <a id="jobTypeDd"
                                            class="current-selected"
                                            href="javascript:;">
@@ -216,7 +216,7 @@
                                     <dt>
                                         <label for="weeklySchedulerDd">Weekly Scheduler</label>
                                     </dt>
-                                    <dd>
+                                    <dd class="_newSelectListWrap">
                                         <a id="weeklySchedulerDd" class="current-selected"
                                            data-id=""
                                            href="javascript:;">
@@ -227,7 +227,7 @@
                                     <dt>
                                         <label for="payrollStructureTypeDd">Contract</label>
                                     </dt>
-                                    <dd>
+                                    <dd class="_newSelectListWrap">
                                         <a id="payrollStructureTypeDd" class="current-selected"
                                            data-id=""
                                            href="javascript:;">
@@ -238,7 +238,7 @@
                                     <dt>
                                         <label for="scheduledPayDd">Scheduled Pay</label>
                                     </dt>
-                                    <dd>
+                                    <dd class="_newSelectListWrap">
                                         <a id="scheduledPayDd" class="current-selected"
                                            data-id=""
                                            href="javascript:;">
@@ -272,7 +272,7 @@
                                     <dt>
                                         <label for="workflowsDd">Stage</label>
                                     </dt>
-                                    <dd id="selectWorkflow">
+                                    <dd id="selectWorkflow" class="_newSelectListWrap">
                                         <a id="workflowsDd"
                                            class="current-selected"
                                            href="javascript:;">
@@ -283,7 +283,7 @@
                                     <dt>
                                         <label for="relatedUsersDd">Related User</label>
                                     </dt>
-                                    <dd>
+                                    <dd class="_newSelectListWrap">
                                         <a id="relatedUsersDd"
                                            class="current-selected"
                                            href="javascript:;">
@@ -328,7 +328,7 @@
                             <div class="half-block left">
                                 <dl class="edit-employee-info">
                                     <dt><label for="nationality">Nationality</label></dt>
-                                    <dd>
+                                    <dd class="_newSelectListWrap">
                                         <a id="nationality"
                                            class="current-selected"
                                            href="javascript:;">
@@ -434,12 +434,7 @@
                                     <dt>
                                         <label for="applicationsCreateCountry">Country</label>
                                     </dt>
-                                    <dd><input type="text"
-                                               placeholder="Country"
-                                               class="homeAddress"
-                                               name="country"
-                                               id="applicationsCreateCountry"
-                                               maxlength="32"/></dd>
+                                    <dd><a class="homeAddress current-selected" name="country" id="applicationsCreateCountry">Select</a></dd>
                                 </dl>
                             </div>
                             <div class="clearfix">
@@ -453,7 +448,8 @@
                                 <dl class="edit-employee-info">
                                     <dt>
                                         <label for="genderDd">Gender</label>
-                                    <dd>
+                                    </dt>
+                                    <dd class="_newSelectListWrap">
                                         <a id="genderDd"
                                            class="current-selected"
                                            href="javascript:;">
@@ -464,7 +460,6 @@
                                             <li id="female">female</li>
                                         </ul>
                                     </dd>
-                                    </dt>
                                 </dl>
 
                             </div>
@@ -473,7 +468,8 @@
                                 <dl class="edit-employee-info">
                                     <dt>
                                         <label for="maritalDd">Marital status</label>
-                                    <dd>
+                                    </dt>
+                                    <dd class="_newSelectListWrap">
                                         <a id="maritalDd"
                                            class="current-selected"
                                            href="javascript:;">
@@ -484,7 +480,6 @@
                                             <li id="unmarried">unmarried</li>
                                         </ul>
                                     </dd>
-                                    </dt>
                                 </dl>
                             </div>
 
@@ -495,7 +490,7 @@
                                     <legend>Resume</legend>
                                 </h3>
                                 <div class="area_holder">
-                                 <textarea id="internalNotes" placeholder="Internal notes..." maxlength="500"
+                                 <textarea id="internalNotes" class="internal_Notes" placeholder="Internal notes..." maxlength="500"
                                            class="opp-internal-create"></textarea>
                                     <a href="javascript:;" class="attach_file">
                                         <i class="fa fa-paperclip" aria-hidden="true"></i>
