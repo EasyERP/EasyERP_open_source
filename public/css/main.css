@@ -2161,13 +2161,13 @@ input::-ms-clear {
   left: 2px;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:before {
-  content: '\38';
+  content: '\f104';
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-next {
   right: 2px;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-next:before {
-  content: '\39';
+  content: '\f105';
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title {
   margin: 0 2.3em;
@@ -4552,13 +4552,13 @@ ul.dialog-tabs li.right button {
   left: 2px;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-prev:before {
-  content: '\38';
+  content: '\f104';
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-next {
   right: 2px;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-next:before {
-  content: '\39';
+  content: '\f105';
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title {
   margin: 0 2.3em;
