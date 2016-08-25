@@ -207,3 +207,16 @@
     }
   }
 }
+.dropBtn {
+  &.icon-list5 {
+    &:hover {
+      text-decoration: none !important;
+    }
+    &:before {
+      font-size: 16px;
+      line-height: 24px;
+      display: block;
+      text-align: center;
+    }
+  }
+}

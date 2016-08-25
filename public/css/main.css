@@ -5115,10 +5115,10 @@ ul.dialog-tabs li.right button {
   width: 129px;
 }
 .thumbnailwithavatar .inner .info div {
+  text-align: center;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  text-align: center;
 }
 .thumbnailwithavatar .inner .info p {
   font-family: 'OpenSans Regular', sans-serif, Verdana;
@@ -10326,6 +10326,9 @@ form .avatar .upload input {
   height: 20px;
   z-index: 1;
   cursor: pointer;
+}
+#createBtnHolder.btnsBlock {
+  float: left;
 }
 .collapsed .sideMenu {
   width: 40px !important;
