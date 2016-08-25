@@ -1843,9 +1843,7 @@ h3 {
   display: -ms-flexbox;
   display: flex; }
   #createBtnHolder .export li .btn {
-    margin-right: 10px;
-    height: 26px;
-    line-height: 22px !important; }
+    margin-right: 10px; }
   #createBtnHolder .export li:last-child .btn {
     margin-right: 0px; }
 
