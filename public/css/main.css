@@ -1823,6 +1823,65 @@ input::-ms-clear {
 .text-center {
   text-align: center;
 }
+/*
+.dl-auto(@max-width: 120px, @with-dt: 35%, @line-height: 0, @height: 18px, @margin-top: 0) {
+  clear: both;
+  font-size: 14px;
+  dt {
+    padding: 1px;
+    margin: -1px;
+    width: @with-dt;
+    max-width: @max-width;
+    float: left;
+    clear: both;
+    line-height: @line-height;
+    min-height: @height;
+    margin-top: @margin-top;
+    .text-overflow;
+    p {
+      word-wrap: break-word;
+      white-space: normal;
+    }
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  dd {
+    padding: 1px;
+    margin: -1px;
+    margin-top: @margin-top;
+    line-height: @line-height;
+    min-height: @height;
+    p {
+      word-wrap: break-word;
+      white-space: normal;
+    }
+    float: left;
+    width: 100%-@with-dt;
+    &:nth-child(2) {
+      margin-top: 0;
+    }
+
+    input:not([type='checkbox']) {
+      width: 100%;
+    }
+
+    input.pikerSize {
+      width: 137px;
+    }
+
+    a.formLink {
+      line-height: @line-height;
+    }
+    span {
+      &.ui-spinner {
+        width: 100%;
+      }
+    }
+  }
+}
+*/
 .thumbnail-text {
   color: #4c4c4c;
   font-size: 13px;
@@ -4166,6 +4225,9 @@ table#workflows tr td.edit-status {
 }
 #top-bar:empty {
   display: none !important;
+}
+#top-bar > .btnsBlock {
+  margin-top: 6px;
 }
 .dashBoardVocationSearch {
   margin-top: 7px !important;

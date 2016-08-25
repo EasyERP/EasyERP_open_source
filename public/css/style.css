@@ -1843,9 +1843,7 @@ h3 {
   display: -ms-flexbox;
   display: flex; }
   #createBtnHolder .export li .btn {
-    margin-right: 10px;
-    height: 26px;
-    line-height: 22px !important; }
+    margin-right: 10px; }
   #createBtnHolder .export li:last-child .btn {
     margin-right: 0px; }
 
@@ -2041,6 +2039,9 @@ label._customCHeckbox input[type="checkbox"] {
 
 .icon-usd:before {
   content: "\f155"; }
+
+.icon-university:before {
+  content: "\f19c"; }
 
 .icon-rect:before {
   content: "\e900"; }
@@ -4205,7 +4206,6 @@ label._customCHeckbox input[type="checkbox"] {
 
 ._newSelectListWrap {
   position: relative;
-  display: inline-block;
   cursor: pointer; }
 
 .newSelectList {
