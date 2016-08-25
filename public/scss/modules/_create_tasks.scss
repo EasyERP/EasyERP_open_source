@@ -157,7 +157,9 @@
 }
 
 .ui-dialog-buttonset {
-  border: none !important;
+  border: none;
+  border-top: 1px solid #d7d7d7;
+  padding-top: 10px;
 }
 
 .task-dialog {

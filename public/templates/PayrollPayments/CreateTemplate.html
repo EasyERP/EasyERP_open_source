@@ -49,7 +49,7 @@
                             <col span="1" width="15%">
                             <col span="1" width="15%">
                         </colgroup>
-                        <tbody id="payRoll-TableBody">
+                        <tbody id="payRoll-TableBody" class="_payRoll-TableBody">
                         <% var total = 0;%>
                         <% collection.forEach(function(model, index){ %>
                         <%var cid = model.cid;%>
@@ -91,16 +91,16 @@
         <div class="half-block left">
             <dl class="opp-info text-right">
                 <dt><label for="currencyDd">Currency</label></dt>
-                <dd class="_newSelectListWrap">
-                    <a id="currencyDd" class="current-selected" data-id="565eab29aeb95fa9c0f9df2d"
+                <dd >
+                    <a id="currencyDd" class="current-selected _newSelectListWrap" data-id="565eab29aeb95fa9c0f9df2d"
                        href="javascript:;">USD</a>
                 </dd>
                 <dt>
                     <label for="paymentMethod">Bank account
                     </label>
                 </dt>
-                <dd class="_newSelectListWrap">
-                    <a id="paymentMethod" class="current-selected" href="javascript:;">Select</a>
+                <dd>
+                    <a id="paymentMethod" class="current-selected _newSelectListWrap" href="javascript:;">Select</a>
                 </dd>
                 <div id='journalDiv'>
                     <dt>
