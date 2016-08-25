@@ -1,3 +1,7 @@
+.payRoll-list-wrap{
+  border-top: 1px solid #d7d7d7;
+}
+
 .payRoll-list {
   width: 100%;
   min-width: 100%;
@@ -8,13 +12,23 @@
   th, td {
     white-space: nowrap;
     text-overflow: ellipsis;
-    border: 1px solid transparent;
-    border-top: none;
+    //border: 1px solid transparent;
+    //border-top: none;
     vertical-align: middle;
+
+
   }
-  thead > tr{
+  tbody tr, thead tr{
     border-top: none;
   }
+
+  tbody tr{
+    border-top: 1px solid #d7d7d7;
+    &:first-child, &:last-child{
+      border-top: 0;
+    }
+  }
+
 
   tfoot {
     margin-right: 17px;
@@ -47,7 +61,7 @@
     }
     #payRoll-TableBody {
       td{
-        border-top: 1px solid #d7d7d7;
+        //border-top: 1px solid #d7d7d7;
       }
     }
     .scrollit {
