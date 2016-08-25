@@ -1836,6 +1836,19 @@ h3 {
     padding: 0 !important;
     color: #000000; }
 
+#createBtnHolder .export {
+  float: left;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex; }
+  #createBtnHolder .export li .btn {
+    margin-right: 10px;
+    height: 26px;
+    line-height: 22px !important; }
+  #createBtnHolder .export li:last-child .btn {
+    margin-right: 0px; }
+
 .btnsBlock:after {
   content: '';
   display: table;
@@ -2049,6 +2062,9 @@ label._customCHeckbox input[type="checkbox"] {
 
 .icon-skype-black:before {
   content: "\73"; }
+
+.icon-close3:before {
+  content: "\e906"; }
 
 .icon-plus-black:before {
   content: "\e921"; }
