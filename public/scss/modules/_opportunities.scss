@@ -34,10 +34,8 @@
     font-size: 12px;
     color: $property-text-color;
 
-    .fa-times {
-      &:hover {
-        color: $black;
-      }
+    &:hover {
+      color: $black;
     }
   }
 

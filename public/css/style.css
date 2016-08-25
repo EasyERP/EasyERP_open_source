@@ -3318,7 +3318,7 @@ label._customCHeckbox input[type="checkbox"] {
     text-align: center;
     font-size: 12px;
     color: #c8c8d3; }
-    .propertyBox .removeProperty .fa-times:hover {
+    .propertyBox .removeProperty:hover {
       color: #000000; }
   .propertyBox .propertyImg {
     width: 40px; }
