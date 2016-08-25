@@ -3933,6 +3933,10 @@ body {
   margin-right: 3px;
   border-right: 1px solid #7f7f80;
 }
+#favoritesContent #forFilterName._filterFavoritesInput {
+  border-right: 1px solid #c8c8d3;
+  margin-bottom: 5px;
+}
 .removeValues {
   position: absolute;
   top: 3px;
@@ -7521,7 +7525,7 @@ textarea#editInput {
 .search-field .search {
   cursor: pointer;
   position: absolute;
-  top: 3px;
+  top: 6px;
   left: 5px;
   height: 18px;
 }
