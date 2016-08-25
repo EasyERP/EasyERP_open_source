@@ -3934,6 +3934,10 @@ body {
   margin-right: 3px;
   border-right: 1px solid #7f7f80;
 }
+#favoritesContent #forFilterName._filterFavoritesInput {
+  border-right: 1px solid #c8c8d3;
+  margin-bottom: 5px;
+}
 .removeValues {
   position: absolute;
   top: 3px;
@@ -5112,10 +5116,10 @@ ul.dialog-tabs li.right button {
   width: 129px;
 }
 .thumbnailwithavatar .inner .info div {
+  text-align: center;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  text-align: center;
 }
 .thumbnailwithavatar .inner .info p {
   font-family: 'OpenSans Regular', sans-serif, Verdana;
@@ -7404,7 +7408,7 @@ textarea#editInput {
 .search-field .search {
   cursor: pointer;
   position: absolute;
-  top: 3px;
+  top: 6px;
   left: 5px;
   height: 18px;
 }
@@ -10202,6 +10206,9 @@ form .avatar .upload input {
   height: 20px;
   z-index: 1;
   cursor: pointer;
+}
+#createBtnHolder.btnsBlock {
+  float: left;
 }
 .collapsed .sideMenu {
   width: 40px !important;
