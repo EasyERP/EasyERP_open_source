@@ -1,10 +1,5 @@
 'use strict';
-define([
-    'Backbone',
-    'models/journalEntry',
-    'custom',
-    'moment'
-], function (Backbone, journalEntryModel, Custom, moment) {
+define([], function () {
     var mappingFields = {
         Quotation: {
             'currency._id': 'Currency ID',
