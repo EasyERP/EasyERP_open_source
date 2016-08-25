@@ -1740,9 +1740,9 @@ h3 {
   border-radius: 3px;
   min-width: 70px; }
   .btn.plus:before {
-    content: "\f067";
+    content: "\e90f";
     margin-right: 6px;
-    font-family: 'FontAwesome'; }
+    font-family: "erp-icons"; }
   .btn:hover {
     cursor: pointer;
     background: #f2f2f2;

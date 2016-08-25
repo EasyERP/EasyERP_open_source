@@ -26,9 +26,9 @@
 
   &.plus {
     &:before {
-      content: "\f067";
+      content: "\e90f";
       margin-right: 6px;
-      font-family: 'FontAwesome';
+      font-family: $icon-font;
     }
   }
 
