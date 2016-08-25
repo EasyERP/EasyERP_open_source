@@ -6007,7 +6007,8 @@ ul.chart-tabs .withEndContract .arrow {
 .choseDateRange .item,
 .choseDateItem .item,
 .choseDateRangeSource .item {
-  margin-left: 5px;
+  margin-right: 5px;
+  margin-bottom: 5px;
   float: left;
   padding: 5px 10px;
   color: #000000;
