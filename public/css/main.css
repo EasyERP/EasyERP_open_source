@@ -10208,6 +10208,9 @@ table.kanban tbody td:nth-child(n+2) {
   display: table;
   clear: both;
 }
+._listModal ._modalSelect {
+  display: block;
+}
 ._modalSelect {
   position: relative;
 }

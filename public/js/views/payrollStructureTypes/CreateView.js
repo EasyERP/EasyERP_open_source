@@ -47,7 +47,7 @@ define([
         events: {
             // 'click li'                                         : 'goToEditDialog',
             'click .selected'  : 'showNewSelect',
-            'click .fa-plus'   : 'create',
+            'click .createBtn' : 'create',
             'click .fa-trash-o': 'remove'
         },
 
