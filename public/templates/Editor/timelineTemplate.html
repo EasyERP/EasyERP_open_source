@@ -10,7 +10,7 @@
             <div class="noteBody">
                 <%if (val.task){%>
                 <div class="itemCircle">
-                    <span class="fa <%=val.task.workflow.status === 'Done' ? 'fa-check-circle-o' : 'fa-circle-o'  %>" aria-hidden="true"></span>
+                    <span class=" <%=val.task.workflow.status === 'Done' ? 'icon-check-circle' : 'icon-circle'  %>" aria-hidden="true"></span>
                 </div>
                 <div class="noteType task noteTopBox clearfix" id="<%= val.task._id%>">
                     <span class="noteUserTitle"><b><%= login %></b> created task</span>
@@ -21,7 +21,7 @@
                 <%} else if (val.history) {%>
                 <%var name = val.history.collectionName%>
                 <div class="itemCircle">
-                    <span class="fa <%=name === 'Opportunities' ? 'fa-usd' : name ==='Persons' ? 'fa-user' : 'fa-building-o'%> "
+                    <span class="<%=name === 'Opportunities' ? 'icon-usd' : name ==='Persons' ? 'icon-user' : 'fa-building-o'%> "
                           aria-hidden="true"></span>
                 </div>
                 <div class="history_body">
@@ -42,7 +42,7 @@
                 <%} else {%>
 
                 <div class="itemCircle">
-                    <span class="fa fa-calendar" aria-hidden="true"></span>
+                    <span class="icon-calendar" aria-hidden="true"></span>
                 </div>
                 <div class="noteTopBox clearfix">
                     <span class="noteType"><b><%=login%></b> left a Note</span>
