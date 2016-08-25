@@ -2,8 +2,8 @@
  * Created by soundstorm on 07.05.15.
  */
 define([
-        'text!templates/Product/form/FormTemplate.html',
-        'views/Product/EditView',
+        'text!templates/Products/form/FormTemplate.html',
+        'views/Products/EditView',
         "jqueryBarcode"
     ],
 
@@ -36,7 +36,7 @@ define([
                         mid: mid
                     },
                     success: function () {
-                        Backbone.history.navigate("#easyErp/Product/thumbnails", {trigger: true});
+                        Backbone.history.navigate("#easyErp/Products/thumbnails", {trigger: true});
                     }
                 });
 

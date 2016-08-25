@@ -106,23 +106,21 @@ module.exports = (function () {
             currency: {type: String, default: ''}
         },
 
+        jobPosition     : {type: String, default: ''},
         creationDate    : {type: Date, default: Date.now},
         tempCompanyField: {type: String, default: ''},
         company         : {type: ObjectId, ref: 'Customers', default: null},
         customer        : {type: ObjectId, ref: 'Customers', default: null},
 
-
-        tags: [{type: ObjectId, ref: 'tags', default: null}],
-
-        address: {
+        tags     : [{type: ObjectId, ref: 'tags', default: null}],
+        dateBirth: Date,
+        address  : {
             street : {type: String, default: ''},
             city   : {type: String, default: ''},
             state  : {type: String, default: ''},
             zip    : {type: String, default: ''},
             country: {type: String, default: ''}
         },
-
-        contacts: [{type: ObjectId, ref: 'Customers', default: null}],
 
         contactName: {
             first: {type: String, default: ''},
@@ -148,7 +146,7 @@ module.exports = (function () {
         },
 
         expectedClosing: {type: Date, default: null},
-        priority       : {type: String, default: 'Trivial'},
+        priority       : {type: String, default: 'Cold'},
 
         categories: {
             id  : {type: String, default: ''},
@@ -195,8 +193,9 @@ module.exports = (function () {
                 login: String
             }
         }],
-        attachments  : {type: Array, default: []},
-        projectType  : {type: String, default: 'fixed'},
+
+        attachments: {type: Array, default: []},
+        projectType: {type: String, default: 'fixed'},
 
         social: {
             FB: {type: String, default: ''},

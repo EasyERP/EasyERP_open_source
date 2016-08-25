@@ -1,0 +1,52 @@
+<div class="_importStep3">
+    <div class="_step3Desk">
+        <h2>
+            Preview Import data
+        </h2>
+        <p>
+            Please validate the data based on the first rows of the upload file.
+        </p>
+    </div>
+
+    <h2 class="_importTitle"><%= fields.type %></h2>
+
+    <div class="tableResponsive">
+        <table class="list task-list _importTable">
+            <thead>
+                <tr>
+                    <% _.each(fields.keys, function(item, key) { %>
+                    <th>
+                        <%= item %>
+                    </th>
+                    <% }) %>
+                </tr>
+            </thead>
+
+            <tbody>
+                <% _.each(fields.result, function(obj, key) { %>
+                <tr>
+                    <% _.each(fields.keys, function(arr, key) { %>
+                        <% if (obj[arr]) { %>
+                        <td>
+                            <% if ((obj[arr]).toString().indexOf('data:image/') === -1) { %>
+                                <%= obj[arr] %>
+                            <% } else { %>
+                                <div class="_importTableImg">
+                                    <img src="<%= obj[arr] %>">
+                                </div>
+                            <% } %>
+                        </td>
+                        <% } else { %>
+                            <td>
+                                <%= "" %>
+                            </td>
+                        <% } %>
+                    <% }) %>
+                </tr>
+            <% }) %>
+            </tbody>
+    </table>
+</div>
+
+
+

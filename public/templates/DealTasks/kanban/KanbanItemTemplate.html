@@ -5,7 +5,7 @@
     <div class="task-content">
         <div class="info">
             <p id="<%=model._id%>" class="taskContentTitle"><%=model.description%></p>
-            <% if (new Date(model.dueDate) < moment().startOf('day')) { %>
+            <% if ((new Date(model.dueDate) < moment().startOf('day')) && (model.workflow.status !== 'Done') && (model.workflow.status !== 'Cancelled')) { %>
             <h3 class="red dateLabel">Overdue : </h3>
             <% }else {%>
             <h3>Due : </h3>
@@ -35,7 +35,7 @@
                 <% }%>
             </div>
         </div>
-        <div class="bottom taskSelect">
+        <div class="bottom taskSelect _newSelectListWrap">
             <a id="type_<%=model._id%>" data-id="<%=model.type%>" class="current-selected bold" href="javascript:;"><%=model.type%></a>
         </div>
         <div data-id="<%=model.assignedTo?model.assignedTo._id:''%>" class="avatar-small right">

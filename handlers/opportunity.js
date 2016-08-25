@@ -8,6 +8,7 @@ var Module = function (models, event) {
     var WorkflowSchema = mongoose.Schemas.workflow;
     var prioritySchema = mongoose.Schemas.Priority;
     var historySchema = mongoose.Schemas.History;
+    var tagsSchema = mongoose.Schemas.tags;
     var objectId = mongoose.Types.ObjectId;
 
     var _ = require('../node_modules/underscore');
@@ -36,7 +37,7 @@ var Module = function (models, event) {
 
     function validBody(body) {
 
-        return body.name ? true : false;
+        return !!body.name;
     }
 
     this.getForDd = function (req, res, next) {
@@ -97,10 +98,11 @@ var Module = function (models, event) {
         }
 
         function getTask(parallelCb) {
-            TasksSchema.find({'deal': model._id})
+            TasksSchema.find({deal: model._id})
                 .populate('deal', '_id name')
                 .populate('company', '_id name')
                 .populate('contact', '_id name')
+                .populate('category')
                 .populate('editedBy.user', '_id login')
                 .populate('assignedTo', '_id name fullName imageSrc')
                 .populate('workflow')
@@ -114,7 +116,7 @@ var Module = function (models, event) {
                             task: elem,
                             _id : elem._id,
                             user: elem.editedBy.user
-                        }
+                        };
                     });
                     parallelCb(null, res);
                 });
@@ -346,8 +348,8 @@ var Module = function (models, event) {
             if (err) {
                 return next(err);
             }
-            if (deleteHistory){
-                historyWriter.deleteHistoryById(req, {contentId : id});
+            if (deleteHistory) {
+                historyWriter.deleteHistoryById(req, {contentId: id});
             }
 
             if (result && result.isOpportunitie) {
@@ -370,10 +372,9 @@ var Module = function (models, event) {
                     return err(err);
                 }
 
-                if (deleteHistory){
-                    historyWriter.deleteHistoryById(req,  {contentId : {$in: ids}});
+                if (deleteHistory) {
+                    historyWriter.deleteHistoryById(req, {contentId: {$in: ids}});
                 }
-
 
                 if (result && result.isOpportunitie) {
                     event.emit('updateSequence', Opportunity, 'sequence', result.sequence, 0, result.workflow, result.workflow, false, true);
@@ -686,8 +687,7 @@ var Module = function (models, event) {
                         };
                         historyWriter.addEntry(historyOptions, function () {
                             res.status(200).send({success: 'Opportunities updated'});
-                        })
-
+                        });
 
                     });
                 });
@@ -767,253 +767,257 @@ var Module = function (models, event) {
     };
 
     this.create = function (req, res, next) {
-        try {
-            var data = req.body;
+        var data = req.body;
+        var err;
+
+        var savetoDb = function (data) {
+            var _opportunitie = new models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema)();
             var err;
+            var noteObj;
 
-            var savetoDb = function (data) {
-                var err;
-                var noteObj;
+            _opportunitie.isOpportunitie = data.isOpportunitie || false;
 
-                try {
-                    var _opportunitie = new models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema)();
-
-                    _opportunitie.isOpportunitie = data.isOpportunitie || false;
-
-                    if (data.name) {
-                        _opportunitie.name = data.name;
-                    }
-                    if (data.jobkey) {
-                        _opportunitie.jobkey = data.jobkey;
-                    }
-                    if (data.color) {
-                        _opportunitie.color = data.color;
-                    }
-                    if (data.expectedRevenue) {
-                        if (data.expectedRevenue.value) {
-                            _opportunitie.expectedRevenue.value = data.expectedRevenue.value;
-                        }
-                        if (data.expectedRevenue.progress) {
-                            _opportunitie.expectedRevenue.progress = data.expectedRevenue.progress;
-                        }
-                        if (data.expectedRevenue.currency) {
-                            _opportunitie.expectedRevenue.currency = data.expectedRevenue.currency;
-                        }
-                    }
-                    if (data.creationDate) {
-                        _opportunitie.creationDate = data.creationDate;
-                    }
-                    if (data.notes && data.notes.length) {
-                        noteObj = data.notes[0];
-
-                        noteObj._id = mongoose.Types.ObjectId();
-                        noteObj.date = new Date();
-                        noteObj.author = req.session.uName;
-                        _opportunitie.notes = data.notes;
-                    }
-                    if (data.company) {
-                        _opportunitie.company = data.company;
-                    }
-                    if (data.customer) {
-                        _opportunitie.customer = data.customer;
-                    }
-                    if (data.address) {
-                        if (data.address.street) {
-                            _opportunitie.address.street = data.address.street;
-                        }
-                        if (data.address.city) {
-                            _opportunitie.address.city = data.address.city;
-                        }
-                        if (data.address.state) {
-                            _opportunitie.address.state = data.address.state;
-                        }
-                        if (data.address.zip) {
-                            _opportunitie.address.zip = data.address.zip;
-                        }
-                        if (data.address.country) {
-                            _opportunitie.address.country = data.address.country;
-                        }
-                    }
-                    if (data.contactName) {
-                        if (data.contactName.first) {
-                            _opportunitie.contactName.first = data.contactName.first;
-                        }
-                        if (data.contactName.last) {
-                            _opportunitie.contactName.last = data.contactName.last;
-                        }
-                    }
-                    if (data.email) {
-                        _opportunitie.email = data.email;
-                    }
-                    if (data.phones) {
-                        if (data.phones.phone) {
-                            _opportunitie.phones.phone = data.phones.phone;
-                        }
-                        if (data.phones.mobile) {
-                            _opportunitie.phones.mobile = data.phones.mobile;
-                        }
-                        if (data.fax) {
-                            _opportunitie.phones.fax = data.phones.fax;
-                        }
-                    }
-                    if (data.func) {
-                        _opportunitie.func = data.func;
-                    }
-                    if (data.salesPerson) {
-                        _opportunitie.salesPerson = data.salesPerson;
-                    }
-                    if (data.salesTeam) {
-                        _opportunitie.salesTeam = data.salesTeam;
-                    }
-                    if (data.internalNotes) {
-
-                        _opportunitie.notes = [{
-                            _id : mongoose.Types.ObjectId(),
-                            date: new Date(),
-                            user: {
-                                _id  : req.session.uId,
-                                login: req.session.uName
-                            },
-                            note: data.internalNotes
-                        }];
-
-                    }
-                    if (data.nextAction) {
-                        if (data.nextAction.desc) {
-                            _opportunitie.nextAction.desc = data.nextAction.desc;
-                        }
-                        if (data.nextAction.date) {
-                            _opportunitie.nextAction.date = new Date(data.nextAction.date);
-                        }
-                    }
-                    if (data.expectedClosing) {
-                        _opportunitie.expectedClosing = new Date(data.expectedClosing);
-                    }
-                    if (data.priority) {
-                        if (data.priority) {
-                            _opportunitie.priority = data.priority;
-                        }
-                    }
-                    if (data.categories) {
-                        if (data.categories._id) {
-                            _opportunitie.categories.id = data.categories._id;
-                        }
-                        if (data.categories.name) {
-                            _opportunitie.categories.name = data.categories.name;
-                        }
-                    }
-                    if (data.groups) {
-                        _opportunitie.groups = data.groups;
-                    }
-                    if (data.whoCanRW) {
-                        _opportunitie.whoCanRW = data.whoCanRW;
-                    }
-                    if (data.info) {
-                        if (data.StartDate) {
-                            _opportunitie.StartDate = data.StartDate;
-                        }
-                        if (data.EndDate) {
-                            _opportunitie.EndDate = data.EndDate;
-                        }
-                        if (data.sequence) {
-                            _opportunitie.sequence = data.sequence;
-                        }
-                        if (data.parent) {
-                            _opportunitie.parent = data.parent;
-                        }
-
-                    }
-                    if (data.workflow) {
-                        _opportunitie.workflow = data.workflow;
-                    }
-                    if (data.active) {
-                        _opportunitie.active = data.active;
-                    }
-                    if (data.optout) {
-                        _opportunitie.optout = data.optout;
-                    }
-                    if (data.reffered) {
-                        _opportunitie.reffered = data.reffered;
-                    }
-
-                    if (data.campaign) {
-                        _opportunitie.campaign = data.campaign;
-                    }
-                    if (data.source) {
-                        _opportunitie.source = data.source;
-                    }
-                    if (data.skype) {
-                        _opportunitie.skype = data.skype;
-                    }
-                    if (data.social && data.social.LI) {
-                        if (!_opportunitie.social) {
-                            _opportunitie.social = {};
-                        }
-                        _opportunitie.social.LI = data.social.LI;
-                    }
-                    if (data.social && data.social.FB) {
-                        if (!_opportunitie.social) {
-                            _opportunitie.social = {};
-                        }
-                        _opportunitie.social.FB = data.social.FB;
-                    }
-
-                    _opportunitie.createdBy.user = req.session.uId;
-                    //uId for edited by field on creation
-                    _opportunitie.editedBy.user = req.session.uId;
-
-                    event.emit('updateSequence', models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema), 'sequence', 0, 0, _opportunitie.workflow, _opportunitie.workflow, true, false, function (sequence) {
-                        _opportunitie.sequence = sequence;
-                        _opportunitie.save(function (err, result) {
-                            var historyOptions;
-                            if (err) {
-                                return next(err);
-                            }
-
-                            historyOptions = {
-                                contentType: result.isOpportunitie ? 'opportunitie' : 'lead',
-                                data       : result.toJSON(),
-                                req        : req,
-                                contentId  : result._id
-                            };
-
-                            historyWriter.addEntry(historyOptions);
-
-                            res.status(201).send({
-                                success: 'A new Opportunities create success',
-                                id     : result._id
-                            });
-
-                            // send email to _opportunitie.salesPerson
-                            if (_opportunitie.salesPerson) {
-                                sendEmailToAssigned(req, _opportunitie);
-                            }
-
-                        });
-                    });
-                } catch (error) {
-                    return next(err);
+            if (data.name) {
+                _opportunitie.name = data.name;
+            }
+            if (data.name) {
+                _opportunitie.name = data.name;
+            }
+            if (data.tempCompanyField) {
+                _opportunitie.tempCompanyField = data.tempCompanyField;
+            }
+            if (data.jobkey) {
+                _opportunitie.jobkey = data.jobkey;
+            }
+            if (data.color) {
+                _opportunitie.color = data.color;
+            }
+            if (data.expectedRevenue) {
+                if (data.expectedRevenue.value) {
+                    _opportunitie.expectedRevenue.value = data.expectedRevenue.value;
                 }
-            };
+                if (data.expectedRevenue.progress) {
+                    _opportunitie.expectedRevenue.progress = data.expectedRevenue.progress;
+                }
+                if (data.expectedRevenue.currency) {
+                    _opportunitie.expectedRevenue.currency = data.expectedRevenue.currency;
+                }
+            }
+            if (data.creationDate) {
+                _opportunitie.creationDate = data.creationDate;
+            }
+            if (data.notes && data.notes.length) {
+                noteObj = data.notes[0];
 
-            if (!validBody(data)) {
-                err = new Error();
-                err.status = 404;
-
-                return next(err);
+                noteObj._id = mongoose.Types.ObjectId();
+                noteObj.date = new Date();
+                noteObj.user = {
+                    _id  : req.session.uId,
+                    login: req.session.uName
+                };
+                _opportunitie.notes = data.notes;
+            }
+            if (data.customer) {
+                _opportunitie.customer = data.customer;
+            }
+            if (data.company) {
+                _opportunitie.company = data.company;
+            }
+            if (data.address) {
+                if (data.address.street) {
+                    _opportunitie.address.street = data.address.street;
+                }
+                if (data.address.city) {
+                    _opportunitie.address.city = data.address.city;
+                }
+                if (data.address.state) {
+                    _opportunitie.address.state = data.address.state;
+                }
+                if (data.address.zip) {
+                    _opportunitie.address.zip = data.address.zip;
+                }
+                if (data.address.country) {
+                    _opportunitie.address.country = data.address.country;
+                }
+            }
+            if (data.contactName) {
+                if (data.contactName.first) {
+                    _opportunitie.contactName.first = data.contactName.first;
+                }
+                if (data.contactName.last) {
+                    _opportunitie.contactName.last = data.contactName.last;
+                }
+            }
+            if (data.email) {
+                _opportunitie.email = data.email;
+            }
+            if (data.phones) {
+                if (data.phones.phone) {
+                    _opportunitie.phones.phone = data.phones.phone;
+                }
+                if (data.phones.mobile) {
+                    _opportunitie.phones.mobile = data.phones.mobile;
+                }
+                if (data.fax) {
+                    _opportunitie.phones.fax = data.phones.fax;
+                }
+            }
+            if (data.func) {
+                _opportunitie.func = data.func;
+            }
+            if (data.salesPerson) {
+                _opportunitie.salesPerson = data.salesPerson;
+            }
+            if (data.salesTeam) {
+                _opportunitie.salesTeam = data.salesTeam;
             }
 
-            if (!data) {
-                err = new Error('Opprtunities.create Incorrect Incoming Data');
-                err.status = 400;
-
-                return next(err);
+            if (data.jobPosition) {
+                _opportunitie.jobPosition = data.jobPosition;
             }
-            savetoDb(data);
 
-        } catch (exception) {
-            return next(exception);
+            if (data.internalNotes) {
+
+                _opportunitie.notes = [{
+                    _id : mongoose.Types.ObjectId(),
+                    date: new Date(),
+                    user: {
+                        _id  : req.session.uId,
+                        login: req.session.uName
+                    },
+                    note: data.internalNotes
+                }];
+
+            }
+            if (data.nextAction) {
+                if (data.nextAction.desc) {
+                    _opportunitie.nextAction.desc = data.nextAction.desc;
+                }
+                if (data.nextAction.date) {
+                    _opportunitie.nextAction.date = new Date(data.nextAction.date);
+                }
+            }
+            if (data.expectedClosing) {
+                _opportunitie.expectedClosing = new Date(data.expectedClosing);
+            }
+            if (data.priority) {
+                if (data.priority) {
+                    _opportunitie.priority = data.priority;
+                }
+            }
+            if (data.categories) {
+                if (data.categories._id) {
+                    _opportunitie.categories.id = data.categories._id;
+                }
+                if (data.categories.name) {
+                    _opportunitie.categories.name = data.categories.name;
+                }
+            }
+            if (data.groups) {
+                _opportunitie.groups = data.groups;
+            }
+            if (data.whoCanRW) {
+                _opportunitie.whoCanRW = data.whoCanRW;
+            }
+            if (data.info) {
+                if (data.StartDate) {
+                    _opportunitie.StartDate = data.StartDate;
+                }
+                if (data.EndDate) {
+                    _opportunitie.EndDate = data.EndDate;
+                }
+                if (data.sequence) {
+                    _opportunitie.sequence = data.sequence;
+                }
+                if (data.parent) {
+                    _opportunitie.parent = data.parent;
+                }
+
+            }
+            if (data.workflow) {
+                _opportunitie.workflow = data.workflow;
+            }
+            if (data.active) {
+                _opportunitie.active = data.active;
+            }
+            if (data.optout) {
+                _opportunitie.optout = data.optout;
+            }
+            if (data.reffered) {
+                _opportunitie.reffered = data.reffered;
+            }
+
+            if (data.campaign) {
+                _opportunitie.campaign = data.campaign;
+            }
+            if (data.source) {
+                _opportunitie.source = data.source;
+            }
+            if (data.skype) {
+                _opportunitie.skype = data.skype;
+            }
+            if (data.social && data.social.LI) {
+                if (!_opportunitie.social) {
+                    _opportunitie.social = {};
+                }
+                _opportunitie.social.LI = data.social.LI;
+            }
+            if (data.social && data.social.FB) {
+                if (!_opportunitie.social) {
+                    _opportunitie.social = {};
+                }
+                _opportunitie.social.FB = data.social.FB;
+            }
+
+            _opportunitie.createdBy.user = req.session.uId;
+            //uId for edited by field on creation
+            _opportunitie.editedBy.user = req.session.uId;
+
+            event.emit('updateSequence', models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema), 'sequence', 0, 0, _opportunitie.workflow, _opportunitie.workflow, true, false, function (sequence) {
+                _opportunitie.sequence = sequence;
+                _opportunitie.save(function (err, result) {
+                    var historyOptions;
+                    if (err) {
+                        return next(err);
+                    }
+
+                    historyOptions = {
+                        contentType: result.isOpportunitie ? 'opportunitie' : 'lead',
+                        data       : result.toJSON(),
+                        req        : req,
+                        contentId  : result._id
+                    };
+
+                    historyWriter.addEntry(historyOptions);
+
+                    res.status(201).send({
+                        success: 'A new Opportunities create success',
+                        id     : result._id
+                    });
+
+                    // send email to _opportunitie.salesPerson
+                    if (_opportunitie.salesPerson) {
+                        sendEmailToAssigned(req, _opportunitie);
+                    }
+
+                });
+            });
+        };
+
+        if (!validBody(data)) {
+            err = new Error();
+            err.status = 404;
+
+            return next(err);
         }
+
+        if (!data) {
+            err = new Error('Opprtunities.create Incorrect Incoming Data');
+            err.status = 400;
+
+            return next(err);
+        }
+        savetoDb(data);
 
     };
 
@@ -1856,6 +1860,8 @@ var Module = function (models, event) {
                 }
             }, {
                 $project: {
+                    /* 'workflow.name': '$workflow.name',
+                     'workflow._id': '$workflow._id',*/
                     workflow: '$workflow.name',
                     date    : 1,
                     revenue : 1
@@ -2122,51 +2128,7 @@ var Module = function (models, event) {
         }
 
         function updateOpp() {
-            /* var createPersonCustomer = function (company) {
-             var _person;
-             if (data.contactName && (data.contactName.first || data.contactName.last)) {
-             _person = {
-             name   : data.contactName,
-             email  : data.email,
-             phones : data.phones,
-             company: company._id,
 
-             salesPurchases: {
-             isCustomer : true,
-             salesPerson: data.salesPerson
-             },
-
-             type     : 'Person',
-             createdBy: {user: req.session.uId}
-             };
-             Opportunity.find({$and: [{'name.first': data.contactName.first}, {'name.last': data.contactName.last}]}, function (err, _persons) {
-             var _Person;
-
-             if (err) {
-             return next(err);
-             }
-
-             if (_persons.length > 0) {
-             if (_persons[0].salesPurchases && !_persons[0].salesPurchases.isCustomer) {
-             Customer.update({_id: _persons[0]._id}, {$set: {'salesPurchases.isCustomer': true}}, function (err) {
-             if (err) {
-             return next(err);
-             }
-             });
-             }
-             } else {
-             _Person = new Customer(_person);
-
-             _Person.save(function (err) {
-             if (err) {
-             return next(err);
-             }
-             });
-             }
-             });
-             }
-             };
-             */
             if (data.company) {
                 data.company = data.company;
             }
@@ -2194,114 +2156,166 @@ var Module = function (models, event) {
                     }
 
                     Opportunity.findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
-                        var updateCustomerArr = [];
 
                         if (err) {
                             return next(err);
                         }
 
-                        historyWriter.addEntry(historyOptions, function () {
-                            getTimeLine(req, result.toJSON(), function (err, model) {
+                        result.populate('salesPerson')
+                            .populate('company')
+                            .populate('customer', function () {
+                                var lead = result.toJSON();
+                                historyWriter.addEntry(historyOptions, function () {
+                                    getTimeLine(req, lead, function (err, model) {
+                                        var _company;
+                                        var _Company;
 
-                                if (data.isOpportunitie && data.isConverted) {
-                                    if (result.company) {
-                                        updateCustomerArr.push(result.company);
-                                    }
-                                    if (result.customer) {
-                                        updateCustomerArr.push(result.customer);
-                                    }
+                                        var createPersonCustomer = function (company) {
+                                            var _person;
+                                            if (lead.contactName && (lead.contactName.first || lead.contactName.last)) {
+                                                _person = {
+                                                    name   : lead.contactName,
+                                                    email  : lead.email,
+                                                    phones : lead.phones,
+                                                    company: company._id,
 
-                                    if (updateCustomerArr.length) {
-                                        Customer.update({
-                                            _id: {$in: updateCustomerArr}
-                                        }, {
-                                            $set: {
-                                                isHidden                   : false,
-                                                'salesPurchases.isCustomer': true
+                                                    salesPurchases: {
+                                                        isCustomer : true,
+                                                        salesPerson: lead.salesPerson
+                                                    },
+
+                                                    type     : 'Person',
+                                                    createdBy: {user: req.session.uId}
+                                                };
+                                                Opportunity.find({$and: [{'name.first': lead.contactName.first}, {'name.last': lead.contactName.last}]}, function (err, _persons) {
+                                                    var _Person;
+
+                                                    if (err) {
+                                                        return next(err);
+                                                    }
+
+                                                    if (_persons.length > 0) {
+                                                        if (_persons[0].salesPurchases && !_persons[0].salesPurchases.isCustomer) {
+                                                            Customer.update({_id: _persons[0]._id}, {$set: {'salesPurchases.isCustomer': true}}, function (err) {
+                                                                if (err) {
+                                                                    return next(err);
+                                                                }
+                                                            });
+                                                        }
+                                                    } else if (data.createCustomer) {
+                                                        _Person = new Customer(_person);
+
+                                                        _Person.save(function (err, doc) {
+                                                            if (err) {
+                                                                return next(err);
+                                                            }
+
+                                                            Opportunity.findByIdAndUpdate(lead._id, {customer: doc._id}, function (err) {
+                                                                if (err) {
+                                                                    return next(err);
+                                                                }
+                                                            });
+                                                        });
+                                                    }
+                                                });
                                             }
-                                        }, {multi: true}, function (err, res) {
-                                            if (err) {
-                                                console.log(err);
+                                        };
+                                        if (data.isConverted && data.isOpportunitie) {
+
+                                            if (lead.tempCompanyField) {
+                                                _company = {
+                                                    name: {
+                                                        first: lead.tempCompanyField,
+                                                        last : ''
+                                                    },
+
+                                                    address: lead.address,
+
+                                                    salesPurchases: {
+                                                        isCustomer : true,
+                                                        salesPerson: lead.salesPerson
+                                                    },
+
+                                                    type     : 'Company',
+                                                    createdBy: {user: req.session.uId}
+                                                };
+
+                                                Customer.find({'name.first': lead.tempCompanyField}, function (err, companies) {
+                                                    if (err) {
+                                                        return next(err);
+                                                    }
+
+                                                    if (companies.length > 0) {
+                                                        Opportunity.update({_id: _id}, {
+                                                            $set: {
+                                                                company : lead.customer,
+                                                                customer: null
+                                                            }
+                                                        }, function (err) {
+                                                            if (err) {
+                                                                return console.log(err);
+                                                            }
+                                                            if (companies[0].salesPurchases && !companies[0].salesPurchases.isCustomer) {
+                                                                Customer.update({_id: companies[0]._id}, {$set: {'salesPurchases.isCustomer': true}}, function (err, success) {
+                                                                    if (err) {
+                                                                        console.log(err);
+                                                                    }
+
+                                                                    createPersonCustomer(companies[0]);
+
+                                                                });
+                                                            } else {
+                                                                createPersonCustomer(companies[0]);
+                                                            }
+
+                                                        });
+
+                                                    } else if (data.createCustomer) {
+                                                        _Company = new Customer(_company);
+                                                        _Company.save(function (err, _res) {
+                                                            if (err) {
+                                                                return next(err);
+                                                            }
+
+                                                            Opportunity.update({_id: _id}, {
+                                                                $set: {
+                                                                    company: _res._id
+                                                                }
+                                                            }, function (err) {
+                                                                if (err) {
+                                                                    console.log(err);
+                                                                }
+                                                            });
+                                                            createPersonCustomer(_res);
+                                                        });
+                                                    } else {
+                                                        createPersonCustomer({});
+                                                    }
+                                                });
+
+                                            } else {
+                                                createPersonCustomer({});
                                             }
-                                        });
-                                    }
 
-                                    /*if (data.tempCompanyField) {
-                                     _company = {
-                                     name: {
-                                     first: data.tempCompanyField,
-                                     last : ''
-                                     },
-
-                                     address: data.address,
-
-                                     salesPurchases: {
-                                     isCustomer : true,
-                                     salesPerson: data.salesPerson
-                                     },
-
-                                     type     : 'Company',
-                                     createdBy: {user: req.session.uId}
-                                     };
-
-                                     Customer.find({'name.first': data.tempCompanyField}, function (err, companies) {
-                                     if (err) {
-                                     return next(err);
-                                     }
-
-                                     if (companies.length > 0) {
-                                     if (companies[0].salesPurchases && !companies[0].salesPurchases.isCustomer) {
-                                     Customer.update({_id: companies[0]._id}, {$set: {'salesPurchases.isCustomer': true}}, function (err, success) {
-                                     if (success) {
-                                     createPersonCustomer(companies[0]);
-                                     }
-                                     });
-                                     }
-                                     } else {
-                                     _Company = new Customer(_company);
-                                     _Company.save(function (err, _res) {
-                                     if (err) {
-                                     return next(err);
-                                     }
-
-                                     Opportunity.update({_id: _id}, {
-                                     $set: {
-                                     company : _res._id,
-                                     customer: _res._id
-                                     }
-                                     }, function (err) {
-                                     if (err) {
-                                     console.log(err);
-                                     }
-                                     });
-                                     createPersonCustomer(_res);
-                                     });
-                                     }
-                                     });
-
-                                     } else {
-                                     createPersonCustomer({});
-                                     }*/
-                                }
-
-                                // send email to assigned when update Lead
-                                if (result.salesPerson) {
-                                    if (oldOpportunity.salesPerson) {
-                                        if (result.salesPerson.toString() !== oldOpportunity.salesPerson.toString()) {
-                                            sendEmailToAssigned(req, result);
                                         }
-                                    } else {
-                                        sendEmailToAssigned(req, result);
-                                    }
-                                }
 
-                                res.status(200).send({
-                                    success: 'Opportunities updated success',
-                                    result : result,
-                                    notes  : model.notes
+                                        // send email to assigned when update Lead
+                                        if (result.salesPerson) {
+                                            if (oldOpportunity.salesPerson) {
+                                                if (result.salesPerson.toString() !== oldOpportunity.salesPerson.toString()) {
+                                                    sendEmailToAssigned(req, result);
+                                                }
+                                            } else {
+                                                sendEmailToAssigned(req, result);
+                                            }
+                                        }
+
+                                        delete model.tags;
+
+                                        res.status(200).send(model);
+                                    });
                                 });
-                            });
-                        });
+                            })
 
                     });
                 });
@@ -2508,6 +2522,7 @@ var Module = function (models, event) {
 
     function getFilter(req, res, next) {
         var Opportunities = models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema);
+        var Tags = models.get(req.session.lastDb, 'tags', tagsSchema);
         var data = req.query;
         var contentType = data.contentType;
         var paginationObject = pageHelper(data);
@@ -2520,7 +2535,7 @@ var Module = function (models, event) {
         var optionsObject = [];
         var filter = data.filter || {};
         var key;
-
+        var filterForOpps = {};
         var filterMapper = new FilterMapper();
 
         if (filter) {
@@ -2538,7 +2553,17 @@ var Module = function (models, event) {
                 break;
         }
 
-        optionsObject.push(filterObj);
+        if (contentType === 'Opportunities') {
+            Object.keys(filterObj).forEach(function (el) {
+                filterForOpps[el + '._id'] = filterObj[el];
+            });
+
+            optionsObject.push(filterForOpps);
+
+        } else {
+            optionsObject.push(filterObj);
+
+        }
 
         accessRollSearcher = function (cb) {
             accessRoll(req, Opportunities, cb);
@@ -2587,11 +2612,8 @@ var Module = function (models, event) {
             switch (contentType) {
 
                 case ('Opportunities'):
+
                     aggregateQuery.push({
-                        $match: {
-                            $and: optionsObject
-                        }
-                    }, {
                         $lookup: {
                             from        : 'Customers',
                             localField  : 'customer',
@@ -2600,18 +2622,22 @@ var Module = function (models, event) {
                         }
                     }, {
                         $project: {
-                            creationDate    : 1,
-                            name            : 1,
-                            expectedRevenue : 1,
-                            customer        : {$arrayElemAt: ['$customer', 0]},
-                            nextAction      : 1,
-                            expectedClosing : 1,
-                            sequence        : 1,
-                            workflow        : {$arrayElemAt: ['$workflow', 0]},
-                            salesPerson     : {$arrayElemAt: ['$salesPerson', 0]},
-                            'editedBy.user' : {$arrayElemAt: ['$editedBy.user', 0]},
-                            'editedBy.date' : 1,
-                            isOpportunitie  : 1
+                            creationDate   : 1,
+                            name           : 1,
+                            expectedRevenue: 1,
+                            customer       : {$arrayElemAt: ['$customer', 0]},
+                            nextAction     : 1,
+                            expectedClosing: 1,
+                            sequence       : 1,
+                            workflow       : {$arrayElemAt: ['$workflow', 0]},
+                            salesPerson    : {$arrayElemAt: ['$salesPerson', 0]},
+                            'editedBy.user': {$arrayElemAt: ['$editedBy.user', 0]},
+                            'editedBy.date': 1,
+                            isOpportunitie : 1
+                        }
+                    }, {
+                        $match: {
+                            $and: optionsObject
                         }
                     }, {
                         $group: {
@@ -2663,18 +2689,23 @@ var Module = function (models, event) {
                     }, {
                         $project: {
                             name            : 1,
+                            contactName     : {$concat: ['$contactName.first', ' ', '$contactName.last']},
                             customer        : {$arrayElemAt: ['$customer', 0]},
                             company         : {$arrayElemAt: ['$company', 0]},
                             salesPerson     : {$arrayElemAt: ['$salesPerson', 0]},
                             workflow        : {$arrayElemAt: ['$workflow', 0]},
+                            tags            : 1,
+                            priority        : 1,
                             'editedBy.user' : {$arrayElemAt: ['$editedBy.user', 0]},
+                            'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]},
                             expectedClosing : 1,
                             'editedBy.date' : 1,
                             source          : 1,
                             address         : 1,
                             skype           : 1,
                             social          : 1,
-                            isOpportunitie  : 1
+                            isOpportunitie  : 1,
+                            dateBirth       : 1
                         }
                     }, {
                         $match: {
@@ -2691,7 +2722,6 @@ var Module = function (models, event) {
                     }, {
                         $project: {
                             _id               : '$root._id',
-                            contactName       : {$concat: ['$root.customer.name.first', ' ', '$root.customer.name.last']},
                             'salesPerson._id' : '$root.salesPerson._id',
                             'salesPerson.name': '$root.salesPerson.name',
                             'workflow._id'    : '$root.workflow._id',
@@ -2701,9 +2731,12 @@ var Module = function (models, event) {
                             expectedClosing   : '$root.expectedClosing',
                             'editedBy.date'   : '$root.editedBy.date',
                             name              : '$root.name',
+                            priority          : '$root.priority',
+                            tags              : '$root.tags',
                             source            : '$root.source',
                             'address.country' : {$ifNull: ['$root.company.address.country', '$root.customer.address.country']},
                             skype             : '$root.customer.skype',
+                            dateBirth         : '$root.dateBirth',
                             'social.LI'       : '$root.customer.social.LI',
                             total             : 1
 
@@ -2747,12 +2780,19 @@ var Module = function (models, event) {
             }
 
             firstElement = result[0];
+
             count = firstElement && firstElement.total ? firstElement.total : 0;
 
             response.total = count;
             response.data = result;
 
-            res.status(200).send(response);
+            Tags.populate(response.data, {
+                path  : 'tags',
+                select: 'color name'
+            }, function () {
+                res.status(200).send(response);
+            });
+
         });
     }
 
@@ -2931,7 +2971,9 @@ var Module = function (models, event) {
             social          : 1,
             skype           : 1,
             tags            : 1,
-            attachments     : 1
+            attachments     : 1,
+            dateBirth       : 1,
+            jobPosition     : 1
         });
 
         query
@@ -2951,20 +2993,25 @@ var Module = function (models, event) {
             if (err) {
                 return next(err);
             }
-            getTimeLine(req, result.toJSON(), function (err, model) {
-                if (err) {
-                    return next(err);
-                }
 
-                res.status(200).send(model);
-            });
+            if (result) {
+                getTimeLine(req, result.toJSON(), function (err, model) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    res.status(200).send(model);
+                });
+            } else {
+                res.status(200).send(result);
+            }
+
         });
     }
 
     this.getById = function (req, res, next) {
         getById(req, res, next);
     };
-
 
     this.getByViewType = function (req, res, next) {
         var viewType = req.query.viewType;

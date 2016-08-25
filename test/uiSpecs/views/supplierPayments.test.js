@@ -3585,7 +3585,7 @@ define([
 
                     ajaxResponse = ajaxSpy.args[0][0];
                     expect(ajaxSpy.called).to.be.true;
-                    expect(ajaxResponse).to.have.property('url', '/payment/');
+                    expect(ajaxResponse).to.have.property('url', '/payments/');
                     expect(ajaxResponse.data).to.have.property('contentType').and.to.not.undefined;
                     expect(ajaxResponse.data).to.have.property('page', 2);
                 });
@@ -3795,7 +3795,7 @@ define([
                     $input.val('2');
                     $input.trigger('change');
 
-                    server.respondWith('PATCH', '/payment/supplier/', [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                    server.respondWith('PATCH', '/payments/supplier/', [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                     $saveBtn.click();
                     server.respond();
 
@@ -3805,7 +3805,7 @@ define([
                 });
 
                 it('Try to filter listView by Employee and Bonus Type', function () {
-                    var url = '/payment/';
+                    var url = '/payments/';
                     var contentType = 'supplierPayments';
                     var firstValue = 'supplier';
                     var secondValue = 'paymentRef';

@@ -64,7 +64,8 @@
 
             country: {
                 displayName: 'Country',
-                backend    : 'address.country'
+                backend    : 'address.country',
+                type       : 'string'
             },
 
             services: {
@@ -102,11 +103,11 @@
         },
 
         DealTasks: {
-            name: {
+            name      : {
                 displayName: 'Name',
                 backend    : '_id'
             },
-            category: {
+            category  : {
                 displayName: 'Category',
                 backend    : 'category'
             },
@@ -114,17 +115,16 @@
                 displayName: 'Assigned To',
                 backend    : 'assignedTo'
             },
-            workflow: {
+            workflow  : {
                 displayName: 'Status',
                 backend    : 'workflow'
             },
-            deal : {
+            deal      : {
                 displayName: 'Deal',
                 backend    : 'deal'
             },
 
-
-            array: ['name', 'assignedTo', 'workflow', 'deal', 'category' ]
+            array: ['name', 'assignedTo', 'workflow', 'deal', 'category']
         },
 
         Companies: {
@@ -135,7 +135,8 @@
 
             country: {
                 displayName: 'Country',
-                backend    : 'address.country'
+                backend    : 'address.country',
+                type       : 'string'
             },
 
             services: {
@@ -349,13 +350,42 @@
             array: ['name', 'customer', 'workflow', 'salesManager', 'projectManager']
         },
 
+        contractJobs: {
+            project: {
+                displayName: 'Project Name',
+                backend    : 'project._id'
+            },
+
+            customer: {
+                displayName: 'Contact',
+                backend    : 'project.customer'
+            },
+
+            workflow: {
+                displayName: 'Status',
+                backend    : 'workflow._id'
+            },
+
+            salesManager: {
+                displayName: 'Sales Manager',
+                backend    : 'salesManager.employeeId'
+            },
+
+            projectManager: {
+                displayName: 'Project Manager',
+                backend    : 'projectManager.employeeId'
+            },
+
+            array: ['project', 'customer', 'workflow', 'salesManager', 'projectManager']
+        },
+
         Leads: {
             contactName: {
                 displayName: 'Contact Name',
-                backend    : 'customer._id'
+                backend    : 'contactName',
+                type       : 'string'
             },
-
-            source: {
+            source     : {
                 displayName: 'Source',
                 backend    : 'source',
                 type       : 'string'
@@ -523,10 +553,10 @@
             },
 
             /*productType: {
-                displayName: 'Product Type',
-                backend    : 'info.productType',
-                type       : 'string'
-            },*/
+             displayName: 'Product Type',
+             backend    : 'info.productType',
+             type       : 'string'
+             },*/
 
             canBeSold: {
                 displayName: 'Can be Sold',
@@ -824,6 +854,32 @@
             },
 
             array: ['project', 'salesManager', 'type']
+        },
+
+        projectsDashboard: {
+            customer: {
+                displayName: 'Customer',
+                backend    : 'customer._id'
+            },
+
+            name: {
+                displayName: 'Project',
+                backend    : 'project._id'
+            },
+
+            workflow: {
+                displayName: 'Status',
+                backend    : 'workflow'
+            },
+
+            type: {
+                displayName: 'Type',
+                backend    : 'type',
+                type       : 'string'
+            },
+
+            array: ['workflow', 'name', 'customer', 'type']
+
         }
     };
 

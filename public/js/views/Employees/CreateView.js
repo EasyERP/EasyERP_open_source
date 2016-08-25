@@ -258,7 +258,7 @@ define([
 
             $thisEl.find('dd').find('.homeAddress').each(function (index, addressLine) {
                 el = $thisEl.find(addressLine);
-                homeAddress[el.attr('name')] = $.trim(el.val());
+                homeAddress[el.attr('name')] = $.trim(el.val()) || el.attr('data-id');
             });
 
             salary = parseInt(helpers.spaceReplacer($tr.find('[data-id="salary"] input').val()) || helpers.spaceReplacer($tr.find('[data-id="salary"]').text()), 10) || 0;
@@ -309,7 +309,7 @@ define([
                 },
 
                 social: {
-                    LI: $.trim($thisEl.find('#LI').val()),
+                    LI: $.trim($thisEl.find('#LI').val()).replace('linkedin', '[]'),
                     FB: $.trim($thisEl.find('#FB').val())
                 },
 
@@ -465,6 +465,7 @@ define([
             populate.get('#weeklySchedulerDd', CONSTANTS.URLS.WEEKLYSCHEDULER, {}, 'name', this, true);
             populate.get('#payrollStructureTypeDd', CONSTANTS.URLS.PAYROLLSTRUCTURETYPES_FORDD, {}, 'name', this, true);
             populate.get('#scheduledPayDd', CONSTANTS.URLS.SCHEDULEDPAY_FORDD, {}, 'name', this, true);
+            populate.get('#employeeCreateCountry', CONSTANTS.URLS.COUNTRIES, {}, '_id', this);
 
             common.canvasDraw({model: this.model.toJSON()}, this);
 

@@ -11,7 +11,7 @@
 //@import "base/normalize";
 @import "base/fonts";
 @import "base/base";
-//@import "base/typography";
+@import "base/typography";
 
 // Styles for grid
 @import "layouts/grid";
@@ -19,6 +19,9 @@
 
 // General styles
 
+
+//@import "general/forms";
+@import "general/buttons";
 @import "general/general";
 @import "general/forms";
 
@@ -27,6 +30,7 @@
 @import "modules/products";
 @import "modules/lists";
 @import "modules/dialog";
+@import "modules/import";
 @import "modules/opportunities";
 @import "modules/dashboard";
 @import "modules/holidays";
@@ -34,6 +38,8 @@
 @import "modules/create_tasks";
 @import "modules/dropDown";
 @import "modules/persons";
-@import "modules/projects";
+@import "modules/datapicker";
+
 
 // Styles for condition
+

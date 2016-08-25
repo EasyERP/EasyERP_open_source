@@ -27,55 +27,56 @@ var Module = function (models, event) {
     var Uploader = require('../services/fileStorage/index');
     var uploader = new Uploader();
 
+    var projectAfterLookup = {
+        type                       : 1,
+        isOwn                      : 1,
+        name                       : 1,
+        dateBirth                  : 1,
+        email                      : 1,
+        company                    : {$arrayElemAt: ['$company', 0]},
+        timezone                   : 1,
+        'address.street'           : 1,
+        'address.city'             : 1,
+        'address.state'            : 1,
+        'address.zip'              : 1,
+        'address.country'          : 1,
+        website                    : 1,
+        jobPosition                : 1,
+        skype                      : 1,
+        'phones.phone'             : 1,
+        'phones.mobile'            : 1,
+        'phones.fax'               : 1,
+        title                      : 1,
+        'salesPurchases.isCustomer': 1,
+        'salesPurchases.isSupplier': 1,
+        social                     : 1,
+        'createdBy.user'           : {$arrayElemAt: ['$createdBy.user', 0]},
+        'createdBy.date'           : 1,
+        'editedBy.user'            : {$arrayElemAt: ['$editedBy.user', 0]},
+        'editedBy.date'            : 1
+    };
+
     var projectCustomer = {
-        type                            : 1,
-        isOwn                           : 1,
-        'name.first'                    : 1,
-        'name.last'                     : 1,
-        dateBirth                       : 1,
-        email                           : 1,
-        company                         : 1,
-        department                      : 1,
-        timezone                        : 1,
-        'address.street'                : 1,
-        'address.city'                  : 1,
-        'address.state'                 : 1,
-        'address.zip'                   : 1,
-        'address.country'               : 1,
-        website                         : 1,
-        jobPosition                     : 1,
-        skype                           : 1,
-        'phones.phone'                  : 1,
-        'phones.mobile'                 : 1,
-        'phones.fax'                    : 1,
-        contacts                        : 1,
-        internalNotes                   : 1,
-        title                           : 1,
-        'salesPurchases.isCustomer'     : 1,
-        'salesPurchases.isSupplier'     : 1,
-        'salesPurchases.salesPerson'    : 1,
-        'salesPurchases.salesTeam'      : 1,
-        'salesPurchases.implementedBy'  : 1,
-        'salesPurchases.active'         : 1,
-        'salesPurchases.reference'      : 1,
-        'salesPurchases.language'       : 1,
-        'salesPurchases.receiveMessages': 1,
-        relatedUser                     : 1,
-        'social.FB'                     : 1,
-        'social.LI'                     : 1,
-        whoCanRW                        : 1,
-        'groups.owner'                  : 1,
-        'groups.users'                  : 1,
-        'groups.group'                  : 1,
-        notes                           : 1,
-        attachments                     : 1,
-        history                         : 1,
-        'createdBy.user'                : 1,
-        'createdBy.date'                : 1,
-        'editedBy.user'                 : 1,
-        'editedBy.date'                 : 1,
-        'companyInfo.info'              : 1,
-        'companyInfo.industry'          : 1
+        type                       : 1,
+        isOwn                      : 1,
+        name                       : 1,
+        dateBirth                  : 1,
+        email                      : 1,
+        company                    : '$company.name.first',
+        timezone                   : 1,
+        address                    : 1,
+        website                    : 1,
+        jobPosition                : 1,
+        skype                      : 1,
+        phones                     : 1,
+        title                      : 1,
+        'salesPurchases.isCustomer': 1,
+        'salesPurchases.isSupplier': 1,
+        social                     : 1,
+        'createdBy.user'           : '$createdBy.user.login',
+        'createdBy.date'           : 1,
+        'editedBy.user'            : '$editedBy.user.login',
+        'editedBy.date'            : 1
     };
 
     /*TODO remove after filters check*/
@@ -379,7 +380,7 @@ var Module = function (models, event) {
                 });
         }
 
-        var parallelTasks = [ getOppByCustomer];
+        var parallelTasks = [getOppByCustomer];
 
         if (customer.type === 'Company') {
             parallelTasks.push(getContactsByCompany);
@@ -445,10 +446,22 @@ var Module = function (models, event) {
             }
 
             function getTask(parallelCb) {
-                TasksSchema.find({'contact': customer._id})
+
+                var findObject = {};
+                var resDate;
+
+                if (customer.type === 'Company') {
+                    findObject.company = customer._id;
+                    resDate = 'companyDate';
+                } else {
+                    findObject.contact = customer._id;
+                    resDate = 'contactDate';
+                }
+                TasksSchema.find(findObject)
                     .populate('deal', '_id name')
                     .populate('company', '_id name imageSrc')
                     .populate('contact', '_id name imageSrc')
+                    .populate('category')
                     .populate('editedBy.user', '_id login')
                     .populate('assignedTo', '_id name fullName imageSrc')
                     .populate('workflow')
@@ -458,7 +471,7 @@ var Module = function (models, event) {
                         }
                         res = res.map(function (elem) {
                             return {
-                                date: elem.contactDate,
+                                date: elem[resDate],
                                 task: elem,
                                 _id : elem._id,
                                 user: elem.editedBy.user
@@ -484,13 +497,11 @@ var Module = function (models, event) {
         });
     }
 
-
-
     function getCustomers(req, res, next) {
         var Customers = models.get(req.session.lastDb, 'Customers', CustomerSchema);
         var query = req.query;
         var type = query.type;
-        var queryObject = {isHidden: false};
+        var queryObject = {};
 
         if (type) {
             queryObject.type = type;
@@ -656,10 +667,13 @@ var Module = function (models, event) {
                     if (err) {
                         return next(err);
                     }
-                    res.status(201).send({success: 'A new Person crate success', id: customer._id});
+                    res.status(201).send({
+                        success: 'A new Person crate success',
+                        id     : customer._id,
+                        type   : customer.type
+                    });
                 });
             });
-
 
         });
     };
@@ -668,8 +682,7 @@ var Module = function (models, event) {
         var Customers = models.get(req.session.lastDb, 'Customers', CustomerSchema);
 
         Customers.find({
-            type    : 'Company',
-            isHidden: false
+            type: 'Company'
         }, {'name.first': 1}).sort({'name.first': 1}).exec(function (err, result) {
             if (err) {
                 return next(err);
@@ -772,9 +785,8 @@ var Module = function (models, event) {
         contentSearcher = function (ids, cb) {
             var queryObject = {};
 
-            queryObject.$and = [{isHidden: false}];
-
             if (optionsObject) {
+                queryObject.$and = [];
                 queryObject.$and.push(optionsObject);
             }
 
@@ -795,13 +807,14 @@ var Module = function (models, event) {
                             case ('list'):
                                 query.sort(sort);
                                 query
-                                    .select('_id createdBy editedBy address.country email name fullName phones.phone')
+                                    .select('_id createdBy editedBy salesPurchases address.country email name fullName phones.phone')
                                     .populate('createdBy.user', 'login')
                                     .populate('editedBy.user', 'login');
                                 break;
                             case ('thumbnails'):
+                                query.sort(sort);
                                 query
-                                    .select('_id name fullName company')
+                                    .select('_id name address.country salesPurchases fullName company')
                                     .populate('company', '_id name');
                                 break;
                             // skip default
@@ -811,7 +824,6 @@ var Module = function (models, event) {
                         switch (viewType) {
                             case ('list'):
                                 query.sort(sort);
-
                                 query
                                     .select('_id editedBy createdBy salesPurchases name fullName email phones.phone phones.mobile address.country')
                                     .populate('salesPurchases.salesPerson', '_id name')
@@ -820,8 +832,9 @@ var Module = function (models, event) {
                                     .populate('editedBy.user', 'login');
                                 break;
                             case ('thumbnails'):
+                                query.sort(sort);
                                 query
-                                    .select('_id name fullName company')
+                                    .select('_id name fullName company address.country salesPurchases')
                                     .populate('company', '_id name address');
                                 break;
                             // skip default
@@ -830,6 +843,7 @@ var Module = function (models, event) {
                     case ('ownCompanies'):
                         switch (viewType) {
                             case ('list'):
+                                query.sort(sort);
                                 query
                                     .populate('salesPurchases.salesPerson', '_id name')
                                     .populate('salesPurchases.salesTeam', '_id name')
@@ -837,6 +851,7 @@ var Module = function (models, event) {
                                     .populate('editedBy.user');
                                 break;
                             case ('thumbnails'):
+                                query.sort(sort);
                                 query
                                     .select('_id name fullName company')
                                     .populate('company', '_id name address');
@@ -1072,7 +1087,7 @@ var Module = function (models, event) {
                 return next(err);
             }
 
-            result.populate('salesPurchases.salesPerson', function (err){
+            result.populate('salesPurchases.salesPerson', function (err) {
 
                 if (err) {
                     return next(err);
@@ -1226,10 +1241,9 @@ var Module = function (models, event) {
                 if (err) {
                     return next(err);
                 }
-                if (deleteHistory){
-                    historyWriter.deleteHistoryById(req, {contentId : _id});
+                if (deleteHistory) {
+                    historyWriter.deleteHistoryById(req, {contentId: _id});
                 }
-
 
                 res.status(200).send({success: 'customer removed'});
             });
@@ -1247,8 +1261,8 @@ var Module = function (models, event) {
             if (err) {
                 return next(err);
             }
-            if (deleteHistory){
-                historyWriter.deleteHistoryById(req, {contentId :  {$in: ids}});
+            if (deleteHistory) {
+                historyWriter.deleteHistoryById(req, {contentId: {$in: ids}});
             }
 
             res.status(200).send(removed);
@@ -1258,20 +1272,14 @@ var Module = function (models, event) {
     this.exportToXlsx = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
 
-        var filter = req.query.filter || JSON.stringify({});
+        var filter = req.query.filter ? JSON.parse(req.query.filter) : JSON.stringify({});
         var type = req.query.type;
         var filterObj = {};
         var options;
-        var matchObject = {};
-        var data = {};
         var filterMapper = new FilterMapper();
 
-        filter = JSON.parse(filter);
-
-        data.filter = filter;
-
         if (filter && typeof filter === 'object') {
-            filterObj = filterMapper.mapFilter(filter, type);
+            filterObj = filterMapper.mapFilter(filter, 'Customers');
 
             if (filter && filter.services) {
                 if (filter.services.value.indexOf('isCustomer') !== -1) {
@@ -1285,6 +1293,8 @@ var Module = function (models, event) {
             delete filterObj.services;
         }
 
+        filterObj.type = type === 'Persons' ? 'Person' : 'Company';
+
         options = {
             res         : res,
             next        : next,
@@ -1297,12 +1307,32 @@ var Module = function (models, event) {
         function lookupForCustomers(cb) {
             var query = [];
 
-            query.push({$match: matchObject});
-
-            if (filterObj && filterObj.$and && filterObj.$and.length) {
-                query.push({$match: filterObj});
-            }
-            query.push({$project: projectCustomer});
+            query.push({$match: filterObj}, {
+                $lookup: {
+                    from        : 'Users',
+                    localField  : 'createdBy.user',
+                    foreignField: '_id',
+                    as          : 'createdBy.user'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Users',
+                    localField  : 'editedBy.user',
+                    foreignField: '_id',
+                    as          : 'editedBy.user'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Customers',
+                    localField  : 'company',
+                    foreignField: '_id',
+                    as          : 'company'
+                }
+            }, {
+                $project: projectAfterLookup
+            }, {
+                $project: projectCustomer
+            });
 
             options.query = query;
             options.cb = cb;
@@ -1328,20 +1358,14 @@ var Module = function (models, event) {
     this.exportToCsv = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
 
-        var filter = req.query.filter || JSON.stringify({});
+        var filter = req.query.filter ? JSON.parse(req.query.filter) : JSON.stringify({});
         var type = req.query.type;
         var filterObj = {};
         var options;
-        var matchObject = {};
-        var data = {};
         var filterMapper = new FilterMapper();
 
-        filter = JSON.parse(filter);
-
-        data.filter = filter;
-
         if (filter && typeof filter === 'object') {
-            filterObj = filterMapper.mapFilter(filter, type);
+            filterObj = filterMapper.mapFilter(filter, 'Customers');
 
             if (filter && filter.services) {
                 if (filter.services.value.indexOf('isCustomer') !== -1) {
@@ -1355,6 +1379,8 @@ var Module = function (models, event) {
             delete filterObj.services;
         }
 
+        filterObj.type = type === 'Persons' ? 'Person' : 'Company';
+
         options = {
             res         : res,
             next        : next,
@@ -1367,12 +1393,32 @@ var Module = function (models, event) {
         function lookupForCustomers(cb) {
             var query = [];
 
-            query.push({$match: matchObject});
-
-            if (filterObj && filterObj.$and && filterObj.$and.length) {
-                query.push({$match: filterObj});
-            }
-            query.push({$project: projectCustomer});
+            query.push({$match: filterObj}, {
+                $lookup: {
+                    from        : 'Users',
+                    localField  : 'createdBy.user',
+                    foreignField: '_id',
+                    as          : 'createdBy.user'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Users',
+                    localField  : 'editedBy.user',
+                    foreignField: '_id',
+                    as          : 'editedBy.user'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Customers',
+                    localField  : 'company',
+                    foreignField: '_id',
+                    as          : 'company'
+                }
+            }, {
+                $project: projectAfterLookup
+            }, {
+                $project: projectCustomer
+            });
 
             options.query = query;
             options.cb = cb;

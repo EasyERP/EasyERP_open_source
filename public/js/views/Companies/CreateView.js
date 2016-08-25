@@ -8,8 +8,9 @@ define([
     'models/CompaniesModel',
     'common',
     'custom',
-    'constants'
-], function (Backbone, $, _, ParentView, CreateTemplate, SalesPurchasesView, CompanyModel, common, custom, CONSTANTS) {
+    'constants',
+    'populate'
+], function (Backbone, $, _, ParentView, CreateTemplate, SalesPurchasesView, CompanyModel, common, custom, CONSTANTS, populate) {
     'use strict';
     var CreateView = ParentView.extend({
         el         : '#content-holder',
@@ -71,7 +72,7 @@ define([
 
             this.$el.find('.person-info').find('.address').each(function () {
                 var el = $(this);
-                address[el.attr('name')] = $.trim(el.val());
+                address[el.attr('name')] = $.trim(el.val() || el.text());
             });
 
             $('.groupsAndUser tr').each(function () {
@@ -89,8 +90,6 @@ define([
                 name    : name,
                 imageSrc: this.imageSrc,
                 email   : email,
-                isHidden : this.saveDeal ? true : false,
-
                 social: {
                     LI: LI,
                     FB: FB
@@ -138,8 +137,9 @@ define([
                     if (self.saveDeal && (typeof self.saveDeal === 'function')) {
                         self.saveDeal({company : res.id}, 'formProperty');
                     } else {
+                        custom.getFiltersValues(true); // added for refreshing filters after creating
+
                         navigateUrl = (viewType === 'form') ? '#easyErp/Companies/form/' + res.id : window.location.hash;
-                        Backbone.history.fragment = '';
                         Backbone.history.navigate(navigateUrl, {trigger: true});
                     }
 
@@ -189,6 +189,8 @@ define([
                     parrent: self
                 }).render().el
             );
+
+            populate.get('#countryInputCreate', CONSTANTS.URLS.COUNTRIES, {}, '_id', this);
 
             common.canvasDraw({model: companyModel.toJSON()}, this);
 

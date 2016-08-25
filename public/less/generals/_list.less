@@ -1,4 +1,14 @@
-.list(@font-size: 12px, @defaultProgressColor: #f5f5f5, @defaultBorderColor: @list-border-color) {
+.salary-list {
+  tbody#listTable {
+    .subRow {
+      &:hover {
+        background-color: transparent;
+      }
+    }
+  }
+}
+
+.list {
   font-family: @fontRegular;
   width: 100%;
 
@@ -9,10 +19,7 @@
     text-overflow: ellipsis;
     box-sizing: border-box;
     color: @mainText-color;
-    font-size: @font-size;
-  }
-  td {
-    overflow: hidden;
+    font-size: 12px;
   }
 
   thead {
@@ -23,7 +30,6 @@
     }
 
     th {
-      font-size: @font-size;
       font-family: @fontSemiBold;
       text-align: right;
     }
@@ -32,9 +38,8 @@
   tbody {
 
     td {
-      //border: @thin-border @defaultBorderColor;
       text-align: right;
-      height: 50px;
+      height: 45px;
       &.changeContent {
         border-top: 2px solid @success;
         border-bottom: 2px solid @success;
@@ -43,7 +48,7 @@
 
     tr {
       &:last-child {
-        border-bottom: @thin-border @defaultBorderColor;
+        border-bottom: @thin-border @list-border-color;
       }
     }
   }
@@ -51,7 +56,7 @@
   tbody,
   thead {
     tr {
-      border-top: @thin-border @defaultBorderColor;
+      border-top: @thin-border @list-border-color;
     }
   }
 
@@ -76,11 +81,10 @@
     }
   }
 
-  .oe_sortable, .oe_sortable_sub {
-    //style for sort arrows in thead
+  .oe_sortable,
+  .oe_sortable_sub {
     cursor: pointer;
     position: relative;
-    //padding-right: 15px;
     .arrow {
       display: none;
       text-align: center;
@@ -111,13 +115,7 @@
   }
 
   .enableTableOdd {
-    // class to enabled table odd color (add to tbody)
     tr {
-      //&:nth-child(odd) {
-      //  &:not(.innerRow) {
-      //    background-color: @defaultBgColorOdd-color;
-      //  }
-      //}
       &:not(.innerRow) {
         &:hover {
           background-color: @defaultBgColorOdd-color;
@@ -127,7 +125,6 @@
   }
 
   .centerCell {
-    //(add to td)
     text-align: center;
   }
 
@@ -141,7 +138,6 @@
     }
   }
   &.enable_hover {
-    // enable hover in table (add to table)
     tbody {
       tr {
         &:hover {
@@ -154,21 +150,6 @@
   .overtime { //add new color for overtime tr
     background-color: @list-overtime-bg !important;
   }
-}
-
-.salary-list {
-  tbody#listTable {
-    .subRow {
-      &:hover {
-        background-color: transparent;
-      }
-    }
-  }
-}
-
-.list2 {
-  .list;
-  table-layout: fixed;
 
   thead th:first-of-type {
     width: 15%;
@@ -199,10 +180,6 @@
       }
     }
   }
-}
-
-.margin(@t: 5px, @r: 5px, @b: 5px, @l: 5px) {
-  margin: @arguments;
 }
 
 .tableFixed {

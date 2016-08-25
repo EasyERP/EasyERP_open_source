@@ -1153,7 +1153,7 @@ var Module = function (models, event) {
 
     this.exportToXlsx = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
-        var filter = JSON.parse(req.params.filter);
+        var filter = req.query.filter ? JSON.parse(req.query.filter) : JSON.stringify({});
         var filterObj = {};
         var type = req.query.type;
         var options;
@@ -1303,7 +1303,7 @@ var Module = function (models, event) {
 
     this.exportToCsv = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
-        var filter = JSON.parse(req.params.filter);
+        var filter = req.query.filter ? JSON.parse(req.query.filter) : JSON.stringify({});
         var filterObj = {};
         var type = req.query.type;
         var options;
@@ -4454,20 +4454,18 @@ var Module = function (models, event) {
                         debit       : 1,
                         salesmanager: {$arrayElemAt: ['$salesManager', 0]}
                     }
-                },
-                    {
-                        $match: filterObject
-                    },
-                    {
-                        $project: {
-                            _id         : 1,
-                            name        : 1,
-                            project     : 1,
-                            debit       : 1,
-                            salesmanager: {$concat: ['$salesmanager.name.first', ' ', '$salesmanager.name.last']}
-                        }
-
+                }, {
+                    $match: filterObject
+                }, {
+                    $project: {
+                        _id         : 1,
+                        name        : 1,
+                        project     : 1,
+                        debit       : 1,
+                        salesmanager: {$concat: ['$salesmanager.name.first', ' ', '$salesmanager.name.last']}
                     }
+
+                }
                 ], function (err, result) {
                     if (err) {
                         return pCb(err);
@@ -4493,18 +4491,69 @@ var Module = function (models, event) {
                         as          : 'sourceDocument'
                     }
                 }, {
+                    $lookup: {
+                        from        : 'Project',
+                        localField  : 'project',
+                        foreignField: '_id',
+                        as          : 'project'
+                    }
+                }, {
                     $project: {
                         sourceDocument: {$arrayElemAt: ['$sourceDocument', 0]},
+                        project       : {$arrayElemAt: ['$project', 0]},
                         debit         : 1,
                         date          : 1
                     }
                 }, {
-                    $project: {
-                        _id  : '$sourceDocument._id',
-                        name : '$sourceDocument.name',
-                        debit: 1,
-                        date : 1
+                    $lookup: {
+                        from        : 'projectMembers',
+                        localField  : 'project._id',
+                        foreignField: 'projectId',
+                        as          : 'projectMembers'
                     }
+                }, {
+                    $project: {
+                        _id    : '$sourceDocument._id',
+                        name   : '$sourceDocument.name',
+                        project: 1,
+                        debit  : 1,
+                        date   : 1,
+
+                        salesManagers: {
+                            $filter: {
+                                input: '$projectMembers',
+                                as   : 'projectMember',
+                                cond : {
+                                    $and: [{
+                                        $eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALESMANAGER)]
+                                    }, {
+                                        $eq: ['$$projectMember.endDate', null]
+                                    }]
+                                }
+                            }
+                        }
+                    }
+                }, {
+                    $project: {
+                        _id         : 1,
+                        name        : 1,
+                        project     : 1,
+                        debit       : 1,
+                        date        : 1,
+                        salesmanager: {$arrayElemAt: ['$salesManager', 0]}
+                    }
+                }, {
+                    $match: filterObject
+                }, {
+                    $project: {
+                        _id         : 1,
+                        name        : 1,
+                        project     : 1,
+                        debit       : 1,
+                        date        : 1,
+                        salesmanager: {$concat: ['$salesmanager.name.first', ' ', '$salesmanager.name.last']}
+                    }
+
                 }], function (err, result) {
                     if (err) {
                         return pCb(err);
@@ -4550,6 +4599,7 @@ var Module = function (models, event) {
 
                     newElement.project = project ? project._id : null;
                     newElement.projectName = project ? project.name : '-----';
+                    newElement.projecttype = project ? project.projecttype : '-----';
 
                     newElement.openingBalance = opening ? opening.debit / 100 : 0;
                     newElement.inwards = inwards ? inwards.debit / 100 : 0;
@@ -4557,11 +4607,14 @@ var Module = function (models, event) {
                     newElement.closingBalance = newElement.openingBalance + newElement.inwards - newElement.outwards;
 
                     if (newElement.name && !(outwards && outwards.date < startDate)) {
-                        resultArray.push(newElement);
-                    } else {
-                        console.log(outwards ? outwards.date : newElement.name, startDate);
+                        if (!Object.keys(filterObject)) {
+                            resultArray.push(newElement);
+                        } else {
+                            if (newElement.inwards || newElement.outwards) {
+                                resultArray.push(newElement);
+                            }
+                        }
                     }
-
                 });
 
                 if (sortField) { // need refactor on aggregate function
@@ -5582,7 +5635,7 @@ var Module = function (models, event) {
 
                     newAccounts.forEach(function (acc) {
                         var balance = _.find(result[3], function (el) {
-                            return el._id.toString() === acc._id.toString();
+                            return el && el._id ? el._id.toString() === acc._id.toString() : null;
                         });
 
                         balance = balance || {};

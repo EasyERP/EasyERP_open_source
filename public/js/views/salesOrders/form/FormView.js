@@ -6,7 +6,7 @@ define([
     var FormView = ParentView.extend({
         forSales   : true,
         contentType: CONSTANTS.SALESORDERS,
-        service: true
+        service    : true
     });
 
     return FormView;

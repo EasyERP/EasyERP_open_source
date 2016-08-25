@@ -29,22 +29,21 @@
                         </div>
                         <div class="propertyFormList">
                             <label>Assigned To</label>
-                            <div  class="inputBox">
-                                <a  class="current-selected assignName"  href="javascript:;" id="salesPersonDd"  data-id="salesPerson"><%=(salesPerson) ? salesPerson.name.first + ' ' + salesPerson.name.last : 'Select'%></a>
+                            <div class="inputBox _newSelectListWrap">
+                                <a class="current-selected assignName"  href="javascript:;" id="salesPersonDd"  data-id="salesPerson"><%=(salesPerson) ? salesPerson.name.first + ' ' + salesPerson.name.last : 'Select'%></a>
                             </div>
                         </div>
                         <div class="tags-container"></div>
                     </div>
                     <div class="propertyEditBtn" id="formBtnBlock">
 
-                        <a href="javascript:;" id="saveBtn" class=" btn btnRounded btnSave">Save</a>
+                        <a href="javascript:;" id="saveBtn" class=" btn  btnSave">Save</a>
 
-                        <a href="javascript:;" id="cancelBtn" class=" btn btnRounded">Cancel</a>
+                        <a href="javascript:;" id="cancelBtn" class=" btn ">Cancel</a>
                     </div>
                 </div>
-
-                <div id="companyHolder"></div>
                 <div id="contactHolder"></div>
+                <div id="companyHolder"></div>
                 <div class="attachments"></div>
             </div>
             <div class="floatColumn col6-10">

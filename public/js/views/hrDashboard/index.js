@@ -723,6 +723,8 @@ define([
             var j;
             var i;
 
+            d3.select('.salaryChart > *').remove();
+
             common.getSalary({
                 month: this.month,
                 year : this.year
@@ -878,6 +880,8 @@ define([
             var rect;
             var max;
             var i;
+
+            d3.select('.salaryByDepartmentChart > *').remove();
 
             common.getSalaryByDepartment({
                 month: this.month,

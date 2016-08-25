@@ -51,5 +51,7 @@ module.exports = {
     CASHBOOK          : 105,
     CASHTRANSFER      : 106,
     WRITEOFF          : 107,
-    DEALTASKS         : 110
+    DEALTASKS         : 110,
+    CONTRACTJOBS      : 115,
+    PROJECTSDASHBOARD : 116
 };

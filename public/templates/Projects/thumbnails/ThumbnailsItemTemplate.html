@@ -14,15 +14,15 @@
 				<span class="health-container">
 				  <a href="javascript:;" data-value="<%=project.health%>" class="health<%=project.health%>"></a>
 				  <ul>
-                    <li>
-                      <div class="health1"></div>
-                    </li>
-                    <li>
-                      <div class="health2"></div>
-                    </li>
-                    <li>
-                      <div class="health3"></div>
-                    </li>
+                      <li>
+                          <div class="health1"></div>
+                      </li>
+                      <li>
+                          <div class="health2"></div>
+                      </li>
+                      <li>
+                          <div class="health3"></div>
+                      </li>
                   </ul>
 
 				</span>
@@ -38,9 +38,9 @@
     <div class="bottom">
         <div class="half-block left">
             <div class="left"><label>Project Type: </label>&nbsp;</div>
-            <div class="forProjectsTypes">
-                    <a class="current-selected"
-                       href="javascript:;"><%=project.projecttype? project.projecttype:'Select'%></a>
+            <div class="forProjectsTypes _newSelectListWrap">
+                <a class="current-selected"
+                   href="javascript:;"><%=project.projecttype? project.projecttype:'Select'%></a>
             </div>
 
             <p class="inner">
@@ -50,10 +50,12 @@
             <div class="inner">
                 <div class="left"><label>Status: </label>&nbsp;</div>
                 <div class="left forStage">
-                    <a href="javascript:;"
-                       class="stageSelect <%=(project.workflow) ? (project.workflow.name.toLowerCase().replace(' ','') === 'closed' ? 'projectClosed' : project.workflow.name.toLowerCase().replace(' ','') ) : '' %>">
-                        <%=(project.workflow) ? project.workflow.name : ''%>
-                    </a>
+                    <div class="_newSelectListWrap">
+                        <a href="javascript:;"
+                           class="stageSelect <%=(project.workflow) ? (project.workflow.name.toLowerCase().replace(' ','') === 'closed' ? 'projectClosed' : project.workflow.name.toLowerCase().replace(' ','') ) : '' %>">
+                            <%=(project.workflow) ? project.workflow.name : ''%>
+                        </a>
+                    </div>
                 </div>
                 <!--<span class="status <%=(project.workflow && project.workflow.status) ? project.workflow.status.toLowerCase().split(' ').join('') : ''%>"><%=(project.workflow) ? project.workflow.status : ''%></span>-->
             </div>

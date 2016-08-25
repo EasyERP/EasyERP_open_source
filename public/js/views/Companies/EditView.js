@@ -127,7 +127,7 @@ define([
                     city   : this.$el.find('#city').val(),
                     state  : this.$el.find('#state').val(),
                     zip    : this.$el.find('#zip').val(),
-                    country: this.$el.find('#country').val()
+                    country: this.$el.find('#country').attr('data-id')
                 },
 
                 website       : this.$el.find('#websiteEdit').val(),

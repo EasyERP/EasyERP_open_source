@@ -13,8 +13,9 @@ define([
     'constants',
     'dataService',
     'views/selectView/selectView',
-    'populate'
-], function (Backbone, _, $, OpportunitiesFormTemplate, workflowProgress,aboutTemplate, EditorView, AttachView, CompanyFormProperty, ContactFormProperty, TagView, constants, dataService, SelectView, populate) {
+    'populate',
+    'moment'
+], function (Backbone, _, $, OpportunitiesFormTemplate, workflowProgress, aboutTemplate, EditorView, AttachView, CompanyFormProperty, ContactFormProperty, TagView, constants, dataService, SelectView, populate, moment) {
     'use strict';
 
     var FormOpportunitiesView = Backbone.View.extend({
@@ -38,7 +39,7 @@ define([
             'click .tabListItem'                               : 'changeWorkflow',
             'click .current-selected:not(.jobs)'               : 'showNewSelect',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
-            'click #convertToOpportunity'                      : 'convertToOpp'
+            'click #convertToOpportunity'                      : 'openDialog'
         },
 
         hideNewSelect: function () {
@@ -49,19 +50,30 @@ define([
             }
         },
 
-        convertToOpp : function (e){
+        openDialog: function (e) {
             e.preventDefault();
-            this.saveDeal({
-                isOpportunitie : true,
-                isConverted    : true,
-                convertedDate  : new Date()
-            }, 'converted');
+            $('#convert-dialog-form').dialog('open');
         },
+
+        /*   convertToOpp : function (e){
+         e.preventDefault();
+         this.saveDeal({
+         isOpportunitie : true,
+         isConverted    : true,
+         convertedDate  : new Date()
+         }, 'converted');
+         },*/
 
         setChangeValueToModel: function (e) {
             var $target = $(e.target);
-            var property = $target.attr('data-id').replace('_', '.');
+            var property = $target.attr('id').replace('_', '.');
             var value = $target.val();
+
+            $target.closest('.propertyFormList').addClass('active');
+
+            if (property === 'social.LI') {
+                value = value.replace('linkedin', '[]');
+            }
 
             this.modelChanged[property] = value;
             this.showButtons();
@@ -129,7 +141,7 @@ define([
         chooseOption: function (e) {
             var $target = $(e.target);
             var holder = $target.parents('.inputBox').find('.current-selected');
-            var type = $target.closest('a').attr('data-id');
+            var type = $target.closest('a').attr('data-id').replace('_', '.');
             var text = $target.text();
             var id = $target.attr('id');
 
@@ -140,6 +152,16 @@ define([
             if (type === 'salesPerson') {
                 this.$el.find('#assignedToDd').text(text).attr('data-id', id);
             }
+
+            if (type === 'customer') {
+                this.selectCustomer(id);
+            }
+
+            if (type === 'company') {
+                this.selectCompany(id);
+            }
+
+            holder.closest('.propertyFormList').addClass('active');
             this.showButtons();
         },
 
@@ -152,6 +174,7 @@ define([
 
             this.formModel.save(changedAttrs, {
                 patch  : true,
+                wait   : true,
                 success: function () {
                     if (type === 'formProperty') {
                         Backbone.history.fragment = '';
@@ -163,10 +186,11 @@ define([
                         Backbone.history.navigate('easyErp/Opportunities', {trigger: true});
                     } else {
                         self.editorView.renderTimeline();
+                        self.renderAbout();
                         self.modelChanged = {};
                         self.hideButtons();
 
-                        if (sendEvent){
+                        if (sendEvent) {
 
                             if (changedAttrs.hasOwnProperty('salesPerson')) {
                                 changedAttrs.salesPerson = $thisEl.find('#salesPersonDd').text().trim();
@@ -176,7 +200,7 @@ define([
                                 changedAttrs.source = $thisEl.find('#sourceDd').text().trim();
                             }
 
-                            if(changedAttrs.hasOwnProperty('workflow')) {
+                            if (changedAttrs.hasOwnProperty('workflow')) {
                                 changedAttrs.workflow = $thisEl.find('.tabListItem.active span').text().trim();
                             }
 
@@ -211,6 +235,63 @@ define([
             );
         },
 
+        selectCompany: function (id) {
+            dataService.getData(constants.URLS.CUSTOMERS, {
+                id: id
+            }, function (response, context) {
+                var customer = response;
+
+                context.$el.find('#company').val(customer.name.first);
+
+                context.$el.find('#address_street').val(customer.address.street);
+                context.$el.find('#address_city').val(customer.address.city);
+                context.$el.find('#address_state').val(customer.address.state);
+                context.$el.find('#address_zip').val(customer.address.zip);
+                context.$el.find('#address_country').attr('data-id', customer.address.country);
+                context.$el.find('#address_country').text(customer.address.country);
+                context.$el.find('#tempCompanyField').val(customer.name.first);
+                context.modelChanged.address = {
+                    street : customer.address.street,
+                    city   : customer.address.city,
+                    state  : customer.address.state,
+                    zip    : customer.address.zip,
+                    country: customer.address.country
+                };
+                context.modelChanged.tempCompanyField = customer.name.first;
+
+            }, this);
+
+        },
+
+        selectCustomer: function (id) {
+
+            dataService.getData(constants.URLS.CUSTOMERS, {
+                id: id
+            }, function (response, context) {
+                var customer = response;
+
+                context.modelChanged.contactName = {
+                    first: customer.name.first,
+                    last : customer.name.last
+                };
+                context.modelChanged.email = customer.email;
+                context.modelChanged.phones = {
+                    phone: customer.phones.phone
+                };
+                context.modelChanged.social = {
+                    LI: customer.social.LI.replace('linkedin', '[]')
+                };
+
+                context.$el.find('#contactName_first').val(customer.name.first);
+                context.$el.find('#contactName_last').val(customer.name.last);
+                context.$el.find('#dateBirth').val(customer.dateBirth ? moment(new Date(customer.dateBirth)).format('DD MMM, YYYY') : '');
+                context.$el.find('#email').val(customer.email);
+                context.$el.find('#phones_phone').val(customer.phones.phone);
+                context.$el.find('#social_LI').val(customer.social.LI.replace('[]', 'linkedin'));
+            }, this);
+
+        },
+
         deleteItems: function () {
             var mid = 39;
 
@@ -225,10 +306,10 @@ define([
 
         },
 
-        renderAbout : function (){
+        renderAbout: function () {
             var self = this;
             var $thisEl = this.$el;
-            $thisEl.find('.aboutHolder').html(_.template(aboutTemplate, this.formModel.toJSON()));
+            $thisEl.find('.aboutHolder').html(_.template(aboutTemplate, {model: self.formModel.toJSON()}));
             this.renderTags();
             $thisEl.find('#expectedClosing').datepicker({
                 dateFormat : 'd M, yy',
@@ -238,16 +319,28 @@ define([
                     self.modelChanged['expectedClosing'] = new Date(dateText);
                     self.showButtons();
                 }
+            });
+
+            $thisEl.find('#dateBirth').datepicker({
+                dateFormat : 'd M, yy',
+                changeMonth: true,
+                changeYear : true,
+                onSelect   : function (dateText) {
+                    self.modelChanged['dateBirth'] = new Date(dateText);
+                    self.showButtons();
+                }
 
             });
+
         },
 
         render: function () {
             var formModel = this.formModel.toJSON();
             var self = this;
+            var that = this;
             var $thisEl = this.$el;
 
-            $thisEl.html(_.template(OpportunitiesFormTemplate, formModel));
+            $thisEl.html(_.template(OpportunitiesFormTemplate, {model: formModel}));
 
             dataService.getData('/workflows/', {id: 'Leads'}, function (response) {
                 self.responseObj = {workflows: response.data};
@@ -266,35 +359,68 @@ define([
 
                 self.responseObj['#salesPersonDd'] = employees;
             });
+            dataService.getData('/customers', {type: 'Person'}, function (employees) {
+                employees = _.map(employees.data, function (employee) {
+                    employee.name = employee.fullName;
 
-            this.formProperty = new CompanyFormProperty({
-                data       : formModel.company,
-                saveDeal   : self.saveDeal,
-                isLead     : true
+                    return employee;
+                });
+
+                self.responseObj['#customerDd'] = employees;
+            });
+            dataService.getData('/customers', {type: 'Company'}, function (employees) {
+                employees = _.map(employees.data, function (employee) {
+                    employee.name = employee.fullName;
+
+                    return employee;
+                });
+
+                self.responseObj['#companyDd'] = employees;
             });
 
+            dataService.getData('/countries/getForDD', {}, function (countries) {
+
+                self.responseObj['#address_country'] = countries.data;
+            });
             this.renderTags();
-
-            $thisEl.find('#companyHolder').html(
-                this.formProperty.render().el
-            );
-
-            $thisEl.find('#contactHolder').html(
-                new ContactFormProperty({
-                    data       : formModel.customer,
-                    saveDeal   : self.saveDeal,
-                    isLead     : true
-                }).render().el
-            );
 
             this.editorView = new EditorView({
                 model      : this.formModel,
-                contentType: 'opportunities'
+                contentType: 'Opportunities'
             });
 
             $thisEl.find('.notes').append(
                 this.editorView.render().el
             );
+
+            $('#convert-dialog-form').dialog({
+                autoOpen: false,
+                height  : 150,
+                width   : 350,
+                modal   : true,
+                title   : 'Convert to opportunity',
+                buttons : {
+                    'Create opportunity': function () {
+                        var createCustomer = ($('select#createCustomerOrNot option:selected').val()) ? true : false;
+
+                        that.saveDeal({
+                            isOpportunitie: true,
+                            isConverted   : true,
+                            convertedDate : new Date(),
+                            createCustomer: createCustomer
+                        }, 'converted');
+
+                    },
+
+                    Cancel: function () {
+                        $(this).dialog('close');
+                    }
+                },
+
+                close: function () {
+                    $(this).dialog('close');
+                }
+            }, this);
 
             $thisEl.find('#expectedClosing').datepicker({
                 dateFormat : 'd M, yy',
@@ -302,16 +428,41 @@ define([
                 changeYear : true,
                 onSelect   : function (dateText) {
                     self.modelChanged['expectedClosing'] = new Date(dateText);
+                    $(this).closest('.propertyFormList').addClass('active');
                     self.showButtons();
                 }
 
+            });
+
+            $thisEl.find('#dateBirth').datepicker({
+                dateFormat : 'd M, yy',
+                changeMonth: true,
+                changeYear : true,
+                yearRange  : '-100y:c+nn',
+                maxDate    : '-18y',
+                minDate    : null,
+                onSelect   : function (dateText) {
+                    self.modelChanged['dateBirth'] = new Date(dateText);
+                    $(this).closest('.propertyFormList').addClass('active');
+                    self.showButtons();
+                }
+
+            });
+
+            dataService.getData('/leads/priority', {}, function (priorities) {
+                priorities = _.map(priorities.data, function (priority) {
+                    priority.name = priority.priority;
+
+                    return priority;
+                });
+                self.responseObj['#priorityDd'] = priorities;
             });
             populate.get('#sourceDd', '/employees/sources', {}, 'name', this);
 
             $thisEl.find('.attachments').append(
                 new AttachView({
                     model      : this.formModel,
-                    contentType: 'opportunities'
+                    contentType: 'Opportunities'
                 }).render().el
             );
 

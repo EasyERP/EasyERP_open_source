@@ -241,7 +241,8 @@ define([
                     context.$el.find('#city').val(customer.address.city);
                     context.$el.find('#state').val(customer.address.state);
                     context.$el.find('#zip').val(customer.address.zip);
-                    context.$el.find('#country').val(customer.address.country);
+                    context.$el.find('#country').attr('data-id', customer.address.country);
+                    context.$el.find('#country').text(customer.address.country);
                 }, this);
             } else {
                 this.$el.find('#email').val('');
@@ -324,6 +325,7 @@ define([
             });
             populate.getWorkflow('#workflowsDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'Leads'}, 'name', this, null);
             populate.get2name('#customerDd', CONSTANTS.URLS.CUSTOMERS, {}, this, null, true);
+            populate.get('#country', CONSTANTS.URLS.COUNTRIES, {}, 'name', true, true);
             dataService.getData('/employees/getForDD', {isEmployee: true}, function (employees) {
                 employees = _.map(employees.data, function (employee) {
                     employee.name = employee.name.first + ' ' + employee.name.last;

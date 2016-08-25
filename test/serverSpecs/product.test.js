@@ -104,7 +104,7 @@ describe('Product Specs', function () {
             };
 
             aggent
-                .patch('product/' + id)
+                .patch('products/' + id)
                 .send(body)
                 .expect(200, done);
         });
@@ -113,7 +113,7 @@ describe('Product Specs', function () {
             var body = {};
 
             aggent
-                .patch('product/123cba')
+                .patch('products/123cba')
                 .send(body)
                 .expect(500, done);
 
@@ -122,7 +122,7 @@ describe('Product Specs', function () {
         it('should get products Alphabet', function (done) {
 
             aggent
-                .get('product/getProductsAlphabet')
+                .get('products/getProductsAlphabet')
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -170,7 +170,7 @@ describe('Product Specs', function () {
         it('should get products images', function (done) {
 
             aggent
-                .get('product/getProductsImages')
+                .get('products/getProductsImages')
                 .query({'ids[0]': id})
                 .expect(200)
                 .end(function (err, res) {
@@ -198,7 +198,7 @@ describe('Product Specs', function () {
         it('should get productsType for Dd', function (done) {
 
             aggent
-                .get('product/getProductsTypeForDd')
+                .get('products/getProductsTypeForDd')
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -228,7 +228,7 @@ describe('Product Specs', function () {
             };
 
             aggent
-                .get('product/totalCollectionLength')
+                .get('products/totalCollectionLength')
                 .query(query)
                 .query({'filter[canBeSold][value][0]': true})
                 .expect(200)
@@ -256,7 +256,7 @@ describe('Product Specs', function () {
             };
 
             aggent
-                .get('product/')
+                .get('products/')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -281,7 +281,7 @@ describe('Product Specs', function () {
             };
 
             aggent
-                .get('product/')
+                .get('products/')
                 .query(query)
                 .expect(400, done);
 
@@ -310,7 +310,7 @@ describe('Product Specs', function () {
             };
 
             aggent
-                .get('product/')
+                .get('products/')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -341,13 +341,13 @@ describe('Product Specs', function () {
 
         it('should delete product', function (done) {
             aggent
-                .delete('product/' + id)
+                .delete('products/' + id)
                 .expect(200, done);
         });
 
         it('should fail delete product', function (done) {
             aggent
-                .delete('product/123cba')
+                .delete('products/123cba')
                 .expect(500, done);
         });
 
@@ -414,7 +414,7 @@ describe('Product Specs', function () {
         it('should fail get Product for View', function (done) {
 
             aggent
-                .get('product/')
+                .get('products/')
                 .expect(404, done);
         });
 

@@ -1,5 +1,7 @@
 define([], function () {
     return {
+        IMPORT            : 'import',
+        IMPORT_HISTORY    : 'importHistory',
         PERSONS           : 'Persons',
         COMPANIES         : 'Companies',
         LEADS             : 'Leads',
@@ -67,6 +69,9 @@ define([], function () {
         PURCHASEPAYMENTS  : 'purchasePayments',
         CASHBOOK          : 'cashBook', // cash book
         CASHTRANSFER      : 'cashTransfer',
+        REPORTSDASHBOARD  : 'reportsDashboard',
+        CONTRACTJOBS      : 'contractJobs',
+        PROJECTSDASHBOARD : 'projectsDashboard',
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
@@ -115,6 +120,7 @@ define([], function () {
         DEFAULT_THUMBNAILS_PER_PAGE: 50,
 
         URLS: {
+            IMPORT_HISTORY             : '/importFile/history',
             PROFILES_FOR_DD            : '/profiles/forDd',
             CURRENT_USER               : '/users/current',
             USERS                      : '/users/',
@@ -155,7 +161,7 @@ define([], function () {
             BONUSTYPE_FORDD            : '/bonusType/getForDD',
             CAPACITY                   : '/capacity/',
             PAYMENTCUSTOMERS           : '/payments/',
-            EMPLOYEES_PERSONSFORDD     : '/employees/getPersonsForDd',
+            EMPLOYEES_PERSONSFORDD     : '/employees/getForDd',
             CUSTOMERS                  : '/customers/',
             DASHBOARD_HR               : 'dashboard/hr',
             DASHBOARD_VACATION         : 'dashboard/vacation',
@@ -177,6 +183,7 @@ define([], function () {
             APPLICATIONS_WFLENGTH      : '/applications/getApplicationsLengthByWorkflows',
             APPLICATIONS_KANBAN        : '/applications/',
             EMPLOYEES_NATIONALITY      : '/employees/nationality',
+            COUNTRIES                  : '/countries/getForDD',
             JOBPOSITIONS_JOBTYPE       : '/jobPositions/jobType',
             JOBPOSITIONS_FORDD         : '/jobPositions/getForDd',
             DEPARTMENTS_FORDD          : '/departments/getForDD',
@@ -197,7 +204,9 @@ define([], function () {
             SCHEDULEDPAY_FORDD         : '/scheduledPay/forDd',
             PAYROLLSTRUCTURETYPES_FORDD: '/payrollStructureTypes/forDd',
             PAYMENT_METHOD_DD          : 'paymentMethod/',
-            DEALTASKS                  : '/dealTasks/',
+            DEALTASKS                  : '/DealTasks/',
+            CONTRACTJOBS               : '/contractJobs/',
+            PROJECTSDASHBOARD          : '/projectsDashboard/'
         },
 
         MID: {
@@ -215,9 +224,13 @@ define([], function () {
         PAYMENT_TERMS   : '55536e52475b7be475f335f6',
         PAYMENT_METHOD  : '565f2e05ab70d49024242e07',
         END_OF_PROJECT  : 'To end of project',
+
         NOT_STARTED_WORKFLOW: '5783b351df8b918c31af24a8',
+        DONE_WORKFLOW       : '5783b351df8b918c31af24ab',
 
         DEFAULT_SCREEN_WIDTH: 1349,
-        PAGINATION_ARRAY    : [25, 50, 100, 200]
+        PAGINATION_ARRAY    : [25, 50, 100, 200],
+
+        TRACKER_URL: '/track'
     };
 });

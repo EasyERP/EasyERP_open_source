@@ -21,6 +21,7 @@
         contentType : 'Employees',
         viewType    : 'thumbnails',
         letterKey   : 'name.last',
+        type        : 'Employees',
 
         initialize: function (options) {
             this.mId = CONSTANTS.MID[this.contentType];
@@ -91,16 +92,6 @@
                     }
                 });
             }
-        },
-
-        exportToCsv: function () {
-            // todo change after routes refactoring
-            window.location = '/employees/exportToCsv';
-        },
-
-        exportToXlsx: function () {
-            // todo change after routes refactoring
-            window.location = '/employees/exportToXlsx';
         }
     });
 

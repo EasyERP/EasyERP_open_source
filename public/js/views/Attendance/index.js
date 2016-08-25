@@ -153,9 +153,9 @@ define([
             if (target.length) {
                 this.currentEmployee = target.attr('id');  // changed for getting value from selectView dd
             } else {
-                this.$el.find('.editable').find('span').text(self.currentEmployee.name);
-                this.$el.find('.editable').attr('data-id', self.currentEmployee._id);
-                self.currentEmployee = self.currentEmployee._id;
+                this.$el.find('.editable').find('span').text(self.currentEmployee ? self.currentEmployee.name : 'Select');
+                this.$el.find('.editable').attr('data-id', self.currentEmployee ? self.currentEmployee._id : null);
+                self.currentEmployee = self.currentEmployee ? self.currentEmployee._id : null;
             }
 
             dataService.getData('/vacation/', {

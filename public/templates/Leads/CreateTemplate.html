@@ -1,61 +1,155 @@
-<div class="form-holder">
-    <form method="post" action="" id="leadForm" class="form notDialog">
-        <fieldset>
-            <div class="inner _salesModal">
-                <h2 class="modal_title">Add a Lead</h2>
-                <div class="clearfix"></div>
-                        <div class="subject-info _modalList clearfix">
+<div class="form-holder _listModalWrap">
+    <form method="post" action="" class="form" id="leadForm">
+        <div class="dialog-tabs-items">
+            <div class="dialog-tabs-item active">
+                <div class="_listModal">
+                    <div class="_listModalColumn">
+                        <div class="_listModalTitle"><label><b>Lead</b></label></div>
+                        <div class="_modalList">
                             <div class="_modalLabel"><label for="name">Subject</label></div>
-                            <div class="_modalSelect"><input type="text" class="title-input"  id="name" required maxlength="48"/></div>
+                            <div class="_modalSelect"><input type="text" class="title-input blueback" id="name" placeholder="Describe the lead..." required maxlength="48"/></div>
                         </div>
-
-
-                        <div class="">
-                            <div class="opprtunitie-info">
-                                <div class="_modalList">
-                                    <div class="_modalLabel"><label for="customerDd">Contact</label></div>
-                                    <div class="_modalSelect"><a id="customerDd" class="current-selected" href="javascript:;"></a></div>
-                                </div>
-
-                               <div class="_modalList">
-                                   <div class="_modalLabel"><label for="companyDd">Company</label></div>
-                                   <div class="_modalSelect"><a id="companyDd" class="current-selected" href="javascript:;"></a></div>
-                               </div>
-
-                                <div class="_modalList">
-                                    <div class="_modalLabel"><label for="salesPersonDd">Assigned to</label></div>
-                                    <div class="_modalSelect"><a id="salesPersonDd" class="current-selected" href="javascript:;">Select</a></div>
-                                </div>
-
-                                <div class="_modalList">
-                                    <div class="_modalLabel"><label for="workflowDd">Stages</label></div>
-                                    <div class="_modalSelect" id="selectWorkflow"><a id="workflowDd" class="current-selected" href="javascript:;"></a></div>
-                                </div>
-
-                                <div class="_modalList">
-                                    <div class="_modalLabel"><label for="sourceDd">Source</label></div>
-                                    <div class="_modalSelect"><a id="sourceDd" class="current-selected" href="javascript:;"></a></div>
-                                </div>
-
-                                <div class="_modalList">
-                                    <div class="_modalLabel"><label for="expectedClosing">Expected Closing</label></div>
-                                    <div class="_modalSelect"><input type="text" id="expectedClosing" maxlength="32" placeholder="Date" readonly/></div>
-                                </div>
-                            </div>
-                            <div class="_modalList">
-                                <div class="area_holder">
-                                 <textarea id="internalNotes" placeholder="Internal notes..." maxlength="500"
-                                           class="opp-internal-create"></textarea>
-                                    <a href="javascript:;" class="attach_file">
-                                        <i class="fa fa-paperclip" aria-hidden="true"></i>
-                                    </a>
-                                </div>
-                                <div class="clearfix"></div>
-                            </div>
-                            <div class="attach-container"></div>
+                        <div class="_modalList">
+                            <div class="_modalLabel"><label for="sourceDd">Source</label></div>
+                            <div class="_modalSelect _newSelectListWrap"><a id="sourceDd" class="current-selected" href="javascript:;">Select</a></div>
+                        </div>
+                        <div class="_modalList">
+                            <div class="_modalLabel"><label for="salesPerson">Assigned to</label></div>
+                            <div class="_modalSelect _newSelectListWrap"><a id="salesPerson" class="current-selected" href="javascript:;">Select</a></div>
+                        </div>
+                        <div class="_modalList">
+                            <div class="_modalLabel"><label for="workflowsDd">Stage</label></div>
+                            <div class="_modalSelect _newSelectListWrap"><a id="workflowsDd" class="current-selected" href="javascript:;">Select</a></div>
+                        </div>
+                        <div class="_modalList">
+                            <div class="_modalLabel"><label for="priorityDd">Priority</label></div>
+                            <div class="_modalSelect _newSelectListWrap"><a id="priorityDd" class="current-selected" href="javascript:;">Select</a></div>
+                        </div>
+                        <div class="_modalList">
+                            <div class="_modalLabel"><label for="expectedClosingDate">Close Date</label></div>
+                            <div class="_modalSelect"><input class="extrainfo" type="text" name="Close Date" id="expectedClosingDate" readonly=""></div>
                         </div>
                     </div>
-            <div class="clearfix"></div>
-        </fieldset>
+                    <div class="_listModalColumn">
+                        <div class="_listModalTitle"><label><b>Person</b></label></div>
+                        <div class="_modalList">
+                            <div class="_modalSelect _newSelectListWrap"><a id="customerDd" class="current-selected" href="javascript:;">Select</a></div>
+                        </div>
+                        <div class="_modalList">
+                            <div class="_modalLabel"><label for="first">First Name </label></div>
+                            <div class="_modalSelect"><input type="text" class="name" id="first" placeholder="First Name" maxlength="32"/></div>
+                        </div>
+                        <div class="_modalList">
+                            <div class="_modalLabel"><label for="last">Last Name </label></div>
+                            <div class="_modalSelect"><input type="text" class="name" id="last" placeholder="Last Name" maxlength="32"/></div>
+                        </div>
+                        <div class="_modalList">
+                            <div class="_modalLabel"><label for="last">Job Position</label></div>
+                            <div class="_modalSelect"><input type="text" id="jobPosition" placeholder="Job Position" maxlength="32"/></div>
+                        </div>
+                        <div class="_modalList">
+                            <div class="_modalLabel"><label for="dateBirthOnCreate">Date of Birth</label></div>
+                            <div class="_modalSelect"><input class="extrainfo" type="text" name="Date of Birth" id="dateBirthOnCreate" readonly=""></div>
+                        </div>
+                        <div class="_modalList">
+                            <div class="_modalLabel"><label for="email">Email </label></div>
+                            <div class="_modalSelect"><input type="text" id="email" placeholder="e.g. email@site.com" maxlength="48"/></div>
+                        </div>
+                        <!--                    <div><label for="jobPos">Job Position</label></div><div><input type="text" id="jobPos" placeholder="Job Position" maxlength="32"/></div>-->
+                        <div class="_modalList">
+                            <div class="_modalLabel"><label for="phone">Phone </label></div>
+                            <div class="_modalSelect"><input type="text" id="phone" placeholder="Phone number" maxlength="32"/></div>
+                        </div>
+                        <!--<div class="_modalList">-->
+                        <!--<div class="_modalLabel"><label for="mobile">Mobile </label></div>-->
+                        <!--<div class="_modalSelect"><input type="text" id="mobile" placeholder="Mobile number" maxlength="32"/></div>-->
+                        <!--</div>-->
+                        <!--                    <div><label for="workflowNamesdiv">Workflow Name </label></div><div>
+                                                <a id="workflowNamesdiv" class="current-selected" href="javascript:;"></a>
+                        </div>-->
+                        <div class="_modalList">
+                            <div class="_modalLabel"><label for="skype">Skype</label></div>
+                            <div class="_modalSelect"><input type="text" id="skype" value="" placeholder="Skype" maxlength="256"/></div>
+                        </div>
+                        <div class="_modalList">
+                            <div class="_modalLabel"><label for="LI">LinkedIn</label></div>
+                            <div class="_modalSelect"><input type="text" id="LI" placeholder="LinkedIn" maxlength="256"/></div>
+                        </div>
+                    </div>
+                    <div class="_listModalColumn">
+                        <div class="_listModalTitle"><label><b>Company</b></label></div>
+                        <div class="_modalList">
+                            <div class="_modalSelect _newSelectListWrap"><a id="companyDd" class="current-selected" href="javascript:;">Select</a></div>
+                        </div>
+                        <div class="_modalList">
+                            <div class="_modalLabel"><label for="company">Name</label></div>
+                            <div class="_modalSelect"><input type="text" id="company" data-id="" placeholder="Company name" maxlength="32"/></div>
+                        </div>
+
+                        <div class="_modalList">
+                            <div class="_modalLabel"><label for="street">Street</label></div>
+                            <div class="_modalSelect"><input type="text" class="address" id="street" name="street" placeholder="Street..." maxlength="32"/></div>
+                        </div>
+                        <div class="_modalList">
+                            <div class="_modalLabel"><label for="city">City</label></div>
+                            <div class="_modalSelect"><input type="text" class="address" id="city" name="city" placeholder="City" maxlength="32"/></div>
+                        </div>
+                        <div class="_modalList">
+                            <div class="_modalLabel"><label for="state">State</label></div>
+                            <div class="_modalSelect"><input type="text" class="address" id="state" name="state" placeholder="State" maxlength="32"/></div>
+                        </div>
+                        <div class="_modalList">
+                            <div class="_modalLabel"><label for="zip">Zip</label></div>
+                            <div class="_modalSelect"><input type="text" class="address" id="zip" name="zip" placeholder="ZIP" maxlength="32"/></div>
+                        </div>
+                        <div class="_modalList">
+                            <div class="_modalLabel"><label for="country">Country</label></div>
+                            <div class="_modalSelect _newSelectListWrap"><a class="address current-selected" id="country" name="country">Select</a></div>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="_modalList">
+                        <div class="area_holder">
+                            <div class="_modalLabel"><label for="internalNotes">Internal Notes</label></div>
+                            <div class="_modalSelect">
+                                <textarea id="internalNotes" class="internal_Notes" placeholder="Internal notes" maxlength="2500"/>
+                                <span class="attach_file fa fa-paperclip"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <div class="half-block left withPadivingLeft">
+                    <!--<div class="formTitle">
+                        <h3 class="left">Extra Info</h3>
+                        <div class="clearfix"></div>
+                    </div>
+                    <dl class="opp-info">
+                      <div><h4>Categorization</h4></div><div>&nbsp;</div>
+                      <div><label>Status </label></div><div>&nbsp;</div>
+                      <div><h4>Mailings</h4></div><div>&nbsp;</div>
+                      <div><label>Opt-Out </label></div><div><input type="checkbox" id="optout" /></div>
+                      <div><h4>Misc</h4></div><div>&nbsp;</div>
+                      <div><label>Active </label></div><div><input type="checkbox" checked="checked" id="active" /></div>
+                      <div><label>Referred By </label></div><div><input type="text" id="reffered" /></div>
+                      <div></div><div></div>
+                    </dl>-->
+                </div>
+
+                <div class="half-block left withPadivingLeft">
+                    <!--<div class="formTitle">
+                        <h3 class="left">Internal Notes</h3>
+                        <div class="clearfix"></div>
+                    </div>
+                    <textarea id="internalNotes"></textarea>-->
+                </div>
+                <div class="clearfix"></div>
+                <div class="attach-container"></div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="dialog-tabs-item">
+                <div class="assignees-container"></div>
+            </div>
+        </div>
     </form>
 </div>

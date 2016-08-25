@@ -1,14 +1,14 @@
 <div class="formulaElement" data-seq="<%= seq %>">
     <% var elData = elData || {prefix:{}, operand:{}, operation:{}, ratio:1} %>
-    <span>
+    <span class="_newSelectListWrap">
         <a id="sumSubDd" class="current-selected" data-id="<%= elData.prefix.id || 'add' %>" href="javascript:;"><%= elData.prefix.name || '+' %></a>
     </span>
     <span class="formulaElementOperand">
         (
-        <span>
+        <span class="_newSelectListWrap">
             <a id="operandDd" class="current-selected" data-id="<%= elData.operand.id || '' %>" href="javascript:;"><%= elData.operand.name || 'Select' %></a>
         </span>
-        <span>
+        <span class="">
             <a id="mulDivDd" class="current-selected" data-id="<%= elData.operation.id || 'multiply' %>" href="javascript:;"><%= elData.operation.name || 'x' %></a>
         </span>
         <input id="ratio" type="number" size="5" value="<%= elData.ratio %>">

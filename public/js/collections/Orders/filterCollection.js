@@ -53,6 +53,8 @@
             this.contentType = options.contentType;
             this.filter = this.setFilterForSales(options.contentType, options.filter);
 
+            options.filter = this.filter;
+
             this.startTime = new Date();
 
             if (page) {

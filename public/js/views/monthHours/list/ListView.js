@@ -15,8 +15,9 @@ define([
     'async',
     'constants',
     'text!templates/monthHours/list/cancelEdit.html',
-    'helpers'
-], function (Backbone, $, _, listViewBase, listTemplate, CreateView, ListItemView, CurrentModel, contentCollection, EditCollection, common, dataService, populate, async, CONSTANTS, cancelEdit, helpers) {
+    'helpers',
+    'helpers/keyCodeHelper'
+], function (Backbone, $, _, listViewBase, listTemplate, CreateView, ListItemView, CurrentModel, contentCollection, EditCollection, common, dataService, populate, async, CONSTANTS, cancelEdit, helpers, keyCodes) {
     var monthHoursListView = listViewBase.extend({
         CreateView   : CreateView,
         listTemplate : listTemplate,
@@ -48,18 +49,34 @@ define([
             'click td.editable'    : 'editRow',
             'click .oe_sortable'   : 'goSort',
             'change .editable'     : 'setEditable',
+            //'change .editing'      : 'onChangeInput',
             'keydown input.editing': 'keyDown'
         },
 
         keyDown: function (e) {
-            if (e.which === 13) {
+            var code = e.keyCode;
+            if (keyCodes.isEnter(e.keyCode)) {
                 if (navigator.userAgent.indexOf('Firefox') > -1) {
                     this.setEditable(e);
                 }
-
                 this.setChangedValueToModel();
+            } else if (!keyCodes.isDigitOrDecimalDot(code) && !keyCodes.isBspaceAndDelete(code)) {
+                e.preventDefault();
+            }
+        },
+
+        onChangeInput: function ($element) {
+            var max = parseInt($element.attr('data-max'), 10);
+            var min = parseInt($element.attr('data-min'), 10);
+            var value = parseInt($element.val(), 10);
+
+            if (max && value > max) {
+                $element.val(max);
             }
 
+            if (min && value < min) {
+                $element.val(min);
+            }
         },
 
         bindingEventsToEditedCollection: function (context) {
@@ -84,15 +101,18 @@ define([
                 editedCol = editedElement.closest('td');
                 editedElementRowId = editedElement.closest('tr').attr('data-id');
                 editedElementContent = editedCol.data('content');
-                editedElementValue = editedElement.val();
-
-                editedElementValue = editedElementValue.replace(/\s+/g, '');
 
                 editModel = this.editCollection.get(editedElementRowId);
 
                 if (!this.changedModels[editedElementRowId]) {
                     this.changedModels[editedElementRowId] = {};
                 }
+
+                this.onChangeInput(editedElement);
+
+                editedElementValue = editedElement.val();
+
+                editedElementValue = editedElementValue.replace(/\s+/g, '');
 
                 this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
 
@@ -135,6 +155,10 @@ define([
             var idleExpenses;
             var adminSalary;
             var marketingBudget;
+            var dataContent;
+            var editingEl;
+
+            e.stopPropagation();
 
             if (mothHoursId && el.prop('tagName') !== 'INPUT') {
                 if (this.modelId) {
@@ -213,11 +237,33 @@ define([
                     tempContainer = el.text();
                     width = el.width() - 6;
                     el.html('<input class="editing" type="text" value="' + tempContainer + '"  style="width:' + width + 'px">');
+
+                    dataContent = el.attr('data-content');
+                    editingEl = el.find('.editing');
+
+                    if (dataContent === 'month') {
+                        editingEl.attr('maxLength', '2');
+                        editingEl.attr('data-max', 12);
+                        editingEl.attr('data-min', 1);
+                    } else if ((dataContent === 'year') || (dataContent === 'hours')) {
+                        editingEl.attr('maxLength', '4');
+                    }
                 });
-            } else {
+            } else if (colType) {
                 tempContainer = el.text();
                 width = el.width() - 6;
                 el.html('<input class="editing" type="text" value="' + tempContainer + '"  style="width:' + width + 'px">');
+
+                dataContent = el.attr('data-content');
+                editingEl = el.find('.editing');
+
+                if (dataContent === 'month') {
+                    editingEl.attr('maxLength', '2');
+                    editingEl.attr('data-max', 12);
+                    editingEl.attr('data-min', 1);
+                } else if ((dataContent === 'year') || (dataContent === 'hours')) {
+                    editingEl.attr('maxLength', '4');
+                }
             }
 
             return false;

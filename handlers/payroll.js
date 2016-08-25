@@ -758,7 +758,7 @@ var Module = function (models) {
                     }
                 }], function (err, result) {
                     if (err) {
-                        callback(err);
+                        return callback(err);
                     }
 
                     callback(null, result);

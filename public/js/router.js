@@ -8,9 +8,10 @@ define([
     'helpers/eventsBinder',
     'custom',
     'common',
-    'constants'
+    'constants',
+    'tracker'
 
-], function (Backbone, _, $, mainView, loginView, dataService, eventsBinder, custom, common, CONSTANTS) {
+], function (Backbone, _, $, mainView, loginView, dataService, eventsBinder, custom, common, CONSTANTS, tracker) {
     'use strict';
     var bindDefaultUIListeners = function () {
         $(document).on('keydown', '.ui-dialog', function (e) {
@@ -31,11 +32,7 @@ define([
         $(document).on('keypress', '.onlyNumber', function (e) {
             var charCode = (e.which) ? e.which : e.keyCode;
 
-            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-                return false;
-            }
-
-            return true;
+            return !(charCode > 31 && (charCode < 48 || charCode > 57));
         });
 
         $(window).on('resize', function (e) {
@@ -60,8 +57,6 @@ define([
         $('#wrapper').on('click', function () {
             $('.loginPanel').removeClass('open');
         });
-
-
     };
 
     var appRouter = Backbone.Router.extend({
@@ -72,11 +67,12 @@ define([
         view       : null,
 
         routes: {
-            home                                                                                            : 'login',
+            home                                                                                            : 'any',
             'easyErp/Products/thumbnails(/c=:countPerPage)(/filter=:filter)'                                : 'goToProduct',
+            'easyErp/import/list(/p=:page)(/c=:countPerPage)'                                               : 'goToImport',
             'login(?password=:password&dbId=:dbId&email=:email)'                                            : 'login',
             'easyErp/:contentType/kanban(/:parrentContentId)(/filter=:filter)'                              : 'goToKanban',
-            'easyErp/:contentType/datelist(/c=:countPerPage)(/filter=:filter)'          : 'goToDateList',
+            'easyErp/:contentType/datelist(/c=:countPerPage)(/filter=:filter)'                              : 'goToDateList',
             'easyErp/:contentType/thumbnails(/c=:countPerPage)(/filter=:filter)'                            : 'goToThumbnails',
             'easyErp/:contentType/tform(/:modelId)(/p=:page)(/c=:countPerPage)(/filter=:filter)'            : 'goToTForm', // FixMe chenge to required Id after test
             'easyErp/:contentType/form(/:modelId)'                                                          : 'goToForm', // FixMe chenge to required Id after test
@@ -91,10 +87,13 @@ define([
             'easyErp/Workflows'                                                                             : 'goToWorkflows',
             'easyErp/Accounts'                                                                              : 'goToAccounts',
             'easyErp/Dashboard'                                                                             : 'goToDashboard',
+            'easyErp/reportsDashboard'                                                                      : 'goToReportsDashboard',
+            'easyErp/payrollDashboard'                                                                      : 'goToPayrollDashboard',
             'easyErp/DashBoardVacation(/filter=:filter)'                                                    : 'dashBoardVacation',
             'easyErp/invoiceCharts(/filter=:filter)'                                                        : 'invoiceCharts',
             'easyErp/HrDashboard'                                                                           : 'hrDashboard',
             'easyErp/projectDashboard'                                                                      : 'goToProjectDashboard',
+           // 'easyErp/projectsDashboard'                                                                     : 'goToProjectsDashboard',
             // "easyErp/jobsDashboard(/filter=:filter)"                                                        : "goToJobsDashboard",
             'easyErp/:contentType'                                                                          : 'getList',
             '*any'                                                                                          : 'any'
@@ -119,18 +118,22 @@ define([
                         }
                         App.filtersObject.savedFilters = response.savedFilters;
                     }
-                    /*else {
-                     App.render({
-                     type   : 'error',
-                     message: 'can\'t fetch currentUser'
-                     });
-                     }*/
                 });
             }
         },
 
         dashBoardVacation: function (filter) {
             var self = this;
+            var currentUser = App.currentUser || {};
+
+            // FlurryAgent.logEvent('DashBoard Vacation', {filter: filter});
+
+            /* tracker.track({
+                name   : 'DashBoard Vacation',
+                message: 'DashBoard Vacation',
+                email  : currentUser.email,
+                login  : currentUser.login
+             }); */
 
             filter = filter || custom.retriveFromCash('DashVacation.filter');
 
@@ -184,6 +187,16 @@ define([
 
         invoiceCharts: function (filter) {
             var self = this;
+            var currentUser = App.currentUser || {};
+
+            // FlurryAgent.logEvent('Invoice Charts', {filter: filter});
+
+            /*tracker.track({
+                name   : 'Invoice Charts',
+                message: 'Invoice Charts',
+                email  : currentUser.email,
+                login  : currentUser.login
+             });*/
 
             if (filter) {
                 filter = decodeURIComponent(filter);
@@ -242,6 +255,16 @@ define([
 
         hrDashboard: function () {
             var self = this;
+            var currentUser = App.currentUser || {};
+
+            // FlurryAgent.logEvent('HR Dashboard');
+
+            /* tracker.track({
+                name   : 'HR Dashboard',
+                message: 'HR Dashboard',
+                email  : currentUser.email,
+                login  : currentUser.login
+             });*/
 
             if (!this.isAuth) {
                 this.checkLogin(function (success) {
@@ -289,6 +312,16 @@ define([
 
         revenue: function (filter) {
             var self = this;
+            var currentUser = App.currentUser || {};
+
+            // FlurryAgent.logEvent('Revenue', {filter: filter});
+
+            /*tracker.track({
+                name   : 'Revenue',
+                message: 'Revenue',
+                email  : currentUser.email,
+                login  : currentUser.login
+             });*/
 
             if (filter) {
                 filter = decodeURIComponent(filter);
@@ -350,6 +383,16 @@ define([
 
         settingsEmployee: function (filter) {
             var self = this;
+            var currentUser = App.currentUser || {};
+
+            // FlurryAgent.logEvent('Settings Employee', {filter: filter});
+
+            /*tracker.track({
+                name   : 'Settings Employee',
+                message: 'Settings Employee',
+                email  : currentUser.email,
+                login  : currentUser.login
+             });*/
 
             if (filter) {
                 filter = decodeURIComponent(filter);
@@ -402,6 +445,16 @@ define([
 
         hours: function () {
             var self = this;
+            var currentUser = App.currentUser || {};
+
+            // FlurryAgent.logEvent('Hours');
+
+            /*tracker.track({
+                name   : 'Hours',
+                message: 'Hours',
+                email  : currentUser.email,
+                login  : currentUser.login
+             });*/
 
             if (!this.isAuth) {
                 this.checkLogin(function (success) {
@@ -440,6 +493,16 @@ define([
 
         attendance: function () {
             var self = this;
+            var currentUser = App.currentUser || {};
+
+            // FlurryAgent.logEvent('Attendance');
+
+            /*tracker.track({
+                name   : 'Attendance',
+                message: 'Attendance',
+                email  : currentUser.email,
+                login  : currentUser.login
+             });*/
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -469,8 +532,70 @@ define([
             }
         },
 
+        goToImport: function (page, count) {
+            var self = this;
+            var currentUser = App.currentUser || {};
+
+            // FlurryAgent.logEvent('Import', {page: page, count: count});
+
+            /*tracker.track({
+                name   : 'Import',
+                message: 'Import',
+                email  : currentUser.email,
+                login  : currentUser.login
+             });*/
+
+            this.checkLogin(function (success) {
+                if (success) {
+                    goImport(self);
+                } else {
+                    self.redirectTo();
+                }
+            });
+
+            function goImport(context) {
+                var startTime = new Date();
+
+                if (context.mainView === null) {
+                    context.main('import');
+                } else {
+                    context.mainView.updateMenu('import');
+                }
+
+                var contentViewUrl = 'views/Import/ContentView';
+
+                require([contentViewUrl], function (contentView) {
+                    var contentview = new contentView({startTime: startTime, page: page, count: count});
+                    var url = '#easyErp/import/list';
+
+                    if (page) {
+                        url += '/p=' + page;
+                    }
+
+                    if (count) {
+                        url += '/c=' + count;
+                    }
+
+                    custom.setCurrentVT('list');
+
+                    context.changeView(contentview);
+                    Backbone.history.navigate(url, {replace: true});
+                });
+            }
+        },
+
         goToProfiles: function () {
             var self = this;
+            var currentUser = App.currentUser || {};
+
+            // FlurryAgent.logEvent('Profiles');
+
+            /*tracker.track({
+                name   : 'Profiles',
+                message: 'Profiles',
+                email  : currentUser.email,
+                login  : currentUser.login
+             });*/
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -521,6 +646,17 @@ define([
 
         goToAccounts: function () {
             var self = this;
+            var currentUser = App.currentUser || {};
+
+            // FlurryAgent.logEvent('Accounts');
+
+            /*tracker.track({
+                name   : 'Accounts',
+                message: 'Accounts',
+                email  : currentUser.email,
+                login  : currentUser.login
+             });*/
+
             this.checkLogin(function (success) {
                 if (success) {
                     goAccounts(self);
@@ -553,6 +689,16 @@ define([
 
         productSettings: function () {
             var self = this;
+            var currentUser = App.currentUser || {};
+
+            // FlurryAgent.logEvent('productSettings');
+
+            /*tracker.track({
+                name   : 'productSettings',
+                message: 'productSettings',
+                email  : currentUser.email,
+                login  : currentUser.login
+             });*/
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -606,6 +752,16 @@ define([
 
         goToProduct: function (countPerPage, filter) {
             var self = this;
+            var currentUser = App.currentUser || {};
+
+            // FlurryAgent.logEvent('Products');
+
+            /*tracker.track({
+                name   : 'Products',
+                message: 'Products',
+                email  : currentUser.email,
+                login  : currentUser.login
+             });*/
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -698,6 +854,17 @@ define([
 
         goToUserPages: function () {
             var self = this;
+            var currentUser = App.currentUser || {};
+
+            // FlurryAgent.logEvent('UserPage');
+
+            /*tracker.track({
+                name   : 'UserPage',
+                message: 'UserPage',
+                email  : currentUser.email,
+                login  : currentUser.login
+             });*/
+
             this.checkLogin(function (success) {
                 if (success) {
                     goMyProfile(self);
@@ -732,8 +899,110 @@ define([
             }
         },
 
+        goToPayrollDashboard: function () {
+            var self = this;
+            var currentUser = App.currentUser || {};
+
+            // FlurryAgent.logEvent('Payroll Dashboard');
+
+            /*tracker.track({
+                name   : 'Payroll Dashboard',
+                message: 'Payroll Dashboard',
+                email  : currentUser.email,
+                login  : currentUser.login
+             });*/
+
+            this.checkLogin(function (success) {
+                if (success) {
+                    goDashboard(self);
+                } else {
+                    self.redirectTo();
+                }
+            });
+
+            function goDashboard(context) {
+                var startTime = new Date();
+                var contentViewUrl = 'views/payrollDashboard/ContentView';
+                var topBarViewUrl = 'views/payrollDashboard/TopBarView';
+                var self = context;
+
+                if (context.mainView === null) {
+                    context.main('payrollDashboard');
+                } else {
+                    context.mainView.updateMenu('payrollDashboard');
+                }
+
+                require([contentViewUrl, topBarViewUrl], function (contentView, topBarView) {
+                    var contentview = new contentView({startTime: startTime});
+                    var topbarView = new topBarView({actionType: 'Content'});
+
+                    custom.setCurrentVT('list');
+
+                    topbarView.bind('backToSettingsEvent', contentview.backToSettings, contentview);
+
+                    self.changeView(contentview);
+                    self.changeTopBarView(topbarView);
+                });
+            }
+        },
+
+        goToReportsDashboard: function () {
+            var self = this;
+            var currentUser = App.currentUser || {};
+
+            // FlurryAgent.logEvent('Reports Dashboard');
+
+            /*tracker.track({
+                name   : 'Reports Dashboard',
+                message: 'Reports Dashboard',
+                email  : currentUser.email,
+                login  : currentUser.login
+             });*/
+
+            this.checkLogin(function (success) {
+                if (success) {
+                    goDashboard(self);
+                } else {
+                    self.redirectTo();
+                }
+            });
+
+            function goDashboard(context) {
+                var startTime = new Date();
+                var contentViewUrl = 'views/reportsDashboard/ContentView';
+                var topBarViewUrl = 'views/reportsDashboard/TopBarView';
+                var self = context;
+
+                if (context.mainView === null) {
+                    context.main('reportsDashboard');
+                } else {
+                    context.mainView.updateMenu('reportsDashboard');
+                }
+
+                require([contentViewUrl, topBarViewUrl], function (contentView, topBarView) {
+                    var contentview = new contentView({startTime: startTime});
+                    var topbarView = new topBarView({actionType: 'Content'});
+
+                    custom.setCurrentVT('list');
+                    self.changeView(contentview);
+                    self.changeTopBarView(topbarView);
+                });
+            }
+        },
+
         goToDashboard: function () {
             var self = this;
+            var currentUser = App.currentUser || {};
+
+            // FlurryAgent.logEvent('Dashboard');
+
+            /*tracker.track({
+                name   : 'Dashboard',
+                message: 'Dashboard',
+                email  : currentUser.email,
+                login  : currentUser.login
+             });*/
+
             this.checkLogin(function (success) {
                 if (success) {
                     goDashboard(self);
@@ -766,8 +1035,56 @@ define([
             }
         },
 
+        goToProjectsDashboard: function () {
+            var self = this;
+
+            // FlurryAgent.logEvent('Projects Dashboard');
+
+            this.checkLogin(function (success) {
+                if (success) {
+                    goProjectDashboard(self);
+                } else {
+                    self.redirectTo();
+                }
+            });
+
+            function goProjectDashboard(context) {
+                var startTime = new Date();
+                var contentViewUrl = "views/projectsDashboard/ContentView";
+                var topBarViewUrl = "views/projectsDashboard/TopBarView";
+                var self = context;
+
+                if (context.mainView === null) {
+                    context.main("projectsDashboard");
+                } else {
+                    context.mainView.updateMenu("projectsDashboard");
+                }
+
+                require([contentViewUrl, topBarViewUrl], function (contentView, topBarView) {
+
+                    custom.setCurrentVT('list');
+
+                    var contentview = new contentView({startTime: startTime});
+                    var topbarView = new topBarView({actionType: "Content"});
+                    self.changeView(contentview);
+                    self.changeTopBarView(topbarView);
+                });
+            }
+        },
+
         goToProjectDashboard: function () {
             var self = this;
+            var currentUser = App.currentUser || {};
+
+            // FlurryAgent.logEvent('Project Dashboard');
+
+            /*tracker.track({
+                name   : 'Project Dashboard',
+                message: 'Project Dashboard',
+                email  : currentUser.email,
+                login  : currentUser.login
+             });*/
+
             this.checkLogin(function (success) {
                 if (success) {
                     goProjectDashboard(self);
@@ -848,6 +1165,17 @@ define([
 
         goToWorkflows: function () {
             var self = this;
+            var currentUser = App.currentUser || {};
+
+            // FlurryAgent.logEvent('Workflows');
+
+            /*tracker.track({
+                name   : 'Workflows',
+                message: 'Workflows',
+                email  : currentUser.email,
+                login  : currentUser.login
+             });*/
+
             this.checkLogin(function (success) {
                 if (success) {
                     goToWorkflows(self);
@@ -942,8 +1270,10 @@ define([
             function goList(context) {
                 var self = context;
                 var currentContentType = context.testContent(contentType);
+                var currentUser = App.currentUser || {};
                 var location = window.location.hash;
                 var startTime = new Date();
+                var message;
                 var url;
                 var savedFilter;
                 var startDate;
@@ -962,8 +1292,30 @@ define([
                         url += '/' + parrentContentId;
                     }
 
-                    Backbone.history.navigate(url, {replace: true});
+                    message = contentType + ' List';
+
+                    // FlurryAgent.logEvent(message);
+
+                    /*tracker.track({
+                        name   : message,
+                        message: message,
+                        email  : currentUser.email,
+                        login  : currentUser.login
+                     });*/
+
+                    return Backbone.history.navigate(url, {replace: true});
                 }
+
+                message = contentType + ' List';
+
+                // FlurryAgent.logEvent(message);
+
+                /*tracker.track({
+                    name   : message,
+                    message: message,
+                    email  : currentUser.email,
+                    login  : currentUser.login
+                 });*/
 
                 contentViewUrl = 'views/' + contentType + '/list/ListView';
                 topBarViewUrl = 'views/' + contentType + '/TopBarView';
@@ -978,6 +1330,10 @@ define([
                     count = CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE;
                 }
 
+                if (contentType === 'contractJobs') {
+                    count = 10;
+                }
+
                 if (!filter) {
 
                     filter = custom.getSavedFilterForCT(contentType) || custom.getDefSavedFilterForCT(contentType);
@@ -989,7 +1345,7 @@ define([
 
                     if (contentType === 'salesProduct') {
                         filter = {
-                            'canBeSold': {
+                            canBeSold: {
                                 key  : 'canBeSold',
                                 value: ['true']
                             }
@@ -1012,8 +1368,8 @@ define([
                     filter = JSON.parse(filter);
                 }
 
-                //savedFilter = custom.savedFilters(contentType, filter);
-                //savedFilter = filter;
+                // savedFilter = custom.savedFilters(contentType, filter);
+                // savedFilter = filter;
 
                 if (context.mainView === null) {
                     context.main(contentType);
@@ -1098,28 +1454,24 @@ define([
                 var topBarViewUrl = "views/" + contentType + "/TopBarView";
                 var collectionUrl = "collections/DealTasks/dateCollection";
 
-
                 if (self.mainView === null) {
                     self.main(contentType);
                 } else {
                     self.mainView.updateMenu(contentType);
                 }
 
-
                 require([contentViewUrl, topBarViewUrl, collectionUrl], function (ContentView, TopBarView, ContentCollection) {
                     var contentview;
                     var topbarView;
                     var collection;
 
-
                     App.filtersObject.filter = filter;
 
                     collection = new ContentCollection({
-                        viewType    : 'datelist',
-                        reset     : true,
-                        filter : filter
+                        viewType: 'datelist',
+                        reset   : true,
+                        filter  : filter
                     });
-
 
                     collection.bind('reset', _.bind(createViews, self));
 
@@ -1127,11 +1479,11 @@ define([
 
                     function createViews() {
                         collection.unbind('reset');
-                        topbarView = new TopBarView({actionType : 'Content'});
+                        topbarView = new TopBarView({actionType: 'Content'});
                         contentview = new ContentView({
-                            startTime: startTime,
-                            collection : collection,
-                            filter   : filter
+                            startTime : startTime,
+                            collection: collection,
+                            filter    : filter
                         });
                         eventsBinder.subscribeTopBarEvents(topbarView, contentview);
                         eventsBinder.subscribeCollectionEvents(collection, contentview)
@@ -1139,9 +1491,6 @@ define([
                         self.changeView(contentview);
                         self.changeTopBarView(topbarView);
                     }
-
-
-
 
                 });
             }
@@ -1175,6 +1524,7 @@ define([
                 var currentContentType = context.testContent(contentType);
                 var location = window.location.hash;
                 var startTime = new Date();
+                var currentUser = App.currentUser || {};
                 var url;
                 var savedFilter;
                 var startDate;
@@ -1184,6 +1534,17 @@ define([
                 var collectionUrl;
                 var navigatePage;
                 var count;
+
+                var message = contentType + ' TForm';
+
+                // FlurryAgent.logEvent(message);
+
+                /*tracker.track({
+                    name   : message,
+                    message: message,
+                    email  : currentUser.email,
+                    login  : currentUser.login
+                 });*/
 
                 contentViewUrl = 'views/' + contentType + '/form/ContentView';
                 topBarViewUrl = 'views/' + contentType + '/TopBarView';
@@ -1318,11 +1679,13 @@ define([
 
             function goForm(context) {
                 var currentContentType = context.testContent(contentType);
+                var currentUser = App.currentUser || {};
                 var self = context;
                 var startTime = new Date();
                 var contentFormModelUrl;
                 var contentFormViewUrl;
                 var topBarViewUrl;
+                var message;
                 var url;
 
                 if (contentType !== currentContentType) {
@@ -1335,6 +1698,17 @@ define([
 
                     Backbone.history.navigate(url, {replace: true});
                 }
+
+                message = contentType + ' Form';
+
+                // FlurryAgent.logEvent(message);
+
+                /*tracker.track({
+                    name   : message,
+                    message: message,
+                    email  : currentUser.email,
+                    login  : currentUser.login
+                 });*/
 
                 if (context.mainView === null) {
                     context.main(contentType);
@@ -1400,6 +1774,7 @@ define([
 
         goToKanban: function (contentType, parrentContentId, filter) {
             var self = this;
+
             this.checkLogin(function (success) {
                 if (success) {
                     goKanban(self);
@@ -1409,25 +1784,44 @@ define([
             });
 
             function goKanban(context) {
-                var self = context;
                 var currentContentType = context.testContent(contentType);
+                var currentUser = App.currentUser || {};
+                var self = context;
+                var contentViewUrl;
+                var topBarViewUrl;
+                var collectionUrl;
+                var message;
+
                 if (contentType !== currentContentType) {
                     contentType = currentContentType;
                 }
-                var contentViewUrl = "views/" + contentType + "/kanban/KanbanView";
-                var topBarViewUrl = "views/" + contentType + "/TopBarView";
-                var collectionUrl = "collections/Workflows/WorkflowsCollection";
+
+                message = contentType + ' Kanban';
+
+                // FlurryAgent.logEvent(message);
+
+                /*tracker.track({
+                    name   : message,
+                    message: message,
+                    email  : currentUser.email,
+                    login  : currentUser.login
+                 });*/
+
+                contentViewUrl = 'views/' + contentType + '/kanban/KanbanView';
+                topBarViewUrl = 'views/' + contentType + '/TopBarView';
+                collectionUrl = 'collections/Workflows/WorkflowsCollection';
 
                 if (context.mainView === null) {
                     context.main(contentType);
                 } else {
                     context.mainView.updateMenu(contentType);
                 }
+
                 custom.setCurrentVT('kanban');
                 require([contentViewUrl, topBarViewUrl, collectionUrl], function (contentView, topBarView, workflowsCollection) {
                     var startTime = new Date();
 
-                    App.filtersObject.filter = filter;
+                    App.filtersObject.filter = JSON.parse(filter);
 
                     var collection = new workflowsCollection({id: contentType});
 
@@ -1457,6 +1851,10 @@ define([
                         }
 
                         url = encodeURI(url);
+
+                        if (filter) {
+                            url += '/filter=' + encodeURI(JSON.stringify(filter));
+                        }
 
                         Backbone.history.navigate(url, {replace: true});
                     }
@@ -1489,15 +1887,15 @@ define([
 
             function goThumbnails(context) {
                 var self = context;
+                var currentUser = App.currentUser || {};
                 var location = window.location.hash;
                 var currentContentType = context.testContent(contentType);
-                var newCollection = true;
                 var startTime = new Date();
                 var viewType = custom.getCurrentVT({contentType: contentType}); // for default filter && defaultViewType
                 var topBarViewUrl;
                 var contentViewUrl;
                 var collectionUrl;
-                var savedFilter;
+                var message;
                 var url;
 
                 if (countPerPage) {
@@ -1516,6 +1914,17 @@ define([
                 }
 
                 topBarViewUrl = 'views/' + contentType + '/TopBarView';
+
+                message = contentType + ' Thumbnails';
+
+                // FlurryAgent.logEvent(message);
+
+                /*tracker.track({
+                    name   : message,
+                    message: message,
+                    email  : currentUser.email,
+                    login  : currentUser.login
+                 });*/
 
                 if (!filter) {
 
@@ -1674,8 +2083,9 @@ define([
             this.mainView = null;
 
             $.ajax({
-                url    : url,
-                type   : 'GET',
+                url : url,
+                type: 'GET',
+
                 success: function (response) {
                     self.changeWrapperView(new loginView({
                         dbs      : response.dbsNames,
@@ -1684,7 +2094,8 @@ define([
                         login    : email
                     }));
                 },
-                error  : function () {
+
+                error: function () {
                     self.changeWrapperView(new loginView());
                 }
             });

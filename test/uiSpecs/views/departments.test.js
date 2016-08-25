@@ -3491,7 +3491,7 @@ define([
                 var $needLiEl = listView.$el.find('#groupList > li:nth-child(1)');
                 var depFormUrl = new RegExp('\/Departments\/', 'i');
                 var usersUrl = new RegExp('\/users\/forDd', 'i');
-                var employeesUrl = new RegExp('\/employees\/getPersonsForDd', 'i');
+                var employeesUrl = new RegExp('\/employees\/getForDd', 'i');
                 var $dialogContainerEl;
 
                 server.respondWith('GET', depFormUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDepartmentForm)]);
@@ -3613,7 +3613,7 @@ define([
                 var depFormUrl = new RegExp('\/Departments\/form\/', 'i');
                 var usersUrl = new RegExp('\/users\/forDd', 'i');
                 var createBtn = topBarView.$el.find('#top-bar-createBtn');
-                var employeesUrl = new RegExp('\/employees\/getPersonsForDd', 'i');
+                var employeesUrl = new RegExp('\/employees\/getForDd', 'i');
 
                 server.respondWith('GET', depFormUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDepartmentForm)]);
                 server.respondWith('GET', usersUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeUsersForDD)]);

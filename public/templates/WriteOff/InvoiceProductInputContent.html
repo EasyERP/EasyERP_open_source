@@ -2,11 +2,11 @@
     <td>
         <span title="Delete" class="fa fa-trash-o"></span>
     </td>
-    <td data-name="productName">
+    <td data-name="productName" class="_newSelectListWrap">
         <a class="current-selected productsDd" href="javascript:;" data-id="<%= products[0] ? products[0]._id : null%>"><%=
             products[0] ? products[0].name : 'Select'%></a>
     </td>
-    <td data-name="jobs" class="jobs text-overflow trash">
+    <td data-name="jobs" class="jobs trash _newSelectListWrap">
         <a class="current-selected jobs" data-id="jobs" href="javascript:;">Select</a>
     <!--<td data-name="scheduledDate">
         <span class="datepicker">

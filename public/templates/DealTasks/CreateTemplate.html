@@ -7,7 +7,7 @@
 
                 <div class="topCell col1-4">
                     <label for="workflowsDd">Stage</label>
-                    <div id="selectWorkflow" class="dataField">
+                    <div id="selectWorkflow" class="dataField _newSelectListWrap">
                         <a id="workflowsDd" class="current-selected" href="javascript:;"></a>
                     </div>
                 </div>
@@ -19,16 +19,14 @@
                     <div class="dataField">
                         <input class="extrainfo" type="text" name="dueDate" id="dueDate" value="" readonly placeholder="Date"/>
                         <div class="inputDateActionBlock">
-                            <input class="time" maxlength="2" name="Hours" id="dueDateHours" value="00"/>
-                            <input class="time" maxlength="2" name="Minutes" id="dueDateMinutes"  value="00"/>
-                            <input class="time" maxlength="2" name="Seconds" id="dueDateSeconds"  value="00"/>
+                            <input maxlength="2" name="time" id="timepickerOne" value="" readonly/>
                         </div>
                     </div>
                 </div>
 
                 <div class="topCell col1-4">
                     <label>Assigned to</label>
-                    <div class="dataField">
+                    <div class="dataField _newSelectListWrap">
                         <a id="assignedToDd" class="current-selected" href="javascript:;">Select</a>
                     </div>
                 </div>
@@ -47,21 +45,21 @@
                     <div class="taskBottom">
                         <div class="topCell selectType col1-3" id="contactItem">
                             <label>Contact</label>
-                            <div>
+                            <div class="_newSelectListWrap">
                                 <a id="contactDd" class="current-selected" href="javascript:;"><i class="fa fa-plus-circle" aria-hidden="true"></i>Add Contact</a>
                             </div>
                         </div>
 
                         <div class="topCell selectType col1-3" id="companyItem">
                             <label>Company</label>
-                            <div>
+                            <div class="_newSelectListWrap">
                                 <a id="companyDd" class="current-selected" href="javascript:;"><i class="fa fa-plus-circle" aria-hidden="true"></i>Add Company</a>
                             </div>
                         </div>
 
                         <div class="topCell selectType col1-3" id="dealItem">
                             <label>Lead/Opportunity</label>
-                            <div>
+                            <div class="_newSelectListWrap">
                                 <a id="dealDd" class="current-selected" href="javascript:;"><i class="fa fa-plus-circle" aria-hidden="true"></i>Add Lead/Opportunity</a>
                             </div>
                         </div>

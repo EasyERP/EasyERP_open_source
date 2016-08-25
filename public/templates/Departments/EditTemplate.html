@@ -15,7 +15,7 @@
                                 <dt><label for="departmentName">Department Name</label></dt>
                                 <dd><input type="text" class="title-input blueback" name="departmentName" id="departmentName" maxlength="32" value="<%=model.name%>"/><input type="text" hidden required value="<%=model.name%>"/></dd>
                                 <dt><label for="parentDepartment">Parent Department</label></dt>
-                                <dd>
+                                <dd class="_newSelectListWrap">
                                     <a id="parentDepartment" data-level="<%=(model.parentDepartment)?model.parentDepartment.nestingLevel:'' %>"data-id="<%=(model.parentDepartment)?model.parentDepartment._id:''%>"class="current-selected"href="javascript:;"><%=(model.parentDepartment)?model.parentDepartment.name:"Select"%></a>
                                 </dd>
                             </dl>
@@ -23,7 +23,7 @@
                         <div class="half-block left">
                             <dl class="department-info">
                                 <dt><label for="departmentManager">Manager</label></dt>
-                                <dd>
+                                <dd class="_newSelectListWrap">
                                     <a id="departmentManager"
                                        data-id="<%=(model.departmentManager)?model.departmentManager._id:''%>" class="current-selected" href="javascript:;"><%=(model.departmentManager)?(model.departmentManager.name.first+""+model.departmentManager.name.last):"Select"%></a>
                                 </dd>

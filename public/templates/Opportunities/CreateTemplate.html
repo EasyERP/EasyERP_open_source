@@ -1,7 +1,7 @@
 <div class="form-holder">
     <form method="post" action="" id="createOpportunities" class="form notDialog">
         <fieldset>
-            <div class="inner _salesModal">
+            <div class="inner _listModal">
                <!-- <ul class="dialog-tabs">
                     <li><a class="active" href="javascript:;">Main</a></li>
                     &lt;!&ndash;<li><a href="javascript:;">Lead</a></li>
@@ -27,17 +27,17 @@
                             <!--<dt>&nbsp;</dt><dd><input type="text" id="expectedRevenueProgress" value="0" maxlength="32"/>%</dd>-->
                             <div class="_modalList">
                                 <div class="_modalLabel"><label for="customerDd">Contact</label></div>
-                                <div class="_modalSelect"><a id="customerDd" class="current-selected" href="javascript:;" data-id="<%=parentModel && parentModel.type==='Person' ? parentModel._id : ''%>"><%=parentModel && parentModel.type ==='Person' ? parentModel.fullName : 'Select'%></a></div>
+                                <div class="_modalSelect _newSelectListWrap"><a id="customerDd" class="current-selected" href="javascript:;" data-id="<%=parentModel && parentModel.type==='Person' ? parentModel._id : ''%>"><%=parentModel && parentModel.type ==='Person' ? parentModel.fullName : 'Select'%></a></div>
                             </div>
 
                             <div class="_modalList">
                                 <div class="_modalLabel"><label for="companyDd">Company</label></div>
-                                <div class="_modalSelect"><a id="companyDd" class="current-selected" href="javascript:;" data-id="<%=parentModel && parentModel.type==='Company' ? parentModel._id : ''%>"><%=parentModel && parentModel.type ==='Company' ? parentModel.fullName : 'Select'%></a></div>
+                                <div class="_modalSelect _newSelectListWrap"><a id="companyDd" class="current-selected" href="javascript:;" data-id="<%=parentModel && parentModel.type==='Company' ? parentModel._id : ''%>"><%=parentModel && parentModel.type ==='Company' ? parentModel.fullName : 'Select'%></a></div>
                             </div>
 
                             <div class="_modalList">
                                 <div class="_modalLabel"><label for="salesPersonDd">Assigned to</label></div>
-                                <div class="_modalSelect"><a id="salesPersonDd" class="current-selected" href="javascript:;">Select</a></div>
+                                <div class="_modalSelect _newSelectListWrap"><a id="salesPersonDd" class="current-selected" href="javascript:;">Select</a></div>
                             </div>
 
                             <!--<dt><label for="salesTeamDd">Sales Team</label></dt>-->
@@ -45,7 +45,7 @@
 
                             <div class="_modalList">
                                 <div class="_modalLabel"><label for="workflowDd">Stages</label></div>
-                                <div class="_modalSelect" id="selectWorkflow"><a id="workflowDd" class="current-selected" href="javascript:;"></a></div>
+                                <div class="_modalSelect _newSelectListWrap" id="selectWorkflow"><a id="workflowDd" class="current-selected" href="javascript:;"></a></div>
                             </div>
 
                             <!--<dt><label for="nextActionDate">Next Action</label></dt>-->
@@ -68,7 +68,7 @@
                             </dd>-->
                             <div class="_modalList">
                                 <div class="area_holder">
-                                 <textarea id="internalNotes" placeholder="Internal notes..." maxlength="500"
+                                 <textarea id="internalNotes" class="internal_Notes" placeholder="Internal notes..." maxlength="500"
                                            class="opp-internal-create"></textarea>
                                     <a href="javascript:;" class="attach_file">
                                         <i class="fa fa-paperclip" aria-hidden="true"></i>

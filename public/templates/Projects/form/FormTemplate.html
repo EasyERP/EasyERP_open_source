@@ -34,26 +34,26 @@
                             <label for="salesManager">Sales Manager</label>
                         </dt>
                         <dd>
-                            <a id="salesManager" href="javascript:;"><%=model.salesManager ? (model.salesManager.fullName):''%></a>
+                            <label id="salesManager"><%=model.salesManager ? (model.salesManager.fullName):''%></label>
                         </dd>
                         <dt>
                             <label for="projectManager">Project Manager</label>
                         </dt>
                         <dd>
-                            <a id="projectManager" href="javascript:;"><%=model.projectManager ? (model.projectManager.fullName):''%></a>
+                            <label id="projectManager"><%=model.projectManager ? (model.projectManager.fullName):''%></label>
                         </dd>
 
 
 
                         <dt><label for="projectTypeDD">Project Type </label></dt>
-                        <dd>
+                        <dd class="_newSelectListWrap">
                             <a id="projectTypeDD" data-id="<%=model.projecttype?model.projecttype:''%>"
                                class="current-selected" href="javascript:;"><%=model.projecttype? model.projecttype:'Select'%></a>
                         </dd>
                         <dt>
                             <label for="customerDd">Project Customer </label>
                         </dt>
-                        <dd>
+                        <dd class="_newSelectListWrap">
                             <a id="customerDd" data-id="<%=model.customer?model.customer._id:''%>"
                                class="current-selected " href="javascript:;"><%=model.customer?(model.customer.fullName):'Select'%></a>
                         </dd>
@@ -61,7 +61,7 @@
                         <dt>
                             <label for="workflowsDd">Status</label>
                         </dt>
-                        <dd>
+                        <dd class="_newSelectListWrap">
                             <a id="workflowsDd" data-id="<%=(model.workflow) ? model.workflow._id : ''%>"
                                class="current-selected " href="javascript:;"><%=(model.workflow)?model.workflow.name:'Undefinded'%></a>
                         </dd>
@@ -119,11 +119,11 @@
                 <div id="comments">
                     <br>
                     <dt><label for="payment_method">Bank Account</label></dt>
-                    <dd>
+                    <dd class="_newSelectListWrap">
                         <a id="payment_method" class="current-selected" href="javascript:;" data-id="<%= (model.paymentMethod) ? model.paymentMethod._id : ''%>"><%= (model.paymentMethod) ? model.paymentMethod.name : 'Select'%></a>
                     </dd>
                     <dt><label for="payment_terms">Payment Terms</label></dt>
-                    <dd>
+                    <dd class="_newSelectListWrap">
                         <a id="payment_terms" class="current-selected" href="javascript:;" data-id="<%= (model.paymentTerms) ? model.paymentTerms._id : ''%>"><%=(model.paymentTerms) ? model.paymentTerms.name :  'Select'%></a>
                     </dd>
                     <div class="textarea-wrapper">

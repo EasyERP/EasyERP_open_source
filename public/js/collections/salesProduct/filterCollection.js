@@ -1,5 +1,5 @@
 ﻿define([
-        'collections/Product/filterCollection'
+        'collections/Products/filterCollection'
     ],
     function (filterCollection) {
         'use strict';

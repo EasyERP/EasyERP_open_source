@@ -20,7 +20,7 @@ var History = function (models) {
             var keys = keyPath.split('.');
             var val;
 
-            if (keys[0] === keyValue.key && (keys.length === 1 || keys[1] === Object.keys(keyValue.value)[0]) ) {
+            if (keys[0] === keyValue.key && (keys.length === 1 || keys[1] === Object.keys(keyValue.value)[0])) {
                 val = keyValue.value;
 
                 if (keys.length > 1) {
@@ -46,7 +46,11 @@ var History = function (models) {
                 };
 
                 if (mappedValue.isRef) {
-                    historyEntry.newValue = objectId(val); // toDo need to be investigated, sometimes an error occurs
+                    if (objectId.isValid(val)) {
+                        historyEntry.newValue = objectId(val);  // toDo need to be investigated, sometimes an error occurs
+                    } else {
+                        historyEntry.newValue = val; // toDo need to be investigated, sometimes an error occurs
+                    }
                 }
             } else {
                 return null;
@@ -78,14 +82,13 @@ var History = function (models) {
 
         }
 
-
         for (i = dataKeys.length - 1; i >= 0; i--) {
 
             key = dataKeys[i];
 
             if (key.indexOf('.') !== -1) {
                 keyArray = key.split('.');
-                if (!data[keyArray[0]]){
+                if (!data[keyArray[0]]) {
                     data[keyArray[0]] = {};
                 }
 
@@ -151,7 +154,7 @@ var History = function (models) {
                     $limit: 1
                 }], function (err, result) {
                     var historyItem;
-                    
+
                     if (err) {
                         console.log(err);
                         cb();
@@ -187,9 +190,9 @@ var History = function (models) {
         }
     };
 
-    this.deleteHistoryById = function(req, id){
+    this.deleteHistoryById = function (req, id) {
         var HistoryEntry = models.get(req.session.lastDb, 'History', HistoryEntrySchema);
-        HistoryEntry.remove(id, function(err, res){
+        HistoryEntry.remove(id, function (err, res) {
             if (err) {
                 console.log(err);
             }
@@ -214,7 +217,7 @@ var History = function (models) {
                         contentId   : id,
                         changedField: changedField
                     }
-                },{
+                }, {
                     $match: filter
                 }, {
                     $lookup: {
@@ -232,25 +235,25 @@ var History = function (models) {
                     }
                 }, {
                     $project: {
-                        editedBy    : {$arrayElemAt: ['$editedBy', 0]},
-                        tmp         : {$arrayElemAt: ['$tmp', 0]},
-                        newValue    : 1,
-                        prevValue   : 1,
-                        date        : 1,
-                        changedField: 1,
-                        contentId   : 1,
-                        collectionName : 1
+                        editedBy      : {$arrayElemAt: ['$editedBy', 0]},
+                        tmp           : {$arrayElemAt: ['$tmp', 0]},
+                        newValue      : 1,
+                        prevValue     : 1,
+                        date          : 1,
+                        changedField  : 1,
+                        contentId     : 1,
+                        collectionName: 1
                     }
                 }, {
                     $project: {
-                        'editedBy.login'    : '$editedBy.login',
-                        'editedBy._id'    : '$editedBy._id',
-                        newValue    : project,
-                        prevValue   : 1,
-                        date        : 1,
-                        changedField: 1,
-                        contentId   : 1,
-                        collectionName : 1
+                        'editedBy.login': '$editedBy.login',
+                        'editedBy._id'  : '$editedBy._id',
+                        newValue        : project,
+                        prevValue       : 1,
+                        date            : 1,
+                        changedField    : 1,
+                        contentId       : 1,
+                        collectionName  : 1
                     }
                 }, {
                     $lookup: {
@@ -261,25 +264,25 @@ var History = function (models) {
                     }
                 }, {
                     $project: {
-                        editedBy    : 1,
-                        tmp         : {$arrayElemAt: ['$tmp', 0]},
-                        newValue    : 1,
-                        prevValue   : 1,
-                        date        : 1,
-                        changedField: 1,
-                        contentId   : 1,
-                        collectionName : 1
+                        editedBy      : 1,
+                        tmp           : {$arrayElemAt: ['$tmp', 0]},
+                        newValue      : 1,
+                        prevValue     : 1,
+                        date          : 1,
+                        changedField  : 1,
+                        contentId     : 1,
+                        collectionName: 1
                     }
                 }, {
                     $project: {
-                        editedBy    : 1,
-                        newValue    : 1,
-                        prevValue   : project,
-                        date        : 1,
-                        changedField: 1,
-                        _id         : 0,
-                        contentId   : 1,
-                        collectionName : 1
+                        editedBy      : 1,
+                        newValue      : 1,
+                        prevValue     : project,
+                        date          : 1,
+                        changedField  : 1,
+                        _id           : 0,
+                        contentId     : 1,
+                        collectionName: 1
                     }
                 }], function (err, result) {
                     if (typeof callback === 'function') {
@@ -296,7 +299,7 @@ var History = function (models) {
                     contentId: id,
                     isRef    : {$ne: true},
                 }
-            },{
+            }, {
                 $match: filter
             }, {
                 $lookup: {
@@ -307,25 +310,25 @@ var History = function (models) {
                 }
             }, {
                 $project: {
-                    editedBy    : {$arrayElemAt: ['$editedBy', 0]},
-                    newValue    : 1,
-                    prevValue   : 1,
-                    date        : 1,
-                    changedField: 1,
-                    contentId   : 1,
-                    collectionName : 1
+                    editedBy      : {$arrayElemAt: ['$editedBy', 0]},
+                    newValue      : 1,
+                    prevValue     : 1,
+                    date          : 1,
+                    changedField  : 1,
+                    contentId     : 1,
+                    collectionName: 1
                 }
             }, {
                 $project: {
-                    'editedBy.login'    : '$editedBy.login',
-                    'editedBy._id'    : '$editedBy._id',
-                    newValue    : 1,
-                    prevValue   : 1,
-                    date        : 1,
-                    changedField: 1,
-                    _id         : 0,
-                    contentId   : 1,
-                    collectionName : 1
+                    'editedBy.login': '$editedBy.login',
+                    'editedBy._id'  : '$editedBy._id',
+                    newValue        : 1,
+                    prevValue       : 1,
+                    date            : 1,
+                    changedField    : 1,
+                    _id             : 0,
+                    contentId       : 1,
+                    collectionName  : 1
                 }
             }], function (err, result) {
                 if (typeof callback === 'function') {
@@ -349,7 +352,6 @@ var History = function (models) {
                 mapSchema = historyMapper[contentType.toUpperCase()];
                 mapSchemaKeys = Object.keys(mapSchema.map);
 
-
                 for (i = mapSchemaKeys.length - 1; i >= 0; i--) {
                     key = mapSchemaKeys[i];
                     field = mapSchema.map[key];
@@ -366,8 +368,7 @@ var History = function (models) {
                     var responseArr = [].concat.apply([], results);
                     responseArr = _.sortBy(responseArr, 'date');
 
-
-                    if (!forNote){
+                    if (!forNote) {
                         responseArr = _.groupBy(responseArr, 'date');
                     }
                     callback(errr, responseArr);
