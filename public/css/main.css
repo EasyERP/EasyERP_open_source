@@ -3431,6 +3431,9 @@ input:not([type="checkbox"]).inputBordered:focus {
   width: 100%;
   overflow: auto;
 }
+.content-holder #searchContainer {
+  width: 25%;
+}
 .borderBottom {
   border-bottom: 1px solid #7f7f80;
 }
@@ -6400,6 +6403,9 @@ dl dd span.ui-spinner {
   min-height: 160px;
   resize: none;
 }
+.form textarea._bigTextArea {
+  width: 100%;
+}
 .form .job-create-info textarea {
   width: 99%;
   height: 160px;
@@ -7277,6 +7283,9 @@ dl dd span.ui-spinner {
   min-height: 160px;
   resize: none;
 }
+.formLeftColumn .form textarea._bigTextArea {
+  width: 100%;
+}
 .formLeftColumn .form .job-create-info textarea {
   width: 99%;
   height: 160px;
@@ -7919,6 +7928,9 @@ dl dd span.ui-spinner {
   width: 99%;
   min-height: 160px;
   resize: none;
+}
+.formRightColumn .form textarea._bigTextArea {
+  width: 100%;
 }
 .formRightColumn .form .job-create-info textarea {
   width: 99%;
@@ -11762,7 +11774,8 @@ ul.dialog-tabs li.right button {
 .form-holder form .inner {
   margin-top: 0;
 }
-.form-holder form input:not([type=checkbox]) {
+.form-holder form input:not([type="checkbox"]),
+.form-holder form input:not([type="radio"]) {
   border: 1px solid #7f7f80;
   width: 100%;
   max-width: 280px;
@@ -11773,11 +11786,13 @@ ul.dialog-tabs li.right button {
   box-sizing: border-box;
   color: #000000;
 }
-.form-holder form input:not([type=checkbox]):focus {
+.form-holder form input:not([type="checkbox"]):focus,
+.form-holder form input:not([type="radio"]):focus {
   outline: medium none;
   border: 1px solid #3e88b9;
 }
-.form-holder form input:not([type=checkbox])#editInput {
+.form-holder form input:not([type="checkbox"])#editInput,
+.form-holder form input:not([type="radio"])#editInput {
   padding: 2px 6px;
 }
 .form-holder form .canReadAndWrite {
@@ -11792,6 +11807,7 @@ ul.dialog-tabs li.right button {
   display: block;
   float: left;
   height: 16px;
+  width: 16px;
 }
 .form-holder form .canReadAndWrite input[type=radio]:focus {
   box-shadow: none !important;
@@ -14994,6 +15010,9 @@ textarea#editInput {
 .payRoll-expenses .payRoll-edit,
 .payRoll-expenses .payRoll-name {
   margin-bottom: 15px;
+}
+.payRoll-expenses._payRollFormVisible {
+  overflow: visible;
 }
 .createJobInput {
   margin: 10px 0;

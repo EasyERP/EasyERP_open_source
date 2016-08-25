@@ -2118,7 +2118,8 @@ input::-ms-clear {
   .inner {
     margin-top: 0;
   }
-  input:not([type=checkbox]) {
+  input:not([type="checkbox"]),
+  input:not([type="radio"]){
     border: @thin-border @border-color-main;
     width: 100%;
     max-width: 280px;
@@ -2140,6 +2141,7 @@ input::-ms-clear {
     }
   }
 
+
   .canReadAndWrite {
     line-height: 22px;
     margin: 10px 0 0 0;
@@ -2151,6 +2153,7 @@ input::-ms-clear {
       display: block;
       float: left;
       height: 16px;
+      width: 16px;
       &:focus {
         box-shadow: none !important;
       }
@@ -2189,6 +2192,8 @@ input::-ms-clear {
     }
   }
 }
+
+
 
 .addUserDialog, .addGroupDialog {
   display: none;
@@ -6700,6 +6705,10 @@ textarea#editInput {
 
   .payRoll-edit, .payRoll-name {
     margin-bottom: 15px;
+  }
+
+  &._payRollFormVisible {
+    overflow: visible;
   }
 }
 
