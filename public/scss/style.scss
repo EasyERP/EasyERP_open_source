@@ -16,7 +16,6 @@
 // Styles for grid
 @import "layouts/grid";
 @import "layouts/flexgrid";
-
 // General styles
 
 
@@ -24,6 +23,9 @@
 @import "general/buttons";
 @import "general/general";
 @import "general/forms";
+@import "general/erp-icons";
+@import "general/table";
+@import "general/dashboard-item";
 
 
 // Styles for specific modules
@@ -39,6 +41,7 @@
 @import "modules/dropDown";
 @import "modules/persons";
 @import "modules/datapicker";
+@import "modules/navigation";
 
 
 // Styles for condition

@@ -26,9 +26,15 @@
 
   &.plus {
     &:before {
-      content: "\f067";
+      content: "\e90f";
       margin-right: 6px;
-      font-family: 'FontAwesome';
+      font-family: $icon-font;
+    }
+  }
+
+  &.icon-download {
+    &:before {
+      font-size: 18px;
     }
   }
 
@@ -166,6 +172,21 @@
   span, a {
     padding: 0 !important;
     color: $black;
+  }
+}
+
+.btnsBlock {
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+  .btn {
+    float: left;
+    margin-right: 10px;
+    &:last-child {
+      margin-right: 0;
+    }
   }
 }
 

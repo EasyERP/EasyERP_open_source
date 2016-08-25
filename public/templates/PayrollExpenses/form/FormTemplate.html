@@ -1,4 +1,4 @@
-<div class="tableFixedWrap">
+<div class="tableFixedWrap payRoll-list-wrap">
     <table class="list payRoll-list tableFixed">
         <colgroup class="borders" span="7">
             <col span="1" width="5%">
@@ -8,21 +8,21 @@
             <col span="1" width="15%">
             <col span="1" width="15%">
         </colgroup>
-        <thead>
-        <tr>
-            <th  class="centerCell"><a id="expandAll">#</a></th>
-            <th class="notForm"><input type="checkbox" class="checkAll"/></th>
-            <th class="oe_sortable" data-sort="employee.name.first">Complete Name<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th>Month</th>
-            <th class="oe_sortable" data-sort="calc">Calc<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="paid">Paid<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="diff">Diff<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-        </tr>
-        </thead>
+        <!--<thead>-->
+        <!--<tr>-->
+            <!--<th  class="centerCell"><a id="expandAll">#</a></th>-->
+            <!--<th class="notForm"><input type="checkbox" class="checkAll"/></th>-->
+            <!--<th class="oe_sortable" data-sort="employee.name.first">Complete Name<span class="arrow down">7</span><span-->
+                    <!--class="arrow up">v</span></th>-->
+            <!--<th>Month</th>-->
+            <!--<th class="oe_sortable" data-sort="calc">Calc<span class="arrow down">7</span><span-->
+                    <!--class="arrow up">v</span></th>-->
+            <!--<th class="oe_sortable" data-sort="paid">Paid<span class="arrow down">7</span><span-->
+                    <!--class="arrow up">v</span></th>-->
+            <!--<th class="oe_sortable" data-sort="diff">Diff<span class="arrow down">7</span><span-->
+                    <!--class="arrow up">v</span></th>-->
+        <!--</tr>-->
+        <!--</thead>-->
 
         <tr>
             <td id="payRoll-Table" colspan="9">
@@ -36,6 +36,21 @@
                             <col span="1" width="15%">
                             <col span="1" width="15%">
                         </colgroup>
+                        <thead>
+                        <tr>
+                            <th  class="centerCell"><a id="expandAll">#</a></th>
+                            <th class="notForm"><input type="checkbox" class="checkAll"/></th>
+                            <th class="oe_sortable" data-sort="employee.name.first">Complete Name<span class="arrow down">7</span><span
+                                    class="arrow up">v</span></th>
+                            <th>Month</th>
+                            <th class="oe_sortable" data-sort="calc">Calc<span class="arrow down">7</span><span
+                                    class="arrow up">v</span></th>
+                            <th class="oe_sortable" data-sort="paid">Paid<span class="arrow down">7</span><span
+                                    class="arrow up">v</span></th>
+                            <th class="oe_sortable" data-sort="diff">Diff<span class="arrow down">7</span><span
+                                    class="arrow up">v</span></th>
+                        </tr>
+                        </thead>
                         <tbody id="payRoll-TableBody">
                         <% var total = 0;%>
                         <% collection.forEach(function(model, index){ %>
