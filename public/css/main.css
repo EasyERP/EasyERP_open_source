@@ -9871,27 +9871,22 @@ td.checkboxRow {
 }
 .dropDown > ul > li.sortDn .sortArrow {
   color: #fff;
-  -webkit-transform: rotate(180deg);
-  -moz-transform: rotate(180deg);
-  -ms-transform: rotate(180deg);
-  -o-transform: rotate(180deg);
-  transform: rotate(180deg);
 }
 .dropDown > ul > li.sortDn .sortArrow:before {
-  content: "\f176";
+  content: "\e91c";
 }
 .dropDown > ul > li.sortUp .sortArrow {
   color: #fff;
 }
 .dropDown > ul > li.sortUp .sortArrow:before {
-  content: "\f176";
+  content: "\e920";
 }
 .dropDown > ul > li .sortArrow {
   position: absolute;
   top: 0;
   right: 8px;
   color: #2b3643;
-  font-family: 'FontAwesome';
+  font-family: 'erp-icons';
   font-size: 12px;
 }
 .dropDown.open ul {
@@ -10329,6 +10324,9 @@ form .avatar .upload input {
 }
 #createBtnHolder.btnsBlock {
   float: left;
+}
+a.attach_file:hover {
+  text-decoration: none;
 }
 .collapsed .sideMenu {
   width: 40px !important;

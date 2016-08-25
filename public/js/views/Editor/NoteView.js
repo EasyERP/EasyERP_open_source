@@ -36,7 +36,7 @@ define([
             'click #addTask'                                   : 'saveTask',
             'click .fa-circle-o'                               : 'completeTask',
             'click .editDelNote'                               : 'editDelNote',
-            'click .fa-paperclip'                              : 'clickInput',
+            'click .icon-attach'                              : 'clickInput',
             'click .chart-tabs li'                             : 'changeTab',
             'click .current-selected:not(.jobs)'               : 'showNewSelect',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'

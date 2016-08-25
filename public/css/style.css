@@ -58,6 +58,9 @@
   [class^="icon-"]:before,
   [class*=" icon-"]:before {
     font-family: 'erp-icons' !important; }
+  [class^="icon-"]:hover,
+  [class*=" icon-"]:hover {
+    text-decoration: none !important; }
 
 * {
   box-sizing: border-box; }

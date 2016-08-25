@@ -66,7 +66,7 @@ define([
             'mouseleave .avatar'                               : 'hideEdit',
             'click .dialog-tabs a'                             : 'changeTab',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
-            'click .fa-paperclip'                              : 'clickInput'
+            'click .icon-attach'                               : 'clickInput'
         },
 
         clickInput: function () {

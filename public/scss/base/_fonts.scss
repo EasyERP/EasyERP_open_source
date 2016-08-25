@@ -46,4 +46,7 @@ $first: 1;
   &:before {
     font-family: 'erp-icons' !important;
   }
+  &:hover {
+    text-decoration: none !important;
+  }
 }
