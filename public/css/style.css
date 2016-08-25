@@ -1983,13 +1983,10 @@ label._customCHeckbox input[type="checkbox"] {
 .internal_Notes {
   min-height: 100px; }
 
-.icon-list4:before {
-  content: "\f0c9"; }
-
 .icon-rect:before {
   content: "\e900"; }
 
-.icon-arrows:before {
+.icon-transfer2:before {
   content: "\30"; }
 
 .icon-arrow-down2:before {
@@ -2018,6 +2015,24 @@ label._customCHeckbox input[type="checkbox"] {
 
 .icon-arrow-up2:before {
   content: "\76"; }
+
+.icon-down-arrow2:before {
+  content: "\e91b"; }
+
+.icon-down-arrow:before {
+  content: "\e91c"; }
+
+.icon-up-arrow2:before {
+  content: "\e91d"; }
+
+.icon-sort-arrows:before {
+  content: "\e91e"; }
+
+.icon-transfer:before {
+  content: "\e91f"; }
+
+.icon-up-arrow:before {
+  content: "\e920"; }
 
 .icon-folder-download:before {
   content: "\e917"; }
@@ -4194,6 +4209,14 @@ label._customCHeckbox input[type="checkbox"] {
   .dropDown._contractJobsFilter > ul {
     left: auto;
     right: 0; }
+
+.dropBtn.icon-list5:hover {
+  text-decoration: none !important; }
+.dropBtn.icon-list5:before {
+  font-size: 16px;
+  line-height: 24px;
+  display: block;
+  text-align: center; }
 
 .notFoundItems {
   text-align: center;
