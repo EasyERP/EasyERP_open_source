@@ -2247,6 +2247,130 @@ label._customCHeckbox input[type="checkbox"] {
 .icon-skype:before {
   content: "\e60f"; }
 
+.payRoll-list-wrap {
+    border-top: 1px solid #d7d7d7;
+}
+
+.payRoll-list {
+    width: 100%;
+    min-width: 100%;
+    border-spacing: 0;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.payRoll-list th, .payRoll-list td {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+}
+
+.payRoll-list tbody tr, .payRoll-list thead tr {
+    border-top: none;
+}
+
+.payRoll-list tbody tr {
+    border-top: 1px solid #d7d7d7;
+}
+
+.payRoll-list tbody tr:first-child, .payRoll-list tbody tr:last-child {
+    border-top: 0;
+}
+
+.payRoll-list tfoot {
+    margin-right: 17px;
+}
+
+.payRoll-list tfoot td {
+    border-color: transparent;
+    padding-right: 20px;
+}
+
+.payRoll-list tbody tr:hover {
+    background: none;
+}
+
+.payRoll-list #payRoll-Table {
+    padding: 0;
+}
+
+.payRoll-list #payRoll-Table .datePicker {
+    padding: 0;
+}
+
+.payRoll-list #payRoll-Table .datePicker input:not([disabled]) {
+    outline: 1px solid #66b5d4 !important;
+}
+
+.payRoll-list #payRoll-Table .datePicker input:focus {
+    outline: 1px solid #66b5d4 !important;
+}
+
+.payRoll-list #payRoll-Table .mainRow td {
+    border: none;
+}
+
+.payRoll-list #payRoll-Table .scrollit {
+    display: block;
+    height: calc(100vh - 2010px);
+    overflow-x: hidden;
+}
+
+.payRoll-list ._payRoll-TableBody
+td {
+    border: 1px solid #d7d7d7;
+}
+
+.payRoll-expenses dd, .payRoll-expenses dt {
+    display: inline-block;
+    line-height: 23px;
+    width: 40%;
+    float: left;
+}
+
+.payRoll-expenses dd + dt {
+    clear: both;
+}
+
+.payRoll-expenses dd {
+    width: 60%;
+}
+
+.payRollHolder {
+    margin-top: 0 !important;
+}
+
+.totalContainer {
+    margin: 15px 20px 0 0;
+    text-align: right;
+    color: #000000;
+    font-size: 14px;
+}
+
+.totalContainer dd, .totalContainer dt {
+    display: inline-block;
+    line-height: 23px;
+    font-size: 14px;
+}
+
+.totalContainer dd {
+    width: 65%;
+}
+
+.totalContainer dd .newSelectList {
+    left: 50%;
+    margin-left: -100%;
+}
+
+#searchContainer.payRoll {
+    margin: 0 0 10px;
+}
+
+@media (min-width: 920px) {
+    table.payRoll-list #payRoll-Table .scrollit {
+        height: calc(100vh - 290px);
+    }
+}
 .flex {
   display: -webkit-box;
   display: -webkit-flex;
@@ -3770,7 +3894,10 @@ label._customCHeckbox input[type="checkbox"] {
         color: #f2f2f2; }
 
 .ui-dialog-buttonset {
-  border: none !important; }
+    border: none;
+    border-top: 1px solid #d7d7d7;
+    padding-top: 10px;
+}
 
 .task-content {
   padding: 5px;
@@ -3955,7 +4082,10 @@ label._customCHeckbox input[type="checkbox"] {
   position: relative; }
 
 ._newSelectListWrap {
-  position: relative; }
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
 
 .newSelectList {
   position: absolute;
