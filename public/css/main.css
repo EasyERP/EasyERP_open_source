@@ -4904,7 +4904,7 @@ ul.dialog-tabs .withEndContract .arrow {
   width: 98px;
   border-radius: 0;
   text-align: center;
-  line-height: 20px;
+  line-height: 19px;
   height: 20px;
 }
 ul.dialog-tabs .withEndContract .arrow {
@@ -4915,6 +4915,7 @@ ul.dialog-tabs .withEndContract .arrow {
   font-size: 10px;
   width: 16px;
   margin-left: -2px;
+  line-height: 22px;
 }
 .dialog-tabs-items {
   border-top: none;
