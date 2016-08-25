@@ -184,6 +184,8 @@ define([
                 login    : currentUser.login
             });
 
+            App.Tracker.send.call(App.Tracker);
+
             return 'You sure you want to leave?';
         });
     };
