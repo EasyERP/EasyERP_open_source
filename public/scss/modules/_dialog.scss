@@ -12,6 +12,10 @@
 
 
 .ui-dialog {
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 100%;
+
   &-buttonpane {
     padding: 0 0 10px !important;
     margin-top: 0 !important;

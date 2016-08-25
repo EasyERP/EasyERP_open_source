@@ -731,8 +731,9 @@ input::-ms-clear {
       height: 2em;
       line-height: 2em;
       text-align: center;
-      font-family: 'FontAwesome';
+      font-family: 'erp-icons';
       font-size: 14px;
+      cursor: pointer;
 
       &:hover {
         text-decoration: none;
@@ -746,14 +747,11 @@ input::-ms-clear {
         text-indent: -99999px;
         overflow: hidden;
         display: block;
-
         position: absolute;
         left: 50%;
         top: 50%;
         right: auto;
         bottom: auto;
-
-        cursor: pointer;
       }
     }
 
@@ -761,7 +759,7 @@ input::-ms-clear {
       left: 2px;
 
       &:before {
-        content: '\f104';
+        content: '\38';
       }
     }
 
@@ -769,7 +767,7 @@ input::-ms-clear {
       right: 2px;
 
       &:before {
-        content: '\f105';
+        content: '\39';
       }
 
     }
@@ -1132,10 +1130,6 @@ select {
   }
 }
 
-#thumbBtn {
-  font-size: 14px;
-}
-
 .icon-btn {
   display: block;
   .noPaddingMargin;
@@ -1158,17 +1152,10 @@ a {
   }
 }
 
-
-
 body {
   font-family: @fontRegular;
   font-size: 12px;
   height: 100%;
-}
-
-
-dl {
-  //.dl-auto;
 }
 
 .clear {
@@ -2838,16 +2825,9 @@ table#workflows {
 
         .icons {
           padding: 0 11px;
-          display: inline-block;
-          font: normal normal normal 14px simple-line-icons;
           font-size: inherit;
           text-rendering: auto;
-          -webkit-font-smoothing: antialiased;
-          -moz-osx-font-smoothing: grayscale;
           transform: translate(0, 0);
-          font-style: normal;
-          font-variant: normal;
-          text-transform: none;
         }
 
         > a, .icons {
@@ -2860,51 +2840,34 @@ table#workflows {
           text-shadow: none;
           font-weight: 300;
         }
-
-        .icon {
-          &-Sales {
-            &:before {
-              content: "\e043";
-            }
-          }
-          &-HR {
-            &:before {
-              content: "\e001";
-            }
-          }
-          &-Project {
-            &:before {
-              content: "\e02d";
-            }
-          }
-          &-Settings {
-            &:before {
-              content: "\e09a";
-            }
-          }
-          &-Accounting {
-            &:before {
-              content: "\e04b";
-            }
-          }
-          &-Expenses {
-            &:before {
-              content: "\e077";
-            }
-          }
-          &-Payroll {
-            &:before {
-              content: "\e025";
-            }
-          }
-          &-Purchases {
-            &:before {
-              content: "\e04e";
-            }
-          }
+        .icons {
+          line-height: 38px;
         }
 
-        &:hover, &.opened {
+        .icon-Sales:before {
+          content: "\e043";
+        }
+        .icon-Project:before {
+          content: "\e02d";
+        }
+        .icon-HR:before {
+          content: "\e001";
+        }
+        .icon-Accounting:before {
+          content: "\e04b";
+        }
+        .icon-Payroll:before {
+          content: "\e025";
+        }
+        .icon-Expenses:before {
+          content: "\e077";
+        }
+        .icon-Settings:before {
+          content: "\e09a";
+        }
+
+        &:hover,
+        &.opened {
           cursor: pointer;
           height: 40px;
           background-color: @submenu-hover;
@@ -2943,10 +2906,10 @@ table#workflows {
           width: 30px;
           text-align: center;
           display: inline;
-          font-size: 16px;
-          font-family: 'FontAwesome';
+          font-size: 12px;
+          font-family: 'erp-icons';
           height: auto;
-          content: "\f104";
+          content: "\37";
           font-weight: 300;
           text-shadow: none;
           position: absolute;
@@ -2963,7 +2926,7 @@ table#workflows {
             display: block;
           }
           &:before {
-            transform: rotate(-90deg);
+            transform: rotate(90deg);
           }
         }
       }
@@ -3105,61 +3068,6 @@ table#workflows {
 
 .noPadding {
   padding: 0 !important;
-}
-
-.createBtnHolder, #createBtnHolder {
-  float: left;
-  margin-left: 5px;
-  a {
-    float: left;
-    display: block;
-    overflow: hidden;
-    margin-right: 3px;
-    cursor: pointer;
-    vertical-align: baseline;
-    color: @top-font-color;
-    line-height: 25px; //it was 18px
-
-    &:hover {
-      color: @top-font-color + #333;
-    }
-  }
-  .fa {
-    font-size: 15px;
-    text-decoration: none;
-    text-align: center;
-    margin-right: 10px;
-    &:before {
-      line-height: 18px;
-    }
-  }
-  ul {
-    overflow: hidden;
-    padding: 0 0 0 10px;
-    float: left;
-    li {
-      float: left;
-      margin-right: 10px;
-      a {
-        display: inline-block;
-        line-height: 18px;
-        width: 100%;
-        padding: 0 5px;
-        margin: 0;
-        &:hover {
-          text-decoration: none;
-        }
-      }
-      .dateReconcileDate {
-        line-height: 29px;
-      }
-    }
-  }
-  .btnRounded {
-    height: 26px;
-    line-height: 22px!important;
-    .defaultBorRad;
-  }
 }
 
 /*----------------------------- Tabs ------------------------------------*/
@@ -3860,7 +3768,9 @@ ul.chart-tabs {
   .defaultBorRad;
 
   .item {
-    margin-left: 5px;
+    //margin-left: 5px;
+    margin-right: 5px;
+    margin-bottom: 5px;
     float: left;
     padding: 5px 10px;
     color: @fontColor-2;
@@ -6142,10 +6052,10 @@ textarea#editInput {
   width: 70% !important;
   margin: 0 auto;
   padding-top: 25px !important;
-  overflow: hidden;
+  //overflow: hidden;
 
   .payRoll-name {
-    float: left;
+    //float: left;
     padding-right: 5px;
   }
 

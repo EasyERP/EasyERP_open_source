@@ -52,10 +52,10 @@
       font-family: $semibold-font-family;
 
       &:before {
-        font-family: FontAwesome;
+        font-family: 'erp-icons';
         position: absolute;
         left: 6px;
-        content: "\f00c";
+        content: "\e904";
       }
     }
   }
@@ -129,6 +129,8 @@
 
 ._newSelectListWrap {
   position: relative;
+  display: inline-block;
+  cursor: pointer;
 }
 
 .newSelectList {
