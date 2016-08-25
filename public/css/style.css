@@ -1983,6 +1983,18 @@ label._customCHeckbox input[type="checkbox"] {
 .internal_Notes {
   min-height: 100px; }
 
+.icon-check-circle:before {
+  content: "\f05d"; }
+
+.icon-list4:before {
+  content: "\f0c9"; }
+
+.icon-circle:before {
+  content: "\f10c"; }
+
+.icon-usd:before {
+  content: "\f155"; }
+
 .icon-rect:before {
   content: "\e900"; }
 
