@@ -4019,7 +4019,7 @@ table#workflows tr td.edit-status {
   font-size: 12px;
   font-family: 'erp-icons';
   height: auto;
-  content: "\37";
+  content: "\f104";
   font-weight: 300;
   text-shadow: none;
   position: absolute;
@@ -8147,7 +8147,7 @@ input:not([type="checkbox"]).inputBordered:focus {
   display: block;
 }
 .topbarHolder .loginPanel .dropdownButton:after {
-  content: "\37";
+  content: "\f107";
   display: inline-block;
   float: right;
   font-size: 12px;
