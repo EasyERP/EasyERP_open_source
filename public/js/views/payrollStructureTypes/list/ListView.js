@@ -41,7 +41,7 @@ define([
 
         events: {
             'click  .list tbody td:not(.notForm, .validated)': 'goToEditDialog',
-            'click  .fa-plus'                                : 'create',
+            'click  .createBtn'                              : 'create',
             'click  .fa-trash-o'                             : 'remove'
         },
 

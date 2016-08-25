@@ -58,6 +58,9 @@
   [class^="icon-"]:before,
   [class*=" icon-"]:before {
     font-family: 'erp-icons' !important; }
+  [class^="icon-"]:hover,
+  [class*=" icon-"]:hover {
+    text-decoration: none !important; }
 
 * {
   box-sizing: border-box; }
@@ -1983,6 +1986,18 @@ label._customCHeckbox input[type="checkbox"] {
 .internal_Notes {
   min-height: 100px; }
 
+.icon-check-circle:before {
+  content: "\f05d"; }
+
+.icon-list4:before {
+  content: "\f0c9"; }
+
+.icon-circle:before {
+  content: "\f10c"; }
+
+.icon-usd:before {
+  content: "\f155"; }
+
 .icon-rect:before {
   content: "\e900"; }
 
@@ -3328,7 +3343,7 @@ label._customCHeckbox input[type="checkbox"] {
     text-align: center;
     font-size: 12px;
     color: #c8c8d3; }
-    .propertyBox .removeProperty .fa-times:hover {
+    .propertyBox .removeProperty:hover {
       color: #000000; }
   .propertyBox .propertyImg {
     width: 40px; }
