@@ -257,12 +257,14 @@ define([
                 title        : 'Edit Department',
                 buttons      : [{
                     text : 'Save',
+                    class: 'btn blue',
                     click: function () {
                         self.saveItem();
                     }
                 },
                     {
                         text : 'Cancel',
+                        class: 'btn',
                         click: function () {
                             $(this).remove();
                         }

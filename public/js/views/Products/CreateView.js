@@ -174,7 +174,7 @@ define([
                 buttons    : {
                     save: {
                         text : 'Create',
-                        class: 'btn',
+                        class: 'btn blue',
                         id   : 'createBtnDialog',
                         click: self.saveItem
                     },

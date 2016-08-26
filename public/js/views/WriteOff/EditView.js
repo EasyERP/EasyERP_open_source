@@ -438,9 +438,11 @@ define([
             buttons = [
                 {
                     text : 'Close',
+                    class: 'btn',
                     click: self.hideDialog
                 }, {
                     text : 'Delete',
+                    class: 'btn',
                     click: self.deleteItem
                 }
             ];

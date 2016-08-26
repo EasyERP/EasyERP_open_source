@@ -94,6 +94,7 @@ define([
                 buttons      : [
                     {
                         id   : 'create-scheduledPay-dialog',
+                        class: 'btn blue',
                         text : 'Save',
                         click: function () {
                             self.saveItem();
@@ -102,6 +103,7 @@ define([
 
                     {
                         text : 'Cancel',
+                        class: 'btn',
                         click: function () {
                             self.hideDialog();
                         }

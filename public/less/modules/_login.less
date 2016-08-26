@@ -1649,32 +1649,32 @@ td.checkboxRow {
   .createBtnHolder {
     margin-top: 6px;
   }
-    //position: absolute;
-    //left: 35px;
-    //z-index: 1;
-    //
-    //h3 {
-    //  display: none;
-    //}
-    //
-    //#createBtnHolder {
-    //  margin-top: 8px;
-    //}
-/*
-    &.position {
-      position: absolute;
-      left: 35px;
-      z-index: 1;
+  //position: absolute;
+  //left: 35px;
+  //z-index: 1;
+  //
+  //h3 {
+  //  display: none;
+  //}
+  //
+  //#createBtnHolder {
+  //  margin-top: 8px;
+  //}
+  /*
+      &.position {
+        position: absolute;
+        left: 35px;
+        z-index: 1;
 
-      h3 {
-        display: none;
-      }
+        h3 {
+          display: none;
+        }
 
-      #createBtnHolder {
-        margin-top: 8px;
+        #createBtnHolder {
+          margin-top: 8px;
+        }
       }
-    }
-*/
+  */
 
   #createBtnHolder {
     .btnBlue {
@@ -2340,5 +2340,34 @@ form .avatar .upload input {
 a.attach_file {
   &:hover {
     text-decoration: none;
+  }
+}
+
+._projectWeekTable {
+  &.list {
+    tbody td,
+    thead th {
+      text-align: center;
+    }
+    tbody td {
+      width: 35px;
+      > input.editing {
+        text-align: center;
+      }
+    }
+  }
+}
+
+@media (max-width: 1400px) {
+  ._projectsTablesWrap {
+    > .left {
+      width: calc(~"100% - 345px") !important;
+    }
+    > .right {
+      width: 330px !important;
+    }
+  }
+  .form-holder.employee {
+    padding: 20px 10px;
   }
 }
