@@ -2010,6 +2010,12 @@ label._customCHeckbox input[type="checkbox"] {
 .icon-check-circle:before {
   content: "\f05d"; }
 
+.icon-folder2:before {
+  content: "\f07b"; }
+
+.icon-folder-open2:before {
+  content: "\f07c"; }
+
 .icon-list4:before {
   content: "\f0c9"; }
 
@@ -2036,6 +2042,12 @@ label._customCHeckbox input[type="checkbox"] {
 
 .icon-circle:before {
   content: "\f10c"; }
+
+.icon-folder3:before {
+  content: "\f114"; }
+
+.icon-folder-open3:before {
+  content: "\f115"; }
 
 .icon-usd:before {
   content: "\f155"; }
@@ -2219,6 +2231,9 @@ label._customCHeckbox input[type="checkbox"] {
 
 .icon-briefcase:before {
   content: "\e04b"; }
+
+.icon-basket:before {
+  content: "\e04e"; }
 
 .icon-wrench:before {
   content: "\e052"; }

@@ -3704,16 +3704,16 @@ a.red:hover {
   position: relative;
 }
 #groupList li.parent > .content .text:before {
-  font-family: Icons;
-  content: '2';
-  font-size: 20px;
-  line-height: 24px;
-  color: #3e88b9;
+  content: '\f115';
   position: absolute;
-  left: 2px;
   top: 2px;
   right: auto;
   bottom: auto;
+  left: 2px;
+  line-height: 24px;
+  font-size: 20px;
+  color: #3e88b9;
+  font-family: 'erp-icons';
 }
 #groupList li .text {
   display: block;
@@ -4025,6 +4025,9 @@ table#workflows tr td.edit-status {
 }
 .sideMenu nav .root .icon-Payroll:before {
   content: "\e025";
+}
+.sideMenu nav .root .icon-Purchases:before {
+  content: "\e04e";
 }
 .sideMenu nav .root .icon-Expenses:before {
   content: "\e077";
@@ -8193,7 +8196,7 @@ input:not([type="checkbox"]).inputBordered:focus {
   float: right;
   font-size: 12px;
   font-family: 'erp-icons';
-  line-height: 24px;
+  line-height: 20px;
   color: #fff;
   width: 20px;
   text-align: center;
