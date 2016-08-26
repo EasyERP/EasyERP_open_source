@@ -897,23 +897,6 @@
   border: none !important;
 }
 /*== End Input type number =============*/
-.tableResponsive {
-  min-height: .01%;
-  overflow: auto;
-  width: 100%;
-  -ms-overflow-style: -ms-autohiding-scrollbar;
-}
-.tableResponsiveNew {
-  min-height: .01%;
-  width: 100%;
-}
-#loading {
-  position: fixed;
-  display: block;
-  width: 100%;
-  height: 100%;
-  z-index: 9999;
-}
 .salary-list tbody#listTable .subRow:hover {
   background-color: transparent;
 }
@@ -1574,30 +1557,6 @@
   text-align: left;
 }
 /*== temp files==*/
-tr.redBorder {
-  background-color: red;
-}
-.totalBySales {
-  background-color: #045986;
-}
-.totalBySales td {
-  text-align: left !important;
-  font-size: 13px !important;
-}
-.paidBySales {
-  background-color: #1d96c2;
-}
-.paidBySales td {
-  text-align: left !important;
-  font-size: 13px !important;
-}
-.revenueBySales {
-  background-color: #A19015;
-}
-.revenueBySales td {
-  text-align: left !important;
-  font-size: 13px !important;
-}
 #forInfo {
   overflow: hidden;
 }
@@ -1613,8 +1572,6 @@ tr.redBorder {
   margin-bottom: 10px;
 }
 #forInfo .tableProjects .forCaption {
-  color: #ffffff;
-  background-color: #3e88b9;
   line-height: 28px;
 }
 #forInfo .tableProjects .forCaption:last-child {
@@ -1666,8 +1623,17 @@ tr.redBorder {
 #forInfo .tableProjects .subRow td:last-child {
   border-right: 1px solid transparent;
 }
+#forInfo #jobsItem {
+  border-bottom: 1px solid #d7d7d7 !important;
+}
 #forInfo .innerTableProject {
   padding: 5px 0 5px 20px;
+}
+#forInfo .innerTableProject .list > thead tr {
+  border-top: 0;
+}
+#forInfo .innerTableProject .list > tfoot tr {
+  border-bottom: 0;
 }
 #forInfo .innerTableProject .innerTableProject-footer td {
   border-width: 0;
@@ -1695,9 +1661,6 @@ tr.redBorder {
 }
 #forInfo.accounting td a.fa {
   margin-right: 10px;
-}
-li.fired {
-  background-color: rgba(235, 0, 4, 0.73);
 }
 .holidays {
   position: relative;
@@ -9637,25 +9600,6 @@ a.attach_file:hover {
 }
 .unpaid {
   color: #e55253 !important;
-}
-.textUnderlineHover:hover {
-  text-decoration: underline !important;
-}
-.fired {
-  background-color: rgba(235, 0, 4, 0.73) !important;
-  color: #fff!important;
-}
-.text-left {
-  text-align: left !important;
-}
-.text-right {
-  text-align: right !important;
-}
-.blueText {
-  color: #3e88b9;
-}
-.textGrey {
-  color: #9a9a9e;
 }
 .bgRed {
   background-color: #eb5a46 !important;

@@ -15,8 +15,6 @@
     margin-bottom: 10px;
 
     .forCaption {
-      color: @forCaption-text-color;
-      background-color: @forCaption-color;
       line-height: 28px;
       &:last-child {
         padding: 0 10px 0 0;
@@ -77,9 +75,17 @@
       }
     }
   }
-
+  #jobsItem{
+    border-bottom: 1px solid #d7d7d7 !important;
+  }
   .innerTableProject {
     padding: 5px 0 5px 20px;
+    .list > thead tr{
+      border-top: 0;
+    }
+    .list > tfoot tr {
+      border-bottom: 0;
+    }
     .innerTableProject-footer {
       td {
         border-width: 0;

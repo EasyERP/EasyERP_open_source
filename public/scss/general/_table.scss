@@ -1,3 +1,16 @@
+//will adding horizontal scrolling to
+//the table who has biggest width than monitor(needed wrapper for the table)
+.tableResponsive {
+  min-height: .01%;
+  overflow: auto;
+  width: 100%;
+  -ms-overflow-style: -ms-autohiding-scrollbar;
+  &New {
+    min-height: .01%;
+    width: 100%;
+  }
+}
+
 .payRoll-list-wrap{
   border-top: 1px solid #d7d7d7;
 }
