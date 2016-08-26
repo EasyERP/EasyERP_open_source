@@ -1942,6 +1942,15 @@ h3 {
   ._multiEllipsis ._ellipsisCloseBtn {
     display: none; }
 
+/*Copied from less/generals/loader*/
+#loading {
+  position: fixed;
+  display: block;
+  width: 100%;
+  height: 100%;
+  z-index: 9999; }
+
+/*End Copied */
 ._pms-tr {
   background-color: #f1f3f1; }
   ._pms-tr td {
@@ -2321,6 +2330,15 @@ label._customCHeckbox input[type="checkbox"] {
 
 .icon-skype:before {
   content: "\e60f"; }
+
+.tableResponsive {
+  min-height: .01%;
+  overflow: auto;
+  width: 100%;
+  -ms-overflow-style: -ms-autohiding-scrollbar; }
+  .tableResponsiveNew {
+    min-height: .01%;
+    width: 100%; }
 
 .payRoll-list-wrap {
   border-top: 1px solid #d7d7d7; }
