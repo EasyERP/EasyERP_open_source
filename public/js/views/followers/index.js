@@ -57,16 +57,35 @@ define([
             var self = this;
             var $target = $(e.target);
             var id = $target.closest('li').attr('data-id');
+            var userId = App.currentUser.relatedEmployee ? App.currentUser.relatedEmployee._id : null;
+            var status;
+            var unfollow = false;
+
+            status = _.find(this.model.toJSON().followers, function (el) {
+                return el._id === id;
+            });
+
+            if (status.followerId === userId){
+                unfollow = true;
+            }
 
             App.startPreload();
 
             dataService.deleteData('/followers/', {
                 _id: id
             }, function (err, response) {
+
                 App.stopPreload();
                 self.hideNewSelect();
 
                 self.model.set('followers', response.data);
+
+                if (unfollow) {
+                    self.model.set('followerStatus', false);
+                    self.$el.find('#follow').text('Follow');
+                    self.$el.find('#follow').removeClass('unfollow');
+                    self.$el.find('#follow').removeClass('follow');
+                }
 
                 self.$el.find('.followersList').html('');
             });
@@ -182,7 +201,7 @@ define([
                 return el.followerId === userId;
             });
 
-            if (status){
+            if (status) {
                 this.model.set('followerStatus', true);
             } else {
                 this.model.set('followerStatus', false);
