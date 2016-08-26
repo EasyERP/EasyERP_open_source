@@ -9,6 +9,7 @@ var Module = function (models, event) {
     var prioritySchema = mongoose.Schemas.Priority;
     var historySchema = mongoose.Schemas.History;
     var tagsSchema = mongoose.Schemas.tags;
+    var followersSchema = mongoose.Schemas.followers;
     var objectId = mongoose.Types.ObjectId;
 
     var _ = require('../node_modules/underscore');
@@ -69,6 +70,7 @@ var Module = function (models, event) {
 
     function getTimeLine(req, model, cb) {
         var TasksSchema = models.get(req.session.lastDb, 'DealTasks', TasksSchema);
+        var FollowersModel = models.get(req.session.lastDb, 'followers', followersSchema);
         var parallelTasks;
 
         var historyOptions = {
@@ -122,12 +124,35 @@ var Module = function (models, event) {
                 });
         }
 
-        parallelTasks = [getTask, getHistoryNotes];
+        function getFollowers(parallelCb) {
+            FollowersModel.find({contentId: model._id})
+                .populate('followerId', 'name fullName')
+                .exec(function (err, res) {
+                    if (err) {
+                        return parallelCb(err);
+                    }
+
+                    res = res.map(function (elem) {
+                        return {
+                            name      : elem.followerId.fullName,
+                            followerId: elem.followerId._id,
+                            _id       : elem._id
+                        };
+                    });
+
+                    parallelCb(null, res);
+                });
+        }
+
+        parallelTasks = [getTask, getHistoryNotes, getFollowers];
 
         async.parallel(parallelTasks, function (err, results) {
 
             model.notes = model.notes.concat(results[0], results[1]);
             model.notes = _.sortBy(model.notes, 'date');
+
+            model.followers = results[2] || [];
+
             cb(null, model);
         });
 

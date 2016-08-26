@@ -78,6 +78,7 @@ module.exports = function (app, mainDb) {
     var countriesRouter = require('./countries')(models);
     var contractJobsRouter = require('./contractJobs')(models);
     var projectsDashboardRouter = require('./projectsDashboard')(models);
+    var followersRouter = require('./followers')(models);
 
     var logger = require('../helpers/logger');
     var async = require('async');
@@ -195,6 +196,7 @@ module.exports = function (app, mainDb) {
     app.use('/countries', countriesRouter);
     app.use('/contractJobs', contractJobsRouter);
     app.use('/projectsDashboard', projectsDashboardRouter);
+    app.use('/followers', followersRouter);
 
     /**
      *@api {get} /getDBS/ Request DBS

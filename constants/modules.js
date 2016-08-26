@@ -53,5 +53,6 @@ module.exports = {
     WRITEOFF          : 107,
     DEALTASKS         : 110,
     CONTRACTJOBS      : 115,
-    PROJECTSDASHBOARD : 116
+    PROJECTSDASHBOARD : 116,
+    FOLLOWERS         : 117
 };

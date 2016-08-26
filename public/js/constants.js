@@ -72,6 +72,7 @@ define([], function () {
         REPORTSDASHBOARD  : 'reportsDashboard',
         CONTRACTJOBS      : 'contractJobs',
         PROJECTSDASHBOARD : 'projectsDashboard',
+        FOLLOWERS         : 'followers',
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
@@ -206,7 +207,8 @@ define([], function () {
             PAYMENT_METHOD_DD          : 'paymentMethod/',
             DEALTASKS                  : '/DealTasks/',
             CONTRACTJOBS               : '/contractJobs/',
-            PROJECTSDASHBOARD          : '/projectsDashboard/'
+            PROJECTSDASHBOARD          : '/projectsDashboard/',
+            FOLLOWERS                  : '/followers/'
         },
 
         MID: {
