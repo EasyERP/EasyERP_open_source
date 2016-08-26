@@ -18,7 +18,7 @@ define([
         initialize: function (options) {
             this.remove();
             this.model = options.model;
-            this.collectioName = options.collectionName;
+            this.collectionName = options.collectionName;
 
             this.responseObj = {};
         },
@@ -102,7 +102,8 @@ define([
             dataService.postData('/followers/', {
                 followerId    : id,
                 contentId     : this.model.id,
-                collectionName: this.collectionName
+                collectionName: this.collectionName,
+                contentName   : this.model.toJSON().name
             }, function (err, response) {
                 App.stopPreload();
                 self.hideNewSelect();
@@ -134,7 +135,8 @@ define([
                 dataService.postData('/followers/', {
                     followerId    : App.currentUser.relatedEmployee._id,
                     contentId     : this.model.id,
-                    collectionName: this.collectionName
+                    collectionName: this.collectionName,
+                    contentName   : this.model.toJSON().name
                 }, function (err, response) {
                     App.stopPreload();
                     self.hideNewSelect();

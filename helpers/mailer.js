@@ -92,6 +92,23 @@ module.exports = function () {
         deliver(mailOptions, cb);
     };
 
+    this.sendAddedFollower = function (mailOptions, cb) {
+
+        var templateOptions = {
+            employee      : mailOptions.employee.first + ' ' + mailOptions.employee.last,
+            contentName   : mailOptions.contentName,
+            collectionName: mailOptions.collectionName
+        };
+
+        mailOptions.generateTextFromHTML = true;
+        mailOptions.from = 'ThinkMobiles <no-replay@easyerp.com>';
+        mailOptions.subject = 'You was set as a follower'; // + name Leads
+
+        mailOptions.html = _.template(fs.readFileSync('public/templates/mailer/addedFollower.html', encoding = 'utf8'), templateOptions);
+
+        deliver(mailOptions, cb);
+    };
+
     this.registeredNewUser = function (options) {
         var templateOptions = {
             name   : options.firstName + ' ' + options.lastName,

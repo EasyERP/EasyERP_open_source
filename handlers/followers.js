@@ -1,11 +1,52 @@
 var mongoose = require('mongoose');
+var Mailer = require('../helpers/mailer');
+var mailer = new Mailer();
 
 var Module = function (models) {
     var followersSchema = mongoose.Schemas.followers;
+    var EmployeeSchema = mongoose.Schemas.Employee;
+
+    function sendEmailToFollower(req, empId, contentName, collectionName) {
+        var mailOptions;
+        var Employee;
+
+        Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+
+        Employee.findById(empId, {}, function (err, modelEmployee) {
+            var workEmail;
+            var employee;
+
+            if (err) {
+                return console.log('email send to follower error');
+            }
+
+            workEmail = modelEmployee.get('workEmail');
+            employee = modelEmployee.get('name');
+
+            if (workEmail) {
+                mailOptions = {
+                    to            : workEmail,
+                    employee      : employee,
+                    contentName   : contentName || '',
+                    collectionName: collectionName
+                };
+
+                mailer.sendAddedFollower(mailOptions, function (err, result) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    console.log('email was send to ' + workEmail);
+                });
+            } else {
+                console.log('employee have not work email');
+            }
+        });
+    }
 
     this.create = function (req, res, next) {
         var FollowersModel = models.get(req.session.lastDb, 'followers', followersSchema);
         var body = req.body;
+        var contentName = body.contentName;
         var newModel;
 
         body.createdBy = {
@@ -26,6 +67,8 @@ var Module = function (models) {
                         return next(err);
                     }
 
+                    sendEmailToFollower(req, result.followerId, contentName, result.collectionName);
+
                     FollowersModel.find({contentId: body.contentId})
                         .populate('followerId', 'name fullName')
                         .exec(function (err, result) {
@@ -42,6 +85,7 @@ var Module = function (models) {
                             });
 
                             res.status(200).send({data: result});
+
                         });
                 });
             } else {
