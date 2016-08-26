@@ -18,6 +18,7 @@ define([
         initialize: function (options) {
             this.remove();
             this.model = options.model;
+            this.collectioName = options.collectionName;
 
             this.responseObj = {};
         },
@@ -65,7 +66,7 @@ define([
                 return el._id === id;
             });
 
-            if (status.followerId === userId){
+            if (status.followerId === userId) {
                 unfollow = true;
             }
 
@@ -101,7 +102,7 @@ define([
             dataService.postData('/followers/', {
                 followerId    : id,
                 contentId     : this.model.id,
-                collectionName: 'leads'
+                collectionName: this.collectionName
             }, function (err, response) {
                 App.stopPreload();
                 self.hideNewSelect();
@@ -133,7 +134,7 @@ define([
                 dataService.postData('/followers/', {
                     followerId    : App.currentUser.relatedEmployee._id,
                     contentId     : this.model.id,
-                    collectionName: 'leads'
+                    collectionName: this.collectionName
                 }, function (err, response) {
                     App.stopPreload();
                     self.hideNewSelect();
