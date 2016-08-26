@@ -3058,8 +3058,25 @@ table#workflows {
 #top-bar {
   -webkit-flex-shrink: 0;
   flex-shrink: 0;
-  .top-bar;
-
+  display: block;
+  height: 40px;
+  clear: both;
+  //overflow: hidden; /*dont work datapiker in dashboardVocation when overflow - enable*/
+  h3 {
+    line-height: 40px;
+    padding: 0 10px;
+    color: #666666  !important;
+    font-family: 'OpenSans Regular', sans-serif, Verdana;;
+    font-weight: normal;
+    float: left;
+    overflow: visible;
+  }
+  &.banned {
+    border-bottom: 0
+  }
+  #reconcileDate {
+    color: #333;
+  }
   > .btnsBlock {
     margin-top: 6px;
   }
@@ -3070,7 +3087,25 @@ table#workflows {
 }
 
 .projectInfoTopBar {
-  .top-bar;
+  display: block;
+  height: 40px;
+  clear: both;
+  //overflow: hidden; /*dont work datapiker in dashboardVocation when overflow - enable*/
+  h3 {
+    line-height: 40px;
+    padding: 0 10px;
+    color: #666666  !important;
+    font-family: 'OpenSans Regular', sans-serif, Verdana;;
+    font-weight: normal;
+    float: left;
+    overflow: visible;
+  }
+  &.banned {
+    border-bottom: 0
+  }
+  #reconcileDate {
+    color: #333;
+  }
   margin-left: 0;
 }
 
@@ -3513,43 +3548,49 @@ ul.dialog-tabs {
       }
     }
   }
+
   .withEndContract {
     position: relative;
+    background-color: #8f1311;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#b13533), to(#8f1311));
+    background-image: -webkit-linear-gradient(top, #b13533, #8f1311);
+    background-image: -moz-linear-gradient(top, #b13533, #8f1311);
+    background-image: -ms-linear-gradient(top, #b13533, #8f1311);
+    background-image: -o-linear-gradient(top, #b13533, #8f1311);
+    background-image: linear-gradient(to bottom, #b13533, #8f1311);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(155, 155, 155, 0.4) inset;
+    color: white;
+    line-height: 15px;
+
+
+    &:hover {
+      background-color: #a13333;
+      background-image: -webkit-gradient(linear, left top, left bottom, from(#c35555), to(#a13333));
+      background-image: -webkit-linear-gradient(top, #c35555, #a13333);
+      background-image: -moz-linear-gradient(top, #c35555, #a13333);
+      background-image: -ms-linear-gradient(top, #c35555, #a13333);
+      background-image: -o-linear-gradient(top, #c35555, #a13333);
+      background-image: linear-gradient(to bottom, #c35555, #a13333);
+    }
+
     .newSelectList {
       display: none;
-      width: 115px;
+      //width: 115px;
       right: 0;
       left: auto;
+      width: 112px;
       li {
         padding-left: 10px;
         float: none;
       }
     }
-    .endContractReasonList,
-    .arrow {
+    .endContractReasonList, .arrow {
       float: right;
-      width: 80px;
+      width: 98px;
       border-radius: 0;
-      background-color: #8f1311;
-      background-image: -webkit-gradient(linear, left top, left bottom, from(#b13533), to(#8f1311));
-      background-image: -webkit-linear-gradient(top, #b13533, #8f1311);
-      background-image: -moz-linear-gradient(top, #b13533, #8f1311);
-      background-image: -ms-linear-gradient(top, #b13533, #8f1311);
-      background-image: -o-linear-gradient(top, #b13533, #8f1311);
-      background-image: linear-gradient(to bottom, #b13533, #8f1311);
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(155, 155, 155, 0.4) inset;
-      color: white;
-      line-height: 15px;
-
-      &:hover {
-        background-color: #a13333;
-        background-image: -webkit-gradient(linear, left top, left bottom, from(#c35555), to(#a13333));
-        background-image: -webkit-linear-gradient(top, #c35555, #a13333);
-        background-image: -moz-linear-gradient(top, #c35555, #a13333);
-        background-image: -ms-linear-gradient(top, #c35555, #a13333);
-        background-image: -o-linear-gradient(top, #c35555, #a13333);
-        background-image: linear-gradient(to bottom, #c35555, #a13333);
-      }
+      text-align: center;
+      line-height: 19px;
+      height: 20px;
     }
     .arrow {
       border-left: 1px solid #ABABAB;
@@ -3557,11 +3598,9 @@ ul.dialog-tabs {
       color: white;
       font-weight: 500;
       font-size: 10px;
-      line-height: 20px;
-      width: 8px;
+      width: 16px;
       margin-left: -2px;
-      min-height: 17px;
-      display: block;
+      line-height: 22px;
     }
   }
 
@@ -3618,6 +3657,7 @@ ul.chart-tabs {
   &.dashboard {
     margin: 10px 0;
   }
+  /*
   .withEndContract {
     position: relative;
     .newSelectList {
@@ -3630,6 +3670,7 @@ ul.chart-tabs {
         float: none;
       }
     }
+
     .endContractReasonList, .arrow {
       float: right;
       width: 80px;
@@ -3661,13 +3702,17 @@ ul.chart-tabs {
       color: white;
       font-weight: 500;
       font-size: 10px;
-      line-height: 20px;
+      //line-height: 20px;
       width: 8px;
       margin-left: -2px;
-      height: 17px;
+      //height: 17px;
       display: block;
+      top: 0;
+      right: 8px;
+      position: absolute;
     }
   }
+  */
 }
 
 .noteWrapper {

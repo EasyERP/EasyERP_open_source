@@ -4211,7 +4211,7 @@ table#workflows tr td.edit-status {
 #top-bar h3 {
   line-height: 40px;
   padding: 0 10px;
-  color: #666666 !important;
+  color: #666666  !important;
   font-family: 'OpenSans Regular', sans-serif, Verdana;
   font-weight: normal;
   float: left;
@@ -4221,10 +4221,7 @@ table#workflows tr td.edit-status {
   border-bottom: 0;
 }
 #top-bar #reconcileDate {
-  color: #000000;
-}
-#top-bar:empty {
-  display: none !important;
+  color: #333;
 }
 #top-bar > .btnsBlock {
   margin-top: 6px;
@@ -4242,7 +4239,7 @@ table#workflows tr td.edit-status {
 .projectInfoTopBar h3 {
   line-height: 40px;
   padding: 0 10px;
-  color: #666666 !important;
+  color: #666666  !important;
   font-family: 'OpenSans Regular', sans-serif, Verdana;
   font-weight: normal;
   float: left;
@@ -4252,10 +4249,7 @@ table#workflows tr td.edit-status {
   border-bottom: 0;
 }
 .projectInfoTopBar #reconcileDate {
-  color: #000000;
-}
-.projectInfoTopBar:empty {
-  display: none !important;
+  color: #333;
 }
 .noPadding {
   padding: 0 !important;
@@ -4874,22 +4868,6 @@ ul.dialog-tabs li.right button {
 }
 ul.dialog-tabs .withEndContract {
   position: relative;
-}
-ul.dialog-tabs .withEndContract .newSelectList {
-  display: none;
-  width: 115px;
-  right: 0;
-  left: auto;
-}
-ul.dialog-tabs .withEndContract .newSelectList li {
-  padding-left: 10px;
-  float: none;
-}
-ul.dialog-tabs .withEndContract .endContractReasonList,
-ul.dialog-tabs .withEndContract .arrow {
-  float: right;
-  width: 80px;
-  border-radius: 0;
   background-color: #8f1311;
   background-image: -webkit-gradient(linear, left top, left bottom, from(#b13533), to(#8f1311));
   background-image: -webkit-linear-gradient(top, #b13533, #8f1311);
@@ -4901,8 +4879,7 @@ ul.dialog-tabs .withEndContract .arrow {
   color: white;
   line-height: 15px;
 }
-ul.dialog-tabs .withEndContract .endContractReasonList:hover,
-ul.dialog-tabs .withEndContract .arrow:hover {
+ul.dialog-tabs .withEndContract:hover {
   background-color: #a13333;
   background-image: -webkit-gradient(linear, left top, left bottom, from(#c35555), to(#a13333));
   background-image: -webkit-linear-gradient(top, #c35555, #a13333);
@@ -4911,17 +4888,34 @@ ul.dialog-tabs .withEndContract .arrow:hover {
   background-image: -o-linear-gradient(top, #c35555, #a13333);
   background-image: linear-gradient(to bottom, #c35555, #a13333);
 }
+ul.dialog-tabs .withEndContract .newSelectList {
+  display: none;
+  right: 0;
+  left: auto;
+  width: 112px;
+}
+ul.dialog-tabs .withEndContract .newSelectList li {
+  padding-left: 10px;
+  float: none;
+}
+ul.dialog-tabs .withEndContract .endContractReasonList,
+ul.dialog-tabs .withEndContract .arrow {
+  float: right;
+  width: 98px;
+  border-radius: 0;
+  text-align: center;
+  line-height: 19px;
+  height: 20px;
+}
 ul.dialog-tabs .withEndContract .arrow {
   border-left: 1px solid #ABABAB;
   font-family: Icons;
   color: white;
   font-weight: 500;
   font-size: 10px;
-  line-height: 20px;
-  width: 8px;
+  width: 16px;
   margin-left: -2px;
-  min-height: 17px;
-  display: block;
+  line-height: 22px;
 }
 .dialog-tabs-items {
   border-top: none;
@@ -4933,6 +4927,64 @@ ul.dialog-tabs .withEndContract .arrow {
 .dialog-tabs-items .dialog-tabs-item.active,
 .dialog-tabs-items .chart-tabs-item.active {
   display: block;
+}
+ul.chart-tabs {
+  /*
+  .withEndContract {
+    position: relative;
+    .newSelectList {
+      display: none;
+      width: 112px;
+      margin-top: 22px;
+      right: 0;
+      li {
+        padding-left: 10px;
+        float: none;
+      }
+    }
+
+    .endContractReasonList, .arrow {
+      float: right;
+      width: 80px;
+      height: 15px;
+      border-radius: 0;
+      background-color: #8f1311;
+      background-image: -webkit-gradient(linear, left top, left bottom, from(#b13533), to(#8f1311));
+      background-image: -webkit-linear-gradient(top, #b13533, #8f1311);
+      background-image: -moz-linear-gradient(top, #b13533, #8f1311);
+      background-image: -ms-linear-gradient(top, #b13533, #8f1311);
+      background-image: -o-linear-gradient(top, #b13533, #8f1311);
+      background-image: linear-gradient(to bottom, #b13533, #8f1311);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(155, 155, 155, 0.4) inset;
+      color: white;
+
+      &:hover {
+        background-color: #a13333;
+        background-image: -webkit-gradient(linear, left top, left bottom, from(#c35555), to(#a13333));
+        background-image: -webkit-linear-gradient(top, #c35555, #a13333);
+        background-image: -moz-linear-gradient(top, #c35555, #a13333);
+        background-image: -ms-linear-gradient(top, #c35555, #a13333);
+        background-image: -o-linear-gradient(top, #c35555, #a13333);
+        background-image: linear-gradient(to bottom, #c35555, #a13333);
+      }
+    }
+    .arrow {
+      border-left: 1px solid #ABABAB;
+      font-family: Icons;
+      color: white;
+      font-weight: 500;
+      font-size: 10px;
+      //line-height: 20px;
+      width: 8px;
+      margin-left: -2px;
+      //height: 17px;
+      display: block;
+      top: 0;
+      right: 8px;
+      position: absolute;
+    }
+  }
+  */
 }
 ul.chart-tabs li {
   float: left;
@@ -4965,57 +5017,6 @@ ul.chart-tabs li.right button {
 }
 ul.chart-tabs.dashboard {
   margin: 10px 0;
-}
-ul.chart-tabs .withEndContract {
-  position: relative;
-}
-ul.chart-tabs .withEndContract .newSelectList {
-  display: none;
-  width: 112px;
-  margin-top: 22px;
-  right: 0;
-}
-ul.chart-tabs .withEndContract .newSelectList li {
-  padding-left: 10px;
-  float: none;
-}
-ul.chart-tabs .withEndContract .endContractReasonList,
-ul.chart-tabs .withEndContract .arrow {
-  float: right;
-  width: 80px;
-  height: 15px;
-  border-radius: 0;
-  background-color: #8f1311;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#b13533), to(#8f1311));
-  background-image: -webkit-linear-gradient(top, #b13533, #8f1311);
-  background-image: -moz-linear-gradient(top, #b13533, #8f1311);
-  background-image: -ms-linear-gradient(top, #b13533, #8f1311);
-  background-image: -o-linear-gradient(top, #b13533, #8f1311);
-  background-image: linear-gradient(to bottom, #b13533, #8f1311);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(155, 155, 155, 0.4) inset;
-  color: white;
-}
-ul.chart-tabs .withEndContract .endContractReasonList:hover,
-ul.chart-tabs .withEndContract .arrow:hover {
-  background-color: #a13333;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#c35555), to(#a13333));
-  background-image: -webkit-linear-gradient(top, #c35555, #a13333);
-  background-image: -moz-linear-gradient(top, #c35555, #a13333);
-  background-image: -ms-linear-gradient(top, #c35555, #a13333);
-  background-image: -o-linear-gradient(top, #c35555, #a13333);
-  background-image: linear-gradient(to bottom, #c35555, #a13333);
-}
-ul.chart-tabs .withEndContract .arrow {
-  border-left: 1px solid #ABABAB;
-  font-family: Icons;
-  color: white;
-  font-weight: 500;
-  font-size: 10px;
-  line-height: 20px;
-  width: 8px;
-  margin-left: -2px;
-  height: 17px;
-  display: block;
 }
 .noteWrapper ul.chart-tabs {
   border-bottom: 1px solid #c8c8d3;
