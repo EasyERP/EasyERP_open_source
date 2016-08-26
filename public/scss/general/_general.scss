@@ -90,8 +90,71 @@
 
 }
 
+//------ state ------
 
+.text {
+  &UnderlineHover {
+    &:hover {
+      text-decoration: underline !important;
+    }
+  }
+}
 
+.fired {
+  background-color: rgba(235, 0, 4, 0.73) !important;
+  color: #fff!important;
+}
+
+.text-left {
+  text-align: left !important;
+}
+
+.text-right {
+  text-align: right !important;
+}
+
+.blueText {
+  color: #3e88b9;
+}
+
+.textGrey {
+  color: #9a9a9e;
+}
+
+//------ end stat.Took from less/state/state.less that was deleted------
+
+// invoiceChart styles from/less/tmp
+.totalBySales {
+  background-color: #045986;
+  td {
+    text-align: left !important;
+    font-size: 13px !important;
+  }
+}
+.paidBySales {
+  background-color: #1d96c2;
+  td {
+    text-align: left !important;
+    font-size: 13px !important;
+  }
+}
+.revenueBySales {
+  background-color: #A19015;
+  td {
+    text-align: left !important;
+    font-size: 13px !important;
+  }
+}
+
+//less/tmp jobDash
+tr.redBorder {
+  background-color: red;
+}
+
+//firedEmployees less/tmp
+li.fired {
+  background-color: rgba(235, 0, 4, 0.73);
+}
 
 
 
