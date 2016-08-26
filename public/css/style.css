@@ -1888,10 +1888,62 @@ h3 {
 .textBlue {
   color: #27a0cd; }
 
+/*Copied from less/generals/loader*/
+#loading {
+  position: fixed;
+  display: block;
+  width: 100%;
+  height: 100%;
+  z-index: 9999; }
+
+/*End Copied */
 ._pms-tr {
   background-color: #f1f3f1; }
   ._pms-tr td {
     height: 25px !important; }
+
+.textUnderlineHover:hover {
+  text-decoration: underline !important; }
+
+.fired {
+  background-color: rgba(235, 0, 4, 0.73) !important;
+  color: #fff !important; }
+
+.text-left {
+  text-align: left !important; }
+
+.text-right {
+  text-align: right !important; }
+
+.blueText {
+  color: #3e88b9; }
+
+.textGrey {
+  color: #9a9a9e; }
+
+.totalBySales {
+  background-color: #045986; }
+  .totalBySales td {
+    text-align: left !important;
+    font-size: 13px !important; }
+
+.paidBySales {
+  background-color: #1d96c2; }
+  .paidBySales td {
+    text-align: left !important;
+    font-size: 13px !important; }
+
+.revenueBySales {
+  background-color: #A19015; }
+  .revenueBySales td {
+    text-align: left !important;
+    font-size: 13px !important; }
+
+tr.redBorder {
+  background-color: red; }
+
+li.fired {
+  background-color: rgba(235, 0, 4, 0.73); }
 
 label._customCHeckbox input[type="checkbox"] {
   position: absolute;
@@ -2267,6 +2319,15 @@ label._customCHeckbox input[type="checkbox"] {
 
 .icon-skype:before {
   content: "\e60f"; }
+
+.tableResponsive {
+  min-height: .01%;
+  overflow: auto;
+  width: 100%;
+  -ms-overflow-style: -ms-autohiding-scrollbar; }
+  .tableResponsiveNew {
+    min-height: .01%;
+    width: 100%; }
 
 .payRoll-list-wrap {
   border-top: 1px solid #d7d7d7; }
