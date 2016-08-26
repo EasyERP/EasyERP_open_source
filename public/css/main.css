@@ -3668,12 +3668,12 @@ a.red:hover {
 }
 #groupList .content {
   display: block;
-  padding-left: 5px;
+  padding-left: 6px;
   line-height: 25px;
   border: 1px solid #7f7f80;
   background: #ffffff;
   margin: 2px 0;
-  height: 25px;
+  height: 28px;
 }
 #groupList .content .text {
   color: #000000;
@@ -3700,7 +3700,7 @@ a.red:hover {
   margin-right: 2px;
 }
 #groupList li.parent > .content .text {
-  padding-left: 18px !important;
+  padding-left: 26px !important;
   position: relative;
 }
 #groupList li.parent > .content .text:before {
@@ -3709,7 +3709,7 @@ a.red:hover {
   top: 2px;
   right: auto;
   bottom: auto;
-  left: 2px;
+  left: 0;
   line-height: 24px;
   font-size: 20px;
   color: #3e88b9;

@@ -1888,60 +1888,6 @@ h3 {
 .textBlue {
   color: #27a0cd; }
 
-._multiEllipsis {
-  overflow: hidden;
-  height: 37px;
-  line-height: 25px; }
-  ._multiEllipsis:before {
-    content: "";
-    float: left;
-    width: 5px;
-    height: 38px; }
-  ._multiEllipsis.open {
-    height: auto; }
-    ._multiEllipsis.open ._ellipsisShowMore {
-      display: none; }
-    ._multiEllipsis.open ._ellipsisCloseBtn {
-      display: block;
-      float: right;
-      background-color: #7eadcc;
-      color: #fff;
-      font-size: 12px;
-      height: 20px;
-      line-height: 20px;
-      padding: 0 10px;
-      border-radius: 3px;
-      cursor: pointer; }
-  ._multiEllipsis > *:first-child {
-    float: right;
-    width: 100%;
-    margin-left: -5px; }
-  ._multiEllipsis > p {
-    -ms-word-break: break-all;
-    word-break: break-all; }
-  ._multiEllipsis ._ellipsisShowMore {
-    display: block;
-    box-sizing: content-box;
-    -webkit-box-sizing: content-box;
-    -moz-box-sizing: content-box;
-    position: relative;
-    top: -14px;
-    height: 14px;
-    left: 100%;
-    float: right;
-    width: 68px;
-    padding-right: 5px;
-    margin-left: -68px;
-    background-color: #7eadcc;
-    color: #fff;
-    line-height: 13px;
-    font-size: 10px;
-    text-align: center;
-    cursor: pointer;
-    border-radius: 3px; }
-  ._multiEllipsis ._ellipsisCloseBtn {
-    display: none; }
-
 ._pms-tr {
   background-color: #f1f3f1; }
   ._pms-tr td {
