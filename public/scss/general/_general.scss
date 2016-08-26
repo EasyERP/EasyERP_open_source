@@ -72,6 +72,16 @@
   }
 }
 
+/*Copied from less/generals/loader*/
+#loading {
+  position: fixed;
+  display: block;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+}
+/*End Copied */
+
 ._pms-tr {
   background-color: #f1f3f1;
   td {
