@@ -5527,25 +5527,6 @@ a.cancelled {
   height: 60px;
   margin-top: 5px;
 }
-.form-holder form .startDate,
-.form-holder form .endDate {
-  cursor: pointer;
-  text-align: right;
-}
-.form-holder form .startDate input,
-.form-holder form .endDate input {
-  height: 19px;
-  margin: 0;
-  border: none !important;
-  width: 100%;
-  min-width: 100%;
-}
-.form-holder form .startDate input:focus,
-.form-holder form .endDate input:focus {
-  outline: none !important;
-  box-shadow: none !important;
-  border: none !important;
-}
 .form-holder form .startDate > input,
 .form-holder form .endDate > input {
   display: none;
