@@ -2491,22 +2491,24 @@ button.red, a.red {
     }
 
     &.parent {
+
       > .content {
+
         .text {
           padding-left: 18px !important;
           position: relative;
 
           &:before {
-            content: '\e919';
-            font-family: 'erp-icons';
-            font-size: 20px;
-            line-height: 24px;
-            color: @tilte-color;
+            content: '\f115';
             position: absolute;
-            left: 2px;
             top: 2px;
             right: auto;
             bottom: auto;
+            left: 2px;
+            line-height: 24px;
+            font-size: 20px;
+            color: @tilte-color;
+            font-family: 'erp-icons';
           }
         }
       }
@@ -2862,6 +2864,9 @@ table#workflows {
       }
       .icon-Payroll:before {
         content: "\e025";
+      }
+      .icon-Purchases:before {
+        content: "\e04e";
       }
       .icon-Expenses:before {
         content: "\e077";
