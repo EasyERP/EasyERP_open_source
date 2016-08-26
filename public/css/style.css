@@ -1769,13 +1769,15 @@ h3 {
     height: 26px;
     line-height: 24px !important; }
   .btn.green {
-    color: #FFF;
-    background-color: #32c5d2;
-    border-color: #32c5d2; }
+    color: #fff;
+    background-color: #21b799;
+    border-color: #21b799; }
+    .btn.green > * {
+      color: #fff; }
     .btn.green:hover {
-      background-color: #26a1ab;
-      border-color: #2499a3;
-      text-decoration: none; }
+      color: #fff; }
+      .btn.green:hover > * {
+        color: #fff; }
   .btn.blue {
     color: #fff !important;
     background-color: #7eadcc !important;
@@ -4300,6 +4302,49 @@ label._customCHeckbox input[type="checkbox"] {
   line-height: 24px;
   display: block;
   text-align: center; }
+
+._dropDownTG {
+  position: relative;
+  color: #21b799;
+  cursor: pointer;
+  border-radius: 3px; }
+  ._dropDownTG:after {
+    content: '\e912';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 8px;
+    font-family: "erp-icons";
+    color: #21b799; }
+  ._dropDownTG ._dropDownTitle {
+    height: 26px;
+    min-width: 120px;
+    padding: 0 30px 0 10px;
+    line-height: 24px; }
+    ._dropDownTG ._dropDownTitle:hover {
+      background-color: #e6e6e6; }
+  ._dropDownTG .followersList > *:first-child {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    box-shadow: 5px 5px rgba(102, 102, 102, 0.1);
+    border: 1px solid #bebebe; }
+  ._dropDownTG .followersList .newSelectList {
+    top: 0;
+    left: 100%; }
+  ._dropDownTG ._addFollowersBtn {
+    display: block;
+    padding: 5px;
+    line-height: 20px; }
+  ._dropDownTG ._followersList {
+    color: #000; }
+    ._dropDownTG ._followersList > li {
+      padding: 0 5px;
+      line-height: 26px; }
+      ._dropDownTG ._followersList > li:first-child {
+        border-top: 1px solid #bebebe; }
 
 .notFoundItems {
   text-align: center;

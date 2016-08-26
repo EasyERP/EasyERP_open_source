@@ -4220,6 +4220,14 @@ table#workflows tr td.edit-status {
 #top-bar > .btnsBlock {
   margin-top: 6px;
 }
+.btnsBlock > * {
+  float: left;
+}
+.btnsBlock:after {
+  content: '';
+  display: table;
+  clear: both;
+}
 .dashBoardVocationSearch {
   margin-top: 7px !important;
   /*only for DashBoard vocation*/
