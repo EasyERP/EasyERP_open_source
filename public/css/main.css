@@ -1402,15 +1402,6 @@
   margin-top: 15px;
   margin-bottom: 15px;
 }
-/*.sideMenu {
-  display: block;
-  width: auto;
-  max-width: 200px;
-  height: 100%;
-  float: left;
-  margin-right: -100%;
-}
-*/
 .content_wrapper {
   display: -webkit-box;
   display: -moz-box;
@@ -3928,7 +3919,6 @@ table#workflows tr td.edit-status {
   position: fixed;
   bottom: 0;
   left: 0;
-  display: block;
   z-index: 200;
   width: auto;
   height: calc(100% - 40px);
