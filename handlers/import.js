@@ -7,11 +7,13 @@ var Module = function (models) {
     var ImportHistorySchema = mongoose.Schemas.ImportHistories;
 
     var schemaObj = {
-        Customers    : mongoose.Schemas.Customer,
-        Opportunities: mongoose.Schemas.Opportunitie,
-        Employees    : mongoose.Schemas.Employee,
-        Invoice      : mongoose.Schemas.Invoice,
-        Ouotation    : mongoose.Schemas.Quotation
+        Customers       : mongoose.Schemas.Customer,
+        Opportunities   : mongoose.Schemas.Opportunitie,
+        Employees       : mongoose.Schemas.Employee,
+        Invoice         : mongoose.Schemas.Invoice,
+        Ouotation       : mongoose.Schemas.Quotation,
+        PurchasePayments: mongoose.Schemas.purchasePayments,
+        InvoicePayments : mongoose.Schemas.InvoicePayment
     };
 
     var exportMap = require('../helpers/csvMap');
@@ -27,7 +29,6 @@ var Module = function (models) {
     };
     var importedFileName;
     var importedFilePath;
-
 
     function toOneCase(item) {
         item = item ? item.toString().toLowerCase() : null;
@@ -548,7 +549,7 @@ var Module = function (models) {
                 },
 
                 getHeaderId: function (parCb) {
-                    ImportModel.findOne(function(err, result){
+                    ImportModel.findOne(function (err, result) {
                         if (err) {
                             return parCb(err);
                         }

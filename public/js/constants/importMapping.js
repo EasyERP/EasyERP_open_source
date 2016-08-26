@@ -265,6 +265,28 @@
             'createdBy.date',
             'editedBy.user',
             'editedBy.date'
+        ],
+        InvoicePayments : [
+            'invoice',
+            'forSale',
+            'paymentRef',
+            'supplier',
+            'paymentMethod',
+            'period',
+            'bonus',
+            'currency._id',
+            'currency.rate'
+        ],
+        PurchasePayments : [
+            'invoice',
+            'forSale',
+            'paymentRef',
+            'supplier',
+            'paymentMethod',
+            'period',
+            'bonus',
+            'currency._id',
+            'currency.rate'
         ]
     };
 

@@ -116,24 +116,24 @@ define([
             var self = this;
 
             if ((isItClass) && (isDropable)) {
-                if (droppableParentName === 'Customers' || droppableParentName === 'Quotation' || droppableParentName === 'Invoice' || droppableParentName === 'Opportunities' || droppableParentName === 'Employees') {
-                    delete self.logFile[self.findKeyByValue(self.logFile, droppableName)];
+                //if (droppableParentName === 'Customers' || droppableParentName === 'Quotation' || droppableParentName === 'Invoice' || droppableParentName === 'Opportunities' || droppableParentName === 'Employees') {
+                delete self.logFile[self.findKeyByValue(self.logFile, droppableName)];
 
-                    self.$el.find('.fieldsItems[data-tab=' + droppableParentName + ']')
-                        .find('ul')
-                        .append('<li><div class="fieldItem" data-parent="' + droppableParentName + '" style="cursor: pointer"  data-name="' + droppableName + '">' + mappingFields[droppableParentName][droppableName] + '</div></li>')
-                        .find('div[data-name="' + droppableName + '"]')
-                        .draggable({
-                            revert: true,
-                            helper: 'clone',
-                            start : function () {
-                                $(this).hide();
-                            },
-                            stop  : function () {
-                                $(this).show();
-                            }
-                        });
-                }
+                self.$el.find('.fieldsItems[data-tab=' + droppableParentName + ']')
+                    .find('ul')
+                    .append('<li><div class="fieldItem" data-parent="' + droppableParentName + '" style="cursor: pointer"  data-name="' + droppableName + '">' + mappingFields[droppableParentName][droppableName] + '</div></li>')
+                    .find('div[data-name="' + droppableName + '"]')
+                    .draggable({
+                        revert: true,
+                        helper: 'clone',
+                        start : function () {
+                            $(this).hide();
+                        },
+                        stop  : function () {
+                            $(this).show();
+                        }
+                    });
+                //}
             }
         },
 
