@@ -11,7 +11,16 @@ define([
 
         initialize: function (options) {
             this.collection = options.collection;
-            this.keys = options.keys;
+            this.keys = [
+                'date',
+                'user',
+                'type',
+                'status',
+                'fileName',
+                'filePath',
+                'reportFile',
+                'reportFileName'
+            ];
             this.startNumber = (parseInt(this.collection.currentPage, 10) - 1) * this.collection.pageSize; // Counting the start index of list items
         },
 

@@ -32,7 +32,7 @@ define([
 
         events: {
             'click .details'     : 'showDetailsBox',
-            'click .fa-paperclip': 'clickInput'
+            'click .icon-attach' : 'clickInput'
         },
 
         clickInput: function () {

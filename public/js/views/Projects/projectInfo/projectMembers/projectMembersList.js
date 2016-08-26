@@ -140,7 +140,7 @@ define([
         },
 
         editLastMember: function () {
-            var removeBtn = '<span title="Delete" class="fa fa-trash-o"></span>';
+            var removeBtn = '<span title="Delete" class="icon-trash"></span>';
             var self = this;
             var trs = this.$el.find('tr:not(.false)');
 

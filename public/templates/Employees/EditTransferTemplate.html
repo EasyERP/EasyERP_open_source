@@ -1,7 +1,7 @@
 <tr class="transfer" id="<%=transfer._id%>" data-id="" data-content="<%=transfer.status%>">
     <td class="remove">
         <%if(transfer.status!=='hired' && transfer.status!=='fired'){%>
-        <a class="fa fa-trash"></a>
+        <a class="icon-trash"></a>
         <%}%>
     </td>
     <td data-content="status"><%= transfer.status %></td>

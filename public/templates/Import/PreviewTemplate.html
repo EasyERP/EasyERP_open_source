@@ -16,7 +16,7 @@
                 <tr>
                     <% _.each(fields.keys, function(item, key) { %>
                     <th>
-                        <%= item %>
+                        <%= mappingFields[fields.type][item] %>
                     </th>
                     <% }) %>
                 </tr>

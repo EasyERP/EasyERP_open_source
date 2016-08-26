@@ -26,6 +26,10 @@ define([
         addAttach: function (event) {
             var s;
 
+            if ($(event.target).closest('#forImport')) {
+                this.import = true;
+            }
+
             if (this.isCreate) {
                 s = this.$el.find('.inputAttach:last').val().split('\\')[this.$el.find('.inputAttach:last').val().split('\\').length - 1];
                 this.$el.find('.attachContainer').append('<li class="attachFile">' +

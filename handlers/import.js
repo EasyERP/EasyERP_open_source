@@ -7,9 +7,13 @@ var Module = function (models) {
     var ImportHistorySchema = mongoose.Schemas.ImportHistories;
 
     var schemaObj = {
-        Customers    : mongoose.Schemas.Customer,
-        Opportunities: mongoose.Schemas.Opportunitie,
-        Employees    : mongoose.Schemas.Employee
+        Customers       : mongoose.Schemas.Customer,
+        Opportunities   : mongoose.Schemas.Opportunitie,
+        Employees       : mongoose.Schemas.Employee,
+        Invoice         : mongoose.Schemas.Invoice,
+        Ouotation       : mongoose.Schemas.Quotation,
+        PurchasePayments: mongoose.Schemas.purchasePayments,
+        InvoicePayments : mongoose.Schemas.InvoicePayment
     };
 
     var exportMap = require('../helpers/csvMap');
@@ -17,6 +21,7 @@ var Module = function (models) {
     var async = require('async');
     var mapObject = require('../public/js/constants/importMapping');
     var moment = require('../public/js/libs/moment/moment');
+    var path = require('path');
     var _ = require('lodash');
     var arrayKeys = {
         'groups.users': true,
@@ -24,7 +29,6 @@ var Module = function (models) {
     };
     var importedFileName;
     var importedFilePath;
-
 
     function toOneCase(item) {
         item = item ? item.toString().toLowerCase() : null;
@@ -152,6 +156,9 @@ var Module = function (models) {
             reportFile    : options.reportFile,
             reportFileName: options.reportFileName
         };
+
+        //console.log('- write History -');
+        //console.dir(importHistoryObj);
 
         var importHistory = new ImportHistoryModel(importHistoryObj);
 
@@ -393,9 +400,10 @@ var Module = function (models) {
     function compearingForMerge(savedItems, importedItems, compareFiled, callback) {
         var itemsToSave = [];
         var conflictSavedItems = [];
+        var conflictItemsIndex = [];
         var savedItem;
         var jsonSavedItem;
-        var conflictItemsIndex = [];
+        var jsonSavedItemId;
 
         if (!compareFiled) {
             return callback(null, importedItems, []);
@@ -420,8 +428,10 @@ var Module = function (models) {
                 if (importedItems[i][compareFiled] && jsonSavedItem[compareFiled] && importedItems[i][compareFiled].trim() === jsonSavedItem[compareFiled].trim()) {
                     conflictItemsIndex.push(i);
                     jsonSavedItem.isExists = true;
-                    if (conflictSavedItems.indexOf(jsonSavedItem.id.toString()) === -1) {
-                        conflictSavedItems.push(jsonSavedItem.id.toString());
+                    jsonSavedItemId = jsonSavedItem.id || jsonSavedItem._id;
+
+                    if (conflictSavedItems.indexOf(jsonSavedItemId.toString()) === -1) {
+                        conflictSavedItems.push(jsonSavedItemId.toString());
                     }
                 }
             }
@@ -539,7 +549,7 @@ var Module = function (models) {
                 },
 
                 getHeaderId: function (parCb) {
-                    ImportModel.findOne(function(err, result){
+                    ImportModel.findOne(function (err, result) {
                         if (err) {
                             return parCb(err);
                         }
@@ -622,8 +632,6 @@ var Module = function (models) {
                     skipped = userImports.skipped;
                     importedCount = userImports.importedCount;
                     type = userImports.type;
-                    //importFileName = userImports.fileName;
-                    //importFile = userImports.filePath;
 
                     wCb(null, userImports);
                 });
@@ -634,7 +642,8 @@ var Module = function (models) {
                     var mapResult;
                     var type = userImports.type;
 
-                    //console.log(importData);
+                    //console.log('import merged data');
+                    //console.dir(importData);
                     importFileName = importData[0].fileName;
                     importFilePath = importData[0].filePath;
 
@@ -764,8 +773,7 @@ var Module = function (models) {
 
                 reportFilePath = reportOptions.pathName;
                 reportFileName = reportOptions.fileName;
-
-                console.log(importFileName, importFilePath);
+                importFilePath = path.join('download', encodeURIComponent(importFilePath));
 
                 options = {
                     fileName      : importFileName,

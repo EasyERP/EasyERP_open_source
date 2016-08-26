@@ -5,9 +5,11 @@
 
     <div class="_importListFooter">
         <!--<button id="clickToReset">reset</button>-->
-        <button class="btn stageBtn stageBtnBack btnSave left">Back</button>
-        <button class="btn stageBtn stageBtnNext btnDisable btnSave right" disabled>NEXT</button>
+        <div class="_importButtonsGroup left">
+            <button class="btn stageBtn stageBtnBack btnSave back">Back</button>
+            <button id="cancelBtn" class="btn stageBtn btnSave back">Cancel import</button>
+            <button class="btn stageBtn stageBtnNext btnDisable btnSave right next" disabled>NEXT</button>
+        </div>
     </div>
     <div id="historyBlock"></div>
-
 </div>
