@@ -3982,6 +3982,8 @@ label._customCHeckbox input[type="checkbox"] {
   border: none;
   border-top: 1px solid #d7d7d7;
   padding-top: 10px; }
+  .ui-dialog-buttonset .btn + .btn {
+    margin-left: 10px; }
 
 .task-content {
   padding: 5px;
@@ -4166,8 +4168,7 @@ label._customCHeckbox input[type="checkbox"] {
   position: relative; }
 
 ._newSelectListWrap {
-  position: relative;
-  cursor: pointer; }
+  position: relative; }
 
 .newSelectList {
   position: absolute;

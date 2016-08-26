@@ -217,7 +217,7 @@ define([
                 buttons      : {
                     save: {
                         text : 'Save',
-                        class: 'btn',
+                        class: 'btn blue',
                         click: self.saveItem
                     },
 
