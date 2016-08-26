@@ -1484,7 +1484,13 @@ body {
   }
 
   textarea {
+    width: 99%;
+    min-height: 160px;
     resize: none;
+
+    &._bigTextArea {
+      width: 100%;
+    }
   }
   .job-create-info {
     textarea {
@@ -4220,11 +4226,18 @@ h3.dashboard {
     dt {
       width: 42%;
       max-width: 200px;
+      margin-top: 0;
     }
     dd {
       line-height: 0;
       width: 58%;
       margin-top: 0;
+      &>a{
+        line-height: 26px;
+      }
+      input{
+        margin-top: 5px;
+      }
     }
     input {
       width: 218px; //was important, delete because dont work in job position

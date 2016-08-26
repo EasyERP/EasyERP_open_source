@@ -2791,7 +2791,12 @@ body {
   color: #000000;
 }
 .form textarea {
+  width: 99%;
+  min-height: 160px;
   resize: none;
+}
+.form textarea._bigTextArea {
+  width: 100%;
 }
 .form .job-create-info textarea {
   height: 130px;
@@ -5409,11 +5414,18 @@ a.cancelled {
 .form-holder form .job-create-info dt {
   width: 42%;
   max-width: 200px;
+  margin-top: 0;
 }
 .form-holder form .job-create-info dd {
   line-height: 0;
   width: 58%;
   margin-top: 0;
+}
+.form-holder form .job-create-info dd > a {
+  line-height: 26px;
+}
+.form-holder form .job-create-info dd input {
+  margin-top: 5px;
 }
 .form-holder form .job-create-info input {
   width: 218px;
