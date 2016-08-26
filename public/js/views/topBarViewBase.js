@@ -21,7 +21,7 @@ define([
             'click #top-bar-editBtn'        : 'onEditEvent',
             'click #top-bar-saveBtn'        : 'onSaveEvent',
             'click #kanban-settings-Btn'    : 'onEditKanban',
-            'click #top-bar-importBtn'      : 'importEvent',
+//            'click #top-bar-importBtn'      : 'importEvent',
             'click #top-bar-exportBtn'      : 'export',
             'click #top-bar-exportToCsvBtn' : 'exportToCsv',
             'click #top-bar-exportToXlsxBtn': 'exportToXlsx',

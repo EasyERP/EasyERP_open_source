@@ -254,7 +254,7 @@
 ._importTabs {
   .tabListItem {
     span {
-      display: inline-block !important;
+      //display: inline-block !important;
       color: $white;
       line-height: 12px;
     }
@@ -532,9 +532,16 @@
 }
 
 ._importButtonsGroup {
-  padding-right: 15px;
-
+  &.left{
+    width: 100%;
+  }
+  &.right{
+    padding-right: 15px;
+  }
+  button{
+    margin-right: -4px;
+  }
   button + button {
-    margin-right: 15px;
+    margin-left: 15px;
   }
 }

@@ -5,10 +5,11 @@ define([
     'text!templates/Import/ComparingTemplate.html',
     'text!templates/Import/FinishTemplate.html',
     'constants/importMapping',
+    'constants/mappingFields',
     'constants',
     'dataService',
     'common'
-], function (Backbone, $, _, ComparingTemplate, FinishTemplate, importMapping, CONSTANTS, dataService, common) {
+], function (Backbone, $, _, ComparingTemplate, FinishTemplate, importMapping, mappingFields, CONSTANTS, dataService, common) {
     'use strict';
 
     var comparingContentView = Backbone.View.extend({
@@ -114,6 +115,7 @@ define([
             this.existId = null;
 
             stepKey = this.stepKeys[this.step + 1];
+            data.type = this.data.type;
             data.keys = this.data.keys;
             data.result[stepKey] = this.data.result[stepKey];
 
@@ -230,7 +232,8 @@ define([
                 data     : data,
                 step     : this.step,
                 isItExist: this.isItExist,
-                moreExist: this.moreExist
+                moreExist: this.moreExist,
+                mappingFields: mappingFields
             }));
 
             if (this.step >= 0) {
