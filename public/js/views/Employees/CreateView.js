@@ -69,7 +69,7 @@ define([
             'mouseenter .avatar' : 'showEdit',
             'mouseleave .avatar' : 'hideEdit',
             'click td.editable'  : 'editJob',
-            'click .fa-paperclip': 'clickInput'
+            'click .icon-attach' : 'clickInput'
         },
 
         clickInput: function () {

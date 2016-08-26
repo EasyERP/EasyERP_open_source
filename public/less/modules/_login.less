@@ -635,12 +635,12 @@ input {
     .dropdownButton {
 
       &:after {
-        content: "\37";
+        content: "\f107";
         display: inline-block;
         float: right;
         font-size: 12px;
         font-family: 'erp-icons';
-        line-height: 24px;
+        line-height: 20px;
         color: #fff;
         width: 20px;
         text-align: center;
@@ -1729,14 +1729,8 @@ td.checkboxRow {
       &.sortDn {
         .sortArrow {
           color: #fff;
-          -webkit-transform: rotate(180deg);
-          -moz-transform: rotate(180deg);
-          -ms-transform: rotate(180deg);
-          -o-transform: rotate(180deg);
-          transform: rotate(180deg);
-
           &:before {
-            content: "\f176";
+            content: "\e91c";
           }
         }
       }
@@ -1745,7 +1739,7 @@ td.checkboxRow {
         .sortArrow {
           color: #fff;
           &:before {
-            content: "\f176";
+            content: "\e920";
           }
         }
       }
@@ -1755,7 +1749,7 @@ td.checkboxRow {
         top: 0;
         right: 8px;
         color: #2b3643;
-        font-family: 'FontAwesome';
+        font-family: 'erp-icons';
         font-size: 12px;
       }
     }
@@ -2181,6 +2175,9 @@ table {
     display: table;
     clear: both;
   }
+  ._modalSelect {
+    display: block;
+  }
 }
 ._modalSelect {
   position: relative;
@@ -2335,4 +2332,13 @@ form .avatar .upload input {
   height: 20px;
   z-index: 1;
   cursor: pointer;
+}
+#createBtnHolder.btnsBlock {
+  float: left;
+}
+
+a.attach_file {
+  &:hover {
+    text-decoration: none;
+  }
 }

@@ -5,6 +5,6 @@ var state = checkedFilterName === model.name;
 <li class="filters <%= state ? 'checkedValue' : ''%>" id="<%= model._id %>">
     <input type="checkbox" class="defFilterCheckBox" <%= model.byDefault ? 'checked' : '' %>/>
     <%= model.name %>
-    <button class="removeSavedFilter fa fa-times"></button>
+    <button class="removeSavedFilter icon-close"></button>
 </li>
 <% }); %>

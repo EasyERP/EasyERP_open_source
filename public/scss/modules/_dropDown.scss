@@ -129,11 +129,11 @@
 
 ._newSelectListWrap {
   position: relative;
-  display: inline-block;
   cursor: pointer;
 }
 
 .newSelectList {
+
   position: absolute;
   top: 100%;
   left: 0;
@@ -204,6 +204,19 @@
     > ul {
       left: auto;
       right: 0;
+    }
+  }
+}
+.dropBtn {
+  &.icon-list5 {
+    &:hover {
+      text-decoration: none !important;
+    }
+    &:before {
+      font-size: 16px;
+      line-height: 24px;
+      display: block;
+      text-align: center;
     }
   }
 }
