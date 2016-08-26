@@ -1402,7 +1402,7 @@
   margin-top: 15px;
   margin-bottom: 15px;
 }
-.sideMenu {
+/*.sideMenu {
   display: block;
   width: auto;
   max-width: 200px;
@@ -1410,6 +1410,7 @@
   float: left;
   margin-right: -100%;
 }
+*/
 .content_wrapper {
   display: -webkit-box;
   display: -moz-box;
@@ -3934,6 +3935,9 @@ table#workflows tr td.edit-status {
   background-color: #364150;
   box-sizing: border-box;
   font-family: 'OpenSans Light', sans-serif, Verdana;
+  max-width: 200px;
+  float: left;
+  margin-right: -100%;
 }
 .sideMenu nav {
   width: 200px;
