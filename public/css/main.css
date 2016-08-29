@@ -1837,10 +1837,6 @@ input::-ms-clear {
   }
 }
 */
-.thumbnail-text {
-  color: #4c4c4c;
-  font-size: 13px;
-}
 .kanban {
   padding: 0;
   margin: 0;
@@ -2423,23 +2419,31 @@ input::-ms-clear {
     font-size: 10px;
   }
 }
+/*
 #modulesAccessTable {
   display: none;
+
+  tr {
+    &.child {
+      display: none;
+    }
+
+    &.child.visible {
+      display: table-row;
+    }
+
+    &.parent {
+      background-color: #7eadcc;
+      border-color: #fff;
+
+      td {
+        color: #fff;
+        font-family: @fontSemiBold;
+      }
+    }
+  }
 }
-#modulesAccessTable tr.child {
-  display: none;
-}
-#modulesAccessTable tr.child.visible {
-  display: table-row;
-}
-#modulesAccessTable tr.parent {
-  background-color: #7eadcc;
-  border-color: #fff;
-}
-#modulesAccessTable tr.parent td {
-  color: #fff;
-  font-family: 'OpenSans SemiBold', sans-serif, Verdana;
-}
+*/
 *:focus {
   outline: 0 !important;
 }
@@ -3746,33 +3750,6 @@ a.red:hover {
   padding-top: 15px;
   color: #000000;
 }
-table#workflows {
-  width: 40%;
-}
-table#workflows tr a {
-  margin-left: 3px;
-}
-table#workflows tr a.edit {
-  display: none;
-}
-table#workflows tr a.delete {
-  display: none;
-}
-table#workflows tr:hover a.edit:not(.hidden) {
-  display: inline;
-}
-table#workflows tr:hover a.delete:not(.hidden) {
-  display: inline;
-}
-table#workflows tr .hidden {
-  display: none;
-}
-table#workflows tr td {
-  min-width: 40%;
-}
-table#workflows tr td.edit-status {
-  width: 20%;
-}
 .groupsAndUser {
   display: none;
   width: 100%;
@@ -4419,11 +4396,15 @@ ul.dialog-tabs li.right button {
   color: #000000;
   line-height: 16px;
 }
+.thumbnail span,
+.thumbnail p,
+.thumbnail h2 {
+  color: #4c4c4c;
+  font-size: 13px;
+}
 .thumbnail span {
   font-family: 'OpenSans Regular', sans-serif, Verdana;
   position: relative;
-  color: #4c4c4c;
-  font-size: 13px;
 }
 .thumbnail span.status.pending {
   color: #EAE874;
@@ -4446,16 +4427,12 @@ ul.dialog-tabs li.right button {
 }
 .thumbnail p {
   font-family: 'OpenSans Regular', sans-serif, Verdana;
-  color: #4c4c4c;
-  font-size: 13px;
 }
 .thumbnail p span {
   font-weight: normal !important;
 }
 .thumbnail h2 {
   font-family: 'OpenSans Regular', sans-serif, Verdana;
-  color: #4c4c4c;
-  font-size: 13px;
   margin: 0 0 8px;
 }
 .thumbnail:hover {
@@ -4521,12 +4498,17 @@ ul.dialog-tabs li.right button {
   margin-top: 20px;
   margin-bottom: 5px;
 }
-#modulesAccessTable td {
-  text-align: center;
+/*
+#modulesAccessTable {
+  td {
+    text-align: center;
+
+    &.mname {
+      text-align: left;
+    }
+  }
 }
-#modulesAccessTable td.mname {
-  text-align: left;
-}
+*/
 #ui-datepicker-div {
   border-radius: 0 !important;
   margin-top: 2px;
@@ -5152,14 +5134,21 @@ h3.dashboard {
 .chart text {
   fill: #000000;
 }
-#modulesAccessTable tr th {
-  text-align: center;
-  vertical-align: top;
-  padding: 8px 0;
+/*
+#modulesAccessTable {
+  tr {
+    th {
+      text-align: center;
+      vertical-align: top;
+      padding: 8px 0;
+
+      input[type="checkbox"] {
+        margin-top: 5px;
+      }
+    }
+  }
 }
-#modulesAccessTable tr th input[type="checkbox"] {
-  margin-top: 5px;
-}
+*/
 #timeRecivingDataFromServer,
 #timeBuildingDataFromServer {
   clear: both;
@@ -6156,91 +6145,6 @@ textarea#editInput {
   display: table;
   content: " ";
   clear: both;
-}
-.grid-conatiner .statisticsAtten {
-  margin-top: 10px;
-}
-.grid-conatiner .statisticsAtten table {
-  width: 100%;
-}
-.grid-conatiner .statisticsAtten table tr.footerRow {
-  border-bottom: 1px solid #4c5975;
-}
-.grid-conatiner .statisticsAtten table tr.footerRow td span {
-  min-height: 10px;
-  content: " ";
-}
-.grid-conatiner .statisticsAtten table tr td {
-  border-right: 1px solid #4c5975;
-}
-.grid-conatiner .statisticsAtten table tr td:last-child {
-  border: none;
-}
-.grid-conatiner .statisticsAtten table tr td .item .title {
-  text-align: center;
-  font-size: 14px;
-  margin-bottom: 5px;
-  color: #000000;
-}
-.grid-conatiner .statisticsAtten table tr td .item .countDays {
-  font-size: 20px;
-  color: #ffffff;
-  width: 126px;
-  padding: 5px;
-  text-align: center;
-  margin: 0 auto;
-  /*for vacationDashboard*/
-}
-.grid-conatiner .statisticsAtten table tr td .item .countDays.leave,
-.grid-conatiner .statisticsAtten table tr td .item .countDays.working {
-  background-color: #36384e;
-}
-.grid-conatiner .statisticsAtten table tr td .item .countDays.vacation {
-  background-color: #e55253;
-}
-.grid-conatiner .statisticsAtten table tr td .item .countDays.personal {
-  background-color: #f9a203;
-}
-.grid-conatiner .statisticsAtten table tr td .item .countDays.sick {
-  background-color: #3e88b9;
-}
-.grid-conatiner .statisticsAtten table tr td .item .countDays.education {
-  background-color: #3e7f42;
-}
-.grid-conatiner .statisticsAtten table tr td .item .countDays.free {
-  background-color: #e55253;
-}
-.grid-conatiner .statisticsAtten table tr td .item .countDays.almostFree {
-  background-color: #cc5457;
-}
-.grid-conatiner .statisticsAtten table tr td .item .countDays.partiallyBusy {
-  background-color: #f9a203;
-}
-.grid-conatiner .statisticsAtten table tr td .item .countDays.fullyBusy {
-  background-color: #3e7f42;
-}
-.grid-conatiner .statisticsAtten table tr td .item .countDays.overWorked {
-  background-color: #2d5d30;
-}
-.grid-conatiner .statisticsAtten table tr td .item .lastTime {
-  text-align: center;
-  margin-top: 10px;
-  color: #000000;
-}
-.grid-conatiner .statisticsAtten table tr td .item .percent {
-  text-align: center;
-  color: #eb759e;
-}
-.grid-conatiner .statisticsAtten .percent {
-  text-align: center;
-  color: #eb759e;
-}
-.grid-conatiner .statisticsAtten.stick {
-  background-color: #ffffff;
-  padding-top: 10px;
-}
-.grid-conatiner table .grid {
-  border-color: #7f7f80;
 }
 .grid-conatiner.revenue {
   color: #ffffff;
