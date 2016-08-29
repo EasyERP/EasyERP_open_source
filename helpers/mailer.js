@@ -92,6 +92,23 @@ module.exports = function () {
         deliver(mailOptions, cb);
     };
 
+    this.sendHistory = function (mailOptions, cb) {
+        var templateOptions = {
+            employee: mailOptions.employee,
+            to      : mailOptions.email,
+            history : mailOptions.history,
+            you     : mailOptions.you
+        };
+
+        mailOptions.generateTextFromHTML = true;
+        mailOptions.from = 'ThinkMobiles <no-replay@easyerp.com>';
+        mailOptions.subject = 'History changes';
+
+        mailOptions.html = _.template(fs.readFileSync('public/templates/mailer/historyTemplate.html', encoding = 'utf8'), templateOptions);
+
+        deliver(mailOptions, cb);
+    };
+
     this.sendAddedFollower = function (mailOptions, cb) {
 
         var templateOptions = {

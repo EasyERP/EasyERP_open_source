@@ -2327,11 +2327,9 @@ var Module = function (models, event) {
                                         // send email to assigned when update Lead
                                         if (result.salesPerson) {
                                             if (oldOpportunity.salesPerson) {
-                                                if (result.salesPerson.toString() !== oldOpportunity.salesPerson.toString()) {
+                                                if (result.salesPerson._id.toString() !== oldOpportunity.salesPerson.toString()) {
                                                     sendEmailToAssigned(req, result);
                                                 }
-                                            } else {
-                                                sendEmailToAssigned(req, result);
                                             }
                                         }
 
