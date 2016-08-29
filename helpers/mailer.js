@@ -3,6 +3,7 @@ module.exports = function () {
     var nodemailer = require('nodemailer');
     var smtpTransportObject = require('../config/mailer').noReplay;
     var pathMod = require('path');
+    var moment = require('../public/js/libs/moment/moment');
 
     var fs = require('fs');
 
@@ -99,6 +100,7 @@ module.exports = function () {
             history    : mailOptions.history,
             you        : mailOptions.you,
             contentName: mailOptions.contentName,
+            date       : moment(new Date(mailOptions.history.date)).format("dddd, MMMM Do YYYY, h:mm:ss a"),
             note       : mailOptions.note
         };
 
