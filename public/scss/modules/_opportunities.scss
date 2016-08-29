@@ -8,7 +8,6 @@
   }
 }
 
-
 .propertyBox {
   position: relative;
   display: table;
@@ -82,7 +81,7 @@
   label,
   .inputBox {
     display: table-cell !important;
-    vertical-align: bottom;
+    //vertical-align: bottom;
   }
 
   label {

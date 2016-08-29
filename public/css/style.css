@@ -3422,8 +3422,7 @@ label._customCHeckbox input[type="checkbox"] {
     border-left-color: #3e88b9; }
   .propertyFormList label,
   .propertyFormList .inputBox {
-    display: table-cell !important;
-    vertical-align: bottom; }
+    display: table-cell !important; }
   .propertyFormList label {
     width: 100px !important;
     text-align: left;

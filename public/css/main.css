@@ -1162,9 +1162,6 @@
   padding: .5em 1em;
   background: 0;
 }
-.ui-dialog .ui-dialog-buttonpane {
-  margin-top: 10px !important;
-}
 .ui-dialog .ui-dialog-titlebar {
   display: none;
 }
@@ -8259,7 +8256,6 @@ input:not([type="checkbox"]).inputBordered:focus {
 .colorCardWrap {
   width: 280px;
   padding: 0 10px;
-  margin-bottom: -30px;
   background-color: #fff;
   border-radius: 3px;
   border: 1px solid #d6dadc;
