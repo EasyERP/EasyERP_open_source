@@ -7,8 +7,12 @@
 Dear <b><%=employee%></b>,
 <br>
 <br>
+<% if (note) {%>
+<%= you ? 'You' : history.author%> added comment "<%=history.note%>" to "<%=contentName%>" on <%=history.date%>
+<% } else {%>
 <%= you ? 'You' : history.editedBy.login%> changed <%=history.changedField%> from <b><%=history.prevValue%></b> to <b><%=history.newValue%></b>
 on <%=history.date%> in <%=history.collectionName%>
+<%}%>
 <br>
 <br>
 </body>

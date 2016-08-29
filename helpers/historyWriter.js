@@ -11,7 +11,6 @@ var History = function (models) {
 
     var HistoryEntrySchema = mongoose.Schemas.History;
     var followersSchema = mongoose.Schemas.followers;
-    var EmployeeSchema = mongoose.Schemas.Employee;
 
     function generateHistoryEntry(contentType, keyValue) {
         var mapSchema = historyMapper[contentType.toUpperCase()];
@@ -68,14 +67,24 @@ var History = function (models) {
         return historyEntry;
     }
 
+    this.sendToFollowers = function (options) {
+        sendToFollowers(options);
+    };
+
     function sendToFollowers(options) {
         var req = options.req;
+        var contentName = options.contentName;
         var FollowersModel = models.get(req.session.lastDb, 'followers', followersSchema);
         var contentId = options.contentId;
         var historyRecord = options.historyRecord;
+        var note = options.note;
         var waterfallFuncs;
 
         function getHistory(cb) {
+            if (note) {
+                return cb(null, note);
+            }
+
             getHistoryForTrackedObject({req: req, _id: historyRecord._id}, cb);
         }
 
@@ -98,6 +107,7 @@ var History = function (models) {
             }, {
                 $project: {
                     name : {$concat: ['$followerId.name.first', ' ', '$followerId.name.last']},
+                    _id  : '$followerId._id',
                     email: '$followerId.workEmail'
                 }
             }], function (err, result) {
@@ -105,19 +115,31 @@ var History = function (models) {
                     return cb(err);
                 }
 
-                cb(null, history, result);
+                cb(null, history || note, result);
             });
         }
 
         function sendTo(history, emails, cb) {
             async.each(emails, function (empObject, asyncCb) {
-                var key = Object.keys(history)[0];
-                var historyEntry = history[key][0];
-                var options = {
-                    employee: empObject.name,
-                    to      : empObject.email,
-                    history : historyEntry,
-                    you     : historyEntry.editedBy._id.toString() === req.session.uId.toString()
+                var key;
+                var historyEntry;
+                var options;
+
+                if (!note) {
+                    key = Object.keys(history)[0];
+                    historyEntry = history[key][0];
+                } else {
+                    historyEntry = note;
+                }
+
+
+                options = {
+                    employee   : empObject.name,
+                    to         : empObject.email,
+                    contentName: contentName,
+                    note       : note,
+                    history    : historyEntry,
+                    you        : historyEntry.editedBy ? historyEntry.editedBy._id.toString() === empObject._id.toString() : historyEntry.authorId === empObject._id.toString()
                 };
 
                 mailer.sendHistory(options, asyncCb);
@@ -138,6 +160,7 @@ var History = function (models) {
         var contentType = options.contentType;
         var data = options.data;
         var contentId = options.contentId;
+        var contentName = options.contentName;
         var historyRecords = [];
         var date = new Date();
         var HistoryEntry = models.get(options.req.session.lastDb, 'History', HistoryEntrySchema);
@@ -244,7 +267,12 @@ var History = function (models) {
                                     console.log(error);
                                 }
 
-                                sendToFollowers({req: options.req, contentId: contentId, historyRecord: res});
+                                sendToFollowers({
+                                    contentName  : contentName,
+                                    req          : options.req,
+                                    contentId    : contentId,
+                                    historyRecord: res
+                                });
                                 cb();
                             });
                         } else {

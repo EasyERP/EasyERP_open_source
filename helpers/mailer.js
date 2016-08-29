@@ -94,15 +94,17 @@ module.exports = function () {
 
     this.sendHistory = function (mailOptions, cb) {
         var templateOptions = {
-            employee: mailOptions.employee,
-            to      : mailOptions.email,
-            history : mailOptions.history,
-            you     : mailOptions.you
+            employee   : mailOptions.employee,
+            to         : mailOptions.email,
+            history    : mailOptions.history,
+            you        : mailOptions.you,
+            contentName: mailOptions.contentName,
+            note       : mailOptions.note
         };
 
         mailOptions.generateTextFromHTML = true;
         mailOptions.from = 'ThinkMobiles <no-replay@easyerp.com>';
-        mailOptions.subject = 'History changes';
+        mailOptions.subject = 'Changed ' + mailOptions.contentName;
 
         mailOptions.html = _.template(fs.readFileSync('public/templates/mailer/historyTemplate.html', encoding = 'utf8'), templateOptions);
 
