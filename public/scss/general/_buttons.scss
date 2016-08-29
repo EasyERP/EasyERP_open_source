@@ -57,14 +57,17 @@
   }
 
   &.green {
-    color: #FFF;
-    background-color: #32c5d2;
-    border-color: #32c5d2;
-
+    color: #fff;
+    background-color: #21b799;
+    border-color: #21b799;
+    > * {
+      color: #fff;
+    }
     &:hover {
-      background-color: #26a1ab;
-      border-color: #2499a3;
-      text-decoration: none;
+      color: #fff;
+      > * {
+        color: #fff;
+      }
     }
   }
 
@@ -174,6 +177,7 @@
     color: $black;
   }
 }
+
 #createBtnHolder{
   .export{
     float: left;

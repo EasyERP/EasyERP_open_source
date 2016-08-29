@@ -220,3 +220,66 @@
     }
   }
 }
+
+._dropDownTG {
+  position: relative;
+  color: #21b799;
+  cursor: pointer;
+  border-radius: 3px;
+
+  &:after {
+    content: '\e912';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 8px;
+    font-family: $icon-font;
+    color: #21b799;
+  }
+
+  ._dropDownTitle {
+    height: 26px;
+    min-width: 120px;
+    padding: 0 30px 0 10px;
+    line-height: 24px;
+
+    &:hover {
+      background-color: #e6e6e6;
+    }
+  }
+
+  .followersList {
+    > * {
+      &:first-child {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: #fff;
+        box-shadow: 5px 5px rgba(102, 102, 102, 0.1);
+        border: 1px solid #bebebe;
+      }
+    }
+
+    .newSelectList {
+      top: 0;
+      left: 100%;
+    }
+  }
+
+  ._addFollowersBtn {
+    display: block;
+    padding: 5px;
+    line-height: 20px;
+  }
+  ._followersList {
+    color: #000;
+    > li {
+      padding: 0 5px;
+      line-height: 26px;
+      &:first-child {
+        border-top: 1px solid #bebebe;
+      }
+    }
+  }
+}

@@ -1,6 +1,8 @@
-<div class="addFollowers">
-    <a class="current-selected" id="followersDd">Add</a>
-    <%followers.forEach(function (el){%>
-    <li data-id="<%=el._id%>"><%=el.name %><span class="icon-close remove"></span></li>
-    <%})%>
+<div class="addFollowers ">
+    <a class="current-selected _addFollowersBtn" id="followersDd">Add</a>
+    <ul class="_followersList">
+        <%followers.forEach(function (el){%>
+        <li data-id="<%=el._id%>"><%=el.name %><span class="icon-close remove"></span></li>
+        <%})%>
+    </ul>
 </div>

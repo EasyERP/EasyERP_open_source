@@ -4,7 +4,7 @@ define([
     'Underscore',
     'text!templates/followers/indexTemplate.html',
     'text!templates/followers/followersList.html',
-    'views/selectView/SelectView',
+    'views/selectView/selectView',
     'common',
     'populate',
     'constants',
