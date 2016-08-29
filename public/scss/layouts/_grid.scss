@@ -36,6 +36,8 @@
   margin-right: ($gutter-width / -2);
 }
 
+
+
 .col {
   float: left;
   width: 100%;
@@ -216,4 +218,8 @@ $j: 1;
   .xl-offset-0 {
     margin-left: 0;
   }
+}
+
+.bsReset {
+  padding: 0 !important;
 }

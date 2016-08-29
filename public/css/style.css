@@ -1093,6 +1093,9 @@ h3 {
 
   .xl-offset-0 {
     margin-left: 0; } }
+.bsReset {
+  padding: 0 !important; }
+
 .container {
   width: 100%;
   margin: 0 auto;
