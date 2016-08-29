@@ -58,7 +58,6 @@ define([
     };
 
     var changeContentViewType = function (event, contentType, collection) {
-
         var windowLocation = window.location.hash;
         var windowLocHash = windowLocation.split('/')[3];
         var browserFilter = windowLocation.split('/filter=')[1];

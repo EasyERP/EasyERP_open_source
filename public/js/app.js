@@ -6,8 +6,9 @@ define([
     'custom',
     'socket.io',
     'spinJs',
-    'constants'
-], function ($, Router, Communication, Custom, io, Spinner, constants) {
+    'constants',
+    'tracker'
+], function ($, Router, Communication, Custom, io, Spinner, constants, tracker) {
     var initialize = function () {
         'use strict';
         var appRouter = new Router();
@@ -47,14 +48,6 @@ define([
                 $(target).fadeOut();
             }
         });
-
-        App.startPreload = function () {
-            $('#loading').show();
-        };
-
-        App.stopPreload = function () {
-            $('#loading').hide();
-        };
 
         appRouter.checkLogin = Communication.checkLogin;
         Communication.checkLogin(Custom.runApplication);
@@ -106,8 +99,8 @@ define([
             create   : function (event, ui) {
                 var win = $(window);
                 var dialog = $(event.target).parent('.ui-dialog');
-                //var top = $(document).scrollTop() + (win.height() - dialog.height() - 200) / 2; //8.7.16(Pogorilyak)
-                var top =  (win.height() - dialog.height() ) / 2;
+                // var top = $(document).scrollTop() + (win.height() - dialog.height() - 200) / 2; //8.7.16(Pogorilyak)
+                var top = (win.height() - dialog.height() ) / 2;
                 var left = (win.width() - dialog.width()) / 2;
 
                 dialog.css({
@@ -171,6 +164,27 @@ define([
             }
         });
 
+        $(window).on('beforeunload', function (e) {
+            var currentUser = App.currentUser || {};
+
+            tracker.track({
+                date   : new Date(),
+                name   : 'sessionEnd',
+                message: 'sessionEnd',
+                email  : currentUser.email,
+                login  : currentUser.login
+            });
+            tracker.track({
+                date     : new Date(),
+                eventType: 'userFlow',
+                name     : 'close',
+                message  : 'close',
+                email    : currentUser.email,
+                login    : currentUser.login
+            });
+
+            App.Tracker.send.call(App.Tracker);
+        });
     };
 
     return {

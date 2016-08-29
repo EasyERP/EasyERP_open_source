@@ -42,27 +42,37 @@
   min-height: 1px;
   position: relative;
   box-sizing: border-box;
+  padding-left: 15px;
+  padding-right: 15px;
   padding-left: ($gutter-width / 2);
   padding-right: ($gutter-width / 2);
 }
 
 @media (max-width: $small-screen-down) {
   .container {
+    padding-left: 12px;
+    padding-right: 12px;
     padding-left: ($gutter-width / 2.5);
     padding-right: ($gutter-width / 2.5);
 
     &-full {
+      padding-left: 12px;
+      padding-right: 12px;
       padding-left: ($gutter-width / 2.5);
       padding-right: ($gutter-width / 2.5);
     }
   }
 
   .row {
+    margin-left: -12px;
+    margin-right:-12px;
     margin-left: ($gutter-width / -2.5);
     margin-right: ($gutter-width / -2.5);
   }
 
   .col {
+    padding-left: 12px;
+    padding-right: 12px;
     padding-left: ($gutter-width / 2.5);
     padding-right: ($gutter-width / 2.5);
   }

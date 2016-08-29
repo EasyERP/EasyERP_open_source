@@ -21,7 +21,7 @@ define([
             'click #addNote'     : 'saveNote',
             'click .addTitle'    : 'showTitle',
             'click .editDelNote' : 'editDelNote',
-            'click .fa-paperclip': 'clickInput'
+            'click .icon-attach' : 'clickInput'
         },
 
         clickInput: function () {

@@ -529,7 +529,7 @@ define([
                 return el._id === id;
             });
             // ToDo refactor
-            var delHTML = '<span title="Delete" class="fa fa-trash-o"></span>';
+            var delHTML = '<span title="Delete" class="icon-trash"></span>';
 
             var editVacationModel;
             var employee;

@@ -8,6 +8,7 @@
   }
 }
 
+
 .propertyBox {
   position: relative;
   display: table;
@@ -23,6 +24,7 @@
     vertical-align: top;
   }
 
+
   .removeProperty {
     position: absolute;
     right: 5px;
@@ -34,12 +36,11 @@
     font-size: 12px;
     color: $property-text-color;
 
-    .fa-times {
-      &:hover {
-        color: $black;
-      }
+    &:hover {
+      color: $black;
     }
   }
+
 
   .propertyImg {
     width: 40px;

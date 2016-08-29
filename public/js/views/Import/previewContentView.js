@@ -4,8 +4,9 @@ define([
     'Underscore',
     'text!templates/Import/PreviewTemplate.html',
     'constants',
+    'constants/mappingFields',
     'dataService'
-], function (Backbone, $, _, PreviewTemplate, CONSTANTS, dataService) {
+], function (Backbone, $, _, PreviewTemplate, CONSTANTS, mappingFields, dataService) {
     'use strict';
 
     var PreviewView = Backbone.View.extend({
@@ -32,7 +33,8 @@ define([
             var $thisEl = this.$el;
 
             $thisEl.html(this.previewTemplate({
-                fields: this.data
+                fields: this.data,
+                mappingFields: mappingFields
             }));
         }
     });

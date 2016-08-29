@@ -332,21 +332,34 @@ module.exports = function (app, mainDb) {
     });
 
     app.post('/track', function (req, res) {
+        var RegExp = /production|test_demo/;
         var body = req.body;
         var ip = req.headers ? req.headers['x-real-ip'] : req.ip;
         var geo = geoip.lookup(ip);
 
+        function mapper(body) {
+            body.ip = ip;
+            body.country = (!body.country && geo) ? geo.country : '';
+            body.city = (!body.city && geo) ? geo.city : '';
+            body.region = (!body.region && geo) ? geo.region : '';
+
+            body.registrType = process.env.SERVER_TYPE;
+            body.server = process.env.SERVER_PLATFORM;
+        }
+
         ip = ip || '127.0.0.1';
 
-        body.ip = ip;
-        body.country = (!body.country && geo) ? geo.country : '';
-        body.city = (!body.city && geo) ? geo.city : '';
-        body.region = (!body.region && geo) ? geo.region : '';
+        if (body instanceof Array) {
+            body.map(mapper);
+        } else {
+            mapper(body);
+        }
 
-        body.registrType = process.env.SERVER_TYPE;
-        body.server = process.env.SERVER_PLATFORM;
+        res.status(200).send();
 
-        tracker.track(body);
+        if (!RegExp.test(process.env.SERVER_TYPE)) {
+            tracker.track(body);
+        }
     });
 
     function notFound(req, res, next) {

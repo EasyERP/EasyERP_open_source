@@ -28,7 +28,7 @@
                     <% if (data.keys.length) { %>
                         <% _.each(data.keys, function(item){ %>
                             <td>
-                                <%= item %>
+                                <%= mappingFields[data.type][item] %>
                             </td>
                         <% }) %>
                     <% } %>
@@ -88,10 +88,10 @@
                 <% }) %>
             </table>
         </div>
-        <div class="_importButtonsGroup">
-            <button id="stepByStepButton" class="btn btnSave right">Step-By-Step</button>
-            <button id="skipAllButton" data-action="skip" class="btn btnSave right">Skip All</button>
-            <button id="importAllButton" data-action="import" class="btn btnSave right">Duplicate All</button>
+        <div class="_importButtonsGroup right">
+            <button id="skipAllButton" data-action="skip" class="btn btnSave ">Skip All</button>
+            <button id="importAllButton" data-action="import" class="btn btnSave ">Duplicate All</button>
+            <button id="stepByStepButton" class="btn btnSave ">Step-By-Step</button>
         </div>
     </div>
 <% } else { %>

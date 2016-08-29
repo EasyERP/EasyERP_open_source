@@ -2,19 +2,19 @@
     <div class="_progressBarContainer">
         <div class="bar _progressBar" style="width: 0"></div>
     </div>
-    <p class="attachFileName">You have uploaded file <span><%= fileName%></span></p>
+    <p class="attachFileName">Please upload file <span><%= fileName%></span></p>
     <label>
-        <input data-table="Customers" name="changeTableBtn" type="radio" value="Customers" checked="checked"
+        <input data-table="Customers" name="changeTableBtn" type="radio" value="Persons"
                class="changeTableBtn">
         <span>Persons</span>
     </label>
     <label>
-        <input data-table="Customers" name="changeTableBtn" type="radio" value="Customers"
+        <input data-table="Customers" name="changeTableBtn" type="radio" value="Companies"
                class="changeTableBtn">
         <span>Companies</span>
     </label>
     <label>
-        <input data-table="Opportunities" name="changeTableBtn" type="radio" value="Opportunities"
+        <input data-table="Opportunities" name="changeTableBtn" type="radio" value="Leads"
                class="changeTableBtn">
         <span>Leads</span>
     </label>
@@ -27,16 +27,30 @@
         <input data-table="Employees" name="changeTableBtn" type="radio" value="Employees" class="changeTableBtn">
         <span>Employees</span>
     </label>
-
+    <label>
+        <input data-table="Invoice" name="changeTableBtn" type="radio" value="Invoice" class="changeTableBtn">
+        <span>Invoice</span>
+    </label>
+    <label>
+        <input data-table="Quotation" name="changeTableBtn" type="radio" value="Orders" class="changeTableBtn">
+        <span>Orders</span>
+    </label>
+    <label>
+        <input data-table="Quotation" name="changeTableBtn" type="radio" value="Quotations" class="changeTableBtn">
+        <span>Quotations</span>
+    </label>
+    <label>
+        <input data-table="InvoicePayments" name="changeTableBtn" type="radio" value="InvoicePayments" class="changeTableBtn">
+        <span>InvoicePayments</span>
+    </label>
+    <label>
+        <input data-table="PurchasePayments" name="changeTableBtn" type="radio" value="PurchasePayments" class="changeTableBtn">
+        <span>PurchasePayments</span>
+    </label>
     <label>
         <p class="_importSearchDublicate"> Search duplicates by</p>
         <div class="dropDownDateRangeContainer">
             <div id="changeTableCombobox" class="choseDateRange dropDownDateRange">
-                <div class="item" data-imp="email">Email</div>
-                <div class="item" data-imp="name.first">First Name</div>
-                <div class="item" data-imp="website">Site</div>
-                <div class="item" data-imp="phones.phone">Phone</div>
-                <span class="selectArrow"></span>
             </div>
         </div>
     </label>
