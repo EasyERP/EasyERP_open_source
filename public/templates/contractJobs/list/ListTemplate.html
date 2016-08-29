@@ -78,14 +78,14 @@
         <%}%>
     </td>
     <td class="_contractJobsRevenueBlock">
-        <div><span>Total: </span><span class="money"><%=currencySplitter(((proformaPaid + paymentsInvoice)/100).toFixed(2))%></span>
+        <div><span class="semiBold">Total: </span><span class="money"><%=currencySplitter(((proformaPaid + paymentsInvoice)/100).toFixed(2))%></span>
         </div>
         <%if (paymentsInvoice) {%>
-        <div><span>By Invoice: </span><span
+        <div><span class="semiBold">By Invoice: </span><span
                 class="money"><%=currencySplitter(((paymentsInvoice)/100).toFixed(2))%></span></div>
         <%}%>
         <%if (proformaPaid) {%>
-        <div><span>By Proforma: </span><span
+        <div><span class="semiBold">By Proforma: </span><span
                 class="money"><%=currencySplitter(((proformaPaid)/100).toFixed(2))%></span></div>
         <%}%>
 
@@ -115,8 +115,10 @@
         <div class="percent">100 %</div>
     </td>
     <%} else {%>
+    <td class="_contractJobsProfitBlock profitBlock percent">
     <div class="money"><%=currencySplitter(((el.revenue - (el.costMaterials +el.costLabour))/100).toFixed(2))%></div>
     <div class="percent">0 %</div>
+    </td>
     <% } %>
 </tr>
 <% }) %>
