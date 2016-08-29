@@ -9,10 +9,13 @@ var department = mongoose.Schemas.Department;
 var projectSchema = mongoose.Schemas.Project;
 var prioritySchema = mongoose.Schemas.Priority;
 var CustomerSchema = mongoose.Schemas.Customer;
+var EmployeeSchema = mongoose.Schemas.Employee;
 var opportunitiesSchema = mongoose.Schemas.Opportunitie;
 var objectId = mongoose.Types.ObjectId;
 var _ = require('underscore');
 var async = require('async');
+var Mailer = require('../helpers/mailer');
+var mailer = new Mailer();
 
 var Module = function (models, event) {
     'use strict';
@@ -26,6 +29,46 @@ var Module = function (models, event) {
 
     var historyWriter = new HistoryWriter(models);
     var FilterMapper = require('../helpers/filterMapper');
+
+    function sendEmailToAssigned(req, dealTask) {
+        var mailOptions;
+        var Employee;
+
+        Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+
+        Employee.findById(dealTask.assignedTo, {}, function (err, modelEmployee) {
+            var workEmail;
+            var employee;
+            var description;
+
+            if (err) {
+                return console.log('email send to assigned error');
+            }
+
+            workEmail = modelEmployee.get('workEmail');
+            employee = modelEmployee.get('name');
+
+            description = dealTask.description || '';
+
+            if (workEmail) {
+                mailOptions = {
+                    to         : workEmail,
+                    employee   : employee.first + ' ' + employee.last,
+                    description: description,
+                    date       : dealTask.dueDate
+                };
+
+                mailer.sendEmailFromTask(mailOptions, function (err, result) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    console.log('email was send to ' + workEmail);
+                });
+            } else {
+                console.log('employee have not work email');
+            }
+        });
+    }
 
     this.createTask = function (req, res, next) {
         var body = req.body;
@@ -63,13 +106,16 @@ var Module = function (models, event) {
                             contentType: 'dealTask',
                             data       : result.toJSON(),
                             req        : req,
-                            contentId  : result._id
+                            contentId  : result._id,
+                            deal       : result.deal,
+                            followerId : result.assignedTo
                         };
+
+                        sendEmailToAssigned(req, result);
 
                         historyWriter.addEntry(historyOptions, function () {
                             res.status(201).send({success: 'New Task created success', id: result._id});
                         });
-
 
                     });
                 });
@@ -135,16 +181,17 @@ var Module = function (models, event) {
                 }
 
                 historyOptions = {
-                    contentType: 'dealtask',
+                    contentType: 'dealTask',
                     data       : data,
                     req        : req,
-                    contentId  : result._id
+                    contentId  : result._id,
+                    deal       : result.deal,
+                    followerId : result.assignedTo
                 };
 
                 historyWriter.addEntry(historyOptions, function () {
                     res.send(200, {success: 'Tasks updated', sequence: result.sequence});
                 });
-
 
             });
         }
@@ -418,7 +465,7 @@ var Module = function (models, event) {
 
     }
 
-    this.getActivity = function (req, res, next){
+    this.getActivity = function (req, res, next) {
         var data = req.query;
         var filterMapper = new FilterMapper();
         var obj = {};
@@ -428,27 +475,27 @@ var Module = function (models, event) {
         }
         var Task = models.get(req.session.lastDb, 'DealTasks', tasksSchema);
 
-        Task.find(obj, {_id : 1, description : 1}, function (err, docs) {
+        Task.find(obj, {_id: 1, description: 1}, function (err, docs) {
             var ids;
             var historyOptions;
 
-            if (err){
+            if (err) {
                 return next(err);
             }
 
-            ids = docs.map(function(elem){
+            ids = docs.map(function (elem) {
                 return elem._id;
             });
             historyOptions = {
-                req: req,
-                id : {$in : ids},
-                filter : {
-                    date : {$gte : moment().subtract(1, 'days').toDate() }
+                req   : req,
+                id    : {$in: ids},
+                filter: {
+                    date: {$gte: moment().subtract(1, 'days').toDate()}
                 }
 
             };
             historyWriter.getHistoryForTrackedObject(historyOptions, function (err, history) {
-                if (err){
+                if (err) {
                     return next(err);
                 }
 
@@ -463,12 +510,10 @@ var Module = function (models, event) {
 
                 history = history.reverse();
 
-
-                res.status(200).send({data : history});
+                res.status(200).send({data: history});
 
             }, true);
         });
-
 
     }
 
@@ -557,23 +602,24 @@ var Module = function (models, event) {
                 }, {
                     $group: {
                         _id: null,
-                        doc: {$push : '$$ROOT'}
+                        doc: {$push: '$$ROOT'}
                     }
                 }, {
                     $project: {
-                        _id : 0,
-                        overdue : {
+                        _id      : 0,
+                        overdue  : {
                             $filter: {
                                 input: '$doc',
                                 as   : 'task',
-                                cond : { $and: [{
-                                    $lt: ['$$task.dueDate', moment().startOf('day').toDate()]
-                                }, {$ne : ['$$task.workflow.status', 'Done']}, {$ne : ['$$task.workflow.status', 'Cancelled']}]
+                                cond : {
+                                    $and: [{
+                                        $lt: ['$$task.dueDate', moment().startOf('day').toDate()]
+                                    }, {$ne: ['$$task.workflow.status', 'Done']}, {$ne: ['$$task.workflow.status', 'Cancelled']}]
 
                                 }
                             }
                         },
-                        today   : {
+                        today    : {
                             $filter: {
                                 input: '$doc',
                                 as   : 'task',
@@ -596,8 +642,8 @@ var Module = function (models, event) {
                                 }
                             }
                         }
-                    }  }
-
+                    }
+                }
 
             ], function (err, result) {
                 var count;
@@ -606,7 +652,7 @@ var Module = function (models, event) {
                     return next(err);
                 }
 
-                res.status(200).send({data : result[0]});
+                res.status(200).send({data: result[0]});
             });
 
     }
@@ -665,9 +711,9 @@ var Module = function (models, event) {
                 return next(err);
             }
 
-           /* if (deleteHistory){
-                historyWriter.deleteHistoryById(req, _id);
-            }*/
+            /* if (deleteHistory){
+             historyWriter.deleteHistoryById(req, _id);
+             }*/
 
             event.emit('updateContent', req, res, task.project, 'remove');
             event.emit('updateSequence', DealTask, 'sequence', task.sequence, 0, task.workflow, task.workflow, false, true);

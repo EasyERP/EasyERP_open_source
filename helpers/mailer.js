@@ -113,6 +113,23 @@ module.exports = function () {
         deliver(mailOptions, cb);
     };
 
+    this.sendEmailFromTask = function (mailOptions, cb) {
+        var templateOptions = {
+            employee   : mailOptions.employee,
+            to         : mailOptions.email,
+            date       : moment(new Date(mailOptions.date)).format('dddd, MMMM Do YYYY, h:mm:ss a'),
+            description: mailOptions.description
+        };
+
+        mailOptions.generateTextFromHTML = true;
+        mailOptions.from = 'ThinkMobiles <no-replay@easyerp.com>';
+        mailOptions.subject = 'New Task'
+
+        mailOptions.html = _.template(fs.readFileSync('public/templates/mailer/taskTemplate.html', encoding = 'utf8'), templateOptions);
+
+        deliver(mailOptions, cb);
+    };
+
     this.sendAddedFollower = function (mailOptions, cb) {
 
         var templateOptions = {

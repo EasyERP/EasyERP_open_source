@@ -77,8 +77,17 @@ var History = function (models) {
         var FollowersModel = models.get(req.session.lastDb, 'followers', followersSchema);
         var contentId = options.contentId;
         var historyRecord = options.historyRecord;
+        var followerId = options.followerId;
+        var deal = options.deal;
         var note = options.note;
         var waterfallFuncs;
+        var query = {};
+
+        query.contentId = objectId(contentId);
+
+        if (followerId) {
+            query.followerId = objectId(followerId);
+        }
 
         function getHistory(cb) {
             if (note) {
@@ -90,9 +99,7 @@ var History = function (models) {
 
         function getEmails(history, cb) {
             FollowersModel.aggregate([{
-                $match: {
-                    contentId: objectId(contentId)
-                }
+                $match: query
             }, {
                 $lookup: {
                     from        : 'Employees',
@@ -160,6 +167,8 @@ var History = function (models) {
         var data = options.data;
         var contentId = options.contentId;
         var contentName = options.contentName;
+        var deal = options.deal;
+        var followerId = options.followerId;
         var historyRecords = [];
         var date = new Date();
         var HistoryEntry = models.get(options.req.session.lastDb, 'History', HistoryEntrySchema);
@@ -267,10 +276,12 @@ var History = function (models) {
                                 }
 
                                 sendToFollowers({
-                                    contentName  : contentName,
+                                    contentName  : contentName || 'task',
                                     req          : options.req,
-                                    contentId    : contentId,
-                                    historyRecord: res
+                                    contentId    : deal || contentId,
+                                    deal         : deal,
+                                    historyRecord: res,
+                                    followerId   : followerId
                                 });
                                 cb();
                             });
