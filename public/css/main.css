@@ -4406,8 +4406,7 @@ ul.dialog-tabs li.right button {
 }
 .thumbnail {
   float: left;
-  margin-top: 4px;
-  margin-left: 4px;
+  margin: 2px;
   position: relative;
   display: block;
   background: transparent !important;
@@ -7775,9 +7774,6 @@ textarea#editInput {
 .defaultBorRad {
   border-radius: 3px;
 }
-.loginContent * {
-  box-sizing: border-box;
-}
 *,
 *:before,
 *:after {
@@ -9431,6 +9427,21 @@ form .avatar .upload input {
 }
 a.attach_file:hover {
   text-decoration: none;
+}
+.thumbnailContent {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  padding: 2px;
+}
+.thumbnailContent > .thumbnail {
+  -webkit-flex-grow: 1;
+  flex-grow: 1;
 }
 .collapsed .sideMenu {
   width: 40px !important;
