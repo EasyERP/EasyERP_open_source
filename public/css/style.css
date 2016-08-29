@@ -3394,7 +3394,7 @@ label._customCHeckbox input[type="checkbox"] {
   position: relative;
   display: table;
   border: 1px solid #c8c8d3;
-  padding: 10px;
+  padding: 10px 25px 10px 10px;
   margin-bottom: 20px;
   width: 100%;
   border-radius: 3px; }
@@ -3426,7 +3426,8 @@ label._customCHeckbox input[type="checkbox"] {
     margin-bottom: 5px;
     font-weight: bold; }
   .propertyBox a {
-    color: #3e88b9; }
+    color: #3e88b9;
+    word-break: break-all; }
 
 .separateBlock {
   text-align: center; }
