@@ -764,9 +764,6 @@
 .icon-social-dropbox:before {
   content: "\e00c";
 }
-.containerContent {
-  padding: 20px 0;
-}
 /************* Main Colors *************/
 /* errors, negativeMoney */
 /* .cash */
@@ -4222,6 +4219,14 @@ table#workflows tr td.edit-status {
 }
 #top-bar > .btnsBlock {
   margin-top: 6px;
+}
+.btnsBlock > * {
+  float: left;
+}
+.btnsBlock:after {
+  content: '';
+  display: table;
+  clear: both;
 }
 .dashBoardVocationSearch {
   margin-top: 7px !important;

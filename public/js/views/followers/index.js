@@ -4,7 +4,7 @@ define([
     'Underscore',
     'text!templates/followers/indexTemplate.html',
     'text!templates/followers/followersList.html',
-    'views/selectView/SelectView',
+    'views/selectView/selectView',
     'common',
     'populate',
     'constants',
@@ -18,6 +18,7 @@ define([
         initialize: function (options) {
             this.remove();
             this.model = options.model;
+            this.collectionName = options.collectionName;
 
             this.responseObj = {};
         },
@@ -57,16 +58,35 @@ define([
             var self = this;
             var $target = $(e.target);
             var id = $target.closest('li').attr('data-id');
+            var userId = App.currentUser.relatedEmployee ? App.currentUser.relatedEmployee._id : null;
+            var status;
+            var unfollow = false;
+
+            status = _.find(this.model.toJSON().followers, function (el) {
+                return el._id === id;
+            });
+
+            if (status.followerId === userId) {
+                unfollow = true;
+            }
 
             App.startPreload();
 
             dataService.deleteData('/followers/', {
                 _id: id
             }, function (err, response) {
+
                 App.stopPreload();
                 self.hideNewSelect();
 
                 self.model.set('followers', response.data);
+
+                if (unfollow) {
+                    self.model.set('followerStatus', false);
+                    self.$el.find('#follow').text('Follow');
+                    self.$el.find('#follow').removeClass('unfollow');
+                    self.$el.find('#follow').removeClass('follow');
+                }
 
                 self.$el.find('.followersList').html('');
             });
@@ -82,7 +102,8 @@ define([
             dataService.postData('/followers/', {
                 followerId    : id,
                 contentId     : this.model.id,
-                collectionName: 'leads'
+                collectionName: this.collectionName,
+                contentName   : this.model.toJSON().name
             }, function (err, response) {
                 App.stopPreload();
                 self.hideNewSelect();
@@ -114,7 +135,8 @@ define([
                 dataService.postData('/followers/', {
                     followerId    : App.currentUser.relatedEmployee._id,
                     contentId     : this.model.id,
-                    collectionName: 'leads'
+                    collectionName: this.collectionName,
+                    contentName   : this.model.toJSON().name
                 }, function (err, response) {
                     App.stopPreload();
                     self.hideNewSelect();
@@ -182,7 +204,7 @@ define([
                 return el.followerId === userId;
             });
 
-            if (status){
+            if (status) {
                 this.model.set('followerStatus', true);
             } else {
                 this.model.set('followerStatus', false);

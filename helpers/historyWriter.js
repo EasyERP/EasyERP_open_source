@@ -3,11 +3,14 @@ var objectId = mongoose.Types.ObjectId;
 var historyMapper = require('../constants/historyMapper');
 var async = require('async');
 var _ = require('../public/js/libs/underscore/underscore');
+var Mailer = require('../helpers/mailer');
+var mailer = new Mailer();
 
 var History = function (models) {
     'use strict';
 
     var HistoryEntrySchema = mongoose.Schemas.History;
+    var followersSchema = mongoose.Schemas.followers;
 
     function generateHistoryEntry(contentType, keyValue) {
         var mapSchema = historyMapper[contentType.toUpperCase()];
@@ -64,9 +67,100 @@ var History = function (models) {
         return historyEntry;
     }
 
+    this.sendToFollowers = function (options) {
+        sendToFollowers(options);
+    };
+
+    function sendToFollowers(options) {
+        var req = options.req;
+        var contentName = options.contentName;
+        var FollowersModel = models.get(req.session.lastDb, 'followers', followersSchema);
+        var contentId = options.contentId;
+        var historyRecord = options.historyRecord;
+        var note = options.note;
+        var waterfallFuncs;
+
+        function getHistory(cb) {
+            if (note) {
+                return cb(null, note);
+            }
+
+            getHistoryForTrackedObject({req: req, _id: historyRecord._id}, cb);
+        }
+
+        function getEmails(history, cb) {
+            FollowersModel.aggregate([{
+                $match: {
+                    contentId: objectId(contentId)
+                }
+            }, {
+                $lookup: {
+                    from        : 'Employees',
+                    localField  : 'followerId',
+                    foreignField: '_id',
+                    as          : 'followerId'
+                }
+            }, {
+                $project: {
+                    followerId: {$arrayElemAt: ['$followerId', 0]}
+                }
+            }, {
+                $project: {
+                    name : {$concat: ['$followerId.name.first', ' ', '$followerId.name.last']},
+                    _id  : '$followerId._id',
+                    email: '$followerId.workEmail'
+                }
+            }], function (err, result) {
+                if (err) {
+                    return cb(err);
+                }
+
+                cb(null, history || note, result);
+            });
+        }
+
+        function sendTo(history, emails, cb) {
+            async.each(emails, function (empObject, asyncCb) {
+                var key;
+                var historyEntry;
+                var options;
+
+                if (!note) {
+                    key = Object.keys(history)[0];
+                    historyEntry = history[key][0];
+                } else {
+                    historyEntry = note;
+                }
+
+
+                options = {
+                    employee   : empObject.name,
+                    to         : empObject.email,
+                    contentName: contentName,
+                    note       : note,
+                    history    : historyEntry,
+                    you        : historyEntry.editedBy ? historyEntry.editedBy._id.toString() === empObject._id.toString() : historyEntry.authorId === empObject._id.toString()
+                };
+
+                mailer.sendHistory(options, asyncCb);
+            }, cb);
+        }
+
+        waterfallFuncs = [getHistory, getEmails, sendTo];
+
+        async.waterfall(waterfallFuncs, function (err, result) {
+            if (err) {
+                return console.log(err);
+            }
+        });
+
+    }
+
     this.addEntry = function (options, callback) {
         var contentType = options.contentType;
         var data = options.data;
+        var contentId = options.contentId;
+        var contentName = options.contentName;
         var historyRecords = [];
         var date = new Date();
         var HistoryEntry = models.get(options.req.session.lastDb, 'History', HistoryEntrySchema);
@@ -172,6 +266,13 @@ var History = function (models) {
                                 if (error) {
                                     console.log(error);
                                 }
+
+                                sendToFollowers({
+                                    contentName  : contentName,
+                                    req          : options.req,
+                                    contentId    : contentId,
+                                    historyRecord: res
+                                });
                                 cb();
                             });
                         } else {
@@ -201,9 +302,28 @@ var History = function (models) {
     }
 
     this.getHistoryForTrackedObject = function (options, callback, forNote) {
+        getHistoryForTrackedObject(options, callback, forNote);
+    };
+
+    function getHistoryForTrackedObject(options, callback, forNote) {
         var id = options.id;
+        var _id = options._id;
         var filter = options.filter || {};
+        var query = {};
+        var matchObject = {};
+        var queryObj = {};
         var HistoryEntry = models.get(options.req.session.lastDb, 'History', HistoryEntrySchema);
+
+        if (_id) {
+            query._id = _id;
+            matchObject._id = _id;
+            queryObj._id = _id;
+        } else {
+            query.contentId = id;
+            matchObject.contentId = id;
+            matchObject.isRef = {$ne: true};
+            queryObj.contentId = id;
+        }
 
         function getFunctionToGetForRefField(fieldDescription) {
             var fieldCollection = fieldDescription.collection;
@@ -212,11 +332,10 @@ var History = function (models) {
 
             return function getHistoryWithPopulation(cb) {
 
+                query.changedField = changedField;
+
                 HistoryEntry.aggregate([{
-                    $match: {
-                        contentId   : id,
-                        changedField: changedField
-                    }
+                    $match: query
                 }, {
                     $match: filter
                 }, {
@@ -295,10 +414,7 @@ var History = function (models) {
         function getHistoryWithoutPopulation(cb) {
 
             HistoryEntry.aggregate([{
-                $match: {
-                    contentId: id,
-                    isRef    : {$ne: true},
-                }
+                $match: matchObject
             }, {
                 $match: filter
             }, {
@@ -337,7 +453,7 @@ var History = function (models) {
             });
         }
 
-        HistoryEntry.findOne({contentId: id}, function (err, res) {
+        HistoryEntry.findOne(queryObj, function (err, res) {
             var contentType;
             var mapSchema;
             var mapSchemaKeys;
@@ -378,7 +494,7 @@ var History = function (models) {
             }
         });
 
-    };
+    }
 };
 
 module.exports = History;

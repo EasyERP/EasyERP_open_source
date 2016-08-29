@@ -3,6 +3,7 @@ module.exports = function () {
     var nodemailer = require('nodemailer');
     var smtpTransportObject = require('../config/mailer').noReplay;
     var pathMod = require('path');
+    var moment = require('../public/js/libs/moment/moment');
 
     var fs = require('fs');
 
@@ -88,6 +89,43 @@ module.exports = function () {
         mailOptions.subject = 'Lead is assigned'; // + name Leads
 
         mailOptions.html = _.template(fs.readFileSync('public/templates/mailer/sendAssignedToLead.html', encoding = 'utf8'), templateOptions);
+
+        deliver(mailOptions, cb);
+    };
+
+    this.sendHistory = function (mailOptions, cb) {
+        var templateOptions = {
+            employee   : mailOptions.employee,
+            to         : mailOptions.email,
+            history    : mailOptions.history,
+            you        : mailOptions.you,
+            contentName: mailOptions.contentName,
+            date       : moment(new Date(mailOptions.history.date)).format('dddd, MMMM Do YYYY, h:mm:ss a'),
+            note       : mailOptions.note
+        };
+
+        mailOptions.generateTextFromHTML = true;
+        mailOptions.from = 'ThinkMobiles <no-replay@easyerp.com>';
+        mailOptions.subject = 'Changed ' + mailOptions.contentName;
+
+        mailOptions.html = _.template(fs.readFileSync('public/templates/mailer/historyTemplate.html', encoding = 'utf8'), templateOptions);
+
+        deliver(mailOptions, cb);
+    };
+
+    this.sendAddedFollower = function (mailOptions, cb) {
+
+        var templateOptions = {
+            employee      : mailOptions.employee.first + ' ' + mailOptions.employee.last,
+            contentName   : mailOptions.contentName,
+            collectionName: mailOptions.collectionName
+        };
+
+        mailOptions.generateTextFromHTML = true;
+        mailOptions.from = 'ThinkMobiles <no-replay@easyerp.com>';
+        mailOptions.subject = 'You was set as a follower'; // + name Leads
+
+        mailOptions.html = _.template(fs.readFileSync('public/templates/mailer/addedFollower.html', encoding = 'utf8'), templateOptions);
 
         deliver(mailOptions, cb);
     };

@@ -469,7 +469,8 @@ define([
 
             $thisEl.find('.followers').append(
                 new Followers({
-                    model: this.formModel
+                    model         : this.formModel,
+                    collectionName: 'leads'
                 }).render().el
             );
 

@@ -708,7 +708,8 @@ var Module = function (models, event) {
                             contentType: result.isOpportunitie ? 'opportunitie' : 'lead',
                             data       : data,
                             req        : req,
-                            contentId  : result._id
+                            contentId  : result._id,
+                            contentName: result.name
                         };
                         historyWriter.addEntry(historyOptions, function () {
                             res.status(200).send({success: 'Opportunities updated'});
@@ -772,7 +773,8 @@ var Module = function (models, event) {
                         contentType: result.isOpportunitie ? 'opportunitie' : 'lead',
                         data       : data,
                         req        : req,
-                        contentId  : result._id
+                        contentId  : result._id,
+                        contentName: result.name
                     };
 
                     historyWriter.addEntry(historyOptions, function () {
@@ -1010,7 +1012,8 @@ var Module = function (models, event) {
                         contentType: result.isOpportunitie ? 'opportunitie' : 'lead',
                         data       : result.toJSON(),
                         req        : req,
-                        contentId  : result._id
+                        contentId  : result._id,
+                        contentName: result.name
                     };
 
                     historyWriter.addEntry(historyOptions);
@@ -2131,6 +2134,7 @@ var Module = function (models, event) {
         var data = req.body;
         var _id = req.params.id;
         var obj;
+        var noteObject;
 
         var historyOptions = {
             contentType: 'lead',
@@ -2148,8 +2152,11 @@ var Module = function (models, event) {
 
             if (!obj.author) {
                 obj.author = req.session.uName;
+                obj.authorId = req.session.uId;
             }
             data.notes[data.notes.length - 1] = obj;
+
+            noteObject = obj;
         }
 
         function updateOpp() {
@@ -2190,6 +2197,9 @@ var Module = function (models, event) {
                             .populate('company')
                             .populate('customer', function () {
                                 var lead = result.toJSON();
+
+                                historyOptions.contentName = lead.name;
+
                                 historyWriter.addEntry(historyOptions, function () {
                                     getTimeLine(req, lead, function (err, model) {
                                         var _company;
@@ -2327,12 +2337,15 @@ var Module = function (models, event) {
                                         // send email to assigned when update Lead
                                         if (result.salesPerson) {
                                             if (oldOpportunity.salesPerson) {
-                                                if (result.salesPerson.toString() !== oldOpportunity.salesPerson.toString()) {
+                                                if (result.salesPerson._id.toString() !== oldOpportunity.salesPerson.toString()) {
                                                     sendEmailToAssigned(req, result);
                                                 }
-                                            } else {
-                                                sendEmailToAssigned(req, result);
                                             }
+                                        }
+
+                                        if (noteObject) {
+                                            historyOptions.note = noteObject;
+                                            historyWriter.sendToFollowers(historyOptions);
                                         }
 
                                         delete model.tags;
