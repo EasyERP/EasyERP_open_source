@@ -843,9 +843,6 @@
   display: block;
   overflow: hidden;
 }
-.ui-spinner > input:not([type="checkbox"]) {
-  max-width: 100%;
-}
 .ui-spinner .ui-spinner-input {
   float: left;
   border: none;
@@ -900,6 +897,23 @@
   border: none !important;
 }
 /*== End Input type number =============*/
+.tableResponsive {
+  min-height: .01%;
+  overflow: auto;
+  width: 100%;
+  -ms-overflow-style: -ms-autohiding-scrollbar;
+}
+.tableResponsiveNew {
+  min-height: .01%;
+  width: 100%;
+}
+#loading {
+  position: fixed;
+  display: block;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+}
 .salary-list tbody#listTable .subRow:hover {
   background-color: transparent;
 }
@@ -1147,9 +1161,6 @@
   border: 0;
   padding: .5em 1em;
   background: 0;
-}
-.ui-dialog .ui-dialog-buttonpane {
-  margin-top: 10px !important;
 }
 .ui-dialog .ui-dialog-titlebar {
   display: none;
@@ -1560,6 +1571,30 @@
   text-align: left;
 }
 /*== temp files==*/
+tr.redBorder {
+  background-color: red;
+}
+.totalBySales {
+  background-color: #045986;
+}
+.totalBySales td {
+  text-align: left !important;
+  font-size: 13px !important;
+}
+.paidBySales {
+  background-color: #1d96c2;
+}
+.paidBySales td {
+  text-align: left !important;
+  font-size: 13px !important;
+}
+.revenueBySales {
+  background-color: #A19015;
+}
+.revenueBySales td {
+  text-align: left !important;
+  font-size: 13px !important;
+}
 #forInfo {
   overflow: hidden;
 }
@@ -1575,6 +1610,8 @@
   margin-bottom: 10px;
 }
 #forInfo .tableProjects .forCaption {
+  color: #ffffff;
+  background-color: #3e88b9;
   line-height: 28px;
 }
 #forInfo .tableProjects .forCaption:last-child {
@@ -1626,17 +1663,8 @@
 #forInfo .tableProjects .subRow td:last-child {
   border-right: 1px solid transparent;
 }
-#forInfo #jobsItem {
-  border-bottom: 1px solid #d7d7d7 !important;
-}
 #forInfo .innerTableProject {
   padding: 5px 0 5px 20px;
-}
-#forInfo .innerTableProject .list > thead tr {
-  border-top: 0;
-}
-#forInfo .innerTableProject .list > tfoot tr {
-  border-bottom: 0;
 }
 #forInfo .innerTableProject .innerTableProject-footer td {
   border-width: 0;
@@ -1664,6 +1692,9 @@
 }
 #forInfo.accounting td a.fa {
   margin-right: 10px;
+}
+li.fired {
+  background-color: rgba(235, 0, 4, 0.73);
 }
 .holidays {
   position: relative;
@@ -1837,6 +1868,10 @@ input::-ms-clear {
   }
 }
 */
+.thumbnail-text {
+  color: #4c4c4c;
+  font-size: 13px;
+}
 .kanban {
   padding: 0;
   margin: 0;
@@ -2419,31 +2454,23 @@ input::-ms-clear {
     font-size: 10px;
   }
 }
-/*
 #modulesAccessTable {
   display: none;
-
-  tr {
-    &.child {
-      display: none;
-    }
-
-    &.child.visible {
-      display: table-row;
-    }
-
-    &.parent {
-      background-color: #7eadcc;
-      border-color: #fff;
-
-      td {
-        color: #fff;
-        font-family: @fontSemiBold;
-      }
-    }
-  }
 }
-*/
+#modulesAccessTable tr.child {
+  display: none;
+}
+#modulesAccessTable tr.child.visible {
+  display: table-row;
+}
+#modulesAccessTable tr.parent {
+  background-color: #7eadcc;
+  border-color: #fff;
+}
+#modulesAccessTable tr.parent td {
+  color: #fff;
+  font-family: 'OpenSans SemiBold', sans-serif, Verdana;
+}
 *:focus {
   outline: 0 !important;
 }
@@ -2798,12 +2825,7 @@ body {
   color: #000000;
 }
 .form textarea {
-  width: 99%;
-  min-height: 160px;
   resize: none;
-}
-.form textarea._bigTextArea {
-  width: 100%;
 }
 .form .job-create-info textarea {
   height: 130px;
@@ -3640,12 +3662,12 @@ a.red:hover {
 }
 #groupList .content {
   display: block;
-  padding-left: 6px;
+  padding-left: 5px;
   line-height: 25px;
   border: 1px solid #7f7f80;
   background: #ffffff;
   margin: 2px 0;
-  height: 28px;
+  height: 25px;
 }
 #groupList .content .text {
   color: #000000;
@@ -3672,7 +3694,7 @@ a.red:hover {
   margin-right: 2px;
 }
 #groupList li.parent > .content .text {
-  padding-left: 26px !important;
+  padding-left: 18px !important;
   position: relative;
 }
 #groupList li.parent > .content .text:before {
@@ -3681,7 +3703,7 @@ a.red:hover {
   top: 2px;
   right: auto;
   bottom: auto;
-  left: 0;
+  left: 2px;
   line-height: 24px;
   font-size: 20px;
   color: #3e88b9;
@@ -3749,6 +3771,33 @@ a.red:hover {
   line-height: 30px;
   padding-top: 15px;
   color: #000000;
+}
+table#workflows {
+  width: 40%;
+}
+table#workflows tr a {
+  margin-left: 3px;
+}
+table#workflows tr a.edit {
+  display: none;
+}
+table#workflows tr a.delete {
+  display: none;
+}
+table#workflows tr:hover a.edit:not(.hidden) {
+  display: inline;
+}
+table#workflows tr:hover a.delete:not(.hidden) {
+  display: inline;
+}
+table#workflows tr .hidden {
+  display: none;
+}
+table#workflows tr td {
+  min-width: 40%;
+}
+table#workflows tr td.edit-status {
+  width: 20%;
 }
 .groupsAndUser {
   display: none;
@@ -4168,14 +4217,6 @@ a.red:hover {
 #top-bar > .btnsBlock {
   margin-top: 6px;
 }
-.btnsBlock > * {
-  float: left;
-}
-.btnsBlock:after {
-  content: '';
-  display: table;
-  clear: both;
-}
 .dashBoardVocationSearch {
   margin-top: 7px !important;
   /*only for DashBoard vocation*/
@@ -4362,8 +4403,7 @@ ul.dialog-tabs li.right button {
 }
 .thumbnail {
   float: left;
-  margin-top: 4px;
-  margin-left: 4px;
+  margin: 2px;
   position: relative;
   display: block;
   background: transparent !important;
@@ -4404,15 +4444,11 @@ ul.dialog-tabs li.right button {
   color: #000000;
   line-height: 16px;
 }
-.thumbnail span,
-.thumbnail p,
-.thumbnail h2 {
-  color: #4c4c4c;
-  font-size: 13px;
-}
 .thumbnail span {
   font-family: 'OpenSans Regular', sans-serif, Verdana;
   position: relative;
+  color: #4c4c4c;
+  font-size: 13px;
 }
 .thumbnail span.status.pending {
   color: #EAE874;
@@ -4435,12 +4471,16 @@ ul.dialog-tabs li.right button {
 }
 .thumbnail p {
   font-family: 'OpenSans Regular', sans-serif, Verdana;
+  color: #4c4c4c;
+  font-size: 13px;
 }
 .thumbnail p span {
   font-weight: normal !important;
 }
 .thumbnail h2 {
   font-family: 'OpenSans Regular', sans-serif, Verdana;
+  color: #4c4c4c;
+  font-size: 13px;
   margin: 0 0 8px;
 }
 .thumbnail:hover {
@@ -4506,17 +4546,12 @@ ul.dialog-tabs li.right button {
   margin-top: 20px;
   margin-bottom: 5px;
 }
-/*
-#modulesAccessTable {
-  td {
-    text-align: center;
-
-    &.mname {
-      text-align: left;
-    }
-  }
+#modulesAccessTable td {
+  text-align: center;
 }
-*/
+#modulesAccessTable td.mname {
+  text-align: left;
+}
 #ui-datepicker-div {
   border-radius: 0 !important;
   margin-top: 2px;
@@ -5142,21 +5177,14 @@ h3.dashboard {
 .chart text {
   fill: #000000;
 }
-/*
-#modulesAccessTable {
-  tr {
-    th {
-      text-align: center;
-      vertical-align: top;
-      padding: 8px 0;
-
-      input[type="checkbox"] {
-        margin-top: 5px;
-      }
-    }
-  }
+#modulesAccessTable tr th {
+  text-align: center;
+  vertical-align: top;
+  padding: 8px 0;
 }
-*/
+#modulesAccessTable tr th input[type="checkbox"] {
+  margin-top: 5px;
+}
 #timeRecivingDataFromServer,
 #timeBuildingDataFromServer {
   clear: both;
@@ -5414,18 +5442,11 @@ a.cancelled {
 .form-holder form .job-create-info dt {
   width: 42%;
   max-width: 200px;
-  margin-top: 0;
 }
 .form-holder form .job-create-info dd {
   line-height: 0;
   width: 58%;
   margin-top: 0;
-}
-.form-holder form .job-create-info dd > a {
-  line-height: 26px;
-}
-.form-holder form .job-create-info dd input {
-  margin-top: 5px;
 }
 .form-holder form .job-create-info input {
   width: 218px;
@@ -6154,6 +6175,91 @@ textarea#editInput {
   content: " ";
   clear: both;
 }
+.grid-conatiner .statisticsAtten {
+  margin-top: 10px;
+}
+.grid-conatiner .statisticsAtten table {
+  width: 100%;
+}
+.grid-conatiner .statisticsAtten table tr.footerRow {
+  border-bottom: 1px solid #4c5975;
+}
+.grid-conatiner .statisticsAtten table tr.footerRow td span {
+  min-height: 10px;
+  content: " ";
+}
+.grid-conatiner .statisticsAtten table tr td {
+  border-right: 1px solid #4c5975;
+}
+.grid-conatiner .statisticsAtten table tr td:last-child {
+  border: none;
+}
+.grid-conatiner .statisticsAtten table tr td .item .title {
+  text-align: center;
+  font-size: 14px;
+  margin-bottom: 5px;
+  color: #000000;
+}
+.grid-conatiner .statisticsAtten table tr td .item .countDays {
+  font-size: 20px;
+  color: #ffffff;
+  width: 126px;
+  padding: 5px;
+  text-align: center;
+  margin: 0 auto;
+  /*for vacationDashboard*/
+}
+.grid-conatiner .statisticsAtten table tr td .item .countDays.leave,
+.grid-conatiner .statisticsAtten table tr td .item .countDays.working {
+  background-color: #36384e;
+}
+.grid-conatiner .statisticsAtten table tr td .item .countDays.vacation {
+  background-color: #e55253;
+}
+.grid-conatiner .statisticsAtten table tr td .item .countDays.personal {
+  background-color: #f9a203;
+}
+.grid-conatiner .statisticsAtten table tr td .item .countDays.sick {
+  background-color: #3e88b9;
+}
+.grid-conatiner .statisticsAtten table tr td .item .countDays.education {
+  background-color: #3e7f42;
+}
+.grid-conatiner .statisticsAtten table tr td .item .countDays.free {
+  background-color: #e55253;
+}
+.grid-conatiner .statisticsAtten table tr td .item .countDays.almostFree {
+  background-color: #cc5457;
+}
+.grid-conatiner .statisticsAtten table tr td .item .countDays.partiallyBusy {
+  background-color: #f9a203;
+}
+.grid-conatiner .statisticsAtten table tr td .item .countDays.fullyBusy {
+  background-color: #3e7f42;
+}
+.grid-conatiner .statisticsAtten table tr td .item .countDays.overWorked {
+  background-color: #2d5d30;
+}
+.grid-conatiner .statisticsAtten table tr td .item .lastTime {
+  text-align: center;
+  margin-top: 10px;
+  color: #000000;
+}
+.grid-conatiner .statisticsAtten table tr td .item .percent {
+  text-align: center;
+  color: #eb759e;
+}
+.grid-conatiner .statisticsAtten .percent {
+  text-align: center;
+  color: #eb759e;
+}
+.grid-conatiner .statisticsAtten.stick {
+  background-color: #ffffff;
+  padding-top: 10px;
+}
+.grid-conatiner table .grid {
+  border-color: #7f7f80;
+}
 .grid-conatiner.revenue {
   color: #ffffff;
   padding: 20px;
@@ -6512,9 +6618,9 @@ textarea#editInput {
 .search-field .search {
   cursor: pointer;
   position: absolute;
-  top: 4px;
-  left: 6px;
-  font-size: 16px;
+  top: 6px;
+  left: 5px;
+  height: 18px;
 }
 .search-field span:before {
   color: #4d5a75;
@@ -7125,9 +7231,8 @@ textarea#editInput {
   width: 1px;
 }
 #searchGlobalContainer {
-  position: relative;
   display: block;
-  height: 26px;
+  position: relative;
   border: 1px solid #7f7f80;
   padding-left: 26px;
   border-radius: 3px;
@@ -7666,9 +7771,6 @@ textarea#editInput {
 .defaultBorRad {
   border-radius: 3px;
 }
-.loginContent * {
-  box-sizing: border-box;
-}
 *,
 *:before,
 *:after {
@@ -7729,9 +7831,6 @@ h2.green {
   font-size: 14px;
   line-height: 34px;
   cursor: pointer;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
 }
 .selectDd ul {
   visibility: hidden;
@@ -7753,12 +7852,9 @@ h2.green {
 }
 .selectDd ul li {
   padding: 3px 25px;
+  white-space: nowrap;
   line-height: 18px;
   cursor: pointer;
-  overflow: hidden;
-  -ms-text-overflow: ellipsis;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 .selectDd ul li:hover {
   background-color: #eef0f0;
@@ -7803,7 +7899,6 @@ h2.green {
   -ms-flex-direction: column;
   flex-direction: column;
   height: 100%;
-  height: 100vh;
 }
 .loginForgot {
   color: #a4aab2;
@@ -7956,11 +8051,13 @@ input:not([type="checkbox"]).inputBordered:focus {
   }
 }
 @media (max-width: 992px) {
-  .loginTitle {
-    font-size: 20px;
+  .sliderWrap,
+  .loginContent {
+    height: 50%;
   }
-  .selectDd {
-    margin-top: 0.67em;
+  .loginWrapper,
+  .sliderContainer {
+    height: 100%;
   }
 }
 @media (max-width: 767px) {
@@ -7988,13 +8085,6 @@ input:not([type="checkbox"]).inputBordered:focus {
   }
   .formActions {
     white-space: nowrap;
-  }
-  .loginWrapper,
-  .sliderContainer {
-    height: 100%;
-  }
-  .sliderWrap {
-    display: none;
   }
 }
 @media (max-width: 667px) {
@@ -8166,7 +8256,6 @@ input:not([type="checkbox"]).inputBordered:focus {
 .colorCardWrap {
   width: 280px;
   padding: 0 10px;
-  margin-bottom: -30px;
   background-color: #fff;
   border-radius: 3px;
   border: 1px solid #d6dadc;
@@ -8626,9 +8715,6 @@ dl.payrollDateBlock dt {
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  -moz-box-align: center;
-  -webkit-align-items: center;
-  -ms-flex-align: center;
 }
 .listWrap.leadsList .compactRow:first-child .name {
   -webkit-flex-grow: 1;
@@ -8768,9 +8854,6 @@ dl.payrollDateBlock dt {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.compactRow > * {
-  line-height: normal;
-}
 .compactRow > div:nth-child(odd) {
   float: left;
   clear: both;
@@ -8817,20 +8900,20 @@ td.checkboxRow {
 }
 #top-bar {
   /*
-      &.position {
-        position: absolute;
-        left: 35px;
-        z-index: 1;
+    &.position {
+      position: absolute;
+      left: 35px;
+      z-index: 1;
 
-        h3 {
-          display: none;
-        }
-
-        #createBtnHolder {
-          margin-top: 8px;
-        }
+      h3 {
+        display: none;
       }
-  */
+
+      #createBtnHolder {
+        margin-top: 8px;
+      }
+    }
+*/
 }
 #top-bar #createBtnHolder,
 #top-bar .createBtnHolder {
@@ -9101,7 +9184,11 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .noteBtnBlock .btn,
 .editNoteBtnBlock .btn {
+  border: 0 !important;
   margin: 8px 0;
+  height: 28px;
+  color: #fff;
+  line-height: 28px !important;
 }
 .noteBtnBlock .btn:hover,
 .editNoteBtnBlock .btn:hover {
@@ -9118,7 +9205,6 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .editedNote .noteType {
   float: left;
-  padding: 10px 5px;
 }
 .editedNote .noteText {
   padding: 10px !important;
@@ -9265,9 +9351,7 @@ td.editable {
 }
 .addTaskTitle {
   display: flex;
-  -moz-box-align: center;
-  -webkit-align-items: center;
-  -ms-flex-align: center;
+  align-items: center;
   white-space: nowrap;
 }
 .addTaskTitle > label {
@@ -9279,14 +9363,8 @@ td.editable {
   margin-right: 10px;
 }
 .addTaskTitle ._taskTimeBlock {
-  display: -webkit-box;
-  display: -moz-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
   display: flex;
-  -moz-box-align: center;
-  -webkit-align-items: center;
-  -ms-flex-align: center;
+  align-items: center;
 }
 .addTaskTitle ._taskTimeBlock #categoryHolder {
   margin-right: 20px;
@@ -9346,30 +9424,20 @@ form .avatar .upload input {
 a.attach_file:hover {
   text-decoration: none;
 }
-._spinnerTitle {
-  line-height: 28px;
-  font-family: 'OpenSans SemiBold', sans-serif, Verdana;
+.thumbnailContent {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  padding: 2px;
 }
-._projectWeekTable.list tbody td,
-._projectWeekTable.list thead th {
-  text-align: center;
-}
-._projectWeekTable.list tbody td {
-  width: 35px;
-}
-._projectWeekTable.list tbody td > input.editing {
-  text-align: center;
-}
-@media (max-width: 1400px) {
-  ._projectsTablesWrap > .left {
-    width: calc(100% - 345px) !important;
-  }
-  ._projectsTablesWrap > .right {
-    width: 330px !important;
-  }
-  .form-holder.employee {
-    padding: 20px 10px;
-  }
+.thumbnailContent > .thumbnail {
+  -webkit-flex-grow: 1;
+  flex-grow: 1;
 }
 .collapsed .sideMenu {
   width: 40px !important;
@@ -9554,6 +9622,25 @@ a.attach_file:hover {
 }
 .unpaid {
   color: #e55253 !important;
+}
+.textUnderlineHover:hover {
+  text-decoration: underline !important;
+}
+.fired {
+  background-color: rgba(235, 0, 4, 0.73) !important;
+  color: #fff!important;
+}
+.text-left {
+  text-align: left !important;
+}
+.text-right {
+  text-align: right !important;
+}
+.blueText {
+  color: #3e88b9;
+}
+.textGrey {
+  color: #9a9a9e;
 }
 .bgRed {
   background-color: #eb5a46 !important;

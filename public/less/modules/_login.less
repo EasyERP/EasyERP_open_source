@@ -5,12 +5,6 @@
   border-radius: 3px;
 }
 
-.loginContent {
-  *{
-    box-sizing: border-box;
-  }
-}
-
 *, *:before, *:after {
   box-sizing: border-box;
 }
@@ -742,7 +736,7 @@ input {
     &Wrap {
       width: 280px;
       padding:0 10px;
-      margin-bottom: -30px;
+      //margin-bottom: -30px;
       background-color: #fff;
       border-radius: 3px;
       border: 1px solid #d6dadc;
@@ -2343,8 +2337,27 @@ form .avatar .upload input {
 }
 
 a.attach_file {
+
   &:hover {
     text-decoration: none;
+  }
+}
+
+
+.thumbnailContent {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  padding: 2px;
+
+  >.thumbnail {
+    -webkit-flex-grow: 1;
+    flex-grow: 1;
   }
 }
 
