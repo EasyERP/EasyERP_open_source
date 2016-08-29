@@ -1,12 +1,11 @@
 // process.env.HOST = 'http://localhost:8089/';
 // process.env.HOST = 'http://erp.thinkmobiles.com/';
-// process.env.HOST = 'http://testdemo.easyerp.com/';
 process.env.HOST = 'http://testdemo.easyerp.com/';
 process.env.TRACKER_HOST = 'http://tracker.thinkmobiles.com:7069/';
 // process.env.TRACKER_HOST = 'http://192.168.88.88:8091';
 process.env.MAIN_DB_HOST = 'localhost';
 process.env.MAIN_DB_NAME = 'mainDB';
-process.env.DB_PORT = 27017;
+process.env.DB_PORT = 28017;
 process.env.DB_USER = 'easyErp';
 process.env.DB_PASS = '1q2w3e!@#';
 
