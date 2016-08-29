@@ -4306,7 +4306,6 @@ label._customCHeckbox input[type="checkbox"] {
 ._dropDownTG {
   position: relative;
   color: #21b799;
-  cursor: pointer;
   border-radius: 3px; }
   ._dropDownTG:after {
     content: '\e912';
@@ -4320,11 +4319,13 @@ label._customCHeckbox input[type="checkbox"] {
     height: 26px;
     min-width: 120px;
     padding: 0 30px 0 10px;
-    line-height: 24px; }
+    line-height: 24px;
+    cursor: pointer; }
     ._dropDownTG ._dropDownTitle:hover {
       background-color: #e6e6e6; }
-  ._dropDownTG .followersList > *:first-child {
+  ._dropDownTG .followersList ._followersListBlock {
     position: absolute;
+    z-index: 100;
     top: 100%;
     left: 0;
     width: 100%;
@@ -4337,14 +4338,24 @@ label._customCHeckbox input[type="checkbox"] {
   ._dropDownTG ._addFollowersBtn {
     display: block;
     padding: 5px;
-    line-height: 20px; }
+    line-height: 20px;
+    cursor: pointer; }
   ._dropDownTG ._followersList {
     color: #000; }
-    ._dropDownTG ._followersList > li {
+    ._dropDownTG ._followersList ._followersListItem {
       padding: 0 5px;
       line-height: 26px; }
-      ._dropDownTG ._followersList > li:first-child {
+      ._dropDownTG ._followersList ._followersListItem:first-child {
         border-top: 1px solid #bebebe; }
+      ._dropDownTG ._followersList ._followersListItem .icon-close {
+        float: right;
+        height: 20px;
+        width: 20px;
+        line-height: 20px;
+        margin: 3px 0;
+        text-align: center;
+        font-size: 10px;
+        cursor: pointer; }
 
 .notFoundItems {
   text-align: center;
