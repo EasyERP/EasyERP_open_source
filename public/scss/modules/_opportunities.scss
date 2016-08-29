@@ -8,12 +8,11 @@
   }
 }
 
-
 .propertyBox {
   position: relative;
   display: table;
   border: 1px solid $property-box-border-color;
-  padding: 10px;
+  padding: 10px 25px 10px 10px;
   margin-bottom: 20px;
   width: 100%;
   border-radius: 3px;
@@ -63,6 +62,7 @@
 
   a {
     color: $property-link-color;
+    word-break: break-all;
   }
 }
 .separateBlock {
@@ -81,7 +81,7 @@
   label,
   .inputBox {
     display: table-cell !important;
-    vertical-align: bottom;
+    //vertical-align: bottom;
   }
 
   label {

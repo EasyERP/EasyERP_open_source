@@ -67,4 +67,5 @@ module.exports = (function () {
     require('./cashTransfer.js');
     require('./import.js');
     require('./countries.js');
+    require('./followers.js');
 })();

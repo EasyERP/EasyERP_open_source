@@ -57,14 +57,17 @@
   }
 
   &.green {
-    color: #FFF;
-    background-color: #32c5d2;
-    border-color: #32c5d2;
-
+    color: #fff;
+    background-color: #21b799;
+    border-color: #21b799;
+    > * {
+      color: #fff;
+    }
     &:hover {
-      background-color: #26a1ab;
-      border-color: #2499a3;
-      text-decoration: none;
+      color: #fff;
+      > * {
+        color: #fff;
+      }
     }
   }
 
@@ -116,26 +119,6 @@
     }
   }
 
-  &.btnSave {
-    background: #3291c8;
-    color: $white;
-    border-color: transparent;
-
-    span,
-    a {
-      color: $white;
-    }
-
-    &:hover {
-      background: #2d82b4;
-
-      span,
-      a {
-        color: $white;
-      }
-    }
-  }
-
   &.btnSuccess {
     border-color: #3E7F42;
 
@@ -174,6 +157,7 @@
     color: $black;
   }
 }
+
 #createBtnHolder{
   .export{
     float: left;

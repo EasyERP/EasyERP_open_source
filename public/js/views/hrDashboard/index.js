@@ -508,11 +508,17 @@ define([
                         return d.value;
                     });
 
+                console.log(data);
+
                 d3.selectAll('.dashboard-vacation-stat')
                     .select('.desc')
                     .append('span')
                     .text(function (d) {
-                        return d.key;
+                        if(d){
+                            return d.key;
+                        }
+
+                        return '';
                     })
                     .style('font-size', '20px');
             });
@@ -576,7 +582,11 @@ define([
                     .select('.desc')
                     .append('span')
                     .text(function (d) {
-                        return d.key;
+                        if(d){
+                            return d.key;
+                        }
+
+                        return '';
                     })
                     .style('font-size', '20px');
             });

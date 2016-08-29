@@ -46,7 +46,7 @@ define([
                 this.$el.html('');
                 this.$el
                     .append('<div id="searchContainer"></div>')
-                    .append('<div id="thumbnailContent"></div>');
+                    .append('<div id="thumbnailContent" class="thumbnailContent"></div>');
             }
         },
 

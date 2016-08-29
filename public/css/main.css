@@ -764,9 +764,6 @@
 .icon-social-dropbox:before {
   content: "\e00c";
 }
-.containerContent {
-  padding: 20px 0;
-}
 /************* Main Colors *************/
 /* errors, negativeMoney */
 /* .cash */
@@ -1164,9 +1161,6 @@
   border: 0;
   padding: .5em 1em;
   background: 0;
-}
-.ui-dialog .ui-dialog-buttonpane {
-  margin-top: 10px !important;
 }
 .ui-dialog .ui-dialog-titlebar {
   display: none;
@@ -4409,8 +4403,7 @@ ul.dialog-tabs li.right button {
 }
 .thumbnail {
   float: left;
-  margin-top: 4px;
-  margin-left: 4px;
+  margin: 2px;
   position: relative;
   display: block;
   background: transparent !important;
@@ -7778,9 +7771,6 @@ textarea#editInput {
 .defaultBorRad {
   border-radius: 3px;
 }
-.loginContent * {
-  box-sizing: border-box;
-}
 *,
 *:before,
 *:after {
@@ -8266,7 +8256,6 @@ input:not([type="checkbox"]).inputBordered:focus {
 .colorCardWrap {
   width: 280px;
   padding: 0 10px;
-  margin-bottom: -30px;
   background-color: #fff;
   border-radius: 3px;
   border: 1px solid #d6dadc;
@@ -9434,6 +9423,21 @@ form .avatar .upload input {
 }
 a.attach_file:hover {
   text-decoration: none;
+}
+.thumbnailContent {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  padding: 2px;
+}
+.thumbnailContent > .thumbnail {
+  -webkit-flex-grow: 1;
+  flex-grow: 1;
 }
 .collapsed .sideMenu {
   width: 40px !important;

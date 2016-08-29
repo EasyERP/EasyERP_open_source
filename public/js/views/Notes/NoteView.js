@@ -16,12 +16,12 @@ define([
         },
 
         events: {
-            'click #noteArea'    : 'expandNote',
-            'click #cancelNote'  : 'cancelNote',
-            'click #addNote'     : 'saveNote',
-            'click .addTitle'    : 'showTitle',
-            'click .editDelNote' : 'editDelNote',
-            'click .icon-attach' : 'clickInput'
+            'click #noteArea'   : 'expandNote',
+            'click #cancelNote' : 'cancelNote',
+            'click #addNote'    : 'saveNote',
+            'click .addTitle'   : 'showTitle',
+            'click .editDelNote': 'editDelNote',
+            'click .icon-attach': 'clickInput'
         },
 
         clickInput: function () {
@@ -59,7 +59,8 @@ define([
                         currentModel.save({notes: newNotes},
                             {
                                 headers: {
-                                    mid: 39
+                                    mid   : 39,
+                                    remove: true
                                 },
                                 patch  : true,
                                 success: function () {
@@ -99,8 +100,6 @@ define([
             var arrKeyStr;
             var noteObj;
             var editNotes;
-
-
 
             if ($(e.target).parents('.addNote').find('#noteArea').val().replace(/ /g, '') || $(e.target).parents('.addNote').find('#noteTitleArea').val().replace(/ /g, '')) {
                 $(e.target).parents('.addNote').find('#noteArea').attr('placeholder', 'Add a Note...').parents('.addNote').removeClass('active');
@@ -167,7 +166,6 @@ define([
                                 var formLeftColumn = self.$el.find('.formLeftColumn');
                                 var noteWrapper = formLeftColumn.find('.noteWrapper');
 
-
                                 noteWrapper.empty();
                                 formLeftColumn.append(self.render());
 
@@ -193,7 +191,6 @@ define([
         render: function () {
             var notDiv;
             var modelObj = this.model.toJSON();
-
 
             if (!modelObj.notes) {
                 modelObj.notes = 0;

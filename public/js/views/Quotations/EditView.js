@@ -568,11 +568,13 @@ define([
             var buttons = [
                 {
                     text : 'Save',
+                    class: 'btn blue',
                     click: function () {
                         self.saveItem();
                     }
                 }, {
                     text : 'Cancel',
+                    class: 'btn',
                     click: function () {
                         self.hideDialog();
                     }
@@ -582,6 +584,7 @@ define([
             if (!model.proformaCounter) {
                 buttons.push({
                     text : 'Delete',
+                    class: 'btn',
                     click: self.deleteItem
                 });
             }

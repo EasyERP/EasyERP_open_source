@@ -1091,6 +1091,9 @@ h3 {
 
   .xl-offset-0 {
     margin-left: 0; } }
+.bsReset {
+  padding: 0 !important; }
+
 .container {
   width: 100%;
   margin: 0 auto;
@@ -1787,13 +1790,15 @@ h3 {
     height: 26px;
     line-height: 24px !important; }
   .btn.green {
-    color: #FFF;
-    background-color: #32c5d2;
-    border-color: #32c5d2; }
+    color: #fff;
+    background-color: #21b799;
+    border-color: #21b799; }
+    .btn.green > * {
+      color: #fff; }
     .btn.green:hover {
-      background-color: #26a1ab;
-      border-color: #2499a3;
-      text-decoration: none; }
+      color: #fff; }
+      .btn.green:hover > * {
+        color: #fff; }
   .btn.blue {
     color: #fff !important;
     background-color: #7eadcc !important;
@@ -1820,18 +1825,6 @@ h3 {
         border-color: #3e88b9;
         color: #fff;
         text-decoration: none; }
-  .btn.btnSave {
-    background: #3291c8;
-    color: #ffffff;
-    border-color: transparent; }
-    .btn.btnSave span,
-    .btn.btnSave a {
-      color: #ffffff; }
-    .btn.btnSave:hover {
-      background: #2d82b4; }
-      .btn.btnSave:hover span,
-      .btn.btnSave:hover a {
-        color: #ffffff; }
   .btn.btnSuccess {
     border-color: #3E7F42; }
     .btn.btnSuccess:hover {
@@ -1903,64 +1896,62 @@ h3 {
 .textBlue {
   color: #27a0cd; }
 
-._multiEllipsis {
-  overflow: hidden;
-  height: 37px;
-  line-height: 25px; }
-  ._multiEllipsis:before {
-    content: "";
-    float: left;
-    width: 5px;
-    height: 38px; }
-  ._multiEllipsis.open {
-    height: auto; }
-    ._multiEllipsis.open ._ellipsisShowMore {
-      display: none; }
-    ._multiEllipsis.open ._ellipsisCloseBtn {
-      display: block;
-      float: right;
-      background-color: #7eadcc;
-      color: #fff;
-      font-size: 12px;
-      height: 20px;
-      line-height: 20px;
-      padding: 0 10px;
-      border-radius: 3px;
-      cursor: pointer; }
-  ._multiEllipsis > *:first-child {
-    float: right;
-    width: 100%;
-    margin-left: -5px; }
-  ._multiEllipsis > p {
-    -ms-word-break: break-all;
-    word-break: break-all; }
-  ._multiEllipsis ._ellipsisShowMore {
-    display: block;
-    box-sizing: content-box;
-    -webkit-box-sizing: content-box;
-    -moz-box-sizing: content-box;
-    position: relative;
-    top: -14px;
-    height: 14px;
-    left: 100%;
-    float: right;
-    width: 68px;
-    padding-right: 5px;
-    margin-left: -68px;
-    background-color: #7eadcc;
-    color: #fff;
-    line-height: 13px;
-    font-size: 10px;
-    text-align: center;
-    cursor: pointer;
-    border-radius: 3px; }
-  ._multiEllipsis ._ellipsisCloseBtn {
-    display: none; }
+/*Copied from less/generals/loader*/
+#loading {
+  position: fixed;
+  display: block;
+  width: 100%;
+  height: 100%;
+  z-index: 9999; }
 
+/*End Copied */
 ._pms-tr {
   background-color: #f1f3f1; }
   ._pms-tr td {
     height: 25px !important; }
+
+.textUnderlineHover:hover {
+  text-decoration: underline !important; }
+
+.fired {
+  background-color: rgba(235, 0, 4, 0.73) !important;
+  color: #fff !important; }
+
+.text-left {
+  text-align: left !important; }
+
+.text-right {
+  text-align: right !important; }
+
+.blueText {
+  color: #3e88b9; }
+
+.textGrey {
+  color: #9a9a9e; }
+
+.totalBySales {
+  background-color: #045986; }
+  .totalBySales td {
+    text-align: left !important;
+    font-size: 13px !important; }
+
+.paidBySales {
+  background-color: #1d96c2; }
+  .paidBySales td {
+    text-align: left !important;
+    font-size: 13px !important; }
+
+.revenueBySales {
+  background-color: #A19015; }
+  .revenueBySales td {
+    text-align: left !important;
+    font-size: 13px !important; }
+
+tr.redBorder {
+  background-color: red; }
+
+li.fired {
+  background-color: rgba(235, 0, 4, 0.73); }
 
 label._customCHeckbox input[type="checkbox"] {
   position: absolute;
@@ -2010,9 +2001,6 @@ label._customCHeckbox input[type="checkbox"] {
 
 .internal_Notes {
   min-height: 100px; }
-
-.icon-check-circle:before {
-  content: "\f05d"; }
 
 .icon-check-circle:before {
   content: "\f05d"; }
@@ -2067,15 +2055,6 @@ label._customCHeckbox input[type="checkbox"] {
 
 .icon-transfer2:before {
   content: "\30"; }
-
-.icon-arrow-down2:before {
-  content: "\37"; }
-
-.icon-arrow-left2:before {
-  content: "\38"; }
-
-.icon-arrow-right2:before {
-  content: "\39"; }
 
 .icon-facebook2:before {
   content: "\66"; }
@@ -2154,12 +2133,6 @@ label._customCHeckbox input[type="checkbox"] {
 
 .icon-close2:before {
   content: "\e905"; }
-
-.icon-chevronR:before {
-  content: "\e906"; }
-
-.icon-chevronL:before {
-  content: "\e907"; }
 
 .icon-download:before {
   content: "\e908"; }
@@ -2343,6 +2316,141 @@ label._customCHeckbox input[type="checkbox"] {
 
 .icon-skype:before {
   content: "\e60f"; }
+
+/* Don`t remove this styles
+table#workflows {
+  width: 40%;
+
+  tr {
+    a {
+      margin-left: 3px;
+
+      &.edit {
+        display: none;
+      }
+
+      &.delete {
+        display: none;
+      }
+    }
+
+    &:hover {
+      a.edit:not(.hidden) {
+        display: inline;
+      }
+
+      a.delete:not(.hidden) {
+        display: inline;
+      }
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    td {
+      min-width: 40%;
+
+      &.edit-status {
+        width: 20%;
+      }
+    }
+  }
+}
+*/
+#modulesAccessTable {
+  display: none; }
+  #modulesAccessTable tr th {
+    text-align: center;
+    vertical-align: top;
+    padding: 8px 0; }
+    #modulesAccessTable tr th input[type="checkbox"] {
+      margin-top: 5px; }
+  #modulesAccessTable tr.child {
+    display: none; }
+  #modulesAccessTable tr.child.visible {
+    display: table-row; }
+  #modulesAccessTable tr.parent {
+    background-color: #7eadcc;
+    border-color: #fff; }
+    #modulesAccessTable tr.parent td {
+      color: #fff;
+      font-family: "OpenSans SemiBold", sans-serif; }
+  #modulesAccessTable td {
+    text-align: center; }
+    #modulesAccessTable td.mname {
+      text-align: left; }
+
+.grid-conatiner .statisticsAtten {
+  margin-top: 10px; }
+  .grid-conatiner .statisticsAtten table {
+    width: 100%; }
+    .grid-conatiner .statisticsAtten table tr.footerRow {
+      border-bottom: 1px solid #4c5975; }
+      .grid-conatiner .statisticsAtten table tr.footerRow td span {
+        min-height: 10px;
+        content: " "; }
+    .grid-conatiner .statisticsAtten table tr td {
+      border-right: 1px solid #4c5975; }
+      .grid-conatiner .statisticsAtten table tr td:last-child {
+        border: none; }
+      .grid-conatiner .statisticsAtten table tr td .item .title {
+        text-align: center;
+        font-size: 14px;
+        margin-bottom: 5px;
+        color: #000000; }
+      .grid-conatiner .statisticsAtten table tr td .item .countDays {
+        font-size: 20px;
+        color: #ffffff;
+        width: 126px;
+        padding: 5px;
+        text-align: center;
+        margin: 0 auto;
+        /*for vacationDashboard*/ }
+        .grid-conatiner .statisticsAtten table tr td .item .countDays.leave, .grid-conatiner .statisticsAtten table tr td .item .countDays.working {
+          background-color: #36384e; }
+        .grid-conatiner .statisticsAtten table tr td .item .countDays.vacation {
+          background-color: #e55253; }
+        .grid-conatiner .statisticsAtten table tr td .item .countDays.personal {
+          background-color: #f9a203; }
+        .grid-conatiner .statisticsAtten table tr td .item .countDays.sick {
+          background-color: #3e88b9; }
+        .grid-conatiner .statisticsAtten table tr td .item .countDays.education {
+          background-color: #3e7f42; }
+        .grid-conatiner .statisticsAtten table tr td .item .countDays.free {
+          background-color: #a22a2d; }
+        .grid-conatiner .statisticsAtten table tr td .item .countDays.almostFree {
+          background-color: #cc5457; }
+        .grid-conatiner .statisticsAtten table tr td .item .countDays.partiallyBusy {
+          background-color: #f9a203; }
+        .grid-conatiner .statisticsAtten table tr td .item .countDays.fullyBusy {
+          background-color: #3e7f42; }
+        .grid-conatiner .statisticsAtten table tr td .item .countDays.overWorked {
+          background-color: #2d5d30; }
+      .grid-conatiner .statisticsAtten table tr td .item .lastTime {
+        text-align: center;
+        margin-top: 10px;
+        color: #000000; }
+      .grid-conatiner .statisticsAtten table tr td .item .percent {
+        text-align: center;
+        color: #eb759e; }
+  .grid-conatiner .statisticsAtten .percent {
+    text-align: center;
+    color: #eb759e; }
+  .grid-conatiner .statisticsAtten.stick {
+    background-color: #fff;
+    padding-top: 10px; }
+.grid-conatiner table .grid {
+  border-color: #7f7f80; }
+
+.tableResponsive {
+  min-height: .01%;
+  overflow: auto;
+  width: 100%;
+  -ms-overflow-style: -ms-autohiding-scrollbar; }
+  .tableResponsiveNew {
+    min-height: .01%;
+    width: 100%; }
 
 .payRoll-list-wrap {
   border-top: 1px solid #d7d7d7; }
@@ -2963,6 +3071,8 @@ label._customCHeckbox input[type="checkbox"] {
   font-style: italic; }
 ._contractJobsListItem ._contractJobsInvoiceBlock > div {
   line-height: 20px; }
+._contractJobsListItem ._contractJobsRevenueBlock > div {
+  line-height: 20px; }
 
 .list tbody tr._contractJobsListItem td {
   padding: 10px;
@@ -3356,7 +3466,7 @@ label._customCHeckbox input[type="checkbox"] {
   position: relative;
   display: table;
   border: 1px solid #c8c8d3;
-  padding: 10px;
+  padding: 10px 25px 10px 10px;
   margin-bottom: 20px;
   width: 100%;
   border-radius: 3px; }
@@ -3388,7 +3498,8 @@ label._customCHeckbox input[type="checkbox"] {
     margin-bottom: 5px;
     font-weight: bold; }
   .propertyBox a {
-    color: #3e88b9; }
+    color: #3e88b9;
+    word-break: break-all; }
 
 .separateBlock {
   text-align: center; }
@@ -3401,8 +3512,7 @@ label._customCHeckbox input[type="checkbox"] {
     border-left-color: #3e88b9; }
   .propertyFormList label,
   .propertyFormList .inputBox {
-    display: table-cell !important;
-    vertical-align: bottom; }
+    display: table-cell !important; }
   .propertyFormList label {
     width: 100px !important;
     text-align: left;
@@ -4003,6 +4113,8 @@ label._customCHeckbox input[type="checkbox"] {
   border: none;
   border-top: 1px solid #d7d7d7;
   padding-top: 10px; }
+  .ui-dialog-buttonset .btn + .btn {
+    margin-left: 10px; }
 
 .task-content {
   padding: 5px;
@@ -4185,8 +4297,7 @@ label._customCHeckbox input[type="checkbox"] {
   position: relative; }
 
 ._newSelectListWrap {
-  position: relative;
-  cursor: pointer; }
+  position: relative; }
 
 .newSelectList {
   position: absolute;
@@ -4244,6 +4355,73 @@ label._customCHeckbox input[type="checkbox"] {
   line-height: 24px;
   display: block;
   text-align: center; }
+
+._dropDownTG {
+  position: relative;
+  color: #21b799;
+  border-radius: 3px; }
+  ._dropDownTG:after {
+    content: '\e912';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 8px;
+    font-family: "erp-icons";
+    color: #21b799; }
+  ._dropDownTG ._dropDownTitle {
+    height: 26px;
+    min-width: 140px;
+    padding: 0 30px 0 10px;
+    line-height: 24px;
+    cursor: pointer; }
+    ._dropDownTG ._dropDownTitle:hover {
+      background-color: #e6e6e6; }
+  ._dropDownTG .followersList ._followersListBlock {
+    position: absolute;
+    z-index: 100;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    box-shadow: 5px 5px rgba(102, 102, 102, 0.1);
+    border: 1px solid #bebebe; }
+  ._dropDownTG .followersList .newSelectList {
+    top: 0;
+    right: 100%;
+    left: auto; }
+  ._dropDownTG ._addFollowersBtn {
+    display: block;
+    padding: 5px;
+    line-height: 20px;
+    cursor: pointer; }
+  ._dropDownTG ._followersList {
+    color: #000; }
+    ._dropDownTG ._followersList ._followersListItem {
+      display: -webkit-box;
+      display: -moz-box;
+      display: -ms-flexbox;
+      display: -webkit-flex;
+      display: flex;
+      padding: 0 5px;
+      line-height: 26px; }
+      ._dropDownTG ._followersList ._followersListItem:first-child {
+        border-top: 1px solid #bebebe; }
+      ._dropDownTG ._followersList ._followersListItem ._itemName {
+        -webkit-flex-grow: 1;
+        flex-grow: 1;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden; }
+      ._dropDownTG ._followersList ._followersListItem .icon-close {
+        -webkit-flex-shrink: 0;
+        flex-shrink: 0;
+        height: 20px;
+        width: 20px;
+        line-height: 20px;
+        margin: 3px 0;
+        text-align: center;
+        font-size: 10px;
+        cursor: pointer; }
 
 .notFoundItems {
   text-align: center;

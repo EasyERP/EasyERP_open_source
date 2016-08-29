@@ -9,6 +9,7 @@ var Module = function (models, event) {
     var prioritySchema = mongoose.Schemas.Priority;
     var historySchema = mongoose.Schemas.History;
     var tagsSchema = mongoose.Schemas.tags;
+    var followersSchema = mongoose.Schemas.followers;
     var objectId = mongoose.Types.ObjectId;
 
     var _ = require('../node_modules/underscore');
@@ -69,6 +70,7 @@ var Module = function (models, event) {
 
     function getTimeLine(req, model, cb) {
         var TasksSchema = models.get(req.session.lastDb, 'DealTasks', TasksSchema);
+        var FollowersModel = models.get(req.session.lastDb, 'followers', followersSchema);
         var parallelTasks;
 
         var historyOptions = {
@@ -122,12 +124,35 @@ var Module = function (models, event) {
                 });
         }
 
-        parallelTasks = [getTask, getHistoryNotes];
+        function getFollowers(parallelCb) {
+            FollowersModel.find({contentId: model._id})
+                .populate('followerId', 'name fullName')
+                .exec(function (err, res) {
+                    if (err) {
+                        return parallelCb(err);
+                    }
+
+                    res = res.map(function (elem) {
+                        return {
+                            name      : elem.followerId.fullName,
+                            followerId: elem.followerId._id,
+                            _id       : elem._id
+                        };
+                    });
+
+                    parallelCb(null, res);
+                });
+        }
+
+        parallelTasks = [getTask, getHistoryNotes, getFollowers];
 
         async.parallel(parallelTasks, function (err, results) {
 
             model.notes = model.notes.concat(results[0], results[1]);
             model.notes = _.sortBy(model.notes, 'date');
+
+            model.followers = results[2] || [];
+
             cb(null, model);
         });
 
@@ -562,6 +587,7 @@ var Module = function (models, event) {
         var files = req.files && req.files.attachfile ? req.files.attachfile : null;
         var dir;
         var err;
+        var historyOptions = {};
 
         contentType = contentType.toLowerCase();
         dir = path.join(contentType, id);
@@ -604,6 +630,18 @@ var Module = function (models, event) {
             }, {new: true}, function (err, response) {
                 if (err) {
                     return next(err);
+                }
+
+                historyOptions = {
+                    contentType: response.isOpportunitie ? 'opportunitie' : 'lead',
+                    req        : req,
+                    contentId  : response._id,
+                    contentName: response.name
+                };
+
+                if (files) {
+                    historyOptions.files = files;
+                    historyWriter.sendToFollowers(historyOptions);
                 }
 
                 res.status(200).send({success: 'Opportunity updated success', data: response});
@@ -683,7 +721,8 @@ var Module = function (models, event) {
                             contentType: result.isOpportunitie ? 'opportunitie' : 'lead',
                             data       : data,
                             req        : req,
-                            contentId  : result._id
+                            contentId  : result._id,
+                            contentName: result.name
                         };
                         historyWriter.addEntry(historyOptions, function () {
                             res.status(200).send({success: 'Opportunities updated'});
@@ -747,7 +786,8 @@ var Module = function (models, event) {
                         contentType: result.isOpportunitie ? 'opportunitie' : 'lead',
                         data       : data,
                         req        : req,
-                        contentId  : result._id
+                        contentId  : result._id,
+                        contentName: result.name
                     };
 
                     historyWriter.addEntry(historyOptions, function () {
@@ -985,7 +1025,8 @@ var Module = function (models, event) {
                         contentType: result.isOpportunitie ? 'opportunitie' : 'lead',
                         data       : result.toJSON(),
                         req        : req,
-                        contentId  : result._id
+                        contentId  : result._id,
+                        contentName: result.name
                     };
 
                     historyWriter.addEntry(historyOptions);
@@ -2106,6 +2147,7 @@ var Module = function (models, event) {
         var data = req.body;
         var _id = req.params.id;
         var obj;
+        var noteObject;
 
         var historyOptions = {
             contentType: 'lead',
@@ -2123,8 +2165,11 @@ var Module = function (models, event) {
 
             if (!obj.author) {
                 obj.author = req.session.uName;
+                obj.authorId = req.session.uId;
             }
             data.notes[data.notes.length - 1] = obj;
+
+            noteObject = obj;
         }
 
         function updateOpp() {
@@ -2165,6 +2210,9 @@ var Module = function (models, event) {
                             .populate('company')
                             .populate('customer', function () {
                                 var lead = result.toJSON();
+
+                                historyOptions.contentName = lead.name;
+
                                 historyWriter.addEntry(historyOptions, function () {
                                     getTimeLine(req, lead, function (err, model) {
                                         var _company;
@@ -2302,12 +2350,15 @@ var Module = function (models, event) {
                                         // send email to assigned when update Lead
                                         if (result.salesPerson) {
                                             if (oldOpportunity.salesPerson) {
-                                                if (result.salesPerson.toString() !== oldOpportunity.salesPerson.toString()) {
+                                                if (result.salesPerson._id.toString() !== oldOpportunity.salesPerson.toString()) {
                                                     sendEmailToAssigned(req, result);
                                                 }
-                                            } else {
-                                                sendEmailToAssigned(req, result);
                                             }
+                                        }
+
+                                        if (noteObject) {
+                                            historyOptions.note = noteObject;
+                                            historyWriter.sendToFollowers(historyOptions);
                                         }
 
                                         delete model.tags;

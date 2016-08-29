@@ -6,6 +6,7 @@
             <th>Job Position</th>
             <th>Department</th>
             <th>Hours</th>
+
         </tr>
         </thead>
 
@@ -17,6 +18,7 @@
                     <td><%=element.employee.jobPosition%></td>
                     <td><%=element.department%></td>
                     <td><%=currencySplitter(element.employee.worked.toFixed())%></td>
+                    <!--<td colspan="15"></td>-->
                 </tr>
             <%}%>
         <% })%>
@@ -24,7 +26,7 @@
 
         <tfoot class="innerTableProject-footer">
         <tr>
-            <td colspan="9"></td>
+            <td colspan="15"></td>
             <td>
                 <a href="javascript:;" data-id="<%=jobItem._id%>" data-value="<%=jobItem.name%>"
                    id="createItem">

@@ -147,13 +147,13 @@ define([
                 buttons      : {
                     save: {
                         text : 'Create',
-                        class: 'btn  btnRounded btnSave',
+                        class: 'btn blue',
                         click: self.saveItem
                     },
 
                     cancel: {
                         text : 'Cancel',
-                        class: 'btn  btnRounded',
+                        class: 'btn',
                         click: function () {
                             self.hideDialog();
                         }

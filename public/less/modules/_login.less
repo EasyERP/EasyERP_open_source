@@ -5,12 +5,6 @@
   border-radius: 3px;
 }
 
-.loginContent {
-  *{
-    box-sizing: border-box;
-  }
-}
-
 *, *:before, *:after {
   box-sizing: border-box;
 }
@@ -83,12 +77,14 @@ h2 {
     font-size: 14px;
     line-height: 34px;
     cursor: pointer;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
   }
 
   ul {
     visibility: hidden;
     opacity: 0;
-
     position: absolute;
     top: 34px;
     width: 100%;
@@ -110,6 +106,10 @@ h2 {
       white-space: nowrap;
       line-height: 18px;
       cursor: pointer;
+      overflow: hidden;
+      -ms-text-overflow: ellipsis;
+      text-overflow: ellipsis;
+      white-space:nowrap;
 
       &:hover {
         background-color: #eef0f0;
@@ -167,6 +167,7 @@ h2 {
     -ms-flex-direction: column;
     flex-direction: column;
     height: 100%;
+    height: 100vh;
   }
 
   &Forgot {
@@ -455,11 +456,14 @@ input {
 @media (max-width: 992px) {
   .sliderWrap,
   .loginContent {
-    height: 50%;
+    //height: 50%;
   }
-  .loginWrapper,
-  .sliderContainer {
-    height: 100%;
+
+  .loginTitle{
+    font-size: 20px;
+  }
+  .selectDd{
+    margin-top: 0.67em;
   }
 }
 
@@ -503,6 +507,15 @@ input {
 
   .formActions {
     white-space: nowrap;
+  }
+
+  .loginWrapper,
+  .sliderContainer {
+    height: 100%;
+  }
+
+  .sliderWrap{
+    display: none;
   }
 }
 
@@ -723,7 +736,7 @@ input {
     &Wrap {
       width: 280px;
       padding:0 10px;
-      margin-bottom: -30px;
+      //margin-bottom: -30px;
       background-color: #fff;
       border-radius: 3px;
       border: 1px solid #d6dadc;
@@ -1308,6 +1321,9 @@ dl.payrollDateBlock {
         display: -webkit-flex;
         display: -ms-flexbox;
         display: flex;
+        -moz-box-align: center;
+        -webkit-align-items: center;
+        -ms-flex-align: center;
 
         .name {
           -webkit-flex-grow: 1;
@@ -1524,30 +1540,9 @@ dl.payrollDateBlock {
 }
 
 .compactRow {
-  //min-height: 20px;
-  //width: 330px;
-  //display: -webkit-box;
-  //display: -moz-box;
-  //display: -ms-flexbox;
-  //display: -webkit-flex;
-  //display: flex;
-  //-webkit-box-pack: justify;
-  //-moz-box-pack: justify;
-  //-ms-flex-pack: justify;
-  //-webkit-justify-content: space-between;
-  //justify-content: space-between;
-  //
-  //.firstName {
-  //  overflow: hidden;
-  //  text-overflow: ellipsis;
-  //  white-space: nowrap;
-  //  flex: 1 2 auto;
-  //}
-  //.country {
-  //  -webkit-flex-shrink: 0;
-  //  flex-shrink: 0;
-  //}
-
+  > * {
+    line-height: normal;
+  }
   > div {
     &:nth-child(odd) {
       float: left;
@@ -1560,7 +1555,6 @@ dl.payrollDateBlock {
   &:nth-child(n+2) {
     margin-top: 10px;
   }
-
   &:after {
     content: '';
     display: table;
@@ -1649,32 +1643,32 @@ td.checkboxRow {
   .createBtnHolder {
     margin-top: 6px;
   }
-    //position: absolute;
-    //left: 35px;
-    //z-index: 1;
-    //
-    //h3 {
-    //  display: none;
-    //}
-    //
-    //#createBtnHolder {
-    //  margin-top: 8px;
-    //}
-/*
-    &.position {
-      position: absolute;
-      left: 35px;
-      z-index: 1;
+  //position: absolute;
+  //left: 35px;
+  //z-index: 1;
+  //
+  //h3 {
+  //  display: none;
+  //}
+  //
+  //#createBtnHolder {
+  //  margin-top: 8px;
+  //}
+  /*
+      &.position {
+        position: absolute;
+        left: 35px;
+        z-index: 1;
 
-      h3 {
-        display: none;
-      }
+        h3 {
+          display: none;
+        }
 
-      #createBtnHolder {
-        margin-top: 8px;
+        #createBtnHolder {
+          margin-top: 8px;
+        }
       }
-    }
-*/
+  */
 
   #createBtnHolder {
     .btnBlue {
@@ -2004,11 +1998,7 @@ table {
   transition: all .2s ease;
 
   .btn {
-    border: 0 !important;
     margin: 8px 0;
-    height: 28px;
-    color: #fff;
-    line-height: 28px !important;
 
     &:hover {
       text-decoration: none;
@@ -2036,6 +2026,7 @@ table {
 
   .noteType {
     float: left;
+    padding: 10px 5px;
   }
 
   .noteText {
@@ -2253,7 +2244,9 @@ td.editable {
 
 .addTaskTitle {
   display: flex;
-  align-items: center;
+  -moz-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
   white-space: nowrap;
 
   >label {
@@ -2266,8 +2259,14 @@ td.editable {
   }
 
   ._taskTimeBlock {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
     display: flex;
-    align-items: center;
+    -moz-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
 
     #categoryHolder {
       margin-right: 20px;
@@ -2338,7 +2337,60 @@ form .avatar .upload input {
 }
 
 a.attach_file {
+
   &:hover {
     text-decoration: none;
+  }
+}
+
+
+.thumbnailContent {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  padding: 2px;
+
+  >.thumbnail {
+    -webkit-flex-grow: 1;
+    flex-grow: 1;
+  }
+}
+
+._spinnerTitle {
+  line-height: 28px;
+  font-family: @fontSemiBold;
+}
+
+._projectWeekTable {
+  &.list {
+    tbody td,
+    thead th {
+      text-align: center;
+    }
+    tbody td {
+      width: 35px;
+      > input.editing {
+        text-align: center;
+      }
+    }
+  }
+}
+
+@media (max-width: 1400px) {
+  ._projectsTablesWrap {
+    > .left {
+      width: calc(~"100% - 345px") !important;
+    }
+    > .right {
+      width: 330px !important;
+    }
+  }
+  .form-holder.employee {
+    padding: 20px 10px;
   }
 }

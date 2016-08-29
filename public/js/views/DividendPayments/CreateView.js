@@ -243,6 +243,7 @@ define([
                 buttons      : [
                     {
                         id   : 'create-payment-dialog',
+                        class: 'btn blue',
                         text : 'Create',
                         click: function () {
                             self.saveItem();
@@ -250,6 +251,7 @@ define([
                     },
                     {
                         text : 'Cancel',
+                        class: 'btn',
                         click: function () {
                             self.hideDialog();
                         }

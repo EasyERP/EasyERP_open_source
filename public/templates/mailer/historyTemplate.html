@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+Dear <b><%=employee%></b>,
+<br>
+<br>
+<% if (note) {%>
+<%= you ? 'You' : history.author%> added comment "<%=history.note%>" to "<%=contentName%>" on <%=date%>
+<%} else if (files) {%>
+File <%=files.name%> was added to "<%=contentName%>" on <%=date%>
+<% } else if (history.changedField === 'isOpportunitie'){%>
+<%= you ? 'You' : history.editedBy.login%> converted <b>Lead</b> to <b>Opportunity</b> on <%=date%> in
+<%=history.collectionName%>
+<% } else {%>
+<%= you ? 'You' : history.editedBy.login%> changed <%=history.changedField%> <%=history.prevValue ? 'from ' : '' %> <b><%=history.prevValue%> </b>
+to <b><%=history.newValue%></b>
+on <%=date%> in <%=history.collectionName%>
+<%}%>
+<br>
+<br>
+</body>
+</html>
