@@ -100,7 +100,7 @@ module.exports = function () {
             history    : mailOptions.history,
             you        : mailOptions.you,
             contentName: mailOptions.contentName,
-            date       : moment(new Date(mailOptions.history.date)).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+            date       : moment(new Date(mailOptions.history.date)).format('dddd, MMMM Do YYYY, h:mm:ss a'),
             note       : mailOptions.note
         };
 
