@@ -238,7 +238,7 @@
 
   ._dropDownTitle {
     height: 26px;
-    min-width: 120px;
+    min-width: 140px;
     padding: 0 30px 0 10px;
     line-height: 24px;
     cursor: pointer;
@@ -262,7 +262,8 @@
 
     .newSelectList {
       top: 0;
-      left: 100%;
+      right: 100%;
+      left: auto;
     }
   }
 
@@ -274,15 +275,31 @@
   }
   ._followersList {
     color: #000;
+
     ._followersListItem {
+      display: -webkit-box;
+      display: -moz-box;
+      display: -ms-flexbox;
+      display: -webkit-flex;
+      display: flex;
       padding: 0 5px;
       line-height: 26px;
+
       &:first-child {
         border-top: 1px solid #bebebe;
       }
 
+      ._itemName {
+        -webkit-flex-grow: 1;
+        flex-grow: 1;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+
       .icon-close {
-        float: right;
+        -webkit-flex-shrink: 0;
+        flex-shrink: 0;
         height: 20px;
         width: 20px;
         line-height: 20px;
