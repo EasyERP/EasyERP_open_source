@@ -339,15 +339,23 @@ module.exports = function (app, mainDb) {
         var ip = req.headers ? req.headers['x-real-ip'] : req.ip;
         var geo = geoip.lookup(ip);
 
+        function mapper(body) {
+            body.ip = ip;
+            body.country = (!body.country && geo) ? geo.country : '';
+            body.city = (!body.city && geo) ? geo.city : '';
+            body.region = (!body.region && geo) ? geo.region : '';
+
+            body.registrType = process.env.SERVER_TYPE;
+            body.server = process.env.SERVER_PLATFORM;
+        }
+
         ip = ip || '127.0.0.1';
 
-        body.ip = ip;
-        body.country = (!body.country && geo) ? geo.country : '';
-        body.city = (!body.city && geo) ? geo.city : '';
-        body.region = (!body.region && geo) ? geo.region : '';
-
-        body.registrType = process.env.SERVER_TYPE;
-        body.server = process.env.SERVER_PLATFORM;
+        if (body instanceof Array) {
+            body.map(mapper);
+        } else {
+            mapper(body);
+        }
 
         res.status(200).send();
 
