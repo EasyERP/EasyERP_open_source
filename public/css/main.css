@@ -843,6 +843,9 @@
   display: block;
   overflow: hidden;
 }
+.ui-spinner > input:not([type="checkbox"]) {
+  max-width: 100%;
+}
 .ui-spinner .ui-spinner-input {
   float: left;
   border: none;
@@ -8711,6 +8714,9 @@ dl.payrollDateBlock dt {
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
+  -moz-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
 }
 .listWrap.leadsList .compactRow:first-child .name {
   -webkit-flex-grow: 1;
@@ -8849,6 +8855,9 @@ dl.payrollDateBlock dt {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.compactRow > * {
+  line-height: normal;
 }
 .compactRow > div:nth-child(odd) {
   float: left;
@@ -9180,11 +9189,7 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .noteBtnBlock .btn,
 .editNoteBtnBlock .btn {
-  border: 0 !important;
   margin: 8px 0;
-  height: 28px;
-  color: #fff;
-  line-height: 28px !important;
 }
 .noteBtnBlock .btn:hover,
 .editNoteBtnBlock .btn:hover {
@@ -9201,6 +9206,7 @@ table.kanban tbody td:nth-child(n+2) {
 }
 .editedNote .noteType {
   float: left;
+  padding: 10px 5px;
 }
 .editedNote .noteText {
   padding: 10px !important;
@@ -9347,7 +9353,9 @@ td.editable {
 }
 .addTaskTitle {
   display: flex;
-  align-items: center;
+  -moz-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
   white-space: nowrap;
 }
 .addTaskTitle > label {
@@ -9359,8 +9367,14 @@ td.editable {
   margin-right: 10px;
 }
 .addTaskTitle ._taskTimeBlock {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
   display: flex;
-  align-items: center;
+  -moz-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
 }
 .addTaskTitle ._taskTimeBlock #categoryHolder {
   margin-right: 20px;
@@ -9419,6 +9433,10 @@ form .avatar .upload input {
 }
 a.attach_file:hover {
   text-decoration: none;
+}
+._spinnerTitle {
+  line-height: 28px;
+  font-family: 'OpenSans SemiBold', sans-serif, Verdana;
 }
 ._projectWeekTable.list tbody td,
 ._projectWeekTable.list thead th {

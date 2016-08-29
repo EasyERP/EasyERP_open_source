@@ -1805,18 +1805,6 @@ h3 {
         border-color: #3e88b9;
         color: #fff;
         text-decoration: none; }
-  .btn.btnSave {
-    background: #3291c8;
-    color: #ffffff;
-    border-color: transparent; }
-    .btn.btnSave span,
-    .btn.btnSave a {
-      color: #ffffff; }
-    .btn.btnSave:hover {
-      background: #2d82b4; }
-      .btn.btnSave:hover span,
-      .btn.btnSave:hover a {
-        color: #ffffff; }
   .btn.btnSuccess {
     border-color: #3E7F42; }
     .btn.btnSuccess:hover {

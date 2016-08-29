@@ -116,26 +116,6 @@
     }
   }
 
-  &.btnSave {
-    background: #3291c8;
-    color: $white;
-    border-color: transparent;
-
-    span,
-    a {
-      color: $white;
-    }
-
-    &:hover {
-      background: #2d82b4;
-
-      span,
-      a {
-        color: $white;
-      }
-    }
-  }
-
   &.btnSuccess {
     border-color: #3E7F42;
 
