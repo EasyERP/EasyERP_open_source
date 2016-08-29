@@ -122,6 +122,7 @@ define([
                 buttons    : [
                     {
                         text : 'Save',
+                        class: 'btn blue',
                         click: function () {
                             self.saveItem();
                         }
@@ -129,12 +130,14 @@ define([
 
                     {
                         text : 'Cancel',
+                        class: 'btn',
                         click: function () {
                             $(this).dialog().remove();
                         }
                     },
                     {
                         text : 'Delete',
+                        class: 'btn',
                         click: self.deleteItem
                     }
 

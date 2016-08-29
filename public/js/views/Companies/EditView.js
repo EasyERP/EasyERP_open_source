@@ -219,16 +219,19 @@ define([
                 buttons      : [
                     {
                         text : 'Save',
+                        class: 'btn blue',
                         click: function () {
                             self.saveItem();
                         }
                     },
                     {
                         text : 'Cancel',
+                        class: 'btn',
                         click: self.hideDialog
                     },
                     {
                         text : 'Delete',
+                        class: 'btn',
                         click: self.deleteItem
                     }
                 ],

@@ -488,12 +488,14 @@ define([
                 width        : '900px',
                 buttons      : [{
                     id   : 'payButton',
+                    class: 'btn blue',
                     text : 'Pay',
                     click: function () {
                         self.pay();
                     }
                 }, {
                     text : 'Cancel',
+                    class: 'btn',
                     click: function () {
                         self.removeDialog();
                         self.changedModels = {};

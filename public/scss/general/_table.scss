@@ -1,3 +1,213 @@
+//from 2418 main.less
+/* Don`t remove this styles
+table#workflows {
+  width: 40%;
+
+  tr {
+    a {
+      margin-left: 3px;
+
+      &.edit {
+        display: none;
+      }
+
+      &.delete {
+        display: none;
+      }
+    }
+
+    &:hover {
+      a.edit:not(.hidden) {
+        display: inline;
+      }
+
+      a.delete:not(.hidden) {
+        display: inline;
+      }
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    td {
+      min-width: 40%;
+
+      &.edit-status {
+        width: 20%;
+      }
+    }
+  }
+}
+*/
+
+
+//from row 879 main.less
+#modulesAccessTable {
+  display: none;
+
+  tr {
+    th {
+      text-align: center;
+      vertical-align: top;
+      padding: 8px 0;
+
+      input[type="checkbox"] {
+        margin-top: 5px;
+      }
+    }
+
+    &.child {
+      display: none;
+    }
+
+    &.child.visible {
+
+      display: table-row;
+    }
+
+    &.parent {
+      background-color: #7eadcc;
+      border-color: #fff;
+
+      td {
+        color: #fff;
+        font-family: $semibold-font-family;
+      }
+    }
+  }
+  //copied from main.less 3308
+  td {
+    text-align: center;
+
+    &.mname {
+      text-align: left;
+    }
+  }
+}
+
+//from mein.less 5026
+
+.grid-conatiner {
+  .statisticsAtten {
+    margin-top: 10px;
+    table {
+      width: 100%;
+
+      tr {
+
+        &.footerRow {
+          border-bottom: 1px solid #4c5975;
+          td {
+            span {
+              min-height: 10px;
+              content: " ";
+            }
+          }
+        }
+
+        td {
+          border-right: 1px solid #4c5975;
+
+          &:last-child {
+            border: none;
+          }
+
+          .item {
+
+            .title {
+              text-align: center;
+              font-size: 14px;
+              margin-bottom: 5px;
+              color: $black;
+            }
+            .countDays {
+              font-size: 20px;
+              color: #ffffff;
+              width: 126px;
+              padding: 5px;
+              text-align: center;
+              margin: 0 auto;
+
+              &.leave, &.working {
+                background-color: #36384e;
+              }
+              &.vacation {
+                background-color: #e55253 //@capacityColorVacation;
+              }
+              &.personal {
+                background-color: #f9a203;
+              }
+              &.sick {
+                background-color: #3e88b9 //@tilte-color;
+              }
+              &.education {
+                background-color: #3e7f42 //@capacityColorEducation;
+              }
+
+              /*for vacationDashboard*/
+
+              &.free {
+                background-color: #a22a2d //@free;
+              }
+              &.almostFree {
+                background-color: #cc5457 //@oneWorkDay;
+              }
+              &.partiallyBusy {
+                background-color: #f9a203 // @littleWork;
+              }
+              &.fullyBusy {
+                background-color: #3e7f42 //@normalWork;
+              }
+              &.overWorked {
+                background-color: #2d5d30;
+              }
+            }
+            .lastTime {
+              text-align: center;
+              margin-top: 10px;
+              color: $black;
+            }
+            .percent {
+              text-align: center;
+              color: #eb759e;
+            }
+          }
+        }
+      }
+    }
+
+    .percent {
+      text-align: center;
+      color: #eb759e;
+    }
+
+    &.stick {
+      background-color: #fff;
+      padding-top: 10px;
+    }
+  }
+
+  table {
+    .grid {
+      border-color: #7f7f80;
+    }
+  }
+}
+
+//will adding horizontal scrolling to
+//the table who has biggest width than monitor(needed wrapper for the table)
+.tableResponsive {
+  min-height: .01%;
+  overflow: auto;
+  width: 100%;
+  -ms-overflow-style: -ms-autohiding-scrollbar;
+  &New {
+    min-height: .01%;
+    width: 100%;
+  }
+}
+
 .payRoll-list-wrap{
   border-top: 1px solid #d7d7d7;
 }

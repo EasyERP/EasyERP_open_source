@@ -219,7 +219,7 @@ define([
 
                         App.startPreload();
 
-                        payBtnHtml = '<button class="btn newPayment"><span>Pay</span></button>';
+                        payBtnHtml = '<button class="btn blue newPayment"><span>Pay</span></button>';
                         url = '/invoices/approve';
                         data = {
                             invoiceId  : proformaId,
@@ -574,12 +574,15 @@ define([
                 buttons = [
                     {
                         text : 'Save',
+                        class: 'btn blue',
                         click: self.saveItem
                     }, {
                         text : 'Cancel',
+                        class: 'btn',
                         click: self.hideDialog
                     }, {
                         text : 'Delete',
+                        class: 'btn',
                         click: self.deleteItem
                     }
                 ];

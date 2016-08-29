@@ -212,12 +212,14 @@ define([
                 buttons      : [
                     {
                         id   : 'create-invoice-dialog',
+                        class: 'btn blue',
                         text : 'Create',
                         click: function () {
                             self.saveItem();
                         }
                     }, {
                         text : 'Cancel',
+                        class: 'btn',
                         click: self.hideDialog
                     }]
             });

@@ -309,6 +309,7 @@ define([
                     {
                         id   : 'create-person-dialog',
                         text : 'Create',
+                        class: 'btn blue',
                         click: function () {
                             self.saveItem();
                         }
@@ -316,6 +317,7 @@ define([
 
                     {
                         text : 'Cancel',
+                        class: 'btn',
                         click: function () {
                             self.hideDialog();
                         }

@@ -39,6 +39,7 @@ define([
             buttons = [
                 {
                     text : 'Close',
+                    class: 'btn',
                     click: function () {
                         self.hideDialog();
                     }
