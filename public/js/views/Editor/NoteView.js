@@ -36,7 +36,7 @@ define([
             'click #addTask'                                   : 'saveTask',
             'click .fa-circle-o'                               : 'completeTask',
             'click .editDelNote'                               : 'editDelNote',
-            'click .icon-attach'                              : 'clickInput',
+            'click .icon-attach'                               : 'clickInput',
             'click .chart-tabs li'                             : 'changeTab',
             'click .current-selected:not(.jobs)'               : 'showNewSelect',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
@@ -49,11 +49,9 @@ define([
             var hasClass = $target.hasClass('showButtons');
             var $thisEl = this.$el;
 
-            if (target.closest('.itemCircle').length ){
+            if (target.closest('.itemCircle').length) {
                 return false;
             }
-
-
 
             if ($thisEl.find('.editedNote').length || $thisEl.find('.createHolder').hasClass('active')) {
                 return false;
@@ -82,20 +80,20 @@ define([
             var self = this;
             var $thisEl = this.$el;
             var id = $target.closest('.noteContainer').attr('id');
-            var model = new TaskModel({_id : id});
+            var model = new TaskModel({_id: id});
             model.fetch();
-            model.on('sync', function(success){
+            model.on('sync', function (success) {
 
                 model.save({
-                    workflow : CONSTANTS.DONE_WORKFLOW,
-                    sequence : -1,
+                    workflow     : CONSTANTS.DONE_WORKFLOW,
+                    sequence     : -1,
                     workflowStart: model.get('workflow')._id,
                     sequenceStart: model.get('sequence')
                 }, {
-                    wait   : true,
-                    patch : true,
-                    validate : false,
-                    success: function () {
+                    wait    : true,
+                    patch   : true,
+                    validate: false,
+                    success : function () {
                         $target.switchClass('fa-circle-o', 'fa-check-circle-o');
                         model.unbind();
 
@@ -265,7 +263,8 @@ define([
                             currentModel.save({notes: newNotes},
                                 {
                                     headers: {
-                                        mid: 39
+                                        mid   : 39,
+                                        remove: true
                                     },
                                     patch  : true,
                                     success: function () {
@@ -353,7 +352,7 @@ define([
                     editNotes = _.map(notes, function (note) {
                         if (note._id === targetId) {
                             note.note = val;
-                         /*   note.title = title;*/
+                            /*   note.title = title;*/
                         }
                         return note;
                     });
@@ -368,13 +367,13 @@ define([
                             success: function () {
                                 var $contentHolder = $noteContainer.find('.contentHolder');
                                 $contentHolder.removeClass('showButtons');
-                              /*  $contentHolder.find('.noteTitle').text(title);*/
+                                /*  $contentHolder.find('.noteTitle').text(title);*/
                                 $contentHolder.find('.noteText').text(val).removeClass('hidden');
                                 $contentHolder.show();
                                 $target.closest('.addNote').remove();
 
                                 /*console.log('note is changed 1');
-                                $noteArea.html('');*/
+                                 $noteArea.html('');*/
                             }
                         });
                 } else {
@@ -395,7 +394,7 @@ define([
                             formLeftColumn.append(self.render());
 
                             /*console.log('note is changed 2');
-                            $noteArea.html('');*/
+                             $noteArea.html('');*/
                         },
 
                         error: function (models, xhr) {
@@ -449,14 +448,13 @@ define([
 
             modelObj.needNotes = this.needNotes;
 
-
             $thisEl.html(this.template({date: date, assignedTo: assignedTo}));
 
             this.renderTimeline();
 
             this.renderCategory();
             this.$el.find('#timepickerOne').wickedpicker({
-                showSeconds: true, //Whether or not to show seconds,
+                showSeconds    : true, //Whether or not to show seconds,
                 secondsInterval: 1, //Change interval for seconds, defaults to 1,
                 minutesInterval: 1
             });
