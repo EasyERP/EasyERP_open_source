@@ -125,7 +125,7 @@ define([
                 description: description,
                 dueDate    : dueDate,
                 workflow   : CONSTANTS.NOT_STARTED_WORKFLOW,
-                category   : this.taskModel.get('category')._id || null
+                category   : this.taskModel.get('category') ? this.taskModel.get('category')._id : null
             };
 
             switch (this.contentType) {

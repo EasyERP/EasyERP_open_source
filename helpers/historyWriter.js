@@ -132,7 +132,6 @@ var History = function (models) {
                     historyEntry = note;
                 }
 
-
                 options = {
                     employee   : empObject.name,
                     to         : empObject.email,
@@ -264,7 +263,7 @@ var History = function (models) {
 
                             historyItem.save(function (error, res) {
                                 if (error) {
-                                    console.log(error);
+                                    return console.log(error);
                                 }
 
                                 sendToFollowers({
