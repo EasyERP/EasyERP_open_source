@@ -587,6 +587,7 @@ var Module = function (models, event) {
         var files = req.files && req.files.attachfile ? req.files.attachfile : null;
         var dir;
         var err;
+        var historyOptions = {};
 
         contentType = contentType.toLowerCase();
         dir = path.join(contentType, id);
@@ -629,6 +630,18 @@ var Module = function (models, event) {
             }, {new: true}, function (err, response) {
                 if (err) {
                     return next(err);
+                }
+
+                historyOptions = {
+                    contentType: response.isOpportunitie ? 'opportunitie' : 'lead',
+                    req        : req,
+                    contentId  : response._id,
+                    contentName: response.name
+                };
+
+                if (files) {
+                    historyOptions.files = files;
+                    historyWriter.sendToFollowers(historyOptions);
                 }
 
                 res.status(200).send({success: 'Opportunity updated success', data: response});

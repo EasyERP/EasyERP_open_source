@@ -100,8 +100,9 @@ module.exports = function () {
             history    : mailOptions.history,
             you        : mailOptions.you,
             contentName: mailOptions.contentName,
-            date       : moment(new Date(mailOptions.history.date)).format('dddd, MMMM Do YYYY, h:mm:ss a'),
-            note       : mailOptions.note
+            date       : mailOptions.history.date ? moment(new Date(mailOptions.history.date)).format('dddd, MMMM Do YYYY, h:mm:ss a') : moment(new Date()).format('dddd, MMMM Do YYYY, h:mm:ss a'),
+            note       : mailOptions.note,
+            files      : mailOptions.files
         };
 
         mailOptions.generateTextFromHTML = true;

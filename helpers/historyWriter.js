@@ -80,6 +80,7 @@ var History = function (models) {
         var followerId = options.followerId;
         var deal = options.deal;
         var note = options.note;
+        var files = options.files;
         var waterfallFuncs;
         var query = {};
 
@@ -92,6 +93,10 @@ var History = function (models) {
         function getHistory(cb) {
             if (note) {
                 return cb(null, note);
+            }
+
+            if (files) {
+                return cb(null, files);
             }
 
             getHistoryForTrackedObject({req: req, _id: historyRecord._id}, cb);
@@ -122,7 +127,7 @@ var History = function (models) {
                     return cb(err);
                 }
 
-                cb(null, history || note, result);
+                cb(null, history || note || files, result);
             });
         }
 
@@ -135,6 +140,9 @@ var History = function (models) {
                 if (!note) {
                     key = Object.keys(history)[0];
                     historyEntry = history[key][0];
+                }
+                if (files) {
+                    historyEntry = files;
                 } else {
                     historyEntry = note;
                 }
@@ -144,8 +152,9 @@ var History = function (models) {
                     to         : empObject.email,
                     contentName: contentName,
                     note       : note,
+                    files      : files,
                     history    : historyEntry,
-                    you        : historyEntry.editedBy ? historyEntry.editedBy._id.toString() === empObject._id.toString() : historyEntry.authorId === empObject._id.toString()
+                    you        : historyEntry.editedBy ? historyEntry.editedBy._id.toString() === empObject._id.toString() : historyEntry.authorId ? historyEntry.authorId === empObject._id.toString() : false
                 };
 
                 mailer.sendHistory(options, asyncCb);
