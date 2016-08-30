@@ -804,11 +804,14 @@ var Module = function (models, event) {
                         contentName: result.name
                     };
 
-                    if (noteObject) {
+                    if (noteObject && !edit) {
                         historyOptions.note = noteObject;
                         historyWriter.sendToFollowers(historyOptions);
+                    } else if (noteObject && edit) {
+                        historyOptions.note = noteObject;
+                        historyOptions.edit = edit;
+                        historyWriter.sendToFollowers(historyOptions);
                     }
-
                     historyWriter.addEntry(historyOptions, function () {
                         getTimeLine(req, result.toJSON(), function (err, model) {
                             res.status(200).send({
