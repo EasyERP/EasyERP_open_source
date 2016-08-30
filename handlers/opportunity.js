@@ -656,6 +656,7 @@ var Module = function (models, event) {
         var newDirname;
         var fileName = data.fileName;
         var remove = req.headers.remove;
+        var edit = req.headers.edit;
         var query;
         var obj;
         var noteObject;
@@ -728,11 +729,15 @@ var Module = function (models, event) {
                             contentName: result.name
                         };
 
-                        if (noteObject) {
+                        if (noteObject && !edit) {
                             historyOptions.note = noteObject;
                             historyWriter.sendToFollowers(historyOptions);
+                        } else if (noteObject && edit) {
+                            historyOptions.note = noteObject;
+                            historyOptions.edit = edit;
+                            historyWriter.sendToFollowers(historyOptions);
                         }
-
+                        
                         historyWriter.addEntry(historyOptions, function () {
                             res.status(200).send({success: 'Opportunities updated'});
                         });
@@ -2158,6 +2163,7 @@ var Module = function (models, event) {
         var Customer = models.get(req.session.lastDb, 'Customers', CustomerSchema);
         var Workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);
         var remove = req.headers.remove;
+        var edit = req.headers.edit;
         var data = req.body;
         var _id = req.params.id;
         var obj;
@@ -2370,8 +2376,12 @@ var Module = function (models, event) {
                                             }
                                         }
 
-                                        if (noteObject) {
+                                        if (noteObject && !edit) {
                                             historyOptions.note = noteObject;
+                                            historyWriter.sendToFollowers(historyOptions);
+                                        } else if (noteObject && edit) {
+                                            historyOptions.note = noteObject;
+                                            historyOptions.edit = edit;
                                             historyWriter.sendToFollowers(historyOptions);
                                         }
 

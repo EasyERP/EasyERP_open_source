@@ -7,8 +7,10 @@
 Dear <b><%=employee%></b>,
 <br>
 <br>
-<% if (note) {%>
+<% if (note && !edit) {%>
 <%= you ? 'You' : history.author || history.user.login%> added comment "<%=history.note%>" to "<%=contentName%>" on <%=date%>
+<%} else if (note && edit) {%>
+<%= you ? 'You' : history.author || history.user.login%> edited comment to "<%=contentName%>" on <%=date%>
 <%} else if (files) {%>
 File <%=files.name%> was added to "<%=contentName%>" on <%=date%>
 <% } else if (history.changedField === 'isOpportunitie'){%>

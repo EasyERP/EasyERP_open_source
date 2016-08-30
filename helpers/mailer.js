@@ -102,6 +102,7 @@ module.exports = function () {
             contentName: mailOptions.contentName,
             date       : mailOptions.history.date ? moment(new Date(mailOptions.history.date)).format('dddd, MMMM Do YYYY, h:mm:ss a') : moment(new Date()).format('dddd, MMMM Do YYYY, h:mm:ss a'),
             note       : mailOptions.note,
+            edit       : mailOptions.edit,
             files      : mailOptions.files
         };
 

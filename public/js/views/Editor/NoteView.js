@@ -360,7 +360,8 @@ define([
                         {
                             validate: false,
                             headers : {
-                                mid: 39
+                                mid : 39,
+                                edit: true
                             },
 
                             patch  : true,

@@ -80,6 +80,7 @@ var History = function (models) {
         var followerId = options.followerId;
         var deal = options.deal;
         var note = options.note;
+        var edit = options.edit;
         var files = options.files;
         var waterfallFuncs;
         var query = {};
@@ -152,9 +153,10 @@ var History = function (models) {
                     to         : empObject.email,
                     contentName: contentName,
                     note       : note,
+                    edit       : edit,
                     files      : files,
                     history    : historyEntry,
-                    you        : historyEntry.editedBy ? historyEntry.editedBy._id.toString() === empObject._id.toString() : historyEntry.authorId ? historyEntry.authorId === empObject._id.toString() : historyEntry.user ? historyEntry.user._id === req.session.uId.toString() : false,
+                    you        : historyEntry.editedBy ? historyEntry.editedBy._id.toString() === empObject._id.toString() : historyEntry.authorId ? historyEntry.authorId === empObject._id.toString() : historyEntry.user ? historyEntry.user._id === empObject._id.toString() : false,
                 };
 
                 mailer.sendHistory(options, asyncCb);
