@@ -137,13 +137,13 @@ var History = function (models) {
                 var historyEntry;
                 var options;
 
-                if (!note) {
+                if (!note && !files) {
                     key = Object.keys(history)[0];
                     historyEntry = history[key][0];
                 }
                 if (files) {
                     historyEntry = files;
-                } else {
+                } else if (note) {
                     historyEntry = note;
                 }
 
@@ -154,7 +154,7 @@ var History = function (models) {
                     note       : note,
                     files      : files,
                     history    : historyEntry,
-                    you        : historyEntry.editedBy ? historyEntry.editedBy._id.toString() === empObject._id.toString() : historyEntry.authorId ? historyEntry.authorId === empObject._id.toString() : false
+                    you        : historyEntry.editedBy ? historyEntry.editedBy._id.toString() === empObject._id.toString() : historyEntry.authorId ? historyEntry.authorId === empObject._id.toString() : historyEntry.user ? historyEntry.user._id === req.session.uId.toString() : false,
                 };
 
                 mailer.sendHistory(options, asyncCb);

@@ -10,11 +10,12 @@ define([
     'views/Companies/formPropertyView',
     'views/Persons/formProperty/formPropertyView',
     'views/Tags/TagView',
+    'views/followers/index',
     'constants',
     'dataService',
     'views/selectView/selectView',
     'helpers/keyValidator'
-], function (Backbone, _, $, OpportunitiesFormTemplate, workflowProgress, aboutTemplate, EditorView, AttachView, CompanyFormProperty, ContactFormProperty, TagView, constants, dataService, SelectView, keyValidator) {
+], function (Backbone, _, $, OpportunitiesFormTemplate, workflowProgress, aboutTemplate, EditorView, AttachView, CompanyFormProperty, ContactFormProperty, TagView, Followers, constants, dataService, SelectView, keyValidator) {
     'use strict';
 
     var FormOpportunitiesView = Backbone.View.extend({
@@ -317,6 +318,13 @@ define([
                 new AttachView({
                     model      : this.formModel,
                     contentType: 'opportunities'
+                }).render().el
+            );
+
+            $thisEl.find('.followers').append(
+                new Followers({
+                    model         : this.formModel,
+                    collectionName: 'opportunities'
                 }).render().el
             );
 

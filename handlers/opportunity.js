@@ -655,8 +655,10 @@ var Module = function (models, event) {
         var _id = req.params.id;
         var newDirname;
         var fileName = data.fileName;
+        var remove = req.headers.remove;
         var query;
         var obj;
+        var noteObject;
 
         delete data.fileName;
 
@@ -665,7 +667,7 @@ var Module = function (models, event) {
             date: new Date().toISOString()
         };
 
-        if (data.notes && data.notes.length !== 0) {
+        if (data.notes && data.notes.length !== 0 && !remove) {
             obj = data.notes[data.notes.length - 1];
 
             if (!obj._id) {
@@ -681,6 +683,7 @@ var Module = function (models, event) {
             }
 
             data.notes[data.notes.length - 1] = obj;
+            noteObject = obj;
         }
 
         if (data.workflow && data.sequenceStart && data.workflowStart) {
@@ -724,6 +727,12 @@ var Module = function (models, event) {
                             contentId  : result._id,
                             contentName: result.name
                         };
+
+                        if (noteObject) {
+                            historyOptions.note = noteObject;
+                            historyWriter.sendToFollowers(historyOptions);
+                        }
+
                         historyWriter.addEntry(historyOptions, function () {
                             res.status(200).send({success: 'Opportunities updated'});
                         });
@@ -789,6 +798,11 @@ var Module = function (models, event) {
                         contentId  : result._id,
                         contentName: result.name
                     };
+
+                    if (noteObject) {
+                        historyOptions.note = noteObject;
+                        historyWriter.sendToFollowers(historyOptions);
+                    }
 
                     historyWriter.addEntry(historyOptions, function () {
                         getTimeLine(req, result.toJSON(), function (err, model) {
