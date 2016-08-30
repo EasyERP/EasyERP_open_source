@@ -28,13 +28,13 @@
 
             Validation.checkGroupsNameField(errors, true, attrs.name, 'Subject');
             // Validation.checkGroupsNameField(errors, false, attrs.company.name, 'Company'); // commented in hotFix By Liliya
-            Validation.checkPhoneField(errors, false, attrs['phones.phone'] ||  attrs.phones.phone , 'Phone');
-            Validation.checkPhoneField(errors, false,attrs['phones.mobile'] || attrs.phones.mobile, 'Mobile');
-            Validation.checkCountryCityStateField(errors, false, attrs['address.country'] || attrs.address.country , 'Country');
-            Validation.checkCountryCityStateField(errors, false, attrs['address.state'] ||  attrs.address.state, 'State');
-            Validation.checkCountryCityStateField(errors, false,  attrs['address.city'] || attrs.address.city, 'City');
-            Validation.checkZipField(errors, false, attrs['address.zip'] || attrs.address.zip  , 'Zip');
-            Validation.checkStreetField(errors, false,attrs['address.street'] ||  attrs.address.street  , 'Street');
+            Validation.checkPhoneField(errors, false, attrs['phones.phone'] || attrs.phones.phone, 'Phone');
+            Validation.checkPhoneField(errors, false, attrs['phones.mobile'] || attrs.phones.mobile, 'Mobile');
+            Validation.checkCountryCityStateField(errors, false, attrs['address.country'] || attrs.address.country, 'Country');
+            Validation.checkCountryCityStateField(errors, false, attrs['address.state'] || attrs.address.state, 'State');
+            Validation.checkCountryCityStateField(errors, false, attrs['address.city'] || attrs.address.city, 'City');
+            Validation.checkZipField(errors, false, attrs['address.zip'] || attrs.address.zip, 'Zip');
+            Validation.checkStreetField(errors, false, attrs['address.street'] || attrs.address.street, 'Street');
             Validation.checkEmailField(errors, false, attrs.email, 'Email');
             Validation.checkNotesField(errors, false, attrs.internalNotes, 'Notes');
             if (errors.length > 0) {
@@ -66,7 +66,7 @@
                     _.map(response.notes, function (note) {
                         note.date = moment(note.date).format('DD MMM, YYYY, H:mm:ss');
 
-                        if (note.history && (note.history.changedField === 'Close Date'|| note.history.changedField === 'Creation Date')){
+                        if (note.history && (note.history.changedField === 'Close Date' || note.history.changedField === 'Creation Date')) {
                             note.history.changedValue = note.history.changedValue ? moment(new Date(note.history.changedValue)).format('DD MMM, YYYY') : '';
                             note.history.newValue = note.history.newValue ? moment(new Date(note.history.newValue)).format('DD MMM, YYYY') : '';
                             note.history.prevValue = note.history.prevValue ? moment(new Date(note.history.prevValue)).format('DD MMM, YYYY') : '';
@@ -75,16 +75,16 @@
                         return note;
                     });
 
-                    response.notes.forEach(function(note, index) {
-                        if (!note.name && note.history && (note.history.changedField === 'Creation Date')){
+                    response.notes.forEach(function (note, index) {
+                        if (!note.name && note.history && (note.history.changedField === 'Creation Date')) {
                             response.notes.splice(index, 1);
                             response.notes.unshift(note);
                             return;
                         }
                     });
 
-                    response.notes.forEach(function(note, index) {
-                        if (note.task && (note.task.workflow.status !== 'Done') && (note.task.workflow.status !== 'Cancelled')){
+                    response.notes.forEach(function (note, index) {
+                        if (note.task && (note.task.workflow.status !== 'Done') && (note.task.workflow.status !== 'Cancelled')) {
                             response.notes.splice(index, 1);
                             response.notes.push(note);
                             return;
@@ -156,6 +156,7 @@
             internalNotes: '',
             active       : true,
             optout       : false,
+            sequence     : 0,
             reffered     : '',
             workflow     : {
                 wName : 'lead',
