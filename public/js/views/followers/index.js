@@ -81,6 +81,8 @@ define([
 
                 self.model.set('followers', response.data);
 
+                self.$el.find('#followerCount').text(response.data.length);
+
                 if (unfollow) {
                     self.model.set('followerStatus', false);
                     self.$el.find('#follow').text('Follow');
@@ -96,6 +98,8 @@ define([
             var self = this;
             var $target = $(e.target);
             var id = $target.attr('id');
+            var userId;
+            var status;
 
             App.startPreload();
 
@@ -110,6 +114,24 @@ define([
 
                 if (response.data) {
                     self.model.set('followers', response.data);
+
+                    var userId = App.currentUser.relatedEmployee ? App.currentUser.relatedEmployee._id : null;
+
+                    status = _.find(response.data, function (el) {
+                        return el.followerId === userId;
+                    });
+
+                    if (status) {
+                        self.model.set('followerStatus', true);
+
+                        self.$el.find('#follow').text('Unfollow');
+                        self.$el.find('#follow').removeClass('follow');
+                        self.$el.find('#follow').addClass('unfollow');
+                    } else {
+                        self.model.set('followerStatus', false);
+                    }
+
+                    self.$el.find('#followerCount').text(response.data.length);
 
                     self.$el.find('.followersList').html('');
                 } else if (response.error) {
@@ -147,6 +169,8 @@ define([
 
                         self.$el.find('.followersList').html('');
 
+                        self.$el.find('#followerCount').text(response.data.length);
+
                         self.$el.find('#follow').text('Unfollow');
                         self.$el.find('#follow').removeClass('follow');
                         self.$el.find('#follow').addClass('unfollow');
@@ -169,6 +193,8 @@ define([
                     self.hideNewSelect();
 
                     self.model.set('followers', response.data);
+
+                    self.$el.find('#followerCount').text(response.data.length);
 
                     self.$el.find('#follow').text('Follow');
                     self.$el.find('#follow').addClass('follow');
@@ -210,7 +236,7 @@ define([
                 this.model.set('followerStatus', false);
             }
 
-            this.$el.html(this.template({model: this.model.toJSON()}));
+            this.$el.html(this.template({model: this.model.toJSON(), count: this.model.toJSON().followers.length}));
 
             dataService.getData('/employees/getForDD', {isEmployee: true}, function (employees) {
                 employees = _.map(employees.data, function (employee) {

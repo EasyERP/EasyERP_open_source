@@ -3,7 +3,7 @@
         <span id="follow" class="<%=model.followerStatus ? 'unfollow' : 'follow'%>"><%=model.followerStatus ? 'Unfollow' : 'Follow'%></span>
     </div>
     <div class="followers _dropDownTG">
-        <div class="_dropDownTitle">Followers</div>
+        <div class="_dropDownTitle">Followers (<span id="followerCount"><%=count%></span>)</div>
         <div class="followersList"></div>
     </div>
 </div>
