@@ -103,7 +103,7 @@ var Module = function (models, event) {
             TasksSchema.find({deal: model._id})
                 .populate('deal', '_id name')
                 .populate('company', '_id name imageSrc')
-                .populate('contact', '_id name')
+                .populate('contact', '_id name imageSrc')
                 .populate('category')
                 .populate('editedBy.user', '_id login')
                 .populate('assignedTo', '_id name fullName imageSrc')
