@@ -102,7 +102,7 @@ var Module = function (models, event) {
         function getTask(parallelCb) {
             TasksSchema.find({deal: model._id})
                 .populate('deal', '_id name')
-                .populate('company', '_id name')
+                .populate('company', '_id name imageSrc')
                 .populate('contact', '_id name')
                 .populate('category')
                 .populate('editedBy.user', '_id login')
