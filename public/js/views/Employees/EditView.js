@@ -76,7 +76,7 @@ define([
             transfers = this.currentModel.get('transfer');
 
             isSalary = transfers[0];
-            isSalary = isSalary.salary;
+            isSalary = isSalary ? isSalary.salary : false;
             isSalary = !!(isSalary || isSalary === 0);
             this.isSalary = isSalary;
 

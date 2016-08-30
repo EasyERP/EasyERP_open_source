@@ -12,7 +12,15 @@ Dear <b><%=employee%></b>,
 <%} else if (note && edit) {%>
 <%= you ? 'You' : history.author || history.user.login%> edited comment to "<%=contentName%>" on <%=date%>
 <%} else if (files) {%>
+<%if (files.name) {%>
 File <%=files.name%> was added to "<%=contentName%>" on <%=date%>
+<% } else if (files.length) {%>
+Files:
+<%files.forEach(function (f){%>
+<%=f.name%>,
+<%})%>
+were added to "<%=contentName%>" on <%=date%>
+<%}%>
 <% } else if (history.changedField === 'isOpportunitie'){%>
 <%= you ? 'You' : history.editedBy.login%> converted <b>Lead</b> to <b>Opportunity</b> on <%=date%> in
 <%=history.collectionName%>
