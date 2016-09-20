@@ -1,5 +1,7 @@
 <table id="listTable">
     <% quotations.forEach(function(quotation, index){ %>
+    <% var currency =(quotation.currency && quotation.currency._id ? quotation.currency._id.symbol : '')%>
+
     <tr class="compactView" data-id="<%=quotation._id%>">
         <td class="checkboxRow">
             <label>
@@ -16,8 +18,8 @@
                     <div><%= quotation.orderDate %></div>
                 </div>
                 <div class="compactRow">
-                    <div class="total <%=currencyClass(quotation.currency._id)%>"><%=(quotation.paymentInfo) ? currencySplitter(quotation.paymentInfo.total) : '0'%></div>
-                    <div class="unTaxed <%=currencyClass(quotation.currency._id)%>"><%=(quotation.paymentInfo) ? currencySplitter(quotation.paymentInfo.unTaxed) : '0'%></div>
+                    <div class="total"><%=currency %><%=(quotation.paymentInfo) ? currencySplitter(quotation.paymentInfo.total) : '0'%></div>
+                    <div class="unTaxed"><%=currency %><%=(quotation.paymentInfo) ? currencySplitter(quotation.paymentInfo.unTaxed) : '0'%></div>
                 </div>
             </div>
         </td>

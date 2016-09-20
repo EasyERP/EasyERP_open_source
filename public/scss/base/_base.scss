@@ -1,6 +1,5 @@
 * {
   box-sizing: border-box;
-
   &:before,
   &:after {
     box-sizing: border-box;
@@ -22,6 +21,10 @@ html, body {
 
 body {
   background-color: #fff;
+  font-family: $base-font-family; // @fontRegular;
+  font-size: 12px;
+  height: 100%;
+
 }
 
 html {
@@ -133,6 +136,10 @@ ol, ul {
 
 q:before, q:after, blockquote:before, blockquote:after {
   content: "";
+}
+
+*:focus {
+  outline: 0 !important;
 }
 
 a:focus {

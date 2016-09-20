@@ -33,10 +33,10 @@
                     </li>
 
                     <li class="right">
-                        <button class="red hireEmployee">
+                        <button class="btn blue slim hireEmployee">
                             <span>Hire & Create Employee</span>
                         </button>
-                        <button class="red refuseEmployee">
+                        <button class="btn blue slim  refuseEmployee">
                             <span>Refuse</span>
                         </button>
                     </li>
@@ -582,6 +582,22 @@
                                 </dl>
                             </div>
 
+                            <div class="half-block left withPaddingLeft">
+
+                                <dl class="edit-employee-info">
+                                    <dt>
+                                        <label for="employmentTypeDd">Employment type</label>
+                                    <dd class="_newSelectListWrap">
+                                        <a id="employmentTypeDd"
+                                           data-id="<%=model.employmentType ? model.employmentType :''%>"
+                                           class="current-selected"
+                                           href="javascript:;">
+                                            <%=model.employmentType ? (model.employmentType):'Select'%>
+                                        </a>
+                                    </dd>
+                                    </dt>
+                                </dl>
+                            </div>
                             <div class="clearfix"></div>
                             <div class="formTitle">
                                 <h3 class="left">Resume</h3>

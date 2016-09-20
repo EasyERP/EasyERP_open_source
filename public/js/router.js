@@ -83,6 +83,7 @@ define([
             'easyErp/Attendance'                                                                            : 'attendance',
             'easyErp/Profiles'                                                                              : 'goToProfiles',
             'easyErp/productSettings'                                                                       : 'productSettings',
+            'easyErp/organizationSettings'                                                                  : 'organizationSettings',
             'easyErp/myProfile'                                                                             : 'goToUserPages',
             'easyErp/Workflows'                                                                             : 'goToWorkflows',
             'easyErp/Accounts'                                                                              : 'goToAccounts',
@@ -106,6 +107,7 @@ define([
                 $('.ui-dialog').remove();
                 $('#ui-datepicker-div').hide().remove();
             });
+            this.on('updateOrgSettings', this.getOrgSettings, this);
 
             bindDefaultUIListeners();
 
@@ -117,9 +119,27 @@ define([
                             App.filtersObject = {};
                         }
                         App.filtersObject.savedFilters = response.savedFilters;
+                        if (!App.organizationSettings) {
+                            self.trigger('updateOrgSettings');
+                        }
                     }
                 });
             }
+        },
+
+        getOrgSettings : function () {
+            dataService.getData('/organizationSettings', null, function (response) {
+                if (response && !response.error) {
+                    App.organizationSettings = response.data;
+                    if (response.data && response.data.startDate){ //toDo enable StartDate of program
+                        $.datepicker.setDefaults({
+                            firstDay : 1,
+                            minDate : new Date(response.data.startDate)
+                        });
+                    }
+
+                }
+            });
         },
 
         dashBoardVacation: function (filter) {
@@ -658,6 +678,53 @@ define([
                         context.changeTopBarView(topbarView);
                         Backbone.history.navigate(url, {replace: true});
                     }
+                });
+            }
+        },
+
+        organizationSettings: function () {
+            var self = this;
+            var currentUser = App.currentUser || {};
+
+            // FlurryAgent.logEvent('Accounts');
+
+            tracker.track({
+                date     : new Date(),
+                eventType: 'userFlow',
+                name     : 'Organization Profile',
+                message  : 'Organization Profile',
+                email    : currentUser.email,
+                login    : currentUser.login
+            });
+
+            this.checkLogin(function (success) {
+                if (success) {
+                    goOrgSettings(self);
+                } else {
+                    self.redirectTo();
+                }
+            });
+
+            function goOrgSettings(context) {
+                var startTime = new Date();
+                var contentViewUrl = 'views/orgSettings/ContentView';
+                var topBarViewUrl = 'views/orgSettings/TopBarView';
+                var self = context;
+
+                if (context.mainView === null) {
+                    context.main('organizationSettings');
+                } else {
+                    context.mainView.updateMenu('organizationSettings');
+                }
+
+                require([contentViewUrl, topBarViewUrl], function (ContentView, TopBarView) {
+
+                    var contentview = new ContentView({startTime: startTime});
+                    var topbarView = new TopBarView({actionType: 'Content'});
+                    self.changeView(contentview);
+                    self.changeTopBarView(topbarView);
+
+                    contentview._events = _.extend({}, self._events);
                 });
             }
         },
@@ -1311,13 +1378,9 @@ define([
                 var startTime = new Date();
                 var message;
                 var url;
-                var savedFilter;
-                var startDate;
-                var endDate;
                 var contentViewUrl;
                 var topBarViewUrl;
                 var collectionUrl;
-                var navigatePage;
                 var count;
 
                 if (contentType !== currentContentType) {

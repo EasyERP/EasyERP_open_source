@@ -96,7 +96,7 @@ define([
 
         events: {
             'click #addFormulaElement': 'addFormulaElement',
-            'click .fa-trash-o'       : 'removeEl',
+            'click .icon-trash'       : 'removeEl',
             'click #range'            : 'toggleRange'
         },
 

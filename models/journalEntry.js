@@ -2,6 +2,7 @@ module.exports = (function () {
 
     var mongoose = require('mongoose');
     var ObjectId = mongoose.Schema.Types.ObjectId;
+    var extend = require('mongoose-schema-extend');
 
     var Schema = mongoose.Schema;
     var journalEntriesSchema = new Schema({
@@ -27,18 +28,23 @@ module.exports = (function () {
         sourceDocument: {
             _id     : {type: ObjectId, default: null},
             model   : {type: String, default: 'Invoice'},
-            employee: {type: ObjectId, default: null}
+            employee: {type: ObjectId, default: null},
+            name    : {type: String, default: ''}
         },
 
         debit : {type: Number, default: 0},
         credit: {type: Number, default: 0}
-    });
+    }, {collection: 'journalentries', discriminatorKey: '_type'});
+
+    var manualEntrySchema = journalEntriesSchema.extend({});
 
     mongoose.model('journalEntry', journalEntriesSchema);
+    mongoose.model('manualEntry', manualEntrySchema);
 
     if (!mongoose.Schemas) {
         mongoose.Schemas = {};
     }
 
     mongoose.Schemas.journalEntry = journalEntriesSchema;
+    mongoose.Schemas.manualEntry = manualEntrySchema;
 })();

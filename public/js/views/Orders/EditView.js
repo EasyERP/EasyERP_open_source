@@ -194,6 +194,7 @@ define([
             var usersId = [];
             var groupsId = [];
             var whoCanRW;
+            var jobDescription;
             var currency;
             var i;
 
@@ -231,14 +232,15 @@ define([
                     productId = targetEl.data('id');
                     if (productId) {  // added more info for save
                         quantity = $.trim(targetEl.find('[data-name="quantity"]').text()) || targetEl.find('[data-name="quantity"] input').val();
-                        price = helpers.spaceReplacer(targetEl.find('[data-name="price"]').text()) || helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val());
+                        price = helpers.spaceReplacer(targetEl.find('[data-name="price"] .sum').text()) || helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val());
                         price = parseFloat(price) * 100;
                         scheduledDate = $.trim(targetEl.find('[data-name="scheduledDate"]').text());
-                        taxes = helpers.spaceReplacer($.trim(targetEl.find('[data-name="taxes"]').text()));
+                        taxes = helpers.spaceReplacer($.trim(targetEl.find('[data-name="taxes"] .sum').text()));
                         taxes = parseFloat(taxes) * 100;
-                        description = targetEl.find('[data-name="productDescr"] textarea').val() || targetEl.find('[data-name="productDescr"]').text();
+                        description = targetEl.find('[data-name="productName"] textarea').val() || targetEl.find('[data-name="productDescr"]').text();
+                        jobDescription = targetEl.find('textarea.jobsDescription').val();
                         jobs = targetEl.find('[data-name="jobs"]').attr('data-content');
-                        subTotal = helpers.spaceReplacer($.trim(targetEl.find('.subtotal').text()));
+                        subTotal = helpers.spaceReplacer($.trim(targetEl.find('.subtotal .sum').text()));
                         subTotal = parseFloat(subTotal) * 100;
 
                         if (!quantity) {
@@ -262,6 +264,7 @@ define([
                             scheduledDate: scheduledDate,
                             taxes        : taxes,
                             description  : description,
+                            jobDescription: jobDescription,
                             subTotal     : subTotal,
                             jobs         : jobs || null
                         });
@@ -450,7 +453,9 @@ define([
                     editablePrice  : self.editablePrice,
                     balanceVissible: self.balanceVissible,
                     forSales       : self.forSales,
-                    service        : self.service
+
+                    service        : self.service,
+                    canBeSold      : self.forSales
                 }).render({model: model}).el
             );
 

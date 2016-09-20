@@ -37,6 +37,10 @@ define([
                     emails.Cc = (res.projectmanager || '') + ', ' + (res.salesmanager || '');
                     emails.To = (res.customerCompany || '') + ', ' + res.customerPersons.join(', ');
 
+                    if (emails.Cc === ', ') {
+                        emails.Cc = '';
+                    }
+
                     self.render(emails);
                 });
             } else {

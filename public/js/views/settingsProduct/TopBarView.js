@@ -47,7 +47,7 @@ define([
         render: function () {
             $('title').text(this.contentType);
 
-            this.$el.html(this.template({contentType: this.contentType}));
+            this.$el.html(this.template({contentType: this.contentType, viewType: 'list'}));
             Common.displayControlBtnsByActionType(this.actionType);
 
             return this;

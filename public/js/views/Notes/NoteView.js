@@ -37,6 +37,10 @@ define([
             var notes = currentModel.get('notes');
             var newNotes;
 
+            notes = notes.filter(function (elem) {
+                return !elem.history && !elem.pay;
+            });
+
             switch (type) {
                 case 'edit':
                     this.$el.find('.addTitle').show();
@@ -122,6 +126,10 @@ define([
                 if (val.replace(/ /g, '') || title.replace(/ /g, '')) {
                     formModel = this.model;
                     notes = formModel.get('notes');
+                    notes = notes.filter(function (elem) {
+                        return !elem.history && !elem.pay;
+                    });
+
                     arrKeyStr = this.$el.find('#getNoteKey').attr('value');
                     noteObj = {
                         note : '',

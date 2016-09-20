@@ -1,11 +1,19 @@
 var express = require('express');
 var router = express.Router();
 var JournalEntryHandler = require('../handlers/journalEntry');
+var PaymentsHandler = require('../handlers/payment');
+var EmployeesHandler = require('../handlers/employee');
+var InvoicesHandler = require('../handlers/invoice');
+var JobsHandler = require('../handlers/jobs');
 var authStackMiddleware = require('../helpers/checkAuth');
 var MODULES = require('../constants/modules');
 
 module.exports = function (models, event) {
     var _journalEntryHandler = new JournalEntryHandler(models, event);
+    var jobsHandler = new JobsHandler(models, event);
+    var invoicesHandler = new InvoicesHandler(models, event);
+    var employeesHandler = new EmployeesHandler(event, models);
+    var paymentsHandler = new PaymentsHandler(models, event);
     var moduleId = MODULES.JOURNALENTRY;
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
@@ -29,6 +37,7 @@ module.exports = function (models, event) {
     router.get('/getReconcileDate', _journalEntryHandler.getReconcileDate);
     router.get('/getForReport', _journalEntryHandler.getForReport);
     router.get('/getAsyncData', _journalEntryHandler.getAsyncData);
+    router.get('/getSourceForDd', _journalEntryHandler.getSourceForDd);
 
     /**
      *@api {get} /journalEntries/getAsyncDataForGL Request AsyncDataForGL
@@ -475,6 +484,11 @@ module.exports = function (models, event) {
     router.get('/exportToXlsx', _journalEntryHandler.exportToXlsx);
     router.get('/exportToCsv', _journalEntryHandler.exportToCsv);
 
+    router.get('/jobs', jobsHandler.getForJournalSource);
+    router.get('/invoices', invoicesHandler.getInvoiceById);
+    router.get('/payments', paymentsHandler.getById);
+    router.get('/employees', employeesHandler.getForJournalSource);
+
     /**
      *@api {get} /journalEntries/ Request JournalEntries
      *
@@ -640,8 +654,11 @@ module.exports = function (models, event) {
      }
      * */
     router.post('/reconcile', _journalEntryHandler.reconcile);
+    router.post('/createManual', _journalEntryHandler.createManual);
     router.post('/closeMonth', _journalEntryHandler.closeMonth);
     router.post('/recloseMonth', _journalEntryHandler.recloseMonth);
+
+    router.delete('/', _journalEntryHandler.removeBulk);
 
     return router;
 };

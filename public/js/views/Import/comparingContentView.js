@@ -18,11 +18,11 @@ define([
         finishTemplate : _.template(FinishTemplate),
 
         events: {
-            'click #stepByStepButton'              : 'stepByStep',
+            'click #stepByStepButton'               : 'stepByStep',
             'click #skipAllButton, #importAllButton': 'actionAll',
-            'click .changeTableCombobox'           : 'changeTableCombobox',
-            'click .item'                          : 'checkItem',
-            'click #finishBtn'                     : 'finishImport'
+            'click .changeTableCombobox'            : 'changeTableCombobox',
+            'click .item'                           : 'checkItem',
+            'click #finishBtn'                      : 'finishImport'
         },
 
         initialize: function (options) {
@@ -30,6 +30,7 @@ define([
             var self = this;
 
             this.timeStamp = options.timeStamp;
+            this.updateHistory = options.updateHistory;
             this.step = -1;
             this.skippedArray = App.currentUser.imports.skipped;
             this.imported = App.currentUser.imports.importedCount;
@@ -42,6 +43,7 @@ define([
                 self.data = data;
                 self.data.keys.reverse();
                 self.stepKeys = Object.keys(self.data.result);
+                self.stepKeysForAll = Object.keys(self.data.result);
                 self.headerId = data.headerId;
                 self.render(self.data);
             });
@@ -66,12 +68,13 @@ define([
             var $target = $(e.target);
             var action = $target.data('action');
             var self = this;
-            var mergingArray = [];
+            //var mergingArray = [];
+            var mergingArray = this.mergingArray;
             var url = 'importFile/merge';
             var linkToFile;
             var linkName;
 
-            _.each(this.stepKeys, function (stepKey) {
+            _.each(this.stepKeysForAll, function (stepKey) {
                 _.each(self.data.result[stepKey], function (item, key) {
                     if (!item.isExist) {
                         mergingArray.push({
@@ -149,6 +152,8 @@ define([
                     }
                 });
 
+                delete self.stepKeysForAll[this.step];
+
                 if (this.step === this.stepKeys.length - 1) {
                     dataService.postData(url, {
                         data    : this.mergingArray,
@@ -208,6 +213,8 @@ define([
         finishStep: function (linkToFile, linkName) {
             var $thisEl = this.$el;
 
+            this.updateHistory();
+
             $('.stageBtnNext').remove();
             //$('.stageBtnNext').prop('disabled', true);
 
@@ -229,10 +236,10 @@ define([
             var self = this;
 
             $thisEl.html(this.contentTemplate({
-                data     : data,
-                step     : this.step,
-                isItExist: this.isItExist,
-                moreExist: this.moreExist,
+                data         : data,
+                step         : this.step,
+                isItExist    : this.isItExist,
+                moreExist    : this.moreExist,
                 mappingFields: mappingFields
             }));
 

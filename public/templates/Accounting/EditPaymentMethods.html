@@ -1,40 +1,19 @@
-<div class="form-holder">
-    <div class="half-block left">
-        <dl>
-            <dt><label for="paymentMethodName">Name</label></dt>
-            <dd>
-                <input id="paymentMethodName" value="<%=model.name%>">
-            </dd>
-            <dt><label for="currency">Currency</label></dt>
-            <dd class="_newSelectListWrap">
-                <a href="javascript:;" class="current-selected" id="currency" data-id="<%=model.currency%>"><%=model.currency%></a>
-            </dd>
-        </dl>
+<div class="form-holder _dialogWrap">
+    <div class="_dialogMainTitle">Bank Accounts</div>
+    <div class="_dialogBlock">
+        <div class="_dialogRow">Name</div>
+        <div class="_dialogRow"><input id="paymentMethodName" value="<%=model.name%>"></div>
+        <div class="_dialogRow">Currency</div>
+        <div class="_dialogRow account-wrapper"><a href="javascript:;" class="current-selected _newSelectListWrap" id="currency" data-id="<%=model.currency%>"><%=model.currency%></a></div>
+        <div class="_dialogRow">Bank</div>
+        <div class="_dialogRow"><input id="bankName" value="<%=model.bank%>"></div>
+        <!--<div class="_dialogRow">Name</div>
+            <div class="_dialogRow" id="owner" data-id="<%=model.owner%>"><%=model.owner%></div>-->
+        <div class="_dialogRow">Account</div>
+        <div class="_dialogRow"><input id="account" value="<%=model.account%>"></div>
+        <div class="_dialogRow">Chart of Account</div>
+        <div class="_dialogRow account-wrapper"><a href="javascript:;" class="current-selected _newSelectListWrap" id="chartAccount" data-id="<%=model.chartAccount ? model.chartAccount._id : null%>"><%=model.chartAccount ? model.chartAccount.name : 'Select'%></a></div>
     </div>
-    <div class="half-block left">
-        <dl>
-            <dt><label for="bankName">Bank</label></dt>
-            <dd>
-                <input id="bankName" value="<%=model.bank%>">
-            </dd>
-
-            <!--<dt><label for="owner">Name</label></dt>
-            <dd>
-                <span id="owner" data-id="<%=model.owner%>"><%=model.owner%></span>
-            </dd>-->
-            <dt><label for="account">Account</label></dt>
-            <dd>
-                <input id="account" value="<%=model.account%>">
-            </dd>
-            <dt><label for="chartAccount">Chart of Account</label></dt>
-            <dd class="_newSelectListWrap">
-                <a href="javascript:;" class="current-selected" id="chartAccount" data-id="<%=model.chartAccount ? model.chartAccount._id : null%>"><%=model.chartAccount ? model.chartAccount.name : 'Select'%></a>
-            </dd>
-        </dl>
-    </div>
-
-
-
-    <div class="clearfix"></div>
 </div>
+
   

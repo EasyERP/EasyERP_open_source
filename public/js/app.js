@@ -64,11 +64,11 @@ define([
     };
 
     var applyDefaults = function () {
-        $.datepicker.setDefaults({
+      /*  $.datepicker.setDefaults({
             // dateFormat:'dd/mm/yy'
-            firstDay: 1,
-            minDate : new Date(constants.MIN_DATE)
-        });
+            // firstDay: 1,
+           // minDate : new Date(constants.MIN_DATE) //toDo disable for startDate of program
+        });*/
         // add ability to clear console by calling -> console.API.clear();
         if (typeof console._commandLineAPI !== 'undefined') {
             console.API = console._commandLineAPI;

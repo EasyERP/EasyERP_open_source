@@ -1,34 +1,33 @@
 ﻿<div id="searchContainer"></div>
-<div>
-    <table class="list task-list">
-        <col width="2%">
-        <col width="2%">
-        <col width="10%">
-        <col width="10%">
-        <col width="15%">
-        <col width="10%">
-        <col width="10%">
-        <col width="10%">
-        <col width="10%">
-
+<div class="_tableQuotationsWrap">
+    <table class="list stripedList">
+        <colgroup>
+            <col width="42px">
+            <col width="17%">
+            <col width="17%">
+            <col width="17%">
+            <col width="17%">
+            <col width="16%">
+            <col width="16%">
+        </colgroup>
         <thead>
         <tr>
-            <th class=""><input type="checkbox" id="checkAll"/></th>
-            <th class="oe_sortable" data-sort="name">Reference<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
+            <th class="centerCell"><input type="checkbox" id="checkAll"/></th>
+            <th class="oe_sortable" data-sort="name">Reference<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
 
-            <th class="oe_sortable" data-sort="supplier.name.first">Supplier<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <!--<th class="oe_sortable" data-sort="expectedDate">Expected Date<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>-->  <!--commented on 14 Mar, in quotationEdit commit -->
-            <th class="oe_sortable" data-sort="paymentInfo.unTaxed">Untaxed<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable sortDn" data-sort="paymentInfo.total">Total<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="workflow.name">Status<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="orderDate">Order Date<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="supplier.name.first">Supplier<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <!--<th class="oe_sortable" data-sort="expectedDate">Expected Date<span class="arrow down"></span><span
+                    class="arrow up"></span></th>-->  <!--commented on 14 Mar, in quotationEdit commit -->
+            <th class="oe_sortable" data-sort="paymentInfo.unTaxed">Untaxed<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable sortDn" data-sort="paymentInfo.total">Total<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="workflow.name">Status<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="orderDate">Order Date<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
         </tr>
         </thead>
         <tbody id="listTable" class="enableTableOdd"></tbody>

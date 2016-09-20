@@ -37,14 +37,14 @@
 
         <div class="editorTab dialog-tabs-item" id="task">
             <div class="addTask createHolder">
-                <div class="addTaskTitle _newSelectListWrap">
-                    <label>Assigned To</label>
-                    <a  href="javascript:;"  class="current-selected" data-id="<%= assignedTo ? assignedTo._id : '' %>" id="assignedToDd"><%= assignedTo ? assignedTo.fullName : 'Select' %></a>
-                    <div class="_taskTimeBlock">
-                        <div id="categoryHolder" class="left"></div>
-                        <div class="inputDateActonBlock">
-                            <input type="text" id="timepickerOne" name="timepicker-one" class="timepicker" readonly/>
-                        </div>
+                <div class="addTaskTitle _addTaskTitleBlock">
+                    <div class="_addTaskTitle">
+                        <label>Assigned To</label>
+                        <a  href="javascript:;"  class="current-selected" data-id="<%= assignedTo ? assignedTo._id : '' %>" id="assignedToDd"><%= assignedTo ? assignedTo.fullName : 'Select' %></a>
+                    </div>
+                    <div id="categoryHolder" class="left"></div>
+                    <div class="inputDateActonBlock">
+                        <input type="text" id="timepickerOne" name="timepicker-one" class="timepicker" readonly/>
                         <input type="text" class="date _taskDueDate" id="taskDueDate"
                                value="<%= date %>" maxlength="32"
                                placeholder="Date" readonly/>
@@ -57,14 +57,8 @@
                     </a>
                 </div>
                 <div class="buttons">
-                    <butto class="btn blue btnSave" id="addTask">
-                        <span>Save</span>
-                    </butto>
-                    <buttom class="btn" id="cancelTask">
-                        <span>Cancel</span>
-                    </buttom>
-                    <div class="clearfix">
-                    </div>
+                    <span class="btn blue btnSave" id="addTask">Save</span>
+                    <span class="btn" id="cancelTask">Cancel</span>
                 </div>
             </div>
         </div>

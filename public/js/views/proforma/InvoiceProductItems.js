@@ -4,7 +4,7 @@ define([
     'jQuery',
     'text!templates/Invoices/InvoiceProductItems.html',
     'text!templates/Invoices/InvoiceProductInputContent.html',
-    'text!templates/proforma/EditInvoiceProductInputContent.html',
+    'text!templates/Proforma/EditInvoiceProductInputContent.html',
     'text!templates/Products/InvoiceOrder/TotalAmount.html',
     'text!templates/Invoices/EditInvoiceProductInputContent.html',
     'collections/Products/products',
@@ -34,9 +34,11 @@ define([
             this.responseObj = {};
             this.taxesRate = 0;
 
+
             if (options) {
                 this.visible = !!options.balanceVisible;
                 this.isPaid = !!options.isPaid;
+                this.discountVisible = options.discountVisible;
                 this.notAddItem = !!options.notAddItem;
                 this.paid = options.paid;
                 this.approved = options.approved;
@@ -160,15 +162,15 @@ define([
 
         recalculateTaxes: function (parent) {
             var quantity = parent.find('[data-name="quantity"] span').text();
-            var cost = parseFloat(parent.find('[data-name="price"] input').val());
+            var cost = parseFloat(parent.find('input').val());
             var taxes = cost * this.taxesRate;
             var amount = cost + taxes;
             taxes = taxes.toFixed(2);
             amount = amount.toFixed(2);
             quantity = parseFloat(quantity);
             parent = parent.closest('tr');
-            parent.find('.taxes').text(taxes);
-            parent.find('.amount').text(amount);
+            parent.find('.taxes .sum').text(taxes);
+            parent.find('.subtotal .sum').text(amount);
 
             this.calculateTotal();
         },
@@ -294,6 +296,7 @@ define([
                     totalAmountContainer.append(_.template(totalAmount, {
                         model           : options.model,
                         balanceVisible  : this.visible,
+                        discountVisible : this.discountVisible,
                         currencySplitter: helpers.currencySplitter,
                         currencyClass   : helpers.currencyClass
                     }));
@@ -303,12 +306,14 @@ define([
                     forSales  : self.forSales,
                     isPaid    : self.isPaid,
                     notAddItem: this.notAddItem
+
                 }));
                 totalAmountContainer = thisEl.find('#totalAmountContainer');
                 totalAmountContainer.append(_.template(totalAmount, {
                     model           : null,
                     balanceVisible  : this.visible,
-                    currencySplitter: helpers.currencySplitter
+                    currencySplitter: helpers.currencySplitter,
+                    discountVisible : this.discountVisible
                 }));
             }
 

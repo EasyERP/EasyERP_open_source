@@ -41,11 +41,19 @@
 }
 
 .textRight {
-  text-align: right;
+  text-align: right !important;
 }
 
 .textCenter {
   text-align: center;
+}
+
+.textDecor {
+  height: 30px;
+
+  &span {
+    height: 30px;
+  }
 }
 
 @mixin spacing($name, $size, $value) {

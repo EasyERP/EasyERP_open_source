@@ -31,6 +31,7 @@ define([
                 this.visible = !!options.balanceVisible;
                 this.isPaid = !!options.isPaid;
                 this.notAddItem = !!options.notAddItem;
+                this.discountVisible = !!options.discountVisible;
                 this.paid = options.paid;
             }
 
@@ -167,6 +168,7 @@ define([
                         model           : options.model,
                         balanceVisible  : this.visible,
                         currencySplitter: helpers.currencySplitter,
+                        discountVisible : this.discountVisible,
                         currencyClass   : helpers.currencyClass
                     }));
                 }
@@ -182,6 +184,7 @@ define([
                 totalAmountContainer.append(_.template(totalAmount, {
                     model           : null,
                     balanceVisible  : this.visible,
+                    discountVisible : this.discountVisible,
                     currencySplitter: helpers.currencySplitter,
                     currencyClass   : helpers.currencyClass
                 }));

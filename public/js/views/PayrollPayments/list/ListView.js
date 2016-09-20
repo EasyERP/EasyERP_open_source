@@ -61,7 +61,7 @@ define([
                 itemsNumber: this.collection.namberToShow
             }).render());
 
-            $currentEl.append(new ListTotalView({element: this.$el.find('#listTable'), cellSpan: 6}).render());
+            $currentEl.append(new ListTotalView({element: this.$el.find('#listTable'), cellSpan: 5}).render());
 
             $currentEl.append(_.template(paginationTemplate));
 

@@ -11,22 +11,22 @@
         <tr>
             <th class=""><input type="checkbox" id="checkAll_payments" class="checkAll"/></th>
             <th class="centerCell">N</th>
-            <th class="oe_sortable" data-sort="assigned.name.first">Assigned<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="supplier.name.first">Company<span class="arrow down">7</span><span
-                    class="arrow up">v</span>
+            <th class="oe_sortable" data-sort="assigned.name.first">Assigned<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="supplier.name.first">Company<span class="arrow down"></span><span
+                    class="arrow up"></span>
             </th>
-            <th class="oe_sortable" data-sort="invoice.name">Invoice<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="invoice.name">Invoice<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
 
-            <th class="oe_sortable" data-sort="paymentMethod.name">Bank account<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="paidAmount">Paid<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <!--<th class="oe_sortable" data-sort="workflow">Status<span class="arrow down">7</span><span-->
-            <!--class="arrow up">v</span></th>-->
-            <th class="oe_sortable sortDn" data-sort="date">Payment Date<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="paymentMethod.name">Bank account<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="paidAmount">Paid<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <!--<th class="oe_sortable" data-sort="workflow">Status<span class="arrow down"></span><span-->
+            <!--class="arrow up"></span></th>-->
+            <th class="oe_sortable sortDn" data-sort="date">Payment Date<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
         </tr>
         </thead>
         <tbody id="listTable">
@@ -34,7 +34,7 @@
         <%var totalPaidAmount = 0;%>
         <% paymentCollection.forEach(function(payment, index) {%>
         <tr data-id="<%=payment._id%>">
-            <td class="notForm"><input type="checkbox" value="<%=payment._id%>" class="checkbox <%=payment.removable ? '' : 'notRemovable'%>"/></td>
+            <td class="notForm centerCell"><input type="checkbox" value="<%=payment._id%>" class="checkbox <%=payment.removable ? '' : 'notRemovable'%>"/></td>
             <td><%=startNumber + index + 1%></td>
             <td><%=(payment && payment.assigned) ? payment.assigned.name.first + ' ' + payment.assigned.name.last:
                 ''%>

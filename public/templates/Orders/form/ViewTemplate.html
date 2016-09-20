@@ -1,5 +1,3 @@
-<div class="form-holder">
-
     <form method="post" action="" id="createPersonsForm" class="form">
         <fieldset>
             <div class="inner">
@@ -45,10 +43,6 @@
                                         <a id="projectDd" class="" href="javascript:;" data-id="<%=model.project._id%>"><%=model.project.name%></a>
                                     </dd>
                                    <% } %>
-                                </dl>
-                            </div>
-                            <div class="half-block left">
-                                <dl class="opp-info">
                                     <dt><label>Order Date</label></dt>
                                     <dd>
                                         <span><%=model.orderDate%></span>
@@ -59,6 +53,10 @@
                                     <!--<a id="deliveryDd" href="#easyErp/Companies/form/<%=model.deliverTo._id%>" data-id="<%=model.deliverTo._id%>"><%=model.deliverTo.name%></a>-->
                                     <!--<%}%>-->
                                     <!--</dd>-->
+                                    <dt><label for="expectedDate">Expected Date</label></dt>
+                                    <dd>
+                                        <span><%=model.expectedDate%></span>
+                                    </dd>
                                     <dt><label for="currencyDd">Currency</label></dt>
                                     <dd>
                                         <a id="currencyDd" class=""
@@ -68,29 +66,28 @@
                                     </dd>
                                 </dl>
                             </div>
+
+
                             <div class="clearfix"></div>
                         </div>
                         <div class="clearfix"></div>
-                        <ul class="dialog-tabs" data-class="childTabs">
+                        <!--<ul class="dialog-tabs" data-class="childTabs">
                             <li><a class="active" href="javascript:;">Products</a></li>
-                            <!--<li><a href="javascript:;">Bid</a></li>-->
+                            &lt;!&ndash;<li><a href="javascript:;">Bid</a></li>&ndash;&gt;
                             <li><a href="javascript:;">Deliveries & Invoices</a></li>
-                        </ul>
+                        </ul>-->
                         <div class="clearfix"></div>
-                        <div class="dialog-tabs-items childTabs">
-                            <div class="dialog-tabs-item childTabs active">
+                      <!--  <div class="dialog-tabs-items childTabs">
+                            <div class="dialog-tabs-item childTabs active">-->
                                 <div id="productItemsHolder">
 
                                 </div>
-                            </div>
+                           <!-- </div>
                             <div class="dialog-tabs-item childTabs">
                                 <div class="delivery-invoices-container">
                                     <div class="half-block left">
                                         <dl class="quotation-info">
-                                            <dt><label for="expectedDate">Expected Date</label></dt>
-                                            <dd><input id="expectedDate" placeholder="" type="text"
-                                                       value="<%=model.expectedDate%>" readonly/>
-                                            </dd>
+
                                             <dt><label for="destination">Destination</label></dt>
                                             <dd class="_newSelectListWrap">
                                                 <%if(model.destination){%>
@@ -126,9 +123,9 @@
                                                 <%}%>
                                             </dd>
                                             </dd>
-                                            <!--<dt><label for="invoiceReceived">Invoice Received</label></dt>-->
-                                            <!-- <dd><input id="invoiceReceived" type="checkbox" class="checkbox left" disabled></dd>-->
-                                            <!--<dt><label for="paymentTerm">Payment Term</label></dt>
+                                            &lt;!&ndash;<dt><label for="invoiceReceived">Invoice Received</label></dt>&ndash;&gt;
+                                            &lt;!&ndash; <dd><input id="invoiceReceived" type="checkbox" class="checkbox left" disabled></dd>&ndash;&gt;
+                                            &lt;!&ndash;<dt><label for="paymentTerm">Payment Term</label></dt>
                                             <dd>
                                                 <%if(model.paymentTerm){%>
                                                 <a id="paymentTerm" class="current-selected"
@@ -138,7 +135,7 @@
                                                 <a id="paymentTerm" class="current-selected" href="javascript:;"
                                                    data-id="">Select</a>
                                                 <%}%>
-                                            </dd>-->
+                                            </dd>&ndash;&gt;
                                             <dt><label for="fiscalPosition">Fiscal Position</label></dt>
                                             <dd class="_newSelectListWrap">
                                                 <a id="fiscalPosition" class="current-selected" href="javascript:;">Fiscal
@@ -147,7 +144,7 @@
                                         </dl>
                                     </div>
                                 </div>
-                            </div>
+                            </div>-->
                         </div>
                         <div class="clearfix"></div>
                     </div>
@@ -158,4 +155,3 @@
         </fieldset>
     </form>
     <div class="clearfix"></div>
-</div>

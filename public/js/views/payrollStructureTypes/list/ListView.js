@@ -41,8 +41,8 @@ define([
 
         events: {
             'click  .list tbody td:not(.notForm, .validated)': 'goToEditDialog',
-            'click  .createBtn'                              : 'create',
-            'click  .fa-trash-o'                             : 'remove'
+            'click  #top-bar-createBtn'                      : 'create',
+            'click  .icon-trash'                             : 'remove'
         },
 
         create: function (e) {
@@ -122,7 +122,7 @@ define([
             }
 
             currentEllistRenderer(self);
-            
+
         }
 
     });

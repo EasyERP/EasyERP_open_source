@@ -82,6 +82,19 @@ define([
 
             this.editCollection = new EditCollection(transfers);
 
+            this.responseObj['#employmentTypeDd'] = [
+                {
+                    _id : 'Employees',
+                    name: 'Employees'
+                }, {
+                    _id : 'FOP',
+                    name: 'FOP'
+                }, {
+                    _id : 'Un Employees',
+                    name: 'Un Employees'
+                }
+            ];
+
             this.responseObj['#sourceDd'] = [
                 {
                     _id : 'www.rabota.ua',
@@ -445,6 +458,11 @@ define([
             var manager;
             var changedAttr;
             var datacontent;
+            var $departmentsDd = $('#departmentsDd');
+            var jobPositions = this.responseObj['#jobPositionDd'];
+            var jobPosition;
+            var departments = this.responseObj['#departmentsDd'];
+            var department;
 
             e.stopPropagation();
 
@@ -492,6 +510,22 @@ define([
                     }
 
                     changedAttr.transfered = true;
+                }
+
+                if (id === 'jobPositionDd') {
+
+                    jobPosition = _.find(jobPositions, function (el) {
+                        return el._id === valueId;
+                    });
+
+                    department = _.find(departments, function (el) {
+                        return el._id === jobPosition.department;
+                    });
+
+                    $departmentsDd.text(department.name);
+                    $departmentsDd.attr('data-id', department._id);
+
+                    $departmentsDd.closest('td').removeClass('errorContent');
                 }
 
             } else {
@@ -570,6 +604,7 @@ define([
             var dataType;
             var manager;
             var marital;
+            var employmentType;
             var jobType;
             var usersId;
             var $jobTrs;
@@ -590,6 +625,7 @@ define([
             dateBirthSt = helpers.setTimeToDate($.trim(self.$el.find('#dateBirth').val()));
             $jobTable = $thisEl.find('#hireFireTable');
             marital = $thisEl.find('#maritalDd').attr('data-id') || null;
+            employmentType = $thisEl.find('#employmentTypeDd').attr('data-id') || null;
             nationality = $thisEl.find('#nationality').attr('data-id');
             gender = $thisEl.find('#genderDd').attr('data-id') || null;
             $jobTrs = $jobTable.find('tr.transfer');
@@ -659,10 +695,11 @@ define([
                     last : $.trim($thisEl.find('#last').val())
                 },
 
-                gender     : gender,
-                jobType    : jobType,
-                marital    : marital,
-                workAddress: {
+                gender        : gender,
+                jobType       : jobType,
+                marital       : marital,
+                employmentType: employmentType,
+                workAddress   : {
                     street : $.trim($thisEl.find('#street').val()),
                     city   : $.trim($thisEl.find('#city').val()),
                     state  : $.trim($thisEl.find('#state').val()),
@@ -929,12 +966,15 @@ define([
             populate.get('#jobTypeDd', CONSTANTS.URLS.JOBPOSITIONS_JOBTYPE, {}, 'name', this);
             populate.get('#nationality', CONSTANTS.URLS.EMPLOYEES_NATIONALITY, {}, '_id', this);
             populate.get2name('#projectManagerDD', CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this);
-            populate.get('#jobPositionDd', CONSTANTS.URLS.JOBPOSITIONS_FORDD, {}, 'name', this, false, false);
             populate.get('#relatedUsersDd', CONSTANTS.URLS.USERS_FOR_DD, {}, 'login', this, false, true);
             populate.get('#departmentsDd', CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, 'name', this);
             populate.get('#payrollStructureTypeDd', CONSTANTS.URLS.PAYROLLSTRUCTURETYPES_FORDD, {}, 'name', this);
             populate.get('#scheduledPayDd', CONSTANTS.URLS.SCHEDULEDPAY_FORDD, {}, 'name', this);
             populate.get('#employeeEditCountry', CONSTANTS.URLS.COUNTRIES, {}, '_id', this);
+
+            dataService.getData(CONSTANTS.URLS.JOBPOSITIONS_FORDD, {}, function (jobPositions) {
+                self.responseObj['#jobPositionDd'] = jobPositions.data;
+            });
 
             common.canvasDraw({model: this.currentModel.toJSON()}, this);
 

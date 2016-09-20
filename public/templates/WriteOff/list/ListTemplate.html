@@ -1,6 +1,6 @@
 <% invoiceCollection.forEach(function(invoice, index){ %>
 <tr data-id="<%=invoice._id%>">
-    <td class="notForm"><input type="checkbox" value="<%=invoice._id%>"
+    <td class="centerCell"><input type="checkbox" value="<%=invoice._id%>"
                                           class="checkbox <%=invoice.removable ? '' : 'notRemovable'%>"/>
     </td>
     <td><%=startNumber + index + 1%></td>

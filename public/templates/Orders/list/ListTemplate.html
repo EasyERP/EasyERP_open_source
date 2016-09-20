@@ -1,14 +1,16 @@
 <% orderCollection.forEach(function(quotation, index){ %>
-<tr data-id="<%=quotation._id%>"
+<% var currency =(quotation.currency && quotation.currency._id ? quotation.currency._id.symbol : '')%>
+
+<tr class="centerCell" data-id="<%=quotation._id%>"
 <%if (quotation.workflow && quotation.workflow.status === 'Done') { %>
 class="notEditable"
 <% } %>>
-<td class="notForm"><input type="checkbox" value="<%=quotation._id%>" class="checkbox"/></td>
+<td class="notForm centerCell"><input type="checkbox" value="<%=quotation._id%>" class="checkbox"/></td>
 <td><%=quotation.name%></td>
 <td><%=(quotation.supplier) ? quotation.supplier.name.first + ' ' + quotation.supplier.name.last : ''%></td>
 <!--<td><%=quotation.expectedDate%></td>-->
-<td class="unTaxed <%=currencyClass(quotation.currency._id)%>"><%=(quotation.paymentInfo) ? currencySplitter(quotation.paymentInfo.unTaxed) : '0.00'%></td>
-<td class="total <%=currencyClass(quotation.currency._id)%>"><%=(quotation.paymentInfo) ? currencySplitter(quotation.paymentInfo.total) : '0.00'%></td>
+<td class="unTaxed"><%=currency %><%=(quotation.paymentInfo) ? currencySplitter(quotation.paymentInfo.unTaxed) : '0.00'%></td>
+<td class="total"><%=currency %><%=(quotation.paymentInfo) ? currencySplitter(quotation.paymentInfo.total) : '0.00'%></td>
 <td id='<%=quotation._id%>'>
     <a href="javascript:;"><%=quotation.workflow ? quotation.workflow.name: 'Undefinded'%></a>
 </td>

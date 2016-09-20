@@ -18,10 +18,10 @@ define([
         },
 
         events: {
-            'click .fa-pencil-square-o': 'goToEditDialog',
-            'click .fa-trash-o'        : 'deleteItem',
-            'click #top-bar-createBtn' : 'createPaymentMethod',
-            'click .fa-angle-down'     : 'toggleList'
+            'click .goToEdit'         : 'goToEditDialog',
+            'click .goToRemove'       : 'deleteItem',
+            'click #top-bar-createBtn': 'createPaymentMethod',
+            'click .toggleList'       : 'toggleList'
         },
 
         deleteItem: function (e) {
@@ -72,7 +72,7 @@ define([
         createPaymentMethod: function (e) {
             e.preventDefault();
 
-            return new CreateView();
+            return new CreateView({collection: this.collection});
         },
 
         render: function () {

@@ -14,6 +14,7 @@ var Module = function (models, event) {
     var InvoiceSchema = mongoose.Schemas.Invoice;
     var wTrackInvoiceSchema = mongoose.Schemas.wTrackInvoice;
     var OrderSchema = mongoose.Schemas.Quotation;
+    var ProductSchema = mongoose.Schemas.Products;
     var ProformaSchema = mongoose.Schemas.Proforma;
     var WriteOffSchema = mongoose.Schemas.writeOff;
     var ExpensesInvoiceSchema = mongoose.Schemas.expensesInvoice;
@@ -36,6 +37,8 @@ var Module = function (models, event) {
     var _journalEntryHandler = new JournalEntryHandler(models, event);
     var path = require('path');
     var Uploader = require('../services/fileStorage/index');
+    var HistoryWriter = require('../helpers/historyWriter.js');
+    var historyWriter = new HistoryWriter(models);
     var uploader = new Uploader();
     var FilterMapper = require('../helpers/filterMapper');
 
@@ -53,6 +56,7 @@ var Module = function (models, event) {
         journalEntryBody.sourceDocument = {};
         journalEntryBody.sourceDocument._id = invoice._id;
         journalEntryBody.sourceDocument.model = 'Invoice';
+        journalEntryBody.sourceDocument.name = invoice.name;
 
         if (invoice.paymentInfo.total - invoice.paymentInfo.balance > 0) {
             cb = _.after(2, waterfallCb);
@@ -64,11 +68,71 @@ var Module = function (models, event) {
             beforeInvoiceBody.sourceDocument = {};
             beforeInvoiceBody.sourceDocument._id = invoice._id;
             beforeInvoiceBody.sourceDocument.model = 'Proforma';
+            journalEntryBody.sourceDocument.name = invoice.name;
 
             _journalEntryHandler.create(beforeInvoiceBody, dbIndex, cb, uId);
         }
 
         _journalEntryHandler.create(journalEntryBody, dbIndex, cb, uId);
+    }
+
+    function getHistory(req, invoice, cb) {
+        var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+
+        var historyOptions = {
+            req: req,
+            id : invoice._id
+        };
+
+        historyWriter.getHistoryForTrackedObject(historyOptions, function (err, history) {
+            var notes;
+            var payments;
+
+            if (err) {
+                return cb(err);
+            }
+
+            notes = history.map(function (elem) {
+                return {
+                    date   : elem.date,
+                    history: elem,
+                    user   : elem.editedBy
+                };
+            });
+
+            Invoice.populate(invoice, {
+                path: 'payments.createdBy.user',
+                model: 'Users',
+                select: 'login'
+            }, function (err, invoice) {
+
+                Invoice.populate(invoice, {
+                    path: 'payments.currency._id',
+                    model: 'currency',
+                    select: 'symbol'
+                },function (err, invoice) {
+                    var payments;
+
+                    payments = invoice.payments.map(function (elem) {
+                        return {
+                            date   : elem.createdBy ? elem.createdBy.date : '',
+                            pay    : (elem.currency && elem.currency._id  ? elem.currency._id.symbol : '') + (elem.paidAmount/100).toFixed(2),
+                            user   : elem.createdBy && elem.createdBy.user ? elem.createdBy.user.toJSON() : ''
+                        };
+                    });
+
+                    invoice.notes = invoice.notes.concat(notes, payments);
+                    invoice.notes = _.sortBy(invoice.notes, 'date');
+                    cb(null, invoice);
+                });
+
+
+            });
+
+
+
+        }, true);
+
     }
 
     this.create = function (req, res, next) {
@@ -92,19 +156,34 @@ var Module = function (models, event) {
             }
 
             invoice.save(function (err, result) {
+                var historyOptions;
+
+
+
                 if (err) {
                     return waterfallCb(err);
                 }
 
-                result = result.toObject();
-                result.currency = result.currency || {};
-                result.currency.name = body.currency ? body.currency.name : 'USD';
+                historyOptions = {
+                    contentType: 'invoice',
+                    data       : result.toJSON(),
+                    req        : req,
+                    contentId  : result._id
+                };
 
-                if (forSales) {
-                    waterfallCb(null, dbIndex, result);
-                } else { // added in case of bad creating no forSales invoice ( property model undefined for Journal )
-                    waterfallCb(null, result);
-                }
+                historyWriter.addEntry(historyOptions, function () {
+
+                    result = result.toObject();
+                    result.currency = result.currency || {};
+                    result.currency.name = body.currency ? body.currency.name : 'USD';
+
+                    if (forSales) {
+                        waterfallCb(null, dbIndex, result);
+                    } else { // added in case of bad creating no forSales invoice ( property model undefined for Journal )
+                        waterfallCb(null, result);
+                    }
+                });
+
             });
         }
 
@@ -239,7 +318,7 @@ var Module = function (models, event) {
             var query = Order.findById(id).lean();
 
             query
-                .populate('products.product')
+                .populate('products.info')
                 .populate('products.jobs')
                 .populate('currency._id')
                 .populate('project', '_id name salesmanager');
@@ -356,7 +435,7 @@ var Module = function (models, event) {
                 workflow = parallelResponse[1];
 
                 // order.attachments[0].shortPas = order.attachments[0].shortPas.replace('..%2Froutes', '');
-                delete order.attachments;
+              //  delete order.attachments;
 
             } else {
                 err = new Error(RESPONSES.BAD_REQUEST);
@@ -429,11 +508,21 @@ var Module = function (models, event) {
                 invoice.salesPerson = order.project.salesmanager || null;
 
                 invoice.save(function (err, result) {
+                    var historyOptions;
+
                     if (err) {
                         return next(err);
                     }
+                    historyOptions = {
+                        contentType: 'invoice',
+                        data       : result.toJSON(),
+                        req        : req,
+                        contentId  : result._id
+                    };
 
-                    callback(null, result);
+                    historyWriter.addEntry(historyOptions, function () {
+                        callback(null, result);
+                    });
                 });
 
             } else {
@@ -451,11 +540,23 @@ var Module = function (models, event) {
                     }
 
                     invoice.save(function (err, result) {
+                        var historyOptions;
+
                         if (err) {
                             return next(err);
                         }
 
-                        callback(null, result);
+                        historyOptions = {
+                            contentType: 'invoice',
+                            data       : result.toJSON(),
+                            req        : req,
+                            contentId  : result._id
+                        };
+
+                        historyWriter.addEntry(historyOptions, function () {
+                            callback(null, result);
+                        });
+
                     });
                 });
 
@@ -490,6 +591,7 @@ var Module = function (models, event) {
     this.uploadFile = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
         var headers = req.headers;
+        var addNote = headers.addnote;
         var id = headers.modelid || 'empty';
         var contentType = headers.modelname || 'invoices';
         var files = req.files && req.files.attachfile ? req.files.attachfile : null;
@@ -507,11 +609,35 @@ var Module = function (models, event) {
         }
 
         uploader.postFile(dir, files, {userId: req.session.uName}, function (err, file) {
+            var notes = [];
             if (err) {
                 return next(err);
             }
 
-            Model.findByIdAndUpdate(id, {$push: {attachments: {$each: file}}}, {new: true}, function (err, response) {
+
+            if (addNote) {
+                notes = file.map(function (elem) {
+                    return {
+                        _id       : mongoose.Types.ObjectId(),
+                        attachment: {
+                            name    : elem.name,
+                            shortPas: elem.shortPas
+                        },
+                        user      : {
+                            _id  : req.session.uId,
+                            login: req.session.uName
+                        },
+                        date      : new Date()
+                    }
+                });
+            }
+
+            Model.findByIdAndUpdate(id, {
+                $push: {
+                    attachments: {$each: file},
+                    notes      : {$each: notes}
+                }
+            }, {new: true}, function (err, response) {
                 if (err) {
                     return next(err);
                 }
@@ -526,8 +652,10 @@ var Module = function (models, event) {
         var id = req.params.id;
         var data = req.body;
         var Invoice = models.get(db, 'wTrackInvoice', wTrackInvoiceSchema);
-        var date;
+        var JobsModel = models.get(db, 'jobs', JobsSchema);
+        var ProductModel = models.get(db, 'Product', ProductSchema);
         var Customer = models.get(db, 'Customers', CustomerSchema);
+        var date;
         var query;
         var queryForClosed;
         var model;
@@ -565,8 +693,10 @@ var Module = function (models, event) {
 
             obj.date = new Date();
 
-            if (!obj.author) {
-                obj.author = req.session.uName;
+            if (!obj.user) {
+                obj.user = {};
+                obj.user._id = req.session.uId;
+                obj.user.login = req.session.uName;
             }
 
             data.notes[data.notes.length - 1] = obj;
@@ -634,73 +764,240 @@ var Module = function (models, event) {
                 fx.rates = oxr.rates;
                 fx.base = oxr.base;
 
-                if (data.currency && data.currency.name) {
+                if (data.currency && data.currency.name && Object.keys(oxr.rates).length) {
                     data.currency.rate = oxr.rates[data.currency.name];
                 }
 
                 Invoice.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, invoice) {
+                    var products = data.products;
+                    var historyOptions;
+
                     if (err) {
                         return next(err);
                     }
+                    historyOptions = {
+                        contentType: 'invoice',
+                        data       : data,
+                        req        : req,
+                        contentId  : invoice._id
+                    };
 
-                    if (invoice && invoice._type === 'Proforma') {
-                        model = 'Proforma';
 
-                        query = {
-                            'sourceDocument.model': model,
-                            'sourceDocument._id'  : id,
-                            journal               : CONSTANTS.BEFORE_INVOICE
-                        };
-                        _journalEntryHandler.changeDate(query, data.invoiceDate, req.session.lastDb, function () {
-                        });
+                        if (products) {
+                            async.each(products, function (result, cb) {
+                                var jobs = result.jobs;
+                                var productId = result.product;
+                                var editedBy = {
+                                    user: req.session.uId,
+                                    date: new Date()
+                                };
+                                ProductModel.findByIdAndUpdate(productId, {
+                                    'info.description' : result.description
+                                }, function(err) {
+                                    if (err) {
+                                        return next(err);
+                                    }
+                                    JobsModel.findByIdAndUpdate(jobs, {
+                                        $set: {
+                                            description: result.jobDescription,
+                                            editedBy   : editedBy
+                                        }
+                                    }, {new: true}, function (err, job) {
+                                        if (err) {
+                                            return cb(err);
+                                        }
 
-                        journal = invoice.journal; // CONSTANTS.PROFORMA_JOURNAL;
-                    } else {
-                        model = 'Invoice';
-                        journal = invoice.journal; // CONSTANTS.INVOICE_JOURNAL;
+                                        cb();
+                                    });
+                                });
 
-                        dateForJobs = moment(new Date(data.invoiceDate)).subtract(1, 'seconds');
-                        dateForJobsFinished = moment(new Date(data.invoiceDate)).subtract(2, 'seconds');
 
-                        invoiceProducts = invoice.products;
 
-                        invoiceJobs = [];
+                            }, function () {
+                                if (invoice && invoice._type === 'Proforma') {
+                                    model = 'Proforma';
 
-                        invoiceProducts.forEach(function (prod) {
-                            invoiceJobs.push(prod.jobs);
-                        });
+                                    query = {
+                                        'sourceDocument.model': model,
+                                        'sourceDocument._id'  : id,
+                                        journal               : CONSTANTS.BEFORE_INVOICE
+                                    };
+                                    _journalEntryHandler.changeDate(query, data.invoiceDate, req.session.lastDb, function () {
+                                    });
 
-                        query = {
-                            'sourceDocument.model': 'jobs',
-                            'sourceDocument._id'  : {$in: invoiceJobs},
-                            journal               : CONSTANTS.JOB_FINISHED
-                        };
-                        _journalEntryHandler.changeDate(query, dateForJobs, req.session.lastDb, function () {
-                        });
+                                    journal = invoice.journal; // CONSTANTS.PROFORMA_JOURNAL;
+                                } else {
+                                    model = 'Invoice';
+                                    journal = invoice.journal; // CONSTANTS.INVOICE_JOURNAL;
 
-                        queryForClosed = {
-                            'sourceDocument.model': 'jobs',
-                            'sourceDocument._id'  : {$in: invoiceJobs},
-                            journal               : CONSTANTS.CLOSED_JOB
-                        };
-                        _journalEntryHandler.changeDate(query, dateForJobsFinished, req.session.lastDb, function () {
-                        });
+                                    dateForJobs = moment(new Date(data.invoiceDate)).subtract(1, 'seconds');
+                                    dateForJobsFinished = moment(new Date(data.invoiceDate)).subtract(2, 'seconds');
 
-                        query = {'sourceDocument.model': model, 'sourceDocument._id': id, journal: journal};
-                        _journalEntryHandler.changeDate(query, data.invoiceDate, req.session.lastDb, function () {
-                        });
-                    }
+                                    invoiceProducts = invoice.products;
 
-                    Customer.populate(invoice, {
-                        path  : 'supplier',
-                        select: '_id name fullName'
-                    }, function (err) {
-                        if (err) {
-                            return next(err);
+                                    invoiceJobs = [];
+
+                                    invoiceProducts.forEach(function (prod) {
+                                        invoiceJobs.push(prod.jobs);
+                                    });
+
+                                    query = {
+                                        'sourceDocument.model': 'jobs',
+                                        'sourceDocument._id'  : {$in: invoiceJobs},
+                                        journal               : CONSTANTS.JOB_FINISHED
+                                    };
+                                    _journalEntryHandler.changeDate(query, dateForJobs, req.session.lastDb, function () {
+                                    });
+
+                                    queryForClosed = {
+                                        'sourceDocument.model': 'jobs',
+                                        'sourceDocument._id'  : {$in: invoiceJobs},
+                                        journal               : CONSTANTS.CLOSED_JOB
+                                    };
+                                    _journalEntryHandler.changeDate(query, dateForJobsFinished, req.session.lastDb, function () {
+                                    });
+
+                                    query = {'sourceDocument.model': model, 'sourceDocument._id': id, journal: journal};
+                                    _journalEntryHandler.changeDate(query, data.invoiceDate, req.session.lastDb, function () {
+                                    });
+                                }
+
+                                historyWriter.addEntry(historyOptions, function () {
+                                    Customer.populate(invoice, {
+                                        path  : 'supplier',
+                                        select: '_id name fullName'
+                                    }, function (err) {
+                                        if (err) {
+                                            return next(err);
+                                        }
+
+                                        invoice.populate('workflow', '_id name status')
+                                            .populate('sourceDocument', '_id name')
+                                            .populate('journal', '_id name')
+                                            .populate('payments', '_id name date paymentRef paidAmount createdBy currency')
+                                            .populate('department', '_id name')
+                                            .populate('currency._id', 'name symbol')
+                                            .populate('products.jobs', 'name description')
+                                            .populate('products.product', 'name info')
+                                            .populate('paymentTerms', function (err) {
+                                                if (err) {
+                                                    return next(err);
+                                                }
+
+                                                if (invoice && invoice._type !== 'Proforma'){
+                                                    getHistory(req, invoice, function(err, invoice){
+                                                        if (err) {
+                                                            return next(err);
+                                                        }
+
+                                                        res.status(200).send(invoice);
+                                                    });
+                                                } else {
+                                                    res.status(200).send(invoice);
+                                                }
+
+
+                                            });
+                                    });
+                                });
+
+
+
+
+                            });
+                        } else {
+                            if (invoice && invoice._type === 'Proforma') {
+                                model = 'Proforma';
+
+                                query = {
+                                    'sourceDocument.model': model,
+                                    'sourceDocument._id'  : id,
+                                    journal               : CONSTANTS.BEFORE_INVOICE
+                                };
+                                _journalEntryHandler.changeDate(query, data.invoiceDate, req.session.lastDb, function () {
+                                });
+
+                                journal = invoice.journal; // CONSTANTS.PROFORMA_JOURNAL;
+                            } else {
+                                model = 'Invoice';
+                                journal = invoice.journal; // CONSTANTS.INVOICE_JOURNAL;
+
+                                dateForJobs = moment(new Date(data.invoiceDate)).subtract(1, 'seconds');
+                                dateForJobsFinished = moment(new Date(data.invoiceDate)).subtract(2, 'seconds');
+
+                                invoiceProducts = invoice.products;
+
+                                invoiceJobs = [];
+
+                                invoiceProducts.forEach(function (prod) {
+                                    invoiceJobs.push(prod.jobs);
+                                });
+
+                                query = {
+                                    'sourceDocument.model': 'jobs',
+                                    'sourceDocument._id'  : {$in: invoiceJobs},
+                                    journal               : CONSTANTS.JOB_FINISHED
+                                };
+                                _journalEntryHandler.changeDate(query, dateForJobs, req.session.lastDb, function () {
+                                });
+
+                                queryForClosed = {
+                                    'sourceDocument.model': 'jobs',
+                                    'sourceDocument._id'  : {$in: invoiceJobs},
+                                    journal               : CONSTANTS.CLOSED_JOB
+                                };
+                                _journalEntryHandler.changeDate(query, dateForJobsFinished, req.session.lastDb, function () {
+                                });
+
+                                query = {'sourceDocument.model': model, 'sourceDocument._id': id, journal: journal};
+                                _journalEntryHandler.changeDate(query, invoice.invoiceDate, req.session.lastDb, function () {
+                                });
+                            }
+                            historyWriter.addEntry(historyOptions, function () {
+                                Customer.populate(invoice, {
+                                    path  : 'supplier',
+                                    select: '_id name fullName'
+                                }, function (err) {
+                                    if (err) {
+                                        return next(err);
+                                    }
+
+                                    invoice.populate('workflow', '_id name status')
+                                        .populate('sourceDocument', '_id name')
+                                        .populate('journal', '_id name')
+                                        .populate('payments', '_id name date paymentRef paidAmount createdBy currency')
+                                        .populate('department', '_id name')
+                                        .populate('currency._id', 'name symbol')
+                                        .populate('products.jobs', 'name description')
+                                        .populate('products.product', 'name info')
+                                        .populate('paymentTerms', function (err, invoice){
+                                            if (err) {
+                                                return next(err);
+                                            }
+
+                                            if (invoice && invoice._type !== 'Proforma'){
+                                                getHistory(req, invoice.toJSON(), function(err, invoice){
+                                                    if (err) {
+                                                        return next(err);
+                                                    }
+
+                                                    res.status(200).send(invoice);
+                                                });
+                                            } else {
+                                                res.status(200).send(invoice);
+                                            }
+                                        });
+
+
+
+                                });
+                            });
+
+
                         }
 
-                        res.status(200).send(invoice);
-                    });
+
+
 
                 });
             });
@@ -770,92 +1067,106 @@ var Module = function (models, event) {
             var parallelTask;
             var setWorkflow;
             var updateJobs;
+            var historyOptions;
 
             if (err) {
                 return next(err);
             }
 
-            products = resp.products;
+            historyOptions = {
+                contentType: 'invoice',
+                data       : {
+                    approved   : ' '
+                },
+                req        : req,
+                contentId  : id
+            };
 
-            if (resp._type !== 'Proforma') {
-                setWorkflow = function (callback) {
+            historyWriter.addEntry(historyOptions, function () {
+                products = resp.products;
 
-                    journalEntryComposer(resp, req.session.lastDb, function () {
-                    }, req.session.uId);
+                if (resp._type !== 'Proforma') {
+                    setWorkflow = function (callback) {
 
-                    var request = {
-                        query: {
-                            wId   : 'Proforma',
-                            status: 'Cancelled'
-                        },
+                        journalEntryComposer(resp, req.session.lastDb, function () {
+                        }, req.session.uId);
 
-                        session: req.session
+                        var request = {
+                            query: {
+                                wId   : 'Proforma',
+                                status: 'Cancelled'
+                            },
+
+                            session: req.session
+                        };
+
+                        workflowHandler.getFirstForConvert(request, function (err, workflow) {
+                            Invoice.update({
+                                sourceDocument: objectId(resp.sourceDocument),
+                                payments      : []
+                            }, {
+                                $set: {
+                                    workflow: workflow._id,
+                                    invoiced: true
+                                }
+                            }, {
+                                multi: true
+                            }, callback);
+                        });
                     };
 
-                    workflowHandler.getFirstForConvert(request, function (err, workflow) {
-                        Invoice.update({
-                            sourceDocument: objectId(resp.sourceDocument),
-                            payments      : []
-                        }, {
-                            $set: {
-                                workflow: workflow._id,
-                                invoiced: true
-                            }
-                        }, {
-                            multi: true
-                        }, callback);
-                    });
-                };
+                    updateJobs = function (callback) {
+                        if (products) {
+                            async.each(products, function (result, cb) {
+                                var jobs = result.jobs;
+                                var editedBy = {
+                                    user: req.session.uId,
+                                    date: new Date()
+                                };
+                                JobsModel.findByIdAndUpdate(jobs, {
+                                    $set: {
+                                        invoice : resp._id,
+                                        type    : 'Invoiced',
+                                        workflow: CONSTANTS.JOBSFINISHED,
+                                        editedBy: editedBy
+                                    }
+                                }, {new: true}, function (err, job) {
+                                    if (err) {
+                                        return cb(err);
+                                    }
+                                    project = job.project || null;
 
-                updateJobs = function (callback) {
-                    if (products) {
-                        async.each(products, function (result, cb) {
-                            var jobs = result.jobs;
-                            var editedBy = {
-                                user: req.session.uId,
-                                date: new Date()
-                            };
-                            JobsModel.findByIdAndUpdate(jobs, {
-                                $set: {
-                                    invoice : resp._id,
-                                    type    : 'Invoiced',
-                                    workflow: CONSTANTS.JOBSFINISHED,
-                                    editedBy: editedBy
-                                }
-                            }, {new: true}, function (err, job) {
-                                if (err) {
-                                    return cb(err);
-                                }
-                                project = job.project || null;
+                                    _journalEntryHandler.createCostsForJob({
+                                        req     : req,
+                                        jobId   : jobs,
+                                        workflow: CONSTANTS.JOBSFINISHED
+                                    });
 
-                                _journalEntryHandler.createCostsForJob({
-                                    req     : req,
-                                    jobId   : jobs,
-                                    workflow: CONSTANTS.JOBSFINISHED
+                                    cb();
                                 });
 
-                                cb();
+                            }, function () {
+                                if (project) {
+                                    event.emit('fetchJobsCollection', {project: project, dbName: db});
+                                }
+                                callback();
                             });
+                        }
+                    };
 
-                        }, function () {
-                            if (project) {
-                                event.emit('fetchJobsCollection', {project: project, dbName: db});
-                            }
-                            callback();
-                        });
-                    }
-                };
+                    parallelTask = [updateJobs, setWorkflow];
+                    async.parallel(parallelTask, function (err, response) {
+                        if (err) {
+                            return next(err);
+                        }
+                        res.status(200).send(response);
+                    });
+                } else {
+                    res.status(200).send(resp);
+                }
+            });
 
-                parallelTask = [updateJobs, setWorkflow];
-                async.parallel(parallelTask, function (err, response) {
-                    if (err) {
-                        return next(err);
-                    }
-                    res.status(200).send(response);
-                });
-            } else {
-                res.status(200).send(resp);
-            }
+
         });
     };
 
@@ -1096,6 +1407,13 @@ var Module = function (models, event) {
                         }
                     }, {
                         $lookup: {
+                            from        : 'currency',
+                            localField  : 'currency._id',
+                            foreignField: '_id',
+                            as          : 'currency._id'
+                        }
+                    }, {
+                        $lookup: {
                             from        : 'workflows',
                             localField  : 'workflow',
                             foreignField: '_id',
@@ -1115,7 +1433,8 @@ var Module = function (models, event) {
                             journal        : {$arrayElemAt: ['$journal', 0]},
                             expense        : 1,
                             forSales       : 1,
-                            currency       : 1,
+                            'currency._id' : {$arrayElemAt: ['$currency._id', 0]},
+                            'currency.rate': '$currency.rate',
                             paymentInfo    : 1,
                             invoiceDate    : 1,
                             name           : 1,
@@ -1232,6 +1551,13 @@ var Module = function (models, event) {
                         }
                     }, {
                         $lookup: {
+                            from        : 'currency',
+                            localField  : 'currency._id',
+                            foreignField: '_id',
+                            as          : 'currency._id'
+                        }
+                    }, {
+                        $lookup: {
                             from        : 'journals',
                             localField  : 'journal',
                             foreignField: '_id',
@@ -1268,7 +1594,8 @@ var Module = function (models, event) {
 
                             expense        : 1,
                             forSales       : 1,
-                            currency       : 1,
+                            'currency._id' : {$arrayElemAt: ['$currency._id', 0]},
+                            'currency.rate': '$currency.rate',
                             paymentInfo    : 1,
                             invoiceDate    : 1,
                             name           : 1,
@@ -1408,7 +1735,7 @@ var Module = function (models, event) {
     this.getInvoiceById = function (req, res, next) {
         var data = req.query || {};
         var contentType = data.contentType;
-        var id = data.id;
+        var id = data.id || data._id;
         var forSales;
         var Invoice;
         var optionsObject = {};
@@ -1495,14 +1822,14 @@ var Module = function (models, event) {
 
             query = Invoice.findOne(optionsObject);
             query
-                .populate('products.jobs', '_id name')
-                .populate('products.product', '_id name')
+                .populate('products.jobs', '_id name description')
+                .populate('products.product', '_id name info')
                 .populate('project', '_id name paymentMethod paymentTerms')
                 .populate('currency._id')
                 .populate('journal', '_id name')
-                .populate('payments', '_id name date paymentRef paidAmount')
+                .populate('payments', '_id name date paymentRef paidAmount createdBy currency')
                 .populate('department', '_id name')
-                .populate('paymentTerms', '_id name')
+                .populate('paymentTerms', '_id name count')
                 .populate('createdBy.user', '_id login')
                 .populate('editedBy.user', '_id login')
                 .populate('groups.users')
@@ -1521,8 +1848,19 @@ var Module = function (models, event) {
             if (err) {
                 return next(err);
             }
+            if (result && result._type !== 'Proforma'){
+                getHistory(req, result.toJSON(), function(err, invoice){
+                    if (err) {
+                        return next(err);
+                    }
 
-            res.status(200).send(result);
+                    res.status(200).send(invoice);
+                });
+            } else {
+                res.status(200).send(result);
+            }
+
+
         });
     };
 
@@ -1765,6 +2103,7 @@ var Module = function (models, event) {
                         _journalEntryHandler.checkAndCreateForJob({
                             req     : req,
                             jobId   : id,
+                            jobName : result.name,
                             workflow: CONSTANTS.JOBSINPROGRESS,
                             wTracks : result ? result.wTracks : [],
                             date    : invoiceDeleted.invoiceDate

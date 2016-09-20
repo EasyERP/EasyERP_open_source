@@ -3,10 +3,10 @@ define([
     'jQuery',
     'Underscore',
     'views/dialogViewBase',
-    'text!templates/proforma/EditTemplate.html',
+    'text!templates/Proforma/EditTemplate.html',
     'views/Assignees/AssigneesView',
     'views/Notes/NoteView',
-    'views/proforma/InvoiceProductItems',
+    'views/Proforma/InvoiceProductItems',
     'views/Products/InvoiceOrder/ProductItems',
     'views/salesInvoices/wTrack/wTrackRows',
     'views/Payment/ProformaCreateView',
@@ -287,6 +287,7 @@ define([
             var productId;
             var quantity;
             var price;
+            var jobDescription;
             var description;
             var jobs;
             var subTotal;
@@ -335,7 +336,7 @@ define([
 
                 return App.render({
                     type   : 'error',
-                    message: 'Please fill all required fields.'
+                    message: 'Please choose Due Date'
                 });
             }
 
@@ -356,23 +357,25 @@ define([
                             });
                         }
                         jobs = targetEl.find('[data-name="jobs"]').attr('data-content');
-                        taxes = helpers.spaceReplacer(targetEl.find('.taxes').text());
+                        taxes = helpers.spaceReplacer(targetEl.find('.taxes .sum').text());
                         taxes = parseFloat(taxes) * 100;
-                        description = targetEl.find('[data-name="productDescr"] textarea').val() || targetEl.find('[data-name="productDescr"]').text();
-                        subTotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
+                        description = targetEl.find('[data-name="productName"] textarea').val() || targetEl.find('[data-name="productDescr"]').text();
+                        jobDescription = targetEl.find('textarea.jobsDescription').val();
+                        subTotal = helpers.spaceReplacer(targetEl.find('.subtotal .sum').text());
                         if (subTotal == '') {
                             subTotal = helpers.spaceReplacer(targetEl.find('.amount').text());
                         }
                         subTotal = parseFloat(subTotal) * 100;
 
                         products.push({
-                            product    : productId,
-                            jobs       : jobs,
-                            unitPrice  : price,
-                            quantity   : quantity,
-                            description: $.trim(description),
-                            taxes      : taxes,
-                            subTotal   : subTotal
+                            product       : productId,
+                            jobs          : jobs,
+                            unitPrice     : price,
+                            quantity      : quantity,
+                            description   : $.trim(description),
+                            jobDescription: jobDescription,
+                            taxes         : taxes,
+                            subTotal      : subTotal
                         });
                     }
                 }
@@ -611,7 +614,7 @@ define([
             populate.get2name('#salesPerson', CONSTANTS.EMPLOYEES_RELATEDUSER, {}, this, true, true);
             populate.get('#paymentTerm', '/paymentTerm', {}, 'name', this, true, true);
             populate.get('#currencyDd', '/currency/getForDd', {}, 'name', this, true);
-            
+
             if (!this.currentModel.toJSON().approved) {
                 populate.get('#journal', '/journals/getForDd', {}, 'name', this, true, true, this.currentModel.toJSON().journal._id);
             }
@@ -654,10 +657,10 @@ define([
                 productItemContainer = this.$el.find('#productItemsHolder');
                 productItemContainer.append(
                     new ProductItemView({
-                        editable: true,
+                        editable : true,
                         canBeSold: true,
-                        service: service,
-                        forSales: self.forSales
+                        service  : service,
+                        forSales : self.forSales
                     }).render({model: model}).el
                 );
             }

@@ -3,11 +3,12 @@ define([
     'jQuery',
     'Underscore',
     'text!templates/Accounting/CreatePaymentMethods.html',
+    'text!templates/Accounting/paymentMethodEl.html',
     'views/selectView/selectView',
     'models/paymentMethod',
     'populate',
     'constants'
-], function (Backbone, $, _, template, SelectView, Model, populate, CONSTANTS) {
+], function (Backbone, $, _, template, tableEL, SelectView, Model, populate, CONSTANTS) {
     'use strict';
 
     var EditView = Backbone.View.extend({
@@ -17,6 +18,7 @@ define([
             _.bindAll(this, 'render', 'saveItem');
 
             this.currentModel = new Model();
+            this.collection = options.collection;
             this.responseObj = {};
             this.render(options);
         },
@@ -83,16 +85,10 @@ define([
 
             this.currentModel.save(data, {
                 wait   : true,
-                success: function () {
-                    var url = window.location.hash;
-
-                    if (url === '#easyErp/Accounts') {
-                        self.hideDialog();
-                        Backbone.history.fragment = '';
-                        Backbone.history.navigate(url, {trigger: true});
-                    } else {
-                        self.hideDialog();
-                    }
+                success: function (res, model) {
+                    self.hideDialog();
+                    $('#paymentMethodsTable').append(_.template(tableEL, {elem : model}));
+                    self.collection.add(res);
                 },
 
                 error: function (model, xhr) {
@@ -121,11 +117,13 @@ define([
                 buttons      : [
                     {
                         text : 'Save',
+                        class: 'btn blue',
                         click: function () {
                             self.saveItem();
                         }
                     }, {
                         text : 'Cancel',
+                        class: 'btn',
                         click: function () {
                             self.hideDialog();
                         }

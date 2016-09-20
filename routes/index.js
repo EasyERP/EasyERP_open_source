@@ -49,6 +49,7 @@ module.exports = function (app, mainDb) {
     var expensesInvoiceRouter = require('./expensesInvoice')(models, event);
     var dividendInvoiceRouter = require('./dividendInvoice')(models, event);
     var filterRouter = require('./filter')(models);
+    var industryRouter = require('./industry')(models);
     var productCategoriesRouter = require('./productCategories')(models, event);
     var customersRouter = require('./customers')(models, event);
 
@@ -66,6 +67,7 @@ module.exports = function (app, mainDb) {
     var salaryReportRouter = require('./salaryReport')(models);
     var userRouter = require('./user')(event, models);
     var campaignRouter = require('./campaign')(models);
+    var orgSettingsRouter = require('./orgSettings')(models);
     var degreesRouter = require('./degrees')(models);
     var profilesRouter = require('./profiles')(models);
     var tasksRouter = require('./tasks')(models, event);
@@ -79,8 +81,10 @@ module.exports = function (app, mainDb) {
     var contractJobsRouter = require('./contractJobs')(models);
     var projectsDashboardRouter = require('./projectsDashboard')(models);
     var followersRouter = require('./followers')(models);
+    var accountTypesRouter = require('./accountTypes')(models);
 
     var logger = require('../helpers/logger');
+    var exportToPdf = require('../helpers/pdfExtractor');
     var async = require('async');
     var redisStore = require('../helpers/redisClient');
 
@@ -150,6 +154,7 @@ module.exports = function (app, mainDb) {
     app.use('/workflows', workflowRouter);
     app.use('/payments', paymentRouter);
     app.use('/period', periodRouter);
+    app.use('/organizationSettings', orgSettingsRouter);
     app.use('/paymentMethod', paymentMethodRouter);
     app.use('/importFile', importFileRouter);
     app.use('/wTrack', wTrackRouter);
@@ -167,6 +172,7 @@ module.exports = function (app, mainDb) {
     app.use('/monthHours', monthHoursRouter);
     app.use('/modules', modulesRouter);
     app.use('/bonusType', bonusTypeRouter);
+    app.use('/industry', industryRouter);
     app.use('/dashboard', dashboardRouter);
     app.use('/dealTasks', dealTasksRouter);
     app.use('/category', productCategoriesRouter);
@@ -197,6 +203,7 @@ module.exports = function (app, mainDb) {
     app.use('/contractJobs', contractJobsRouter);
     app.use('/projectsDashboard', projectsDashboardRouter);
     app.use('/followers', followersRouter);
+    app.use('/accountTypes', accountTypesRouter);
 
     /**
      *@api {get} /getDBS/ Request DBS
@@ -252,6 +259,9 @@ module.exports = function (app, mainDb) {
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});
     });
+
+    app.post('/exportToPdf', exportToPdf.post);
+    app.get('/exportToPdf', exportToPdf.get);
 
     /**
      *@api {get} /currentDb/ Request CurrentDb

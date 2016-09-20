@@ -6,7 +6,7 @@ define([
     'text!templates/salesProforma/list/ListHeader.html',
     'text!templates/stages.html',
     'views/salesInvoices/CreateView',
-    'views/proforma/EditView',
+    'views/Proforma/EditView',
     'models/InvoiceModel',
     'views/salesProforma/list/ListItemView',
     'collections/salesProforma/filterCollection',

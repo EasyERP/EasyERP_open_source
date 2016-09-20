@@ -8,8 +8,9 @@ define([
     'text!templates/Products/InvoiceOrder/TotalAmount.html',
     'collections/Products/products',
     'populate',
-    'helpers'
-], function (Backbone, $, _, productItemTemplate, ProductInputContent, ProductItemsEditList, totalAmount, ProductCollection, populate, helpers) {
+    'helpers',
+    'helpers/keyValidator'
+], function (Backbone, $, _, productItemTemplate, ProductInputContent, ProductItemsEditList, totalAmount, ProductCollection, populate, helpers, keyValidator) {
     'use strict';
 
     var ProductItemTemplate = Backbone.View.extend({
@@ -24,8 +25,11 @@ define([
             'click .current-selected'                                                 : 'showProductsSelect',
             'mouseenter .editable:not(.quickEdit), .editable .no-long:not(.quickEdit)': 'quickEdit',
             'mouseleave .editable'                                                    : 'removeEdit',
+            'change #discount'                                                        : 'recalculateDiscount',
             'click #cancelSpan'                                                       : 'cancelClick',
             'click #saveSpan'                                                         : 'saveClick',
+            'keyup .discountPercentage'                                               : 'discountChange',
+            'keypress #discount'                                                      : 'keypressHandler',
             'click #editSpan'                                                         : 'editClick'
         },
 
@@ -37,6 +41,7 @@ define([
 
             if (options) {
                 this.visible = !!options.balanceVisible;
+                this.discountVisible = !!options.discountVisible;
                 this.isPaid = !!options.isPaid;
                 this.notAddItem = !!options.notAddItem;
                 this.writeOff = !!options.writeOff;
@@ -44,7 +49,7 @@ define([
 
             this.forSales = options.forSales;
 
-            this.render();
+           /* this.render();*/
 
             products = new ProductCollection(options);
             products.bind('reset', function () {
@@ -73,6 +78,10 @@ define([
             }
 
             return false;
+        },
+
+        keypressHandler: function (e) {
+            return keyValidator(e, true);
         },
 
         filterProductsForDD: function () {
@@ -204,7 +213,7 @@ define([
 
             $('.newSelectList').hide();
 
-            this.calculateTotal(selectedProduct.info.salePrice);
+            this.calculateTotal();
         },
 
         recalculateTaxes: function (parent) {
@@ -222,7 +231,28 @@ define([
             this.calculateTotal();
         },
 
-        calculateTotal: function () {
+        recalculateDiscount: function (e) {
+            var $target = $(e.target);
+            var parentTr = $target.closest('tr');
+            var quantity = parseFloat($target.val()/100);
+            var cost = parseFloat(helpers.spaceReplacer(this.$el.find('#totalUntaxes').text()));
+            var discount = quantity * cost;
+            discount = discount.toFixed(2);
+
+            parentTr.find('#discountSum').text('-' + helpers.currencySplitter(discount));
+
+            this.calculateTotal(discount);
+        },
+
+        discountChange : function (e){
+            var $targetEl = $(e.target);
+
+            if($targetEl.val() > 100){
+                $targetEl.val(100);
+            }
+        },
+
+        calculateTotal: function (discount) {
             var thisEl = this.$el;
 
             var totalUntaxContainer = thisEl.find('#totalUntaxes');
@@ -242,14 +272,14 @@ define([
             if (totalEls) {
                 for (i = totalEls - 1; i >= 0; i--) {
                     $currentEl = $(resultForCalculate[i]);
-                    quantity = $currentEl.find('[data-name="quantity"]').text();
-                    cost = $currentEl.find('[data-name="price"]').text();
+                    quantity = $.trim($currentEl.find('[data-name="quantity"]').text());
+                    cost = helpers.spaceReplacer($currentEl.find('[data-name="price"] .sum').text());
                     totalUntax += (quantity * cost);
                 }
             }
 
             totalUntax = totalUntax.toFixed(2);
-            totalUntaxContainer.text(totalUntax);
+            totalUntaxContainer.text(helpers.currencySplitter(totalUntax));
             totalUntax = parseFloat(totalUntax);
 
             taxes = totalUntax * this.taxesRate;
@@ -258,7 +288,12 @@ define([
             taxes = parseFloat(taxes);
 
             total = totalUntax + taxes;
-            total = total.toFixed(2);
+
+            if (discount){
+                total = total - discount;
+            }
+
+            total = helpers.currencySplitter(total.toFixed(2));
             totalContainer.text(total);
 
             balanceContainer.text(total);
@@ -303,7 +338,8 @@ define([
                         currencySplitter: helpers.currencySplitter,
                         currencyClass   : helpers.currencyClass,
                         currency        : currency,
-                        writeOff        : self.writeOff
+                        writeOff        : self.writeOff,
+                        approved        : options.model.approved
 
                     }));
                     this.recalculateTaxes(this.$el.find('.listTable'));
@@ -311,6 +347,7 @@ define([
                     totalAmountContainer.append(_.template(totalAmount, {
                         model           : options.model,
                         balanceVisible  : this.visible,
+                        discountVisible : this.discountVisible,
                         currencySplitter: helpers.currencySplitter,
                         currencyClass   : helpers.currencyClass
                     }));
@@ -325,6 +362,7 @@ define([
                 totalAmountContainer = thisEl.find('#totalAmountContainer');
                 totalAmountContainer.append(_.template(totalAmount, {
                     model           : null,
+                    discountVisible : this.discountVisible,
                     balanceVisible  : this.visible,
                     currencySplitter: helpers.currencySplitter
                 }));

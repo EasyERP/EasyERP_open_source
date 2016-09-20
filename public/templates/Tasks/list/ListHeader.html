@@ -9,35 +9,50 @@
       <li><input type="checkbox"  value="null" checked="checked"><span>Undefinded</span></li>
 	</ul>-->
 <div id="searchContainer"></div>
-<table class="list task-list">
-    <thead>
-    <tr>
-        <th>
-            <input type="checkbox" id="checkAll"/>
-        </th>
-        <th class="oe_sortable" data-sort="project.projectShortDesc">TaskID<span class="arrow down">7</span><span class="arrow up">v</span></th>
-        <th class="oe_sortable" data-sort="summary">Task Summary<span class="arrow down">7</span><span class="arrow up">v</span>
-        </th>
-        <th class="oe_sortable" data-sort="project">Project<span class="arrow down">7</span><span
-                class="arrow up">v</span></th>
-        <th class="oe_sortable" data-sort="workflow">Status<span class="arrow down">7</span><span
-                class="arrow up">v</span></th>
-        <th class="oe_sortable" data-sort="assignedTo">Assigned to<span class="arrow down">7</span><span
-                class="arrow up">v</span></th>
-        <th class="oe_sortable" data-sort="estimated">Estimated<span class="arrow down">7</span><span
-                class="arrow up">v</span></th>
-        <th class="oe_sortable" data-sort="logged">Logged<span class="arrow down">7</span><span
-                class="arrow up">v</span></th>
-        <th class="oe_sortable" data-sort="type">Type<span class="arrow down">7</span><span
-                class="arrow up">v</span></th>
-        <th class="oe_sortable" data-sort="progress">Progress<span class="arrow down">7</span><span
-                class="arrow up">v</span></th>
-        <th class="oe_sortable" data-sort="createdBy.date">Created By<span class="arrow down">7</span><span
-                class="arrow up">v</span></th>
-        <th class="oe_sortable sortDn" data-sort="editedBy.date">Edited By<span class="arrow down">7</span><span
-                class="arrow up">v</span></th>
-    </tr>
-    </thead>
-    <tbody id="listTable"></tbody>
-</table>
+<div class="_tableTacksWrap">
+    <table class="list stripedList">
+        <colgroup>
+            <col width="42px">
+            <col width="11%">
+            <col width="11%">
+            <col width="13%">
+            <col width="8%">
+            <col width="9%">
+            <col width="8%">
+            <col width="8%">
+            <col width="6%">
+            <col width="145px">
+            <col width="13%">
+            <col width="13%">
+        </colgroup>
+        <thead>
+        <tr>
+            <th class="centerCell">
+                <input type="checkbox" id="checkAll"/>
+            </th>
+            <th class="oe_sortable" data-sort="project.projectShortDesc">TaskID<span class="arrow down"></span><span class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="summary">Task Summary<span class="arrow down"></span><span class="arrow up"></span>
+            </th>
+            <th class="oe_sortable" data-sort="project">Project<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="workflow">Status<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="assignedTo">Assigned to<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="estimated">Estimated<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="logged">Logged<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="type">Type<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="progress">Progress<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="createdBy.date">Created By<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable sortDn" data-sort="editedBy.date">Edited By<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+        </tr>
+        </thead>
+        <tbody id="listTable"></tbody>
+    </table>
 </div>

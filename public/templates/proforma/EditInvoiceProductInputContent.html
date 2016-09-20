@@ -1,25 +1,29 @@
 <% products.forEach(function(product){ %>
 <tr class="productItem" data-id="<%=product.product ? product.product._id : 'err'%>">
-    <td data-name="productName"><a class="productsDd" href="javascript:;"><%=product.product ? product.product.name : '- - -' %></a></td>
-    <% if (forSales) {%>
+    <td data-name="productName">
+        <div class="jobsWescWrap">
+            <a class="productsDd" href="javascript:;"><%=product.product ? product.product.name : '- - -' %></a>
+            <textarea class="productDescr" <%= approved  ? 'readonly' : ''%>><%= product ? product.product.info.description : ''%></textarea></td>
+    </div>
         <% if (product.jobs) { %>
             <td data-name="jobs" data-content="<%=product.jobs._id%>">
+                <div class="jobsWescWrap">
                 <a id="jobs" href="javascript:;"><%=product.jobs.name%></a>
+                <textarea class="jobsDescription" <%=approved  ? 'readonly' : ''%>><%=product.jobs.description%></textarea>
+                </div>
             </td>
         <% } %>
-    <% } else {%>
-    <td data-name="productDescr" class="<%=editable  ? 'editable' : ''%>"><span><%=product.description%></span></td>
-    <% } %>
     <td data-name="quantity" class=""><span>1</span></td>
     <% var editable = !approved %>
-    <td data-name="price" class="<%= editable ? 'editable' : ''%> forNum <%=currencyClass(currency._id._id)%>">
+    <td data-name="price" class="<%= editable ? 'editable' : ''%> forNum ">
+        <span class="currencySymbol"><%=(currency && currency._id ? currency._id.symbol : '') %></span><span class="sum">
         <% if(editable) { %>
         <input id="editInput" maxlength="9" class="statusInfo" size=7 type="text" value="<%=product.unitPrice%>" />
         <% } else { %>
-        <span><%=product.unitPrice%></span>
+        <span class="sum"><%=product.unitPrice%></span>
         <% } %>
     </td>
-    <td class="taxes <%=currencyClass(currency._id._id)%>"><span><%=product.taxes%></span></td>
-    <td class="subtotal <%=currencyClass(currency._id._id)%>"><span><%=currencySplitter(product.subTotal.toString())%></span></td>
+    <td class="taxes"><span class="currencySymbol"><%=(currency && currency._id ? currency._id.symbol : '') %></span><span class="sum"><%=product.taxes%></span></td>
+    <td class="subtotal"><span class="currencySymbol"><%=(currency && currency._id ? currency._id.symbol : '') %></span><span class="sum"><%=currencySplitter(product.subTotal.toString())%></span></td>
 </tr>
 <% }); %>

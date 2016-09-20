@@ -45,7 +45,10 @@
         <% if (notes && notes.length) { %>
             <% notes = notes || [];%>
             <% notes.reverse();
-            _.each(notes, function(val,key){ %>
+            _.each(notes, function(val, key){ %>
+        <%debugger%>
+        <%if (!val.history && !val.attachment && !val.pay) {%>
+
             <div id="<%=val['_id'] %>" class="noteContainer noteInner">
                 <div class="noteTitle">
                     <span><%=val.title ? val.title.replace(/</g,"&#60;").replace(/>/g,"&#62;") : '' %></span>
@@ -75,6 +78,7 @@
                 </div>
             </div>
             <div class="clearfix"></div>
+        <% } %>
 
             <% }); notes.reverse(); %>
         <% } %>

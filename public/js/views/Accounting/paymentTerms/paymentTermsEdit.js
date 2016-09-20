@@ -3,10 +3,12 @@ define([
     'jQuery',
     'Underscore',
     'text!templates/Accounting/EditPaymentTerms.html',
+    'text!templates/Accounting/paymentTermsEl.html',
     'views/selectView/selectView',
     'populate',
-    'constants'
-], function (Backbone, $, _, EditTemplate, SelectView, populate, CONSTANTS) {
+    'constants',
+    'helpers/keyValidator'
+], function (Backbone, $, _, EditTemplate, tableEL, SelectView, populate, CONSTANTS, keyValidator) {
     'use strict';
 
     var EditView = Backbone.View.extend({
@@ -27,28 +29,32 @@ define([
             this.render(options);
         },
 
+        events: {
+            'keypress #paymentTermCount' : 'keypressHandler'
+        },
+
+
         saveItem: function () {
             var self = this;
             var thisEl = this.$el;
 
             var name = thisEl.find('#paymentTermName').val();
+            var count = thisEl.find('#paymentTermCount').val();
 
             var data = {
-                name: name
+                name: name,
+                count :  count || 1
             };
 
             this.currentModel.save(data, {
                 wait   : true,
-                success: function (res) {
-                    var url = window.location.hash;
+                success: function (res, model) {
+                    var el =  $('#paymentterms-holder').find('tr[data-id="' + model._id + '"]');
+                    self.hideDialog();
 
-                    if (url === '#easyErp/Accounts') {
-                        self.hideDialog();
-                        Backbone.history.fragment = '';
-                        Backbone.history.navigate(url, {trigger: true});
-                    } else {
-                        self.hideDialog();
-                    }
+
+                    el.after(_.template(tableEL, {elem : model}));
+                    el.remove();
                 },
 
                 error: function (model, xhr) {
@@ -59,6 +65,10 @@ define([
 
         hideDialog: function () {
             $('.edit-dialog').remove();
+        },
+
+        keypressHandler: function (e) {
+            return keyValidator(e);
         },
 
         render: function () {
@@ -77,6 +87,7 @@ define([
                 buttons      : [
                     {
                         text : 'Save',
+                        class: 'btn blue',
                         click: function () {
                             self.saveItem();
                         }
@@ -84,6 +95,7 @@ define([
 
                     {
                         text : 'Cancel',
+                        class: 'btn',
                         click: function () {
                             self.hideDialog();
                         }
@@ -91,8 +103,6 @@ define([
                 ]
 
             });
-
-            populate.get('#currency', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
 
             return this;
         }

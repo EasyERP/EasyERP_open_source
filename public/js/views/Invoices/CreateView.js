@@ -40,19 +40,19 @@ define([
         },
 
         chooseOption: function (e) {
-            var currencyElement = $(e.target).parents('dd').find('.current-selected');
-            var oldCurrency = currencyElement.attr('data-id');
-            var newCurrency = $(e.target).attr('id');
-            var oldCurrencyClass = helpers.currencyClass(oldCurrency);
-            var newCurrencyClass = helpers.currencyClass(newCurrency);
-            var holder;
-            var array = this.$el.find('.' + oldCurrencyClass);
+            var $target = $(e.target);
+            var holder = $target.parents('dd').find('.current-selected');
+            var symbol;
+            var currency;
 
-            array.removeClass(oldCurrencyClass).addClass(newCurrencyClass);
+            if ($target.closest('a').attr('id') === 'currencyDd'){
+                currency =  _.findWhere(this.responseObj['#currencyDd'], {_id : $target.attr('id')});
+                symbol = currency ? currency.currency : '$';
+                $target.closest('dd').find('.current-selected').attr('data-symbol', symbol);
+                this.$el.find('.currencySymbol').text(symbol);
+                this.currencySymbol = symbol;
+            }
 
-            currencyElement.text($(e.target).text()).attr('data-id', newCurrency);
-
-            holder = $(e.target).parents('dd').find('.current-selected');
             holder.text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
 
             this.hideNewSelect();
@@ -101,8 +101,8 @@ define([
             };
 
             var currency = {
-                _id : $currentEl.find('#currencyDd_Create').attr('data-id'),
-                name: $.trim($currentEl.find('#currencyDd_Create').text())
+                _id : $currentEl.find('#currencyDd').attr('data-id'),
+                name: $.trim($currentEl.find('#currencyDd').text())
             };
 
             var usersId = [];
@@ -127,8 +127,8 @@ define([
                         quantity = targetEl.find('[data-name="quantity"] input').val();
                         price = targetEl.find('[data-name="price"] input').val() * 100;
                         description = targetEl.find('[data-name="productDescr"] textarea').val();
-                        taxes = helpers.spaceReplacer(targetEl.find('.taxes').text());
-                        subtotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
+                        taxes = helpers.spaceReplacer(targetEl.find('.taxes .sum').text());
+                        subtotal = helpers.spaceReplacer(targetEl.find('.subtotal .sum').text());
                         subtotal = parseFloat(subtotal) * 100;
 
                         if (isNaN(price) || price <= 0) {
@@ -285,12 +285,12 @@ define([
 
             this.renderAssignees(this.model);
 
-            this.createProductView();
 
-            invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
+
+            /*invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
             invoiceItemContainer.append(
                 new InvoiceItemView({balanceVisible: true, canBeSold: this.forSales}).render().el
-            );
+            );*/
 
             paymentContainer = this.$el.find('#payments-container');
             paymentContainer.append(
@@ -305,7 +305,7 @@ define([
             });
             $notDiv.append(this.attachView.render().el);
 
-            populate.get('#currencyDd_Create', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
+            populate.get('#currencyDd', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
 
             populate.get2name('#supplier_Create', CONSTANTS.URLS.SUPPLIER, {}, this, false, true);
             populate.get('#payment_terms_Create', '/paymentTerm', {}, 'name', this, true, true);
@@ -316,6 +316,8 @@ define([
                     self.defaultWorkflow = response._id;
                 }
             });
+
+            this.createProductView();
 
             this.$el.find('#invoice_date_Create').datepicker({
                 dateFormat : 'd M, yy',

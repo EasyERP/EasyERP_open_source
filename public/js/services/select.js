@@ -11,14 +11,23 @@ define([
         e.stopPropagation();
         e.preventDefault();
 
-        if ($('.newSelectList').is(':visible')) {
+        if ($existingSelect.is(':visible')) { // add in case of click to same select
             if ('hideHealth' in this) {
                 this.hideHealth();
             }
 
             return false;
         }
-        $existingSelect.replaceWith(_.template(stagesTamplate, {stagesCollection: this.stages}));
+
+        if ($('.newSelectList').is(':visible')) { // add in case of click to another select
+            if ('hideHealth' in this) {
+                this.hideHealth();
+            }
+
+            // return false;
+        }
+
+        $targetEl.append(_.template(stagesTamplate, {stagesCollection: this.stages}));
 
         return false;
     }

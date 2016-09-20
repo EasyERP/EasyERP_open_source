@@ -72,13 +72,15 @@ var Module = function (models) {
     this.getForDd = function (req, res, next) {
         var JobPosition = models.get(req.session.lastDb, 'JobPosition', jobPositionSchema);
 
-        JobPosition.find({}, {name: 1}).sort({name: 1}).exec(function (err, result) {
-            if (err) {
-                return next(err);
-            }
+        JobPosition.find({}, {name: 1, department: 1})
+            .sort({name: 1})
+            .exec(function (err, result) {
+                if (err) {
+                    return next(err);
+                }
 
-            res.status(200).send({data: result});
-        });
+                res.status(200).send({data: result});
+            });
     };
 
     this.jobType = function (req, res, next) {
@@ -195,7 +197,6 @@ var Module = function (models) {
                             }
                             return personB[key] - personA[key];
                         }
-
 
                         keysSort = Object.keys(sort);
 

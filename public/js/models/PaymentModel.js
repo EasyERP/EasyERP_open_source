@@ -29,7 +29,8 @@ define([
             return CONSTANTS.URLS.PAYMENT;
         },
 
-        parse: function (model) {
+        parse: function (response) {
+            var model = response.success || response;
             var differenceAmount = model.differenceAmount || 0;
             var paidAmount = model.paidAmount || 0;
             var invoiced;

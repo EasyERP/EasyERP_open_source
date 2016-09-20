@@ -1,6 +1,6 @@
 <% collection.forEach(function(model, index){ %>
 <tr data-id="<%=model._id%>">
-    <td class="notForm"><input id="<%=model._id%>" type="checkbox" value="<%=model._id%>" class="checkbox"/></td>
+    <td class="centerCell"><input id="<%=model._id%>" type="checkbox" value="<%=model._id%>" class="checkbox"/></td>
     <td class="editable" data-content="employee"><%=model.employee ? model.employee.name.first + ' ' + model.employee.name.last : ''%></td>
     <td><%=model.month + '/' + model.year%></td>
     <td class="editable" data-content="paymentType"><%=model.type ? model.type.name : ''%></td>

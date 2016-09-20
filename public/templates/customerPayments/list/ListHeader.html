@@ -1,39 +1,38 @@
 <div id="searchContainer"></div>
-<div>
-    <table class="list payment-list">
-        <col width="2%">
-        <col width="2%">
-        <col width="12%">
-        <col width="12%">
-        <col width="12%">
-        <col width="12%">
-        <col width="28%">
-        <col width="27%">
-        <col width="15%">
-
+<div class="_tablePurchasePaymentsWrap">
+    <table class="list stripedList">
+        <colgroup>
+            <col width="42px">
+            <col width="18%">
+            <col width="18%">
+            <col width="18%">
+            <col width="17%">
+            <col width="12%">
+            <col width="17%">
+        </colgroup>
         <thead>
         <tr>
             <th class="centerCell"><input type="checkbox" id="checkAll"/></th>
-            <th class="oe_sortable" data-sort="assigned.name.first">Assigned<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="supplier.name.first">Company<span class="arrow down">7</span><span
-                    class="arrow up">v</span>
-            </th>
-            <th class="oe_sortable" data-sort="invoice.name">Invoice<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="paymentMethod.name">Bank account<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="paidAmount">Paid<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable sortDn" data-sort="date">Payment Date<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="assigned.name.first">Assigned<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="supplier.name.first">Company<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="invoice.name">Invoice<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="paymentMethod.name">Bank account<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="paidAmount">Paid<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable sortDn" data-sort="date">Payment Date<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
         </tr>
         </thead>
         <tbody id="listTable" class="enableTableOdd"></tbody>
-        <tfoot id="listTotal"><tr>
+        <tfoot id="listTotal">
+        <tr>
             <td colspan="5"></td>
             <td><span id="totalPaidAmount" class="money">0.00</span></td>
-
-        </tr></tfoot>
+        </tr>
+        </tfoot>
     </table>
 </div>

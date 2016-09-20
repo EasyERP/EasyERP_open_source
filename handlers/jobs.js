@@ -1665,17 +1665,18 @@ var Module = function (models, event) {
         });
     };
 
-    this.getForOverview = function (req, res, next) {
-        // Project Overview
+    function getForOverview(req, res, next, options) {
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
         var projectId = req.params.id;
         var data = req.query;
+        var match = {
+            project: objectId(projectId)
+        };
+        var query = options ? options.query : null;
 
         JobsModel
             .aggregate([{
-                $match: {
-                    project: objectId(projectId)
-                }
+                $match: query || match
             }, {
                 $lookup: {
                     from        : 'journalentries',
@@ -1701,12 +1702,20 @@ var Module = function (models, event) {
                         }
                     },
 
-                    type     : 1,
-                    name     : 1,
-                    project  : 1,
-                    invoice  : 1,
-                    quotation: 1,
-                    workflow : 1
+                    type       : 1,
+                    name       : 1,
+                    description: 1,
+                    project    : 1,
+                    invoice    : 1,
+                    quotation  : 1,
+                    workflow   : 1
+                }
+            }, {
+                $lookup: {
+                    from        : 'Project',
+                    localField  : 'project',
+                    foreignField: '_id',
+                    as          : 'project'
                 }
             }, {
                 $lookup: {
@@ -1734,6 +1743,8 @@ var Module = function (models, event) {
                     journalentries: 1,
                     type          : 1,
                     name          : 1,
+                    description   : 1,
+                    project       : {$arrayElemAt: ['$project', 0]},
                     invoice       : {$arrayElemAt: ['$invoice', 0]},
                     quotation     : {$arrayElemAt: ['$quotation', 0]},
                     workflow      : {$arrayElemAt: ['$workflow', 0]}
@@ -1743,6 +1754,8 @@ var Module = function (models, event) {
                     journalentries: 1,
                     type          : 1,
                     name          : 1,
+                    'project._id' : '$project._id',
+                    'project.name': '$project.name',
                     invoice       : {
                         $cond: [{$eq: ['$invoice._type', 'writeOff']}, null, {
                             _id     : '$invoice._id',
@@ -1754,7 +1767,8 @@ var Module = function (models, event) {
                     quotation: {
                         _id     : '$quotation._id',
                         name    : '$quotation.name',
-                        currency: '$quotation.currency'
+                        currency: '$quotation.currency',
+                        isOrder : '$quotation.isOrder'
                     },
 
                     jobPriceQuotation: {
@@ -1766,7 +1780,8 @@ var Module = function (models, event) {
                             }
                         }
                     },
-                    jobPriceInvoice  : {
+
+                    jobPriceInvoice: {
                         $filter: {
                             input: '$invoice.products',
                             as   : 'products',
@@ -1779,12 +1794,16 @@ var Module = function (models, event) {
                     workflow: {
                         _id : '$workflow._id',
                         name: '$workflow.name'
-                    }
+                    },
+
+                    description: 1
                 }
             }, {
                 $project: {
                     journalentries: 1,
+                    project       : 1,
                     type          : 1,
+                    description   : 1,
                     name          : 1,
                     invoice       : 1,
                     quotation     : 1,
@@ -1798,14 +1817,16 @@ var Module = function (models, event) {
                 }
             }, {
                 $group: {
-                    _id      : '$_id',
-                    name     : {$first: '$name'},
-                    invoice  : {$first: '$invoice'},
-                    type     : {$first: '$type'},
-                    quotation: {$first: '$quotation'},
-                    workflow : {$first: '$workflow'},
-                    cost     : {$sum: '$journalentries.debit'},
-                    jobPrice : {$first: '$jobPrice.unitPrice'}
+                    _id        : '$_id',
+                    name       : {$first: '$name'},
+                    invoice    : {$first: '$invoice'},
+                    project    : {$first: '$project'},
+                    description: {$first: '$description'},
+                    type       : {$first: '$type'},
+                    quotation  : {$first: '$quotation'},
+                    workflow   : {$first: '$workflow'},
+                    cost       : {$sum: '$journalentries.debit'},
+                    jobPrice   : {$first: '$jobPrice.unitPrice'}
                 }
             }, {
                 $lookup: {
@@ -1830,425 +1851,466 @@ var Module = function (models, event) {
                 }
             }, {
                 $project: {
-
                     name             : 1,
                     invoice          : 1,
                     type             : 1,
                     quotation        : 1,
                     workflow         : 1,
+                    description      : 1,
                     cost             : 1,
                     jobPrice         : 1,
                     tCards           : 1,
+                    project          : 1,
                     totalQAWorked    : {$cond: [{$eq: ['$tCards.department', objectId('55b92ace21e4b7c40f000011')]}, '$tCards.worked', 0]},
                     totalDesignWorked: {$cond: [{$eq: ['$tCards.department', objectId('55bb1f14cb76ca630b000006')]}, '$tCards.worked', 0]}
 
                 }
-            },
-                {
-                    $group: {
-                        _id              : '$_id',
-                        name             : {$first: '$name'},
-                        invoice          : {$first: '$invoice'},
-                        type             : {$first: '$type'},
-                        quotation        : {$first: '$quotation'},
-                        workflow         : {$first: '$workflow'},
-                        cost             : {$first: '$cost'},
-                        jobPrice         : {$first: '$jobPrice'},
-                        totalWorked      : {$sum: '$tCards.worked'},
-                        tCards           : {$push: '$tCards'},
-                        tCardMinDate     : {$first: '$tCards'},
-                        tCardMaxDate     : {$last: '$tCards'},
-                        totalQAWorked    : {$sum: '$totalQAWorked'},
-                        totalDesignWorked: {$sum: '$totalDesignWorked'}
-                    }
-                }, {
-                    $unwind: {
-                        path                      : '$tCards',
-                        preserveNullAndEmptyArrays: true
-                    }
-                }, {
-                    $group: {
-                        _id              : {
-                            _id       : '$_id',
-                            employee  : '$tCards.employee',
-                            department: '$tCards.department'
-                        },
-                        tCardDateByWeek  : {$last: '$tCards.dateByWeek'},
-                        name             : {$first: '$name'},
-                        invoice          : {$first: '$invoice'},
-                        type             : {$first: '$type'},
-                        tCardMinDate     : {$first: '$tCardMinDate'},
-                        tCardMaxDate     : {$last: '$tCardMaxDate'},
-                        quotation        : {$first: '$quotation'},
-                        workflow         : {$first: '$workflow'},
-                        cost             : {$first: '$cost'},
-                        jobPrice         : {$first: '$jobPrice'},
-                        worked           : {$sum: '$tCards.worked'},
-                        totalWorked      : {$first: '$totalWorked'},
-                        totalQAWorked    : {$first: '$totalQAWorked'},
-                        totalDesignWorked: {$first: '$totalDesignWorked'}
-                    }
-                }, {
-                    $project: {
-                        name             : 1,
-                        invoice          : 1,
-                        type             : 1,
-                        quotation        : 1,
-                        workflow         : 1,
-                        cost             : 1,
-                        jobPrice         : 1,
-                        tCardMinDate     : 1,
-                        tCardMaxDate     : 1,
-                        totalWorked      : {
-                            $cond: [{$eq: ['$totalWorked', 0]}, 1, '$totalWorked']
-                        },
-                        totalQAWorked    : 1,
-                        totalDesignWorked: 1,
-                        worked           : 1,
-                        tCardDateByWeek  : 1
-                    }
-                }, {
-                    $project: {
-                        name             : 1,
-                        invoice          : 1,
-                        type             : 1,
-                        quotation        : 1,
-                        workflow         : 1,
-                        cost             : 1,
-                        tCardMinDate     : 1,
-                        tCardMaxDate     : 1,
-                        jobPrice         : 1,
-                        totalWorked      : 1,
-                        totalQAWorked    : 1,
-                        totalDesignWorked: 1,
-                        worked           : 1,
-                        tCardDateByWeek  : 1,
-                        revenue          : {
-                            $cond: {
-                                if: {
-                                    $eq: ['$invoice', {}]
-                                },
+            }, {
+                $group: {
+                    _id              : '$_id',
+                    name             : {$first: '$name'},
+                    invoice          : {$first: '$invoice'},
+                    type             : {$first: '$type'},
+                    project          : {$first: '$project'},
+                    quotation        : {$first: '$quotation'},
+                    workflow         : {$first: '$workflow'},
+                    description      : {$first: '$description'},
+                    cost             : {$first: '$cost'},
+                    jobPrice         : {$first: '$jobPrice'},
+                    totalWorked      : {$sum: '$tCards.worked'},
+                    tCards           : {$push: '$tCards'},
+                    tCardMinDate     : {$first: '$tCards'},
+                    tCardMaxDate     : {$last: '$tCards'},
+                    totalQAWorked    : {$sum: '$totalQAWorked'},
+                    totalDesignWorked: {$sum: '$totalDesignWorked'}
+                }
+            }, {
+                $unwind: {
+                    path                      : '$tCards',
+                    preserveNullAndEmptyArrays: true
+                }
+            }, {
+                $group: {
+                    _id: {
+                        _id       : '$_id',
+                        employee  : '$tCards.employee',
+                        department: '$tCards.department'
+                    },
 
-                                then: {
-                                    $cond: {
-                                        if  : {$eq: ['$quotation', {}]},
-                                        then: {
-                                            $multiply: [{$divide: ['$worked', '$totalWorked']}, '$jobPrice']
-                                        },
-                                        else: {
-                                            $divide: [{$multiply: [{$divide: ['$worked', '$totalWorked']}, '$jobPrice']}, '$quotation.currency.rate']
-                                        }
-                                    }
-                                },
-                                else: {
-                                    $divide: [{$multiply: [{$divide: ['$worked', '$totalWorked']}, '$jobPrice']}, '$invoice.currency.rate']
-                                }
-                            }
-                        }
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'Employees',
-                        localField  : '_id.employee',
-                        foreignField: '_id',
-                        as          : 'employee'
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'Department',
-                        localField  : '_id.department',
-                        foreignField: '_id',
-                        as          : 'department'
-                    }
-                }, {
-                    $project: {
-                        name             : 1,
-                        invoice          : 1,
-                        type             : 1,
-                        quotation        : 1,
-                        workflow         : 1,
-                        cost             : 1,
-                        jobPrice         : 1,
-                        tCardMinDate     : 1,
-                        tCardMaxDate     : 1,
-                        totalWorked      : 1,
-                        totalQAWorked    : 1,
-                        totalDesignWorked: 1,
-                        worked           : 1,
-                        revenue          : 1,
-                        tCardDateByWeek  : 1,
-                        employee         : {
-                            $arrayElemAt: ['$employee', 0]
-                        },
-                        department       : {
-                            $arrayElemAt: ['$department', 0]
-                        }
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'transfers',
-                        localField  : 'employee._id',
-                        foreignField: 'employee',
-                        as          : 'employee.transfer'
-                    }
-                }, {
-                    $project: {
-                        name             : 1,
-                        invoice          : 1,
-                        type             : 1,
-                        quotation        : 1,
-                        workflow         : 1,
-                        cost             : 1,
-                        jobPrice         : 1,
-                        totalWorked      : 1,
-                        totalQAWorked    : 1,
-                        totalDesignWorked: 1,
-                        tCardMinDate     : 1,
-                        tCardMaxDate     : 1,
-                        worked           : 1,
-                        revenue          : 1,
-                        employee         : 1,
-                        department       : '$department.name',
+                    tCardDateByWeek  : {$last: '$tCards.dateByWeek'},
+                    name             : {$first: '$name'},
+                    project          : {$first: '$project'},
+                    invoice          : {$first: '$invoice'},
+                    type             : {$first: '$type'},
+                    tCardMinDate     : {$first: '$tCardMinDate'},
+                    tCardMaxDate     : {$last: '$tCardMaxDate'},
+                    quotation        : {$first: '$quotation'},
+                    description      : {$first: '$description'},
+                    workflow         : {$first: '$workflow'},
+                    cost             : {$first: '$cost'},
+                    jobPrice         : {$first: '$jobPrice'},
+                    worked           : {$sum: '$tCards.worked'},
+                    totalWorked      : {$first: '$totalWorked'},
+                    totalQAWorked    : {$first: '$totalQAWorked'},
+                    totalDesignWorked: {$first: '$totalDesignWorked'}
+                }
+            }, {
+                $project: {
+                    name        : 1,
+                    invoice     : 1,
+                    type        : 1,
+                    quotation   : 1,
+                    workflow    : 1,
+                    cost        : 1,
+                    project     : 1,
+                    description : 1,
+                    jobPrice    : 1,
+                    tCardMinDate: 1,
+                    tCardMaxDate: 1,
+                    totalWorked : {
+                        $cond: [{$eq: ['$totalWorked', 0]}, 1, '$totalWorked']
+                    },
 
-                        transfer: {
-                            $filter: {
-                                input: '$employee.transfer',
-                                as   : 'transfer',
-                                cond : {
-                                    $lte: [{$add: [{$multiply: [{$year: '$$transfer.date'}, 100]}, {$week: '$$transfer.date'}]}, '$tCardDateByWeek']
-                                }
-                            }
-                        }
-                    }
-                }, {
-                    $unwind: {
-                        path                      : '$transfer',
-                        preserveNullAndEmptyArrays: true
-                    }
-                }, {
-                    $sort: {
-                        'transfer.date': -1
-                    }
-                }, {
-                    $group: {
-                        _id              : '$_id',
-                        name             : {
-                            $first: '$name'
-                        },
-                        invoice          : {
-                            $first: '$invoice'
-                        },
-                        type             : {
-                            $first: '$type'
-                        },
-                        quotation        : {
-                            $first: '$quotation'
-                        },
-                        workflow         : {
-                            $first: '$workflow'
-                        },
-                        cost             : {
-                            $first: '$cost'
-                        },
-                        jobPrice         : {
-                            $first: '$jobPrice'
-                        },
-                        tCardMinDate     : {
-                            $first: '$tCardMinDate'
-                        },
-                        tCardMaxDate     : {
-                            $first: '$tCardMaxDate'
-                        },
-                        worked           : {
-                            $first: '$worked'
-                        },
-                        totalWorked      : {
-                            $first: '$totalWorked'
-                        },
-                        revenue          : {
-                            $first: '$revenue'
-                        },
-                        employee         : {
-                            $first: '$employee'
-                        },
-                        department       : {
-                            $first: '$department'
-                        },
-                        transfer         : {
-                            $first: '$transfer'
-                        },
-                        totalQAWorked    : {
-                            $first: '$totalQAWorked'
-                        },
-                        totalDesignWorked: {
-                            $first: '$totalDesignWorked'
-                        }
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'JobPosition',
-                        localField  : 'transfer.jobPosition',
-                        foreignField: '_id',
-                        as          : 'jobPosition'
-                    }
-                }, {
-                    $project: {
-                        name             : 1,
-                        invoice          : 1,
-                        type             : 1,
-                        quotation        : 1,
-                        workflow         : 1,
-                        cost             : 1,
-                        tCardMinDate     : 1,
-                        tCardMaxDate     : 1,
-                        jobPrice         : 1,
-                        totalWorked      : 1,
-                        totalQAWorked    : 1,
-                        totalDesignWorked: 1,
-                        worked           : 1,
-                        revenue          : 1,
-                        employee         : 1,
-                        department       : 1,
-                        jobPosition      : {
-                            $arrayElemAt: ['$jobPosition', 0]
-                        }
-                    }
-                }, {
-                    $group: {
-                        _id              : '$_id._id',
-                        name             : {
-                            $first: '$name'
-                        },
-                        invoice          : {
-                            $first: '$invoice'
-                        },
-                        type             : {
-                            $first: '$type'
-                        },
-                        quotation        : {
-                            $first: '$quotation'
-                        },
-                        workflow         : {
-                            $first: '$workflow'
-                        },
-                        cost             : {
-                            $first: '$cost'
-                        },
-                        tCardMinDate     : {
-                            $first: '$tCardMinDate'
-                        },
-                        tCardMaxDate     : {
-                            $first: '$tCardMaxDate'
-                        },
-                        jobPrice         : {
-                            $first: '$jobPrice'
-                        },
-                        totalWorked      : {
-                            $sum: '$worked'
-                        },
-                        totalQAWorked    : {
-                            $first: '$totalQAWorked'
-                        },
-                        totalDesignWorked: {
-                            $first: '$totalDesignWorked'
-                        },
-                        totalRevenue     : {
-                            $sum: '$revenue'
-                        },
+                    totalQAWorked    : 1,
+                    totalDesignWorked: 1,
+                    worked           : 1,
+                    tCardDateByWeek  : 1
+                }
+            }, {
+                $project: {
+                    name             : 1,
+                    invoice          : 1,
+                    type             : 1,
+                    quotation        : 1,
+                    workflow         : 1,
+                    project          : 1,
+                    cost             : 1,
+                    tCardMinDate     : 1,
+                    tCardMaxDate     : 1,
+                    jobPrice         : 1,
+                    totalWorked      : 1,
+                    totalQAWorked    : 1,
+                    description      : 1,
+                    totalDesignWorked: 1,
+                    worked           : 1,
+                    tCardDateByWeek  : 1,
+                    revenue          : {
+                        $cond: {
+                            if: {
+                                $eq: ['$invoice', {}]
+                            },
 
-                        revenue: {
-                            $push: {
-                                employee: {
-                                    _id        : '$employee._id',
-                                    name       : {
-                                        $concat: ['$employee.name.first', ' ', '$employee.name.last']
+                            then: {
+                                $cond: {
+                                    if  : {$eq: ['$quotation', {}]},
+                                    then: {
+                                        $multiply: [{$divide: ['$worked', '$totalWorked']}, '$jobPrice']
                                     },
-                                    jobPosition: '$jobPosition.name',
-                                    worked     : '$worked'
-                                },
-
-                                department: '$department',
-                                revenue   : '$revenue'
+                                    else: {
+                                        $divide: [{$multiply: [{$divide: ['$worked', '$totalWorked']}, '$jobPrice']}, '$quotation.currency.rate']
+                                    }
+                                }
+                            },
+                            else: {
+                                $divide: [{$multiply: [{$divide: ['$worked', '$totalWorked']}, '$jobPrice']}, '$invoice.currency.rate']
                             }
                         }
-                    }
-                }, {
-                    $project: {
-                        name             : 1,
-                        invoice          : 1,
-                        type             : 1,
-                        quotation        : 1,
-                        workflow         : 1,
-                        cost             : 1,
-                        tCardMinDate     : 1,
-                        tCardMaxDate     : 1,
-                        jobPrice         : 1,
-                        totalWorked      : 1,
-                        totalQAWorked    : 1,
-                        totalDesignWorked: 1,
-                        worked           : 1,
-                        revenue          : 1,
-                        totalRevenue     : 1,
-                        profit           : {
-                            $subtract: ['$totalRevenue', '$cost']
-                        }
-                    }
-                }, {
-                    $group: {
-                        _id         : null,
-                        revenueTotal: {
-                            $sum: '$totalRevenue'
-                        },
-                        profitTotal : {
-                            $sum: '$profit'
-                        },
-                        costTotal   : {
-                            $sum: '$cost'
-                        },
-                        workedTotal : {
-                            $sum: '$totalWorked'
-                        },
-                        root        : {
-                            $push: '$$ROOT'
-                        }
-                    }
-                }, {
-                    $unwind: {
-                        path                      : '$root',
-                        preserveNullAndEmptyArrays: true
-                    }
-                }, {
-                    $project: {
-                        _id              : '$root._id',
-                        name             : '$root.name',
-                        invoice          : '$root.invoice',
-                        type             : '$root.type',
-                        quotation        : '$root.quotation',
-                        workflow         : '$root.workflow',
-                        cost             : '$root.cost',
-                        jobPrice         : '$root.jobPrice',
-                        totalWorked      : '$root.totalWorked',
-                        worked           : '$root.worked',
-                        revenue          : '$root.revenue',
-                        totalRevenue     : '$root.totalRevenue',
-                        profit           : '$root.profit',
-                        tCardMinDate     : '$root.tCardMinDate',
-                        tCardMaxDate     : '$root.tCardMaxDate',
-                        revenueTotal     : 1,
-                        profitTotal      : 1,
-                        costTotal        : 1,
-                        workedTotal      : 1,
-                        totalQAWorked    : '$root.totalQAWorked',
-                        totalDesignWorked: '$root.totalDesignWorked'
                     }
                 }
+            }, {
+                $lookup: {
+                    from        : 'Employees',
+                    localField  : '_id.employee',
+                    foreignField: '_id',
+                    as          : 'employee'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Department',
+                    localField  : '_id.department',
+                    foreignField: '_id',
+                    as          : 'department'
+                }
+            }, {
+                $project: {
+                    name             : 1,
+                    invoice          : 1,
+                    type             : 1,
+                    quotation        : 1,
+                    workflow         : 1,
+                    project          : 1,
+                    cost             : 1,
+                    jobPrice         : 1,
+                    tCardMinDate     : 1,
+                    description      : 1,
+                    tCardMaxDate     : 1,
+                    totalWorked      : 1,
+                    totalQAWorked    : 1,
+                    totalDesignWorked: 1,
+                    worked           : 1,
+                    revenue          : 1,
+                    tCardDateByWeek  : 1,
+                    employee         : {
+                        $arrayElemAt: ['$employee', 0]
+                    },
+
+                    department: {
+                        $arrayElemAt: ['$department', 0]
+                    }
+                }
+            }, {
+                $lookup: {
+                    from        : 'transfers',
+                    localField  : 'employee._id',
+                    foreignField: 'employee',
+                    as          : 'employee.transfer'
+                }
+            }, {
+                $project: {
+                    name             : 1,
+                    invoice          : 1,
+                    type             : 1,
+                    quotation        : 1,
+                    project          : 1,
+                    description      : 1,
+                    workflow         : 1,
+                    cost             : 1,
+                    jobPrice         : 1,
+                    totalWorked      : 1,
+                    totalQAWorked    : 1,
+                    totalDesignWorked: 1,
+                    tCardMinDate     : 1,
+                    tCardMaxDate     : 1,
+                    worked           : 1,
+                    revenue          : 1,
+                    employee         : 1,
+                    department       : '$department.name',
+
+                    transfer: {
+                        $filter: {
+                            input: '$employee.transfer',
+                            as   : 'transfer',
+                            cond : {
+                                $lte: [{$add: [{$multiply: [{$year: '$$transfer.date'}, 100]}, {$week: '$$transfer.date'}]}, '$tCardDateByWeek']
+                            }
+                        }
+                    }
+                }
+            }, {
+                $unwind: {
+                    path                      : '$transfer',
+                    preserveNullAndEmptyArrays: true
+                }
+            }, {
+                $sort: {
+                    'transfer.date': -1
+                }
+            }, {
+                $group: {
+                    _id              : '$_id',
+                    name             : {
+                        $first: '$name'
+                    },
+                    project          : {
+                        $first: '$project'
+                    },
+                    invoice          : {
+                        $first: '$invoice'
+                    },
+                    type             : {
+                        $first: '$type'
+                    },
+                    quotation        : {
+                        $first: '$quotation'
+                    },
+                    workflow         : {
+                        $first: '$workflow'
+                    },
+                    description      : {
+                        $first: '$description'
+                    },
+                    cost             : {
+                        $first: '$cost'
+                    },
+                    jobPrice         : {
+                        $first: '$jobPrice'
+                    },
+                    tCardMinDate     : {
+                        $first: '$tCardMinDate'
+                    },
+                    tCardMaxDate     : {
+                        $first: '$tCardMaxDate'
+                    },
+                    worked           : {
+                        $first: '$worked'
+                    },
+                    totalWorked      : {
+                        $first: '$totalWorked'
+                    },
+                    revenue          : {
+                        $first: '$revenue'
+                    },
+                    employee         : {
+                        $first: '$employee'
+                    },
+                    department       : {
+                        $first: '$department'
+                    },
+                    transfer         : {
+                        $first: '$transfer'
+                    },
+                    totalQAWorked    : {
+                        $first: '$totalQAWorked'
+                    },
+                    totalDesignWorked: {
+                        $first: '$totalDesignWorked'
+                    }
+                }
+            }, {
+                $lookup: {
+                    from        : 'JobPosition',
+                    localField  : 'transfer.jobPosition',
+                    foreignField: '_id',
+                    as          : 'jobPosition'
+                }
+            }, {
+                $project: {
+                    name             : 1,
+                    invoice          : 1,
+                    type             : 1,
+                    quotation        : 1,
+                    project          : 1,
+                    workflow         : 1,
+                    cost             : 1,
+                    tCardMinDate     : 1,
+                    tCardMaxDate     : 1,
+                    description      : 1,
+                    jobPrice         : 1,
+                    totalWorked      : 1,
+                    totalQAWorked    : 1,
+                    totalDesignWorked: 1,
+                    worked           : 1,
+                    revenue          : 1,
+                    employee         : 1,
+                    department       : 1,
+                    jobPosition      : {
+                        $arrayElemAt: ['$jobPosition', 0]
+                    }
+                }
+            }, {
+                $group: {
+                    _id              : '$_id._id',
+                    name             : {
+                        $first: '$name'
+                    },
+                    invoice          : {
+                        $first: '$invoice'
+                    },
+                    project          : {
+                        $first: '$project'
+                    },
+                    type             : {
+                        $first: '$type'
+                    },
+                    quotation        : {
+                        $first: '$quotation'
+                    },
+                    workflow         : {
+                        $first: '$workflow'
+                    },
+                    description      : {
+                        $first: '$description'
+                    },
+                    cost             : {
+                        $first: '$cost'
+                    },
+                    tCardMinDate     : {
+                        $first: '$tCardMinDate'
+                    },
+                    tCardMaxDate     : {
+                        $first: '$tCardMaxDate'
+                    },
+                    jobPrice         : {
+                        $first: '$jobPrice'
+                    },
+                    totalWorked      : {
+                        $sum: '$worked'
+                    },
+                    totalQAWorked    : {
+                        $first: '$totalQAWorked'
+                    },
+                    totalDesignWorked: {
+                        $first: '$totalDesignWorked'
+                    },
+                    totalRevenue     : {
+                        $sum: '$revenue'
+                    },
+
+                    revenue: {
+                        $push: {
+                            employee: {
+                                _id        : '$employee._id',
+                                name       : {
+                                    $concat: ['$employee.name.first', ' ', '$employee.name.last']
+                                },
+                                jobPosition: '$jobPosition.name',
+                                worked     : '$worked'
+                            },
+
+                            department: '$department',
+                            revenue   : '$revenue'
+                        }
+                    }
+                }
+            }, {
+                $project: {
+                    name             : 1,
+                    invoice          : 1,
+                    type             : 1,
+                    description      : 1,
+                    quotation        : 1,
+                    workflow         : 1,
+                    cost             : 1,
+                    project          : 1,
+                    tCardMinDate     : 1,
+                    tCardMaxDate     : 1,
+                    jobPrice         : 1,
+                    totalWorked      : 1,
+                    totalQAWorked    : 1,
+                    totalDesignWorked: 1,
+                    worked           : 1,
+                    revenue          : 1,
+                    totalRevenue     : 1,
+                    profit           : {
+                        $subtract: ['$totalRevenue', '$cost']
+                    }
+                }
+            }, {
+                $group: {
+                    _id         : null,
+                    revenueTotal: {
+                        $sum: '$totalRevenue'
+                    },
+                    profitTotal : {
+                        $sum: '$profit'
+                    },
+                    costTotal   : {
+                        $sum: '$cost'
+                    },
+                    workedTotal : {
+                        $sum: '$totalWorked'
+                    },
+                    root        : {
+                        $push: '$$ROOT'
+                    }
+                }
+            }, {
+                $unwind: {
+                    path                      : '$root',
+                    preserveNullAndEmptyArrays: true
+                }
+            }, {
+                $project: {
+                    _id              : '$root._id',
+                    name             : '$root.name',
+                    invoice          : '$root.invoice',
+                    type             : '$root.type',
+                    quotation        : '$root.quotation',
+                    workflow         : '$root.workflow',
+                    cost             : '$root.cost',
+                    project          : '$root.project',
+                    jobPrice         : '$root.jobPrice',
+                    totalWorked      : '$root.totalWorked',
+                    worked           : '$root.worked',
+                    revenue          : '$root.revenue',
+                    totalRevenue     : '$root.totalRevenue',
+                    profit           : '$root.profit',
+                    tCardMinDate     : '$root.tCardMinDate',
+                    tCardMaxDate     : '$root.tCardMaxDate',
+                    revenueTotal     : 1,
+                    profitTotal      : 1,
+                    costTotal        : 1,
+                    description      : '$root.description',
+                    workedTotal      : 1,
+                    totalQAWorked    : '$root.totalQAWorked',
+                    totalDesignWorked: '$root.totalDesignWorked'
+                }
+            }
             ], function (err, jobs) {
                 if (err) {
                     return next(err);
                 }
 
+                if (query) {
+                    return res.status(200).send(jobs.length ? jobs[0] : {});
+                }
+
                 res.status(200).send(jobs);
             });
+    }
+
+    this.getForOverview = function (req, res, next) {
+        getForOverview(req, res, next);
     };
 
     this.getForDD = function (req, res, next) {
@@ -2272,9 +2334,10 @@ var Module = function (models, event) {
         }
 
         query.find(queryObj, {
-            name  : 1,
-            _id   : 1,
-            budget: 1
+            name       : 1,
+            _id        : 1,
+            budget     : 1,
+            description: 1
         }, function (err, jobs) {
             if (err) {
                 return next(err);
@@ -2388,6 +2451,15 @@ var Module = function (models, event) {
                 event.emit('recollectVacationDash', {dbName: dbName});
             });
         }
+    };
+
+    this.getForJournalSource = function (req, res, next) {
+        var data = req.query;
+        var _id = data._id;
+        var query = {_id: objectId(_id)};
+
+        getForOverview(req, res, next, {query: query});
+
     };
 };
 

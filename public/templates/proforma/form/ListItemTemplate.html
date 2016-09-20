@@ -1,5 +1,7 @@
 <table id="listTable">
     <% proforms.forEach(function(proform, index){ %>
+    <% var currency =(proform.currency && proform.currency._id ? proform.currency._id.symbol : '')%>
+
     <tr class="compactView" data-id="<%=proform._id%>">
         <td class="checkboxRow">
             <label>
@@ -20,7 +22,7 @@
                     <div class="date"><%= proform.invoiceDate %></div>
                 </div>
                 <div class="compactRow">
-                    <div class="total <%= currencyClass(proform.currency._id) %>"><%- (proform.paymentInfo) ? currencySplitter(proform.paymentInfo.total) : '0.00'%></div>
+                    <div class="total"><%=currency %><%= (proform.paymentInfo) ? currencySplitter(proform.paymentInfo.total) : '0.00'%></div>
                     <div class="status">
                         <%if(proform.workflow){%>
                         <%if(proform.workflow.status === 'In Progress'){%>

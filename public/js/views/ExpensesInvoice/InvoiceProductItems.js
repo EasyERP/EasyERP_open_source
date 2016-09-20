@@ -2,8 +2,8 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
-    'text!templates/ExpensesInvoice/InvoiceProductItems.html',
-    'text!templates/ExpensesInvoice/InvoiceProductInputContent.html',
+    'text!templates/Invoices/InvoiceProductItems.html',
+    'text!templates/Invoices/InvoiceProductInputContent.html',
     'text!templates/Invoices/EditInvoiceProductInputContent.html',
     'text!templates/Products/InvoiceOrder/TotalAmount.html',
     'collections/Products/products',
@@ -16,11 +16,11 @@ define([
         el: '#invoiceItemsHolder',
 
         events: {
-            'click .addProductItem'  : 'getProducts',
-            'click .current-selected': 'showProductsSelect',
-            'change input.statusInfo': 'recalculateTaxes',
+            'click .addProductItem a'                          : 'getProducts',
+            'click .current-selected'                          : 'showProductsSelect',
+            'change input.statusInfo'                          : 'recalculateTaxes',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
-            'keyup input.statusInfo' : 'recalculateTaxes'
+            'keyup input.statusInfo'                           : 'recalculateTaxes'
         },
 
         initialize: function (options) {
@@ -28,6 +28,7 @@ define([
 
             this.responseObj = {};
             this.taxesRate = 0;
+            this.discountVisible = options.discountVisible;
 
             this.recalculateTaxes = _.debounce(this.recalculateTaxes, 500);
 
@@ -57,25 +58,15 @@ define([
             var parrentRow = parrent.find('.productItem').last();
             var rowId = parrentRow.attr('data-id');
             var trEll = parrent.find('tr.productItem');
-            var templ = _.template(ProductInputContent);
-            var currency = {};
 
             e.preventDefault();
             e.stopPropagation();
 
-            currency._id = $('#currencyDd').attr('data-id');
-
             if (rowId === undefined || rowId !== 'false') {
                 if (!trEll.length) {
-                    return parrent.prepend(templ({
-                        currencyClass: helpers.currencyClass,
-                        currency     : currency
-                    }));
+                    return parrent.prepend(_.template(ProductInputContent));
                 }
-                $(trEll[trEll.length - 1]).after(templ({
-                    currencyClass: helpers.currencyClass,
-                    currency     : currency
-                }));
+                $(trEll[trEll.length - 1]).after(_.template(ProductInputContent));
             }
 
             return false;
@@ -101,17 +92,34 @@ define([
             var target = $(e.target);
             var parrent = target.parents('td');
             var trEl = target.parents('tr');
+            var parrents = trEl.find('td');
             var _id = target.attr('id');
             var model = this.products.get(_id);
             var selectedProduct = model.toJSON();
+            var taxes;
+            var price;
+            var amount;
 
             trEl.attr('data-id', model.id);
 
             parrent.find('.current-selected').text(target.text()).attr('data-id', _id);
-            parrent.removeClass('errorContent');
+
+            $(parrents[1]).attr('class', 'editable').find('span').text(selectedProduct.info.description || '');
+            $(parrents[2]).attr('class', 'editable').find('span').text(1);
+
+            price = selectedProduct.info.salePrice;
+            $(parrents[3]).attr('class', 'editable').find('span').text(price);
+
+            taxes = parseFloat(selectedProduct.info.salePrice) * this.taxesRate;
+            amount = price + taxes;
+            taxes = taxes.toFixed(2);
+
+            $(parrents[4]).text(taxes);
+            $(parrents[5]).text(amount.toFixed(2));
+
             $('.newSelectList').hide();
 
-            this.calculateTotal(selectedProduct.info.salePrice);
+            this.calculateTotal();
         },
 
         recalculateTaxes: function (parent) {
@@ -120,9 +128,9 @@ define([
             var amount;
             var $parent = $(parent.target).closest('tr');
 
-            quantity = $parent.find('[data-name="quantity"] input').val();
+            quantity = $parent.find('[data-name="quantity"] input').val() || 0;
             quantity = parseFloat(quantity);
-            cost = $parent.find('[data-name="price"] input').val();
+            cost = $parent.find('[data-name="price"] input').val() || 0;
             cost = parseFloat(cost);
             amount = (quantity * cost);
             amount = amount.toFixed(2);
@@ -206,6 +214,7 @@ define([
                     totalAmountContainer.append(_.template(totalAmount, {
                         model           : options.model,
                         balanceVisible  : this.visible,
+                        discountVisible : this.discountVisible,
                         currencySplitter: helpers.currencySplitter,
                         currencyClass   : helpers.currencyClass
                     }));
@@ -220,6 +229,7 @@ define([
                 totalAmountContainer.append(_.template(totalAmount, {
                     model           : null,
                     balanceVisible  : this.visible,
+                    discountVisible : this.discountVisible,
                     currencySplitter: helpers.currencySplitter,
                     currencyClass   : helpers.currencyClass
                 }));

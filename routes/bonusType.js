@@ -10,7 +10,6 @@ module.exports = function (models) {
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
     router.use(authStackMiddleware);
-    router.use(accessStackMiddleware);
 
     /**
      *@api {get} /bonusType/ Request Bonus Types
@@ -52,7 +51,7 @@ HTTP/1.1 200 OK
   ]
 }
      */
-    router.get('/', handler.getList);
+    router.get('/', accessStackMiddleware, handler.getList);
 
     /**
      *@api {get} /bonusType/getForDD/ Request Bonus Types for dropDown
@@ -117,7 +116,7 @@ HTTP/1.1 201 Created
     }
 }
      */
-    router.post('/', handler.create);
+    router.post('/', accessStackMiddleware, handler.create);
 
     /**
      *@api {patch} /bonusType/ Request for partly updating Bonus Type
@@ -141,8 +140,8 @@ HTTP/1.1 200 OK
     "success":"updated"
 }
      */
-    router.patch('/', handler.patchM);
-    router.delete('/:_id', handler.remove);
+    router.patch('/', accessStackMiddleware, handler.patchM);
+    router.delete('/:_id',accessStackMiddleware,  handler.remove);
 
     /**
      *@api {delete} /bonusType/ Request for deleting selected Bonus Types
@@ -168,7 +167,7 @@ HTTP/1.1 200 OK
      "n":2
 }
      */
-    router.delete('/', handler.bulkRemove);
+    router.delete('/', accessStackMiddleware, handler.bulkRemove);
 
     return router;
 };

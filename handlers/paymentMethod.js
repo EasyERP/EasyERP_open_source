@@ -41,11 +41,18 @@ var Module = function (models) {
         var body = req.body;
         var id = req.params.id;
 
-        PaymentMethod.findByIdAndUpdate(id, body, function (err, method) {
+        PaymentMethod.findByIdAndUpdate(id, body, {new : true}, function (err, method) {
             if (err) {
                 return next(err);
             }
-            res.status(200).send(method);
+            method.populate('chartAccount', function (err, method){
+                if (err) {
+                    return next(err);
+                }
+                res.status(200).send(method);
+            });
+
+
         });
     };
 
@@ -59,7 +66,12 @@ var Module = function (models) {
             if (err) {
                 return next(err);
             }
-            res.status(200).send(method);
+            method.populate('chartAccount', function (err, method){
+                if (err) {
+                    return next(err);
+                }
+                res.status(200).send(method);
+            });
         });
     };
 

@@ -271,6 +271,7 @@ define([
                     },
                     {
                         text : 'Delete',
+                        class: 'btn',
                         click: self.deleteItem
                     }]
             });

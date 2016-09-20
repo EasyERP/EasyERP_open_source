@@ -120,9 +120,10 @@ define([
 
             $currentEl.append(itemView.render());
 
-            $currentEl.append(new ListTotalView({element: this.$el.find('#listTable'), cellSpan: 6, invoiceTemplate: true}).render());
+            $currentEl.append(new ListTotalView({element: this.$el.find('#listTable'), cellSpan: 5, invoiceTemplate: true}).render());
 
             this.renderPagination($currentEl, this);
+            this.recalcTotal();
             this.renderFilter({name: 'forSales', value: {key: 'forSales', value: [false]}});
 
             $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');

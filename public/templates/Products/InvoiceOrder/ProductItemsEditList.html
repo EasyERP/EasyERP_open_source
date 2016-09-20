@@ -1,17 +1,17 @@
-<table class="list2">
+<table class="list2 tableFixed _invoiceTable">
     <colgroup>
-        <col width="2%">
-        <col width="15%">
-        <col width="25%">
-        <col width="17%">
-        <col width="13%">
-        <col width="10%">
-        <col width="10%">
+        <col width="200px">
+        <% if (forSales) {%>
+        <col width="200px">
+        <% } %>
+        <col width="60px">
+        <col width="100px">
+        <col width="80px">
+        <col width="80px">
+        <col width="30px">
     </colgroup>
     <thead>
-    <tr class="productListItemsColumns">
-        <th>
-        </th>
+    <tr class="productListItemsColumns _deleteHeader ">
         <th data-sort="Product">
             Product
         </th>
@@ -19,11 +19,8 @@
             <th data-sort="jobs">
                 Job
             </th>
-        <% } else { %>
-        <th data-sort="description">
-            Description
-        </th>
         <% } %>
+
         <!--<th data-sort="scheduledDate">
             Scheduled Date
         </th>-->  <!--commented on 14 Mar, in quotationEdit commit -->
@@ -48,6 +45,8 @@
         <th data-sort="subtotal">
             Subtotal
         </th>
+        <th class="deleteCell">
+        </th>
     </tr>
     </thead>
     <tbody id="productList">
@@ -55,6 +54,6 @@
     </tbody>
 </table>
 <div class="clearfix"></div>
-<div id="totalAmountContainer" class="half-block right">
+<div id="totalAmountContainer" class="_totalAmountContainer">
 
 </div>

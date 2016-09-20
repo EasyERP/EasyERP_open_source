@@ -8,6 +8,7 @@ define([
     'models/QuotationModel',
     'views/salesQuotations/form/FormView',
     'views/salesQuotations/CreateView',
+    'views/Quotations/form/EditView',
     'constants',
     'helpers'
 ], function (Backbone,
@@ -19,6 +20,7 @@ define([
              QuotationModel,
              FormView,
              CreateView,
+             EditView,
              CONSTANTS,
              helpers) {
     'use strict';
@@ -27,12 +29,14 @@ define([
         listTemplate   : _.template(ListItemTemplate),
         contentTemplate: _.template(ContentTemplate),
         CreateView     : CreateView,
+        EditView       : EditView,
         listUrl        : 'easyErp/salesQuotations/list/',
         contentType    : CONSTANTS.SALESQUOTATIONS, // needs in view.prototype.changeLocationHash
         viewType       : 'tform', // needs in view.prototype.changeLocationHash
         hasPagination  : true,
         hasAlphabet    : false,
         formView       : null,
+        forSales       : true,
         selectedId     : null,
         ContentModel   : QuotationModel,
         FormView       : FormView,

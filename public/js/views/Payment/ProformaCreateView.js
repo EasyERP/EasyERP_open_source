@@ -128,9 +128,6 @@ define([
                         transaction : 'Payment',
                         debitAccount: el.chartAccount._id
                     }, function (resp) {
-                        self.responseObj['#journal'] = resp.data || [];
-
-                        self.$el.find('#journalDiv').show();
 
                         if (resp.data && resp.data.length) {
                             (self.$el.find('#journal').text(resp.data[0].name)).attr('data-id', resp.data[0]._id);
@@ -186,10 +183,25 @@ define([
 
             period = period || null;
 
+            paidAmount = parseFloat(paidAmount);
+            if (isNaN(paidAmount) || paidAmount <= 0) {
+                return App.render({
+                    type   : 'error',
+                    message: 'Please, enter Paid Amount!'
+                });
+            }
+
             if (!paymentMethodID) {
                 return App.render({
                     type   : 'error',
                     message: "Bank Account can't be empty."
+                });
+            }
+
+            if (!journal) {
+                return App.render({
+                    type   : 'error',
+                    message: "Journal can't be empty."
                 });
             }
 
@@ -290,7 +302,7 @@ define([
             populate.get('#paymentMethod', '/paymentMethod', {}, 'name', this, true, true, null);
             populate.get('#currencyDd', '/currency/getForDd', {}, 'name', this, true);
 
-            this.$el.find('#journalDiv').hide();
+            populate.get('#journal', '/journals/getForDd', {}, 'name', this, true, true);
 
             this.$el.find('#paymentDate').datepicker({
                 dateFormat : 'd M, yy',

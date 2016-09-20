@@ -88,6 +88,7 @@ module.exports = (function () {
             unMap          : {type: JSON},
             type           : {type: String, default: ''},
             comparingField : {type: String, default: ''},
+            delimiter      : {type: String, default: ','},
             skipped        : {type: Array},
             conflictedItems: {type: Array},
             importedCount  : {type: Number, default: 0}

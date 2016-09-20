@@ -39,9 +39,9 @@ module.exports = function (models) {
         var userId = req.session.uId;
         var fileName;
         var timeStamp;
+        var delimiter;
         var dir = path.join('importFiles', userId);
         var ImportModel = models.get(req.session.lastDb, 'Imports', ImportSchema);
-
 
         ImportModel.remove({user: userId}, function () {});
 
@@ -63,6 +63,11 @@ module.exports = function (models) {
                     fileName = file.name;
 
                     timeStamp = headers.timestamp;
+                    delimiter = headers.delimiter;
+
+                    if(delimiter === 'undefined') {
+                        delimiter = ',';
+                    }
 
                     if (!modelName || !filePath) {
                         error = new Error((!modelName) ? 'Model name empty' : 'File path empty');
@@ -93,9 +98,10 @@ module.exports = function (models) {
                     switch (getExtension(filePath)) {
 
                         case '.csv':
-                            importCsvToTemporaryCollection(res, next, file);
+                            importCsvToTemporaryCollection(res, next, file, delimiter);
                             break;
                         case '.xlsx':
+                        case '.xls':
                             importXlsxToTemporaryDb(res, next, file);
                             break;
                         default:
@@ -113,9 +119,11 @@ module.exports = function (models) {
         });
 
 
-
-        function importCsvToTemporaryCollection(res, next, file) {
+        function importCsvToTemporaryCollection(res, next, file, delimiter) {
             var headers;
+
+            var delimiterLocal = delimiter || ',';
+
             var q = async.queue(function (data, callback) {
                 var tasksWaterflow;
 
@@ -128,13 +136,20 @@ module.exports = function (models) {
                 async.waterfall(tasksWaterflow, function (err) {
                     if (err) {
                         error = err;
+
+                        /*if (err.message !== 'topology was destroyed') {
+                            error = err;
+                        }*/
+                        //console.log(err);
                     }
                     callback();
                 });
-            }, 1000);
+            }, 20);
+
 
             csv
-                .fromPath(filePath)/*   //todo check validation later
+                .fromPath(filePath, {delimiter: delimiterLocal})/*   //todo check validation later
+
                  .validate(function (data) {
 
                  if (!headers) {
@@ -165,6 +180,7 @@ module.exports = function (models) {
                 .on("data", function (data) {
                     q.push([data], function (err) {
                         if (err) {
+                            console.log('err ', err);
                             error = err;
                             logWriter.error(error);
                         }
@@ -196,7 +212,7 @@ module.exports = function (models) {
             sheet = obj[0];
 
             if (sheet && sheet.data) {
-                async.eachLimit(sheet.data, 25, function (data, cb) {
+                async.eachLimit(sheet.data, 5, function (data, cb) {
                     var tasksWaterflow;
 
                     if (data.length) {
@@ -375,6 +391,8 @@ module.exports = function (models) {
         function parse(data, callback) {
             var insertObj = {};
             var arrayKeys = task.arrayKeys;
+            //console.log(data);
+            //console.log(arrayKeys);
 
             Object.keys(data).forEach(function (key) {
                 var val = data[key];
@@ -393,6 +411,7 @@ module.exports = function (models) {
                     insertObj[keysAliases[key]] = val;
                 }
             });
+
             callback(null, insertObj);
         }
 
@@ -522,7 +541,6 @@ module.exports = function (models) {
                 filePath : filePath,
                 timeStamp: +timeStamp
             });
-
 
             importModel.save(callback);
         }

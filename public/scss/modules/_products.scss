@@ -158,13 +158,6 @@ $top-font-color: #666666;
       color: $top-font-color;
       line-height: 28px;
       font-size: 14px;
-      font-family: Title;
-
-      &:before {
-        font-size: 16px;
-        padding-right: 10px;
-        font-family: FontAwesome;
-      }
 
       &:hover {
         text-decoration: none;

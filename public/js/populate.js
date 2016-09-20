@@ -16,12 +16,15 @@ define([
              }*/
             content.responseObj[id] = content.responseObj[id].concat(_.map(response.data, function (item) {
                 return {
-                    _id         : item._id,
-                    name        : item[field],
-                    level       : item.projectShortDesc || '',
-                    imageSrc    : item.imageSrc || '',
-                    chartAccount: item.chartAccount || null,
-                    currency    : item.currency || null
+                    _id          : item._id,
+                    name         : item[field],
+                    level        : item.projectShortDesc || item.count || item.email  || '',
+                    imageSrc     : item.imageSrc || '',
+                    chartAccount : item.chartAccount || null,
+                    currency     : item.currency || item.symbol || '',
+                    debitAccount : item.debitAccount || '',
+                    creditAccount: item.creditAccount || '',
+                    type         : item.type || ''
                 };
             }));
 
@@ -33,20 +36,28 @@ define([
                         curEl.text("Select");
                     } else {
                         curEl.text(content.responseObj[id][defaultId].name).attr('data-id', content.responseObj[id][defaultId]._id);
+                        curEl.attr('data-type', content.responseObj[id][defaultId].type);
+                        if (content.responseObj[id][defaultId].currency) {
+                            curEl.attr('data-symbol', content.responseObj[id][defaultId].currency);
+                        }
                     }
                 }
             }
 
-            if (parrrentContentId && parrrentContentId.split("=").length === 2) {
-                parrrentContentId = parrrentContentId.split("=")[1]
+            if (parrrentContentId && parrrentContentId.split('=').length === 2) {
+                parrrentContentId = parrrentContentId.split('=')[1];
             }
 
             if (parrrentContentId) {
-                var current = _.filter(response.data, function (item) {
+                var current = _.filter(content.responseObj[id], function (item) {
                     return item._id === parrrentContentId;
                 });
 
-                curEl.text(current[0][field]).attr("data-id", current[0]._id);
+                if (current[0].level) {
+                    curEl.attr('data-level', current[0].level);
+                }
+
+                curEl.text(current[0].name).attr('data-id', current[0]._id);
             }
         });
     };
@@ -89,7 +100,6 @@ define([
             if (isCreate) {
                 $(id).text(content.responseObj[id][0].name).attr("data-id", content.responseObj[id][0]._id).attr("data-level", content.responseObj[id][0].level).attr("data-fullname", content.responseObj[id][0].fullName);
             }
-
 
         });
     };
@@ -212,7 +222,6 @@ define([
                     fullName: item.fullName
                 };
             }));
-
 
             //$(id).text(content.responseObj[id][0].name).attr("data-id", content.responseObj[id][0]._id);
 
@@ -482,7 +491,6 @@ define([
             end = 1;
         }
 
-
         parent.append(_.template(selectTemplate, {
             collection    : data.slice(start, end),
             currentPage   : currentPage,
@@ -545,7 +553,7 @@ define([
             data = {wId: 'Purchase Order'};
         }
 
-        dataService.getData('workflows/getFirstForConvert', data, callback);
+        dataService.getData('/workflows/getFirstForConvert', data, callback);
     };
 
     return {

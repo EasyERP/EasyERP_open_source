@@ -3,13 +3,13 @@
     <form method="post" action="" id="createPersonsForm" class="form">
         <fieldset>
             <div class="inner">
-                <ul class="dialog-tabs" data-class="mainTabs">
+                <!--<ul class="dialog-tabs" data-class="mainTabs">
                     <li><a class="active" href="javascript:;">Main</a></li>
                     <li><a href="javascript:;">Assignees</a></li>
-                </ul>
+                </ul>-->
                 <div class="clearfix"></div>
-                <div class="dialog-tabs-items mainTabs">
-                    <div class="dialog-tabs-item mainTabs active">
+                <!--<div class="dialog-tabs-items mainTabs">-->
+                   <!-- <div class="dialog-tabs-item mainTabs active">-->
                         <div class="topInputHolder">
                             <%if(visible) {%>
                             <h2>Request for Quotation</h2>
@@ -42,6 +42,9 @@
                                     </dd>
                                     </dd>
                                     <% } %>
+                                    <dt><label for="expectDate">Expected Date</label></dt>
+                                    <dd><input id="expectDate" placeholder="" type="text" readonly/>
+                                    </dd>
 
                                 </dl>
                             </div>
@@ -61,11 +64,11 @@
                             <div class="clearfix"></div>
                         </div>
                         <div class="clearfix"></div>
-                        <ul class="dialog-tabs" data-class="childTabs">
+                     <!--   <ul class="dialog-tabs" data-class="childTabs">
                             <li><a class="active" href="javascript:;">Products</a></li>
-                            <!--<li><a href="javascript:;">Bid</a></li>-->
+                            &lt;!&ndash;<li><a href="javascript:;">Bid</a></li>&ndash;&gt;
                             <li><a href="javascript:;">Deliveries & Invoices</a></li>
-                        </ul>
+                        </ul>-->
                         <div class="clearfix"></div>
                         <div class="dialog-tabs-items childTabs">
                             <div class="dialog-tabs-item childTabs active">
@@ -73,13 +76,11 @@
 
                                 </div>
                             </div>
-                            <div class="dialog-tabs-item childTabs">
+                      <!--      <div class="dialog-tabs-item childTabs">
                                 <div class="delivery-invoices-container">
                                     <div class="half-block left">
                                         <dl class="quotation-info">
-                                            <dt><label for="expectedDate">Expected Date</label></dt>
-                                            <dd><input id="expectedDate" placeholder="" type="text" readonly/>
-                                            </dd>
+
                                             <dt><label for="destination">Destination</label></dt>
                                             <dd class="_newSelectListWrap"><a id="destination" class="current-selected"
                                                    href="javascript:;">Select</a></dd>
@@ -93,12 +94,12 @@
                                             <dt><label for="invoicingControl">Invoicing Control</label></dt>
                                             <dd class="_newSelectListWrap"><a id="invoicingControl" class="current-selected" href="javascript:;">Select</a>
                                             </dd>
-                                            <!--<dt><label for="invoiceReceived">Invoice Received</label></dt>-->
-                                            <!-- <dd><input id="invoiceReceived" type="checkbox" class="checkbox left" disabled></dd>-->
-                                            <!--<dt><label for="paymentTerm">Payment Term</label></dt>
+                                            &lt;!&ndash;<dt><label for="invoiceReceived">Invoice Received</label></dt>&ndash;&gt;
+                                            &lt;!&ndash; <dd><input id="invoiceReceived" type="checkbox" class="checkbox left" disabled></dd>&ndash;&gt;
+                                            &lt;!&ndash;<dt><label for="paymentTerm">Payment Term</label></dt>
                                             <dd><a id="paymentTerm" class="current-selected"
                                                    href="javascript:;">Select</a>
-                                            </dd>-->
+                                            </dd>&ndash;&gt;
                                             <dt><label for="fiscalPosition">Fiscal Position</label></dt>
                                             <dd class="_newSelectListWrap">
                                                 <a id="fiscalPosition" class="current-selected" href="javascript:;">Select</a>
@@ -106,13 +107,13 @@
                                         </dl>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
+                            </div>-->
+                     <!--   </div>-->
                         <div class="clearfix"></div>
-                    </div>
-                    <div class="dialog-tabs-item mainTabs">
+                   <!-- </div>-->
+                   <!-- <div class="dialog-tabs-item mainTabs">
                         <div class="assignees-container"></div>
-                    </div>
+                    </div>-->
                 </div>
                 <div class="clearfix"></div>
             </div>

@@ -3,64 +3,30 @@
 
     </div>
 </div>
-<div>
-    <table class="list payRoll-list">
-        <colgroup class="borders" span="8">
-            <col span="1" width="5%">
-            <col span="1" width="5%">
-            <col span="1" width="15%">
-            <col span="1" width="20%">
-            <col span="1" width="20%">
-            <col span="1" width="20%">
-            <col span="1" width="5%">
-            <col span="1" width="10%">
+<div id="payRoll-Table">
+    <table class="stripedList" id="payRoll-listTable">
+        <colgroup>
+            <col width="42px">
+            <col width="15%">
+            <col width="20%">
+            <col width="20%">
+            <col width="15%">
+            <col width="15%">
+            <col width="15%">
         </colgroup>
         <thead>
-        <!--<tr>-->
-            <!--<th class=""><input type="checkbox" class="totalRowCB" id="checkAll"/></th>-->
-            <!--<th>Month</th>-->
-            <!--<th>Calc</th>-->
-            <!--<th>Paid</th>-->
-            <!--<th>Diff</th>-->
-            <!--<th class="centerCell">Status</th>-->
-            <!--<th>Date</th>-->
-        <!--</tr>-->
-        <!--</thead>-->
-
-        <tbody>
         <tr>
-            <td id="payRoll-Table" colspan="8">
-                <div class="scrollit">
-                    <table class="list enable_hover" id="payRoll-listTable">
-                        <colgroup class="borders" span="8">
-                            <col span="1" width="5%">
-                            <col span="1" width="5%">
-                            <col span="1" width="15%">
-                            <col span="1" width="20%">
-                            <col span="1" width="20%">
-                            <col span="1" width="20%">
-                            <col span="1" width="5%">
-                            <col span="1" width="10%">
-                        </colgroup>
-                        <thead>
-                        <tr>
-                            <th class=""><input type="checkbox" class="totalRowCB" id="checkAll"/></th>
-                            <th>Month</th>
-                            <th>Calc</th>
-                            <th>Paid</th>
-                            <th>Diff</th>
-                            <th class="centerCell">Status</th>
-                            <th>Date</th>
-                        </tr>
-                        </thead>
-                        <tbody id="payRoll-TableBody" class="enableTableOdd">
-
-                        </tbody>
-                    </table>
-                </div>
-            </td>
+            <th class="centerCell"><input type="checkbox" class="totalRowCB" id="checkAll"/></th>
+            <th>Month</th>
+            <th>Calc</th>
+            <th>Paid</th>
+            <th>Diff</th>
+            <th class="centerCell">Status</th>
+            <th>Date</th>
         </tr>
-        </tbody>
+        </thead>
+        <tbody id="payRoll-TableBody"></tbody>
         <tfoot id="payRoll-listTotal"></tfoot>
     </table>
 </div>
+

@@ -9,11 +9,12 @@ module.exports = (function () {
     var quotationSchema;
 
     payments = {
-        _id    : false,
-        id     : false,
-        total  : {type: Number, default: 0},
-        unTaxed: {type: Number, default: 0},
-        taxes  : {type: Number, default: 0}
+        _id     : false,
+        id      : false,
+        total   : {type: Number, default: 0},
+        discount: {type: Number, default: 0},
+        unTaxed : {type: Number, default: 0},
+        taxes   : {type: Number, default: 0}
     };
 
     products = {
@@ -53,7 +54,8 @@ module.exports = (function () {
         products      : [products],
         workflow      : {type: ObjectId, ref: 'workflows', default: null},
         whoCanRW      : {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
-        attachments   : {type: Array, default: []},
+        attachments: {type: Array, default: []},
+        notes      : {type: Array, default: []},
 
         groups: {
             owner: {type: ObjectId, ref: 'Users', default: null},
@@ -73,7 +75,9 @@ module.exports = (function () {
             date: {type: Date, default: Date.now}
         },
 
-        proformaCounter: {type: Number, default: 0}
+        proformaCounter: {type: Number, default: 0},
+        externalId     : {type: String, default: null}
+
     }, {collection: 'Quotation'});
 
     mongoose.model('Quotation', quotationSchema);

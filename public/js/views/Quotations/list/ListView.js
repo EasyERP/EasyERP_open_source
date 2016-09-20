@@ -45,8 +45,8 @@ define([
         hasPagination    : true,
 
         events: {
-            'click .stageSelect'                 : selectService.showStageSelect,
-            'click .newSelectList li'            : 'chooseOption'
+            'click .stageSelect'     : selectService.showStageSelect,
+            'click .newSelectList li': 'chooseOption'
         },
 
         initialize: function (options) {
@@ -122,7 +122,6 @@ define([
             $thisEl.find('#unTaxed').text(helpers.currencySplitter(unTaxed.toFixed(2)));
         },
 
-
         gotoForm: function (e) {
             var id = $(e.target).closest('tr').data('id');
             var page = this.collection.currentPage;
@@ -138,31 +137,31 @@ define([
         },
 
         /*goToEditDialog: function (e) {
-            var self = this;
-            var id = $(e.target).closest('tr').attr('data-id');
-            var model = new CurrentModel({validate: false});
+         var self = this;
+         var id = $(e.target).closest('tr').attr('data-id');
+         var model = new CurrentModel({validate: false});
 
-            e.preventDefault();
+         e.preventDefault();
 
-            model.urlRoot = '/quotations/';
-            model.fetch({
-                data: {
-                    id      : id,
-                    viewType: 'form'
-                },
-                
-                success: function (model) {
-                    return new self.EditView({model: model});
-                },
+         model.urlRoot = '/quotations/';
+         model.fetch({
+         data: {
+         id      : id,
+         viewType: 'form'
+         },
 
-                error: function () {
-                    App.render({
-                        type   : 'error',
-                        message: 'Please refresh browser'
-                    });
-                }
-            });
-        },*/
+         success: function (model) {
+         return new self.EditView({model: model});
+         },
+
+         error: function () {
+         App.render({
+         type   : 'error',
+         message: 'Please refresh browser'
+         });
+         }
+         });
+         },*/
 
         render: function () {
             var self;
@@ -181,7 +180,7 @@ define([
                 itemsNumber: this.collection.namberToShow
             }).render()); // added two parameters page and items number
 
-            $currentEl.append(new ListTotalView({element: $currentEl.find('#listTable'), cellSpan: 4}).render());
+            $currentEl.append(new ListTotalView({element: $currentEl.find('#listTable'), cellSpan: 3}).render());
 
             this.recalcTotal();
         }

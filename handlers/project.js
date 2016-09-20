@@ -20,6 +20,7 @@ module.exports = function (models, event) {
     var ProjectTypeSchema = mongoose.Schemas.projectType;
     var wTrackSchema = mongoose.Schemas.wTrack;
     var EmployeeSchema = mongoose.Schemas.Employee;
+    var OrgSettingsSchema = mongoose.Schemas.orgSettingsSchema;
     var wTrackInvoiceSchema = mongoose.Schemas.wTrackInvoice;
     var tasksSchema = mongoose.Schemas.Task;
     var jobsSchema = mongoose.Schemas.jobs;
@@ -1057,10 +1058,11 @@ module.exports = function (models, event) {
             to         : data.To,
             cc         : data.Cc,
             subject    : 'Invoice ' + data.name,
-            attachments: attachments
+            attachments: attachments,
+            req        : req
         };
 
-        mailer.sendInvoice(mailOptions, function (err, result) {
+        getFromMail(mailOptions, function (err, result) {
             if (err) {
                 return next(err);
             }
@@ -1069,6 +1071,29 @@ module.exports = function (models, event) {
             });
         });
     };
+
+    function getFromMail(mailOptions, cb) {
+
+        var OrgSettings;
+        if (mailOptions.req) {
+            OrgSettings = models.get(mailOptions.req.session.lastDb, 'orgSettings', OrgSettingsSchema);
+            OrgSettings.findOne()
+                .populate('contact', 'email')
+                .exec(function (err, settings) {
+                    if (err) {
+                        return console.log(err);
+                    }
+
+                    if (settings && !settings.defaultEmail && settings.contact) {
+                        mailOptions.from = settings.contact.email;
+                    }
+
+                    mailer.sendInvoice(mailOptions, cb);
+                });
+        } else {
+            mailer.sendInvoice(mailOptions, cb);
+        }
+    }
 
     this.getEmails = function (req, res, next) {
         var projectId = req.params.id;

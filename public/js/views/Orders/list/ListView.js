@@ -128,7 +128,9 @@ define([
                 page       : this.page,
                 itemsNumber: this.collection.namberToShow
             }).render()); // added two parameters page and items number
-            $currentEl.append(new ListTotalView({element: this.$el.find('#listTable'), cellSpan: 4}).render());
+            $currentEl.append(new ListTotalView({element: this.$el.find('#listTable'), cellSpan: 3}).render());
+
+            this.recalcTotal();
 
             // this.renderPagination($currentEl, this);
             // this.renderFilter();

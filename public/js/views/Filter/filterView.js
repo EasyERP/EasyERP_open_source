@@ -459,7 +459,7 @@ define([
         showSearchContent: function () {
             var el = this.$el.find('.search-content');
             var searchOpt = this.$el.find('.search-options');
-            var selector = 'fa-caret-up';
+            var selector = 'caretUp';
 
             searchOpt.removeClass('hidden');
 

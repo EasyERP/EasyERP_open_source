@@ -7,6 +7,7 @@ var fx = require('money');
 var moment = require('../public/js/libs/moment/moment');
 var MAIN_CONSTANTS = require('../constants/mainConstants');
 
+
 var wTrackPayOutSchema = mongoose.Schemas.wTrackPayOut;
 var currencySchema = mongoose.Schemas.Currency;
 var PaymentSchema = mongoose.Schemas.Payment;
@@ -24,9 +25,13 @@ var wTrackSchema = mongoose.Schemas.wTrack;
 var journalSchema = mongoose.Schemas.journal;
 var objectId = mongoose.Types.ObjectId;
 
+
+
 var Module = function (models, event) {
     'use strict';
     var composeExpensesAndCache = require('../helpers/expenses')(models);
+    var HistoryWriter = require('../helpers/historyWriter.js');
+    var historyWriter = new HistoryWriter(models);
 
     var rewriteAccess = require('../helpers/rewriteAccess');
     var JournalEntryHandler = require('./journalEntry');
@@ -39,7 +44,7 @@ var Module = function (models, event) {
 
     function returnModuleId(req) {
         var moduleId;
-        var type = req.params.byType;
+        var type = req.params.byType || 'customers';
 
         moduleId = type === 'customers' ? 61 : (type === 'supplier') ? 60 : 79;
 
@@ -60,87 +65,6 @@ var Module = function (models, event) {
 
         return Payment;
     }
-
-    /*function ConvertType(array, type) {
-     var i;
-
-     if (type === 'integer') {
-     for (i = array.length - 1; i >= 0; i--) {
-     array[i] = parseInt(array[i], 10);
-     }
-     } else if (type === 'boolean') {
-     for (i = array.length - 1; i >= 0; i--) {
-     if (array[i] === 'true') {
-     array[i] = true;
-     } else if (array[i] === 'false') {
-     array[i] = false;
-     } else {
-     array[i] = null;
-     }
-     }
-     }
-     }*/
-
-    /*function caseFilter(filter) {
-     var condition;
-     var resArray = [];
-     var filtrElement = {};
-     var key;
-     var filterName;
-     var i;
-     var filterKeys = Object.keys(filter);
-
-     for (i = filterKeys.length - 1; i >= 0; i--) {
-     filterName = filterKeys[i];
-     condition = filter[filterName].value ? filter[filterName].value : [];
-     key = filter[filterName].key;
-
-     switch (filterName) {
-     case 'assigned':
-     filtrElement[key] = {$in: condition.objectID()};
-     resArray.push(filtrElement);
-     break;
-     case 'name':
-     filtrElement[key] = {$in: condition.objectID()};
-     resArray.push(filtrElement);
-     break;
-     case 'supplier':
-     filtrElement[key] = {$in: condition.objectID()};
-     resArray.push(filtrElement);
-     break;
-     case 'paymentMethod':
-     filtrElement[key] = {$in: condition.objectID()};
-     resArray.push(filtrElement);
-     break;
-     case 'workflow':
-     filtrElement[key] = {$in: condition};
-     resArray.push(filtrElement);
-     break;
-     case 'forSale':
-     condition = ConvertType(condition, 'boolean');
-     filtrElement[key] = condition;
-     resArray.push(filtrElement);
-     break;
-     case 'paymentRef':
-     filtrElement[key] = {$in: condition};
-     resArray.push(filtrElement);
-     break;
-     case 'year':
-     ConvertType(condition, 'integer');
-     filtrElement[key] = {$in: condition};
-     resArray.push(filtrElement);
-     break;
-     case 'month':
-     ConvertType(condition, 'integer');
-     filtrElement[key] = {$in: condition};
-     resArray.push(filtrElement);
-     break;
-     // skip default;
-     }
-     }
-
-     return resArray;
-     }*/
 
     function getPaymentFilter(req, res, next, options) {
         var moduleId = returnModuleId(req);
@@ -575,6 +499,13 @@ var Module = function (models, event) {
                             as          : 'journal'
                         }
                     }, {
+                        $lookup: {
+                            from        : 'journals',
+                            localField  : 'otherIncomeJournal',
+                            foreignField: '_id',
+                            as          : 'otherIncomeJournal'
+                        }
+                    }, {
                         $project: {
                             'supplier.name'   : '$supplier.name',
                             'supplier._id'    : '$supplier._id',
@@ -585,6 +516,7 @@ var Module = function (models, event) {
                             'invoice.name'    : 1,
                             'invoice.workflow': {$arrayElemAt: ['$invoice.workflow', 0]},
                             journal           : {$arrayElemAt: ['$journal', 0]},
+                            otherIncomeJournal: {$arrayElemAt: ['$otherIncomeJournal', 0]},
 
                             salesmanagers: {
                                 $filter: {
@@ -612,30 +544,32 @@ var Module = function (models, event) {
                         }
                     }, {
                         $project: {
-                            supplier               : 1,
-                            'journal.name'         : '$journal.name',
-                            'journal._id'          : '$journal._id',
-                            'currency.name'        : 1,
-                            'currency._id'         : 1,
-                            'currency.rate'        : 1,
-                            'invoice._id'          : 1,
-                            'invoice.name'         : 1,
-                            'invoice.workflow.name': '$invoice.workflow.name',
-                            name                   : 1,
-                            salesmanagers          : {$arrayElemAt: ['$salesmanagers', 0]},
-                            forSale                : 1,
-                            differenceAmount       : 1,
-                            paidAmount             : 1,
-                            workflow               : 1,
-                            date                   : 1,
-                            paymentMethod          : 1,
-                            isExpense              : 1,
-                            bonus                  : 1,
-                            paymentRef             : 1,
-                            year                   : 1,
-                            month                  : 1,
-                            period                 : 1,
-                            _type                  : 1
+                            supplier                 : 1,
+                            'journal.name'           : '$journal.name',
+                            'journal._id'            : '$journal._id',
+                            'otherIncomeJournal.name': '$otherIncomeJournal.name',
+                            'otherIncomeJournal._id' : '$otherIncomeJournal._id',
+                            'currency.name'          : 1,
+                            'currency._id'           : 1,
+                            'currency.rate'          : 1,
+                            'invoice._id'            : 1,
+                            'invoice.name'           : 1,
+                            'invoice.workflow.name'  : '$invoice.workflow.name',
+                            name                     : 1,
+                            salesmanagers            : {$arrayElemAt: ['$salesmanagers', 0]},
+                            forSale                  : 1,
+                            differenceAmount         : 1,
+                            paidAmount               : 1,
+                            workflow                 : 1,
+                            date                     : 1,
+                            paymentMethod            : 1,
+                            isExpense                : 1,
+                            bonus                    : 1,
+                            paymentRef               : 1,
+                            year                     : 1,
+                            month                    : 1,
+                            period                   : 1,
+                            _type                    : 1
                         }
                     }, {
                         $lookup: {
@@ -649,6 +583,7 @@ var Module = function (models, event) {
                             assigned          : {$arrayElemAt: ['$salesmanagers', 0]},
                             supplier          : 1,
                             journal           : 1,
+                            otherIncomeJournal: 1,
                             'currency.name'   : 1,
                             'currency._id'    : 1,
                             'currency.rate'   : 1,
@@ -676,6 +611,7 @@ var Module = function (models, event) {
                         $project: {
                             supplier          : 1,
                             journal           : 1,
+                            otherIncomeJournal: 1,
                             'currency.name'   : 1,
                             'currency._id'    : 1,
                             'currency.rate'   : 1,
@@ -716,28 +652,29 @@ var Module = function (models, event) {
                         $unwind: '$root'
                     }, {
                         $project: {
-                            _id             : '$root._id',
-                            supplier        : '$root.supplier',
-                            journal         : '$root.journal',
-                            currency        : '$root.currency',
-                            invoice         : '$root.invoice',
-                            assigned        : '$root.assigned',
-                            forSale         : '$root.forSale',
-                            differenceAmount: '$root.differenceAmount',
-                            name            : '$root.name',
-                            paidAmount      : '$root.paidAmount',
-                            workflow        : '$root.workflow',
-                            date            : '$root.date',
-                            paymentMethod   : '$root.paymentMethod',
-                            isExpense       : '$root.isExpense',
-                            bonus           : '$root.bonus',
-                            paymentRef      : '$root.paymentRef',
-                            year            : '$root.year',
-                            month           : '$root.month',
-                            period          : '$root.period',
-                            _type           : '$root._type',
-                            removable       : '$root.removable',
-                            total           : 1
+                            _id               : '$root._id',
+                            supplier          : '$root.supplier',
+                            journal           : '$root.journal',
+                            otherIncomeJournal: '$root.otherIncomeJournal',
+                            currency          : '$root.currency',
+                            invoice           : '$root.invoice',
+                            assigned          : '$root.assigned',
+                            forSale           : '$root.forSale',
+                            differenceAmount  : '$root.differenceAmount',
+                            name              : '$root.name',
+                            paidAmount        : '$root.paidAmount',
+                            workflow          : '$root.workflow',
+                            date              : '$root.date',
+                            paymentMethod     : '$root.paymentMethod',
+                            isExpense         : '$root.isExpense',
+                            bonus             : '$root.bonus',
+                            paymentRef        : '$root.paymentRef',
+                            year              : '$root.year',
+                            month             : '$root.month',
+                            period            : '$root.period',
+                            _type             : '$root._type',
+                            removable         : '$root.removable',
+                            total             : 1
                         }
                     }
                 ];
@@ -775,7 +712,7 @@ var Module = function (models, event) {
     }
 
     function getById(req, res, next) {
-        var id = req.query.id;
+        var id = req.query.id || req.query._id;
         var Payment;
         var query;
         var moduleId = returnModuleId(req);
@@ -792,7 +729,9 @@ var Module = function (models, event) {
             .populate('supplier', '_id name fullName')
             .populate('paymentMethod', '_id name')
             .populate('journal', '_id name')
-            .populate('currency', '_id name');
+            .populate('otherIncomeJournal', '_id name')
+            .populate('currency._id', '_id name')
+            .populate('invoice');
 
         query.exec(function (err, payment) {
             if (err) {
@@ -1011,7 +950,8 @@ var Module = function (models, event) {
 
                     sourceDocument: {
                         model: 'salaryPayment',
-                        _id  : _payment.supplier._id
+                        _id  : _payment.supplier._id,
+                        name : _payment.supplier.name
                     },
 
                     amount: _payment.paidAmount * 100
@@ -1511,11 +1451,6 @@ var Module = function (models, event) {
 
             request.query.wId = wId;
 
-            /* totalToPay = parseFloat(totalToPay).toFixed(2);
-             paid = parseFloat(paid).toFixed(2);
-
-             isNotFullPaid = parseFloat(paid) < parseFloat(totalToPay);*/
-
             totalToPay = parseInt(totalToPay, 10);
             paid = parseInt(paid, 10);
 
@@ -1536,20 +1471,20 @@ var Module = function (models, event) {
 
                 invoice.workflow = workflow._id;
                 invoice.paymentInfo.balance = totalToPay - paid;
-                // invoice.paymentInfo.unTaxed += paid / 100;// commented by Liliya forRoman
-                // invoice.paymentInfo.unTaxed = paid * (1 + invoice.paymentInfo.taxes);
 
                 payments.push(payment._id);
                 invoice.payments = payments;
 
                 invoice.paymentDate = new Date(paymentDate); // Because we have it in post.schema
 
-                // delete invoice.paymentDate;
-
                 Invoice.findByIdAndUpdate(invoiceId, invoice, {new: true}, function (err, invoice) {
+                    var historyOptions;
+
                     if (err) {
                         return waterfallCallback(err);
                     }
+
+
 
                     project = invoice ? invoice.get('project') : null;
 
@@ -1558,12 +1493,12 @@ var Module = function (models, event) {
                     if (project) {
                         event.emit('fetchInvoiceCollection', {project: project, dbName: dbName});
                     }
+
                     if (isForSale) { // todo added in case of no last task
                         waterfallCallback(null, invoice, payment);
                     } else {
                         waterfallCallback(null, payment);
                     }
-
                 });
             });
         }
@@ -1599,7 +1534,8 @@ var Module = function (models, event) {
                 date          : payment.date,
                 sourceDocument: {
                     model: 'Payment',
-                    _id  : payment._id
+                    _id  : payment._id,
+                    name : payment.name
                 },
 
                 amount: amountByInvoice
@@ -1610,9 +1546,11 @@ var Module = function (models, event) {
                 date          : new Date(date),
                 sourceDocument: {
                     model: 'Payment',
-                    _id  : payment._id
+                    _id  : payment._id,
+                    name : payment.name
                 },
-                amount        : Math.abs(amountByInvoice - differenceAmount)
+
+                amount: Math.abs(amountByInvoice - differenceAmount)
             };
 
             if (Math.abs(amountByInvoice - differenceAmount) !== 0) {
@@ -1621,12 +1559,12 @@ var Module = function (models, event) {
                     queryForJournal = {
                         debitAccount : payment.paymentMethod ? payment.paymentMethod.chartAccount : null,
                         creditAccount: MAIN_CONSTANTS.OTHER_INCOME_ACCOUNT
-                    }
+                    };
                 } else if (differenceAmount < amountByInvoice) {
                     queryForJournal = {
                         debitAccount : MAIN_CONSTANTS.OTHER_INCOME_ACCOUNT,
                         creditAccount: payment.paymentMethod ? payment.paymentMethod.chartAccount : null
-                    }
+                    };
                 }
 
                 queryForJournal.name = 'Other Income / Loss';
@@ -1639,7 +1577,7 @@ var Module = function (models, event) {
                     var query = {};
 
                     if (err) {
-                        return cb(err);
+                        return waterfallCallback(err);
                     }
 
                     modelId = result && result.upserted && result.upserted.length ? result.upserted[0]._id : null;
@@ -1648,7 +1586,7 @@ var Module = function (models, event) {
                         query._id = modelId;
                     } else {
                         query.debitAccount = queryForJournal.debitAccount;
-                        query.creditAccount = queryForJournal.creditAccount
+                        query.creditAccount = queryForJournal.creditAccount;
                     }
 
                     Journal.find(query, function (err, result) {
@@ -1661,7 +1599,11 @@ var Module = function (models, event) {
                         if (bodyOtherIncome.journal) {
 
                             journalEntry.createReconciled(bodyOtherIncome, req.session.lastDb, function () {
-
+                                Payment.update({_id: bodyOtherIncome.sourceDocument._id}, {$set: {otherIncomeJournal: bodyOtherIncome.journal}}, function (err) {
+                                    if (err) {
+                                        return waterfallCallback(err);
+                                    }
+                                });
                             }, req.session.uId);
                         }
 
@@ -1671,7 +1613,7 @@ var Module = function (models, event) {
 
                         waterfallCallback(null, invoice, payment);
                     });
-                })
+                });
             } else {
                 journalEntry.createReconciled(paymentBody, req.session.lastDb, function () {
 

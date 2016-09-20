@@ -794,20 +794,25 @@
         },
 
         journalEntry: {
-            journalName: {
+            journal: {
                 displayName: 'Journal',
-                backend    : 'journal.name',
-                type       : 'string'
+                backend    : 'journal._id'
             },
 
-            sourceDocument: {
-                displayName: 'Subject',
-                backend    : 'sourceDocument.subject._id'
+            name: {
+                displayName: 'Source Document',
+                backend    : 'sourceDocument.name',
+                type       : 'string'
             },
 
             creditAccount: {
                 displayName: 'Credit Account',
-                backend    : 'journal.creditAccount._id'
+                backend    : 'creditAccount._id'
+            },
+
+            debitAccount: {
+                displayName: 'Debit Account',
+                backend    : 'debitAccount._id'
             },
 
             salesManager: {
@@ -828,7 +833,12 @@
                 type   : 'date'
             },
 
-            array: ['journalName', 'sourceDocument', 'creditAccount']
+            _type: {
+                backend: '_type',
+                type   : 'string'
+            },
+
+            array: ['journal', 'name', 'debitAccount', 'creditAccount']
         },
 
         inventoryReport: {

@@ -4,10 +4,11 @@ module.exports = (function () {
     var ObjectId = mongoose.Schema.Types.ObjectId;
 
     var chartAccountSchema = mongoose.Schema({
-        code   : {type: Number},
-        account: {type: String, default: ''},
-        name   : {type: String, default: ''},
-        type   : {type: String, default: ''},
+        code      : {type: Number},
+        account   : {type: String, default: ''},
+        name      : {type: String, default: ''},
+        subAccount: {type: ObjectId, ref: 'chartOfAccount', default: null},
+        type      : {type: ObjectId, ref: 'accountTypes', default: null},
 
         payMethod: {type: ObjectId, ref: 'PaymentMethod', default: null},
 

@@ -52,6 +52,8 @@ module.exports = (function () {
             date: {type: Date, default: Date.now}
         },
 
+        externalId: {type: String, default: null},
+
         attachments: {type: Array, default: []},
 
         ID: Number

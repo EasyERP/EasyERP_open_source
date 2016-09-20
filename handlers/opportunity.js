@@ -10,6 +10,7 @@ var Module = function (models, event) {
     var historySchema = mongoose.Schemas.History;
     var tagsSchema = mongoose.Schemas.tags;
     var followersSchema = mongoose.Schemas.followers;
+    var OrgSettingsSchema = mongoose.Schemas.orgSettingsSchema;
     var objectId = mongoose.Types.ObjectId;
 
     var _ = require('../node_modules/underscore');
@@ -188,10 +189,11 @@ var Module = function (models, event) {
                     isOpportunity         : isOpportunity,
                     employee              : employee,
                     opportunityName       : opportunityName,
-                    opportunityDescription: opportunityDescription
+                    opportunityDescription: opportunityDescription,
+                    req                   : req,
                 };
 
-                mailer.sendAssignedToLead(mailOptions, function (err, result) {
+                getFromMail(mailOptions, function (err, result) {
                     if (err) {
                         console.log(err);
                     }
@@ -201,6 +203,27 @@ var Module = function (models, event) {
                 console.log('employee have not work email');
             }
         });
+    }
+
+    function getFromMail(mailOptions, cb){
+
+        var OrgSettings;
+        if (mailOptions.req){
+            OrgSettings = models.get(mailOptions.req.session.lastDb, 'orgSettings', OrgSettingsSchema);
+            OrgSettings.findOne()
+                .populate('contact', 'email')
+                .exec(function(err, settings){
+                    if (err){
+                        return console.log(err);
+                    }
+                    if (!settings.defaultEmail && settings.contact){
+                        mailOptions.from = settings.contact.email;
+                    }
+                    mailer.sendAssignedToLead(mailOptions, cb);
+                });
+        } else {
+            mailer.sendAssignedToLead(mailOptions, cb);
+        }
     }
 
     this.addNewLeadFromSite = function (req, res, next) {
@@ -737,7 +760,7 @@ var Module = function (models, event) {
                             historyOptions.edit = edit;
                             historyWriter.sendToFollowers(historyOptions);
                         }
-                        
+
                         historyWriter.addEntry(historyOptions, function () {
                             res.status(200).send({success: 'Opportunities updated'});
                         });
@@ -2189,6 +2212,11 @@ var Module = function (models, event) {
             if (!obj.author) {
                 obj.author = req.session.uName;
                 obj.authorId = req.session.uId;
+            }
+            if (!obj.user) {
+                obj.user = {};
+                obj.user._id = req.session.uId;
+                obj.user.login = req.session.uName;
             }
             data.notes[data.notes.length - 1] = obj;
 

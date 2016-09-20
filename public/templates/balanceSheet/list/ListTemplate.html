@@ -2,8 +2,23 @@
 <%var value = account.debit - account.credit;%>
 <%if (account.group === 'liabilities'){value = Math.abs(value)}%>
 <tr data-id="<%=account._id%>" class="mainTr">
-    <td class="expand centerCell">+</td>
-    <td colspan="2" class="centerCell"><%=account.name%></td>
+    <td class="expand"><span class="icon-caret-right"></span></td>
+    <td colspan="3"><%=account._id%></td>
     <td data-id="debit" data-value="<%=value%>" class="money <%= parseInt((value / 100).toFixed(2), 10) < 0 ? 'redText' : '' %>"><%=currencySplitter((value / 100).toFixed(2))%></td>
 </tr>
+
+<%account.root.forEach(function(account){%>
+<tr data-main="<%=account.type%>" data-account="<%=account._id%>" class="childTr hidden">
+    <td class="expand"><span class="icon-caret-right"></span></td>
+    <td><%=account.name%></td>
+    <td class="money" data-id="debit"><%=currencySplitter((account.debit / 100).toFixed(2))%>
+    </td>
+    <td class="money" data-id="credit">
+        <%=currencySplitter((account.credit / 100).toFixed(2))%>
+    </td>
+    <td class="money <%= parseInt((account.debit - account.credit).toFixed(2), 10) < 0 ? 'redText' : '' %>">
+        <%=currencySplitter(((account.debit - account.credit) / 100).toFixed(2))%>
+    </td>
+</tr>
+<%})%>
 <% }) %>

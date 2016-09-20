@@ -1,27 +1,43 @@
 <div id="searchContainer"></div>
 <div id="salaryReport">
-    <table class="list report-list">
+    <table class="list stripedList">
+        <colgroup>
+            <col width="140px">
+            <col width="160px">
+            <col width="80px">
+            <col width="80px">
+            <col width="80px">
+            <col width="80px">
+            <col width="80px">
+            <col width="80px">
+            <col width="80px">
+            <col width="80px">
+            <col width="80px">
+            <col width="80px">
+            <col width="80px">
+            <col width="80px">
+        </colgroup>
         <thead>
-            <tr id="caption">
-                <th class="oe_sortable" data-sort="department">Department</th>
-                <th class="oe_sortable" data-sort="name">Employee</th>
+        <tr id="caption">
+            <th class="oe_sortable" data-sort="department">Department</th>
+            <th class="oe_sortable" data-sort="name">Employee</th>
 
-                <% for (var i = startKey; i <= endKey; i++) {   %>
-                <%if (i <= parseInt(i.toString().slice(0, 4)) * 100 + 11) {%>
-                <th class="dates" data-id="<%=i + 1%>"><%=weekSplitter((i + 1).toString())%></th>
-                <% } else { %>
+            <% for (var i = startKey; i <= endKey; i++) {   %>
+            <%if (i <= parseInt(i.toString().slice(0, 4)) * 100 + 11) {%>
+            <th class="dates" data-id="<%=i + 1%>"><%=weekSplitter((i + 1).toString())%></th>
+            <% } else { %>
 
-                <% i = (parseInt(i.toString().slice(0, 4)) + 1) * 100; %>
-                <%i--;%>
-                <% } %>
-                <% } %>
-            </tr>
+            <% i = (parseInt(i.toString().slice(0, 4)) + 1) * 100; %>
+            <%i--;%>
+            <% } %>
+            <% } %>
+        </tr>
         </thead>
 
         <tbody id="listTable" class="enableTableOdd"></tbody>
         <tfoot id="salaryReportFooter">
         <tr>
-            <td colspan="3" class="centerCell">Total</td>
+            <td colspan="2" class="centerCell">Total</td>
             <% for (var i = startKey + 1; i <= endKey + 1; i++) {%>
             <%if (i <= parseInt(i.toString().slice(0, 4)) * 100 + 12) {%>
             <td id="<%= i %>"></td>
@@ -32,5 +48,5 @@
             <% } %>
         </tr>
         </tfoot>
-        </table>
+    </table>
 </div>

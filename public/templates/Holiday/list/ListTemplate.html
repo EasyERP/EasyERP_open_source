@@ -1,6 +1,6 @@
 <% holidayCollection.forEach(function(holiday, index){ %>
 <tr data-id="<%=holiday._id%>">
-    <td class="notForm"><input type="checkbox" value="<%=holiday._id%>" class="checkbox listCB"/></td>
+    <td class="centerCell"><input type="checkbox" value="<%=holiday._id%>" class="checkbox listCB"/></td>
     <td data-type="dtPicker" class="editable date" data-content="date">
         <%=holiday.date%>
     </td>

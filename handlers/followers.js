@@ -5,6 +5,7 @@ var mailer = new Mailer();
 var Module = function (models) {
     var followersSchema = mongoose.Schemas.followers;
     var EmployeeSchema = mongoose.Schemas.Employee;
+    var OrgSettingsSchema = mongoose.Schemas.orgSettingsSchema;
 
     function sendEmailToFollower(req, empId, contentName, collectionName) {
         var mailOptions;
@@ -28,10 +29,11 @@ var Module = function (models) {
                     to            : workEmail,
                     employee      : employee,
                     contentName   : contentName || '',
-                    collectionName: collectionName
+                    collectionName: collectionName,
+                    req           : req
                 };
 
-                mailer.sendAddedFollower(mailOptions, function (err, result) {
+                getFromMail(mailOptions, function (err, result) {
                     if (err) {
                         console.log(err);
                     }
@@ -95,6 +97,27 @@ var Module = function (models) {
         });
 
     };
+
+    function getFromMail(mailOptions, cb){
+
+        var OrgSettings;
+        if (mailOptions.req){
+            OrgSettings = models.get(mailOptions.req.session.lastDb, 'orgSettings', OrgSettingsSchema);
+            OrgSettings.findOne()
+                .populate('contact', 'email')
+                .exec(function(err, settings){
+                    if (err){
+                        return console.log(err);
+                    }
+                    if (!settings.defaultEmail && settings.contact){
+                        mailOptions.from = settings.contact.email;
+                    }
+                    mailer.sendAddedFollower(mailOptions, cb);
+                });
+        } else {
+            mailer.sendAddedFollower(mailOptions, cb);
+        }
+    }
 
     this.remove = function (req, res, next) {
         var FollowersModel = models.get(req.session.lastDb, 'followers', followersSchema);

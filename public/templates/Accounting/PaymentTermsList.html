@@ -1,38 +1,42 @@
-<div class="accounting-fourth-block left">
-    <table class="list tableProjects tableFixed">
-        <colgroup>
-            <col width="75%"/>
-            <col width="25%"/>
-        </colgroup>
-        <thead>
-        <tr>
-            <th  class="forCaption">Payment Terms</th>
-            <th class="forCaption">
-                <a href="javascript:;" class="icon-arrow-down2"></a>
-                <a href="javascript:;" class="btnAdd" title="Create" id="top-bar-createBtn">Add</a>
-            </th>
-        </tr>
-        <tr class="forToggle">
-            <th>Name</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody class="forToggle">
-        <% collection.forEach(function(elem,index){ %>
+<div class="_acountingTableWrap">
+    <div class="_acountingTitleBlock">
+        <span class="_acountingTitle">Payment Terms</span>
+        <a href="javascript:;" class="btn blue plus" title="Create" id="top-bar-createBtn">Add</a>
+    </div>
+    <div class="_acountingTableBlock">
+        <table class="list tableProjects tableFixed _paymentTable">
+            <colgroup>
+                <col width="40%"/>
+                <col width="40%"/>
+                <col width="20%"/>
+            </colgroup>
+            <thead>
+            <tr class="forToggle">
+                <th>Name</th>
+                <th>Number of days</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody class="forToggle" id="paymentTermsTable">
+            <% collection.forEach(function(elem,index){ %>
 
-        <tr data-id="<%= elem._id%>">
-            <td><span><%=elem.name %></span></td>
-            <td>
-                <a href="javascript:;" class="icon-note" aria-hidden="true"></a>
-                <a href="javascript:;" class="icon-trash" aria-hidden="true"></a>
-            </td>
-        </tr>
+            <tr data-id="<%= elem._id%>">
+                <td><span><%=elem.name %></span></td>
+                <td><span><%=elem.count %></span></td>
+                <td>
+                    <% if (elem.count){ %>
 
+                    <a href="javascript:;" class="icon-note goToEdit" aria-hidden="true"></a>
+                    <a href="javascript:;" class="icon-trash goToRemove" aria-hidden="true"></a>
 
-        <% }) %>
+                    <% } %>
+                </td>
+            </tr>
 
-        </tbody>
-    </table>
+            <% }) %>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 

@@ -41,7 +41,9 @@ module.exports = (function () {
             date: {type: Date, default: Date.now}
         },
 
-        journal: {type: ObjectId, ref: 'journal', default: null}
+        journal   : {type: ObjectId, ref: 'journal', default: null},
+        externalId: {type: String, default: null},
+        otherIncomeJournal: {type: ObjectId, ref: 'journal', default: null} // journal for other income/loss with different currency of invoice and payment
 
     }, {collection: 'Payment', discriminatorKey: '_type'});
 

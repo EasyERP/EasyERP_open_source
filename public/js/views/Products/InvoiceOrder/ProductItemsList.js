@@ -32,6 +32,7 @@ define([
             var products;
 
             this.responseObj = {};
+
             this.render();
 
             this.taxesRate = 0;
@@ -190,7 +191,7 @@ define([
 
             parrent.find(".current-selected").text(target.text()).attr("data-id", _id);
 
-            $(parrents[1]).attr('class', 'editable').find('span').text(selectedProduct.info.description || '');
+            $(parrents[1]).attr('class', 'editable').find('.productDescr').val(selectedProduct.info.description || '');
             $(parrents[2]).find('.datepicker').datepicker({
                 dateFormat : "d M, yy",
                 changeMonth: true,

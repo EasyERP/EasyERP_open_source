@@ -22,7 +22,8 @@ define([
         events: {
             'click .compactView:not(.checkbox)': 'goToForm',
             'click .closeBtn'                  : 'returnToList',
-            'click #sortBy'                    : 'openSortDrop'
+            'click #sortBy'                    : 'openSortDrop',
+            'click #editButton'                : 'editItem'
         },
 
         initialize: function (options) {
@@ -52,6 +53,15 @@ define([
             $target.closest('.dropDown').toggleClass('open');
         },
 
+        editItem: function (e) {
+            var EditView = this.EditView;
+            e.preventDefault();
+
+            this.editView = new EditView({model: this.currentModel, forSales: this.forSales});
+            this.editView.render();
+
+        },
+
         returnToList: function (e) {
             var currentPage = this.collection.currentPage;
             var count = this.collection.pageSize;
@@ -60,6 +70,14 @@ define([
 
             if (e) {
                 e.preventDefault();
+            }
+
+            if (this.editView) {
+                this.editView.undelegateEvents();
+                delete this.editView;
+
+                this.formView.render();
+                return;
             }
 
             url = this.listUrl + 'p=' + currentPage + '/c=' + count;
@@ -197,6 +215,8 @@ define([
                         self.formView.undelegateEvents();
                     }
 
+                    self.currentModel = model;
+
                     self.formView = new self.FormView({
                         model: model,
                         el   : '#formContent'
@@ -288,7 +308,12 @@ define([
                             needId = diffIds[0];
 
                             self.selectedId = needId;
-                            self.renderFormView(needId);
+
+                            if (collectionObj.length) {
+                                self.renderFormView(needId);
+                            } else {
+                                self.returnToList();
+                            }
                         }
                     }
                 });

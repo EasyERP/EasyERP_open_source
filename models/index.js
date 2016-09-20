@@ -55,6 +55,7 @@ module.exports = (function () {
     require('./paymentType.js');
     require('./chartAccount.js');
     require('./currency.js');
+    require('./currencyStore.js');
     require('./projectPosition.js');
     require('./projectMember.js');
     require('./weeklyScheduler.js');
@@ -64,8 +65,10 @@ module.exports = (function () {
     require('./historyEntry.js');
     require('./dealTask.js');
     require('./payrollStructureTypes.js');
+    require('./organizationSettings.js');
     require('./cashTransfer.js');
     require('./import.js');
     require('./countries.js');
     require('./followers.js');
+    require('./accountTypes.js');
 })();

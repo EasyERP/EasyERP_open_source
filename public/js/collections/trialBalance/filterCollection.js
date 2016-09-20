@@ -4,7 +4,7 @@
 'use strict';
 define([
     'Backbone',
-    'models/journalEntry',
+    'models/hiredFired',
     'custom',
     'moment'
 ], function (Backbone, journalEntryModel, Custom, moment) {

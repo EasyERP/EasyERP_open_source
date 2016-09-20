@@ -71,7 +71,9 @@ var Module = function (models) {
         var query = req.query;
 
         Model
-            .find(query, {_id: 1, name: 1})
+            .find(query, {_id: 1, name: 1, debitAccount: 1, creditAccount: 1})
+            .populate('debitAccount', 'name')
+            .populate('creditAccount', 'name')
             .sort({name: 1})
             .exec(function (err, result) {
                 if (err) {
@@ -105,7 +107,9 @@ var Module = function (models) {
         var creditAccount = body.creditAccount;
         var query = {};
 
-        query.transaction = transaction;
+        if (transaction) {
+            query.transaction = transaction;
+        }
 
         if (debitAccount) {
             query.debitAccount = debitAccount;

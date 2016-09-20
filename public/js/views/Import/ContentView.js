@@ -106,6 +106,8 @@ define([
                     }
                 }
             });
+
+            delete App.currentUser.imports.conflictedItems;
         },
 
         selectStage: function (e) {
@@ -149,7 +151,12 @@ define([
 
             } else if (this.stage === 2) {
                 if (this.childView && this.childView.updateUser) {
-                    this.childView.updateUser();
+                    this.childView.updateUser(this.timeStamp);
+                } else {
+                    this.updateCurrentUser({
+                        stage    : this.stage,
+                        timeStamp: this.timeStamp
+                    });
                 }
 
                 this.$el.find('.stageBtnBack').show();
@@ -161,25 +168,27 @@ define([
                     fileName : this.fileName
                 });
 
-                this.updateCurrentUser({
-                    stage: this.stage
-                });
-
                 $thisEl.find('#fileName').text(this.fileName);
             } else if (this.stage === 3) {
                 this.enabledNextBtn();
 
                 if (this.childView) {
                     data = this.childView.getDataWithFields();
-                    data.timeStamp = this.timeStamp;
-                    this.map = data;
 
-                    this.updateCurrentUser({
-                        stage: this.stage,
-                        map  : this.map
-                    }, function () {
-                        self.childView = new PreviewView({timeStamp: self.timeStamp});
-                    });
+                    if (Object.keys(data).length) {
+                        data.timeStamp = this.timeStamp;
+                        this.map = data;
+
+                        this.updateCurrentUser({
+                            stage: this.stage,
+                            map  : this.map
+                        }, function () {
+                            self.childView = new PreviewView({timeStamp: self.timeStamp});
+                        });
+                    } else {
+                        this.stage = 2;
+                        //this.selectStage();
+                    }
                 } else {
                     this.childView = new PreviewView({timeStamp: this.timeStamp});
                 }
@@ -198,12 +207,18 @@ define([
                             importedCount  : data.imported,
                             conflictedItems: data.conflictedItems
                         }, function () {
-                            self.childView = new ComparingView({timeStamp: self.timeStamp});
+                            self.childView = new ComparingView({
+                                timeStamp    : self.timeStamp,
+                                updateHistory: self.insertHistoryView
+                            });
                         });
 
                     });
                 } else {
-                    self.childView = new ComparingView({timeStamp: self.timeStamp});
+                    self.childView = new ComparingView({
+                        timeStamp    : self.timeStamp,
+                        updateHistory: self.insertHistoryView
+                    });
                 }
 
                 $thisEl.find('.left').remove();

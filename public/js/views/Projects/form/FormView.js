@@ -13,7 +13,7 @@ define([
     'views/salesOrders/EditView',
     'views/salesQuotations/EditView',
     'views/salesInvoices/EditView',
-    'views/proforma/EditView',
+    'views/Proforma/EditView',
     'views/Projects/EditView',
     'views/Notes/NoteView',
     'views/Notes/AttachView',
@@ -32,7 +32,7 @@ define([
     'collections/salesInvoices/filterCollection',
     'collections/customerPayments/filterCollection',
     'collections/Jobs/filterCollection',
-    'collections/proforma/filterCollection',
+    'collections/Proforma/filterCollection',
     'collections/projectMembers/editCollection',
     'models/QuotationModel',
     'models/InvoiceModel',
@@ -507,9 +507,12 @@ define([
             var jobs = {};
             var self = this;
             var $target = $(e.target);
+            var job;
 
             jobs._id = $target.attr('data-id');
             jobs.name = $target.attr('data-value');
+            job = this.jobsCollection.get(jobs._id);
+            jobs.description = job.get('description');
 
             if (this.generatedView) {
                 this.generatedView.undelegateEvents();
@@ -1569,7 +1572,7 @@ define([
 
             _.bindAll(this, 'getQuotations', 'getProjectMembers', 'getOrders', 'getWTrack', 'renderProformRevenue', 'renderProjectInfo', 'renderJobs', 'getInvoice', 'getInvoiceStats', 'getProformaStats', 'getProforma', 'getPayments');
 
-            paralellTasks = [this.renderProjectInfo, this.getQuotations, this.getOrders];
+            paralellTasks = [this.renderProjectInfo, this.getQuotations, this.getOrders, self.getProjectMembers];
 
             accessData.forEach(function (accessElement) {
                 if (accessElement.module === 64) {
@@ -1603,14 +1606,14 @@ define([
                     }
                 }
 
-                if (accessElement.module === 72) {
+                /*if (accessElement.module === 72) {
                     if (accessElement.access.read) {
                         paralellTasks.push(self.getProjectMembers);
                     } else {
                         $thisEl.find('#projectMembersTab').parent().remove();
                         $thisEl.find('div#projectMembers').parent().remove();
                     }
-                }
+                }*/
 
             });
 
@@ -1644,6 +1647,7 @@ define([
                     self.showSaveButton();
                 }
             });
+
             $thisEl.find('#EndDate').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
@@ -1657,6 +1661,7 @@ define([
                     self.showSaveButton();
                 }
             });
+
             $thisEl.find('#EndDateTarget').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,

@@ -39,6 +39,14 @@
                         <dd class="_newSelectListWrap">
                             <a id="journal" class="current-selected" href="javascript:;"><%=model.journal ? model.journal.name : 'Not found journal'%></a>
                         </dd>
+                        <% if (model.otherIncomeJournal) {%>
+                        <dt>
+                            <label for="journal">Other Income\Loss Journal</label>
+                        </dt>
+                        <dd class="_newSelectListWrap">
+                            <a id="otherIncomeJournal" class="current-selected" href="javascript:;"><%=model.otherIncomeJournal ? model.otherIncomeJournal.name : ''%></a>
+                        </dd>
+                        <% } %>
                     </dl>
                 </div>
                 <div class="half-block left">

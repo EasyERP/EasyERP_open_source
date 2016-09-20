@@ -72,6 +72,65 @@ module.exports = {
             }
         }
     },
+
+    INVOICE : {
+        collectionName: 'Invoice',
+
+        map: {
+            approved: {
+                name : 'Approved',
+                isRef: false
+            },
+
+
+            workflow: {
+                name      : 'Status',
+                isRef     : true,
+                collection: 'workflows',
+                project   : '$tmp.name'
+            },
+            dueDate: {
+                name : 'Due Date',
+                isRef: false
+            },
+            invoiceDate: {
+                name : 'Invoice Date',
+                isRef: false
+            },
+            'createdBy.date' : {
+                name : 'Creation Date',
+                isRef: false
+            }
+        }
+    },
+    QUOTATION : {
+        collectionName: 'QUOTATION',
+
+        map: {
+            isOrder: {
+                name : 'Ordered',
+                isRef: false
+            },
+            orderDate: {
+                name : 'Order Date',
+                isRef: false
+            },
+            expectedDate: {
+                name : 'Expected Date',
+                isRef: false
+            },
+            workflow: {
+                name      : 'Status',
+                isRef     : true,
+                collection: 'workflows',
+                project   : '$tmp.name'
+            },
+            'createdBy.date' : {
+                name : 'Creation Date',
+                isRef: false
+            }
+        }
+    },
     PERSON : {
         collectionName: 'Persons',
 

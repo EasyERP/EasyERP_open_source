@@ -191,9 +191,9 @@ module.exports = (function () {
             size    : String,
             industry: {type: ObjectId, ref: 'Industries', default: null}
         },
-        isHidden   : {type: Boolean, default: false},
 
-        ID: Number
+        ID        : Number,
+        externalId: {type: String, default: null}
     }, {collection: 'Customers'});
 
     mongoose.model('Customers', customerSchema);

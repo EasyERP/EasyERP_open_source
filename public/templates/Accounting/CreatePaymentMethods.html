@@ -1,44 +1,19 @@
-<div class="form-holder">
+<div class="form-holder _dialogWrap">
+    <div class="_dialogMainTitle">Bank Account</div>
+    <div class="_dialogBlock">
+        <div class="_dialogRow">Name</div>
+        <div class="_dialogRow"><input id="paymentMethodName" value=""></div>
 
+        <!--<div class="_dialogRow">Name</div>
+            <div id="owner" class="_dialogRow" data-id="<%=model.owner%>"><%=model.owner%></div>-->
 
-    <div class="half-block left">
-        <dl>
-            <dt><label for="paymentMethodName">Name</label></dt>
-            <dd>
-                <input id="paymentMethodName" value="">
-            </dd>
-
-
-            <!--<dt><label for="owner">Name</label></dt>
-            <dd>
-                <span id="owner" data-id="<%=model.owner%>"><%=model.owner%></span>
-            </dd>-->
-
-            <dt><label for="currency">Currency</label></dt>
-            <dd class="_newSelectListWrap">
-                <a href="javascript:;" class="current-selected" id="currency" data-id=""></a>
-            </dd>
-        </dl>
+        <div class="_dialogRow">Currency</div>
+        <div class="_dialogRow"><a href="javascript:;" class="current-selected _newSelectListWrap" id="currency" data-id=""></a></div>
+        <div class="_dialogRow">Bank</div>
+        <div class="_dialogRow"><input id="bankName" value=""></div>
+        <div class="_dialogRow">Account</div>
+        <div class="_dialogRow"><input id="account" value=""></div>
+        <div class="_dialogRow">Chart of Account</div>
+        <div class="_dialogRow"><a href="javascript:;" class="current-selected _newSelectListWrap" id="chartAccount" data-id="">Select</a></div>
     </div>
-    <div class="half-block right">
-        <dl>
-            <dt><label for="bankName">Bank</label></dt>
-            <dd>
-                <input id="bankName" value="">
-            </dd>
-            <dt><label for="account">Account</label></dt>
-            <dd>
-                <input id="account" value="">
-            </dd>
-            <dt><label for="chartAccount">Chart of Account</label></dt>
-            <dd>
-                <a href="javascript:;" class="current-selected" id="chartAccount" data-id="">Select</a>
-            </dd>
-        </dl>
-    </div>
-
-
-
-    <div class="clearfix"></div>
 </div>
-  

@@ -1,33 +1,46 @@
 ﻿<div id="searchContainer"></div>
-<div>
-    <table class="list task-list withCheckbox">
+<div class="_tableSalesProformaWrap">
+    <table class="list stripedList">
+        <colgroup>
+            <col width="42px">
+            <col width="14%">
+            <col width="14%">
+            <col width="14%">
+            <col width="14%">
+            <col width="7%">
+            <col width="7%">
+            <col width="7%">
+            <col width="7%">
+            <col width="7%">
+            <col width="9%">
+        </colgroup>
         <thead>
         <tr>
-            <th class=""><input type="checkbox" id="checkAll"/></th>
-            <th class="oe_sortable" data-sort="supplier.name.first">Customer<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="name">Invoice Number<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="paymentDate">Payment Date<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
+            <th class="centerCell"><input type="checkbox" id="checkAll"/></th>
+            <th class="oe_sortable" data-sort="supplier.name.first">Customer<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="name">Invoice Number<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="paymentDate">Payment Date<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
             <th class="oe_sortable" data-sort="salesPerson.name.first"><%= currentDb ? 'Assigned' : 'SalesPerson'%><span
-                    class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="dueDate">Due<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="paymentInfo.balance">Balance<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
+                    class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="dueDate">Due<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="paymentInfo.balance">Balance<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
             <th class="oe_sortable" data-sort="paymentInfo.unTaxed"><%= currentDb ? 'Paid' : 'Untaxed'%><span
-                    class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="paymentInfo.total">Total<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="workflow.name">Status<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="invoiceDate">Invoice Date<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <!--<th class="oe_sortable" data-sort="validated">Validated<span class="arrow down">7</span><span-->
-            <!--class="arrow up">v</span></th>-->
+                    class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="paymentInfo.total">Total<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="workflow.name">Status<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="invoiceDate">Invoice Date<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <!--<th class="oe_sortable" data-sort="validated">Validated<span class="arrow down"></span><span-->
+            <!--class="arrow up"></span></th>-->
         </tr>
         </thead>
         <tbody id="listTable" class="enableTableOdd"></tbody>

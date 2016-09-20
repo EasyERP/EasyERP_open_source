@@ -79,14 +79,16 @@ define([
             var $tr = $target.closest('tr');
             var dataId = $tr.attr('data-id');
             var $body = this.$el;
-            var childTr = $body.find('[data-main="' + dataId + '"]')
+            var childTr = $body.find('[data-main="' + dataId + '"]');
+            var span = $tr.find('.expand').find('span');
+            var sign = $.trim(span.attr('class'));
 
-            var sign = $.trim($tr.find('.expand').text());
-
-            if (sign === '+') {
-                $tr.find('.expand').text('-');
+            if (sign === 'icon-caret-right') {
+                span.removeClass('icon-caret-right');
+                span.addClass('icon-caret-down');
             } else {
-                $tr.find('.expand').text('+');
+                span.removeClass('icon-caret-down');
+                span.addClass('icon-caret-right');
             }
 
             childTr.toggleClass();
@@ -106,7 +108,7 @@ define([
                     var journalEntries = result.journalEntries;
                     var mainTr = body.find('[data-id="' + asyncId + '"]');
                     journalEntries.forEach(function (entry) {
-                        mainTr.after("<tr data-main='" + asyncId + " 'class='hidden'><td colspan='3' class='leftBorderNone'>" + common.utcDateToLocaleFullDateTime(entry._id) + "</td><td class='money'>" + (entry.debit ? helpers.currencySplitter((entry.debit / 100).toFixed(2)) : helpers.currencySplitter((entry.credit / 100).toFixed(2))) + '</td></tr>');
+                        mainTr.after("<tr data-main='" + asyncId + " 'class='hidden'><td colspan='2' class='leftBorderNone'>" + common.utcDateToLocaleFullDateTime(entry._id) + "</td><td class='money'>" + (entry.debit ? helpers.currencySplitter((entry.debit / 100).toFixed(2)) : helpers.currencySplitter((entry.credit / 100).toFixed(2))) + '</td></tr>');
                     });
                 });
 

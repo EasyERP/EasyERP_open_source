@@ -24,6 +24,7 @@
     "fast-csv": "0.6.0",
     "geoip-lite": "1.1.6",
     "googleapis": "0.4.6",
+    "html-pdf": "2.1.0",
     "isodate": "0.1.4",
     "lodash": "3.8.0",
     "money": "0.2.0",
@@ -57,6 +58,7 @@
     "url": "http://192.168.88.122"
   },
   "devDependencies": {
+    "apidoc": "^0.16.1",
     "autoprefixer": "^6.3.7",
     "chai": "^3.2.0",
     "chai-jquery": "^2.0.0",
@@ -65,6 +67,7 @@
     "eslint-config-thinkmobiles": "git+https://github.com/ivanlyah/eslint-config-thinkmobiles.git",
     "eslint-plugin-react": "^4.1.0",
     "grunt": "^0.4.5",
+    "grunt-apidoc": "^0.11.0",
     "grunt-contrib-jshint": "^0.11.2",
     "grunt-contrib-nodeunit": "^0.4.1",
     "grunt-contrib-sass": "^1.0.0",

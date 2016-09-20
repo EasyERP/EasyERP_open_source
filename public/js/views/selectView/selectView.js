@@ -4,8 +4,9 @@ define([
     'Underscore',
     'text!templates/selectView/selectTemplate.html',
     'text!templates/selectView/selectContent.html',
-    'collections/Filter/filterCollection'
-], function (Backbone, $, _, selectTemplate, selectContent, FilterCollection) {
+    'collections/Filter/filterCollection',
+    'dataService'
+], function (Backbone, $, _, selectTemplate, selectContent, FilterCollection, dataService) {
     var selectView = Backbone.View.extend({
         template       : _.template(selectTemplate),
         contentTemplate: _.template(selectContent),
@@ -183,6 +184,23 @@ define([
 
             if (this.attr === 'jobs') {
                 data.push({_id: 'createJob', name: 'Generate sprint'});
+
+                start = (this.currentPage - 1) * elementVisible;
+                end = Math.min(this.currentPage * elementVisible, data.length);
+                allPages = Math.ceil(data.length / elementVisible);
+
+                contentHolder.html(_.template(selectContent, {
+                    collection    : data.slice(start, end),
+                    currentPage   : this.currentPage,
+                    allPages      : allPages,
+                    start         : start,
+                    end           : end,
+                    dataLength    : data.length,
+                    elementVisible: elementVisible
+                }));
+
+            } else if (this.attr === 'accountTypeDd') {
+                data.unshift({_id: 'createAccountType', name: 'Create Account Type'});
 
                 start = (this.currentPage - 1) * elementVisible;
                 end = Math.min(this.currentPage * elementVisible, data.length);

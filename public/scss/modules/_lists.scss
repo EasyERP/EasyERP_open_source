@@ -230,11 +230,11 @@
       border: 2px solid $payroll-border-blue;
 
       &:after {
-        content: "\f00c";
+        content: "\e904";
         position: absolute;
         top: 15px;
         right: 15px;
-        font-family: FontAwesome;
+        font-family: 'erp-icons';
         color: $payroll-border-blue;
       }
 
@@ -288,7 +288,7 @@
     &._employeesItem {
       ._payrollListImage {
         &:after {
-          font-family: 'fontAwesome';
+          font-family: 'erp-icons';
           margin: auto;
           color: $payroll-border-gray;
           font-size: 24px;
@@ -299,35 +299,35 @@
     &._weeklyItem {
       ._payrollListImage {
         &:after {
-          content: "\f073";
+          content: "\e075";
         }
       }
     }
     &._payItem {
       ._payrollListImage {
         &:after {
-          content: "\f080";
+          content: "\e077";
         }
       }
     }
     &._structureItem {
       ._payrollListImage {
         &:after {
-          content: "\f200";
+          content: "\e924";
         }
       }
     }
     &._bankItem {
       ._payrollListImage {
         &:after {
-          content: "\f09d";
+          content: "\e025";
         }
       }
     }
     &._employeesItem {
       ._payrollListImage {
         &:after {
-          content: "\f0c0";
+          content: "\e001";
         }
       }
     }
@@ -387,14 +387,14 @@
   }
 }
 
-.list td {
-  &._priorityCell {
-    padding: 0;
-  }
-}
+//.list td {
+//  &._priorityCell {
+//    padding: 0;
+//  }
+//}
 
 ._tagsCellWrap {
-  width: 100px;
+  min-width: 100px;
   padding-bottom: 5px;
   &:after {
     content: '';
@@ -518,23 +518,22 @@
 
   }
 }
-
-.list tbody tr._contractJobsListItem td {
-  padding: 10px;
-  text-align: left;
-  vertical-align: top;
-
-  &.contractCell {
-    text-align: center;
-  }
-}
-
-
-.list tbody td {
-  &.contractCell {
-    text-align: center;
-  }
-}
+//
+//.list tbody tr._contractJobsListItem td {
+//  padding: 10px;
+//  text-align: left;
+//  vertical-align: top;
+//
+//  &.contractCell {
+//    text-align: center;
+//  }
+//}
+//
+//.list tbody td {
+//  &.contractCell {
+//    text-align: center;
+//  }
+//}
 
 .semiBold {
   font-family: $semibold-font-family;

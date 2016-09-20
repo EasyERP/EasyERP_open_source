@@ -109,10 +109,10 @@ var Products = function (models) {
             queryObject.canBeSold = true;
 
             // todo change it for category
-            if (query.service === 'true') {
+           /* if (query.service === 'true') {
                 key = 'info.productType';
                 queryObject[key] = 'Service';
-            }
+            }*/
         } else {
             queryObject.canBePurchased = true;
         }

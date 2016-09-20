@@ -1,25 +1,23 @@
-<table class="list2">
+<table class="list2 tableFixed  _invoiceTable">
     <colgroup>
-        <col width="15%">
-        <col width="30%">
-        <col width="17%">
-        <col width="10%">
-        <col width="13%">
-        <col width="10%">
+        <col width="200px">
+
+        <col width="200px">
+
+        <col width="60px">
+        <col width="100px">
+        <col width="80px">
+        <col width="80px">
 
     </colgroup>
     <thead>
-    <tr class="productListItemsColumns">
+    <tr class="productListItemsColumns _deleteHeader ">
         <th data-sort="Product">
             Product
         </th>
         <% if (forSales) {%>
         <th data-sort="jobs">
             Job
-        </th>
-        <% } else {%>
-        <th data-sort="description">
-            Description
         </th>
         <% } %>
         <th data-sort="quantity">
@@ -56,7 +54,7 @@
     </tbody>
 </table>
 <div class="clearfix"></div>
-<div id="totalAmountContainer" class="half-block right">
+<div id="totalAmountContainer" class="_totalAmountContainer">
 
 </div>
 

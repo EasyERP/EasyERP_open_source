@@ -19,6 +19,16 @@
                         <% } %>
                     </dd>
                 </dl>
+                <dl class="person-info">
+                    <dt><label for="jobDescription">Description</label></dt>
+                    <dd>
+                        <% if (jobs && jobs._id) {%>
+                        <textarea id="jobDescription"><%=jobs.description%></textarea>
+                        <% } else {%>
+                        <textarea id="jobDescription"/>
+                        <% } %>
+                    </dd>
+                </dl>
             </div>
             <div class="thirdPartBlock left">
                 <dl class="person-info">
@@ -53,15 +63,14 @@
         </div>
         <div class="clearfix"></div>
         <div class="topContentHolder">
-            <div id="wTrackItemsHolder">
-                <table id="rawTable" class="list2">
+            <div id="wTrackItemsHolder" class="_wTrackItemsHolder">
+                <table id="rawTable" class="list2 tableFixed _invoiceTable">
                     <colgroup>
-                        <col width="2%">
                         <col width="13%">
                         <col width="10%">
-                        <col width="7%">
-                        <col width="7%">
-                        <col width="7%">
+                        <col width="8%">
+                        <col width="12%">
+                        <col width="12%">
                         <col width="5%">
                         <col width="5%">
                         <col width="5%">
@@ -69,11 +78,11 @@
                         <col width="5%">
                         <col width="5%">
                         <col width="5%">
-                        <col width="5%">
+                        <col width="10%">
+                        <col width="30px">
                     </colgroup>
                     <thead>
-                    <tr>
-                        <th></th>
+                    <tr  class="_deleteHeader">
                         <th>Employee</th>
                         <th>Department</th>
                         <th>Generate&nbspBy</th>
@@ -87,11 +96,12 @@
                         <th>Sa</th>
                         <th>Su</th>
                         <th>Approx Hours</th>
+                        <th class="deleteCell"></th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr id="addNewItem">
-                        <td colspan="14">
+                    <tr id="addNewItem" class="_addNewItem">
+                        <td colspan="13">
                             <a href="javascript:;" id="addNewEmployeeRow">Add an Item</a>
                         </td>
                     </tr>

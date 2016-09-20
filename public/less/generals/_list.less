@@ -10,160 +10,129 @@
 
 .list,
 .list2 {
-  font-family: @fontRegular;
-  width: 100%;
+  &:not(.stripedList) {
+    font-family: @fontRegular;
+    width: 100%;
 
-  td, th {
-    height: 23px;
-    padding: 0 6px;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    box-sizing: border-box;
-    color: @mainText-color;
-    font-size: 12px;
-  }
-
-  thead {
-    tr {
-      border: none;
-      height: 30px;
-      vertical-align: middle;
+    td, th {
+      height: 23px;
+      padding: 0 6px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      box-sizing: border-box;
+      color: @mainText-color;
+      font-size: 12px;
     }
 
-    th {
-      font-family: @fontSemiBold;
-      text-align: right;
-    }
-  }
-
-  tbody {
-
-    td {
-      text-align: right;
-      height: 45px;
-      &.changeContent {
-        border-top: 2px solid @success;
-        border-bottom: 2px solid @success;
-      }
-    }
-
-    tr {
-      &:last-child {
-        border-bottom: @thin-border @list-border-color;
-      }
-    }
-  }
-
-  tbody,
-  thead {
-    tr {
-      border-top: @thin-border @list-border-color;
-    }
-  }
-
-  tfoot {
-    td {
-      text-align: right;
-    }
-  }
-
-  thead, tfoot {
-    tr {
-      background: inherit !important; //hover should not work in a hover and footer tr
-    }
-  }
-
-  .notForm {
-    input {
-      margin-top: 3px;
-      cursor: pointer;
-      display: inline-block;
-      vertical-align: top;
-    }
-  }
-
-  .oe_sortable,
-  .oe_sortable_sub {
-    cursor: pointer;
-    position: relative;
-    .arrow {
-      display: none;
-      text-align: center;
-      cursor: pointer;
-      font-family: FontAwesome;
-      position: absolute;
-      top: 2px;
-      right: -8px;
-    }
-    &.sortUp {
-      .up,
-      .down {
-        display: inline-block;
-        &:before {
-          content: "\f176";
-        }
-      }
-    }
-    &.sortDn {
-      .down {
-        &:before {
-          -webkit-transform: rotate(90deg);
-          transform: rotate(90deg);
-        }
-      }
-    }
-
-  }
-
-  .enableTableOdd {
-    tr {
-      &:not(.innerRow) {
-        &:hover {
-          background-color: @defaultBgColorOdd-color;
-        }
-      }
-    }
-  }
-
-  .centerCell {
-    text-align: center;
-  }
-
-  .leftBorderNone {
-    border-left: none;
-  }
-
-  .cancelled {
-    a {
-      text-decoration: line-through;
-    }
-  }
-  &.enable_hover {
-    tbody {
+    thead {
       tr {
-        &:hover {
-          background-color: @defaultBgHover-color;
+        border: none;
+        height: 30px;
+        vertical-align: middle;
+      }
+
+      th {
+        font-family: @fontSemiBold;
+        text-align: right;
+      }
+    }
+
+    tbody {
+
+      td {
+        text-align: right;
+        height: 45px;
+        &.changeContent {
+          border-top: 2px solid @success;
+          border-bottom: 2px solid @success;
+        }
+      }
+
+      tr {
+        &:last-child {
+          border-bottom: @thin-border @list-border-color;
         }
       }
     }
-  }
 
-  .overtime { //add new color for overtime tr
-    background-color: @list-overtime-bg !important;
-  }
+    tbody,
+    thead {
+      tr {
+        border-top: @thin-border @list-border-color;
+      }
+    }
 
-  thead th:first-of-type {
-    width: 15%;
-  }
+    tfoot {
+      td {
+        text-align: right;
+      }
+    }
 
-  .datepicker {
-    width: 90%
-  }
+    thead, tfoot {
+      tr {
+        background: inherit ; //hover should not work in a hover and footer tr
+      }
+    }
 
-  .datepicker.notVisible {
-    display: none;
-  }
+    .notForm {
+      input {
+        margin-top: 3px;
+        cursor: pointer;
+        display: inline-block;
+        vertical-align: top;
+      }
+    }
 
+    .enableTableOdd {
+      tr {
+        &:not(.innerRow) {
+          &:hover {
+            background-color: @defaultBgColorOdd-color;
+          }
+        }
+      }
+    }
+
+    .centerCell {
+      text-align: center !important;
+    }
+
+    .leftBorderNone {
+      border-left: none;
+    }
+
+    .cancelled {
+      a {
+        text-decoration: line-through;
+      }
+    }
+    &.enable_hover {
+      tbody {
+        tr {
+          &:hover {
+            background-color: @defaultBgHover-color;
+          }
+        }
+      }
+    }
+
+    .overtime { //add new color for overtime tr
+      background-color: @list-overtime-bg !important;
+    }
+
+    thead th:first-of-type {
+      width: 15%;
+    }
+
+    .datepicker {
+      width: 90%
+    }
+
+    .datepicker.notVisible {
+      display: none;
+    }
+
+  }
 }
 
 .ui-dialog {
@@ -218,5 +187,3 @@
 .hireFireTable {
   margin-bottom: 10px;
 }
-
-

@@ -20,10 +20,9 @@ define([
         componentObject  : {},
 
         events: {
-            'click .createBtn'                                 : 'create',
-            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
-            'click .selected'                                  : 'showNewSelect',
-            'click .fa-trash-o'                                : 'remove'
+            'click .createBtn' : 'create',
+            'click .selected'  : 'showNewSelect',
+            'click .icon-trash': 'remove'
         },
 
         initialize: function (options) {
@@ -307,6 +306,8 @@ define([
                 this.$el.find('#resultFormula').text(' - ( ' + deductionsFormula + ' )');
             } else if (earningsFormula) {
                 this.$el.find('#resultFormula').text(earningsFormula);
+            } else {
+                this.$el.find('#resultFormula').text('');
             }
         },
 

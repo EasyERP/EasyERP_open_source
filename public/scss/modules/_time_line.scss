@@ -58,9 +58,9 @@
     }
 
     .noteBody {
-      padding: 0 0 17px !important;
+      padding: 0 0 17px;
       border-radius: 3px;
-      border: 1px solid $note-border-color !important;
+      border: 1px solid $note-border-color;
       box-shadow: 1px 1px 3px 0 rgba($black, 0.05);
     }
 
@@ -99,6 +99,18 @@
   .historyContent {
     &:first-child {
       padding-top: 8px;
+    }
+  }
+
+  .itemCircle {
+    > [class^="icon-"],
+    > [class*=" icon-"] {
+      line-height: 26px;
+      display: block;
+    }
+    .icon-calendar {
+      line-height: 22px;
+      display: block;
     }
   }
 }

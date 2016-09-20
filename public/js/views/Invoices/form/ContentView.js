@@ -7,17 +7,19 @@ define([
     'text!templates/Invoices/form/ListItemTemplate.html',
     'models/InvoiceModel',
     'views/Invoices/form/FormView',
+    'views/Invoices/form/EditView',
     'views/Invoices/CreateView',
     'common',
     'constants',
     'helpers'
-], function (Backbone, $, _, TFormBaseView, ContentTemplate, ListItemTemplate, InvoiceModel, FormView, CreateView, common, CONSTANTS, helpers) {
+], function (Backbone, $, _, TFormBaseView, ContentTemplate, ListItemTemplate, InvoiceModel, FormView, EditView, CreateView, common, CONSTANTS, helpers) {
     'use strict';
 
     var InvoicesListView = TFormBaseView.extend({
         listTemplate   : _.template(ListItemTemplate),
         contentTemplate: _.template(ContentTemplate),
         CreateView     : CreateView,
+        EditView       : EditView,
         listUrl        : 'easyErp/Invoices/list/',
         contentType    : CONSTANTS.INVOICES, // needs in view.prototype.changeLocationHash
         viewType       : 'tform', // needs in view.prototype.changeLocationHash
@@ -63,6 +65,8 @@ define([
                         self.formView.undelegateEvents();
                     }
 
+                    self.currentModel = model;
+
                     self.formView = new self.FormView({model: model, el: '#formContent'});
                     self.formView.render();
 
@@ -70,7 +74,6 @@ define([
                     $thisEl.find('tr[data-id="' + modelId + '"]').addClass('selected');
 
                     self.selectedId = model.id;
-
 
                     if (cb && typeof cb === 'function') {
                         cb();

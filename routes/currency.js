@@ -37,6 +37,11 @@ HTTP/1.1 200 OK
  }
      */
     router.get('/getForDD', authStackMiddleware, handler.getForDd);
+    router.get('/getAll', authStackMiddleware, handler.getAll);
+    router.get('/getForList', handler.getForList);
+    router.put('/:id', handler.update);
+    router.post('/', handler.create);
+    router.delete('/:id', handler.remove);
 
     return router;
 };

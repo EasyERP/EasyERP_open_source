@@ -5,31 +5,37 @@ module.exports = function (grunt) {
 
     // Project configuration.
     grunt.initConfig({
-        jsdoc    : {
-            dist: {
-                src    : ['handlers/**/*.js', 'Modules/**/*.js', 'routes/**/*.js', 'models/**/*.js'],
+        apidoc: {
+            easyerp: {
+                title  : 'EasyErp documentation',
+                url    : 'http://192.168.88.88',
+                src    : 'routes/',
+                dest   : 'apidoc/',
                 options: {
-                    destination: 'doc',
-                    template   : "node_modules/grunt-jsdoc/node_modules/ink-docstrap/template",
-                    configure  : "jsdoc.json"
+                    debug         : true,
+                    excludeFilters: ['node_modules/', 'git/']
                 }
             }
         },
+
         karma: {
             all: {
                 configFile: 'karma.conf.js'
             }
         },
+
         sass: {
             dist: {
                 options: {
                     sourcemap: 'file'
                 },
+
                 files: {
                     'public/css/style.css': 'public/scss/style.scss'
                 }
             }
         },
+
         postcss: {
             options: {
                 processors: [
@@ -38,10 +44,11 @@ module.exports = function (grunt) {
                     // require('cssnano')() // minify the result
                 ]
             },
-            dist: {
+            dist   : {
                 src: 'public/css/style.css'
             }
         },
+
         watch: {
             sass: {
                 files: 'public/scss/**/*.scss',
@@ -50,45 +57,13 @@ module.exports = function (grunt) {
         }
     });
 
-    //grunt.loadNpmTasks('grunt-jsdoc');
+    grunt.loadNpmTasks('grunt-apidoc');
     grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-contrib-sass');
     grunt.loadNpmTasks('grunt-postcss');
     grunt.loadNpmTasks('grunt-contrib-watch'); // only for css/flexbox branch
 
-    //grunt.registerTask('default', ['jsdoc']);
     grunt.registerTask('default', ['karma']);
     grunt.registerTask('dist-css', ['sass', 'postcss:dist']);
+    grunt.registerTask('compile', ['dist-css', 'apidoc:easyerp']);
 };
-
-// Old version
-
-// /**
-//  * http://gruntjs.com/configuring-tasks
-//  */
-// module.exports = function (grunt) {
-//     // Project configuration.
-//     grunt.initConfig({
-//         jsdoc    : {
-//             dist: {
-//                 src    : ['handlers/**/*.js', 'Modules/**/*.js', 'routes/**/*.js', 'models/**/*.js'],
-//                 options: {
-//                     destination: 'doc',
-//                     template   : "node_modules/grunt-jsdoc/node_modules/ink-docstrap/template",
-//                     configure  : "jsdoc.json"
-//                 }
-//             }
-//         },
-//         karma: {
-//             all: {
-//                 configFile: 'karma.conf.js'
-//             }
-//         }
-//     });
-//
-//     //grunt.loadNpmTasks('grunt-jsdoc');
-//     grunt.loadNpmTasks('grunt-karma');
-//
-//     //grunt.registerTask('default', ['jsdoc']);
-//     grunt.registerTask('default', ['karma']);
-// };

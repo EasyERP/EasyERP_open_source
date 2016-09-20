@@ -94,7 +94,7 @@ define([
 
             $currentEl.append(new ListTotalView({
                 element : this.$el.find('#listTable'),
-                cellSpan: 4,
+                cellSpan: 3,
                 wTrack  : true
             }).render());
 

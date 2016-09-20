@@ -1,7 +1,7 @@
 <% collection.forEach(function(account, index){ %>
 <tr data-id="<%=account._id%>" class="mainTr">
-    <td class="notForm"><input type="checkbox" value="<%=account._id%>" class="checkbox listCB"/></td>
-    <td class="expand centerCell">+</td>
+    <td class="notForm centerCell"><input type="checkbox" value="<%=account._id%>" class="checkbox listCB"/></td>
+    <td class="expand"><span class="icon-caret-right"></span></td>
     <td><%=moment(account._id).month() + 1%></td>
     <td><%=moment(account._id).year()%></td>
 </tr>

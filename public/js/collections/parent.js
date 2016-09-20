@@ -123,7 +123,7 @@ define([
                 delete data.contentType;
             }
 
-            if(data.viewType === 'tform') {
+            if (data.viewType === 'tform') {
                 data.viewType = 'list';
             }
 
@@ -296,6 +296,7 @@ define([
             this.totalRecords = response.total;
             this.totalPages = Math.ceil(this.totalRecords / this.pageSize);
             this.lastPage = this.totalPages;
+            this.totalValue = response.totalValue;
 
             this.trigger('fetchFinished', {
                 totalRecords: this.totalRecords,

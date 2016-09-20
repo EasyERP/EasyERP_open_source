@@ -10,6 +10,7 @@ var History = function (models) {
     'use strict';
 
     var HistoryEntrySchema = mongoose.Schemas.History;
+    var OrgSettingsSchema = mongoose.Schemas.orgSettingsSchema;
     var followersSchema = mongoose.Schemas.followers;
 
     function generateHistoryEntry(contentType, keyValue) {
@@ -157,9 +158,10 @@ var History = function (models) {
                     files      : files,
                     history    : historyEntry,
                     you        : historyEntry.editedBy ? historyEntry.editedBy._id.toString() === empObject._id.toString() : historyEntry.authorId ? historyEntry.authorId === empObject._id.toString() : historyEntry.user ? historyEntry.user._id === empObject._id.toString() : false,
+                    req        : req
                 };
 
-                mailer.sendHistory(options, asyncCb);
+                getFromMail(options, asyncCb);
             }, cb);
         }
 
@@ -171,6 +173,27 @@ var History = function (models) {
             }
         });
 
+    }
+
+    function getFromMail(mailOptions, cb){
+
+        var OrgSettings;
+        if (mailOptions.req){
+            OrgSettings = models.get(mailOptions.req.session.lastDb, 'orgSettings', OrgSettingsSchema);
+            OrgSettings.findOne()
+                .populate('contact', 'email')
+                .exec(function(err, settings){
+                    if (err){
+                        return console.log(err);
+                    }
+                    if (!settings.defaultEmail && settings.contact){
+                        mailOptions.from = settings.contact.email;
+                    }
+                    mailer.sendHistory(mailOptions, cb);
+                });
+        } else {
+            mailer.sendHistory(mailOptions, cb);
+        }
     }
 
     this.addEntry = function (options, callback) {
@@ -216,7 +239,7 @@ var History = function (models) {
             };
 
             if (data[key]) {
-                if (typeof data[key] === 'object' && !data[key]._bsontype) {
+                if (typeof data[key] === 'object' && !(data[key] instanceof objectId) && !(data[key] instanceof Date)) {
                     arrayDataKey = Object.keys(data[key]);
                     arrayDataKey.forEach(function (elem, index) {
                         var name = arrayDataKey[index];

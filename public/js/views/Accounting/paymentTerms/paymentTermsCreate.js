@@ -3,11 +3,13 @@ define([
     'jQuery',
     'Underscore',
     'text!templates/Accounting/CreatePaymentTerms.html',
+    'text!templates/Accounting/paymentTermsEl.html',
     'views/selectView/selectView',
     'models/paymentTerm',
     'populate',
-    'constants'
-], function (Backbone, $, _, template, SelectView, Model, populate, CONSTANTS) {
+    'constants',
+    'helpers/keyValidator'
+], function (Backbone, $, _, template, tableEL, SelectView, Model, populate, CONSTANTS, keyValidator) {
     'use strict';
 
     var EditView = Backbone.View.extend({
@@ -19,51 +21,19 @@ define([
 
             this.currentModel = new Model();
 
+            this.collection = options.collection;
+
             this.responseObj = {};
 
-            this.render(options);
+            this.render();
         },
 
         events: {
-            'click .current-selected:not(.jobs)'               : 'showNewSelect',
-            click                                              : 'hideNewSelect',
-            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
+            'keypress #paymentTermCount'               : 'keypressHandler'
         },
 
-        showNewSelect: function (e) {
-            var $target = $(e.target);
-            e.stopPropagation();
-
-            if ($target.attr('id') === 'selectInput') {
-                return false;
-            }
-
-            if (this.selectView) {
-                this.selectView.remove();
-            }
-
-            this.selectView = new SelectView({
-                e          : e,
-                responseObj: this.responseObj
-            });
-
-            $target.append(this.selectView.render().el);
-
-            return false;
-        },
-
-        hideNewSelect: function () {
-            $('.newSelectList').hide();
-
-            if (this.selectView) {
-                this.selectView.remove();
-            }
-        },
-
-        chooseOption: function (e) {
-            $(e.target).parents('dd').find('.current-selected').text($(e.target).text());
-
-            this.hideNewSelect();
+        keypressHandler: function (e) {
+            return keyValidator(e);
         },
 
         saveItem: function () {
@@ -71,23 +41,19 @@ define([
             var thisEl = this.$el;
 
             var name = thisEl.find('#paymentTermName').val();
+            var count = thisEl.find('#paymentTermCount').val();
 
             var data = {
-                name: name
+                name: name,
+                count : count || 1
             };
 
             this.currentModel.save(data, {
                 wait   : true,
-                success: function (res) {
-                    var url = window.location.hash;
-
-                    if (url === '#easyErp/Accounts') {
-                        self.hideDialog();
-                        Backbone.history.fragment = '';
-                        Backbone.history.navigate(url, {trigger: true});
-                    } else {
-                        self.hideDialog();
-                    }
+                success: function (res, model) {
+                    self.hideDialog();
+                    $('#paymentTermsTable').append(_.template(tableEL, {elem : model}));
+                    self.collection.add(res);
                 },
 
                 error: function (model, xhr) {
@@ -116,6 +82,7 @@ define([
                 buttons      : [
                     {
                         text : 'Save',
+                        class: 'btn blue',
                         click: function () {
                             self.saveItem();
                         }
@@ -123,6 +90,7 @@ define([
 
                     {
                         text : 'Cancel',
+                        class: 'btn',
                         click: function () {
                             self.hideDialog();
                         }
@@ -130,8 +98,6 @@ define([
                 ]
 
             });
-
-            populate.get('#currency', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
 
             return this;
         }

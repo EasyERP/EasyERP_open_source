@@ -890,6 +890,7 @@ var Module = function (models) {
             }, {
                 $project: {
                     isEmployee  : 1,
+                    name        : {$concat: ['$name.first', ' ', '$name.last']},
                     fire        : 1,
                     hire        : 1,
                     lastFire    : 1,
@@ -920,13 +921,16 @@ var Module = function (models) {
                             }
                         }
                     },
-                    fire    : 1,
-                    hire    : '$transfer'
+
+                    name: 1,
+                    fire: 1,
+                    hire: '$transfer'
                 }
             }, {
                 $project: {
                     transferDate: {$max: '$transfer.date'},
                     transfer    : 1,
+                    name        : 1,
                     fire        : 1,
                     hire        : 1
                 }
@@ -942,20 +946,24 @@ var Module = function (models) {
                             }
                         }
                     },
-                    fire  : 1,
-                    hire  : 1
+
+                    name: 1,
+                    fire: 1,
+                    hire: 1
                 }
             }, {
                 $project: {
                     salary              : {$max: '$salary.salary'},
                     payrollStructureType: {$arrayElemAt: ['$salary', 0]},
                     fire                : 1,
+                    name                : 1,
                     hire                : 1
                 }
             }, {
                 $project: {
                     department          : '$payrollStructureType.department',
                     salary              : 1,
+                    name                : 1,
                     payrollStructureType: '$payrollStructureType.payrollStructureType',
                     fire                : 1,
                     hire                : 1
@@ -969,6 +977,7 @@ var Module = function (models) {
                 }
             }, {
                 $project: {
+                    name                : 1,
                     department          : 1,
                     salary              : 1,
                     fire                : 1,
@@ -988,6 +997,7 @@ var Module = function (models) {
 
             async.each(employeesResult, function (empObject, asyncCb) {
                 var employee = empObject._id;
+                var employeeName = empObject.name;
                 var department = empObject.department;
                 var salary = empObject.salary;
                 var hire = empObject.hire;
@@ -1039,7 +1049,8 @@ var Module = function (models) {
                     date          : localDate,
                     sourceDocument: {
                         model: 'Employees',
-                        _id  : employee
+                        _id  : employee,
+                        name : employeeName
                     }
                 };
 
@@ -1336,7 +1347,7 @@ var Module = function (models) {
                                 journal             : bodySalary.journal
                             };
 
-                            journalEntry.removeByDocId(query, req.session.lastDb, cb)
+                            journalEntry.removeByDocId(query, req.session.lastDb, cb);
                         };
 
                         createJournalEntries = function (result, cb) {

@@ -29,8 +29,8 @@ define([
             'mouseover tbody tr:not("#addNewItem")'                    : 'showRemove',
             'mouseleave tbody tr:not("#addNewItem")'                   : 'hideRemove',
             'click .remove'                                            : 'deleteRow',
-            'keydown input:not(#jobName, #selectInput)'                : 'onKeyDownInput',
-            'keyup input:not(#jobName, #selectInput, .hasDatepicker)'  : 'onKeyUpInput',
+            'keydown input:not(#jobName, #selectInput, #jobDescription)'                : 'onKeyDownInput',
+            'keyup input:not(#jobName, #jobDescription, #selectInput, .hasDatepicker)'  : 'onKeyUpInput',
             'click div:not(input.endDateInput) input:not(#selectInput)': 'hideSelects'
         },
 
@@ -493,7 +493,8 @@ define([
                 var activeTab;
                 var dialogHolder;
                 var jobId = self.jobs ? self.jobs._id : null;
-                var jobName = self.jobs ? self.jobs.name : $('#jobName').val();
+                var jobName = self.jobs ? self.jobs.name : self.$el.find('#jobName').val();
+                var jobDescription = self.jobs ? self.jobs.description : self.$el.find('#jobDescription').val();
                 var _id = window.location.hash.split('form/')[1];
                 var nameRegExp = /^[a-zA-Z0-9\s][a-zA-Z0-9-,\s\.\/\s]+$/;
 
@@ -519,6 +520,7 @@ define([
                             xhr.setRequestHeader('createJob', self.createJob);
                             xhr.setRequestHeader('project', self.modelJSON._id);
                             xhr.setRequestHeader('jobid', jobId);
+                            xhr.setRequestHeader('jobdesc', jobDescription);
                             xhr.setRequestHeader('jobname', jobName);
                         },
 

@@ -44,6 +44,7 @@ define([
             this.render();
         },
 
+
         // to remove zombies was needed for event after recieveInvoice on projectInfo
         remove: function () {
             this.$el.empty().off();
@@ -69,6 +70,10 @@ define([
             });
 
             $holder.append(itemView.render());
+
+            if (newModels.totalValue) {
+                $holder.find('#totalDebit').text(helpers.currencySplitter((newModels.totalValue / 100).toFixed(2)));
+            }
 
             itemView.undelegateEvents();
 

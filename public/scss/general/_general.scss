@@ -4,6 +4,42 @@
 .textBlue {
   color: #27a0cd;
 }
+.centerCell {
+  text-align: center !important;
+}
+.noPaddingMargin{
+  padding: 0;
+  margin: 0;
+}
+.half-block{
+  width: 42%;
+  margin-right: 5%;
+}
+
+.defaultBorRad{
+  border-radius: 3px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.clearfix {
+
+  clear: both;
+
+  &:before {
+    content:'';
+    display: table;
+    clear: both;
+  }
+
+  &:after {
+    content:'';
+    display: table;
+    clear: both;
+  }
+}
 
 //._multiEllipsis {
 //  overflow: hidden;
@@ -121,6 +157,12 @@
   color: #9a9a9e;
 }
 
+.text-overflow {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 //------ end stat.Took from less/state/state.less that was deleted------
 
 // invoiceChart styles from/less/tmp
@@ -148,7 +190,26 @@
 
 //less/tmp jobDash
 tr.redBorder {
-  background-color: red;
+  background-color: red !important;
+  * {
+    color: #fff !important;
+  }
+  td {
+    border-color: red !important;
+  }
+  &:hover {
+    background-color: red !important;
+    * {
+      color: #fff !important;
+    }
+    td {
+      border-color: red !important;
+    }
+  }
+}
+
+tr.greyBorder {
+  background-color: #e5d7e8;
 }
 
 //firedEmployees less/tmp
@@ -157,8 +218,25 @@ li.fired {
 }
 
 
+.content_wrapper {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  height: calc(100% - 40px);
+  width: calc(100% - 200px);
+}
 
-
+.template-switcher {
+  margin-top: 6px;
+}
 
 
 

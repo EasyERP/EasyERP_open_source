@@ -4,11 +4,12 @@ module.exports = (function () {
     var extend = require('mongoose-schema-extend');
 
     var payments = {
-        _id    : false,
-        total  : {type: Number, default: 0},
-        balance: {type: Number, default: 0},
-        unTaxed: {type: Number, default: 0},
-        taxes  : {type: Number, default: 0}
+        _id     : false,
+        total   : {type: Number, default: 0},
+        balance : {type: Number, default: 0},
+        unTaxed : {type: Number, default: 0},
+        discount: {type: Number, default: 0},
+        taxes   : {type: Number, default: 0}
     };
 
     var productForJobs = {type: ObjectId, ref: 'Product', default: null};
@@ -67,7 +68,8 @@ module.exports = (function () {
         removable  : {type: Boolean, default: true},
         approved   : {type: Boolean, default: false},
         emailed    : {type: Boolean, default: false},
-        project    : {type: ObjectId, ref: 'Project', default: null}
+        project    : {type: ObjectId, ref: 'Project', default: null},
+        externalId : {type: String, default: null}
     }, {collection: 'Invoice', discriminatorKey: '_type'});
 
     var jobsInvoiceSchema = baseSchema.extend({

@@ -23,6 +23,19 @@ define([
             this.model = new ApplicationModel();
             this.responseObj = {};
 
+            this.responseObj['#employmentTypeDd'] = [
+                {
+                    _id : 'Employees',
+                    name: 'Employees'
+                }, {
+                    _id : 'FOP',
+                    name: 'FOP'
+                }, {
+                    _id : 'Un Employees',
+                    name: 'Un Employees'
+                }
+            ];
+
             this.responseObj['#genderDd'] = [
                 {
                     _id : 'male',
@@ -102,6 +115,8 @@ define([
             var jobType = $thisEl.find('#jobTypeDd').attr('data-id') || null;
 
             var marital = $thisEl.find('#maritalDd').attr('data-id');
+
+            var employmentType = $thisEl.find('#employmentTypeDd').attr('data-id') || null;
 
             var workAddress = {
                 street : $.trim($thisEl.find('#applicationsCreateStreet').val()),
@@ -222,6 +237,7 @@ define([
                 gender              : gender,
                 jobType             : jobType,
                 marital             : marital,
+                employmentType      : employmentType,
                 workAddress         : workAddress,
                 social              : social,
                 tags                : tags,

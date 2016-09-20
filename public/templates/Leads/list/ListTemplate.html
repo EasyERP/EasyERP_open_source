@@ -1,6 +1,6 @@
 <% leadsCollection.forEach(function(lead, index){ %>
 <tr data-id="<%=lead._id%>" class="stage-<%=(lead.workflow) ? lead.workflow.status.toLowerCase() : ''%>">
-    <td class="notForm"><input type="checkbox" value="<%=lead._id%>" class="checkbox listCB"/></td>
+    <td class="notForm centerCell"><input type="checkbox" value="<%=lead._id%>" class="checkbox listCB"/></td>
     <td><span class="blue"><%=lead.name%></span></td>
     <td>
         <div class="_tagsCellWrap">

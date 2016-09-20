@@ -14,8 +14,10 @@ define([
         template   : _.template(CreateTemplate),
         responseObj: {},
 
-        initialize: function () {
+        initialize: function (options) {
             this.model = new JournalModel();
+
+            this.notRedirect = options.notRedirect;
             this.render();
         },
 
@@ -71,7 +73,11 @@ define([
                 },
                 wait   : true,
                 success: function (model) {
-                    self.redirectAfterSave(self, model);
+                    if (!self.notRedirect) {
+                        return self.redirectAfterSave(self, model);
+                    }
+
+                    self.hideDialog();
                 },
 
                 error: function (model, xhr) {

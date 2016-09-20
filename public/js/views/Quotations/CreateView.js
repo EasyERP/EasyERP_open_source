@@ -45,6 +45,7 @@ define([
             this.model = new QuotationModel();
             this.responseObj = {};
             this.forSales = false;
+            this.currencySymbol = '$';
 
             this.render();
         },
@@ -59,19 +60,19 @@ define([
             var id = $target.attr('id');
             var type = $target.attr('data-level');
             var aEl;
+            var symbol;
+            var currency;
 
             var element = _.find(this.responseObj['#project'], function (el) {
                 return el._id === id;
             });
-
-            var currencyElement = $target.parents('dd').find('.current-selected');
-            var oldCurrency = currencyElement.attr('data-id');
-            var newCurrency = $target.attr('id');
-            var oldCurrencyClass = helpers.currencyClass(oldCurrency);
-            var newCurrencyClass = helpers.currencyClass(newCurrency);
-
-            var array = this.$el.find('.' + oldCurrencyClass);
-            array.removeClass(oldCurrencyClass).addClass(newCurrencyClass);
+            if ($target.closest('a').attr('id') === 'currencyDd') {
+                currency = _.findWhere(this.responseObj['#currencyDd'], {_id: $target.attr('id')});
+                symbol = currency ? currency.currency : '$';
+                $target.closest('dd').find('.current-selected').attr('data-symbol', symbol);
+                this.$el.find('.currencySymbol').text(symbol);
+                this.currencySymbol = symbol;
+            }
 
             if (type) {    // added condition for project with no data-level empty
                 this.salesManager = element.salesmanager;
@@ -122,12 +123,13 @@ define([
             var fiscalPosition = $.trim(thisEl.find('#fiscalPosition').attr('data-id'));
 
             var orderDate = thisEl.find('#orderDate').val();
-            var expectedDate = thisEl.find('#expectedDate').val() || thisEl.find('#orderDate').val();
+            var expectedDate = thisEl.find('#expectDate').val() || thisEl.find('#orderDate').val();
 
             var total = helpers.spaceReplacer($.trim(thisEl.find('#totalAmount').text()));
             var totalTaxes = helpers.spaceReplacer($.trim(thisEl.find('#taxes').text()));
             var taxes;
             var description;
+            var jobDescription;
             var unTaxed = helpers.spaceReplacer($.trim(thisEl.find('#totalUntaxes').text()));
             var subTotal;
             var jobs;
@@ -178,9 +180,10 @@ define([
                     });
                 }
                 // scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
-                taxes = helpers.spaceReplacer(targetEl.find('.taxes').text());
+                taxes = helpers.spaceReplacer(targetEl.find('.taxes .sum').text());
                 description = targetEl.find('[data-name="productDescr"] textarea').val();
-                subTotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
+                jobDescription = targetEl.find('textarea.jobsDescription').val();
+                subTotal = helpers.spaceReplacer(targetEl.find('.subtotal .sum').text());
                 subTotal = parseFloat(subTotal) * 100;
                 jobs = targetEl.find('.current-selected.jobs').attr('data-id');
 
@@ -206,13 +209,14 @@ define([
                 }
 
                 products.push({
-                    product    : productId,
-                    unitPrice  : price,
-                    quantity   : quantity,
-                    taxes      : taxes,
-                    description: description,
-                    subTotal   : subTotal,
-                    jobs       : jobs
+                    product       : productId,
+                    unitPrice     : price,
+                    quantity      : quantity,
+                    taxes         : taxes,
+                    description   : description,
+                    jobDescription: jobDescription,
+                    subTotal      : subTotal,
+                    jobs          : jobs
                 });
             }
 
@@ -284,7 +288,11 @@ define([
 
             if (this.forSales) {
                 productItemContainer.append(
-                    new ProductItemView({canBeSold: true, service: true, quotations: true}).render().el
+                    new ProductItemView({
+                        canBeSold: true,
+                        quotations: true,
+                        currencySymbol: this.currencySymbol
+                    }).render().el
                 );
             } else {
                 productItemContainer.append(
@@ -304,7 +312,7 @@ define([
                 resizable    : true,
                 dialogClass  : 'edit-dialog',
                 title        : 'Create Quotation',
-                width        : '900px',
+                width        : '950px',
                 buttons      : [
                     {
                         id   : 'create-person-dialog',
@@ -371,7 +379,7 @@ define([
                 maxDate    : '+0D'
             }).datepicker('setDate', curDate);
 
-            this.$el.find('#expectedDate').datepicker({
+            this.$el.find('#expectDate').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true

@@ -73,6 +73,7 @@ define([], function () {
         CONTRACTJOBS      : 'contractJobs',
         PROJECTSDASHBOARD : 'projectsDashboard',
         FOLLOWERS         : 'followers',
+        MANUALENTRY       : 'manualEntry',
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
@@ -208,7 +209,8 @@ define([], function () {
             DEALTASKS                  : '/DealTasks/',
             CONTRACTJOBS               : '/contractJobs/',
             PROJECTSDASHBOARD          : '/projectsDashboard/',
-            FOLLOWERS                  : '/followers/'
+            FOLLOWERS                  : '/followers/',
+            MANUALENTRY                : '/journalEntries/'
         },
 
         MID: {

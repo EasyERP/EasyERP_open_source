@@ -117,6 +117,7 @@
     }
 
     .fieldItem {
+      position: relative;
       width: 100%;
       max-width: 460px;
       padding: 10px 15px;
@@ -134,8 +135,22 @@
       }
     }
   }
+}
 
-  
+.required {
+  .requiredIcon {
+    display: inline-block !important;
+  }
+}
+
+
+.requiredIcon {
+  position: absolute;
+  right: 40px;
+  top: 50%;
+  display: none;
+  color: $importWarningIcon;
+  transform: translate(0, -50%);
 }
 
 ._contentBlockRow {
@@ -149,11 +164,17 @@
   border-radius: 3px;
   background-color: $white;
   margin-bottom: 10px;
-
-
   
   &.emptyRow {
     background-color: #f3f5f6;
+
+    ._rowItem {
+      &:hover {
+        .cleanButton {
+          display: none !important;
+        }
+      }
+    }
 
     .secondBox {
       border: 1px dashed #c2c8cd;
@@ -206,10 +227,12 @@
     font-size: 14px;
 
     &:hover {
-     .cleanButton {
-       display: block !important;
-     }
+      .cleanButton {
+        display: block !important;
+      }
     }
+
+
 
     &:nth-child(n+2) {
       border-left: none;
@@ -335,6 +358,14 @@
 
   ._importSearchDublicate {
     margin-bottom: 10px;
+  }
+
+  ._attachBottom {
+    margin-top: 30px;
+
+    .dropDownDateRangeContainer {
+      margin: 0 auto 25px;
+    }
   }
 }
 

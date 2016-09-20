@@ -6,7 +6,7 @@
 <% overdue = new Date() - new Date(invoice.dueDate) %>
 <% } %>
 <tr data-id="<%=invoice._id%>">
-    <td class="notForm"><input type="checkbox" value="<%=invoice._id%>" class="checkbox <%if (invoice.workflow && invoice.workflow.status !== 'New') { %>
+    <td class="notForm centerCell"><input type="checkbox" value="<%=invoice._id%>" class="checkbox <%if (invoice.workflow && invoice.workflow.status !== 'New') { %>
                 notRemovable
                 <% } %>"  <%if (invoice.workflow && invoice.workflow.status !== 'New') { %>
         disabled='disabled'
@@ -23,9 +23,9 @@
      <span><%= invoice.dueDate%></span>
      <%}%>
 </td>
-<td class="balance <%=currencyClass(invoice.currency._id)%>"><%=invoice.workflow.name.toLowerCase() !== 'cancelled' ? currencySplitter(invoice.paymentInfo.balance) : '0.00'%></td>
-<td class="paid <%=currencyClass(invoice.currency._id)%>"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.paid) : '0.00'%></td>
-<td class="total <%=currencyClass(invoice.currency._id)%>"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.total) : '0.00'%></td>
+<td class="balance"><%=(invoice.currency && invoice.currency._id ? invoice.currency._id.symbol : '') + (invoice.workflow.name.toLowerCase() !== 'cancelled' ? currencySplitter(invoice.paymentInfo.balance) : '0.00')%></td>
+<td class="paid"><%=(invoice.currency && invoice.currency._id ? invoice.currency._id.symbol : '') + ((invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.paid) : '0.00')%></td>
+<td class="total"><%=(invoice.currency && invoice.currency._id ? invoice.currency._id.symbol : '') + ((invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.total) : '0.00')%></td>
 <td class="centerCell" id='<%=invoice._id%>'>
     <%if(invoice.workflow){%>
         <%if(invoice.workflow.status === 'In Progress'){%>

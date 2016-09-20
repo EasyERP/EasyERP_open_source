@@ -54,5 +54,6 @@ module.exports = {
     DEALTASKS         : 110,
     CONTRACTJOBS      : 115,
     PROJECTSDASHBOARD : 116,
-    FOLLOWERS         : 117
+    FOLLOWERS         : 117,
+    MANUALENTRY       : 119
 };

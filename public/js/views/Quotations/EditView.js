@@ -4,12 +4,8 @@ define([
     'Underscore',
     'text!templates/Quotations/EditTemplate.html',
     'views/dialogViewBase',
-    'views/Projects/projectInfo/proformas/proformaView',
     'views/Assignees/AssigneesView',
     'views/Products/InvoiceOrder/ProductItems',
-    'views/Projects/projectInfo/orders/orderView',
-    'collections/Quotations/filterCollection',
-    'collections/proforma/filterCollection',
     'common',
     'custom',
     'dataService',
@@ -22,12 +18,8 @@ define([
              _,
              EditTemplate,
              ParentView,
-             ProformaView,
              AssigneesView,
              ProductItemView,
-             OrdersView,
-             QuotationCollection,
-             ProformaCollection,
              common,
              Custom,
              dataService,
@@ -190,7 +182,7 @@ define([
                 currency   : this.currentModel.toJSON().currency,
                 journal    : journal
             };
-            var redirectUrl = self.forSales ? 'easyErp/salesProforma/list' : 'easyErp/proforma/list';
+            var redirectUrl = self.forSales ? 'easyErp/salesProforma/list' : 'easyErp/Proforma/list';
 
             if (e) {
                 e.preventDefault();
@@ -335,6 +327,7 @@ define([
             var scheduledDate;
             var usersId = [];
             var groupsId = [];
+            var jobDescription;
             var data;
 
             var currency = {
@@ -383,11 +376,13 @@ define([
                             });
                         }
                         scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
-                        taxes = helpers.spaceReplacer(targetEl.find('.taxes').text());
+                        taxes = helpers.spaceReplacer(targetEl.find('.taxes .sum').text());
                         taxes = parseFloat(taxes) * 100;
-                        description = targetEl.find('[data-name="productDescr"] textarea').val() || targetEl.find('[data-name="productDescr"]').text();
+                        description = targetEl.find('[data-name="productName"] textarea').val() || targetEl.find('[data-name="productDescr"]').text();
+                        jobDescription = targetEl.find('textarea.jobsDescription').val();
                         jobs = targetEl.find('[data-name="jobs"]').attr('data-content');
-                        subTotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
+                        jobDescription = targetEl.find('textarea.jobsDescription').val();
+                        subTotal = helpers.spaceReplacer(targetEl.find('.subtotal .sum').text());
                         subTotal = parseFloat(subTotal) * 100;
 
                         if (!quantity) {
@@ -406,14 +401,15 @@ define([
 
                         if (jobs) {
                             products.push({
-                                product      : productId,
-                                unitPrice    : price,
-                                quantity     : quantity,
-                                scheduledDate: scheduledDate,
-                                taxes        : taxes,
-                                description  : $.trim(description),
-                                subTotal     : subTotal,
-                                jobs         : jobs
+                                product       : productId,
+                                unitPrice     : price,
+                                quantity      : quantity,
+                                scheduledDate : scheduledDate,
+                                taxes         : taxes,
+                                description   : $.trim(description),
+                                jobDescription: jobDescription,
+                                subTotal      : subTotal,
+                                jobs          : jobs
                             });
                         } else if (this.forSales) {
                             return App.render({

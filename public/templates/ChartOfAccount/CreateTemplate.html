@@ -1,6 +1,34 @@
-<tr id="false" data-id="<%=cid%>">
-    <td class="notForm"><input type="checkbox" value="<%=cid%>" class="checkbox listCB"/></td>
-    <td data-type="input" data-content="code" class="editable"></td>
-    <td data-type="input" data-content="account" class="editable"></td>
-    <td data-type="input" data-content="type" class="editable"></td>
-</tr>
+<div class="form-holder">
+    <div class="popupTitle">Chart of Account</div>
+    <form method="post" action="" id="createChartOfAccount" class="form">
+        <dl class="journal-info">
+            <div>
+                <dt><label>Account Type</label></dt>
+                <dd class="_newSelectListWrap">
+                    <a id="accountTypeDd" class="current-selected" href="javascript:;">Select</a>
+                </dd>
+
+                <dt><label for="nameInput">Account Name</label></dt>
+                <dd>
+                    <input id="nameInput" type="text" maxlength="25">
+                </dd>
+
+                <dd class="hidden _subCheckBlock" id="subCheck">
+                    <input type="checkbox" id="subAccount"/><label for="subAccount">Make this a sub-account</label>
+                </dd>
+
+                <div class="subAccount hidden">
+                    <dt><label>Account</label></dt>
+                    <dd class="_newSelectListWrap">
+                        <a id="chartsDd" class="current-selected" href="javascript:;">Select</a>
+                    </dd>
+                </div>
+
+                <dt><label for="code">Account Code</label></dt>
+                <dd>
+                    <input id="code" type="text" maxlength="25">
+                </dd>
+            </div>
+        </dl>
+    </form>
+</div>

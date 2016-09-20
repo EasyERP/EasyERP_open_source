@@ -32,15 +32,21 @@ define([
             this.logFile = {};
 
             /*if (App.currentUser.imports && App.currentUser.imports.map) {
-                self.data = {};
-                self.data[App.currentUser.imports.map.type] = App.currentUser.imports.map.result;
-                self.render(self.data);
-            } else {*/
-                dataService.getData(url, {timeStamp: this.timeStamp, type: this.type}, function (data) {
+             self.data = {};
+             self.data[App.currentUser.imports.map.type] = App.currentUser.imports.map.result;
+             self.render(self.data);
+             } else {*/
+            dataService.getData(url, {timeStamp: this.timeStamp, type: this.type}, function (data) {
+                if (data.error) {
+                    alert(data.error.responseText);
+                    $('#cancelBtn').click();
+                } else {
                     self.data = data.mappedObj;
                     self.unmappedData = data.unmappedObj;
+                    self.required = data.requiredFields;
                     self.render(self.data);
-                });
+                }
+            });
             //}
 
         },
@@ -57,10 +63,11 @@ define([
 
             $field.text('');
             $field.data('name', '');
-            $field.data('parent', '');
+            //$field.data('parent', '');
             $field.addClass('empty');
             $field.closest('.contentBlockRow').addClass('emptyRow');
             $field.removeClass('dbFieldItemDrag');
+            $field.closest('.secondBox').removeClass('required');
             $cleanButton.hide();
         },
 
@@ -84,6 +91,8 @@ define([
             var parentTable = $thisEl.find('.tabItem').data('tab');
             var firstColumnVal;
             var secondColumnVal;
+            var required = self.required.slice();
+            var index;
 
             fieldsObject.type = parentTable;
             fieldsObject.result = {};
@@ -92,16 +101,27 @@ define([
                 firstColumnVal = $($content[i]).find('.firstColumn').data('name');
                 secondColumnVal = $($content[i]).find('.secondColumn').data('name');
 
+                index = required.indexOf(secondColumnVal);
+
                 if (secondColumnVal && !Array.isArray(secondColumnVal)) {
                     fieldsObject.result[firstColumnVal] = secondColumnVal;
                 }
+
+                if (index >= 0) {
+                    required.splice(index, 1);
+                }
+            }
+
+            if (required.length > 0) {
+                alert('please check required fields');
+                fieldsObject = {};
             }
 
             return fieldsObject;
         },
 
         findKeyByValue: function (obj, value) {
-            var result;
+            var result = 0;
 
             _.each(obj, function (item, key) {
                 if (item === value) {
@@ -114,14 +134,20 @@ define([
 
         revertToTables: function (isItClass, isDropable, droppableName, droppableParentName) {
             var self = this;
+            var required = '';
+            var span = '';
+
+            if (self.required.indexOf(droppableName) >= 0) {
+                required = 'required';
+                span = '<span class="requiredIcon icon-warning2"></span>';
+            }
 
             if ((isItClass) && (isDropable)) {
-                //if (droppableParentName === 'Customers' || droppableParentName === 'Quotation' || droppableParentName === 'Invoice' || droppableParentName === 'Opportunities' || droppableParentName === 'Employees') {
                 delete self.logFile[self.findKeyByValue(self.logFile, droppableName)];
 
                 self.$el.find('.fieldsItems[data-tab=' + droppableParentName + ']')
                     .find('ul')
-                    .append('<li><div class="fieldItem" data-parent="' + droppableParentName + '" style="cursor: pointer"  data-name="' + droppableName + '">' + mappingFields[droppableParentName][droppableName] + '</div></li>')
+                    .append('<li class="' + required + '"><div class="fieldItem" data-parent="' + droppableParentName + '" style="cursor: pointer"  data-name="' + droppableName + '">' + mappingFields[droppableParentName][droppableName] + span + '</div></li>')
                     .find('div[data-name="' + droppableName + '"]')
                     .draggable({
                         revert: true,
@@ -133,7 +159,6 @@ define([
                             $(this).show();
                         }
                     });
-                //}
             }
         },
 
@@ -166,9 +191,13 @@ define([
                     $droppable.closest('.contentBlockRow').removeClass('emptyRow');
                     $droppable.text(mappingFields[draggableParentName][draggableName]);
                     $droppable.data('name', draggableName);
+
                     //$draggable.removeClass('borderField');
 
-                    if ($draggable.attr('class').indexOf('dbFieldItem') !== -1) {
+
+                    //<% if (required.indexOf(item) >= 0) { %> required <% } %>
+
+                    if ($draggable.attr('class').indexOf('dbFieldItemDrag') !== -1) {
 
                         if (!droppableName.length) {
                             $droppable.addClass('dbFieldItemDrag');
@@ -192,6 +221,17 @@ define([
                         $droppable.data('parent', draggableParentName);
                         $draggable.data('parent', droppableParentName);
 
+
+                        if ($droppable.closest('.secondBox').attr('class').indexOf('required') < 0) {
+                            $draggable.closest('.secondBox').removeClass('required');
+                            if (self.required.indexOf(draggableName) !== -1) {
+                                $droppable.closest('.secondBox').addClass('required');
+                            }
+                        }
+
+
+
+
                         $draggable.text(mappingFields[droppableParentName][droppableName]);
                         $draggable.data('name', droppableName);
                     } else {
@@ -207,8 +247,18 @@ define([
                                 revert  : true,
                                 disabled: false
                             });
-                            $droppable.siblings('.cleanButton').show();
+                            $droppable.siblings('.cleanButon').show();
                         }
+
+                        if (self.required.indexOf(draggableName) !== -1) {
+                            $droppable.closest('.secondBox').addClass('required');
+                        }
+
+                        if ($draggable.closest('li').attr('class').indexOf('required') < 0) {
+                            $droppable.closest('.secondBox').removeClass('required');
+                        }
+
+
 
                         $droppable.data('parent', draggableParentName);
                         $draggable.remove();
@@ -225,6 +275,7 @@ define([
                     var $droppable = $(this).closest('div');
                     var $draggable = ui.draggable;
 
+                    $draggable.attr('z-index', 0);
                     $draggable.removeClass('borderField');
                     $droppable.closest('.contentBlockRow').removeClass('hoverRow');
                 },
@@ -248,9 +299,10 @@ define([
 
 
             $thisEl.html(this.contentTemplate({
-                content: data,
-                fields : self.unmappedData,
-                mappingFields: mappingFields
+                content      : data,
+                fields       : self.unmappedData,
+                mappingFields: mappingFields,
+                required     : self.required
             }));
 
             this.draggableDBFields();

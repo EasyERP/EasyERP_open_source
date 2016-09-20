@@ -48,7 +48,7 @@ define([
             // 'click li'                                         : 'goToEditDialog',
             'click .selected'  : 'showNewSelect',
             'click .createBtn' : 'create',
-            'click .fa-trash-o': 'remove'
+            'click .icon-trash': 'remove'
         },
 
         newStructureComponent: function (component, modelComponent) {

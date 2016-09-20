@@ -3,7 +3,7 @@ module.exports = (function () {
     var IndustrySchema = mongoose.Schema({
         name: String,
         ID  : Number
-    }, {collection: 'Industry'});
+    }, {collection: 'companyIndustry'});
 
     mongoose.model('Industry', IndustrySchema);
 

@@ -1,25 +1,32 @@
 <div id="searchContainer"></div>
-<div id="glReport">
-    <table class="list gl-list smallTd">
-        <thead>
-        <tr id="caption">
-            <th class="centerCell">Expand</th>
-            <th>Account</th>
-            <th>Date</th>
-            <th class="countable" data-id="debit">Debit</th>
-            <th class="countable" data-id="credit">Credit</th>
-            <th>Balance</th>
-        </tr>
-        </thead>
-
-        <tbody id="listTable" class="enableTableOdd"></tbody>
-        <tfoot id="glReportFooter">
-        <tr>
-            <td colspan="3">Total</td>
-            <td class="money" id="debitTotal"></td>
-            <td class="money" id="creditTotal"></td>
-            <td class="money" id="balanceTotal"></td>
-        </tr>
-        </tfoot>
-    </table>
+<div id="glReport" class="_trialBalanceWrap">
+    <div class="_trialBalanceTableWrap">
+        <table class="list preventHover tableFixed">
+            <colgroup>
+                <col width="50px">
+                <col width="25%">
+                <col width="25%">
+                <col width="25%">
+                <col width="25%">
+            </colgroup>
+            <thead>
+            <tr id="caption">
+                <th class="_profitTitle"></th>
+                <th class="_profitTitle">Account</th>
+                <th class="countable _profitTitle" data-id="debit">Debit</th>
+                <th class="countable _profitTitle" data-id="credit">Credit</th>
+                <th class="_profitTitle">Balance</th>
+            </tr>
+            </thead>
+            <tbody id="listTable" class="enableTableOdd"></tbody>
+            <tfoot id="glReportFooter">
+            <tr>
+                <td colspan="2">Total</td>
+                <td class="money" id="debitTotal"></td>
+                <td class="money" id="creditTotal"></td>
+                <td class="money" id="balanceTotal"></td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
 </div>

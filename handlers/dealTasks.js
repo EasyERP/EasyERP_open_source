@@ -10,6 +10,7 @@ var projectSchema = mongoose.Schemas.Project;
 var prioritySchema = mongoose.Schemas.Priority;
 var CustomerSchema = mongoose.Schemas.Customer;
 var EmployeeSchema = mongoose.Schemas.Employee;
+var OrgSettingsSchema = mongoose.Schemas.orgSettingsSchema;
 var opportunitiesSchema = mongoose.Schemas.Opportunitie;
 var objectId = mongoose.Types.ObjectId;
 var _ = require('underscore');
@@ -55,10 +56,11 @@ var Module = function (models, event) {
                     to         : workEmail,
                     employee   : employee.first + ' ' + employee.last,
                     description: description,
-                    date       : dealTask.dueDate
+                    date       : dealTask.dueDate,
+                    req        : req
                 };
 
-                mailer.sendEmailFromTask(mailOptions, function (err, result) {
+                getFromMail(mailOptions, function (err, result) {
                     if (err) {
                         console.log(err);
                     }
@@ -68,6 +70,27 @@ var Module = function (models, event) {
                 console.log('employee have not work email');
             }
         });
+    }
+
+    function getFromMail(mailOptions, cb){
+
+        var OrgSettings;
+        if (mailOptions.req){
+            OrgSettings = models.get(mailOptions.req.session.lastDb, 'orgSettings', OrgSettingsSchema);
+            OrgSettings.findOne()
+                .populate('contact', 'email')
+                .exec(function(err, settings){
+                    if (err){
+                        return console.log(err);
+                    }
+                    if (!settings.defaultEmail && settings.contact){
+                        mailOptions.from = settings.contact.email;
+                    }
+                    mailer.sendEmailFromTask(mailOptions, cb);
+                });
+        } else {
+            mailer.sendEmailFromTask(mailOptions, cb);
+        }
     }
 
     this.createTask = function (req, res, next) {

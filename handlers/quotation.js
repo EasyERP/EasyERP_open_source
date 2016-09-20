@@ -8,6 +8,7 @@ var Module = function (models, event) {
     var WorkflowSchema = mongoose.Schemas.workflow;
     var EmployeesSchema = mongoose.Schemas.Employees;
     var ProjectSchema = mongoose.Schemas.Project;
+    var ProductSchema = mongoose.Schemas.Products;
     var DepartmentSchema = mongoose.Schemas.Department;
     var JobsSchema = mongoose.Schemas.jobs;
     var wTrackSchema = mongoose.Schemas.wTrack;
@@ -15,10 +16,16 @@ var Module = function (models, event) {
 
     var rewriteAccess = require('../helpers/rewriteAccess');
     var accessRoll = require('../helpers/accessRollHelper.js')(models);
+    var Uploader = require('../services/fileStorage/index');
+    var uploader = new Uploader();
+    var RESPONSES = require('../constants/responses');
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
     var _ = require('../node_modules/underscore');
+    var HistoryWriter = require('../helpers/historyWriter.js');
+    var historyWriter = new HistoryWriter(models);
     var currencyHalper = require('../helpers/currency');
+    var path = require('path');
     var CONSTANTS = require('../constants/mainConstants.js');
     var pageHelper = require('../helpers/pageHelper');
     var moment = require('../public/js/libs/moment/moment');
@@ -107,6 +114,8 @@ var Module = function (models, event) {
         var dbName = req.session.lastDb;
         var Quotation = models.get(dbName, 'Quotation', QuotationSchema);
         var JobsModel = models.get(dbName, 'jobs', JobsSchema);
+        var ProductModel = models.get(dbName, 'Product', ProductSchema);
+
         var wTrackModel = models.get(dbName, 'wTrack', wTrackSchema);
         var products;
         var project;
@@ -115,6 +124,7 @@ var Module = function (models, event) {
             user: req.session.uId,
             date: new Date()
         };
+        var obj;
 
         var indexOfBinary = function (arr, jobs) {
             var minIndex = 0;
@@ -139,6 +149,24 @@ var Module = function (models, event) {
 
         delete data.attachments;
 
+        if (data.notes && data.notes.length !== 0) {
+            obj = data.notes[data.notes.length - 1];
+
+            if (!obj._id) {
+                obj._id = mongoose.Types.ObjectId();
+            }
+
+            obj.date = new Date();
+
+            if (!obj.user) {
+                obj.user = {};
+                obj.user._id = req.session.uId;
+                obj.user.login = req.session.uName;
+            }
+
+            data.notes[data.notes.length - 1] = obj;
+        }
+
         Quotation.findById(id, function (err, oldQuotation) {
             if (err) {
                 return next(err);
@@ -147,15 +175,24 @@ var Module = function (models, event) {
             oldProducts = oldQuotation.toJSON().products;
 
             Quotation.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, quotation) {
+                var historyOptions;
                 if (err) {
                     return next(err);
                 }
 
+                historyOptions = {
+                    contentType: 'quotation',
+                    data       : data,
+                    req        : req,
+                    contentId  : quotation._id
+                };
+
                 if (quotation.forSales) {
-                    products = quotation.toJSON().products;
+                    products = data.products || quotation.toJSON().products;
 
                     async.each(products, function (product, cb) {
                         var jobs = product.jobs;
+                        var productId = product.product;
                         var _type = quotation.toJSON().isOrder ? 'Ordered' : 'Quoted';
 
                         var index = indexOfBinary(oldProducts, jobs.id);
@@ -164,19 +201,37 @@ var Module = function (models, event) {
                             oldProducts.splice(index, 1);
                         }
 
-                        JobsModel.findByIdAndUpdate(jobs, {
-                            $set: {
+                        ProductModel.findByIdAndUpdate(productId, {
+                            'info.description' : product.description
+                        }, function(err) {
+                            var saveObject;
+
+                            if (err) {
+                                return next(err);
+                            }
+
+                            saveObject = {
                                 quotation: id,
                                 type     : _type,
                                 editedBy : editedBy
+                            };
+                            if (product.jobDescription){
+                                saveObject.description = product.jobDescription;
                             }
-                        }, {new: true}, function (err, result) {
-                            if (err) {
-                                return cb(err);
-                            }
-                            project = result.project || null;
-                            cb();
+
+                            JobsModel.findByIdAndUpdate(jobs, {
+                                $set: saveObject
+                            }, {new: true}, function (err, result) {
+                                if (err) {
+                                    return cb(err);
+                                }
+                                project = result.project || null;
+                                cb();
+                            });
                         });
+
+
+
 
                     }, function () {
                         var type;
@@ -184,44 +239,131 @@ var Module = function (models, event) {
                         if (project) {
                             event.emit('fetchJobsCollection', {project: project, dbName: dbName});
                         }
+                        historyWriter.addEntry(historyOptions, function () {
+                            if (err) {
+                                return next(err);
+                            }
+                            quotation.populate('supplier', '_id name fullName')
+                                .populate('destination')
+                                .populate('currency._id')
+                                .populate('incoterm')
+                                .populate('invoiceControl')
+                                .populate('paymentTerm')
+                                .populate('products.product', '_id name info')
+                                .populate('products.jobs', '_id name description')
+                                .populate('groups.users')
+                                .populate('groups.group')
+                                .populate('groups.owner', '_id login')
+                                .populate('editedBy.user', '_id login')
+                                .populate('deliverTo', '_id, name')
+                                .populate('project', '_id name')
+                                .populate('workflow', function (err, quotation){
+                                    getHistory(req, quotation.toJSON(), function(err, quotation){
+                                        if (err) {
+                                            return next(err);
+                                        }
 
-                        res.status(200).send({success: 'Quotation updated', result: quotation});
+                                        res.status(200).send(quotation);
+                                        if (oldProducts.length > 0) {
+                                            async.each(oldProducts, function (oldProduct, cb) {
 
-                        if (oldProducts.length > 0) {
-                            async.each(oldProducts, function (oldProduct, cb) {
+                                                type = 'Not Quoted';
 
-                                type = 'Not Quoted';
+                                                JobsModel.findByIdAndUpdate(oldProduct.jobs, {
+                                                    type     : type,
+                                                    quotation: null,
+                                                    editedBy : editedBy
+                                                }, {new: true}, function (err, result) {
+                                                    var wTracks;
 
-                                JobsModel.findByIdAndUpdate(oldProduct.jobs, {
-                                    type     : type,
-                                    quotation: null,
-                                    editedBy : editedBy
-                                }, {new: true}, function (err, result) {
-                                    var wTracks;
+                                                    if (err) {
+                                                        return next(err);
+                                                    }
 
+                                                    project = result ? result.get('project') : null;
+                                                    wTracks = result ? result.wTracks : [];
+
+                                                    async.each(wTracks, function (wTr, callback) {
+                                                        wTrackModel.findByIdAndUpdate(wTr, {$set: {revenue: 0}}, callback);
+                                                    }, function () {
+                                                        cb();
+                                                    });
+                                                });
+
+                                            });
+                                        }
+                                    });
+
+                                });
+
+                        });
+
+                    });
+                } else {
+                    historyWriter.addEntry(historyOptions, function () {
+
+                        if (err) {
+                            return next(err);
+                        }
+                        quotation.populate('supplier', '_id name fullName')
+                            .populate('destination')
+                            .populate('currency._id')
+                            .populate('incoterm')
+                            .populate('invoiceControl')
+                            .populate('paymentTerm')
+                            .populate('products.product', '_id name info')
+                            .populate('products.jobs', '_id name description')
+                            .populate('groups.users')
+                            .populate('groups.group')
+                            .populate('groups.owner', '_id login')
+                            .populate('editedBy.user', '_id login')
+                            .populate('deliverTo', '_id, name')
+                            .populate('project', '_id name')
+                            .populate('workflow', function (err, quotation){
+                                getHistory(req, quotation.toJSON(), function(err, quotation){
                                     if (err) {
                                         return next(err);
                                     }
 
-                                    project = result ? result.get('project') : null;
-                                    wTracks = result ? result.wTracks : [];
-
-                                    async.each(wTracks, function (wTr, callback) {
-                                        wTrackModel.findByIdAndUpdate(wTr, {$set: {revenue: 0}}, callback);
-                                    }, function () {
-                                        cb();
-                                    });
+                                    res.status(200).send(quotation);
                                 });
 
                             });
-                        }
-
                     });
-                } else {
-                    res.status(200).send({success: 'Quotation updated', result: quotation});
+
                 }
             });
         });
+    }
+
+    function getHistory(req, quotation, cb) {
+        var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
+
+        var historyOptions = {
+            req: req,
+            id : quotation._id
+        };
+
+        historyWriter.getHistoryForTrackedObject(historyOptions, function (err, history) {
+            var notes;
+
+            if (err) {
+                return cb(err);
+            }
+
+            notes = history.map(function (elem) {
+                return {
+                    date   : elem.date,
+                    history: elem,
+                    user   : elem.editedBy
+                };
+            });
+            quotation.notes = quotation.notes.concat(notes);
+            quotation.notes = _.sortBy(quotation.notes, 'date');
+            cb(null, quotation);
+
+        }, true);
+
     }
 
     this.getForProject = function (req, res, next) {
@@ -540,6 +682,7 @@ var Module = function (models, event) {
             }
 
             quotation.save(function (err, _quotation) {
+                var historyOptions;
                 var parellelTasks = [
                     function (callback) {
                         Customer.populate(_quotation, {
@@ -592,7 +735,16 @@ var Module = function (models, event) {
                     return next(err);
                 }
 
+                historyOptions = {
+                    contentType: 'quotation',
+                    data       : _quotation.toJSON(),
+                    req        : req,
+                    contentId  : _quotation._id
+                };
+
                 if (isPopulate) {
+
+
                     async.parallel(parellelTasks, function (err) {
                         var id;
                         var products;
@@ -602,7 +754,7 @@ var Module = function (models, event) {
                         }
 
                         id = _quotation._id;
-                        products = _quotation.products;
+                        products = body.products;
 
                         async.each(products, function (product, cb) {
                             var jobs = product.jobs;
@@ -611,7 +763,8 @@ var Module = function (models, event) {
                                 $set: {
                                     quotation: id,
                                     type     : 'Quoted',
-                                    editedBy : editedBy
+                                    editedBy : editedBy,
+                                    description : product.jobDescription
                                 }
                             }, {new: true}, function (err, result) {
                                 if (err) {
@@ -629,11 +782,19 @@ var Module = function (models, event) {
                             if (project) {
                                 event.emit('fetchJobsCollection', {project: project, dbName: db});
                             }
-                            res.status(201).send(_quotation);
+
+
+                            historyWriter.addEntry(historyOptions, function () {
+                                res.status(201).send(_quotation);
+                            });
+
                         });
                     });
                 } else {
-                    res.status(201).send(_quotation);
+
+                    historyWriter.addEntry(historyOptions, function () {
+                        res.status(201).send(_quotation);
+                    });
                 }
             });
         });
@@ -669,6 +830,65 @@ var Module = function (models, event) {
             data.currency.rate = rates[currency] || 1;
 
             updateOnlySelectedFields(req, res, next, id, data);
+        });
+    };
+
+    this.uploadFile = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
+        var headers = req.headers;
+        var addNote = headers.addnote;
+        var id = headers.modelid || 'empty';
+        var contentType = headers.modelname || 'invoices';
+        var files = req.files && req.files.attachfile ? req.files.attachfile : null;
+        var dir;
+        var err;
+
+        contentType = contentType.toLowerCase();
+        dir = path.join(contentType, id);
+
+        if (!files) {
+            err = new Error(RESPONSES.BAD_REQUEST);
+            err.status = 400;
+
+            return next(err);
+        }
+
+        uploader.postFile(dir, files, {userId: req.session.uName}, function (err, file) {
+            var notes = [];
+            if (err) {
+                return next(err);
+            }
+
+
+            if (addNote) {
+                notes = file.map(function (elem) {
+                    return {
+                        _id       : mongoose.Types.ObjectId(),
+                        attachment: {
+                            name    : elem.name,
+                            shortPas: elem.shortPas
+                        },
+                        user      : {
+                            _id  : req.session.uId,
+                            login: req.session.uName
+                        },
+                        date      : new Date()
+                    }
+                });
+            }
+
+            Model.findByIdAndUpdate(id, {
+                $push: {
+                    attachments: {$each: file},
+                    notes      : {$each: notes}
+                }
+            }, {new: true}, function (err, response) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send({success: 'Invoice updated success', data: response});
+            });
         });
     };
 
@@ -766,6 +986,13 @@ var Module = function (models, event) {
                 }
             }, {
                 $lookup: {
+                    from        : 'currency',
+                    localField  : 'currency._id',
+                    foreignField: '_id',
+                    as          : 'currency._id'
+                }
+            }, {
+                $lookup: {
                     from        : 'workflows',
                     localField  : 'workflow',
                     foreignField: '_id',
@@ -790,21 +1017,21 @@ var Module = function (models, event) {
                     workflow: {$arrayElemAt: ['$workflow', 0]},
                     supplier: {$arrayElemAt: ['$supplier', 0]},
 
-                    salesManagers: {
+                    salesManagers  : {
                         $filter: {
                             input: '$projectMembers',
                             as   : 'projectMember',
                             cond : salesManagerMatch
                         }
                     },
-
                     name           : 1,
                     paymentInfo    : 1,
                     project        : {$arrayElemAt: ['$project', 0]},
                     orderDate      : 1,
                     forSales       : 1,
                     isOrder        : 1,
-                    currency       : 1,
+                    'currency._id' : {$arrayElemAt: ['$currency._id', 0]},
+                    'currency.rate': '$currency.rate',
                     proformaCounter: 1
                 }
             }, {
@@ -970,11 +1197,12 @@ var Module = function (models, event) {
                 .populate('incoterm')
                 .populate('invoiceControl')
                 .populate('paymentTerm')
-                .populate('products.product', '_id, name')
-                .populate('products.jobs', '_id, name')
+                .populate('products.product', '_id name info')
+                .populate('products.jobs', '_id name description')
                 .populate('groups.users')
                 .populate('groups.group')
                 .populate('groups.owner', '_id login')
+                .populate('editedBy.user', '_id login')
                 .populate('deliverTo', '_id, name')
                 .populate('project', '_id name')
                 .populate('workflow', '_id name status');
@@ -985,11 +1213,13 @@ var Module = function (models, event) {
         waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
 
         async.waterfall(waterfallTasks, function (err, result) {
-            if (err) {
-                return next(err);
-            }
+            getHistory(req, result.toJSON(), function (err, result) {
+                if (err) {
+                    return next(err);
+                }
 
-            res.status(200).send(result);
+                res.status(200).send(result);
+            });
         });
     }
 

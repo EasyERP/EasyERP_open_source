@@ -3,10 +3,11 @@ define([
     'jQuery',
     'Underscore',
     'text!templates/Accounting/EditPaymentMethods.html',
+    'text!templates/Accounting/paymentMethodEl.html',
     'views/selectView/selectView',
     'populate',
     'constants'
-], function (Backbone, $, _, EditTemplate, SelectView, populate, CONSTANTS) {
+], function (Backbone, $, _, EditTemplate, tableEL, SelectView, populate, CONSTANTS) {
     'use strict';
 
     var EditView = Backbone.View.extend({
@@ -64,7 +65,7 @@ define([
         },
 
         chooseOption: function (e) {
-            $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
+            $(e.target).parents('.account-wrapper').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
 
             this.hideNewSelect();
         },
@@ -88,16 +89,12 @@ define([
 
             this.currentModel.save(data, {
                 wait   : true,
-                success: function (res) {
-                    var url = window.location.hash;
+                success: function (res, model) {
+                    var el = $('#paymentMethodsTable').find('tr[data-id="' + model._id + '"]');
+                    self.hideDialog();
 
-                    if (url === '#easyErp/Accounts') {
-                        self.hideDialog();
-                        Backbone.history.fragment = '';
-                        Backbone.history.navigate(url, {trigger: true});
-                    } else {
-                        self.hideDialog();
-                    }
+                    el.after(_.template(tableEL, {elem: model}));
+                    el.remove();
                 },
 
                 error: function (model, xhr) {
@@ -126,6 +123,7 @@ define([
                 buttons      : [
                     {
                         text : 'Save',
+                        class: 'btn blue',
                         click: function () {
                             self.saveItem();
                         }
@@ -133,6 +131,7 @@ define([
 
                     {
                         text : 'Cancel',
+                        class: 'btn',
                         click: function () {
                             self.hideDialog();
                         }

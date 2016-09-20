@@ -8,21 +8,24 @@ define([
     'models/QuotationModel',
     'views/Quotations/CreateView',
     'views/Orders/form/FormView',
+    'views/Orders/form/EditView',
     'constants',
     'helpers'
-], function (Backbone, $, _, TFormBaseView, ContentTemplate, ListItemTemplate, QuotationModel, CreateView, FormView, CONSTANTS, helpers) {
+], function (Backbone, $, _, TFormBaseView, ContentTemplate, ListItemTemplate, QuotationModel, CreateView, FormView, EditView, CONSTANTS, helpers) {
     'use strict';
 
     var QuotationsListView = TFormBaseView.extend({
         listTemplate   : _.template(ListItemTemplate),
         contentTemplate: _.template(ContentTemplate),
         CreateView     : CreateView,
+        EditView       : EditView,
         listUrl        : 'easyErp/Orders/list/',
         contentType    : CONSTANTS.ORDERS, // needs in view.prototype.changeLocationHash
         viewType       : 'tform', // needs in view.prototype.changeLocationHash
         hasPagination  : true,
         hasAlphabet    : false,
         formView       : null,
+        forSales       : false,
         selectedId     : null,
         ContentModel   : QuotationModel,
         FormView       : FormView,
@@ -53,6 +56,8 @@ define([
                     if (self.formView) {
                         self.formView.undelegateEvents();
                     }
+
+                    self.currentModel = model;
 
                     self.formView = new self.FormView({model: model, el: '#formContent'});
                     self.formView.render();

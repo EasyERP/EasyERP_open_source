@@ -7,9 +7,10 @@ define([
     'text!templates/salesOrders/form/ListItemTemplate.html',
     'models/QuotationModel',
     'views/salesOrders/form/FormView',
+    'views/Orders/form/EditView',
     'constants',
     'helpers'
-], function (Backbone, $, _, TFormBaseView, ContentTemplate, ListItemTemplate, QuotationModel, FormView, CONSTANTS, helpers) {
+], function (Backbone, $, _, TFormBaseView, ContentTemplate, ListItemTemplate, QuotationModel, FormView, EditView, CONSTANTS, helpers) {
     'use strict';
 
     var QuotationsListView = TFormBaseView.extend({
@@ -22,8 +23,10 @@ define([
         hasAlphabet    : false,
         formView       : null,
         selectedId     : null,
+        forSales       : true,
         ContentModel   : QuotationModel,
         FormView       : FormView,
+        EditView       : EditView,
 
         renderList: function (orders) {
             var $thisEl = this.$el;
@@ -36,7 +39,7 @@ define([
             }));
         },
 
-        renderFormView: function (modelId, cb) {
+        /*renderFormView: function (modelId, cb) {
             var $thisEl = this.$el;
             var self = this;
             var model;
@@ -72,7 +75,7 @@ define([
                     });
                 }
             });
-        }
+        }*/
 
 
     });

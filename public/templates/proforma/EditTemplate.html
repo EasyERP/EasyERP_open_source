@@ -1,5 +1,5 @@
 <div class="form-holder">
-    <form method="post" action="" class="form" id="invoiceForm">
+    <form method="post" action="" class="form " id="invoiceForm">
         <fieldset>
             <div class="inner">
                 <ul class="dialog-tabs" data-class="mainTabs">
@@ -56,7 +56,7 @@
 
                                 <dt><label for="invoice_date">Proforma Date </label></dt>
                                 <dd>
-                                    <input type="text" class="date" id="invoice_date"
+                                    <input type="text" class="date _inputBordered" id="invoice_date"
                                            value="<%=(model.invoiceDate) ? model.invoiceDate : ''%>" maxlength="32"
                                            placeholder="Invoice Date" readonly/>
                                 </dd>
@@ -223,7 +223,7 @@
                                     </table>
                                 </div>
                                 <div class="clearfix"></div>
-                                <div id="totalAmountContainer" class="half-block right">
+                                <div id="totalAmountContainer" class="_totalAmountContainer">
                                     <table border="0" cellpadding="0" cellspacing="0" class="right calculateTotal">
                                         <tbody>
                                         <tr>

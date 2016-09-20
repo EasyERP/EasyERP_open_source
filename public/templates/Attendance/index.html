@@ -1,4 +1,4 @@
-<div class="grid-conatiner">
+<div class="grid-conatiner _attendateWrap">
     <div class="attendanceTop">
         <div class="pull-left">
             <span>
@@ -19,28 +19,28 @@
             </select>
         </div>
     </div>
+    <div class="_tableScrollWrap">
+        <table class="grid attendance" cellspacing="0" cellpadding="0">
+            <thead>
+            <tr>
+                <th>
+                    <span></span>
+                </th>
 
-    <table class="grid attendance" cellspacing="0" cellpadding="0">
-        <thead>
-        <tr>
-            <th>
-                <span></span>
-            </th>
+                <% for (var i = 1; i <= 6; i++) { %>
+                <% weekDays.forEach(function(day){ %>
+                <th>
+                    <%= day %>
+                </th>
+                <% }) %>
+                <% } %>
 
-            <% for (var i = 1; i <= 6; i++) { %>
-            <% weekDays.forEach(function(day){ %>
-            <th>
-                <%= day %>
-            </th>
-            <% }) %>
-            <% } %>
-
-        </tr>
-        </thead>
-        <tbody id="attendanceMonth">
-        </tbody>
-    </table>
-
+            </tr>
+            </thead>
+            <tbody id="attendanceMonth">
+            </tbody>
+        </table>
+    </div>
     <div class="statisticsAtten">
         <table>
             <tbody id="statictics">

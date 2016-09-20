@@ -20,13 +20,13 @@
             <div class="compactRowWrap">
                 <div class="compactRow">
                     <div class="firstName"><%=(order.supplier) ? order.supplier.name.first + ' ' + order.supplier.name.last : ''%></div>
-                    <div><%=(order.salesManager) ? order.salesManager.name.first + ' ' + order.salesManager.name.last : ''%></div>
+                    <div><%=(order.salesManager && order.salesManager.name) ? order.salesManager.name.first + ' ' + order.salesManager.name.last : ''%></div>
                 </div>
                 <div class="compactRow">
                     <div><%= order.orderDate %></div>
                 </div>
                 <div class="compactRow">
-                    <div class="total <%= currencyClass(order.currency._id) %>"><%= (order.paymentInfo) ? currencySplitter(order.paymentInfo.total) : '0.00' %></div>
+                    <div class="total"><%=(order.currency && order.currency._id ? order.currency._id.symbol : '') + ((order.paymentInfo) ? currencySplitter(order.paymentInfo.total) : '0.00') %></div>
                     <div><%=order.workflow ? order.workflow.name: 'undefined'%></div>
                 </div>
             </div>

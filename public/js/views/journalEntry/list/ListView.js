@@ -4,9 +4,12 @@ define([
     'views/listViewBase',
     'text!templates/journalEntry/list/ListHeader.html',
     'views/journalEntry/list/ListItemView',
-    'views/salesInvoices/EditView',
-    'views/DividendInvoice/EditView',
+    'views/selectView/selectView',
+    'views/journalEntry/ViewSource',
     'models/InvoiceModel',
+    'models/jobsModel',
+    'models/EmployeesModel',
+    'models/PaymentModel',
     'collections/journalEntry/filterCollection',
     'constants',
     'helpers',
@@ -19,9 +22,12 @@ define([
              ListViewBase,
              listTemplate,
              ListItemView,
-             EditView,
-             DividendEditView,
+             SelectView,
+             View,
              InvoiceModel,
+             JobsModel,
+             EmployeesModel,
+             PaymentModel,
              contentCollection,
              CONSTANTS,
              helpers,
@@ -40,9 +46,18 @@ define([
         exportToXlsxUrl  : 'journalEntries/exportToXlsx',
         exportToCsvUrl   : 'journalEntries/exportToCsv',
         hasPagination    : true,
+        responseObj      : {},
+        JobsModel        : JobsModel,
+        InvoiceModel     : InvoiceModel,
+        PaymentModel     : PaymentModel,
+        EmployeesModel   : EmployeesModel,
+
+        events: {
+            'click .newSelectList li:not(.miniStylePagination)': 'viewSourceDocument',
+            'click .current-selected'                          : 'showNewSelect'
+        },
 
         initialize: function (options) {
-            // var dateRange = custom.retriveFromCash('journalEntryDateRange');
             var dateRange;
 
             $(document).off('click');
@@ -53,6 +68,7 @@ define([
             this.sort = options.sort;
             this.page = options.collection.currentPage;
             this.contentCollection = contentCollection;
+            this.totalValue = options.collection.totalValue;
 
             this.filter = options.filter || custom.retriveFromCash('journalEntry.filter');
 
@@ -62,33 +78,135 @@ define([
 
             dateRange = this.filter.date ? this.filter.date.value : [];
 
-            /*if (!this.filter.startDate) {
-             this.filter.startDate = {
-             key  : 'startDate',
-             value: new Date(dateRange.startDate)
-             };
-             this.filter.endDate = {
-             key  : 'endDate',
-             value: new Date(dateRange.endDate)
-             };
-             }*/
+            if (!this.filter.date) {
+                this.filter.date = {
+                    key  : 'date',
+                    value: [new Date(dateRange.startDate), new Date(dateRange.endDate)]
+                };
+            }
+
+            options.filter = this.filter;
 
             this.startDate = new Date(dateRange[0]);
             this.endDate = new Date(dateRange[1]);
 
-            /*this.startDate = new Date(this.filter.startDate.value);
-             this.endDate = new Date(this.filter.endDate.value);*/
-
-            // this.render();
-
             ListViewBase.prototype.initialize.call(this, options);
 
             custom.cacheToApp('journalEntry.filter', this.filter);
+
+            this.responseObj['#source'] = [
+                {
+                    _id : 'source',
+                    name: 'View Source Document'
+                }
+            ];
         },
 
-        events: {
-            'click .Invoice, .dividendInvoice': 'viewSourceDocument',
-            'click .jobs'                     : 'viewSourceDocumentJOb'
+        viewSourceDocument: function (e) {
+            var $target = $(e.target);
+            var id = $target.attr('id');
+            var closestSpan = $target.closest('.current-selected');
+            var dataId = closestSpan.attr('data-id');
+            var dataName = closestSpan.attr('data-name');
+            var dataEmployee = closestSpan.attr('data-employee');
+            var model;
+            var data;
+
+            App.startPreload();
+
+            if (this.selectView) {
+                this.selectView.remove();
+            }
+
+            switch (dataName) {
+                case 'wTrack':
+                    model = new this.JobsModel();
+                    data = {
+                        employee: dataEmployee,
+                        _id     : dataId
+                    };
+
+                    model.urlRoot = '/journalEntries/jobs';
+                    break;
+                case 'expensesInvoice':
+                case 'dividendInvoice':
+                case 'Invoice':
+                    model = new this.InvoiceModel();
+                    data = {
+                        _id: dataId
+                    };
+
+                    model.urlRoot = '/journalEntries/invoices';
+
+                    break;
+                case 'Proforma':
+                    model = new this.InvoiceModel();
+                    data = {
+                        _id     : dataId,
+                        proforma: true
+                    };
+
+                    model.urlRoot = '/journalEntries/invoices';
+
+                    break;
+                case 'jobs':
+                    model = new this.JobsModel();
+                    data = {
+                        _id: dataId
+                    };
+
+                    model.urlRoot = '/journalEntries/jobs';
+
+                    break;
+                case 'Payment':
+                    model = new this.PaymentModel();
+                    data = {
+                        _id: dataId
+                    };
+
+                    model.urlRoot = '/journalEntries/payments';
+
+                    break;
+                case 'Employees':
+                    model = new this.EmployeesModel();
+                    data = {
+                        _id: dataId
+                    };
+
+                    model.urlRoot = '/journalEntries/employees';
+
+                    break;
+
+                // skip default;
+            }
+
+            if (model) {
+                model.fetch({
+                    data   : data,
+                    success: function (model) {
+                        new View({model: model, type: dataName, employee: dataEmployee});
+
+                        App.stopPreload();
+                    },
+
+                    error: function () {
+                        App.stopPreload();
+
+                        App.render({
+                            type   : 'error',
+                            message: 'Please refresh browser'
+                        });
+                    }
+                });
+            } else {
+                App.stopPreload();
+
+                App.render({
+                    type   : 'notify',
+                    message: 'No Source Document is required'
+                });
+            }
+
         },
 
         changeDateRange: function () {
@@ -103,16 +221,6 @@ define([
             if (!this.filter) {
                 this.filter = {};
             }
-
-            /*this.filter.startDate = {
-             key  : 'startDate',
-             value: stDate
-             };
-
-             this.filter.endDate = {
-             key  : 'endDate',
-             value: enDate
-             };*/
 
             this.filter.date = {
                 value: [this.startDate, this.endDate]
@@ -153,39 +261,6 @@ define([
             });
         },
 
-        viewSourceDocument: function (e) {
-            var $target = $(e.target);
-            var id = $target.attr('data-id');
-            var forSales = $target.attr('class') !== 'dividendInvoice';
-            var View = EditView;
-            var model = new InvoiceModel({validate: false});
-
-            if (!forSales) {
-                View = DividendEditView;
-            }
-
-            model.urlRoot = '/Invoices/';
-            model.fetch({
-                data: {
-                    id         : id,
-                    currentDb  : App.currentDb,
-                    contentType: $target.attr('class'),
-                    forSales   : forSales.toString()
-                },
-
-                success: function (model) {
-                    new View({model: model, redirect: true, notCreate: true});
-                },
-
-                error: function () {
-                    App.render({
-                        type   : 'error',
-                        message: 'Please refresh browser'
-                    });
-                }
-            });
-        },
-
         render: function () {
             var $currentEl;
             var itemView;
@@ -222,21 +297,9 @@ define([
 
             $currentEl.prepend(itemView.render());
 
-            // this.renderFilter();
-
-            /*if (!this.filterView) {
-             if (!App || !App.filtersObject || !App.filtersObject.filtersValues || !App.filtersObject.filtersValues[this.contentType]) {
-             custom.getFiltersValues({contentType: this.contentType}, this.renderFilter(this.baseFilter));
-             } else {
-             this.renderFilter(this.baseFilter);
-             }
-             }*/
-
-            // this.renderPagination($currentEl, this);
+            this.$el.find('#totalDebit').text(helpers.currencySplitter((this.totalValue / 100).toFixed(2)));
 
             App.filtersObject.filter = this.filter;
-
-            // $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         }
     });
 

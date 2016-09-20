@@ -281,6 +281,7 @@ define([
             var quantity;
             var price;
             var description;
+            var jobs;
             var taxes;
             var amount;
             var data;
@@ -298,6 +299,7 @@ define([
             var total = parseFloat($thisEl.find('#totalAmount').text());
             var unTaxed = parseFloat($thisEl.find('#totalUntaxes').text());
             var balance = parseFloat($thisEl.find('#balance').text());
+            var jobDescription;
 
             var salesPersonId = $thisEl.find('#salesPerson').attr('data-id') || null;
             var paymentTermId = $thisEl.find('#payment_terms').attr('data-id') || null;
@@ -324,19 +326,26 @@ define([
                     productId = targetEl.data('id');
 
                     if (productId) {
-                        quantity = targetEl.find('[data-name="quantity"]').text();
-                        price = targetEl.find('[data-name="price"]').text();
-                        description = targetEl.find('[data-name="productDescr"]').text();
-                        taxes = targetEl.find('.taxes').text();
-                        amount = targetEl.find('.amount').text();
+                        quantity = parseFloat(targetEl.find('[data-name="quantity"] span').text());
+                        price = helpers.spaceReplacer(targetEl.find('[data-name="price"] .sum').text());
+                        price = parseFloat(price) * 100;
+                        jobs = targetEl.find('[data-id="jobs"]').attr('data-content');
+                        description = targetEl.find('.productDescr').val();
+                        jobDescription = targetEl.find('textarea.jobsDescription').val();
+                        taxes = helpers.spaceReplacer(targetEl.find('.taxes .sum').text());
+                        taxes = parseFloat(taxes) * 100;
+                        amount = helpers.spaceReplacer(targetEl.find('.amount .sum').text());
+                        amount = parseFloat(amount) * 100;
 
                         products.push({
-                            product    : productId,
-                            description: description,
-                            unitPrice  : price,
-                            quantity   : quantity,
-                            taxes      : taxes,
-                            amount     : amount
+                            product       : productId,
+                            description   : description,
+                            jobs          : jobs,
+                            jobDescription: jobDescription,
+                            unitPrice     : price,
+                            quantity      : quantity,
+                            taxes         : taxes,
+                            subTotal      : amount
                         });
                     }
                 }
@@ -361,6 +370,7 @@ define([
                 dueDate       : dueDate,
                 account       : null,
                 journal       : journalId,
+                products      : products,
 
                 salesPerson : salesPersonId,
                 paymentTerms: paymentTermId,

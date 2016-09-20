@@ -49,9 +49,11 @@ define([
             'click #cancelSpan'                                                       : 'cancelClick',
             'click #saveSpan'                                                         : 'saveClick',
             'click #editSpan'                                                         : 'editClick',
-            'click .fa-trash-o'                                                       : 'deleteRow',
+            'click .removeJob'                                                        : 'deleteRow',
             'keyup td[data-name=price],td[data-name=quantity] input'                  : 'priceChange',
+            'keyup .discountPercentage'                                               : 'discountChange',
             'keypress  .forNum'                                                       : 'keypressHandler',
+            'change #discount'                                                        : 'recalculateDiscount',
             'click .productItem'                                                      : 'renderMessage',
             'click li#createNewEl'                                                    : 'createNewElement'
         },
@@ -77,6 +79,7 @@ define([
             if (options) {
                 this.projectModel = options.projectModel;
                 this.wTrackCollection = options.wTrackCollection;
+                this.discountVisible = options.discountVisible;
                 this.createJob = options.createJob;
 
                 delete options.projectModel;
@@ -106,7 +109,7 @@ define([
                 this.quotations = false;
             }
 
-            this.forSales = options.service;
+            this.forSales = options.canBeSold;
             this.notPayed = options.notPayed;
 
             options.projection = {
@@ -122,6 +125,8 @@ define([
 
             this.priceChange = _.debounce(this.priceChange, 250);
         },
+
+
 
         renderMessage: function (e) {
             var $target = $(e.target);
@@ -278,20 +283,19 @@ define([
             var $trEll = $parrent.find('tr.productItem');
             var products = this.products ? this.products.toJSON() : [];
             var templ = _.template(ProductInputContent);
-            var currency = {};
+            var curSymbol;
 
             e.preventDefault();
             e.stopPropagation();
 
-            currency._id = $('#currencyDd').attr('data-id');
+            curSymbol = this.$el.closest('form').find('#currencyDd').attr('data-symbol');
 
             if (rowId === undefined || /* rowId !== 'false'*/ !hasError) {
                 if (!$trEll.length) {
                     $parrent.prepend(templ({
                         forSales     : self.forSales,
                         products     : products,
-                        currencyClass: helpers.currencyClass,
-                        currency     : currency,
+                        curSymbol    : curSymbol,
                         writeOff     : self.writeOff,
                         quotations   : self.quotations
                     }));
@@ -304,8 +308,7 @@ define([
                 $($trEll[$trEll.length - 1]).after(templ({
                     forSales     : self.forSales,
                     products     : products,
-                    currencyClass: helpers.currencyClass,
-                    currency     : currency,
+                    curSymbol    : curSymbol,
                     writeOff     : self.writeOff,
                     quotations   : self.quotations
                 }));
@@ -330,10 +333,18 @@ define([
              }));*/
         },
 
+        discountChange : function (e){
+            var $targetEl = $(e.target);
+
+            if($targetEl.val()> 100){
+                $targetEl.val(100);
+            }
+        },
+
         priceChange: function (e) {
             var $targetEl = $(e.target);
-            var parent = $targetEl.closest('td');
-            var inputEl = parent.find('input');
+            var parent = $targetEl.closest('tr');
+            var inputEl = $targetEl.closest('input');
             var val;
 
             if (!inputEl.length) {
@@ -378,9 +389,9 @@ define([
             var $parrent = $target.parents('td');
             var $trEl = $target.parents('tr');
             var $quantityContainer = $trEl.find('[data-name="quantity"]');
-            var $descriptionContainer = $trEl.find('[data-name="productDescr"] textarea');
-            var $taxesContainer = $trEl.find('[data-name="taxes"]');
-            var $subtotalContainer = $trEl.find('[data-name="subtotal"]');
+            var $descriptionContainer = $trEl.find('.productDescr');
+            var $taxesContainer = $trEl.find('[data-name="taxes"] .sum');
+            var $subtotalContainer = $trEl.find('[data-name="subtotal"] .sum');
 
             var isJob = !!$parrent.hasClass('jobs');
             var $quantity = $quantityContainer.find('input');
@@ -416,6 +427,8 @@ define([
                 quantity = 1;
 
                 $parrent.find('.jobs').text($target.text()).attr('data-id', jobId);
+                $parrent.find('.jobsDescription').remove();
+                $parrent.find('.jobsWescWrap').append('<textarea class="jobsDescription">' + currentJob.description + '</textarea>');
                 $parrent.attr('data-content', jobId); // in case of getting id  on edit quotation
                 // $quantity.text(currentJob.budget.budgetTotal.hoursSum);
                 model = this.products.get(_id);
@@ -450,9 +463,9 @@ define([
             salePrice = selectedProduct.info.salePrice;
 
             currency._id = $('#currencyDd').attr('data-id');
-            classForParent = 'editable forNum ' + helpers.currencyClass(currency._id);
 
-            $($parrents[4]).attr('class', classForParent).find('input').val(salePrice);
+
+            $($parrents[2]).find('input').val(salePrice);
             total = parseFloat(selectedProduct.info.salePrice);
             taxes = total * this.taxesRate;
             subtotal = total + taxes;
@@ -493,7 +506,7 @@ define([
             if (selectedProduct && selectedProduct.get('name') === CONSTANTS.IT_SERVICES) {
                 quantity = 1;
             } else {
-                quantity = $parent.find('#quantity').val();
+                quantity = $parent.find('#quantity').val() || $parent.find('td[data-name="quantity"]').text();
                 //quantity = $.trim($parent.find('[data-name="quantity"]').text());
                 quantity = parseFloat(quantity);
             }
@@ -520,15 +533,29 @@ define([
             subtotal = total + taxes;
 
             taxes = taxes.toFixed(2);
-            $parent.find('.taxes').text(taxes);
+            $parent.find('.taxes .sum').text(taxes);
 
             subtotal = subtotal.toFixed(2);
-            $parent.find('.subtotal').text(helpers.currencySplitter(subtotal));
+            $parent.find('.subtotal .sum').text(helpers.currencySplitter(subtotal));
 
             this.calculateTotal();
         },
 
-        calculateTotal: function () {
+        recalculateDiscount: function (e) {
+            var $target = $(e.target);
+            var parentTr = $target.closest('tr');
+            var quantity = parseFloat($target.val()/100);
+            var cost = parseFloat(helpers.spaceReplacer(this.$el.find('#totalUntaxes').text()));
+            var discount = quantity * cost;
+            discount = discount.toFixed(2);
+
+            parentTr.find('#discountSum').text('-' + helpers.currencySplitter(discount));
+
+            this.calculateTotal(discount);
+        },
+
+
+        calculateTotal: function (discount) {
             var thisEl = this.$el;
 
             var totalUntaxContainer = thisEl.find('#totalUntaxes');
@@ -574,6 +601,10 @@ define([
             taxes = parseFloat(helpers.spaceReplacer(taxes));
 
             total = totalUntax + taxes;
+            if (discount){
+                total = total - discount;
+            }
+
             balance = total - this.paid;
             total = total.toFixed(2);
             balance = balance.toFixed(2);
@@ -628,7 +659,6 @@ define([
                         editablePrice   : this.editablePrice,
                         forSales        : self.forSales,
                         currencySplitter: helpers.currencySplitter,
-                        currencyClass   : helpers.currencyClass,
                         currency        : currency,
                         quotations      : self.quotations
                     }));
@@ -636,8 +666,8 @@ define([
                     totalAmountContainer.append(_.template(totalAmount, {
                         model           : options.model,
                         balanceVisible  : this.visible,
-                        currencySplitter: helpers.currencySplitter,
-                        currencyClass   : helpers.currencyClass
+                        discountVisible :this.discountVisible,
+                        currencySplitter: helpers.currencySplitter
                     }));
                 }
             } else {
@@ -650,6 +680,7 @@ define([
                     totalAmountContainer.append(_.template(totalAmount, {
                         model           : null,
                         balanceVisible  : this.visible,
+                        discountVisible :this.discountVisible,
                         currencySplitter: helpers.currencySplitter,
                         currencyClass   : helpers.currencyClass
                     }));

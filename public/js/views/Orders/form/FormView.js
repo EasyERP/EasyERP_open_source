@@ -2,69 +2,72 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
-    'views/dialogViewBase',
     'text!templates/Orders/form/FormTemplate.html',
-    'text!templates/Orders/form/ViewTemplate.html',
-    'views/Assignees/AssigneesView',
+    'text!templates/Orders/temps/documentTemp.html',
+    'views/dialogViewBase',
+    'views/Projects/projectInfo/proformas/proformaView',
     'views/Products/InvoiceOrder/ProductItems',
+    'views/Projects/projectInfo/orders/orderView',
+    'collections/Quotations/filterCollection',
+    'collections/Proforma/filterCollection',
+    'views/NoteEditor/NoteView',
+    'views/Editor/AttachView',
     'common',
     'custom',
     'dataService',
     'populate',
     'constants',
+    'helpers/keyValidator',
     'helpers'
-], function (Backbone, $, _, ParentView, EditTemplate, ViewTemplate, AssigneesView, ProductItemView, common, Custom, dataService, populate, CONSTANTS, helpers) {
+], function (Backbone,
+             $,
+             _,
+             EditTemplate,
+             DocumentTemplate,
+             BaseView,
+             ProformaView,
+             ProductItemView,
+             OrdersView,
+             QuotationCollection,
+             ProformaCollection,
+             NoteEditor,
+             AttachView,
+             common,
+             Custom,
+             dataService,
+             populate,
+             CONSTANTS,
+             keyValidator,
+             helpers) {
+    'use strict';
 
-    var EditView = ParentView.extend({
+    var FormView = BaseView.extend({
         contentType: 'Orders',
         imageSrc   : '',
         template   : _.template(EditTemplate),
+        templateDoc: _.template(DocumentTemplate),
         forSales   : false,
-        service    : false,
 
         initialize: function (options) {
-            var modelObj;
-
             if (options) {
                 this.visible = options.visible;
+                this.eventChannel = options.eventChannel;
             }
 
-            _.bindAll(this, 'render', 'saveItem');
-            _.bindAll(this, 'render', 'deleteItem');
+            if (options.model) {
+                this.currentModel = options.model;
+            } else {
+                this.currentModel = options.collection.getElement();
+            }
 
-            this.currentModel = (options.model) ? options.model : options.collection.getElement();
             this.currentModel.urlRoot = '/orders';
-            this.responseObj = {};
-            this.editablePrice = this.currentModel.get('workflow').status === 'New' || false;
-            this.editable = options.editable || true;
-            this.balanceVissible = false;
-            modelObj = this.currentModel.toJSON();
-            this.onlyView = (modelObj.workflow && modelObj.workflow.status === 'Done');
         },
 
         events: {
-            'click .receiveInvoice': 'receiveInvoice',
-            'click .cancelOrder'   : 'cancelOrder',
-            'click .setDraft'      : 'setDraft',
-            'click .saveBtn'       : 'saveOrder'
-        },
-
-        chooseOption: function (e) {
-            var currencyElement = $(e.target).parents('dd').find('.current-selected');
-            var oldCurrency = currencyElement.attr('data-id');
-            var newCurrency = $(e.target).attr('id');
-            var oldCurrencyClass = helpers.currencyClass(oldCurrency);
-            var newCurrencyClass = helpers.currencyClass(newCurrency);
-
-            var array = this.$el.find('.' + oldCurrencyClass);
-
-            array.removeClass(oldCurrencyClass).addClass(newCurrencyClass);
-
-            currencyElement.text($(e.target).text()).attr('data-id', newCurrency);
-
-            //$(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
-
-            this.hideNewSelect();
+            'click .receiveInvoice' : 'receiveInvoice',
+            'click .cancelOrder'    : 'cancelOrder',
+            'click .setDraft'       : 'setDraft',
+            'click #attachment_file': 'clickInput'
         },
 
         cancelOrder: function (e) {
@@ -100,6 +103,10 @@ define([
             });
         },
 
+        clickInput: function () {
+            $('.input-file .inputAttach').click();
+        },
+
         receiveInvoice: function (e) {
             var self = this;
             var url = '/invoices/receive';
@@ -113,22 +120,19 @@ define([
 
             e.preventDefault();
 
-            this.saveItem(function (err) {
-                if (!err) {
-                    dataService.postData(url, data, function (err) {
-                        var redirectUrl = self.forSales ? 'easyErp/salesInvoices' : 'easyErp/Invoices';
+            dataService.postData(url, data, function (err) {
+                var redirectUrl = self.forSales ? 'easyErp/salesInvoices' : 'easyErp/Invoices';
 
-                        if (err) {
-                            App.render({
-                                type   : 'error',
-                                message: 'Can\'t receive invoice'
-                            });
-                        } else {
-                            Backbone.history.navigate(redirectUrl, {trigger: true});
-                        }
+                if (err) {
+                    App.render({
+                        type   : 'error',
+                        message: 'Can\'t receive invoice'
                     });
+                } else {
+                    Backbone.history.navigate(redirectUrl, {trigger: true});
                 }
             });
+
         },
 
         setDraft: function (e) {
@@ -162,274 +166,53 @@ define([
             });
         },
 
-        saveOrder: function (e) {
-            e.preventDefault();
-
-            this.saveItem();
-        },
-
-        saveItem: function (invoiceCb) {
-            var self = this;
-            var mid = 55;
-            var thisEl = this.$el;
-            var selectedProducts = thisEl.find('.productItem');
-            var products = [];
-            var data;
-            var selectedLength = selectedProducts.length;
-            var targetEl;
-            var productId;
-            var quantity;
-            var price;
-            var description;
-            var subTotal;
-            var jobs;
-            var scheduledDate;
-            var taxes;
-            var supplier = thisEl.find('#supplierDd').data('id');
-
-            var destination = $.trim(thisEl.find('#destination').data('id'));
-            var incoterm = $.trim(thisEl.find('#incoterm').data('id'));
-            var invoiceControl = $.trim(thisEl.find('#invoicingControl').data('id'));
-            var paymentTerm = $.trim(thisEl.find('#paymentTerm').data('id'));
-            var fiscalPosition = $.trim(thisEl.find('#fiscalPosition').data('id'));
-            var supplierReference = thisEl.find('#supplierReference').val();
-            var orderDate = thisEl.find('#orderDate').val() || thisEl.find('#orderDate').text();
-            var expectedDate = thisEl.find('#expectedDate').val() || thisEl.find('#minScheduleDate').text();
-
-            var total = helpers.spaceReplacer($.trim(thisEl.find('#totalAmount').text()));
-            var totalTaxes = helpers.spaceReplacer($.trim(thisEl.find('#taxes').text()));
-            var unTaxed = helpers.spaceReplacer($.trim(thisEl.find('#totalUntaxes').text()));
-
-            var usersId = [];
-            var groupsId = [];
-            var whoCanRW;
-            var currency;
-            var i;
-
-            unTaxed = parseFloat(unTaxed) * 100;
-            total = parseFloat(total) * 100;
-            totalTaxes = parseFloat(totalTaxes) * 100;
-
-            if (thisEl.find('#currencyDd').attr('data-id')) {
-                currency = {
-                    _id : thisEl.find('#currencyDd').attr('data-id'),
-                    name: thisEl.find('#currencyDd').text()
-                };
-            } else {
-                currency = {
-                    _id : null,
-                    name: ''
-                };
-            }
-
-            $('.groupsAndUser tr').each(function () {
-                if ($(this).data('type') === 'targetUsers') {
-                    usersId.push($(this).data('id'));
-                }
-                if ($(this).data('type') === 'targetGroups') {
-                    groupsId.push($(this).data('id'));
-                }
-
-            });
-
-            whoCanRW = this.$el.find('[name="whoCanRW"]:checked').val();
-
-            if (selectedLength) {
-                for (i = selectedLength - 1; i >= 0; i--) {
-                    targetEl = $(selectedProducts[i]);
-                    productId = targetEl.data('id');
-                    if (productId) {  // added more info for save
-                        quantity = $.trim(targetEl.find('[data-name="quantity"]').text()) || targetEl.find('[data-name="quantity"] input').val();
-                        price = helpers.spaceReplacer(targetEl.find('[data-name="price"]').text()) || helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val());
-                        price = parseFloat(price) * 100;
-                        scheduledDate = $.trim(targetEl.find('[data-name="scheduledDate"]').text());
-                        taxes = helpers.spaceReplacer($.trim(targetEl.find('[data-name="taxes"]').text()));
-                        taxes = parseFloat(taxes) * 100;
-                        description = targetEl.find('[data-name="productDescr"] textarea').val() || targetEl.find('[data-name="productDescr"]').text();
-                        jobs = targetEl.find('[data-name="jobs"]').attr('data-content');
-                        subTotal = helpers.spaceReplacer($.trim(targetEl.find('.subtotal').text()));
-                        subTotal = parseFloat(subTotal) * 100;
-
-                        if (!quantity) {
-                            return App.render({
-                                type   : 'error',
-                                message: 'Quantity can\'t be empty'
-                            });
-                        }
-
-                        if (!price) {
-                            return App.render({
-                                type   : 'error',
-                                message: 'Unit price can\'t be empty'
-                            });
-                        }
-
-                        products.push({
-                            product      : productId,
-                            unitPrice    : price,
-                            quantity     : quantity,
-                            scheduledDate: scheduledDate,
-                            taxes        : taxes,
-                            description  : description,
-                            subTotal     : subTotal,
-                            jobs         : jobs || null
-                        });
-                    }
-                }
-            }
-
-            data = {
-                currency         : currency,
-                supplier         : supplier,
-                supplierReference: supplierReference,
-                products         : products,
-                orderDate        : helpers.setTimeToDate(orderDate),
-                expectedDate     : expectedDate,
-                destination      : destination || null,
-                incoterm         : incoterm || null,
-                invoiceControl   : invoiceControl || null,
-                paymentTerm      : paymentTerm || null,
-                fiscalPosition   : fiscalPosition || null,
-                paymentInfo      : {
-                    total  : total,
-                    unTaxed: unTaxed
-                },
-
-                groups: {
-                    owner: this.$el.find('#allUsersSelect').attr('data-id') || null,
-                    users: usersId,
-                    group: groupsId
-                },
-
-                whoCanRW: whoCanRW
-            };
-
-            if (supplier) {
-                this.model.save(data, {
-                    headers: {
-                        mid: mid
-                    },
-                    patch  : true,
-                    success: function () {
-                        Backbone.history.fragment = '';
-                        Backbone.history.navigate(window.location.hash, {trigger: true});
-                        self.hideDialog();
-
-                        if (invoiceCb && typeof invoiceCb === 'function') {
-                            return invoiceCb(null);
-                        }
-                    },
-
-                    error: function (model, xhr) {
-                        self.errorNotification(xhr);
-
-                        if (invoiceCb && typeof invoiceCb === 'function') {
-                            return invoiceCb(xhr.text);
-                        }
-                    }
-                });
-
-            } else {
-                App.render({
-                    type   : 'error',
-                    message: CONSTANTS.RESPONSES.CREATE_QUOTATION
-                });
-            }
-        },
-
-        deleteItem: function (event) {
-            var mid = 55;
-            var self = this;
-            var answer = confirm('Really DELETE items ?!');
-
-            event.preventDefault();
-
-            if (answer) {
-                this.currentModel.destroy({
-                    headers: {
-                        mid: mid
-                    },
-                    success: function () {
-                        $('.edit-product-dialog').remove();
-                        Backbone.history.navigate('easyErp/' + self.contentType, {trigger: true});
-                    },
-
-                    error: function (model, err) {
-                        if (err.status === 403) {
-                            App.render({
-                                type   : 'error',
-                                message: 'You do not have permission to perform this action'
-                            });
-                        }
-                    }
-                });
-            }
-
+        redirectAfter: function (content) {
+            Backbone.history.fragment = '';
+            Backbone.history.navigate(window.location.hash, {trigger: true});
         },
 
         render: function () {
-            var self = this;
             var $thisEl = this.$el;
-            var formString;
-            var model;
-            var productItemContainer;
-
-            if (this.onlyView) {
-                $('.saveBtn').addClass('hidden');
-            } else {
-                $('.saveBtn').removeClass('hidden');
-            }
-
-            this.template = this.onlyView ? _.template(ViewTemplate) : _.template(EditTemplate);
-
-            formString = this.template({
-                model   : this.currentModel.toJSON(),
-                visible : this.visible,
-                onlyView: this.onlyView,
-                forSales: this.forSales
+            var model = this.currentModel.toJSON();
+            var formString = this.template({
+                model        : model,
+                visible      : this.visible,
+                hidePrAndCust: this.hidePrAndCust
             });
+            var template;
+            var timeLine;
 
             $thisEl.html(formString);
 
-            populate.get('#currencyDd', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
-
-            populate.get('#destination', '/destination', {}, 'name', this, false, true);
-            populate.get('#incoterm', '/incoterm', {}, 'name', this, false, true);
-            populate.get('#invoicingControl', '/invoicingControl', {}, 'name', this, false, true);
-            populate.get('#paymentTerm', '/paymentTerm', {}, 'name', this, false, true);
-            populate.get('#deliveryDd', '/deliverTo', {}, 'name', this, false, true);
-            populate.get2name('#supplierDd', CONSTANTS.URLS.SUPPLIER, {}, this, false, true);
-
-            this.delegateEvents(this.events);
-            model = this.currentModel.toJSON();
-
-            this.$el.find('#expectedDate').datepicker({
-                dateFormat : 'd M, yy',
-                changeMonth: true,
-                changeYear : true,
-                maxDate    : '+0D'
+            template = this.templateDoc({
+                model            : model,
+                currencySplitter : helpers.currencySplitter
             });
 
-            productItemContainer = this.$el.find('#productItemsHolder');
+            timeLine = new NoteEditor({
+                model : this.currentModel
+            });
 
-            if (this.onlyView) {
-                this.editable = false;
-            }
+            $thisEl.find('#templateDiv').html(template);
 
-            productItemContainer.append(
-                new ProductItemView({
-                    editable       : self.editable,
-                    editablePrice  : self.editablePrice,
-                    balanceVissible: self.balanceVissible,
-                    forSales       : self.forSales,
-                    service        : self.service
-                }).render({model: model}).el
+            $thisEl.find('#historyDiv').html(
+                timeLine.render().el
             );
+            $thisEl.find('#attachments').append(
+                new AttachView({
+                    model      : this.currentModel,
+                    contentType: 'quotations',
+                    forDoc     : true
+                }).render().el
+            );
+
+            this.delegateEvents(this.events);
+
+            App.stopPreload();
 
             return this;
         }
-
     });
 
-    return EditView;
+    return FormView;
 });

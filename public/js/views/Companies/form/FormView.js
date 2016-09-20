@@ -147,7 +147,7 @@ define([
             holder.text($target.text());
 
             this.modelChanged[type] = id;
-            this.$el.find('#assignedToDd').text(text).attr('data-id', id);
+            // this.$el.find('#assignedToDd').text(text).attr('data-id', id);
             this.showButtons();
         },
 

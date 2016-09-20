@@ -18,6 +18,8 @@
 @import "layouts/flexgrid";
 // General styles
 
+@import "modules/modal";//passed from modules before forms.scss styling
+
 //@import "general/forms";
 @import "general/buttons";
 @import "general/general";
@@ -25,10 +27,13 @@
 @import "general/erp-icons";
 @import "general/table";
 @import "general/dashboard-item";
+@import "general/inputs";
 
 // Styles for specific modules
 @import "modules/products";
+@import "modules/list";
 @import "modules/lists";
+@import "modules/listStriped";
 @import "modules/dialog";
 @import "modules/import";
 @import "modules/opportunities";
@@ -40,6 +45,29 @@
 @import "modules/persons";
 @import "modules/datapicker";
 @import "modules/navigation";
+@import "modules/acounting";
+//@import "modules/modal";
+@import "modules/autocomplete";
+@import "modules/birth_thumbnail";
+//@import "modules/autocomplete";
+@import "modules/icons";
+@import "modules/pagination";
+@import "modules/history";
+@import "modules/settings_modal";
+@import "modules/slider";
+@import "modules/collapsed";
+@import "modules/quotations_tabs";
+@import "modules/invoiceTemplate";
+
+
+
+@import "state/alerts";
+@import "state/bgColors";
 
 // Styles for condition
+
+
+
+
+
 

@@ -65,6 +65,19 @@
 
             this.editCollection = new EditCollection(transfers);
 
+            this.responseObj['#employmentTypeDd'] = [
+                {
+                    _id : 'Employees',
+                    name: 'Employees'
+                }, {
+                    _id : 'FOP',
+                    name: 'FOP'
+                }, {
+                    _id : 'Un Employees',
+                    name: 'Un Employees'
+                }
+            ];
+
             this.responseObj['#sourceDd'] = [
                 {
                     _id : 'www.rabota.ua',
@@ -523,6 +536,7 @@
             var groupsId;
             var usersId;
             var marital;
+            var employmentType;
             var jobType;
             var manager;
             var $jobTrs;
@@ -568,6 +582,7 @@
             nextAction = $.trim($thisEl.find('#nextAction').val());
             $jobTable = $thisEl.find('#hireFireTable');
             marital = $thisEl.find('#maritalDd').attr('data-id') || null;
+            employmentType = $thisEl.find('#employmentTypeDd').attr('data-id') || null;
             gender = $thisEl.find('#genderDd').attr('data-id') || null;
             nationality = $('#nationality').attr('data-id');
             $jobTrs = $jobTable.find('tr.transfer');
@@ -671,10 +686,11 @@
                     last : $.trim($thisEl.find('#last').val())
                 },
 
-                gender     : gender,
-                jobType    : jobType,
-                marital    : marital,
-                workAddress: {
+                gender        : gender,
+                jobType       : jobType,
+                marital       : marital,
+                employmentType: employmentType,
+                workAddress   : {
                     street : $.trim($thisEl.find('#applicationsEditStreet').val()),
                     city   : $.trim($thisEl.find('#applicationsEditCity').val()),
                     state  : $.trim($thisEl.find('#applicationsEditState').val()),

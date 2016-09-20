@@ -3,6 +3,8 @@ var router = express.Router();
 var QuotationHandler = require('../handlers/quotation');
 var authStackMiddleware = require('../helpers/checkAuth');
 var MODULES = require('../constants/modules');
+var multipart = require('connect-multiparty');
+var multipartMiddleware = multipart();
 
 module.exports = function (models, event) {
     var handler = new QuotationHandler(models, event);
@@ -246,6 +248,7 @@ HTTP/1.1 201 Created
 }
      */
     router.post('/', accessStackMiddleware, handler.create);
+    router.post('/uploadFiles', accessStackMiddleware, multipartMiddleware, handler.uploadFile);
     router.patch('/:id', accessStackMiddleware, handler.putchModel);
 
     /**

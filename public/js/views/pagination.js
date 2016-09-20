@@ -50,6 +50,7 @@ define([
             }
         },
 
+
         afterRender: function (options) {
             var createdInTag;
             var $curEl = this.$el;

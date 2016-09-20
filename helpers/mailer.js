@@ -69,7 +69,7 @@ module.exports = function () {
 
     this.sendInvoice = function (mailOptions, cb) {
         mailOptions.generateTextFromHTML = true;
-        mailOptions.from = 'easyerp <no-replay@easyerp.com>';
+        mailOptions.from =  mailOptions.from || 'easyerp <no-replay@easyerp.com>';
         mailOptions.html = _.template(fs.readFileSync(pathMod.join(__dirname, '../public/templates/mailer/sendInvoice.html'), encoding = 'utf8'), {});
 
         deliver(mailOptions, cb);
@@ -85,7 +85,7 @@ module.exports = function () {
         };
 
         mailOptions.generateTextFromHTML = true;
-        mailOptions.from = 'ThinkMobiles <no-replay@easyerp.com>';
+        mailOptions.from =  mailOptions.from || 'ThinkMobiles <no-replay@easyerp.com>';
         mailOptions.subject = 'Lead is assigned'; // + name Leads
 
         mailOptions.html = _.template(fs.readFileSync('public/templates/mailer/sendAssignedToLead.html', encoding = 'utf8'), templateOptions);
@@ -107,7 +107,7 @@ module.exports = function () {
         };
 
         mailOptions.generateTextFromHTML = true;
-        mailOptions.from = 'ThinkMobiles <no-replay@easyerp.com>';
+        mailOptions.from =  mailOptions.from || 'ThinkMobiles <no-replay@easyerp.com>';
         mailOptions.subject = 'Changed ' + mailOptions.contentName;
 
         mailOptions.html = _.template(fs.readFileSync('public/templates/mailer/historyTemplate.html', encoding = 'utf8'), templateOptions);
@@ -124,8 +124,8 @@ module.exports = function () {
         };
 
         mailOptions.generateTextFromHTML = true;
-        mailOptions.from = 'ThinkMobiles <no-replay@easyerp.com>';
-        mailOptions.subject = 'New Task'
+        mailOptions.from =  mailOptions.from || 'ThinkMobiles <no-replay@easyerp.com>';
+        mailOptions.subject = 'New Task';
 
         mailOptions.html = _.template(fs.readFileSync('public/templates/mailer/taskTemplate.html', encoding = 'utf8'), templateOptions);
 
@@ -141,7 +141,7 @@ module.exports = function () {
         };
 
         mailOptions.generateTextFromHTML = true;
-        mailOptions.from = 'ThinkMobiles <no-replay@easyerp.com>';
+        mailOptions.from =  mailOptions.from || 'ThinkMobiles <no-replay@easyerp.com>';
         mailOptions.subject = 'You was set as a follower'; // + name Leads
 
         mailOptions.html = _.template(fs.readFileSync('public/templates/mailer/addedFollower.html', encoding = 'utf8'), templateOptions);

@@ -202,7 +202,8 @@ module.exports = (function () {
             LI: {type: String, default: ''}
         },
 
-        skype: {type: String, default: ''}
+        skype     : {type: String, default: ''},
+        externalId: {type: String, default: null}
 
     }, {collection: 'Opportunities'});
 

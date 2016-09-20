@@ -1,88 +1,87 @@
-<div id="searchContainer"></div>
-<div class="containerContent">
-    <div>
-        <table class="list gl-list smallTd">
-            <colgroup span="4">
-                <col span="1" width="10%">
-                <col span="2" width="25%">
-                <col span="1" width="40%">
-            </colgroup>
-            <thead>
-            <tr>
-                <th colspan="4"
-                    class="forCaption" style="text-align: left;">
-                    GROSS PROFIT
-                </th>
-            </tr>
-
-            <tr id="caption">
-                <th class="centerCell">Expand</th>
-                <th>Account</th>
-                <th>Date</th>
-                <th class="countable" data-id="debit">Amount</th>
-            </tr>
-            </thead>
-            <tfoot>
-            <td colspan="4" class="money" id="grossFooter"></td>
-            </tfoot>
-            <tbody id="listTableGrossFit" class="enableTableOdd"></tbody>
-        </table>
-
-    </div>
-    <br/>
-    <br/>
-    <div>
-        <table class="list gl-list smallTd">
-            <colgroup span="4">
-                <col span="1" width="10%">
-                <col span="2" width="25%">
-                <col span="1" width="40%">
-            </colgroup>
-            <thead>
-            <tr>
-                <th colspan="4"
-                    class="forCaption" style="text-align: left;">
-                    EXPENSES
-                </th>
-            </tr>
-            <tr id="captionExpenses">
-                <th class="centerCell">Expand</th>
-                <th>Account</th>
-                <th>Date</th>
-                <th class="countable" data-id="debit">Amount</th>
-            </tr>
-            </thead>
-            <tfoot>
-            <td colspan="4" class="money" id="expFooter"></td>
-            </tfoot>
-            <tbody id="listTableExpenses" class="enableTableOdd"></tbody>
-        </table>
-    </div>
-
-    <br/>
-    <br/>
-    <div>
-        <table class="list gl-list smallTd">
-            <colgroup span="3">
-                <col span="2" width="30%">
-                <col span="1" width="40%">
-            </colgroup>
-            <thead>
-            </thead>
-            <tbody id="total">
-            <tr>
-                <td>Net Income</td>
-                <td colspan="2" class="money" id="totalSumm"></td>
-            </tr>
-            <tr>
-                <td>Dividends</td>
-                <td colspan="2" class="money" id="dividends"></td>
-            </tr>
-            <tr>
-                <td>Retained earnings</td>
-                <td colspan="2" class="money" id="retainedEarnings"></td>
-            </tr>
-            </tbody>
-        </table>
+<div class="_profitWrap">
+    <div id="searchContainer"></div>
+    <div class="containerContent">
+        <div class="_profitTableWrap">
+            <table class="list tableFixed">
+                <colgroup>
+                    <col span="1" width="20px">
+                    <col span="2" width="50%">
+                    <col span="1" width="50%">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th colspan="4" class="_profitTitle">INCOME</th>
+                </tr>
+                <tr>
+                    <th colspan="4" class="_profitSubTitle">Gross Profit</th>
+                </tr>
+                <!--<tr id="caption">-->
+                <!--<th class="centerCell">Expand</th>-->
+                <!--<th>Account</th>-->
+                <!--<th>Date</th>-->
+                <!--<th class="countable" data-id="debit">Amount</th>-->
+                <!--</tr>-->
+                </thead>
+                <tbody id="listTableGrossFit" class="enableTableOdd"></tbody>
+                <tfoot>
+                <tr>
+                    <td colspan="4" class="money textRight" id="grossFooter"></td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div class="_profitTableWrap">
+            <table class="list tableFixed">
+                <colgroup span="4">
+                    <col span="1" width="20px">
+                    <col span="2" width="50%">
+                    <col span="1" width="50%">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th colspan="4" class="_profitTitle">EXPENSES</th>
+                </tr>
+                <tr>
+                    <th colspan="4" class="_profitSubTitle">Expenses</th>
+                </tr>
+                <!--<tr id="captionExpenses">-->
+                <!--<th class="centerCell">Expand</th>-->
+                <!--<th>Account</th>-->
+                <!--<th>Date</th>-->
+                <!--<th class="countable" data-id="debit">Amount</th>-->
+                <!--</tr>-->
+                </thead>
+                <tbody id="listTableExpenses" class="enableTableOdd"></tbody>
+                <tfoot>
+                <tr>
+                    <td colspan="4" class="money textRight" id="expFooter"></td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div class="_incomeTableWrap">
+            <table class="list gl-list smallTd tableFixed">
+                <colgroup span="3">
+                    <col width="30%">
+                    <col width="40%">
+                </colgroup>
+                <thead>
+                </thead>
+                <tbody id="total">
+                <tr>
+                    <td class="semiBold">Net Income</td>
+                    <td class="money textRight" id="totalSumm"></td>
+                </tr>
+                <tr>
+                    <td class="semiBold">Dividends</td>
+                    <td class="money textRight" id="dividends"></td>
+                </tr>
+                <tr>
+                    <td class="semiBold">Retained earnings</td>
+                    <td class="money textRight" id="retainedEarnings"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>

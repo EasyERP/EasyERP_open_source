@@ -22,7 +22,7 @@ define([
         template   : _.template(DashboardTemplate),
         el         : '#content-holder',
 
-        initialize : function (options) {
+        initialize: function (options) {
             this.leadsCollection = new LeadsCollection();
             this.startTime = options.startTime;
             this.leadsByNamesChartType = 'leadsBySales';
@@ -41,7 +41,7 @@ define([
             this.dateItem = {
                 date       : 'D',
                 winLost    : 'D',
-                leadsChart: 'createdBy',
+                leadsChart : 'createdBy',
                 leadsByName: 'leadsBySales'
             };
 
@@ -62,8 +62,8 @@ define([
             'click #updateDate'                                                                                             : 'changeDateRange',
             'click #updateDateLeadsByName'                                                                                  : 'changeLeadsDateRangeByName',
             'click #updateDateLeadsBySale'                                                                                  : 'changeLeadsDateRangeBySale',
-            'click #updateDateLeadsBySource'                                                                                : 'changeLeadsDateRangeBySource',
             'click #updateDateLeads'                                                                                        : 'changeLeadsDateRange',
+            'click #updateDateLeadsBySource'                                                                                : 'changeLeadsDateRangeBySource',
             'click li.filterValues:not(#custom, #customLeads, #customLeadsByName, #customLeadsBySale, #customLeadsBySource)': 'setDateRange',
             'click .choseDateRange .item'                                                                                   : 'newRange',
             'click .choseDateItem .item'                                                                                    : 'newItem',
@@ -81,11 +81,11 @@ define([
             'click .dropDownDateRangeContainer'                                                                             : 'toggleDateFilter'
         },
 
-        toggleDateFilter: function(e){
+        toggleDateFilter: function (e) {
             var $target = $(e.target);
-            if($target.hasClass('active')){
+            if ($target.hasClass('active')) {
 
-              e.stopPropagation();
+                e.stopPropagation();
                 e.preventDefault();
             }
 
@@ -102,7 +102,7 @@ define([
             }
         },
 
-        changeClass: function($target) {
+        changeClass: function ($target) {
             if ($target.text() !== "Custom Dates") {
                 $target.toggleClass('checkedValue');
                 return;
@@ -119,6 +119,8 @@ define([
             var startTime;
             var endTime;
 
+            type = type || '';
+
             dateFilter = e ? $(e.target).closest('ul.dateFilter' + type) : this.$el.find('ul.dateFilter' + type);
             startDate = dateFilter.find('#startDate' + type);
             endDate = dateFilter.find('#endDate' + type);
@@ -126,6 +128,14 @@ define([
             endTime = dateFilter.find('#endTime' + type);
             startDate = startDate.val();
             endDate = endDate.val();
+
+            if (new Date(startDate) > new Date(endDate)) {
+                return App.render({
+                    type   : 'error',
+                    message: 'StartDate can\'t be greater than EndDate'
+                });
+            }
+
             startTime.text(startDate);
             endTime.text(endDate);
 
@@ -166,19 +176,19 @@ define([
         },
 
         changeLeadsDateRangeByName: function (e) {
-            this.changeDateRange(null, 'LeadsByName')
+            this.changeDateRange(null, 'LeadsByName');
         },
 
         changeLeadsDateRangeBySale: function (e) {
-            this.changeDateRange(null, 'LeadsBySale')
+            this.changeDateRange(null, 'LeadsBySale');
         },
 
         changeLeadsDateRangeBySource: function (e) {
-            this.changeDateRange(null, 'LeadsBySource')
+            this.changeDateRange(null, 'LeadsBySource');
         },
 
         changeLeadsDateRange: function (e) {
-            this.changeDateRange(null, 'Leads')
+            this.changeDateRange(null, 'Leads');
         },
 
         setDateRange: function (e) {
@@ -247,7 +257,7 @@ define([
             var $parent = $target.closest('.choseDateRange');
             var type = $parent.attr('data-type');
 
-            if($target.hasClass('active')){
+            if ($target.hasClass('active')) {
                 return;
             }
 
@@ -280,7 +290,7 @@ define([
             var $parent = $(e.target).closest('.choseDateItem');
             var type = $parent.attr('data-type');
 
-            if($target.hasClass('active')){
+            if ($target.hasClass('active')) {
                 return;
             }
 
@@ -436,7 +446,7 @@ define([
             var self = this;
 
             this.startDate = (date.startOf('month')).format('D MMM, YYYY');
-            this.endDate = (moment(this.startDate).endOf('month')).format('D MMM, YYYY');
+            this.endDate = (moment(new Date(this.startDate)).endOf('month')).format('D MMM, YYYY');
             this.startDateLeadsByName = this.startDate;
             this.endDateLeadsByName = this.endDate;
             this.startDateLeadsBySale = this.startDate;
@@ -505,14 +515,14 @@ define([
                 })
                 .datepicker('setDate', endDate);
         },
-        
-        getDataForLeadsChart: function(){
+
+        getDataForLeadsChart: function () {
             var self = this;
 
             common.getLeads({
-                    startDay: this.startDateLeadsByName,
-                    endDay  : this.endDateLeadsByName
-                }, function (data) {
+                startDay: this.startDateLeadsByName,
+                endDay  : this.endDateLeadsByName
+            }, function (data) {
 
                 self.dataForLeadsChart = data;
 
@@ -542,7 +552,7 @@ define([
 
             data = this.dataForLeadsChart[this.dateItem.leadsByName];
             margin = {top: 50, right: 150, bottom: 80, left: 150};
-            width = ($wrapper.width())/2;
+            width = ($wrapper.width()) / 2;
             height = data.length * 20;
 
             barChart = d3.select('svg.leadsByNameBarChart')
@@ -692,7 +702,7 @@ define([
                 endDay  : this.endDateLeads
             }, function (data) {
 
-                daysCount  = Math.floor((new Date(self.endDateLeads) - new Date(self.startDateLeads)) / 24 / 60 / 60 / 1000);
+                daysCount = Math.floor((new Date(self.endDateLeads) - new Date(self.startDateLeads)) / 24 / 60 / 60 / 1000);
 
                 data2 = _.filter(data[self.dateItem.leadsChart], function (item) {
                     return item.isOpp;
@@ -703,14 +713,14 @@ define([
                 });
 
                 max1 = d3.max(data1, function (d) {
-                    return d.count;
-                }) || 0;
+                        return d.count;
+                    }) || 0;
 
                 max2 = d3.max(data2, function (d) {
-                    return d.count;
-                }) || 0;
+                        return d.count;
+                    }) || 0;
 
-                max = Math.ceil((max1 + max2)/10)*10;
+                max = Math.ceil((max1 + max2) / 10) * 10;
 
                 margin = {
                     top   : 50,
@@ -719,7 +729,7 @@ define([
                     left  : 80
                 };
 
-                width = ($wrapper.width())/2  - margin.left - margin.right;
+                width = ($wrapper.width()) / 2 - margin.left - margin.right;
                 height = $wrapper.width() / 4;
 
                 barChart = d3.select('svg.leadsBarChart')
@@ -732,7 +742,7 @@ define([
 
                 xScale = d3.time.scale()
                     .domain([new Date(self.startDateLeads), new Date(self.endDateLeads)])
-                    .range([0, width - margin.left*1.5]);
+                    .range([0, width - margin.left * 1.5]);
 
                 yScale = d3.scale.linear()
                     .domain([0, max])
@@ -762,7 +772,7 @@ define([
                     .orient('right')
                     .tickSize(0)
                     .tickPadding(padding)
-                    .tickFormat(function(d, i){
+                    .tickFormat(function (d, i) {
                         return d + '%';
                     });
 
@@ -794,7 +804,7 @@ define([
                             return yScale(d.count)
                         },
                         fill       : '#FEA281',
-                        class: function(d){
+                        class      : function (d) {
                             return 'total_' + d._id;
                         },
                         'transform': 'translate(' + (-(rectWidth / 2 + 2 * offset)) + ',0)'
@@ -817,21 +827,21 @@ define([
 
                             baseRect = d3.select('rect.total_' + d._id);
 
-                            if(baseRect[0][0]){
-                               yOffset = baseRect.attr('y') - verticalBarSpacing;
+                            if (baseRect[0][0]) {
+                                yOffset = baseRect.attr('y') - verticalBarSpacing;
                             } else {
                                 yOffset = height;
                             }
 
-                            return yOffset  - yScale(d.count)
+                            return yOffset - yScale(d.count)
                         },
                         width      : rectWidth,
                         height     : function (d) {
 
                             baseRect = d3.select('rect.total_' + d._id);
 
-                            if(baseRect[0][0]){
-                                return yScale(d.count) - 2*verticalBarSpacing;
+                            if (baseRect[0][0]) {
+                                return yScale(d.count) - 2 * verticalBarSpacing;
                             }
 
                             return yScale(d.count);
@@ -868,9 +878,9 @@ define([
 
                 keys = Object.keys(percent).sort();
 
-                for (i = 0; i < keys.length; i++){
+                for (i = 0; i < keys.length; i++) {
                     percentData.push({
-                        date: keys[i],
+                        date : keys[i],
                         value: percent[keys[i]]
                     })
                 }
@@ -939,7 +949,7 @@ define([
 
                 barChart.append('g')
                     .attr({
-                        'class': 'y2 axis2',
+                        'class'    : 'y2 axis2',
                         'transform': 'translate(' + (width - margin.right) + ',0)'
                     })
                     .call(yAxis2)
@@ -1022,7 +1032,7 @@ define([
                 });
 
                 uniqueNames = scaleArray.slice().filter(uniqueVal);
-                width = ($('#content-holder').width())/2;
+                width = ($('#content-holder').width()) / 2;
                 height = uniqueNames.length * 20;
 
                 y = d3.scale.ordinal()
@@ -1044,7 +1054,7 @@ define([
                     .orient('left');
 
                 chart = d3.select(chartClass)
-                    .attr('width', width  - margin.left - margin.right)
+                    .attr('width', width - margin.left - margin.right)
                     .attr('height', height + margin.top + margin.bottom)
                     .append('g')
                     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
@@ -1066,13 +1076,13 @@ define([
                     return !item.isOpp;
                 });
 
-                maxLeads = d3.max(data2, function(d){
-                    return d.count
-                }) || 0;
+                maxLeads = d3.max(data2, function (d) {
+                        return d.count
+                    }) || 0;
 
-                maxOpportunities = d3.max(data1, function(d){
-                    return d.count;
-                }) || 0;
+                maxOpportunities = d3.max(data1, function (d) {
+                        return d.count;
+                    }) || 0;
 
                 gradient = d3.select('svg.chart.' + type + 'sChart').select('g').append('linearGradient')
                     .attr({
@@ -1191,10 +1201,10 @@ define([
             }, function (data) {
 
                 margin = {
-                    top: 50,
-                    right: 150,
+                    top   : 50,
+                    right : 150,
                     bottom: 80,
-                    left: 80
+                    left  : 80
                 };
                 width = ($wrapper.width()) / 2;
                 height1 = data.length * 20;

@@ -20,7 +20,7 @@
                     <div class="date"><%= proform.invoiceDate %></div>
                 </div>
                 <div class="compactRow">
-                    <div class="total <%= currencyClass(proform.currency._id) %>"><%- (proform.paymentInfo) ? currencySplitter(proform.paymentInfo.total) : '0.00'%></div>
+                    <div class="total"><%= (proform.currency && proform.currency._id ? proform.currency._id.symbol : '') + ((proform.paymentInfo) ? currencySplitter(proform.paymentInfo.total) : '0.00')%></div>
                     <div class="status">
                         <%if(proform.workflow){%>
                         <%if(proform.workflow.status === 'In Progress'){%>

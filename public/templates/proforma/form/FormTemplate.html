@@ -10,7 +10,7 @@
                         <%if(model.workflow && model.workflow.name !== 'Invoiced' && model.workflow.name !== 'Paid' && model.workflow.name !== 'Cancelled'){%>
                         <%if(model.approved){%>
                         <button class="btn newPayment">
-                            <span>Pay</span>
+                            <span>Create Payment</span>
                         </button>
                         <%} else {%>
                         <%if(isFinancial){%>
@@ -45,10 +45,11 @@
 
                                 <dt><label for="supplier_invoice_num">Proforma Number</label></dt>
                                 <dd>
-                                    <input type="text" id="supplier_invoice_num"
+                                    <input type="text" id="supplier_invoice_num" class="_inputBordered"
                                            value="<%=(model.name) ? model.name : ''%>"
                                            placeholder="Supplier Invoice Number" maxlength="32"/>
                                 </dd>
+
 
                             </dl>
                         </div>
@@ -57,14 +58,14 @@
 
                                 <dt><label for="invoice_date">Proforma Date </label></dt>
                                 <dd>
-                                    <input type="text" class="date" id="invoice_date"
+                                    <input type="text" class="date _inputBordered" id="invoice_date"
                                            value="<%=(model.invoiceDate) ? model.invoiceDate : ''%>" maxlength="32"
                                            placeholder="Invoice Date" readonly/>
                                 </dd>
 
                                 <dt><label for="due_date">Due Date </label></dt>
                                 <dd>
-                                    <input type="text" class="date
+                                    <input type="text" class="date _inputBordered
                                             <% if (!model.dueDate) {%>
                                               errorContent"
                                     <% } else { %>
@@ -112,6 +113,7 @@
                                           id="supplier_invoice_num"><%=(model.name) ? model.name : ''%></span>
                                 </dd>
 
+
                             </dl>
                         </div>
                         <div class="half-block left">
@@ -147,25 +149,21 @@
                         <%}%>
 
                         <div class="clearfix"></div>
-                        <ul class="dialog-tabs" data-class="childTabs">
+                        <!--<ul class="dialog-tabs" data-class="childTabs">
                             <li><a class="active" href="javascript:;">Proforma</a></li>
                             <li><a href="javascript:;">Other Info</a></li>
                             <li><a href="javascript:;">Payments</a></li>
-                            <li><a href="javascript:;">Attachments</a></li>
-                        </ul>
+                            &lt;!&ndash;<li><a href="javascript:;">Attachments</a></li>&ndash;&gt;
+                        </ul>-->
                         <div class="clearfix"></div>
-                        <div class="dialog-tabs-items childTabs">
-                            <div class="dialog-tabs-item childTabs active">
+                       <!-- <div class="dialog-tabs-items childTabs">
+                            <div class="dialog-tabs-item childTabs active">-->
                                 <%if(!isWtrack) {%>
-                                <% if (!approved) { %>
-                                <div id="productItemsHolder">
 
-                                </div>
-                                <% } else { %>
                                 <div id="invoiceItemsHolder">
 
                                 </div>
-                                <% } %>
+
                                 <div class="clearfix"></div>
                                 <%} else { %>
                                 <div>
@@ -233,7 +231,7 @@
                                     </table>
                                 </div>
                                 <div class="clearfix"></div>
-                                <div id="totalAmountContainer" class="half-block right">
+                                <div id="totalAmountContainer" class="_totalAmountContainer">
                                     <table border="0" cellpadding="0" cellspacing="0" class="right calculateTotal">
                                         <tbody>
                                         <tr>
@@ -287,20 +285,14 @@
                                     </table>
                                 </div>
                                 <%}%>
+                                <h3>Notes</h3>
+                                <div id="attach-container"></div>
                             </div>
-                            <div class="dialog-tabs-item childTabs">
+                          <!--  <div class="dialog-tabs-item childTabs">
                                 <div class="other-info-container">
                                     <div class="half-block left">
                                         <dl class="opp-info">
-                                            <dt><label for="bank_account">Bank Account</label></dt>
-                                            <dd>
-                                                <a id="bank_account" href="javascript:;">Select</a>
-                                            </dd>
 
-                                            <dt><label for="payment_terms">Payment Terms</label></dt>
-                                            <dd>
-                                                <a id="payment_terms" href="javascript:;">Select</a>
-                                            </dd>
                                         </dl>
                                     </div>
                                     <div class="half-block left">
@@ -321,19 +313,21 @@
                                         </dl>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="dialog-tabs-item childTabs">
-                                <div id="payments-container"></div>
-                            </div>
-                            <div class="dialog-tabs-item childTabs">
-                                <div id="attach-container"></div>
-                            </div>
-                        </div>
+                            </div>-->
+                           <!-- <div class="dialog-tabs-item childTabs">
+
+                            </div>-->
+                            <!--<div class="dialog-tabs-item childTabs">
+
+                            </div>-->
+                        <!--</div>-->
+
 
                     </div>
                 </div>
 
                 <div id="paymentHolder">
+                    <div id="payments-container"></div>
 
                 </div>
 

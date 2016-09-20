@@ -24,7 +24,7 @@ define([
 
             this.url = options.url || '/payroll/generate/';
 
-            this.title = options.url ? 'Close Month' : 'Generate Payroll Expenses';
+            this.title = options.url ? 'Close Month' : 'Process Payroll';
 
             this.responseObj['#month'] = [];
 
@@ -71,8 +71,6 @@ define([
                 });
             }
 
-
-
             data.month = this.month;
             data.year = this.year;
 
@@ -116,7 +114,8 @@ define([
 
             var dialog = this.template({
                 month: month,
-                year : year
+                year : year,
+                title: this.title
             });
 
             this.responseObj['#year'] = [];

@@ -63,8 +63,8 @@ define([
         },
 
         events: {
-            keypress           : 'keypressHandler',
-            'keyup #paidAmount': 'changePaidAmount'
+            'keypress:not(#selectInput)': 'keypressHandler',
+            'keyup #paidAmount'         : 'changePaidAmount'
         },
 
         changePaidAmount: function (e) {
@@ -133,9 +133,7 @@ define([
                     query[accountName] = el.chartAccount._id;
 
                     dataService.getData('/journals/getByAccount', query, function (resp) {
-                        self.responseObj['#journal'] = resp.data || [];
-
-                        self.$el.find('#journalDiv').show();
+                        // self.responseObj['#journal'] = resp.data || [];
 
                         if (resp.data && resp.data.length) {
                             (self.$el.find('#journal').text(resp.data[0].name)).attr('data-id', resp.data[0]._id);
@@ -205,6 +203,13 @@ define([
                 });
             }
 
+            if (!journal) {
+                return App.render({
+                    type   : 'error',
+                    message: "Journal can't be empty."
+                });
+            }
+
             data = {
                 mid             : mid,
                 forSale         : this.forSales,
@@ -268,6 +273,7 @@ define([
         render: function () {
             var self = this;
             var model = this.invoiceModel.toJSON();
+            var account = model.project && model.project.paymentMethod || model.paymentMethod;
             var htmBody = this.template({
                 invoice      : model,
                 currency     : self.currency,
@@ -309,8 +315,7 @@ define([
             }
 
             populate.get('#currencyDd', '/currency/getForDd', {}, 'name', this, true);
-
-            this.$el.find('#journalDiv').hide();
+            populate.get('#journal', '/journals/getForDd', {}, 'name', this, true, true);
 
             this.$el.find('#paymentDate').datepicker({
                 dateFormat : 'd M, yy',

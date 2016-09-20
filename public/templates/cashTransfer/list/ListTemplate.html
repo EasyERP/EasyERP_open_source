@@ -1,6 +1,6 @@
 <% collection.forEach(function(item, index){ %>
 <tr data-id="<%=item._id%>">
-    <td class="notForm"><input type="checkbox" value="<%=item._id%>" class="checkbox listCB"/></td>
+    <td class="notForm centerCell"><input type="checkbox" value="<%=item._id%>" class="checkbox listCB"/></td>
     <td data-content="number" class="centerCell"><%=startNumber + index + 1%></td>
     <td><%=item.name%></td>
     <td><%=utcDateToLocaleDate(item.date)%></td>

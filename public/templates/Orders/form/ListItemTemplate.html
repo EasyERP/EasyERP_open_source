@@ -1,5 +1,7 @@
 <table id="listTable">
     <% orders.forEach(function(order, index){ %>
+    <% var currency =(order.currency && order.currency._id ? order.currency._id.symbol : '')%>
+
     <tr data-id="<%=order._id%>"
     <%if (order.workflow && order.workflow.status === 'Done') { %>
     class="compactView notEditable"
@@ -23,8 +25,8 @@
                     <div><%= order.orderDate %></div>
                 </div>
                 <div class="compactRow">
-                    <div class="total <%=currencyClass(order.currency._id)%>"><%=(order.paymentInfo) ? currencySplitter(order.paymentInfo.total) : '0.00'%></div>
-                    <div class="unTaxed <%=currencyClass(order.currency._id)%>"><%=(order.paymentInfo) ? currencySplitter(order.paymentInfo.unTaxed) : '0.00'%></div>
+                    <div class="total"><%=currency %><%=(order.paymentInfo) ? currencySplitter(order.paymentInfo.total) : '0.00'%></div>
+                    <div class="unTaxed"><%=currency %><%=(order.paymentInfo) ? currencySplitter(order.paymentInfo.unTaxed) : '0.00'%></div>
                 </div>
             </div>
         </td>

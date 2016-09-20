@@ -20,23 +20,50 @@ define([
         importView     : null,
 
         events: {
-            'click .importBtn'          : 'importFile',
-            'change .inputAttach'       : 'importFiles',
-            'change .changeTableBtn'    : 'changeCombobox',
-            'click #changeTableCombobox': 'changeTableCombobox',
-            'click .item'               : 'checkItem'
+            'click .importBtn'              : 'importFile',
+            'change .inputAttach'           : 'importFiles',
+            'change .changeTableBtn'        : 'changeCombobox',
+            'click #changeTableCombobox'    : 'changeTableCombobox',
+            'click #changeDelimeterCombobox': 'changeDelimeterCombobox',
+            'click .item'                   : 'checkItem'
         },
 
         initialize: function (options) {
             var $thisEl = this.$el;
             this.fileName = options.fileName;
-            this.entity = 'Customers';
+            this.entity = 'Department';
+            this.delimeter = ',';
             this.comparingField = 'email';
-            this.checkedCombobox = App.currentUser.checkedComboImport || 'Persons';
+            this.checkedCombobox = App.currentUser.checkedComboImport || 'Department';
             this.checkedItem = App.currentUser.checkedItemImport || 'email';
+            this.delimeter = App.currentUser.delimiter || ',';
 
             this.mergeFields = {
-                InvoicePayments: {
+                Workflow        : {
+                    names: [
+                        'Name'
+                    ],
+                    items: [
+                        'name'
+                    ]
+                },
+                JobPosition     : {
+                    names: [
+                        'Name'
+                    ],
+                    items: [
+                        'name'
+                    ]
+                },
+                ProductCategory : {
+                    names: [
+                        'Name'
+                    ],
+                    items: [
+                        'name'
+                    ]
+                },
+                InvoicePayments : {
                     names: [
                         'Number'
                     ],
@@ -52,7 +79,7 @@ define([
                         'name'
                     ]
                 },
-                Quotation: {
+                Orders          : {
                     names: [
                         'Number'
                     ],
@@ -60,15 +87,23 @@ define([
                         'name'
                     ]
                 },
-                Invoice: {
+                Quotation       : {
+                    names: [
+                        'Number'
+                    ],
+                    items: [
+                        'name'
+                    ]
+                },
+                Invoice         : {
                     names: [
                         'Invoice Number'
                     ],
                     items: [
                         'name'
                     ]
-                } ,
-                Opportunities: {
+                },
+                Leads           : {
                     names: [
                         'First Name',
                         'Last Name',
@@ -79,8 +114,20 @@ define([
                         'contactName.last',
                         'name'
                     ]
-                } ,
-                Customers    : {
+                },
+                Opportunities   : {
+                    names: [
+                        'First Name',
+                        'Last Name',
+                        'Full Name'
+                    ],
+                    items: [
+                        'contactName.first',
+                        'contactName.last',
+                        'name'
+                    ]
+                },
+                Persons         : {
                     names: [
                         'Email',
                         'Last Name',
@@ -94,7 +141,21 @@ define([
                         'phones.phone'
                     ]
                 },
-                Employees    : {
+                Companies       : {
+                    names: [
+                        'Email',
+                        'First Name',
+                        'Site',
+                        'Phone'
+                    ],
+                    items: [
+                        'email',
+                        'name.first',
+                        'website',
+                        'phones.phone'
+                    ]
+                },
+                Employees       : {
                     names: [
                         'First Name',
                         'Last Name',
@@ -104,6 +165,22 @@ define([
                         'name.first',
                         'name.last',
                         'workEmail'
+                    ]
+                },
+                Department      : {
+                    names: [
+                        'Name'
+                    ],
+                    items: [
+                        'name'
+                    ]
+                },
+                Products        : {
+                    names: [
+                        'Name'
+                    ],
+                    items: [
+                        'name'
                     ]
                 }
             };
@@ -118,12 +195,20 @@ define([
             var thisEl = this.$el;
             var $target = $(e.target);
 
-            this.comparingField = $target.data('imp');
-            App.currentUser.checkedItemImport = this.comparingField;
+            if ($target.data('imp')) {
+                this.comparingField = $target.data('imp');
+                App.currentUser.checkedItemImport = this.comparingField;
+            } else {
+                this.delimeter = $target.data('delimeter');
+                App.currentUser.delimiter = this.delimeter;
+            }
+
 
             thisEl.find('.item').removeClass('active');
             $target.addClass('active');
         },
+
+
 
         changeCombobox: function (e) {
             var thisEl = this.$el;
@@ -134,13 +219,17 @@ define([
             App.currentUser.checkedComboImport = $target.val();
             this.entity = dropDownAttr;
 
+            this.comparingField = $target.data('check');
+            App.currentUser.comparingField = this.comparingField;
+            App.currentUser.checkedItemImport = this.comparingField;
+
             $combobox.html('');
 
-            this.drowingCombobox($combobox ,dropDownAttr, this);
+            this.drowingCombobox($combobox, dropDownAttr, this);
 
         },
 
-        drowingCombobox: function($combobox, dropDownAttr, self) {
+        drowingCombobox: function ($combobox, dropDownAttr, self) {
             var change = true;
 
             _.each(this.mergeFields[dropDownAttr].names, function (item, key) {
@@ -162,6 +251,12 @@ define([
 
         },
 
+        changeDelimeterCombobox: function (e) {
+            var $combobox = $('#changeDelimeterCombobox');
+
+            $combobox.toggleClass('open');
+        },
+
         changeTableCombobox: function (e) {
             var $combobox = $('#changeTableCombobox');
 
@@ -179,9 +274,9 @@ define([
             this.fileName = $thisEl.find('#inputAttach')[0].files[0].name;
             this.timeStamp = +timeStamp;
 
-            this.updateUser();
+            this.updateUser(timeStamp);
 
-            this.importView = new AttachView({el: '#forImport', import   : true, timeStamp: timeStamp});
+            this.importView = new AttachView({el: '#forImport', import: true, timeStamp: timeStamp});
 
             this.importView.sendToServer(e, null, this);
 
@@ -192,18 +287,22 @@ define([
             });
         },
 
-        updateUser: function() {
+        updateUser: function (timeStamp) {
             var currentUser = App.currentUser;
             //var timeStamp = +(new Date());
             var userModel;
             var importObj;
 
+            this.comparingField = App.currentUser.checkedItemImport || 'email';
+            this.delimeter = App.currentUser.delimiter || ',';
+
             importObj = {
                 fileName      : this.fileName,
-                timeStamp     : +this.timeStamp,
+                timeStamp     : +timeStamp,
                 stage         : 1,
                 type          : this.entity,
-                comparingField: this.comparingField
+                comparingField: this.comparingField,
+                delimiter     : this.delimeter
             };
 
             //
@@ -217,10 +316,9 @@ define([
             });
 
             App.currentUser.imports = importObj;
-
         },
 
-        changingStatus: function() {
+        changingStatus: function () {
             var $attachFileName;
             var $importBtn = this.$el.find('.importBtn');
             var $thisEl = this.$el;
@@ -236,44 +334,11 @@ define([
             }
         },
 
-        checkEntity: function () {
-            switch (this.checkedCombobox) {
-                case 'Opportunities': {
-                    this.entity = 'Opportunities';
-                    break;
-                }
-                case 'Employees': {
-                    this.entity = 'Employees';
-                    break;
-                }
-                case 'Leads': {
-                    this.entity = 'Opportunities';
-                    break;
-                }
-                case 'Invoice': {
-                    this.entity = 'Invoice';
-                    break;
-                }
-                default: {
-                    this.entity = 'Customers';
-                    break;
-                }
-            }
-        },
-
         render: function () {
             var $thisEl = this.$el;
             var $combobox;
 
-            //this.entity = 'Opportunities';
-
-            /*if (this.checkedCombobox === 'Persons' || this.checkedCombobox === 'Companies') {
-                this.entity = 'Customers';
-            } else if (this.checkedCombobox === 'Employees') {
-                this.entity = 'Employees';
-            }*/
-
-            this.checkEntity();
+            this.entity = this.checkedCombobox;
 
             $thisEl.html(this.contentTemplate({fileName: this.fileName}));
 
@@ -282,6 +347,7 @@ define([
             this.drowingCombobox($combobox, this.entity, this);
             $thisEl.find('.item').removeClass('active');
             $thisEl.find('.item[data-imp="' + this.checkedItem + '"]').addClass('active');
+            $thisEl.find('.item[data-delimeter="' + this.delimeter + '"]').addClass('active');
 
 
             $thisEl.find('.importContainer').on('drop', function (e) {
@@ -293,7 +359,6 @@ define([
                     $thisEl.find('#inputAttach')[0].files = e.originalEvent.dataTransfer.files;
                 }
             });
-
 
             $thisEl.find('.importContainer').on('dragover', function (e) {
                 e.preventDefault();

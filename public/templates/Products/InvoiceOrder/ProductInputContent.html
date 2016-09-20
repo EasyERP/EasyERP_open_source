@@ -1,43 +1,45 @@
 <tr class="productItem deleteRow" data-id="<%= products[0] ? products[0]._id : 'false'%>" data-error="true">
-    <td>
-        <span title="Delete" class="icon-trash"></span>
+
+    <td data-name="productName" class="">
+        <div class="jobsWescWrap _newSelectListWrap ">
+        <a class="current-selected productsDd" href="javascript:;" data-id="<%= products[0] ? products[0]._id : null%>">
+
+            <%=
+            products[0] && forSales ? products[0].name : 'Select'%>
+        </a>
+
+        <% if (products[0]  && forSales) {%>
+        <textarea class="productDescr"><%=products[0].info ? products[0].info.description :  ''%></textarea>
+        <% } else { %>
+            <textarea class="productDescr"></textarea>
+            <% }  %>
+            </div>
     </td>
     <% if (forSales) {%>
-    <td data-name="productName" class="_newSelectListWrap">
-        <a class="current-selected productsDd" href="javascript:;" data-id="<%= products[0] ? products[0]._id : null%>">
-            <%=
-            products[0] ? products[0].name : 'Select'%>
-        </a>
-    </td>
-    <td data-name="jobs" class="jobs trash _newSelectListWrap">
-        <a class="current-selected jobs" data-id="jobs" href="javascript:;">Select</a>
-    </td>
-    <% } else { %>
-    <td data-name="productName">
-        <div class="_newSelectListWrap">
-            <a class="current-selected productsDd" href="javascript:;" data-id="">Select</a>
+    <td data-name="jobs" class="jobs trash ">
+        <div class="jobsWescWrap _newSelectListWrap">
+            <a class="current-selected jobs" data-id="jobs" href="javascript:;">Select</a>
         </div>
-    </td>
-    <td data-name="productDescr">
-        <textarea class="productDescr"></textarea>
-    </td>
 
+    </td>
     <% } %>
     <td data-name="quantity">
         <% if (forSales){ %>
         <span>1</span>
         <% } else { %>
-        <input id="quantity" class="quantity statusInfo" maxlength="9" size=10 type="text"/>
+        <input id="quantity" class="quantity statusInfo" maxlength="9" size=7 type="text"/>
         <% } %>
     </td>
     <% if (!writeOff){
-    var currencyClassVal;
-    currencyClassVal = currencyClass(currency._id);
+    currencyClassVal = curSymbol;
     %>
-    <td data-name="price" class="<%=currencyClassVal%>">
-        <input id="editInput" class="statusInfo" maxlength="9" size=10 type="text" />
+    <td data-name="price" class=""><span class="currencySymbol"><%=currencyClassVal %></span>
+        <input id="editInput" class="statusInfo" maxlength="9" size=7 type="text" />
     </td>
-    <td data-name="taxes" class="taxes <%=currencyClassVal%> "><span></span></td>
-    <td data-name="subtotal" class="subtotal <%=currencyClassVal%>"><span></span></td>
+    <td data-name="taxes" class="taxes"><span class="currencySymbol"><%=currencyClassVal%></span><span class="sum"></span></td>
+    <td data-name="subtotal" class="subtotal"><span class="currencySymbol"><%=currencyClassVal %></span><span class="sum"></span></td>
     <% }%>
+    <td class="deleteCell centerCell">
+        <span title="Delete" class="icon-close5 removeJob"></span>
+    </td>
 </tr>

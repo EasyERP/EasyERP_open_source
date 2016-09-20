@@ -1,6 +1,5 @@
 ﻿define([
-        'collections/proforma/filterCollection'
-    ],
-    function (filterCollection) {
-        return filterCollection;
-    });
+    'collections/Proforma/filterCollection'
+], function (filterCollection) {
+    return filterCollection;
+});

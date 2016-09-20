@@ -8,13 +8,13 @@ define([
     'models/InvoiceModel',
     'common',
     'populate',
-    'views/ExpensesInvoice/InvoiceProductItems',
+    'views/Products/InvoiceOrder/ProductItems',
     'views/Assignees/AssigneesView',
     'views/Payment/list/ListHeaderInvoice',
     'dataService',
     'constants',
     'helpers'
-], function ($, _, Backbone, ParentView, CreateTemplate, attachView, InvoiceModel, common, populate, InvoiceItemView, AssigneesView, ListHeaderInvoice, dataService, CONSTANTS, helpers) {
+], function ($, _, Backbone, ParentView, CreateTemplate, attachView, InvoiceModel, common, populate, ProductItemView, AssigneesView, ListHeaderInvoice, dataService, CONSTANTS, helpers) {
     'use strict';
 
     var CreateView = ParentView.extend({
@@ -34,19 +34,19 @@ define([
         },
 
         chooseOption: function (e) {
-            var currencyElement = $(e.target).parents('dd').find('.current-selected');
-            var oldCurrency = currencyElement.attr('data-id');
-            var newCurrency = $(e.target).attr('id');
-            var oldCurrencyClass = helpers.currencyClass(oldCurrency);
-            var newCurrencyClass = helpers.currencyClass(newCurrency);
+            var $target = $(e.target);
+            var holder = $target.parents('dd').find('.current-selected');
+            var symbol;
+            var currency;
 
-            var array = this.$el.find('.' + oldCurrencyClass);
+            if ($target.closest('a').attr('id') === 'currencyDd') {
+                currency = _.findWhere(this.responseObj['#currencyDd'], {_id: $target.attr('id')});
+                symbol = currency ? currency.currency : '$';
+                $target.closest('dd').find('.current-selected').attr('data-symbol', symbol);
+                this.$el.find('.currencySymbol').text(symbol);
+                this.currencySymbol = symbol;
+            }
 
-            array.removeClass(oldCurrencyClass).addClass(newCurrencyClass);
-
-            currencyElement.text($(e.target).text()).attr('data-id', newCurrency);
-
-            var holder = $(e.target).parents('td').find('.current-selected');
             holder.text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
             $(e.target).closest('td').removeClass('errorContent');
         },
@@ -80,9 +80,9 @@ define([
             var invoiceDate = $currentEl.find('#invoice_date').val();
             var dueDate = $currentEl.find('#due_date').val();
 
-            var total = 100 * parseFloat($currentEl.find('#totalAmount').text());
-            var unTaxed = 100 * parseFloat($currentEl.find('#totalUntaxes').text());
-            var balance = 100 * parseFloat($currentEl.find('#balance').text());
+            var total = 100 * parseFloat(helpers.spaceReplacer($currentEl.find('#totalAmount').text()));
+            var unTaxed = 100 * parseFloat(helpers.spaceReplacer($currentEl.find('#totalUntaxes').text()));
+            var balance = 100 * parseFloat(helpers.spaceReplacer($currentEl.find('#balance').text()));
 
             var payments = {
                 total  : total,
@@ -104,11 +104,11 @@ define([
                     targetEl = $(selectedProducts[i]);
                     productId = targetEl.data('id');
                     if (productId) {
-                        quantity = parseFloat(targetEl.find('[data-name="quantity"] input').val());
-                        price = 100 * parseFloat(targetEl.find('[data-name="price"] input').val());
+                        quantity = parseFloat(helpers.spaceReplacer(targetEl.find('[data-name="quantity"] input').val()));
+                        price = 100 * parseFloat(helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val()));
                         description = targetEl.find('[data-name="productDescr"] input').val();
-                        taxes = targetEl.find('.taxes').text();
-                        amount = 100 * targetEl.find('.amount').text();
+                        taxes = targetEl.find('.taxes .sum').text();
+                        amount = 100 * helpers.spaceReplacer(targetEl.find('.subtotal .sum').text());
 
                         if (!quantity || !price) {
                             return App.render({
@@ -193,6 +193,17 @@ define([
 
         },
 
+        createProductView: function () {
+            var productItemContainer;
+
+            productItemContainer = this.$el.find('#invoiceItemsHolder');
+
+            productItemContainer.append(
+                new ProductItemView({canBeSold: false}).render().el
+            );
+
+        },
+
         render: function () {
             var formString = this.template();
             var self = this;
@@ -225,11 +236,12 @@ define([
             });
 
             this.renderAssignees(this.model);
+            this.createProductView();
 
-            invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
-            invoiceItemContainer.append(
-                new InvoiceItemView({balanceVisible: true, canBeSold: this.forSales, paid: 0}).render().el
-            );
+            /*  invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
+             invoiceItemContainer.append(
+             new InvoiceItemView({balanceVisible: true, canBeSold: this.forSales}).render().el
+             );*/
 
             paymentContainer = this.$el.find('#payments-container');
             paymentContainer.append(

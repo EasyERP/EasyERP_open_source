@@ -1,21 +1,27 @@
-<div>
-    <table class="list task-list">
+<div class="_tableExpensesPaymentsWrap">
+    <table class="list stripedList">
+        <colgroup>
+            <col width="42px">
+            <col width="25%">
+            <col width="25%">
+            <col width="25%">
+            <col width="25%">
+        </colgroup>
         <thead>
         <tr>
-            <th class=""><input type="checkbox" id="checkAll"/></th>
-            <th class="oe_sortable" data-sort="name">Name<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="invoice">Invoice<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="paidAmount">Paid<span class="arrow down">7</span><span class="arrow up">v</span>
+            <th class="centerCell"><input type="checkbox" id="checkAll"/></th>
+            <th class="oe_sortable" data-sort="name">Name<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="invoice">Invoice<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="paidAmount">Paid<span class="arrow down"></span><span class="arrow up"></span>
             </th>
             <!--<th class="oe_sortable" data-sort="workflow">Status<span class="arrow down">7</span><span class="arrow up">v</span></th>-->
-            <th class="oe_sortable" data-sort="date">Date<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="date">Date<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
         </tr>
         </thead>
         <tbody id="listTable" class="enableTableOdd"></tbody>
         <tfoot id="listTotal"></tfoot>
     </table>
 </div>
-

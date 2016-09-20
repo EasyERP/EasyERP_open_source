@@ -908,9 +908,9 @@ var Employee = function (event, models) {
                 _id        : '$parentDepartment',
                 departments: {
                     $push: {
-                        _id: '$_id',
-                        name: '$name',
-                        employees: '$employees',
+                        _id             : '$_id',
+                        name            : '$name',
+                        employees       : '$employees',
                         parentDepartment: '$parentDepartment'
                     }
                 }
@@ -1136,6 +1136,8 @@ var Employee = function (event, models) {
     this.createTransfer = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'Transfers', TransferSchema);
         var body = req.body;
+
+        console.log('transfer body', body);
 
         var transfer = new Model(body);
 
@@ -2106,6 +2108,26 @@ var Employee = function (event, models) {
                 break;
             // skip default;
         }
+    };
+
+    this.getForJournalSource = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var data = req.query;
+        var _id = data._id;
+
+        Model.findById(_id)
+            .select('department manager jobPosition name imageSrc dateBirth personalEmail workPhones skype relatedUser jobType workEmail')
+            .populate('department', 'name')
+            .populate('manager', 'name')
+            .populate('jobPosition', 'name')
+            .populate('relatedUser', 'login')
+            .exec(function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send(result);
+            });
     };
 
     this.getSalesPerson = function (req, res, next) {

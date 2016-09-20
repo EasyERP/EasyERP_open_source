@@ -153,7 +153,7 @@ var WriteOffObj = function (models, event) {
                     balance: 0,
                     unTaxed: jobCosts.costTotal
                 },
-                
+
                 products: data.products,
                 whoCanRW: data.whoCanRW,
                 journal : data.journal
@@ -200,7 +200,8 @@ var WriteOffObj = function (models, event) {
                 journal       : data.journal,
                 sourceDocument: {
                     model: 'writeOff',
-                    _id  : writeOff._id
+                    _id  : writeOff._id,
+                    name : writeOff.name
                 },
 
                 amount: 0,

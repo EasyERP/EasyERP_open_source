@@ -29,7 +29,7 @@ define([
 
         calcTotal: function (idTotal) {
             var footerRow = $('#glReportFooter');
-            var trs = this.$el.find('tr');
+            var trs = this.$el.find('tr.mainTr');
             var totalTd = $(footerRow).find('#' + idTotal + 'Total');
             var rowTdVal = 0;
             var row;
@@ -55,9 +55,15 @@ define([
             var debit = footerRow.find('#debitTotal').attr('data-value');
             var credit = footerRow.find('#creditTotal').attr('data-value');
 
-            var balance = debit - credit;
+            var balance = parseFloat(debit) - parseFloat(credit);
 
-            footerRow.find('#balanceTotal').text(helpers.currencySplitter(balance.toFixed(2)));
+            balance = balance.toFixed(2);
+
+            if (balance === '-0.00') {
+                balance = '0.00';
+            }
+
+            footerRow.find('#balanceTotal').text(helpers.currencySplitter(balance));
         },
 
         render: function () {

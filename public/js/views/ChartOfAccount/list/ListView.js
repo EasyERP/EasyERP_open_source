@@ -5,12 +5,14 @@ define([
     'text!templates/ChartOfAccount/list/ListHeader.html',
     'text!templates/ChartOfAccount/list/ListTemplate.html',
     'text!templates/ChartOfAccount/list/cancelEdit.html',
+    'text!templates/ChartOfAccount/list/rowTempl.html',
     'views/ChartOfAccount/CreateView',
     'views/ChartOfAccount/list/ListItemView',
     'collections/ChartOfAccount/filterCollection',
     'collections/ChartOfAccount/editCollection',
-    'models/chartOfAccount'
-], function ($, _, ListViewBase, listHeaderTemplate, listTemplate, cancelEdit, CreateView, ListItemView, ContentCollection, EditCollection, CurrentModel) {
+    'models/chartOfAccount',
+    'populate'
+], function ($, _, ListViewBase, listHeaderTemplate, listTemplate, cancelEdit, rowTempl, CreateView, ListItemView, ContentCollection, EditCollection, CurrentModel, populate) {
     'use strict';
 
     var ProjectsListView = ListViewBase.extend({
@@ -22,12 +24,14 @@ define([
         CurrentModel  : CurrentModel,
         changedModels : {},
         cancelEdit    : cancelEdit,
+        responseObj   : {},
 
         events: {
             'click td.editable'                                : 'editRow',
             'change .editable'                                 : 'setEditable',
             'keydown input.editing '                           : 'keyDown',
-            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
+            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
+            'click .current-selected'                          : 'showNewSelect'
         },
 
         initialize: function (options) {
@@ -66,14 +70,14 @@ define([
             }
 
             changedAttr = this.changedModels[modelId];
-            if (attr === 'accountType') {
+            if (attr === 'type') {
 
-                changedAttr.accountType = target.text();
+                changedAttr.type = target.attr('id');
             }
 
             targetElement.text(target.text());
 
-            this.hideNewSelect();
+            this.hide(e);
             this.setEditable(targetElement);
 
             return false;
@@ -164,6 +168,11 @@ define([
             var self = this;
             var $currentEl;
             var itemView;
+            var rowTemplate = _.template(rowTempl);
+            var filteredCollection = [];
+            var i = 0;
+            var subArray = [];
+
             $currentEl = this.$el;
 
             $currentEl.html('');
@@ -174,11 +183,41 @@ define([
                 itemsNumber: this.collection.namberToShow
             });
 
-            $currentEl.append(itemView.render());// added two parameters page and items number
+            $currentEl.append(itemView.render()); // added two parameters page and items number
+
+            filteredCollection = _.filter(this.collection.toJSON(), function (el) {
+                return el.subAccount;
+            });
+
+            filteredCollection.forEach(function (elem) {
+                var el = $currentEl.find('[data-id="' + elem.subAccount + '"]');
+                var dataIndex = parseInt(el.attr('data-index'), 10) + 1;
+
+                el.after(rowTemplate({el: elem, classValue: 'child' + dataIndex, index: dataIndex}));
+
+                if (!el.length) {
+                    subArray.push(elem);
+                }
+            });
+
+            do {
+                subArray.forEach(function (elem, ind) {
+                    var el = $currentEl.find('[data-id="' + elem.subAccount + '"]');
+                    var dataIndex = parseInt(el.attr('data-index'), 10) + 1;
+
+                    el.after(rowTemplate({el: elem, classValue: 'child' + dataIndex, index: dataIndex}));
+
+                    if (el.length) {
+                        subArray.splice(ind, 1);
+                    }
+                });
+            } while (subArray.length);
 
             this.hideSaveCancelBtns();
 
-            this.renderPagination($currentEl);
+            // this.renderPagination($currentEl);
+
+            populate.get('#accountTypeDd', '/accountTypes/getForDD', {}, 'name', this, true, true);
 
             setTimeout(function () {
                 self.editCollection = new EditCollection(self.collection.toJSON());

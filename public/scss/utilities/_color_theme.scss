@@ -1,6 +1,10 @@
 @import "colors/dark_theme";
 @import "colors/white_theme";
 
+/*Imported from Less folder*/
+@import "colors/_whiteColor";
+//@import "colors/_darkColor";
+
 // usage: color("name_of_array", "name_of_color")
 // to avoid to repeating map-get($colors, ...)
 
@@ -96,6 +100,7 @@ $importCellContainerBorder: map-get($erp-colors, 'light-gray');
 $importCellContainerBg: map-get($erp-colors, 'lighter-gray');
 $importTableTrBg: map-get($erp-colors, 'lighter-gray');
 $importCellContainer: map-get($erp-colors, 'blue');
+$importWarningIcon: map-get($erp-colors, 'yellow');
 // -----------------------
 
 // HR/Employees ----------

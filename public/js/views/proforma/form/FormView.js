@@ -3,10 +3,10 @@ define([
     'jQuery',
     'Underscore',
     'views/dialogViewBase',
-    'text!templates/proforma/form/FormTemplate.html',
+    'text!templates/Proforma/form/FormTemplate.html',
     'views/Assignees/AssigneesView',
     'views/Notes/NoteView',
-    'views/proforma/InvoiceProductItems',
+    'views/Proforma/InvoiceProductItems',
     'views/Products/InvoiceOrder/ProductItems',
     'views/salesInvoices/wTrack/wTrackRows',
     'views/Payment/ProformaCreateView',
@@ -91,6 +91,7 @@ define([
             var paymentView;
             var self = this;
             var mid = this.forSales ? 99 : 95;
+            var currency = self.currentModel.get('currency');
 
             e.preventDefault();
 
@@ -101,7 +102,7 @@ define([
                         redirect    : self.redirect,
                         collection  : self.collection,
                         mid         : mid,
-                        currency    : currency,
+                        currency    : currency && (typeof currency._id === 'object') ? currency._id : currency,
                         eventChannel: self.eventChannel
                     });
                 }
@@ -283,6 +284,7 @@ define([
             var products = [];
             var selectedLength = selectedProducts.length;
             var targetEl;
+            var jobDescription;
             var productId;
             var quantity;
             var price;
@@ -345,7 +347,7 @@ define([
 
                     if (productId) {
                         quantity = targetEl.find('[data-name="quantity"] input').val() || $thisEl.find('[data-name="quantity"]').text();
-                        price = helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val()) || helpers.spaceReplacer(targetEl.find('[data-name="price"]').text());
+                        price = helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val()) || helpers.spaceReplacer(targetEl.find('[data-name="price"] .sum').text());
                         price = parseFloat(price) * 100;
 
                         if (isNaN(price) || price <= 0) {
@@ -355,23 +357,26 @@ define([
                             });
                         }
                         jobs = targetEl.find('[data-name="jobs"]').attr('data-content') || null;
-                        taxes = helpers.spaceReplacer(targetEl.find('.taxes').text());
+                        taxes = helpers.spaceReplacer(targetEl.find('.taxes .sum').text());
                         taxes = parseFloat(taxes) * 100;
-                        description = targetEl.find('[data-name="productDescr"] textarea').val() || targetEl.find('[data-name="productDescr"]').text();
-                        subTotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
+                        jobDescription = targetEl.find('textarea.jobsDescription').val();
+                        description = targetEl.find('.productDescr').val();
+                        subTotal = helpers.spaceReplacer(targetEl.find('.subtotal .sum').text());
                         if (subTotal == '') {
-                            subTotal = helpers.spaceReplacer(targetEl.find('.amount').text());
+                            subTotal = helpers.spaceReplacer(targetEl.find('.amount .sum').text());
                         }
+
                         subTotal = parseFloat(subTotal) * 100;
 
                         products.push({
-                            product    : productId,
-                            jobs       : jobs,
-                            unitPrice  : price,
-                            quantity   : quantity,
-                            description: $.trim(description),
-                            taxes      : taxes,
-                            subTotal   : subTotal
+                            product       : productId,
+                            jobs          : jobs,
+                            unitPrice     : price,
+                            quantity      : quantity,
+                            jobDescription: jobDescription,
+                            description   : $.trim(description),
+                            taxes         : taxes,
+                            subTotal      : subTotal
                         });
                     }
                 }
@@ -466,18 +471,19 @@ define([
         },
 
         chooseOption: function (e) {
-            var holder = $(e.target).parents('dd').find('.current-selected');
+            var $target = $(e.target);
+            var holder = $target.parents('dd').find('.current-selected');
+            var symbol;
+            var currency;
 
-            var currencyElement = $(e.target).parents('dd').find('.current-selected');
-            var oldCurrency = currencyElement.attr('data-id');
-            var newCurrency = $(e.target).attr('id');
-            var oldCurrencyClass = helpers.currencyClass(oldCurrency);
-            var newCurrencyClass = helpers.currencyClass(newCurrency);
-            var array = this.$el.find('.' + oldCurrencyClass);
+            if ($target.closest('a').attr('id') === 'currencyDd'){
+                currency =  _.findWhere(this.responseObj['#currencyDd'], {_id : $target.attr('id')});
+                symbol = currency ? currency.currency : '$';
+                $target.closest('dd').find('.current-selected').attr('data-symbol', symbol);
+                this.$el.find('.currencySymbol').text(symbol);
+            }
 
-            array.removeClass(oldCurrencyClass).addClass(newCurrencyClass);
-
-            holder.text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
+            holder.text($target.text()).attr('data-id', $target.attr('id'));
         },
 
         deleteItem: function (event) {
@@ -587,7 +593,6 @@ define([
 
              });
              */
-            this.renderAssignees(this.currentModel);
 
             paymentContainer = this.$el.find('#payments-container');
             paymentContainer.append(
@@ -637,17 +642,18 @@ define([
 
             invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
 
-            if (!model.approved) {
+            /*if (!model.approved) {
                 productItemContainer = this.$el.find('#productItemsHolder');
                 productItemContainer.append(
                     new ProductItemView({
                         editable : true,
                         canBeSold: true,
                         service  : service,
+                        editable
                         forSales : self.forSales
                     }).render({model: model}).el
                 );
-            }
+            }*/
 
             invoiceItemContainer.append(
                 new InvoiceItemView({
@@ -672,23 +678,6 @@ define([
             if (model.approved || model.workflow.status === 'Done') {
                 self.$el.find('.input-file').remove();
                 self.$el.find('a.deleteAttach').remove();
-            }
-
-            if (model.groups) {
-                if (model.groups.users.length > 0 || model.groups.group.length) {
-                    $('.groupsAndUser').show();
-                    model.groups.group.forEach(function (item) {
-                        $('.groupsAndUser').append("<tr data-type='targetGroups' data-id='" +
-                            item._id + "'><td>" + item.name + "</td><td class='text-right'></td></tr>");
-                        $('#targetGroups').append("<li id='" + item._id + "'>" + item.name + '</li>');
-                    });
-                    model.groups.users.forEach(function (item) {
-                        $('.groupsAndUser').append("<tr data-type='targetUsers' data-id='" +
-                            item._id + "'><td>" + item.login + "</td><td class='text-right'></td></tr>");
-                        $('#targetUsers').append("<li id='" + item._id + "'>" + item.login + '</li>');
-                    });
-
-                }
             }
 
             App.stopPreload();

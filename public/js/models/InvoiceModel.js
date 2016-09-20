@@ -33,10 +33,17 @@ define([
             var taxes;
             var unitPrice;
             var subTotal;
+            var decimalPlace = 2;
 
             if (response) {
                 payments = response.payments;
                 products = response.products;
+
+
+
+                if (response.currency && response.currency._id && response.currency._id.decPlace){
+                    decimalPlace = response.currency._id.decPlace;
+                }
 
                 if (response.paymentInfo) {
                     balance = response.paymentInfo.balance || 0;
@@ -48,10 +55,10 @@ define([
                         paid = 0;
                     }
 
-                    balance = (balance / 100).toFixed(2);
-                    paid = (paid / 100).toFixed(2);
-                    total = (total / 100).toFixed(2);
-                    unTaxed = (unTaxed / 100).toFixed(2);
+                    balance = (balance / 100).toFixed(decimalPlace);
+                    paid = (paid / 100).toFixed(decimalPlace);
+                    total = (total / 100).toFixed(decimalPlace);
+                    unTaxed = (unTaxed / 100).toFixed(decimalPlace);
 
                     response.paymentInfo.balance = balance;
                     response.paymentInfo.unTaxed = unTaxed;
@@ -66,9 +73,9 @@ define([
                         subTotal = product.subTotal || 0;
                         taxes = product.taxes || 0;
 
-                        unitPrice = (unitPrice / 100).toFixed(2);
-                        subTotal = (subTotal / 100).toFixed(2);
-                        taxes = (taxes / 100).toFixed(2);
+                        unitPrice = (unitPrice / 100).toFixed(decimalPlace);
+                        subTotal = (subTotal / 100).toFixed(decimalPlace);
+                        taxes = (taxes / 100).toFixed(decimalPlace);
 
                         product.unitPrice = unitPrice;
                         product.subTotal = subTotal;
@@ -97,10 +104,22 @@ define([
                 }
 
                 if (response.notes) {
-                    _.map(response.notes, function (note) {
+                    _.map(response.notes, function (note, index) {
                         note.date = moment(note.date).format('DD MMM, YYYY, H:mm:ss');
+
+                        if (note.history && (['Invoice Date', 'Due Date', 'Creation Date', 'Payment Date'].indexOf(note.history.changedField) !== -1)){
+                            note.history.changedValue = note.history.changedValue ? moment(new Date(note.history.changedValue)).format('DD MMM, YYYY') : '';
+                            note.history.newValue = note.history.newValue ? moment(new Date(note.history.newValue)).format('DD MMM, YYYY') : '';
+                            note.history.prevValue = note.history.prevValue ? moment(new Date(note.history.prevValue)).format('DD MMM, YYYY') : '';
+                        }
+                        if (!note.name && note.history && (note.history.changedField === 'Creation Date')){
+                            response.notes.splice(index, 1);
+                            response.notes.unshift(note);
+                            return;
+                        }
                         return note;
                     });
+
                 }
 
                 if (response.attachments) {

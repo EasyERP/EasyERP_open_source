@@ -1,13 +1,10 @@
-<div class="form-holder">
-
-    <dl>
-        <dt><label for="paymentTermName">Name</label></dt>
-        <dd>
-            <input id="paymentTermName" value="<%=model.name%>">
-        </dd>
-    </dl>
-
-
-    <div class="clearfix"></div>
+<div class="form-holder _dialogWrap">
+    <div class="_dialogMainTitle">Payment Terms</div>
+    <div class="_dialogBlock">
+        <div class="_dialogRow">Name</div>
+        <div class="_dialogRow"><input id="paymentTermName" value="<%=model.name%>"></div>
+        <div class="_dialogRow">Number of days</div>
+        <div class="_dialogRow"><input id="paymentTermCount" value="<%=model.count%>"></div>
+    </div>
 </div>
-  
+

@@ -1249,6 +1249,7 @@ var TCard = function (event, models) {
 
         var createJob = req.headers.createjob === 'true';
         var jobName = req.headers.jobname;
+        var jobDescr = req.headers.jobdesc;
         var project = req.headers.project;
 
         var tasks;
@@ -1261,6 +1262,7 @@ var TCard = function (event, models) {
             var job = {
                 name    : jobName,
                 workflow: CONSTANTS.JOBSINPROGRESS,
+                description : jobDescr,
                 type    : 'Not Quoted',
                 wTracks : [],
                 project : objectId(project)

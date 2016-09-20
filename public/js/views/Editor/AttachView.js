@@ -3,14 +3,16 @@ define([
     'jQuery',
     'Underscore',
     'text!templates/Editor/AttachTemplate.html',
+    'text!templates/Editor/AttachDocTemplate.html',
     'moment'
-], function (Backbone, $, _, AttachTemplate, moment) {
+], function (Backbone, $, _, AttachTemplate, AttachDocTemplate, moment) {
     var AttachView = Backbone.View.extend({
 
         initialize: function (options) {
             this.contentType = options.contentType;
             this.isCreate = options.isCreate;
             this.elementId = options.elementId;
+            this.forDoc = options.forDoc;
         },
 
         events: {
@@ -19,6 +21,7 @@ define([
         },
 
         template: _.template(AttachTemplate),
+        docTemplate: _.template(AttachDocTemplate),
 
         addAttach: function (event) {
             var $thisEl = this.$el;
@@ -206,12 +209,20 @@ define([
 
         render: function () {
             var attachments = this.model.get('attachments');
-
-            this.$el.html(this.template({
+            var optionObj = {
                 attachments: attachments,
                 elementId  : this.elementId || 'addAttachments',
                 moment     : moment
-            }));
+            };
+
+            if (this.forDoc){
+                this.$el.html(this.docTemplate(optionObj));
+            } else {
+                this.$el.html(this.template(optionObj));
+
+            }
+
+
 
             return this;
         }

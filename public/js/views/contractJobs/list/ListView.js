@@ -20,7 +20,6 @@ define([
         events: {
             'click .invoice': 'showInvoice',
             'click #sortBy' : 'openSortDrop'
-
         },
 
         initialize: function (options) {

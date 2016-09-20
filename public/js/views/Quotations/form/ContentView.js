@@ -8,15 +8,18 @@ define([
     'models/QuotationModel',
     'views/Quotations/form/FormView',
     'views/Quotations/CreateView',
+    'views/Quotations/form/EditView',
     'constants',
     'helpers'
-], function (Backbone, $, _, TFormBaseView, ContentTemplate, ListItemTemplate, QuotationModel, FormView, CreateView, CONSTANTS, helpers) {
+], function (Backbone, $, _, TFormBaseView, ContentTemplate, ListItemTemplate, QuotationModel, FormView, CreateView, EditView, CONSTANTS, helpers) {
     'use strict';
 
     var OrdersListView = TFormBaseView.extend({
         listTemplate   : _.template(ListItemTemplate),
         contentTemplate: _.template(ContentTemplate),
         CreateView     : CreateView,
+        EditView       : EditView,
+
         listUrl        : 'easyErp/Quotations/list/',
         contentType    : CONSTANTS.QUOTATIONS, // needs in view.prototype.changeLocationHash
         viewType       : 'tform', // needs in view.prototype.changeLocationHash

@@ -12,8 +12,9 @@ define([
     'views/dialogViewBase',
     'constants',
     'moment',
-    'helpers'
-], function (Backbone, $, _, CreateTemplate, EmployeeModel, TransferModel, common, populate, AttachView, AssigneesView, ParentView, CONSTANTS, moment, helpers) {
+    'helpers',
+    'dataService'
+], function (Backbone, $, _, CreateTemplate, EmployeeModel, TransferModel, common, populate, AttachView, AssigneesView, ParentView, CONSTANTS, moment, helpers, dataService) {
     'use strict';
 
     var CreateView = ParentView.extend({
@@ -27,6 +28,20 @@ define([
             this.mId = CONSTANTS.MID[this.contentType];
             _.bindAll(this, 'saveItem');
             this.model = new EmployeeModel();
+
+            this.responseObj['#employmentTypeDd'] = [
+                {
+                    _id : 'Employees',
+                    name: 'Employees'
+                }, {
+                    _id : 'FOP',
+                    name: 'FOP'
+                }, {
+                    _id : 'Un Employees',
+                    name: 'Un Employees'
+                }
+            ];
+
             this.responseObj['#sourceDd'] = [
                 {
                     _id : 'www.rabota.ua',
@@ -66,10 +81,10 @@ define([
         },
 
         events: {
-            'mouseenter .avatar' : 'showEdit',
-            'mouseleave .avatar' : 'hideEdit',
-            'click td.editable'  : 'editJob',
-            'click .icon-attach' : 'clickInput'
+            'mouseenter .avatar': 'showEdit',
+            'mouseleave .avatar': 'hideEdit',
+            'click td.editable' : 'editJob',
+            'click .icon-attach': 'clickInput'
         },
 
         clickInput: function () {
@@ -122,6 +137,11 @@ define([
             var managers = this.responseObj['#projectManagerDD'];
             var managerId;
             var manager;
+            var $departmentsDd = $('#departmentsDd');
+            var jobPositions = this.responseObj['#jobPositionDd'];
+            var jobPosition;
+            var departments = this.responseObj['#departmentsDd'];
+            var department;
 
             $td.removeClass('errorContent');
 
@@ -151,6 +171,22 @@ define([
 
                         $element.closest('td').removeClass('errorContent');
                     }
+                }
+
+                if (id === 'jobPositionDd') {
+
+                    jobPosition = _.find(jobPositions, function (el) {
+                        return el._id === valueId;
+                    });
+
+                    department = _.find(departments, function (el) {
+                        return el._id === jobPosition.department;
+                    });
+
+                    $departmentsDd.text(department.name);
+                    $departmentsDd.attr('data-id', department._id);
+
+                    $departmentsDd.closest('td').removeClass('errorContent');
                 }
 
             } else {
@@ -204,6 +240,7 @@ define([
             var dataType;
             var manager;
             var marital;
+            var employmentType;
             var jobType;
             var usersId;
             var salary;
@@ -238,6 +275,7 @@ define([
             dateBirthSt = $.trim($thisEl.find('#dateBirth').val());
             $jobTable = $thisEl.find('#hireFireTable');
             marital = $thisEl.find('#maritalDd').attr('data-id') || null;
+            employmentType = $thisEl.find('#employmentTypeDd').attr('data-id') || null;
             nationality = $thisEl.find('#nationality').attr('data-id');
             gender = $thisEl.find('#genderDd').attr('data-id') || null;
             $tr = $jobTable.find('tr.transfer');
@@ -297,10 +335,11 @@ define([
                     last : $.trim($thisEl.find('#last').val())
                 },
 
-                gender     : gender,
-                jobType    : jobType,
-                marital    : marital,
-                workAddress: {
+                gender        : gender,
+                jobType       : jobType,
+                marital       : marital,
+                employmentType: employmentType,
+                workAddress   : {
                     street : $.trim($thisEl.find('#street').val()),
                     city   : $.trim($thisEl.find('#city').val()),
                     state  : $.trim($thisEl.find('#state').val()),
@@ -392,7 +431,7 @@ define([
                         success: function (model) {
 
                         },
-                        
+
                         error: function (model, xhr) {
                             self.errorNotification(xhr);
                         }
@@ -459,13 +498,16 @@ define([
             populate.get('#jobTypeDd', CONSTANTS.URLS.JOBPOSITIONS_JOBTYPE, {}, 'name', this, false);
             populate.get('#nationality', CONSTANTS.URLS.EMPLOYEES_NATIONALITY, {}, '_id', this, true);
             populate.get2name('#projectManagerDD', CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this, false);
-            populate.get('#jobPositionDd', CONSTANTS.URLS.JOBPOSITIONS_FORDD, {}, 'name', this, true, true);
             populate.get('#relatedUsersDd', CONSTANTS.URLS.USERS_FOR_DD, {}, 'login', this, true, true);
-            populate.get('#departmentsDd', CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, 'name', this, true);
+            populate.get('#departmentsDd', CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, 'name', this, true, true);
             populate.get('#weeklySchedulerDd', CONSTANTS.URLS.WEEKLYSCHEDULER, {}, 'name', this, true);
             populate.get('#payrollStructureTypeDd', CONSTANTS.URLS.PAYROLLSTRUCTURETYPES_FORDD, {}, 'name', this, true);
             populate.get('#scheduledPayDd', CONSTANTS.URLS.SCHEDULEDPAY_FORDD, {}, 'name', this, true);
             populate.get('#employeeCreateCountry', CONSTANTS.URLS.COUNTRIES, {}, '_id', this);
+
+            dataService.getData(CONSTANTS.URLS.JOBPOSITIONS_FORDD, {}, function (jobPositions) {
+                self.responseObj['#jobPositionDd'] = jobPositions.data;
+            });
 
             common.canvasDraw({model: this.model.toJSON()}, this);
 

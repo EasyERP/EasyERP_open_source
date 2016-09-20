@@ -480,7 +480,7 @@ define([
 
                     return false;
                 }
-            } else if (isMonth) {
+            } /*else if (isMonth) {
                 if (this.startMonth === this.endMonth) {
                     return false;
                 }
@@ -493,7 +493,7 @@ define([
                 }
 
                 el.append('<ul class="newSelectList"><li>' + this.startYear + '</li><li>' + this.endYear + '</li></ul>');
-            } else {
+            }*/ else {
                 input.removeClass('editing');
                 input.addClass('edited');
 

@@ -82,6 +82,10 @@
       }
     }
 
+    span {
+      color: #fff;
+    }
+
     //&:hover {
     //  background-color: #4d5a75 !important;
     //  border-color: #4d5a75 !important;
@@ -117,6 +121,25 @@
         text-decoration: none;
       }
     }
+
+    &Red {
+      background-color: #fff;
+      border-color: #CB3B27;
+      color: #CB3B27;
+
+      &:hover {
+        background-color: #fff;
+        border-color: #84261A;
+        color: #84261A;
+
+        > span {
+          color: #84261A;
+        }
+      }
+      > span {
+        color: #CB3B27;
+      }
+    }
   }
 
   &.btnSuccess {
@@ -136,6 +159,7 @@
 
     &:hover {
       background: #A22A2D;
+      color: #CDCDCD;
       span, a {
         color: #CDCDCD;
       }
@@ -166,7 +190,7 @@
        margin-right: 10px;
      }
      li:last-child .btn{
-       margin-right: 0px;
+       margin-right: 0;
      }
   }
 }

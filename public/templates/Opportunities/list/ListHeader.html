@@ -1,37 +1,40 @@
 ﻿<div>
     <div id="searchContainer"></div>
-    <!-- <div class="filterButton">
-       <span class="text">Stage</span>
-       <div class="arrow">
-         7
-       </div>
-     </div>
-     <ul class="filter-check-list">
-         <li><input type="checkbox"  value="null" checked="checked"><span>Undefinded</span></li>
-     </ul>-->
-    <table class="list task-list">
-        <thead>
-        <tr>
-            <th class="centerCell">
-                <input type="checkbox" id="checkAll"/></th>
-           <!-- <th class="oe_sortable" data-sort="creationDate">Creation Date<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>-->
-            <th class="oe_sortable" data-sort="name">Opportunity<span class="arrow down">7</span><span class="arrow up">v</span>
-            </th>
-            <th class="oe_sortable" data-sort="expectedRevenue.value">Expected Revenue<span
-                    class="arrow down">7</span><span class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="customer.name.first">Customer<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="nextAction.date">Closing Date<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="workflow.name">Stage<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="salesPerson.name.first">Assigned To<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-            <th class="oe_sortable sortDn" data-sort="editedBy.date">Edited By<span class="arrow down">7</span><span
-                    class="arrow up">v</span></th>
-        </tr>
-        </thead>
-        <tbody id="listTable" class="enableTableOdd"></tbody>
-    </table>
+    <div class="_tableOpportunitiesWrap">
+        <table class="list stripedList">
+            <colgroup>
+                <col width="42px">
+                <col width="19%">
+                <col width="12%">
+                <col width="16%">
+                <col width="13%">
+                <col width="10%">
+                <col width="10%">
+                <col width="20%">
+            </colgroup>
+            <thead>
+            <tr>
+                <th class="centerCell">
+                    <input type="checkbox" id="checkAll"/></th>
+                <!-- <th class="oe_sortable" data-sort="creationDate">Creation Date<span class="arrow down"></span><span
+                         class="arrow up"></span></th>-->
+                <th class="oe_sortable" data-sort="name">Opportunity<span class="arrow down"></span><span class="arrow up"></span>
+                </th>
+                <th class="oe_sortable" data-sort="expectedRevenue.value">Expected Revenue<span
+                        class="arrow down"></span><span class="arrow up"></span></th>
+                <th class="oe_sortable" data-sort="customer.name.first">Customer<span class="arrow down"></span><span
+                        class="arrow up"></span></th>
+                <th class="oe_sortable" data-sort="nextAction.date">Closing Date<span class="arrow down"></span><span
+                        class="arrow up"></span></th>
+                <th class="oe_sortable" data-sort="workflow.name">Stage<span class="arrow down"></span><span
+                        class="arrow up"></span></th>
+                <th class="oe_sortable" data-sort="salesPerson.name.first">Assigned To<span class="arrow down"></span><span
+                        class="arrow up"></span></th>
+                <th class="oe_sortable sortDn" data-sort="editedBy.date">Edited By<span class="arrow down"></span><span
+                        class="arrow up"></span></th>
+            </tr>
+            </thead>
+            <tbody id="listTable" class="enableTableOdd"></tbody>
+        </table>
+    </div>
 </div>

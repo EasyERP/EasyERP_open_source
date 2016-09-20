@@ -5,14 +5,19 @@ define([
     'text!templates/balanceSheet/list/ListHeader.html',
     'views/balanceSheet/list/ListItemView',
     'views/Filter/filterView',
+    'views/journalEntry/ViewSource',
     'collections/balanceSheet/filterCollection',
+    'models/InvoiceModel',
+    'models/jobsModel',
+    'models/EmployeesModel',
+    'models/PaymentModel',
     'constants',
     'dataService',
     'helpers',
     'custom',
     'async',
     'common'
-], function ($, _, listViewBase, listTemplate, ListItemView, FilterView, reportCollection, CONSTANTS, dataService, helpers, custom, async, common) {
+], function ($, _, listViewBase, listTemplate, ListItemView, FilterView, View, reportCollection, InvoiceModel, JobsModel, EmployeesModel, PaymentModel, CONSTANTS, dataService, helpers, custom, async, common) {
     'use strict';
 
     var ListView = listViewBase.extend({
@@ -27,9 +32,17 @@ define([
         viewType          : 'list', // needs in view.prototype.changeLocationHash
         yearElement       : null,
         FilterView        : FilterView,
+        JobsModel         : JobsModel,
+        InvoiceModel      : InvoiceModel,
+        PaymentModel      : PaymentModel,
+        EmployeesModel    : EmployeesModel,
+        responseObj       : {},
 
         events: {
-            'click .mainTr': 'showHidden'
+            'click .mainTr'                                    : 'showHidden',
+            'click .childTr'                                   : 'showHiddenSub',
+            'click .newSelectList li:not(.miniStylePagination)': 'viewSourceDocument',
+            'click .current-selected'                          : 'showNewSelect'
         },
 
         initialize: function (options) {
@@ -72,23 +85,170 @@ define([
 
             this.contentCollection = reportCollection;
             custom.cacheToApp('balanceSheet.filter', this.filter);
+
+            this.responseObj['#source'] = [
+                {
+                    _id : 'source',
+                    name: 'View Source Document'
+                }
+            ];
+        },
+
+        viewSourceDocument: function (e) {
+            var $target = $(e.target);
+            var id = $target.attr('id');
+            var closestSpan = $target.closest('.current-selected');
+            var dataId = closestSpan.attr('data-id');
+            var dataName = closestSpan.attr('data-name');
+            var dataEmployee = closestSpan.attr('data-employee');
+            var model;
+            var data;
+
+            App.startPreload();
+
+            if (this.selectView) {
+                this.selectView.remove();
+            }
+
+            switch (dataName) {
+                case 'wTrack':
+                    model = new this.JobsModel();
+                    data = {
+                        employee: dataEmployee,
+                        _id     : dataId
+                    };
+
+                    model.urlRoot = '/journalEntries/jobs';
+                    break;
+                case 'expensesInvoice':
+                case 'dividendInvoice':
+                case 'Invoice':
+                    model = new this.InvoiceModel();
+                    data = {
+                        _id: dataId
+                    };
+
+                    model.urlRoot = '/journalEntries/invoices';
+
+                    break;
+                case 'Proforma':
+                    model = new this.InvoiceModel();
+                    data = {
+                        _id     : dataId,
+                        proforma: true
+                    };
+
+                    model.urlRoot = '/journalEntries/invoices';
+
+                    break;
+                case 'jobs':
+                    model = new this.JobsModel();
+                    data = {
+                        _id: dataId
+                    };
+
+                    model.urlRoot = '/journalEntries/jobs';
+
+                    break;
+                case 'Payment':
+                    model = new this.PaymentModel();
+                    data = {
+                        _id: dataId
+                    };
+
+                    model.urlRoot = '/journalEntries/payments';
+
+                    break;
+                case 'Employees':
+                    model = new this.EmployeesModel();
+                    data = {
+                        _id: dataId
+                    };
+
+                    model.urlRoot = '/journalEntries/employees';
+
+                    break;
+
+                // skip default;
+            }
+
+            if (model) {
+                model.fetch({
+                    data   : data,
+                    success: function (model) {
+                        new View({model: model, type: dataName, employee: dataEmployee});
+
+                        App.stopPreload();
+                    },
+
+                    error: function () {
+                        App.stopPreload();
+
+                        App.render({
+                            type   : 'error',
+                            message: 'Please refresh browser'
+                        });
+                    }
+                });
+            } else {
+                App.stopPreload();
+
+                App.render({
+                    type   : 'notify',
+                    message: 'No Source Document is required'
+                });
+            }
+
         },
 
         showHidden: function (e) {
+            var self = this;
             var $target = $(e.target);
             var $tr = $target.closest('tr');
             var dataId = $tr.attr('data-id');
             var $body = this.$el;
-            var childTr = $body.find('[data-main="' + dataId + '"]');
-            var sign = $.trim($tr.find('.expand').text());
+            var childTr = $body.find("[data-main='" + dataId + "']");
+            var span = $tr.find('.expand').find('span');
+            var sign = $.trim(span.attr('class'));
 
-            if (sign === '+') {
-                $tr.find('.expand').text('-');
+            if (sign === 'icon-caret-right') {
+                span.removeClass('icon-caret-right');
+                span.addClass('icon-caret-down');
             } else {
-                $tr.find('.expand').text('+');
+                span.removeClass('icon-caret-down');
+                span.addClass('icon-caret-right');
+
+                childTr.each(function (tr) {
+                    self.showHiddenSub(null, $(this), true);
+                });
             }
 
-            childTr.toggleClass();
+            childTr.toggleClass('hidden');
+        },
+
+        showHiddenSub: function (e, target, hide) {
+            var $target = e ? $(e.target) : null;
+            var $tr = $target ? $target.closest('tr') : target;
+            var dataId = $tr.attr('data-account');
+            var $body = this.$el;
+            var childTr = $body.find("[data-main='" + dataId + "']");
+            var span = $tr.find('.expand').find('span');
+            var sign = $.trim(span.attr('class'));
+
+            if (sign === 'icon-caret-right') {
+                span.removeClass('icon-caret-right');
+                span.addClass('icon-caret-down');
+            } else {
+                span.removeClass('icon-caret-down');
+                span.addClass('icon-caret-right');
+            }
+
+            if (hide) {
+                return childTr.addClass('hidden');
+            }
+
+            childTr.toggleClass('hidden');
+
         },
 
         asyncRenderInfo: function (asyncKeys) {
@@ -103,9 +263,9 @@ define([
                     _id      : asyncId
                 }, function (result) {
                     var journalEntries = result.journalEntries;
-                    var mainTr = body.find('[data-id="' + asyncId + '"]');
+                    var mainTr = body.find("[data-account='" + asyncId + "']");
                     journalEntries.forEach(function (entry) {
-                        mainTr.after("<tr data-main='" + asyncId + "' class='hidden'><td colspan='3' class='leftBorderNone'>" + common.utcDateToLocaleFullDateTime(entry._id) + "</td><td class='money'>" + (entry.debit ? helpers.currencySplitter((entry.debit / 100).toFixed(2)) : helpers.currencySplitter((entry.credit / 100).toFixed(2))) + '</td></tr>');
+                        mainTr.after("<tr data-main='" + asyncId + "' class='subTr hidden'><td></td><td class='leftBorderNone source'><span id='source' class='current-selected icon-caret-down' data-id='" + entry.sourceDocument._id + "' data-name='" + entry.sourceDocument.model + "' data-employee='" + entry.sourceDocument.employee + "'>" + entry.sourceDocument.name + '</span></td><td>' + common.utcDateToLocaleFullDateTime(entry._id) + "</td><td class='money'>" + (entry.debit ? helpers.currencySplitter((entry.debit / 100).toFixed(2)) : helpers.currencySplitter((entry.credit / 100).toFixed(2))) + '</td><td></td></tr>');
                     });
                 });
 
@@ -216,15 +376,21 @@ define([
             collection = this.collection.toJSON();
 
             this.liabilities.forEach(function (el) {
-                asyncKeys.push(el._id);
+                el.root.forEach(function (elem) {
+                    asyncKeys.push(elem._id);
+                });
             });
 
             this.assets.forEach(function (el) {
-                asyncKeys.push(el._id);
+                el.root.forEach(function (elem) {
+                    asyncKeys.push(elem._id);
+                });
             });
 
             this.equity.forEach(function (el) {
-                asyncKeys.push(el._id);
+                el.root.forEach(function (elem) {
+                    asyncKeys.push(elem._id);
+                });
             });
 
             this.$el.find('#listTableLiabilities').html('');

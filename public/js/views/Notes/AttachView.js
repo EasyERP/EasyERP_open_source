@@ -26,8 +26,9 @@ define([
         addAttach: function (event) {
             var s;
 
-            if ($(event.target).closest('#forImport')) {
-                this.import = true;
+            if ($(event.target).closest('.importContainer')) {
+                //this.import = true;
+                this.contentType = 'import';
             }
 
             if (this.isCreate) {
@@ -97,6 +98,13 @@ define([
                 if (!this.fileSizeIsAcceptable(addInptAttach)) {
                     this.$el.find('#inputAttach').val('');
 
+                    if (!addInptAttach) {
+                        return App.render({
+                            type   : 'error',
+                            message: 'You did not change file!'
+                        });
+                    }
+
                     return App.render({
                         type   : 'error',
                         message: 'File you are trying to attach is too big. MaxFileSize: ' + App.File.MaxFileSizeDisplay
@@ -112,7 +120,7 @@ define([
 
                 $('.input-file-button').off('click');
 
-                if (self.import) {
+                if (self.contentType === CONSTANTS.IMPORT) {
                     formURL = 'http://' + window.location.host + '/importFile';
                 } else {
                     formURL = 'http://' + window.location.host + '/' + contentType + '/uploadFiles/';
@@ -132,6 +140,7 @@ define([
                         xhr.setRequestHeader('modelid', currentModelId);
                         xhr.setRequestHeader('modelname', self.contentType);
                         xhr.setRequestHeader('timestamp', self.timeStamp);
+                        xhr.setRequestHeader('delimiter', App.currentUser.delimiter || ',');
                         status.show();
                         bar.width(statusVal);
                         status.html(statusVal);
@@ -152,19 +161,20 @@ define([
                             status.hide();
                             self.hideDialog();
 
-                            if (this.contentType === CONSTANTS.PRODUCTS) {
+                            if (self.contentType === CONSTANTS.PRODUCTS) {
                                 return;
                             }
 
                             Backbone.history.fragment = '';
                             Backbone.history.navigate(window.location.hash, {trigger: true});
-                        } else if (self.import) {
+                        } else if (self.contentType === CONSTANTS.IMPORT) {
                             self.trigger('uploadCompleted');
                         } else {
+                            //attachments = currentModel ? currentModel.get('attachments') : [];
                             attachments = currentModel.get('attachments') || [];
                             attachments.length = 0;
                             $('.attachContainer').empty();
-                            res = (data.data) ? data.data : data.result;
+                            res = data.data || data.result;
 
                             if (!res) {
                                 res = data;

@@ -95,10 +95,9 @@
             Validation.checkGroupsNameField(errors, true,attrs['name.first'] || attrs.name.first, 'Company');
             Validation.checkPhoneField(errors, false,attrs['phones.phone']  || attrs.phones.phone, 'Phone');
             Validation.checkPhoneField(errors, false,attrs['phones.mobile'] || attrs.phones.mobile, 'Mobile');
-            Validation.checkCountryCityStateField(errors,  attrs['address.country'] || false, attrs.address.country, 'Country');
+            Validation.checkCountryCityStateField(errors,   false, attrs['address.country'] || attrs.address.country, 'Country');
             Validation.checkCountryCityStateField(errors, false,  attrs['address.state'] || attrs.address.state, 'State');
-            Validation.checkCountryCityStateField(errors, false,  attrs['address.city'] || attrs.address.city, 'City');Validation.checkZipField(errors, false, attrs.address.zip, 'Zip');
-            Validation.checkStreetField(errors, false, attrs['address.street'] || attrs.address.street, 'Street');
+            Validation.checkCountryCityStateField(errors, false,  attrs['address.city'] || attrs.address.city, 'City');
             Validation.checkZipField(errors, false, attrs['address.zip'] || attrs.address.zip, 'Zip');
             Validation.checkEmailField(errors, false, attrs.email, 'Email');
 

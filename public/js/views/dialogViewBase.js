@@ -3,8 +3,9 @@
     'jQuery',
     'Underscore',
     'views/Assignees/AssigneesView',
-    'views/selectView/selectView'
-], function (Backbone, $, _, AssigneesView, SelectView) {
+    'views/selectView/selectView',
+    'helpers/exportToPdf'
+], function (Backbone, $, _, AssigneesView, SelectView, exportToPdf) {
     'use strict';
 
     var View = Backbone.View.extend({
@@ -14,6 +15,7 @@
             click                                                            : 'hideNewSelect',
             'click .dialog-tabs a'                                           : 'changeTab',
             'click .current-selected:not(.jobs)'                             : 'showNewSelect',
+            'click #exportToPdf'                                             : 'exportToPdf',
             'click .newSelectList li:not(.miniStylePagination, .endContract)': 'chooseOption'
         },
 
@@ -31,6 +33,11 @@
                 display: 'block'
             }, 250);
 
+        },
+
+        exportToPdf : function(e){
+            var template = this.$el.find('#templateDiv').html();
+            exportToPdf({file : template, name : this.model.get('name')});
         },
 
         showDetailsBox: function (e) {

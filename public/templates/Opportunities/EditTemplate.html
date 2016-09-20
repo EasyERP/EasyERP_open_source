@@ -67,11 +67,11 @@
                                 <!--                       <dt><label for="company">Company Name</label></dt><dd><input type="text" id="company" value="<%=(model.company && model.company.name) ? model.company.name.first : ''%>" disabled maxlength="32" /></dd> -->
                                 <dt><label for="street">Street</label></dt>
                                 <dd><input type="text" id="street" class="address" name="street"
-                                           value="<%=model.address.street%>" placeholder="Street..." maxlength="32"/>
+                                           value="<%=model.address.street%>" placeholder="Street..." maxlength="60"/>
                                 </dd>
                                 <dt><label for="city">City</label></dt>
                                 <dd><input type="text" id="city" class="address" name="city"
-                                           value="<%=model.address.city%>" placeholder="City" maxlength="32"/>
+                                           value="<%=model.address.city%>" placeholder="City" maxlength="60"/>
                                 </dd>
                                 <dt><label for="state">State</label></dt>
                                 <dd><input type="text" id="state" class="address" name="state"

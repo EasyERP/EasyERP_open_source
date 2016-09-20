@@ -109,7 +109,8 @@ var Proforma = function (models) {
                 journal       : CONSTANTS.DIVIDEND_INVOICE_JOURNAL,
                 sourceDocument: {
                     model: 'dividendInvoice',
-                    _id  : dividendInvoice._id
+                    _id  : dividendInvoice._id,
+                    name : dividendInvoice.name
                 },
 
                 amount: 0,

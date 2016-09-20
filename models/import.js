@@ -8,7 +8,8 @@ module.exports = (function () {
         result   : JSON,
         filePath : {type: String, default: ''},
         fileName : {type: String, default: ''},
-        timeStamp: {type: Number}
+        timeStamp: {type: Number},
+        reason   : {type: String, default: ''}
     }, {collection: 'Imports'});
 
     mongoose.model('Import', importSchema);

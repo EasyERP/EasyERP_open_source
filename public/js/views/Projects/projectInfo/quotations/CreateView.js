@@ -97,6 +97,7 @@ define([
             var totalTaxes = $.trim(thisEl.find('#taxes').text());
             var taxes;
             var description;
+            var jobDescription;
             var unTaxed = helpers.spaceReplacer($.trim(thisEl.find('#totalUntaxes').text()));
             var subTotal;
             var jobs;
@@ -136,10 +137,12 @@ define([
                             });
                         }
                         scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
-                        taxes = targetEl.find('.taxes').text();
+                        taxes = targetEl.find('.taxes .sum').text();
                         taxes = parseFloat(helpers.spaceReplacer(taxes)) * 100;
                         description = targetEl.find('[data-name="productDescr"]').text();
-                        subTotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
+                        jobDescription = targetEl.find('textarea.jobsDescription').val();;
+
+                        subTotal = helpers.spaceReplacer(targetEl.find('.subtotal .sum').text());
                         subTotal = parseFloat(helpers.spaceReplacer(subTotal)) * 100;
                         jobs = targetEl.find('.current-selected.jobs').attr('data-id');
 
@@ -158,14 +161,15 @@ define([
                         }
 
                         products.push({
-                            product      : productId,
-                            unitPrice    : price,
-                            quantity     : quantity,
-                            scheduledDate: scheduledDate,
-                            taxes        : taxes,
-                            description  : description,
-                            subTotal     : subTotal,
-                            jobs         : jobs
+                            product       : productId,
+                            unitPrice     : price,
+                            quantity      : quantity,
+                            scheduledDate : scheduledDate,
+                            jobDescription: jobDescription,
+                            taxes         : taxes,
+                            description   : description,
+                            subTotal      : subTotal,
+                            jobs          : jobs
                         });
                     } else {
                         return App.render({

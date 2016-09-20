@@ -69,9 +69,9 @@ define([
         },
 
         events: {
-            'click .editTag'                                                  : 'editTag',
-            'click #newTag'                                                   : 'createTag',
-            'click li span:not(.editTag)'                                     : 'changeSelected'
+            'click .editTag'             : 'editTag',
+            'click #newTag'              : 'createTag',
+            'click li span:not(.editTag)': 'changeSelected'
         },
 
         changeSelected: function (e) {
@@ -139,14 +139,15 @@ define([
                 autoOpen     : true,
                 resizable    : true,
                 position     : {
-                    at: "top+35%"
+                    at: 'top+35%'
                 },
-                dialogClass  : 'tag-list-dialog ',
-                title        : 'Tag List',
-                width        : '300px',
-                buttons      : [
+
+                dialogClass: 'tag-list-dialog ',
+                title      : 'Tag List',
+                width      : '300px',
+                buttons    : [
                     {
-                        class   : 'exitButton',
+                        class: 'exitButton',
                         click: function () {
                             self.hideDialog();
                         }

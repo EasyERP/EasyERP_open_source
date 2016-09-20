@@ -633,7 +633,7 @@ var User = function (event, models) {
         var data = req.query;
         var UserModel = models.get(req.session.lastDb, 'Users', userSchema);
 
-        findUsers(UserModel, {login: 1}, {login: 1}, data, function (err, users) {
+        findUsers(UserModel, {login: 1, email : 1}, {login: 1}, data, function (err, users) {
             if (err) {
                 return next(err);
             }

@@ -1,4 +1,5 @@
 <% invoiceCollection.forEach(function(Invoice, index){ %>
+<% var currency =(Invoice.currency && Invoice.currency._id ? Invoice.currency._id.symbol : '')%>
 <tr data-id="<%=Invoice._id%>">
     <td class="notForm centerCell"><input type="checkbox" value="<%=Invoice._id%>"
                                           class="checkbox <%=Invoice.removable ? '' : 'notRemovable'%>"/>
@@ -9,14 +10,14 @@
         Invoice.salesPerson.name.last: ''%>
     </td>
     <td><%=Invoice.dueDate%></td>
-    <td class="balance <%=currencyClass(Invoice.currency._id)%>"><%=currencySplitter(Invoice.paymentInfo.balance)%></td>
-    <td class="paid <%=currencyClass(Invoice.currency._id)%>"><%=(Invoice.paymentInfo && Invoice.paid) ?
+    <td class="balance"><%=currency %><%=currencySplitter(Invoice.paymentInfo.balance)%></td>
+    <td class="paid"><%=currency %><%=(Invoice.paymentInfo && Invoice.paid) ?
         currencySplitter(Invoice.paid.toFixed(2)) : '0.00'%>
     </td>
-    <td class="total <%=currencyClass(Invoice.currency._id)%>"><%=(Invoice.paymentInfo) ?
+    <td class="total"><%=currency %><%=(Invoice.paymentInfo) ?
         currencySplitter(Invoice.paymentInfo.total) : '0.00'%>
     </td>
-    <td class="centerCell" id='<%=Invoice._id%>'>
+    <td id='<%=Invoice._id%>'>
         <%if(Invoice.workflow){%>
         <%if(Invoice.workflow.status === 'In Progress'){%>
         <span class="<%=Invoice.workflow.status.toLowerCase().replace(' ', '')%>"><%=Invoice.workflow.name%></span>

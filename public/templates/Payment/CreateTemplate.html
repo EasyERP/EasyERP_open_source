@@ -63,8 +63,8 @@
                         <dt><label for="currencyDd">Currency</label></dt>
                         <dd class="_newSelectListWrap">
                             <a id="currencyDd" class="current-selected"
-                               data-id="<%= currency && currency._id ? invoice.currency._id : null%>"
-                               href="javascript:;"><%= currency && currency.name ?
+                               data-id="<%= currency && currency._id ? currency._id : null%>"
+                               href="javascript:;"><%= currency ?
                                 currency.name : ''%></a>
                         </dd>
                     </dl>

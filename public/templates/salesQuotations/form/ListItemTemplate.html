@@ -11,13 +11,13 @@
         <td>
             <div class="compactRowWrap">
                 <div class="compactRow">
-                    <div class="firstName"><%- quotation.project.name%></div>
+                    <div class="firstName"><%= quotation.project.name%></div>
                     <div><%=(quotation.supplier) ? quotation.supplier.name.first + ' ' + quotation.supplier.name.last : ''%></div>
                     <div><%= quotation.orderDate %></div>
                 </div>
                 <div class="compactRow">
-                    <div class="total <%=currencyClass(quotation.currency._id)%>"><%=(quotation.paymentInfo) ? currencySplitter(quotation.paymentInfo.total) : '0'%></div>
-                    <div><%=(quotation.salesManager) ? quotation.salesManager.name.first + ' ' + quotation.salesManager.name.last : ''%></div>
+                    <div class="total"><%=(quotation.currency && quotation.currency._id ? quotation.currency._id.symbol : '') + (quotation.paymentInfo) ? currencySplitter(quotation.paymentInfo.total) : '0'%></div>
+                    <div><%=(quotation.salesManager && quotation.salesManager.name) ? quotation.salesManager.name.first + ' ' + quotation.salesManager.name.last : ''%></div>
                 </div>
             </div>
         </td>

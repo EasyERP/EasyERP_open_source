@@ -22,7 +22,7 @@ define([
         events: {
             'click  .list tbody td:not(.notForm, .validated)': 'goToEditDialog',
             'click  #top-bar-createBtn'                      : 'create',
-            'click  .fa-trash-o'                             : 'remove'
+            'click  .icon-trash'                             : 'remove'
         },
 
         initialize: function (options) {

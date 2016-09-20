@@ -36,8 +36,6 @@ module.exports = (function () {
          * @property {String} skype - Skype login
          *
          * @property {Object} department - `department` of _Employee_
-         * @property {String} department._id - Department `_id` of _Employee_
-         * @property {String} department.name - Department `name` of _Employee_
          *
          * @property {Object} jobPosition - `jobPosition` of _Employee_
          * @property {String} jobPosition._id - Job Position `_id` of _Employee_
@@ -186,12 +184,13 @@ module.exports = (function () {
             date  : {type: Date, default: Date.now}
         },
 
-        marital : {type: String, enum: ['married', 'unmarried'], default: 'unmarried'},
-        gender  : {type: String, enum: ['male', 'female'], default: 'male'},
-        jobType : {type: String, default: ''},
-        sequence: {type: Number, default: 0},
-        isLead  : Number,
-        ID      : Number,
+        marital       : {type: String, enum: ['married', 'unmarried'], default: 'unmarried'},
+        employmentType: {type: String, enum: ['Employees', 'FOP', 'Un Employees']}, //todo default
+        gender        : {type: String, enum: ['male', 'female'], default: 'male'},
+        jobType       : {type: String, default: ''},
+        sequence      : {type: Number, default: 0},
+        isLead        : Number,
+        ID            : Number,
 
         social: {
             FB: {type: String, default: ''},
@@ -204,7 +203,8 @@ module.exports = (function () {
 
         transfer: {type: Array, default: []},
 
-        lastFire: {type: Number, default: null}
+        lastFire  : {type: Number, default: null},
+        externalId: {type: String, default: null}
     }, {collection: 'Employees'});
 
     employeeSchema.virtual('fullName').get(function () {

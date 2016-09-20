@@ -3,11 +3,18 @@ module.exports = (function () {
     var ObjectId = mongoose.Schema.Types.ObjectId;
 
     var jobsSchema = mongoose.Schema({
-        name    : {type: String, default: ''},
-        workflow: {type: ObjectId, ref: 'workflows', default: null},
-        type    : {type: String, enum: ['Not Quoted', 'Quoted', 'Ordered', 'Invoiced', 'Paid'], default: 'Not Quoted'},
-        wTracks : [{type: ObjectId, ref: 'wTrack', default: null}],
-        project : {type: ObjectId, ref: 'Project', default: null},
+        name       : {type: String, default: ''},
+        number     : {type: String, default: ''},
+        description: {type: String, default: ''},
+        workflow   : {type: ObjectId, ref: 'workflows', default: null},
+        type       : {
+            type   : String,
+            enum   : ['Not Quoted', 'Quoted', 'Ordered', 'Invoiced', 'Paid'],
+            default: 'Not Quoted'
+        },
+
+        wTracks: [{type: ObjectId, ref: 'wTrack', default: null}],
+        project: {type: ObjectId, ref: 'Project', default: null},
 
         budget: {
             _id          : false,
@@ -34,6 +41,28 @@ module.exports = (function () {
     }, {collection: 'jobs'});
 
     mongoose.model('jobs', jobsSchema);
+
+    jobsSchema.pre('save', function (next) {
+        var job = this;
+        var db = job.db.db;
+
+        db.collection('settings').findOneAndUpdate({
+            dbName: db.databaseName,
+            name  : 'jobs'
+        }, {
+            $inc: {seq: 1}
+        }, {
+            returnOriginal: false,
+            upsert        : true
+        }, function (err, rate) {
+            if (err) {
+                return next(err);
+            }
+            job.number = 'SP' + rate.value.seq;
+
+            next();
+        });
+    });
 
     if (!mongoose.Schemas) {
         mongoose.Schemas = {};

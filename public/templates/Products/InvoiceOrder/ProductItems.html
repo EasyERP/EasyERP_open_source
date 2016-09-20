@@ -1,4 +1,4 @@
-<table class="list2 _projectTableLeftAlign">
+<table class="list2 _projectTableLeftAlign tableFixed _invoiceTable">
     <colgroup>
         <%if (writeOff) {%>
         <col width="15%">
@@ -6,29 +6,27 @@
         <col width="40%">
         <col width="15%">
         <% } else { %>
-        <col width="2%">
-        <col width="15%">
-        <col width="25%">
-        <col width="17%">
+        <col width="200px">
+        <% if (forSales) {%>
+        <col width="200px">
+        <% } %>
+        <!--<col width="200px">-->
+        <col width="120px">
         <!--<col width="10%">-->
-        <col width="13%">
-        <col width="10%">
-        <col width="10%">
+        <col width="100px">
+        <col width="140px">
+        <col width="120px">
+        <col width="30px">
         <% } %>
     </colgroup>
     <thead>
-    <tr class="productListItemsColumns">
-        <th></th>
+    <tr class="productListItemsColumns _deleteHeader">
         <th class="width20" data-sort="Product">
             Product
         </th>
         <% if (forSales) {%>
             <th class="width25" data-sort="jobs">
                 Job
-            </th>
-        <% } else {%>
-            <th class="width20" data-sort="description">
-                Description
             </th>
         <% } %>
         <!--<th class="width25" data-sort="scheduledDate">
@@ -57,24 +55,26 @@
             Subtotal
         </th>
         <% }%>
+        <th class="deleteCell"></th>
     </tr>
     </thead>
     <tbody>
     <tr></tr>
     <tr>
-        <td colspan="<%=writeOff ? 4 : 7%>" class="addProductItem">
+        <td colspan="<%=writeOff ? 4 : 6%>" class="addProductItem">
             <a href="javascript:;">Add an item</a>
         </td>
+
     </tr>
     <tr>
-        <td colspan="<%=writeOff ? 4 : 7%>" class="invisible_border">&nbsp;</td>
+        <td colspan="<%=writeOff ? 4 : 6%>" class="invisible_border">&nbsp;</td>
     </tr>
     <tr>
-        <td colspan="<%=writeOff ? 4 : 7%>" class="invisible_border">&nbsp;</td>
+        <td colspan="<%=writeOff ? 4 : 6%>" class="invisible_border">&nbsp;</td>
     </tr>
     </tbody>
 </table>
 <div class="clearfix"></div>
-<div id="totalAmountContainer" class="half-block right">
+<div id="totalAmountContainer" class="_totalAmountContainer _createPopup">
 
 </div>

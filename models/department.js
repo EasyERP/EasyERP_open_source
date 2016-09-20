@@ -21,7 +21,9 @@
 
         nestingLevel: {type: Number, default: 0},
         sequence    : {type: Number, default: 0},
-        ID          : Number
+        ID          : Number,
+
+        externalId: {type: String, default: null}
     }, {collection: 'Department'});
 
     mongoose.model('Department', DepartmentSchema);

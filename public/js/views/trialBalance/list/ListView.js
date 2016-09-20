@@ -27,12 +27,13 @@ define([
         yearElement       : null,
 
         events: {
-            'click .mainTr': 'showHidden'
+            'click .mainTr' : 'showHidden',
+            'click .childTr': 'showHiddenSub'
         },
 
         initialize: function (options) {
             var dateRange;
-            
+
             this.startTime = options.startTime;
             this.collection = options.collection;
             _.bind(this.collection.showMore, this.collection);
@@ -69,20 +70,53 @@ define([
         },
 
         showHidden: function (e) {
+            var self = this;
             var $target = $(e.target);
             var $tr = $target.closest('tr');
             var dataId = $tr.attr('data-id');
             var $body = this.$el.find('#listTable');
             var childTr = $body.find("[data-main='" + dataId + "']");
-            var sign = $.trim($tr.find('.expand').text());
+            var span = $tr.find('.expand').find('span');
+            var sign = $.trim(span.attr('class'));
 
-            if (sign === '+') {
-                $tr.find('.expand').text('-');
+            if (sign === 'icon-caret-right') {
+                span.removeClass('icon-caret-right');
+                span.addClass('icon-caret-down');
             } else {
-                $tr.find('.expand').text('+');
+                span.removeClass('icon-caret-down');
+                span.addClass('icon-caret-right');
+
+                childTr.each(function (tr) {
+                    self.showHiddenSub(null, $(this), true);
+                });
             }
 
-            childTr.toggleClass();
+            childTr.toggleClass('hidden');
+        },
+
+        showHiddenSub: function (e, target, hide) {
+            var $target = e ? $(e.target) : null;
+            var $tr = $target ? $target.closest('tr') : target;
+            var dataId = $tr.attr('data-account');
+            var $body = this.$el.find('#listTable');
+            var childTr = $body.find("[data-main='" + dataId + "']");
+            var span = $tr.find('.expand').find('span');
+            var sign = $.trim(span.attr('class'));
+
+            if (sign === 'icon-caret-right') {
+                span.removeClass('icon-caret-right');
+                span.addClass('icon-caret-down');
+            } else {
+                span.removeClass('icon-caret-down');
+                span.addClass('icon-caret-right');
+            }
+
+            if (hide) {
+                return childTr.addClass('hidden');
+            }
+
+            childTr.toggleClass('hidden');
+
         },
 
         asyncRenderInfo: function (asyncKeys) {
@@ -98,9 +132,9 @@ define([
                     _id        : asyncId
                 }, function (result) {
                     var journalEntries = result.journalEntries;
-                    var mainTr = body.find("[data-id='" + asyncId + "']");
+                    var mainTr = body.find("[data-account='" + asyncId + "']");
                     journalEntries.forEach(function (entry) {
-                        mainTr.after("<tr data-main='" + asyncId + "' class='hidden'><td colspan='3' class='leftBorderNone'>" + common.utcDateToLocaleFullDateTime(entry._id) + "</td><td class='money'>" + helpers.currencySplitter((entry.debit / 100).toFixed(2)) + "</td><td class='money'>" + helpers.currencySplitter((entry.credit / 100).toFixed(2)) + "</td><td class='money'>" + helpers.currencySplitter(((entry.debit - entry.credit) / 100).toFixed(2)) + "</td></tr>");
+                        mainTr.after("<tr data-main='" + asyncId + "' class='subTr hidden'><td></td><td class='leftBorderNone'>" + common.utcDateToLocaleFullDateTime(entry._id) + "</td><td class='money'>" + helpers.currencySplitter((entry.debit / 100).toFixed(2)) + "</td><td class='money'>" + helpers.currencySplitter((entry.credit / 100).toFixed(2)) + "</td><td class='money'>" + helpers.currencySplitter(((entry.debit - entry.credit) / 100).toFixed(2)) + "</td></tr>");
                     });
                 });
 
@@ -141,6 +175,7 @@ define([
             App.filtersObject.filter = this.filter;
 
             custom.cacheToApp('trialBalance.filter', this.filter);
+            custom.cacheToApp('trialBalanceDateRange', {startDate: this.startDate, endDate: this.endDate});
         },
 
         showMoreContent: function (newModels) {
@@ -158,11 +193,13 @@ define([
                 currencySplitter: helpers.currencySplitter
             });
 
-            $currentEl.append(itemView.render());
-
             collection.forEach(function (el) {
-                asyncKeys.push(el._id);
+                el.root.forEach(function (elem) {
+                    asyncKeys.push(elem._id._id);
+                });
             });
+
+            $currentEl.append(itemView.render());
 
             this.asyncRenderInfo(asyncKeys);
         },
@@ -198,7 +235,9 @@ define([
             collection = this.collection.toJSON();
 
             collection.forEach(function (el) {
-                asyncKeys.push(el._id);
+                el.root.forEach(function (elem) {
+                    asyncKeys.push(elem._id._id);
+                });
             });
 
             this.$el.find('#listTable').html('');

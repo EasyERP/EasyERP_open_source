@@ -915,12 +915,13 @@ var Filters = function (models) {
             }
         }, {
             $project: {
-                name        : 1,
-                workflow    : 1,
-                customer    : 1,
+                name    : 1,
+                workflow: 1,
+                customer: 1,
+
                 salesManager: {
-                    _id : '$salesManager._id',
-                    name: '$salesManager.name'
+                    _id : {$ifNull: ['$salesManager._id', 'None']},
+                    name: {$concat: ['$salesManager.name.first', ' ', '$salesManager.name.last']}
                 },
 
                 projectManager: {$arrayElemAt: ['$projectManager', 0]}
@@ -932,8 +933,8 @@ var Filters = function (models) {
                 customer      : 1,
                 salesManager  : 1,
                 projectManager: {
-                    _id : '$projectManager._id',
-                    name: '$projectManager.name'
+                    _id : {$ifNull: ['$projectManager._id', 'None']},
+                    name: {$concat: ['$projectManager.name.first', ' ', '$projectManager.name.last']}
                 }
             }
         }, {
@@ -957,14 +958,14 @@ var Filters = function (models) {
                 projectManager: {
                     $addToSet: {
                         _id : '$projectManager._id',
-                        name: {$concat: ['$projectManager.name.first', ' ', '$projectManager.name.last']}
+                        name: {$ifNull: ['$projectManager.name', 'Empty']}
                     }
                 },
 
                 salesManager: {
                     $addToSet: {
                         _id : '$salesManager._id',
-                        name: {$concat: ['$salesManager.name.first', ' ', '$salesManager.name.last']}
+                        name: {$ifNull: ['$salesManager.name', 'Empty']}
                     }
                 },
 
@@ -3700,313 +3701,402 @@ var Filters = function (models) {
         });
     };
 
+    /*  this.getJournalEntryFilters = function (req, res, next) {
+     var lastDB = req.session.lastDb;
+     var journalEntrySchema = mongoose.Schemas.journalEntry;
+     var JournalEntry = models.get(lastDB, 'journalEntry', journalEntrySchema);
+
+     var getForInvoices = function (pCb) {
+     JournalEntry.aggregate([{
+     $match: {
+     // 'sourceDocument.model: 'wTrack',
+     debit: {$gt: 0}
+     }
+     }, {
+     $lookup: {
+     from        : 'jobs',
+     localField  : 'sourceDocument._id',
+     foreignField: '_id',
+     as          : 'sourceDocument._id'
+     }
+     }, {
+     $lookup: {
+     from        : 'journals',
+     localField  : 'journal',
+     foreignField: '_id',
+     as          : 'journal'
+     }
+     }, {
+     $project: {
+     journal             : {$arrayElemAt: ['$journal', 0]},
+     'sourceDocument._id': {$arrayElemAt: ['$sourceDocument._id', 0]}
+     }
+     }, {
+     $lookup: {
+     from        : 'jobs',
+     localField  : 'sourceDocument._id.jobs',
+     foreignField: '_id',
+     as          : 'sourceDocument._id.jobs'
+     }
+     }, {
+     $lookup: {
+     from        : 'chartOfAccount',
+     localField  : 'journal.debitAccount',
+     foreignField: '_id',
+     as          : 'journal.debitAccount'
+     }
+     }, {
+     $lookup: {
+     from        : 'chartOfAccount',
+     localField  : 'journal.creditAccount',
+     foreignField: '_id',
+     as          : 'journal.creditAccount'
+     }
+     }, {
+     $lookup: {
+     from        : 'Employees',
+     localField  : 'sourceDocument._id.employee',
+     foreignField: '_id',
+     as          : 'sourceDocument._id.employee'
+     }
+     }, {
+     $project: {
+     'journal.debitAccount'  : {$arrayElemAt: ['$journal.debitAccount', 0]},
+     'journal.creditAccount' : {$arrayElemAt: ['$journal.creditAccount', 0]},
+     'journal.name'          : 1,
+     'sourceDocument._id'    : 1,
+     'sourceDocument.jobs'   : {$arrayElemAt: ['$sourceDocument._id.jobs', 0]},
+     'sourceDocument.subject': {$arrayElemAt: ['$sourceDocument._id.employee', 0]},
+     'sourceDocument.name'   : '$sourceDocument._id.jobs.name'
+     }
+     }, {
+     $group: {
+     _id: null,
+
+     journalName: {
+     $addToSet: {
+     _id : '$journal.name',
+     name: '$journal.name'
+     }
+     },
+
+     sourceDocument: {
+     $addToSet: {
+     _id : '$sourceDocument.subject._id',
+     name: {
+     $concat: ['$sourceDocument.subject.name.first', ' ', '$sourceDocument.subject.name.last']
+     }
+     }
+     },
+
+     creditAccount: {
+     $addToSet: {
+     _id : '$journal.creditAccount._id',
+     name: '$journal.creditAccount.name'
+     }
+     }
+     }
+     }], function (err, result) {
+     if (err) {
+     return callback(err);
+     }
+
+     if (result && result.length) {
+     result = result[0];
+     pCb(null, result);
+     } else {
+     pCb(null, {});
+     }
+
+     });
+     };
+
+     var getForEmployees = function (pCb) {
+     JournalEntry.aggregate([{
+     $match: {
+     'sourceDocument.model': 'Invoice',
+     debit                 : {$gt: 0}
+     }
+     }, {
+     $lookup: {
+     from        : 'Invoice',
+     localField  : 'sourceDocument._id',
+     foreignField: '_id',
+     as          : 'sourceDocument._id'
+     }
+     }, {
+     $lookup: {
+     from        : 'journals',
+     localField  : 'journal',
+     foreignField: '_id',
+     as          : 'journal'
+     }
+     }, {
+     $project: {
+     journal             : {$arrayElemAt: ['$journal', 0]},
+     'sourceDocument._id': {$arrayElemAt: ['$sourceDocument._id', 0]}
+     }
+     }, {
+     $lookup: {
+     from        : 'chartOfAccount',
+     localField  : 'journal.debitAccount',
+     foreignField: '_id',
+     as          : 'journal.debitAccount'
+     }
+     }, {
+     $lookup: {
+     from        : 'chartOfAccount',
+     localField  : 'journal.creditAccount',
+     foreignField: '_id',
+     as          : 'journal.creditAccount'
+     }
+     }, {
+     $lookup: {
+     from        : 'Customers',
+     localField  : 'sourceDocument._id.supplier',
+     foreignField: '_id',
+     as          : 'sourceDocument.subject'
+     }
+     }, {
+     $project: {
+     'journal.debitAccount'  : {$arrayElemAt: ['$journal.debitAccount', 0]},
+     'journal.creditAccount' : {$arrayElemAt: ['$journal.creditAccount', 0]},
+     'journal.name'          : 1,
+     'sourceDocument._id'    : 1,
+     'sourceDocument.name'   : '$sourceDocument._id.name',
+     'sourceDocument.subject': {$arrayElemAt: ['$sourceDocument.subject', 0]}
+     }
+     }, {
+     $group: {
+     _id: null,
+
+     journalName: {
+     $addToSet: {
+     _id : '$journal.name',
+     name: '$journal.name'
+     }
+     },
+
+     sourceDocument: {
+     $addToSet: {
+     _id : '$sourceDocument.subject._id',
+     name: {
+     $concat: ['$sourceDocument.subject.name.first', ' ', '$sourceDocument.subject.name.last']
+     }
+     }
+     },
+
+     creditAccount: {
+     $addToSet: {
+     _id : '$journal.creditAccount._id',
+     name: '$journal.creditAccount.name'
+     }
+     }
+     }
+     }], function (err, result) {
+     if (err) {
+     return callback(err);
+     }
+
+     if (result && result.length) {
+     result = result[0];
+     pCb(null, result);
+     } else {
+     pCb(null, {});
+     }
+
+     });
+     };
+
+     var getByEmployees = function (pCb) {
+     JournalEntry.aggregate([{
+     $match: {
+     'sourceDocument.model': 'Employees',
+     debit                 : {$gt: 0}
+     }
+     }, {
+     $lookup: {
+     from        : 'Employees',
+     localField  : 'sourceDocument._id',
+     foreignField: '_id',
+     as          : 'sourceDocument._id'
+     }
+     }, {
+     $lookup: {
+     from        : 'journals',
+     localField  : 'journal',
+     foreignField: '_id',
+     as          : 'journal'
+     }
+     }, {
+     $project: {
+     journal             : {$arrayElemAt: ['$journal', 0]},
+     'sourceDocument._id': {$arrayElemAt: ['$sourceDocument._id', 0]}
+     }
+     }, {
+     $lookup: {
+     from        : 'chartOfAccount',
+     localField  : 'journal.debitAccount',
+     foreignField: '_id',
+     as          : 'journal.debitAccount'
+     }
+     }, {
+     $lookup: {
+     from        : 'chartOfAccount',
+     localField  : 'journal.creditAccount',
+     foreignField: '_id',
+     as          : 'journal.creditAccount'
+     }
+     }, {
+     $project: {
+     'journal.debitAccount' : {$arrayElemAt: ['$journal.debitAccount', 0]},
+     'journal.creditAccount': {$arrayElemAt: ['$journal.creditAccount', 0]},
+     'journal.name'         : 1,
+     'sourceDocument._id'   : 1,
+     'sourceDocument.name'  : '$sourceDocument._id.name'
+     }
+     }, {
+     $group: {
+     _id: null,
+
+     journalName: {
+     $addToSet: {
+     _id : '$journal.name',
+     name: '$journal.name'
+     }
+     },
+
+     sourceDocument: {
+     $addToSet: {
+     _id : '$sourceDocument._id._id',
+     name: {
+     $concat: ['$sourceDocument.name.first', ' ', '$sourceDocument.name.last']
+     }
+     }
+     },
+
+     creditAccount: {
+     $addToSet: {
+     _id : '$journal.creditAccount._id',
+     name: '$journal.creditAccount.name'
+     }
+     }
+     }
+     }], function (err, result) {
+     if (err) {
+     return callback(err);
+     }
+
+     if (result && result.length) {
+     result = result[0];
+     pCb(null, result);
+     } else {
+     pCb(null, {});
+     }
+
+     });
+     };
+
+     var parallelTasks = [getForInvoices, getForEmployees, getByEmployees];
+
+     async.parallel(parallelTasks, function (err, result) {
+     var empInvoice = result[0];
+     var empResult = result[2];
+
+     res.status(200).send({
+     journalName   : _.union(empInvoice.journalName, empResult.journalName),
+     sourceDocument: _.union(empInvoice.sourceDocument, empResult.sourceDocument),
+     creditAccount : _.union(empInvoice.creditAccount, empResult.creditAccount)
+     });
+     });
+     };*/
+
     this.getJournalEntryFilters = function (req, res, next) {
         var lastDB = req.session.lastDb;
         var journalEntrySchema = mongoose.Schemas.journalEntry;
         var JournalEntry = models.get(lastDB, 'journalEntry', journalEntrySchema);
+        var aggregation;
+        var pipeLine = [{
+            $lookup: {
+                from        : 'journals',
+                localField  : 'journal',
+                foreignField: '_id',
+                as          : 'journal'
+            }
+        }, {
+            $project: {
+                journal: {$arrayElemAt: ['$journal', 0]},
+                name   : '$sourceDocument.name'
+            }
+        }, {
+            $lookup: {
+                from        : 'chartOfAccount',
+                localField  : 'journal.debitAccount',
+                foreignField: '_id',
+                as          : 'debitAccount'
+            }
+        }, {
+            $lookup: {
+                from        : 'chartOfAccount',
+                localField  : 'journal.creditAccount',
+                foreignField: '_id',
+                as          : 'creditAccount'
+            }
+        }, {
+            $project: {
+                journal      : 1,
+                creditAccount: {$arrayElemAt: ['$creditAccount', 0]},
+                debitAccount : {$arrayElemAt: ['$debitAccount', 0]},
+                name         : 1
+            }
+        }, {
+            $group: {
+                _id: null,
 
-        var getForInvoices = function (pCb) {
-            JournalEntry.aggregate([{
-                $match: {
-                    // 'sourceDocument.model: 'wTrack',
-                    debit: {$gt: 0}
-                }
-            }, {
-                $lookup: {
-                    from        : 'jobs',
-                    localField  : 'sourceDocument._id',
-                    foreignField: '_id',
-                    as          : 'sourceDocument._id'
-                }
-            }, {
-                $lookup: {
-                    from        : 'journals',
-                    localField  : 'journal',
-                    foreignField: '_id',
-                    as          : 'journal'
-                }
-            }, {
-                $project: {
-                    journal             : {$arrayElemAt: ['$journal', 0]},
-                    'sourceDocument._id': {$arrayElemAt: ['$sourceDocument._id', 0]}
-                }
-            }, {
-                $lookup: {
-                    from        : 'jobs',
-                    localField  : 'sourceDocument._id.jobs',
-                    foreignField: '_id',
-                    as          : 'sourceDocument._id.jobs'
-                }
-            }, {
-                $lookup: {
-                    from        : 'chartOfAccount',
-                    localField  : 'journal.debitAccount',
-                    foreignField: '_id',
-                    as          : 'journal.debitAccount'
-                }
-            }, {
-                $lookup: {
-                    from        : 'chartOfAccount',
-                    localField  : 'journal.creditAccount',
-                    foreignField: '_id',
-                    as          : 'journal.creditAccount'
-                }
-            }, {
-                $lookup: {
-                    from        : 'Employees',
-                    localField  : 'sourceDocument._id.employee',
-                    foreignField: '_id',
-                    as          : 'sourceDocument._id.employee'
-                }
-            }, {
-                $project: {
-                    'journal.debitAccount'  : {$arrayElemAt: ['$journal.debitAccount', 0]},
-                    'journal.creditAccount' : {$arrayElemAt: ['$journal.creditAccount', 0]},
-                    'journal.name'          : 1,
-                    'sourceDocument._id'    : 1,
-                    'sourceDocument.jobs'   : {$arrayElemAt: ['$sourceDocument._id.jobs', 0]},
-                    'sourceDocument.subject': {$arrayElemAt: ['$sourceDocument._id.employee', 0]},
-                    'sourceDocument.name'   : '$sourceDocument._id.jobs.name'
-                }
-            }, {
-                $group: {
-                    _id: null,
+                name: {
+                    $addToSet: {
+                        _id : '$name',
+                        name: '$name'
+                    }
+                },
 
-                    journalName: {
-                        $addToSet: {
-                            _id : '$journal.name',
-                            name: '$journal.name'
-                        }
-                    },
+                journal: {
+                    $addToSet: {
+                        _id : '$journal._id',
+                        name: '$journal.name'
+                    }
+                },
 
-                    sourceDocument: {
-                        $addToSet: {
-                            _id : '$sourceDocument.subject._id',
-                            name: {
-                                $concat: ['$sourceDocument.subject.name.first', ' ', '$sourceDocument.subject.name.last']
-                            }
-                        }
-                    },
+                creditAccount: {
+                    $addToSet: {
+                        _id : '$creditAccount._id',
+                        name: '$creditAccount.name'
+                    }
+                },
 
-                    creditAccount: {
-                        $addToSet: {
-                            _id : '$journal.creditAccount._id',
-                            name: '$journal.creditAccount.name'
-                        }
+                debitAccount: {
+                    $addToSet: {
+                        _id : '$debitAccount._id',
+                        name: '$debitAccount.name'
                     }
                 }
-            }], function (err, result) {
-                if (err) {
-                    return callback(err);
-                }
+            }
+        }];
 
-                if (result && result.length) {
-                    result = result[0];
-                    pCb(null, result);
-                } else {
-                    pCb(null, {});
-                }
+        aggregation = JournalEntry.aggregate(pipeLine);
 
-            });
+        aggregation.options = {
+            allowDiskUse: true
         };
 
-        var getForEmployees = function (pCb) {
-            JournalEntry.aggregate([{
-                $match: {
-                    'sourceDocument.model': 'Invoice',
-                    debit                 : {$gt: 0}
-                }
-            }, {
-                $lookup: {
-                    from        : 'Invoice',
-                    localField  : 'sourceDocument._id',
-                    foreignField: '_id',
-                    as          : 'sourceDocument._id'
-                }
-            }, {
-                $lookup: {
-                    from        : 'journals',
-                    localField  : 'journal',
-                    foreignField: '_id',
-                    as          : 'journal'
-                }
-            }, {
-                $project: {
-                    journal             : {$arrayElemAt: ['$journal', 0]},
-                    'sourceDocument._id': {$arrayElemAt: ['$sourceDocument._id', 0]}
-                }
-            }, {
-                $lookup: {
-                    from        : 'chartOfAccount',
-                    localField  : 'journal.debitAccount',
-                    foreignField: '_id',
-                    as          : 'journal.debitAccount'
-                }
-            }, {
-                $lookup: {
-                    from        : 'chartOfAccount',
-                    localField  : 'journal.creditAccount',
-                    foreignField: '_id',
-                    as          : 'journal.creditAccount'
-                }
-            }, {
-                $lookup: {
-                    from        : 'Customers',
-                    localField  : 'sourceDocument._id.supplier',
-                    foreignField: '_id',
-                    as          : 'sourceDocument.subject'
-                }
-            }, {
-                $project: {
-                    'journal.debitAccount'  : {$arrayElemAt: ['$journal.debitAccount', 0]},
-                    'journal.creditAccount' : {$arrayElemAt: ['$journal.creditAccount', 0]},
-                    'journal.name'          : 1,
-                    'sourceDocument._id'    : 1,
-                    'sourceDocument.name'   : '$sourceDocument._id.name',
-                    'sourceDocument.subject': {$arrayElemAt: ['$sourceDocument.subject', 0]}
-                }
-            }, {
-                $group: {
-                    _id: null,
+        aggregation.exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
 
-                    journalName: {
-                        $addToSet: {
-                            _id : '$journal.name',
-                            name: '$journal.name'
-                        }
-                    },
+            result = result.length ? result[0] : {};
 
-                    sourceDocument: {
-                        $addToSet: {
-                            _id : '$sourceDocument.subject._id',
-                            name: {
-                                $concat: ['$sourceDocument.subject.name.first', ' ', '$sourceDocument.subject.name.last']
-                            }
-                        }
-                    },
-
-                    creditAccount: {
-                        $addToSet: {
-                            _id : '$journal.creditAccount._id',
-                            name: '$journal.creditAccount.name'
-                        }
-                    }
-                }
-            }], function (err, result) {
-                if (err) {
-                    return callback(err);
-                }
-
-                if (result && result.length) {
-                    result = result[0];
-                    pCb(null, result);
-                } else {
-                    pCb(null, {});
-                }
-
-            });
-        };
-
-        var getByEmployees = function (pCb) {
-            JournalEntry.aggregate([{
-                $match: {
-                    'sourceDocument.model': 'Employees',
-                    debit                 : {$gt: 0}
-                }
-            }, {
-                $lookup: {
-                    from        : 'Employees',
-                    localField  : 'sourceDocument._id',
-                    foreignField: '_id',
-                    as          : 'sourceDocument._id'
-                }
-            }, {
-                $lookup: {
-                    from        : 'journals',
-                    localField  : 'journal',
-                    foreignField: '_id',
-                    as          : 'journal'
-                }
-            }, {
-                $project: {
-                    journal             : {$arrayElemAt: ['$journal', 0]},
-                    'sourceDocument._id': {$arrayElemAt: ['$sourceDocument._id', 0]}
-                }
-            }, {
-                $lookup: {
-                    from        : 'chartOfAccount',
-                    localField  : 'journal.debitAccount',
-                    foreignField: '_id',
-                    as          : 'journal.debitAccount'
-                }
-            }, {
-                $lookup: {
-                    from        : 'chartOfAccount',
-                    localField  : 'journal.creditAccount',
-                    foreignField: '_id',
-                    as          : 'journal.creditAccount'
-                }
-            }, {
-                $project: {
-                    'journal.debitAccount' : {$arrayElemAt: ['$journal.debitAccount', 0]},
-                    'journal.creditAccount': {$arrayElemAt: ['$journal.creditAccount', 0]},
-                    'journal.name'         : 1,
-                    'sourceDocument._id'   : 1,
-                    'sourceDocument.name'  : '$sourceDocument._id.name'
-                }
-            }, {
-                $group: {
-                    _id: null,
-
-                    journalName: {
-                        $addToSet: {
-                            _id : '$journal.name',
-                            name: '$journal.name'
-                        }
-                    },
-
-                    sourceDocument: {
-                        $addToSet: {
-                            _id : '$sourceDocument._id._id',
-                            name: {
-                                $concat: ['$sourceDocument.name.first', ' ', '$sourceDocument.name.last']
-                            }
-                        }
-                    },
-
-                    creditAccount: {
-                        $addToSet: {
-                            _id : '$journal.creditAccount._id',
-                            name: '$journal.creditAccount.name'
-                        }
-                    }
-                }
-            }], function (err, result) {
-                if (err) {
-                    return callback(err);
-                }
-
-                if (result && result.length) {
-                    result = result[0];
-                    pCb(null, result);
-                } else {
-                    pCb(null, {});
-                }
-
-            });
-        };
-
-        var parallelTasks = [getForInvoices, getForEmployees, getByEmployees];
-
-        async.parallel(parallelTasks, function (err, result) {
-            var empInvoice = result[0];
-            var empResult = result[2];
-
-            res.status(200).send({
-                journalName   : _.union(empInvoice.journalName, empResult.journalName),
-                sourceDocument: _.union(empInvoice.sourceDocument, empResult.sourceDocument),
-                creditAccount : _.union(empInvoice.creditAccount, empResult.creditAccount)
-            });
+            res.status(200).send(result);
         });
     };
 
