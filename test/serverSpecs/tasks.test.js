@@ -3,6 +3,8 @@ var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var aggent;
 
+require('../../config/environment/development');
+
 
 describe("Tasks Specs", function () {
     'use strict';
@@ -19,16 +21,16 @@ describe("Tasks Specs", function () {
         var estimated = 170;
         var logged = 12;
         var progress = Math.round((logged / estimated) * 100);
-        var adminId = "52203e707d4dba8813000003";
+        var adminId = "57dfac989f572d3d2089ce29";
 
         before(function (done) {
             aggent = request.agent(url);
             aggent
                 .post('users/login')
                 .send({
-                    login: 'admin',
-                    pass: 'tm2016',
-                    dbId: 'production'
+                    login: 'superAdmin',
+                    pass: '111111',
+                    dbId: 'vasyadb'
                 })
                 .expect(200, done);
         });
@@ -610,7 +612,7 @@ describe("Tasks Specs", function () {
                 .send({
                     login: 'ArturMyhalko',
                     pass: 'thinkmobiles2015',
-                    dbId: 'production'
+                    dbId: 'vasyadb'
                 })
                 .expect(200, done);
         });

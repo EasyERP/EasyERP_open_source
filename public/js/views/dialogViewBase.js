@@ -4,11 +4,13 @@
     'Underscore',
     'views/Assignees/AssigneesView',
     'views/selectView/selectView',
-    'helpers/exportToPdf'
-], function (Backbone, $, _, AssigneesView, SelectView, exportToPdf) {
+    'helpers/exportToPdf',
+    'services/select'
+], function (Backbone, $, _, AssigneesView, SelectView, exportToPdf, select) {
     'use strict';
 
     var View = Backbone.View.extend({
+        hideNewSelect: select.hideNewSelect,
 
         events: {
             keydown                                                          : 'keyDownHandler',
@@ -35,9 +37,13 @@
 
         },
 
-        exportToPdf : function(e){
+        exportToPdf: function (e) {
             var template = this.$el.find('#templateDiv').html();
-            exportToPdf({file : template, name : this.model.get('name')});
+
+            exportToPdf({
+                file: template,
+                name: this.model.get('name')
+            });
         },
 
         showDetailsBox: function (e) {
@@ -69,24 +75,6 @@
             $target.append(this.selectView.render().el);
 
             return false;
-        },
-
-        hideNewSelect: function () {
-            var editingDates = this.$el.find('td.date');
-
-            editingDates.each(function () {
-                $(this).text($(this).find('input').val());
-            });
-
-            this.$el.find('.newSelectList').hide();
-
-            if (typeof this.hideHealth === 'function') {
-                this.hideHealth();
-            }
-
-            if (this.selectView) {
-                this.selectView.remove();
-            }
         },
 
         keyDownHandler: function (e) {
@@ -121,7 +109,6 @@
             var selector = '.dialog-tabs-items' + dataClass;
             var itemActiveSelector = '.dialog-tabs-item' + dataClass + '.active';
             var itemSelector = '.dialog-tabs-item' + dataClass;
-
 
 
             closestEl.find('a.active').removeClass('active');

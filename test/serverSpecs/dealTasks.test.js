@@ -4,6 +4,7 @@ var url = 'http://localhost:8089/';
 var aggent;
 var CONSTANTS = require('../../constants/constantsTest');
 
+require('../../config/environment/development');
 
 describe("Tasks Specs", function () {
     'use strict';
@@ -23,9 +24,9 @@ describe("Tasks Specs", function () {
             aggent
                 .post('users/login')
                 .send({
-                    login: 'pavlo.demko',
-                    pass: '111111',
-                    dbId: 'pavlodb'
+                    login: 'superAdmin',
+                    pass : '111111',
+                    dbId : 'vasyadb'
                 })
                 .expect(200, done);
         });
@@ -33,16 +34,15 @@ describe("Tasks Specs", function () {
         it("should create task", function (done) {
 
             var body = {
-                "type": "Task",
-                "assignedTo": assignedTo,
-                "workflow": workflow,
+                "type"       : "Task",
+                "assignedTo" : assignedTo,
+                "workflow"   : workflow,
                 "description": "someDescription",
-                "sequence": "",
-                "dueDate": dueDate,
-                "company" : company,
-                "deal"    : opportunity
+                "sequence"   : "",
+                "dueDate"    : dueDate,
+                "company"    : company,
+                "deal"       : opportunity
             };
-
 
             aggent
                 .post('dealTasks')
@@ -63,7 +63,6 @@ describe("Tasks Specs", function () {
                     if (err) {
                         return done(err);
                     }
-
 
                     done();
                 });
@@ -126,7 +125,7 @@ describe("Tasks Specs", function () {
         it('should return one task with details', function (done) {
             aggent
                 .get('dealTasks')
-                .query({id: id, viewType : 'form'})
+                .query({id: id, viewType: 'form'})
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -134,7 +133,6 @@ describe("Tasks Specs", function () {
                     if (err) {
                         return done(err);
                     }
-
 
                     var task = body;
 
@@ -270,9 +268,9 @@ describe("Tasks Specs", function () {
         it("should change workflow of task", function (done) {
 
             var body = {
-                "workflow": workflowChanged,
+                "workflow"     : workflowChanged,
                 "sequenceStart": 0,
-                "sequence": 0,
+                "sequence"     : 0,
                 "workflowStart": workflow
             };
 
@@ -298,7 +296,7 @@ describe("Tasks Specs", function () {
         it('check if workflow changed', function (done) {
             aggent
                 .get('dealTasks')
-                .query({id: id, viewType : 'form'})
+                .query({id: id, viewType: 'form'})
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -306,7 +304,6 @@ describe("Tasks Specs", function () {
                     if (err) {
                         return done(err);
                     }
-
 
                     var task = body;
 
@@ -342,9 +339,9 @@ describe("Tasks Specs", function () {
         it("should update task", function (done) {
 
             var body = {
-                "assignedTo": "55b92ad221e4b7c40f000030",
-                "description": "lkmjiomlkm",
-                "dueDate": "28 Feb, 2016",
+                "assignedTo"   : "55b92ad221e4b7c40f000030",
+                "description"  : "lkmjiomlkm",
+                "dueDate"      : "28 Feb, 2016",
                 "sequenceStart": 0
             };
 
@@ -370,15 +367,15 @@ describe("Tasks Specs", function () {
         it("should fail update task with wrong id", function (done) {
 
             var body = {
-                "type": "Task",
-                "summary": "testTestModified",
-                "assignedTo": "55b92ad221e4b7c40f000030",
-                "tags": [""],
-                "description": "lkmjiomlkm",
-                "priority": "P3",
-                "StartDate": "28 Feb, 2016",
-                "estimated": 17,
-                "logged": 7,
+                "type"         : "Task",
+                "summary"      : "testTestModified",
+                "assignedTo"   : "55b92ad221e4b7c40f000030",
+                "tags"         : [""],
+                "description"  : "lkmjiomlkm",
+                "priority"     : "P3",
+                "StartDate"    : "28 Feb, 2016",
+                "estimated"    : 17,
+                "logged"       : 7,
                 "sequenceStart": 0
             };
 
@@ -412,7 +409,7 @@ describe("Tasks Specs", function () {
         it('should return empty object when querying deleted task', function (done) {
             aggent
                 .get('dealTasks')
-                .query({id: id, viewType : 'form'})
+                .query({id: id, viewType: 'form'})
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -452,8 +449,8 @@ describe("Tasks Specs", function () {
                 .post('users/login')
                 .send({
                     login: 'ArturMyhalko',
-                    pass: 'thinkmobiles2015',
-                    dbId: 'pavlodb'
+                    pass : 'thinkmobiles2015',
+                    dbId : 'pavlodb'
                 })
                 .expect(200, done);
         });
@@ -461,14 +458,13 @@ describe("Tasks Specs", function () {
         it("should fail create task", function (done) {
 
             var body = {
-                "type": "Task",
-                "assignedTo": assignedTo,
-                "workflow": workflow,
+                "type"       : "Task",
+                "assignedTo" : assignedTo,
+                "workflow"   : workflow,
                 "description": "someDescription",
-                "sequence": "",
-                "dueDate": dueDate
+                "sequence"   : "",
+                "dueDate"    : dueDate
             };
-
 
             aggent
                 .post('dealTasks')
@@ -511,9 +507,9 @@ describe("Tasks Specs", function () {
         it("should fail change workflow of task", function (done) {
 
             var body = {
-                "workflow": workflowChanged,
+                "workflow"     : workflowChanged,
                 "sequenceStart": 0,
-                "sequence": 0,
+                "sequence"     : 0,
                 "workflowStart": workflow
             };
 
@@ -526,15 +522,15 @@ describe("Tasks Specs", function () {
         it("should fail update task", function (done) {
 
             var body = {
-                "type": "Task",
-                "summary": "testTestModified",
-                "assignedTo": "55b92ad221e4b7c40f000030",
-                "tags": [""],
-                "description": "lkmjiomlkm",
-                "priority": "P3",
-                "StartDate": "28 Feb, 2016",
-                "estimated": 17,
-                "logged": 7,
+                "type"         : "Task",
+                "summary"      : "testTestModified",
+                "assignedTo"   : "55b92ad221e4b7c40f000030",
+                "tags"         : [""],
+                "description"  : "lkmjiomlkm",
+                "priority"     : "P3",
+                "StartDate"    : "28 Feb, 2016",
+                "estimated"    : 17,
+                "logged"       : 7,
                 "sequenceStart": 0
             };
 

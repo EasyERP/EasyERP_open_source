@@ -113,7 +113,12 @@ define([
             this.saveItem(function (err) {
                 if (!err) {
                     dataService.postData(url, data, function (err) {
+                        var locationHash = window.location.hash;
                         var redirectUrl = self.forSales ? 'easyErp/salesInvoices' : 'easyErp/Invoices';
+
+                        if (locationHash.indexOf('Projects') !== -1) {
+                            redirectUrl = locationHash;
+                        }
 
                         if (err) {
                             App.render({
@@ -121,6 +126,7 @@ define([
                                 message: 'Can\'t receive invoice'
                             });
                         } else {
+                            Backbone.history.fragment = '';
                             Backbone.history.navigate(redirectUrl, {trigger: true});
                         }
                     });
@@ -258,15 +264,15 @@ define([
                         }
 
                         products.push({
-                            product      : productId,
-                            unitPrice    : price,
-                            quantity     : quantity,
-                            scheduledDate: scheduledDate,
-                            taxes        : taxes,
-                            description  : description,
+                            product       : productId,
+                            unitPrice     : price,
+                            quantity      : quantity,
+                            scheduledDate : scheduledDate,
+                            taxes         : taxes,
+                            description   : description,
                             jobDescription: jobDescription,
-                            subTotal     : subTotal,
-                            jobs         : jobs || null
+                            subTotal      : subTotal,
+                            jobs          : jobs || null
                         });
                     }
                 }
@@ -305,12 +311,13 @@ define([
                     },
                     patch  : true,
                     success: function () {
-                        Backbone.history.fragment = '';
-                        Backbone.history.navigate(window.location.hash, {trigger: true});
                         self.hideDialog();
 
                         if (invoiceCb && typeof invoiceCb === 'function') {
                             return invoiceCb(null);
+                        } else {
+                            Backbone.history.fragment = '';
+                            Backbone.history.navigate(window.location.hash, {trigger: true});
                         }
                     },
 
@@ -454,8 +461,8 @@ define([
                     balanceVissible: self.balanceVissible,
                     forSales       : self.forSales,
 
-                    service        : self.service,
-                    canBeSold      : self.forSales
+                    service  : self.service,
+                    canBeSold: self.forSales
                 }).render({model: model}).el
             );
 

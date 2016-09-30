@@ -32,9 +32,9 @@ define([
     'use strict';
 
     var FormView = ParentView.extend({
-        contentType     : CONSTANTS.INVOICES, // 'Invoices',
-        template        : _.template(EditTemplate),
-        templateDoc     : _.template(DocumentTemplate),
+        contentType: CONSTANTS.INVOICES, // 'Invoices',
+        template   : _.template(EditTemplate),
+        templateDoc: _.template(DocumentTemplate),
 
         events: {
             'click #cancelBtn'      : 'hideDialog',
@@ -86,7 +86,6 @@ define([
                 eventChannel: self.eventChannel
             });
 
-
         },
 
         sendEmail: function (e) {
@@ -110,14 +109,23 @@ define([
 
             e.preventDefault();
 
-
             url = '/invoices/approve';
             data = {
                 invoiceId  : model._id,
                 invoiceDate: model.invoiceDate
             };
 
-            if (model.journal && model.dueDate){
+            if (!model.journal) {
+                App.render({
+                    type   : 'error',
+                    message: 'Please, click on "Edit" and then choose Journal'
+                });
+            } else if (!model.dueDate) {
+                App.render({
+                    type   : 'error',
+                    message: 'Please, click on "Edit" and then choose Due Date'
+                });
+            } else {
                 App.startPreload();
                 dataService.patchData(url, data, function (err) {
                     if (!err) {
@@ -142,15 +150,7 @@ define([
                         });
                     }
                 });
-            } else {
-                App.render({
-                    type   : 'error',
-                    message: 'Please, choose Due Date first.'
-                });
-
             }
-
-
         },
 
         cancelInvoice: function (e) {
@@ -237,7 +237,6 @@ define([
             $('.edit-invoice-dialog').remove();
         },
 
-
         render: function () {
             var $thisEl = this.$el;
             var self = this;
@@ -253,8 +252,6 @@ define([
             var template;
             var paymentContainer;
             var timeLine;
-
-
 
             this.isPaid = (model && model.workflow) ? model.workflow.status === 'Done' : false;
 
@@ -291,12 +288,12 @@ define([
             });
 
             template = this.templateDoc({
-                model            : model,
-                currencySplitter : helpers.currencySplitter
+                model           : model,
+                currencySplitter: helpers.currencySplitter
             });
 
             timeLine = new NoteEditor({
-                model : this.currentModel
+                model: this.currentModel
             });
 
             $thisEl.html(formString);
@@ -314,14 +311,13 @@ define([
                 }).render().el
             );
 
-              paymentContainer = this.$el.find('#payments-container');
+            paymentContainer = this.$el.find('#payments-container');
 
-            if (model && model.payments && model.payments.length){
+            if (model && model.payments && model.payments.length) {
                 paymentContainer.append(
                     new listHederInvoice().render({model: this.currentModel.toJSON()}).el
                 );
             }
-
 
             this.delegateEvents(this.events);
 

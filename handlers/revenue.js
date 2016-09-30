@@ -8,7 +8,7 @@ var moment = require('../public/js/libs/moment/moment');
 
 var wTrack = function (models) {
     'use strict';
-    
+
     var wTrackSchema = mongoose.Schemas.wTrack;
     var ProjectSchema = mongoose.Schemas.Project;
     var BonusTypeSchema = mongoose.Schemas.bonusType;
@@ -2612,14 +2612,14 @@ var wTrack = function (models) {
         var query = req.query;
         var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', invoiceSchema);
 
-        var matchObject =  {
+        var matchObject = {
             _type   : 'wTrackInvoice',
             forSales: true
         };
         var startDate;
         var endDate;
 
-        if(query.startDate && query.endDate){
+        if (query.startDate && query.endDate) {
             startDate = new Date(moment(new Date(query.startDate)).startOf('day'));
             endDate = new Date(moment(new Date(query.endDate)).endOf('day'));
             matchObject.invoiceDate = {$lte: endDate, $gte: startDate};
@@ -3060,8 +3060,8 @@ var wTrack = function (models) {
                     suppliers     : 1,
                     _id           : 0
                 }
-            }], parallelCb);
-        };
+            }]).allowDiskUse(true).exec(parallelCb);
+        }
 
         function paymentGrouper(parallelCb) {
             Payment.aggregate([{
@@ -3242,7 +3242,7 @@ var wTrack = function (models) {
                     paidBySales: 1,
                     _id        : 0
                 }
-            }], parallelCb);
+            }]).allowDiskUse(true).exec(parallelCb);
 
         };
 

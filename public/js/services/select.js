@@ -32,12 +32,31 @@ define([
         return false;
     }
 
+    function hideNewSelect() {
+        var editingDates = this.$el.find('td.date');
+
+        editingDates.each(function () {
+            $(this).text($(this).find('input').val());
+        });
+
+        this.$el.find('.newSelectList').hide();
+
+        if (typeof this.hideHealth === 'function') {
+            this.hideHealth();
+        }
+
+        if (this.selectView) {
+            this.selectView.remove();
+        }
+    }
+
     function removeNewSelect(e) {
         $('.newSelectList').remove();
     }
 
     return {
         showStageSelect: showStageSelect,
-        removeNewSelect: removeNewSelect
+        removeNewSelect: removeNewSelect,
+        hideNewSelect  : hideNewSelect
     };
 });

@@ -135,6 +135,8 @@ define([
             data = {
                 sort: sortObject
             };
+            
+            this.sort = sortObject;
 
             data.filter = filter;
 

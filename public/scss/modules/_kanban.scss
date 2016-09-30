@@ -1,0 +1,49 @@
+.kanban {
+
+  .item {
+
+    &.errorContent {
+      .projectType {
+        color: #ff0000;
+      }
+    }
+
+    .tags {
+      margin-top: 10px;
+      width: 100%;
+      overflow: hidden;
+
+      &:empty {
+        display: none;
+      }
+
+      span {
+        display: block;
+        float: left;
+        height: 18px;
+        line-height: 18px;
+        margin: 0 4px 4px 0;
+        min-width: 40px;
+        max-width: 100%;
+        width: auto;
+        border-radius: 3px;
+        color: #fff;
+        padding: 0 10px;
+        text-align: center;
+        font-size: 11px;
+        text-overflow: ellipsis;
+        text-shadow: 1px 1px 0 rgba(0, 0, 0, .6);
+        white-space: nowrap;
+        cursor: pointer;
+      }
+    }
+  }
+
+  .column {
+    .item {
+      .inner {
+        padding: 5px 5px 8px;
+      }
+    }
+  }
+}

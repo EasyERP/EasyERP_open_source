@@ -1,0 +1,254 @@
+.tags {
+  &Row {
+    > span {
+      display: block;
+      float: left;
+      height: 22px;
+      line-height: 22px;
+      margin: 0 4px 4px 0;
+      min-width: 40px;
+      max-width: 100%;
+      width: auto;
+      border-radius: 3px;
+      color: #fff;
+      padding: 0 10px;
+      text-align: center;
+      text-overflow: ellipsis;
+      text-shadow: 1px 1px 0 rgba(0, 0, 0, .4);
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    span.left {
+      color: #000;
+      text-shadow: none;
+    }
+    .fa-plus {
+      line-height: 22px;
+      width: 22px;
+      margin-left: 5px;
+      text-align: center;
+      &:hover {
+        background-color: #f4f4f4;
+      }
+    }
+  }
+
+  &Title {
+    margin-bottom: 5px;
+    border-bottom: 1px solid #8c8c8c;
+    line-height: 30px;
+    color: #8c8c8c;
+    text-align: center;
+    font-size: 14px;
+  }
+}
+
+._tagSmall {
+  display: inline-block;
+  float: left;
+  padding: 0 5px;
+  height: 18px;
+  line-height: 18px;
+  font-size: 14px;
+  color: #fff;
+  border-radius: 3px;
+
+  &:empty {
+    display: none;
+  }
+}
+
+.tagsListWrap {
+  margin-top: 10px;
+  max-height: 450px;
+  overflow: auto;
+
+  li {
+    display: flex;
+    margin-top: 5px;
+    overflow: hidden;
+
+    span {
+      &:not(.editTag) {
+        position: relative;
+        float: left;
+        height: 30px;
+        width: 235px;
+        color: #fff;
+        line-height: 30px;
+        padding-left: 5px;
+        flex-grow: 1;
+
+        &.selected {
+          &:after {
+            content: "\e903";
+            position: absolute;
+            right: 8px;
+            top: 0;
+            font-family: $icon-font;
+            font-size: 14px;
+            color: #fff;
+          }
+        }
+      }
+      &.editTag {
+        float: right;
+        height: 30px;
+        width: 30px;
+        text-align: center;
+        line-height: 30px;
+        cursor: pointer;
+
+        &:after {
+          content: "\f157";
+          font-family: $icon-font;
+        }
+
+        &:hover {
+          background-color: #f4f4f4;
+          transition: all .3s;
+        }
+      }
+    }
+  }
+}
+
+.createNewTag {
+  display: block;
+  width: 235px;
+  line-height: 25px;
+  margin-top: 5px;
+  padding-left: 5px;
+  color: #8c8c8c !important;
+
+  &:hover {
+    background-color: #f4f4f4;
+  }
+}
+
+.tag-list-dialog {
+  .ui-dialog-buttonpane {
+    padding: 0 !important;
+    height: 0 !important;
+    overflow: visible;
+
+    .ui-dialog-buttonset {
+      button {
+        &.exitButton {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          height: 15px;
+          width: 15px;
+          padding: 0 !important;
+          margin: 0 !important;
+          border: none;
+          line-height: normal !important;
+          background: none;
+
+          &:after, &:before {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 0;
+            height: 15px;
+            width: 2px;
+            background-color: #8c8c8c;
+          }
+          &:before {
+            transform: rotate(-45deg);
+          }
+
+          &:after {
+            transform: rotate(45deg);
+          }
+
+          &:hover {
+            background-color: transparent;
+          }
+
+          .ui-button-text {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+}
+
+.tags-container {
+  margin-top: 8px;
+
+  .editTags {
+    display: inline-block;
+    vertical-align: middle;
+    height: 20px;
+    line-height: 16px;
+    margin: 5px 0;
+    padding: 2px 5px;
+    cursor: pointer;
+    font-size: 12px;
+    border-radius: 3px;
+    color: #fff;
+    border-radius: 3px;
+
+    &:before {
+      color: #000;
+    }
+  }
+}
+
+.color {
+  &Card {
+    &Wrap {
+      width: 280px;
+      padding: 0 10px;
+      background-color: #fff;
+      border-radius: 3px;
+      border: 1px solid #d6dadc;
+      overflow: hidden;
+    }
+    &Title {
+      box-sizing: border-box;
+      color: #8c8c8c;
+      display: block;
+      text-align: center;
+      line-height: 36px;
+      border-bottom: 1px solid #d6dadc;
+    }
+  }
+  &SelectBlock {
+    overflow: hidden;
+  }
+  &Input {
+    box-sizing: border-box;
+    width: 100%;
+    background-color: #e2e4e6;
+    border: 1px solid #cdd2d4;
+    border-radius: 3px;
+    display: block;
+    min-height: 34px;
+    padding: 7px;
+  }
+  &Box {
+    height: 30px;
+    width: 34px;
+    float: left;
+    margin: 0 10px 10px 0;
+    border-radius: 3px;
+    padding: 3px 6px;
+
+    &.checked {
+      position: relative;
+      &:after {
+        content: "\e903";
+        position: absolute;
+        left: 9px;
+        top: 7px;
+        font-family: $icon-font;
+        font-size: 16px;
+        color: #fff;
+      }
+    }
+  }
+}

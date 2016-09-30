@@ -1,0 +1,20 @@
+﻿<div class="_modalDialog">
+    <div class="_modalHeader">
+        <h4>Configure Email Policy</h4>
+    </div>
+    <dl class="settings-info">
+        <label>
+            <input id="defaultEmailEnable" name="choosedType" maxlength="4" class="onlyNumber" type="radio" <%=model.defaultEmail ? 'checked' : ''%>/>
+            Send emails with <b>'easyerp no-replay@easyerp.com'</b> default email in the from field
+            <!--<div class="_helpBlock">
+                Reply from your customers will be delivered to your organizational email address as it has been added to the reply-to section of the email.
+            </div>-->
+        </label>
+        <label><input id="defaultEmailDisable"  name="choosedType" maxlength="4" class="onlyNumber" type="radio" <%=model.defaultEmail ? '' : 'checked'%>/>
+            Send emails email using one of the organizational email addresses
+            <!--<div class="_helpBlock">
+
+            </div>-->
+        </label>
+    </dl>
+</div>

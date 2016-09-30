@@ -166,6 +166,63 @@
 .attachContainer {
   padding: 7px 0;
   width: 100%;
+  margin-top: 10px;
+
+  li {
+    border-bottom: dashed 1px #c8c8d3;//$lightgrey;
+    line-height: 24px;
+    vertical-align: top;
+    position: relative;
+    padding-left: 25px;
+    white-space: normal;
+    word-wrap: break-word;
+    word-break: break-all;
+    color: $mainBlack-color;
+
+    .deleteAttach {
+      display: none;
+      float: right;
+
+      .calculateTotal {
+        width: 50%;
+        text-align: right;
+
+        .totalAmount {
+          border-top: 1px solid grey;
+        }
+      }
+    }
+
+    &:before {
+      content: "\e093";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      font-family: $icon-font !important;
+      font-size: 22px;
+      color: $mainBlack-color;
+    }
+
+    &:hover {
+      background-color: $bg-hover-drop-down-color;
+
+      .deleteAttach {
+        display: block;
+        padding-right: 10px;
+        float: right;
+        line-height: 22px;
+
+        .calculateTotal {
+          width: 50%;
+          text-align: right;
+
+          .totalAmount {
+            border-top: 1px solid grey;
+          }
+        }
+      }
+    }
+  }
 }
 
 .opportunity-header {

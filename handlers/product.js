@@ -28,7 +28,6 @@ var Products = function (models) {
      return models.get(req.session.lastDb, 'Product', ProductSchema)
      }, exportMap, 'Products');*/
 
-
     function updateOnlySelectedFields(req, res, next, id, data) {
         var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
         var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
@@ -82,15 +81,17 @@ var Products = function (models) {
         var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
 
         Products.findOneAndRemove({_id: id}, function (err, product) {
-            var categoryId = product.accounting.category._id;
+            var categoryId;
 
             if (err) {
                 return next(err);
             }
 
-            ProductCategory.update({_id: categoryId}, {$inc: {productsCount: -1}}, function () {
-                if (err) {
-                    return next(err);
+            categoryId = product.accounting.category._id;
+
+            ProductCategory.update({_id: categoryId}, {$inc: {productsCount: -1}}, function (error) {
+                if (error) {
+                    return next(error);
                 }
 
                 res.status(200).send({success: product});
@@ -109,10 +110,10 @@ var Products = function (models) {
             queryObject.canBeSold = true;
 
             // todo change it for category
-           /* if (query.service === 'true') {
-                key = 'info.productType';
-                queryObject[key] = 'Service';
-            }*/
+            /* if (query.service === 'true') {
+             key = 'info.productType';
+             queryObject[key] = 'Service';
+             }*/
         } else {
             queryObject.canBePurchased = true;
         }

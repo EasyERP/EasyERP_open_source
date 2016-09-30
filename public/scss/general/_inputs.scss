@@ -1,0 +1,342 @@
+/*== Begin Input type number =============*/
+input {
+  &:not([type="checkbox"]) {
+
+    &.inputField {
+      height: 34px;
+      width: 100%;
+      border: 0;
+      border-bottom: 1px solid #a0a9b4;
+      border-radius: 0!important;
+      color: #868e97;
+      font-size: 14px;
+      margin-bottom: 30px;
+      outline: 0 !important;
+      box-shadow: none !important;
+    }
+
+    &.inputBordered {
+      width: 100%;
+      height: 34px;
+      padding: 6px 12px;
+      font-size: 14px;
+      line-height: 1.42857;
+      color: #555;
+      display: block;
+      background-color: #fff;
+      border: 1px solid #c2cad8;
+      border-radius: 0!important;
+      -webkit-transition: border-color ease-in-out .15s;
+      transition: border-color ease-in-out .15s;
+      outline: 0!important;
+
+      &:focus {
+        border-color: #93a1bb;
+      }
+    }
+  }
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.inputBlock {
+  width: 100%;
+
+  > label {
+    line-height: 25px;
+  }
+}
+
+.ui-spinner {
+  position: relative;
+  padding: 0;
+  display: block;
+  overflow: hidden;
+  > input:not([type="checkbox"]) {
+    max-width: 100%;
+  }
+  .ui-spinner-input {
+    float: left;
+    border: none;
+  }
+  span {
+    display: block;
+    width: 8px;
+    height: 8px;
+    text-align: center;
+    padding: 0;
+  }
+  .ui-spinner-up {
+    position: absolute;
+    right: 8px;
+    top: 2px;
+    padding: 0;
+    cursor: pointer;
+    font-size: 8px;
+    line-height: 8px;
+    &:hover {
+      text-decoration: none;
+      color: #71bbec;//@mainText-color-selected + #333;
+    }
+  }
+  .ui-spinner-down {
+    position: absolute;
+    padding: 0;
+    right: 8px;
+    bottom: 0;
+    cursor: pointer;
+    font-size: 8px;
+    line-height: 8px;
+    &:hover {
+      text-decoration: none;
+      color: #71bbec;//@mainText-color-selected + #333;
+    }
+  }
+}
+
+.disable_input_style {
+  cursor: pointer;
+  text-align: right;
+
+  input {
+    height: 19px;
+    margin: 0;
+    border: none !important;
+    width: 100%;
+    min-width: 100%;
+
+    &:focus {
+      outline: none !important;
+      box-shadow: none !important;
+      border: none !important;
+    }
+  }
+}
+
+/*== End Input type number =============*/
+.input-file {
+  position: relative;
+  overflow: hidden;
+  float: left;
+  width: 60px;
+  margin-right: 10px;
+  margin-top: 10px;
+  text-align: center;
+  border: 1px solid  #7f7f80;
+  line-height: 20px;
+  height: 20px;
+  cursor: pointer;
+  color: $tilte-color;
+
+  input {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 200px;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    cursor: pointer;
+  }
+}
+
+textarea,
+select {
+  width: 100%;
+  padding: 0 4px; //big cells in BonusType
+  border: 1px solid #c8c8d3;
+  background-color: inherit;
+  color: $mainText-color;
+}
+
+textarea {
+  &._noteTextarea {
+    padding: 5px 8px;
+    border-radius: 2px;
+  }
+}
+
+input {
+  &:not([type="checkbox"]) {
+    width: 100%;
+    padding: 0 4px; //big cells in BonusType
+    border: 1px solid #c8c8d3;
+    background-color: inherit;
+    color: $mainText-color;
+
+    &.monthPicker {
+      width: auto;
+      line-height: 24px;
+    }
+  }
+}
+
+.form-holder {
+
+  form {
+
+    ._inputIconWrap {
+      position: relative;
+      z-index: 1;
+      //display: inline-block;
+
+      input[type="text"] {
+        padding-right: 20px;
+      }
+    }
+  }
+}
+
+._inputIconWrap {
+
+  input[type="text"] {
+    position: relative;
+    z-index: 999;
+
+    &:focus {
+      border-color: #7eadcc !important;
+    }
+
+    + label {
+
+      &:after {
+        position: absolute;
+        top: 3px;
+        right: 6px;
+        z-index: 1;
+        line-height: normal;
+        font: {
+          family: $iconFont;
+          size: 16px;
+        }
+        visibility: hidden;
+        color: transparent;
+        transition: color .1s ease-in-out
+      }
+    }
+
+    &:active, &:focus {
+
+      + label {
+
+        &:after {
+          visibility: visible;
+          color: #7eadcc;
+        }
+      }
+    }
+
+    &#firstName,
+    &#lastName,
+    &#jobPositionInput,
+    &#first,
+    &#last {
+
+      + label {
+        &:after {
+          content: '\f007';
+        }
+      }
+    }
+
+    &#dateBirth,
+    &#StartDate,
+    &#EndDateTarget,
+    &#nextAction,
+    &#expectDate,
+    &#orderDate  {
+      + label {
+        &:after {
+          content: '\e075';
+        }
+      }
+    }
+
+    &#emailInput,
+    &#email,
+    &#personalEmail,
+    &#workEmail {
+      + label {
+        &:after {
+          content: '\f0e0';
+        }
+      }
+    }
+
+    &#skype {
+      + label {
+        &:after {
+          content: '\f17e';
+        }
+      }
+    }
+
+    &#LI {
+      + label {
+        &:after {
+          content: '\e900';
+        }
+      }
+    }
+
+    &#FB {
+      + label {
+        &:after {
+          content: '\f082';
+          font-size: 18px;
+          right: 3px;
+        }
+      }
+    }
+
+    &#addressInput,
+    &#cityInput,
+    &#stateInput,
+    &#street,
+    &#city,
+    &#state {
+      + label {
+        &:after {
+          content: '\e901';
+          right: 3px;
+        }
+      }
+    }
+
+    &#mobileInput,
+    &#mobile {
+      + label {
+        &:after {
+          content: '\e902';
+          right: 3px;
+        }
+      }
+    }
+
+    &#phoneInput,
+    &#phone {
+      + label {
+        &:after {
+          content: '\f095';
+        }
+      }
+    }
+  }
+}
+
+.inputDateActionBlock {
+
+  .timepicker {
+    height: 34px;
+    padding: 6px;
+    border: 1px solid #c2cad8;
+    cursor: pointer;
+  }
+
+  .hasWickedpicker {
+    margin: 15px auto 0;
+  }
+}

@@ -1,0 +1,340 @@
+table {
+  width: 100%;
+
+  &.kanban {
+    tbody {
+      td {
+        margin: 0 5px;
+        text-overflow: clip;
+        background: linear-gradient(0deg, #efefef 0, rgba(255, 255, 255, 0.298039) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 100%), linear-gradient(90deg, #efefef 0, rgba(255, 255, 255, 0.298039) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 100%);
+        background-position: -1px -1px;
+        background-origin: padding-box;
+        background-clip: border-box;
+        background-size: 7px 7px;
+
+        &:nth-child(n+2) {
+          border-left: 9px solid #fff;
+        }
+      }
+    }
+  }
+}
+
+tr.redBorder {
+  background-color: red !important;
+
+  * {
+    color: #fff !important;
+  }
+
+  td {
+    border-color: red !important;
+  }
+
+  &:hover {
+    background-color: red !important;
+    * {
+      color: #fff !important;
+    }
+
+    td {
+      border-color: red !important;
+    }
+  }
+}
+
+tr.greyBorder {
+  background-color: #e5d7e8;
+}
+
+td.checkboxRow {
+  width: 40px;
+  padding: 15px;
+  vertical-align: middle;
+  text-align: center;
+}
+
+td.editable {
+  position: relative;
+}
+
+.projectMembersTable {
+  ._newSelectListWrap {
+    display: inline-block;
+
+    .newSelectList {
+      left: auto;
+      right: 0;
+    }
+  }
+}
+
+.list:not(.stripedList):not(._dialogTable) {
+  tbody tr {
+    &.mainTr,
+    &.childTr,
+    &.subTr {
+      td {
+        text-align: left;
+      }
+    }
+    &.childTr {
+      td {
+        &:nth-child(n+2) {
+          padding-left: 36px;
+        }
+      }
+    }
+    &.subTr {
+      td {
+        &:nth-child(n+2) {
+          padding-left: 66px;
+        }
+      }
+    }
+  }
+}
+
+.list:not(.stripedList):not(._dialogTable) {
+  font-family: $fontRegular; //@fontRegular;
+  width: 100%;
+
+  td, th {
+    height: 23px;
+    padding: 0 6px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: #000000;
+    font-size: 12px;
+  }
+
+  th {
+    &.oe_sortable,
+    &.oe_sortable_sub {
+      height: 30px;
+      padding-right: 20px;
+    }
+  }
+
+  thead {
+    tr {
+      border: none;
+      height: 30px;
+      vertical-align: middle;
+    }
+
+    th {
+      font-family: $semibold-font-family; //@fontSemiBold;
+      text-align: right;
+    }
+  }
+
+  tbody {
+
+    td {
+      text-align: right;
+      height: 45px;
+      &.changeContent {
+        border-top: 2px solid #5cb85c; //@success;
+        border-bottom: 2px solid #5cb85c; //@success;
+      }
+    }
+
+    tr {
+      &:last-child {
+        border-bottom: 1px solid #d7d7d7; //@thin-border @list-border-color;
+      }
+    }
+  }
+
+  tbody,
+  thead {
+    tr {
+      border-top: 1px solid #d7d7d7; //@thin-border @list-border-color;
+    }
+  }
+
+  tfoot {
+    td {
+      text-align: right;
+    }
+  }
+
+  thead,
+  tfoot {
+    tr {
+      background: inherit !important; //hover should not work in a hover and footer tr
+    }
+  }
+
+  .notForm {
+    input {
+      margin-top: 3px;
+      cursor: pointer;
+      display: inline-block;
+      vertical-align: top;
+    }
+  }
+
+  .enableTableOdd {
+    tr {
+      &:not(.innerRow) {
+        &:hover {
+          background-color: #ededed; //@defaultBgColorOdd-color;
+        }
+      }
+    }
+  }
+
+  .centerCell {
+    text-align: center;
+  }
+
+  .leftBorderNone {
+    border-left: none;
+  }
+
+  .cancelled {
+    a {
+      text-decoration: line-through;
+    }
+  }
+
+  &.enable_hover {
+    tbody {
+      tr {
+        &:hover {
+          background-color: #d9d9d9; //@defaultBgHover-color;
+        }
+      }
+    }
+  }
+
+  .overtime {
+    background-color: #ffe332 !important; //@list-overtime-bg !important;
+  }
+
+  thead th:first-of-type {
+    width: 15%;
+  }
+
+  .datepicker {
+    width: 90%
+  }
+
+  .datepicker.notVisible {
+    display: none;
+  }
+}
+
+.mainTr {
+  cursor: pointer;
+}
+
+.subTr + .childTr {
+  td {
+    &:nth-child(n+2) {
+      padding-left: 36px;
+    }
+    &:first-child {
+      border-top: none !important;
+    }
+  }
+}
+
+._projectWeekTable {
+  &.list {
+    tbody td,
+    thead th {
+      text-align: center;
+    }
+    tbody td {
+      width: 35px;
+      > input.editing {
+        text-align: center;
+      }
+    }
+  }
+}
+
+._timeCardTableWrap {
+  min-width: 1550px;
+}
+
+._quotationTableWrap,
+._ordersTableWrap {
+  min-width: 1000px;
+}
+
+._invoiceTableWrap,
+._proformaTableWrap {
+  min-width: 1150px;
+}
+
+._paymentsTableWrap,
+._membersTableWrap {
+  min-width: 800px;
+}
+
+._weeklySheduler,
+._structureTypes,
+._schedulePay,
+._earningsType {
+
+  ._dialogTableTitle {
+    margin: 15px 0 30px;
+  }
+}
+
+._weeklySheduler {
+  ._dialogTable {
+    table-layout: fixed;
+    width: 100%;
+
+    th {
+      font-family: $semibold-font-family;
+    }
+
+    th,td {
+      height: 23px;
+      padding: 0 6px;
+      font-size: 12px;
+      border-top: 1px solid #d7d7d7;
+      text-align: left;
+
+      &:last-child {
+        text-align: right;
+      }
+    }
+
+    tr {
+      &:last-child {
+        td {
+          border-bottom: 1px solid #d7d7d7;
+        }
+      }
+    }
+
+    tbody {
+      td {
+        height: 45px;
+      }
+    }
+  }
+}
+
+._earningsType {
+  .form {
+    textarea {
+      width: 100%;
+      border-bottom: 0;
+    }
+  }
+  &.form-holder {
+    form {
+      dd {
+        float: right;
+      }
+    }
+  }
+}

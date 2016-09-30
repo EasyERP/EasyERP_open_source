@@ -8,7 +8,7 @@ var Module = function (models, event) {
     var WorkflowSchema = mongoose.Schemas.workflow;
     var prioritySchema = mongoose.Schemas.Priority;
     var historySchema = mongoose.Schemas.History;
-    var tagsSchema = mongoose.Schemas.tags;
+    var tagsSchema = mongoose.Schemas.Tags;
     var followersSchema = mongoose.Schemas.followers;
     var OrgSettingsSchema = mongoose.Schemas.orgSettingsSchema;
     var objectId = mongoose.Types.ObjectId;
@@ -216,7 +216,7 @@ var Module = function (models, event) {
                     if (err){
                         return console.log(err);
                     }
-                    if (!settings.defaultEmail && settings.contact){
+                    if (settings && !settings.defaultEmail && settings.contact){
                         mailOptions.from = settings.contact.email;
                     }
                     mailer.sendAssignedToLead(mailOptions, cb);

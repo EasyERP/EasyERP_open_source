@@ -2,9 +2,9 @@ var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var aggent;
-var db = 'pavlodb';
+var db = 'vasyadb';
 
-
+require('../../config/environment/development');
 describe('Person Specs', function () {
     'use strict';
     var id;
@@ -17,7 +17,7 @@ describe('Person Specs', function () {
             aggent
                 .post('users/login')
                 .send({
-                    login: 'pavlo.demko',
+                    login: 'superAdmin',
                     pass : '111111',
                     dbId : db
                 })

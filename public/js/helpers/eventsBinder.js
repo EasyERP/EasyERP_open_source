@@ -38,6 +38,13 @@ define([
             topBarView.bind('pay', contentView.newPayment, contentView);
             topBarView.bind('changeDateRange', contentView.changeDateRange, contentView);
             topBarView.bind('recountAllEvent', contentView.recountAll, contentView);
+            topBarView.bind('moveToEdit', contentView.moveToEdit, contentView);
+            topBarView.bind('saveAllEvent', contentView.saveDashboard, contentView);
+            topBarView.bind('removeAllEvent', contentView.removeAllCharts, contentView);
+        },
+
+        subscribeCustomChartEvents: function(chartView, gridView){
+            chartView.bind('actionWithChart', gridView.markEngagedCells, gridView)
         }
     };
 });

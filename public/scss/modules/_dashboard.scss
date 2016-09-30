@@ -1,21 +1,21 @@
 .dropDownDateRangeContainer {
-  position: relative;
   width: 110px;
   height: 35px;
   float: right;
+  position: relative;
 }
 
 .choseDateRange.dropDownDateRange {
-  position: absolute;
   display: flex;
   flex-direction: column;
   height: 22px;
   width: 110px;
-  border: 1px solid $property-box-border-color;
-  background: $white;
   padding: 1px 33px 3px 10px;
   margin-right: 0;
+  border: 1px solid $property-box-border-color;
+  background: $white;
   overflow: hidden;
+  position: absolute;
 
   &.open {
     height: auto;
@@ -26,17 +26,17 @@
   }
 
   .item {
-    padding: 0;
-    float: none;
-    margin-left: 0 !important;
     min-height: 20px !important;
     line-height: 18px;
     margin-bottom: 5px;
-    text-align: center;
+    margin-left: 0 !important;
+    padding: 0;
     border: none;
+    text-align: center;
     background: none;
     white-space: nowrap;
     order: 1;
+    float: none;
 
     &.active {
       order: 0;
@@ -46,14 +46,157 @@
   }
 
   .selectArrow {
+    height: 0;
+    width: 0;
+    border: {
+      top: 5px solid $property-box-border-color;
+      left: 3px solid transparent;
+      right: 3px solid transparent;
+    }
     position: absolute;
     right: 10px;
     top: 8px;
-    height: 0;
-    width: 0;
-    border-top: 5px solid $property-box-border-color;
-    border-left: 3px solid transparent;
-    border-right: 3px solid transparent;
     cursor: pointer;
+  }
+}
+
+
+.dashboardGraphicsWrap {
+  .halfWidth,
+  .fullWidth {
+    float: left;
+  }
+
+  .halfWidth {
+    width: 50%;
+  }
+
+  .fullWidth {
+    width: 100%;
+
+  }
+}
+
+
+._customDashboard {
+  position: relative;
+  background-color: #f1f1f1;
+  padding: 5px;
+
+  &InputGroup {
+    padding: 0 15px;
+    input {
+      width: 200px;
+      height: 25px;
+      margin-top: 7px;
+      float: left;
+
+      & + input {
+        margin-left: 15px;
+      }
+    }
+
+    h3:empty {
+      display: none;
+    }
+  }
+
+  &.disabled {
+    background-color: $white;
+
+    ._customDashboardGrid .cell {
+      box-shadow: none;
+    }
+  }
+
+  .panel {
+    background-color: $white;
+    display: inline-block;
+    box-shadow: $dashboard-cell-bigger-shadow;
+    border: 1px solid $dashboard-panel-border;
+
+    &-heading {
+      @include flexbox;
+      @include justify-content(space-between);
+      width: 100%;
+    }
+
+    .chartName {
+      font-size: 20px;
+      color: $dashboard-text-color;
+      padding: 10px 10px;
+
+    }
+
+    &HeadingDescr {
+      padding: 7px 12px;
+      color: $dashboard-text-color;
+      //border-bottom: 1px solid $dashboard-panel-border;
+      @include flexbox;
+      @include flex-direction(column);
+      @include align-items(flex-end);
+      min-width: 100px;
+
+      >span {
+        font-size: 10px;
+        display: block;
+
+        &:first-child {
+          margin-top: 10px;
+        }
+
+      }
+
+      button {
+        background-color: transparent;
+        margin: 5px 5px ;
+
+        .fa {
+          font-size: 16px;
+          background-color: transparent;
+          color: $dashboard-text-color;
+        }
+      }
+
+      button + button {
+        margin-right: 5px;
+      }
+
+    }
+
+    .chartHolder {
+      text {
+        font-size: 10px;
+
+        &.label {
+          font-size: 16px;
+        }
+
+        &.infoLabel {
+          color: $dashboard-text-color !important;
+          font-size: 15px;
+        }
+
+        &._valueLabel {
+          font-size: 20px;
+        }
+
+        &._label {
+          font-size: 25px;
+        }
+      }
+    }
+  }
+
+  &Grid {
+    width: 100%;
+    height: auto;
+
+    .cell {
+      height: 200px;
+      background-color: $white;
+      display: inline-block;
+      box-shadow: $dashboard-cell-shadow;
+    }
   }
 }

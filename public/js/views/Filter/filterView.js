@@ -149,7 +149,7 @@ define([
             var self = this;
             var $target = $(e.target);
             var $forFilterContainer = $target.closest('.forFilterIcons');
-            var favouriteIconState = $forFilterContainer.find('.fa.fa-star').length;
+            var favouriteIconState = $forFilterContainer.find('.icon-star2').length;
             var $groupEl = $target.prev();
             var filterView = $groupEl.attr('data-value');
             var $alphabetHolder = $('#startLetter');

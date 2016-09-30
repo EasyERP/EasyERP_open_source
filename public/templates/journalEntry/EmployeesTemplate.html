@@ -1,0 +1,52 @@
+<div class="form-holder employee">
+    <form class="form employee" id="employeeForm" data-id="<%=model._id%>">
+        <div class="topInputHolder">
+            <h2><%=model.name.first + ' ' + model.name.last%></h2>
+        </div>
+        <div class="clearfix"></div>
+        <div class="_employeeProfile">
+            <div class="_avatarWrap left">
+                <div class="avatar">
+                    <img alt="" src="<%=model.imageSrc%>"/>
+                </div>
+                <div class="_introInfo">
+                    <span class="semiBold"><%=model.jobPosition ? model.jobPosition.name : ''%></span> in <span class="semiBold"><%=model.department ? model.department.name : ''%> Department</span>
+                    <a href="mailto:<%=model.workEmail%>" target="_blank"><%=model.workEmail%></a>
+                </div>
+            </div>
+            <div class="avatarInfoContainer employee">
+                <div class="_person-info-wrap">
+                    <dl class="person-info">
+                        <dt class="semiBold">Date Of Birth</dt>
+                        <dd><%=model.dateBirth ? model.dateBirth : "" %></dd>
+                        <dt class="semiBold">Personal Mobile</dt>
+                        <dd><a href="skype:<%=model.workPhones.mobile%>?call"><%=model.workPhones.mobile%></a></dd>
+                        <%if (model.personalEmail) {%>
+                        <dt class="semiBold">Personal Email</dt>
+                        <dd><a href="mailto:<%=model.personalEmail%>" target="_blank"><%=model.personalEmail%></a></dd>
+                        <% } %>
+
+                        <dt class="semiBold">Skype</dt>
+                        <dd><a href="skype:<%=model.skype%>?call"><%=model.skype%></a></dd>
+                        <%if (model.relatedUser){%>
+                        <dt class="semiBold">Related User</dt>
+                        <dd><%=model.relatedUser ? model.relatedUser.login : ''%></dd>
+                        <% } %>
+                        <dt class="semiBold">Manager</dt>
+                        <dd><%=model.manager ? model.manager.fullName : ''%></dd>
+                        <dt class="semiBold">Job Type</dt>
+                        <dd><%=model.jobType ? model.jobType : ''%></dd>
+
+                        <%if (model.workPhones.phone) {%>
+                        <dt class="semiBold">Work Phone</dt>
+                        <dd><a href="skype:<%=model.workPhones.mobile%>?call"><%=model.workPhones.phone%></a></dd>
+                        <% } %>
+                    </dl>
+                </div>
+                <div class="clearfix">
+                </div>
+            </div>
+        </div>
+            <div class="clearfix"></div>
+    </form>
+</div>

@@ -1,40 +1,36 @@
 <div id="searchContainer"></div>
 <div id="createBtnHolder" class="btnsBlock">
-    <a href="javascript:;" class="fa fa-check" title="Save" id="savewTrack"></a>
-    <a href="javascript:;" class="fa fa-times" title="Remove" id="deletewTrack"></a>
-    <a href="javascript:;" class="icon-plus" title="Create" id="createBtn"></a>
+    <a href="javascript:;" class="btn blue slim" title="Save" id="savewTrack">Save</a>
+    <a href="javascript:;" class="btn blue slim" title="Remove" id="deletewTrack">Delete</a>
+    <a href="javascript:;" class="icon-plus btn blue slim" title="Create" id="createBtn">New</a>
     <!--<button id="top-bar-generateBtn" class="red disabled">Generate Invoice</button>-->
     <button id="top-bar-copyBtn" class="red disabled">Copy</button>
 </div>
-<div class="tableResponsive">
-    <table class="list task-list">
+<div class="_timeCardTableWrap">
+    <table class="list stripedList">
         <colgroup>
-            <col width="2%">
-            <col width="6%">
-            <col width="3%">
-            <col width="8%">
-            <col width="13%">
-            <!--<col width="8%">-->
-            <col width="12%">
-            <!--<col width="7%">-->
-            <col width="12%">
+            <col width="43px">
+            <col width="5%">
+            <col width="9%">
             <col width="7%">
+            <col width="9%">
+            <col width="9%">
+            <col width="8%">
+            <col width="5%">
+            <col width="6%">
+            <col width="6%">
+            <col width="6%">
+            <col width="5%">
+            <col width="4%">
+            <col width="5%">
             <col width="4%">
             <col width="4%">
             <col width="4%">
             <col width="4%">
-            <col width="3%">
-            <col width="3%">
-            <col width="3%">
-            <col width="3%">
-            <col width="3%">
-            <col width="3%">
-            <col width="3%">
         </colgroup>
         <thead>
         <tr>
-            <th class=""><input type="checkbox" id="checkAll" class="checkAll"/></th>
-            <th class="centerCell">N</th>
+            <th class="centerCell"><input type="checkbox" id="checkAll" class="checkAll"/></th>
             <th>Type</th>
             <th class="oe_sortable" data-sort="jobs.name">
                 Sprint<span class="arrow down"></span><span class="arrow up"></span>
@@ -113,7 +109,7 @@
         <tbody id="listTable"></tbody>
         <tfoot id="listFooter">
         <tr>
-            <td colspan="11"></td>
+            <td colspan="10"></td>
             <td><span id="hours">0</span></td>
             <td><span id="monHours">0</span></td>
             <td><span id="tueHours">0</span></td>

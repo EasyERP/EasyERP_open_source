@@ -7,9 +7,33 @@
 
 <div class="half-block left">
     <div class="canReadAndWrite">
-        <input id="everyOneCr" type="radio" name="whoCanRW" value="everyOne" <%= (whoCanRW === 'everyOne') ? ' checked': '' %> /><label for="everyOneCr">Everyone</label><br>
-        <input id="ownerCr" type="radio" name="whoCanRW" value="owner" <%= (whoCanRW === 'owner') ? ' checked' : '' %> /> <label for="ownerCr">Owner</label><br>
-        <input id="groupCr" type="radio" name="whoCanRW" value="group" <%= (whoCanRW === 'group') ? ' checked' : '' %> /> <label for="groupCr">Owner, Users and Users in Groups</label>
+        <div class="_circleRadioRadianceWrap">
+            <label for="everyOneCr">Everyone</label>
+            <input id="everyOneCr"
+                   class="_circleRadioRadiance"
+                   type="radio"
+                   name="whoCanRW"
+                   value="everyOne" <%= (whoCanRW === 'everyOne') ? ' checked': '' %> />
+            <label for="everyOneCr" class="_circleRadioRadianceLabel"></label>
+        </div>
+        <div class="_circleRadioRadianceWrap">
+            <label for="ownerCr">Owner</label>
+            <input id="ownerCr"
+                   class="_circleRadioRadiance"
+                   type="radio"
+                   name="whoCanRW"
+                   value="owner" <%= (whoCanRW === 'owner') ? ' checked' : '' %> />
+            <label for="ownerCr" class="_circleRadioRadianceLabel"></label>
+        </div>
+        <div class="_circleRadioRadianceWrap">
+            <label for="groupCr">Owner, Users and Users in Groups</label>
+            <input id="groupCr"
+                   class="_circleRadioRadiance"
+                   type="radio"
+                   name="whoCanRW"
+                   value="group" <%= (whoCanRW === 'group') ? ' checked' : '' %> />
+            <label for="groupCr" class="_circleRadioRadianceLabel"></label>
+        </div>
     </div>
 </div>
 <div class="half-block left">

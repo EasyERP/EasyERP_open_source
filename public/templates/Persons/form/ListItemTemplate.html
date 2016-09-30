@@ -10,7 +10,7 @@
             <div class="compactRowWrap">
                 <div class="compactRow">
                     <div class="firstName" data-key="fullName"><%- person.fullName%></div>
-                    <div class="country" data-key="address.country"><%= person.address.country %></div>
+                    <div class="country" data-key="address.country"><%= person.address.country === 'Select' ? '' : person.address.country %></div>
                 </div>
                 <div class="compactRow">
                     <div class="email" data-key="email"><%= person.email %></div>

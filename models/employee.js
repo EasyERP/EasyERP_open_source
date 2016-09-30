@@ -185,7 +185,7 @@ module.exports = (function () {
         },
 
         marital       : {type: String, enum: ['married', 'unmarried'], default: 'unmarried'},
-        employmentType: {type: String, enum: ['Employees', 'FOP', 'Un Employees']}, //todo default
+        employmentType: {type: String, enum: ['Employees', 'FOP', 'Un Employees'], default: 'Un Employees'},
         gender        : {type: String, enum: ['male', 'female'], default: 'male'},
         jobType       : {type: String, default: ''},
         sequence      : {type: Number, default: 0},

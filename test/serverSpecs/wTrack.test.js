@@ -1,5 +1,3 @@
-require('../../config/development');
-
 var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
@@ -7,10 +5,12 @@ var host = process.env.HOST;
 var CONSTANTS = require('../../constants/constantsTest');
 var aggent;
 
-describe("wTrack Specs", function () {
-    'use strict';
+require('../../config/environment/development');
 
+describe('wTrack Specs', function () {
+    'use strict';
     var dateByWeek = 201602;
+    this.timeout(10000);
 
     describe('wTrack with admin', function () {
 
@@ -19,9 +19,9 @@ describe("wTrack Specs", function () {
             aggent
                 .post('users/login')
                 .send({
-                    login: 'admin',
-                    pass : 'tm2016',
-                    dbId : 'production'
+                    login: 'superAdmin',
+                    pass : '111111',
+                    dbId : 'vasyadb'
                 })
                 .expect(200, done);
         });
@@ -40,14 +40,14 @@ describe("wTrack Specs", function () {
 
             it("should create wTracks OR and OT", function (done) {
                 var body = {
-                    "1" : 12,
-                    "2" : 12,
-                    "3" : 10,
-                    "4" : 8,
-                    "5" : 8,
-                    "6" : 0,
-                    "7" : 0,
-                    "worked" : 50,
+                    "1"          : 12,
+                    "2"          : 12,
+                    "3"          : 10,
+                    "4"          : 8,
+                    "5"          : 8,
+                    "6"          : 0,
+                    "7"          : 0,
+                    "worked"     : 50,
                     "amount"     : 0,
                     "cost"       : 0,
                     "dateByMonth": 201602,
@@ -117,7 +117,7 @@ describe("wTrack Specs", function () {
 
             it("should fail patch wTrack bulk", function (done) {
                 var body = [{
-                    _id : '123cba'
+                    _id: '123cba'
                 }];
 
                 aggent
@@ -133,8 +133,8 @@ describe("wTrack Specs", function () {
                     count   : "100",
                     filter  : {
                         project: {
-                            key  : "project._id",
-                            type : "ObjectId"
+                            key : "project._id",
+                            type: "ObjectId"
                         }
                     }
                 };
@@ -210,19 +210,19 @@ describe("wTrack Specs", function () {
             });
 
             it("should get wTrack totalCollectionLength", function (done) {
-                var query = {
-                    filter: {
-                        project: {
-                            key  : "project._id",
-                            type : "ObjectId"
-                        }
-                    }
-                };
+                /*var query = {
+                 filter: {
+                 project: {
+                 key : "project._id",
+                 type: "ObjectId"
+                 }
+                 }
+                 };*/
 
                 aggent
-                    .get('wTrack/totalCollectionLength')
-                    .query(query)
-                    .query({"filter[project][value][0]": CONSTANTS.PROJECT})
+                    .get('wTrack/totalCollectionLength')/*
+                     .query(query)
+                     .query({"filter[project][value][0]": CONSTANTS.PROJECT})*/
                     .expect(200)
                     .end(function (err, res) {
                         var body = res.body;
@@ -244,9 +244,9 @@ describe("wTrack Specs", function () {
 
             it("should get wTrack for Dashboard Vacation", function (done) {
                 var query = {
-                    dateByWeek : dateByWeek,
-                    employee   : CONSTANTS.EMPLOYEE,
-                    project    : projectName
+                    dateByWeek: dateByWeek,
+                    employee  : CONSTANTS.EMPLOYEE,
+                    project   : projectName
                 };
 
                 aggent
@@ -255,6 +255,7 @@ describe("wTrack Specs", function () {
                     .expect(200)
                     .end(function (err, res) {
                         var body = res.body;
+                        var property = '[' + (body.wTracks.length - 1) + ']';
 
                         if (err) {
                             return done(err);
@@ -267,7 +268,8 @@ describe("wTrack Specs", function () {
                         expect(body)
                             .to.have.property('wTracks')
                             .and.to.be.instanceOf(Array)
-                            .and.to.have.deep.property('[0]')
+                            .and.to.have.deep.property(property)
+                        /*.and.to.have.deep.property('[0]')*/
                             .and.to.have.property('_id', id);
 
                         done();
@@ -310,9 +312,9 @@ describe("wTrack Specs", function () {
                     "startDate" : "21 Feb, 2016"
                 }];
                 var headers = {
-                    "createjob" : "true",
-                    "project"   : CONSTANTS.PROJECT,
-                    "jobname"   : "testJob"
+                    "createjob": "true",
+                    "project"  : CONSTANTS.PROJECT,
+                    "jobname"  : "testJob"
                 };
 
                 aggent
@@ -339,19 +341,19 @@ describe("wTrack Specs", function () {
                     viewType: "list",
                     count   : "100",
                     filter  : {
-                        project : {
+                        project   : {
                             key : "project._id",
                             type: "ObjectId"
                         },
-                        week       : {
+                        week      : {
                             key : "week",
                             type: 'integer'
                         },
-                        year       : {
+                        year      : {
                             key : "year",
                             type: 'integer'
                         },
-                        department : {
+                        department: {
                             key : "department._id",
                             type: 'ObjectId'
                         }
@@ -454,19 +456,19 @@ describe("wTrack Specs", function () {
                 var query = {
                     viewType: "list",
                     filter  : {
-                        project : {
+                        project   : {
                             key : "project._id",
                             type: "ObjectId"
                         },
-                        week       : {
+                        week      : {
                             key : "week",
                             type: 'integer'
                         },
-                        year       : {
+                        year      : {
                             key : "year",
                             type: 'integer'
                         },
-                        department : {
+                        department: {
                             key : "department._id",
                             type: 'ObjectId'
                         }
@@ -555,7 +557,7 @@ describe("wTrack Specs", function () {
                 .send({
                     login: 'ArturMyhalko',
                     pass : 'thinkmobiles2015',
-                    dbId : 'production'
+                    dbId : 'vasyadb'
                 })
                 .expect(200, done);
         });

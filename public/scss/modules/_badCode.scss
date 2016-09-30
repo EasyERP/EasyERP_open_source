@@ -1,0 +1,12 @@
+.icon-trash._correctionPosition {
+  position: relative;
+  display: inline-block;
+  height: 16px;
+  width: 12px;
+
+  &:before {
+    position: absolute;
+    top: 5px;
+    left: 0;
+  }
+}

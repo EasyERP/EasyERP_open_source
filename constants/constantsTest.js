@@ -9,7 +9,7 @@ module.exports = {
     JOB          : "564cfd8ba6e6390160c9edf7",
     DELIVERTO    : "55543831d51bdef79ea0d58c",
     OWNER        : "55ba28c8d79a3a3439000016",
-    EMPLOYEE     : "55b92ad221e4b7c40f000031",
+    EMPLOYEE     : "55b92ad221e4b7c40f00005e",
     PAYMENTMETHOD: "565f2e05ab70d49024242e0f",
     PAYMENTTYPE  : "5645920f624e48551dfe3b25",
     WORKFLOW     : "5555bf276a3f01acae0b5560",

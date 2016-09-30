@@ -1,3 +1,128 @@
+/*----------------------------- Tabs ------------------------------------*/
+.ui-dialog {
+  input {
+    &.searchTagInput {
+      width: 235px;
+      height: 30px;
+      line-height: 30px;
+      padding-left: 5px;
+    }
+  }
+}
+
+ul.dialog-tabs, ul.chart-tabs {
+
+  li {
+    float: left;
+
+    a {
+      border: 1px solid rgba(0, 0, 0, 0);
+      display: block;
+      float: left;
+      //border-radius: 3px 3px 0 0;
+      padding-left: 20px;
+      padding-right: 20px;
+      height: 35px;
+      text-align: center;
+      line-height: 35px;
+      text-decoration: none;
+      color: $mainText-color;
+
+      &.active {
+        height: 35px;
+        line-height: 34px;
+        border-bottom: none;
+        background-color: $bg-main-menu-selected;
+        color: $whiteText;
+      }
+
+    }
+    &.right {
+      float: right;
+      //button {
+      //  margin-top: 4px;
+      //}
+    }
+  }
+
+  .withEndContract {
+    position: relative;
+    background-color: #8f1311;
+    background-image: -ms-linear-gradient(top, #b13533, #8f1311);
+    background-image: linear-gradient(to bottom, #b13533, #8f1311);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), 0 1px 1px rgba(155, 155, 155, 0.4) inset;
+    color: white;
+    line-height: 15px;
+
+    &:hover {
+      background-color: #a13333;
+      background-image: -ms-linear-gradient(top, #c35555, #a13333);
+      background-image: linear-gradient(to bottom, #c35555, #a13333);
+    }
+
+    .newSelectList {
+      display: none;
+      width: 112px;
+      right: 0;
+      left: auto;
+
+      li {
+        padding-left: 10px;
+        float: none;
+      }
+    }
+
+    .endContractReasonList, .arrow {
+      width: 98px;
+      height: 20px;
+      line-height: 19px;
+      border-radius: 0;
+      text-align: center;
+      float: right;
+    }
+
+    .arrow {
+      border-left: 1px solid #ABABAB;
+      //font-family: Icons;
+      color: white;
+      font-weight: 500;
+      font-size: 10px;
+      width: 16px;
+      margin-left: -2px;
+      line-height: 20px;
+
+      &:before {
+        font-family: $icon-font;
+        content: '\e604';
+      }
+    }
+  }
+}
+
+ul.chart-tabs {
+  li.right {
+    button {
+      margin-top: 4px;
+    }
+  }
+
+  &.dashboard {
+    margin: 10px 0;
+  }
+}
+
+.dialog-tabs-items {
+  .dialog-tabs-item,
+  .chart-tabs-item {
+    display: none;
+    border-top: none;
+
+    &.active {
+      display: block;
+    }
+  }
+}
+
 .dialog {
   &-tabs {
     @include clearfix();
@@ -9,7 +134,6 @@
     @include clearfix();
   }
 }
-
 
 .ui-dialog {
   //overflow-y: auto;
@@ -24,7 +148,7 @@
   }
 
   .form-holder {
-    @include clearfix();
+    @include clearfix;
     padding: 15px 20px 0;
 
     form {
@@ -33,9 +157,9 @@
   }
 
   .inner {
-    position: relative;
     padding: 5px 0;
     background-color: $ui-dialog-bg;
+    position: relative;
   }
 
 
@@ -47,10 +171,15 @@
   }
 
   ._leadsDialog {
+    max-height: calc(100vh - 170px);
     overflow-y: auto;
     overflow-x: hidden;
-    max-height: calc(100vh - 170px);
   }
+}
+
+.ui-dialog.tag-list-dialog .ui-dialog-buttonpane {
+  margin-top: 0 !important;
+  border: none;
 }
 
 .mainTabs {
@@ -61,5 +190,110 @@
 
   .avatarInfoContainer {
     margin-left: 160px;
+  }
+}
+
+.ui-dialog {
+
+  ._listModalWrap {
+
+    ._listModal {
+      padding: 0;
+
+      ._modalSelect {
+        > a, > input {
+          padding: 0 0 0 10px;
+          min-height: 30px;
+          line-height: 30px;
+        }
+      }
+    }
+  }
+  .form-holder._listModalWrap {
+    padding: 10px;
+  }
+}
+
+.popupTitle {
+  margin-bottom: 10px;
+  color: #666;
+  font-size: 20px;
+}
+
+._modalSelect {
+  position: relative;
+}
+
+.ui-dialog {
+  box-shadow: 5px 5px rgba(102, 102, 102, 0.1);
+
+  .form-holder {
+    &._dialogWrap {
+      padding: 0;
+    }
+  }
+}
+
+._dialogWrap {
+  ._dialogMainTitle {
+    min-height: 22px;
+    padding: 14px 12px;
+    border-bottom: 1px solid #eee;
+    color: #fff;
+    background-color: #7eadcc;
+    font: {
+      family: $light-font-family;
+      size: 18px;
+    };
+  }
+
+  ._dialogBlock {
+    padding: 12px;
+  }
+
+  ._dialogRow + ._dialogRow {
+    margin-top: 5px;
+  }
+}
+
+._createNewProjectDialog {
+
+  .addUserAndGroup {
+    margin: 20px 20px 0;
+    font-family: $semibold-font-family;
+    > span {
+      color: #2b3643;
+    }
+  }
+
+  ._circleRadioRadianceWrap {
+    label:first-child {
+      color: #2b3643;
+      font-family: $semibold-font-family;
+    }
+  }
+
+  .assignees-info {
+    label {
+      color: #2b3643;
+      font-family: $semibold-font-family;
+    }
+  }
+}
+
+.form-holder {
+
+  ul.dialog-tabs li a.active,
+  ul.chart-tabs li a.active {
+    background-color: #7eadcc;
+    font-family: $semibold-font-family;
+  }
+
+  .dialog-tabs {
+    border-bottom: 1px solid #7eadcc;
+
+    &._btnsBlockFixed {
+      border-bottom: 0;
+    }
   }
 }

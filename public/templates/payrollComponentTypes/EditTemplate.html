@@ -1,29 +1,53 @@
-<div class="form-holder">
+<div class="form-holder _earningsType">
     <div class="settings_modal">
-        <form method="post" action="" class="form" id="invoiceForm">
-            <fieldset>
-                <h3>Edit Payroll <%= type %> Type</h3>
-                <div class="clearfix"></div>
-                <div class="setting_element half-block left">
-                    <span>Name: </span>
-                    <input id="payrollComponentTypeName" maxlength="40" size="40" type="text"
-                           value="<%= model.name %>"></td>
+        <form method="post"
+              action=""
+              class="form"
+              id="invoiceForm">
+            <h3 class="_dialogTableTitle">Edit Payroll <%= type %> Type</h3>
+            <div class="setting_element half-block left">
+                <span>Name: </span>
+                <input id="payrollComponentTypeName"
+                       maxlength="40"
+                       size="40"
+                       type="text"
+                       value="<%= model.name %>">
+                <div class="_setInputTitle">
                     <span>Formula: </span>
                     <span id="formula"></span>
                 </div>
-                <div class="setting_element half-block right">
-                    <dt><span>Min Range: </span></dt>
-                    <dd><input id="minRange" maxlength="20" size="20" type="text" value="<%= model.minRange || 0 %>">
+            </div>
+            <div class="setting_element half-block right">
+                <dl>
+                    <dt>
+                        <span>Min Range: </span>
+                    </dt>
+                    <dd>
+                        <input id="minRange"
+                               maxlength="20"
+                               size="20"
+                               type="text"
+                               value="<%= model.minRange || 0 %>">
                     </dd>
-                    <dt><span>Max Range: </span></dt>
-                    <dd><input id="maxRange" maxlength="20" size="20" type="text" value="<%= model.maxRange || 0 %>">
+                    <dt>
+                        <span>Max Range: </span>
+                    </dt>
+                    <dd>
+                        <input id="maxRange"
+                               maxlength="20"
+                               size="20"
+                               type="text"
+                               value="<%= model.maxRange || 0 %>">
                     </dd>
-                </div>
-                <div class="clearfix"></div>
-                <span>Comment:</span><br>
-                <textarea name="comment" id="payrollComponentTypeComment" cols="3"
-                          rows="10"><%= model.description%></textarea>
-            </fieldset>
+                </dl>
+            </div>
+            <div class="clearfix"></div>
+            <span class="_setInputTitle">Comment:</span>
+            <textarea name="comment"
+                      id="payrollComponentTypeComment"
+                      cols="3"
+                      rows="10"><%= model.description%>
+            </textarea>
         </form>
     </div>
 </div>

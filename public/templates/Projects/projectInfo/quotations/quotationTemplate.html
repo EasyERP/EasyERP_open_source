@@ -1,14 +1,13 @@
 <div id="top-bar-quotations" class="projectInfoTopBar">
     <div id="createBtnHolder" class="btnsBlock">
-        <a href="javascript:;" class="icon-plus" title="Create" id="createQuotation"></a>
-        <a href="javascript:;" class="fa fa-times" title="Remove" id="removeQuotation"></a>
+        <a href="javascript:;" class="icon-plus btn blue slim" title="Create" id="createQuotation">New</a>
+        <a href="javascript:;" class="btn blue slim" title="Remove" id="removeQuotation">Delete</a>
     </div>
 </div>
-<div id="quotationTable">
-    <table class="list task-list tableFixed">
+<div id="quotationTable" class="_quotationTableWrap">
+    <table class="list stripedList">
         <colgroup>
-            <col width="30px">
-            <col width="30px">
+            <col width="43px">
             <col width="20%">
             <col width="20%">
             <col width="20%">
@@ -19,7 +18,6 @@
         <thead>
         <tr>
             <th class="centerCell"><input type="checkbox" id="checkAll_quotations" class="checkAll"/></th>
-            <th class="centerCell">N</th>
             <th class="oe_sortable" data-sort="name">Name<span class="arrow down"></span><span
                     class="arrow up"></span></th>
             <th class="oe_sortable" data-sort="supplier.name.first">Customer<span class="arrow down"></span><span

@@ -3,44 +3,123 @@
         <fieldset>
             <div class="inner">
                 <ul class="dialog-tabs">
-                    <li><a class="active" href="javascript:;">Main</a></li>
-                    <li><a href="javascript:;">Sales & Purchases</a></li>
-                 <!--   <li><a href="javascript:;">Assignees</a></li>-->
+                    <li>
+                        <a class="active" href="javascript:;">Main</a>
+                    </li>
+                    <li>
+                        <a href="javascript:;">Sales & Purchases</a>
+                    </li>
+                    <!--   <li><a href="javascript:;">Assignees</a></li>-->
                 </ul>
                 <div class="clearfix"></div>
                 <div class="dialog-tabs-items">
                     <div class="dialog-tabs-item active">
                         <div class="avatar">
-                            <div class="upload">
-                                Edit
-                                <input type="file" value="Edit" id="inputImg" accept="image/*">
+                            <div class="upload">Edit
+                                <input type="file"
+                                       value="Edit"
+                                       id="inputImg"
+                                       accept="image/*">
                             </div>
-                            <canvas id="avatar" width="140" height="140"></canvas>
+                            <canvas id="avatar"
+                                    width="140"
+                                    height="140">
+                            </canvas>
                         </div>
                         <div class="avatarInfoContainer">
                             <div class="half-block left">
                                 <dl class="person-info">
-                                    <dt><label for="companyName">Company</label></dt>
-                                    <dd><input type="text" class="title-input" name="name" placeholder="Name" id="companyName"
-                                               required maxlength="32"/></dd>
-                                    <dt><label for="website">Website </label></dt>
-                                    <dd><input type="text" name="website" id="website" placeholder="e.g. www.site.com"
-                                               maxlength="32"/></dd>
-                                    <dt><label for="email">Email </label></dt>
-                                    <dd><input type="text" name="email" id="email" placeholder="e.g. email@site.com"
-                                               maxlength="48"/></dd>
-                                    <dt><label for="LI">LinkedIn</label></dt>
-                                    <dd><input type="text" id="LI" placeholder="LinkedIn"
-                                               maxlength="256"/></dd>
-                                    <dt><label for="FB">Facebook</label></dt>
-                                    <dd><input type="text" id="FB" placeholder="Facebook"
-                                               maxlength="256"/></dd>
-                                    <dt><label for="phone">Phone </label></dt>
-                                    <dd><input type="text" name="phone" id="phone" placeholder="Phone number"
-                                               maxlength="20"/></dd>
-                                    <dt><label for="mobile">Mobile </label></dt>
-                                    <dd><input type="text" name="mobile" id="mobile" placeholder="Mobile number"
-                                               maxlength="20"/></dd>
+                                    <dt>
+                                        <label for="companyName">Company</label>
+                                    </dt>
+                                    <dd>
+                                        <div class="_inputIconWrap">
+                                            <input type="text"
+                                                   class="title-input"
+                                                   name="name"
+                                                   placeholder="Name"
+                                                   id="companyName"
+                                                   required
+                                                   maxlength="32"/>
+                                            <label></label>
+                                        </div>
+                                    </dd>
+                                    <dt>
+                                        <label for="website">Website </label>
+                                    </dt>
+                                    <dd>
+                                        <div class="_inputIconWrap">
+                                            <input type="text"
+                                                   name="website"
+                                                   id="website"
+                                                   placeholder="e.g. www.site.com"
+                                                   maxlength="32"/>
+                                            <label></label>
+                                        </div>
+                                    </dd>
+                                    <dt>
+                                        <label for="email">Email </label>
+                                    </dt>
+                                    <dd>
+                                        <div class="_inputIconWrap">
+                                            <input type="text"
+                                                   name="email"
+                                                   id="email"
+                                                   placeholder="e.g. email@site.com"
+                                                   maxlength="48"/>
+                                            <label></label>
+                                        </div>
+                                    </dd>
+                                    <dt>
+                                        <label for="LI">LinkedIn</label>
+                                    </dt>
+                                    <dd>
+                                        <div class="_inputIconWrap">
+                                            <input type="text"
+                                                   id="LI"
+                                                   placeholder="LinkedIn"
+                                                   maxlength="256"/>
+                                            <label></label>
+                                        </div>
+                                    </dd>
+                                    <dt>
+                                        <label for="FB">Facebook</label>
+                                    </dt>
+                                    <dd>
+                                        <div class="_inputIconWrap">
+                                            <input type="text"
+                                                   id="FB"
+                                                   placeholder="Facebook"
+                                                   maxlength="256"/>
+                                            <label></label>
+                                        </div>
+                                    </dd>
+                                    <dt>
+                                        <label for="phone">Phone Number</label>
+                                    </dt>
+                                    <dd>
+                                        <div class="_inputIconWrap">
+                                            <input type="text"
+                                                   name="phone"
+                                                   id="phone"
+                                                   placeholder="Phone number"
+                                                   maxlength="20"/>
+                                            <label></label>
+                                        </div>
+                                    </dd>
+                                    <dt>
+                                        <label for="mobile">Mobile Number</label>
+                                    </dt>
+                                    <dd>
+                                        <div class="_inputIconWrap">
+                                            <input type="text"
+                                                   name="mobile"
+                                                   id="mobile"
+                                                   placeholder="Mobile number"
+                                                   maxlength="20"/>
+                                            <label></label>
+                                        </div>
+                                    </dd>
                                     <!--<dt><label for="departmentDd">Assigned to</label></dt>
                                     <dd>
                                         <a id="departmentDd" class="current-selected" href="javascript:;"></a>
@@ -50,21 +129,66 @@
                             </div>
                             <div class="half-block left">
                                 <dl class="person-info">
-                                    <dt><label for="street">Street </label></dt>
-                                    <dd><input type="text" class="address" name="street" id="street"
-                                               placeholder="Street..." maxlength="60"/></dd>
-                                    <dt><label for="city">City </label></dt>
-                                    <dd><input type="text" class="address" name="city" id="city" placeholder="City"
-                                               maxlength="60"/></dd>
-                                    <dt><label for="state">State </label></dt>
-                                    <dd><input type="text" class="address" name="state" id="state" placeholder="State"
-                                               maxlength="32"/></dd>
-                                    <dt><label for="zip">Zip </label></dt>
-                                    <dd><input type="text" class="address" name="zip" id="zip" placeholder="Zip"
-                                               maxlength="32"/></dd>
-                                    <dt><label for="countryInputCreate">Country</label></dt>
+                                    <dt>
+                                        <label for="street">Street </label>
+                                    </dt>
                                     <dd>
-                                        <a class="address current-selected" name="country" data-id="address_country" id="countryInputCreate">Select</a>
+                                        <div class="_inputIconWrap">
+                                            <input type="text"
+                                                   class="address"
+                                                   name="street"
+                                                   id="street"
+                                                   placeholder="Street"
+                                                   maxlength="60"/>
+                                            <label></label>
+                                        </div>
+                                    </dd>
+                                    <dt>
+                                        <label for="city">City </label>
+                                    </dt>
+                                    <dd>
+                                        <div class="_inputIconWrap">
+                                            <input type="text"
+                                                   class="address"
+                                                   name="city"
+                                                   id="city"
+                                                   placeholder="City"
+                                                   maxlength="60"/>
+                                            <label></label>
+                                        </div>
+                                    </dd>
+                                    <dt>
+                                        <label for="state">State </label>
+                                    </dt>
+                                    <dd>
+                                        <div class="_inputIconWrap">
+                                            <input type="text"
+                                                   class="address"
+                                                   name="state" id="state"
+                                                   placeholder="State"
+                                                   maxlength="32"/>
+                                            <label></label>
+                                        </div>
+                                    </dd>
+                                    <dt>
+                                        <label for="zip">Zip Code</label>
+                                    </dt>
+                                    <dd>
+                                        <div class="_inputIconWrap">
+                                            <input type="text"
+                                                   class="address"
+                                                   name="zip" id="zip"
+                                                   placeholder="Zip Code"
+                                                   maxlength="32"/>
+                                            <label></label>
+                                        </div>
+                                    </dd>
+                                    <dt>
+                                        <label for="countryInputCreate">Country</label>
+                                    </dt>
+                                    <dd>
+                                        <a class="address current-selected" name="country" data-id="address_country"
+                                           id="countryInputCreate">Select</a>
                                     </dd>
                                 </dl>
                             </div>

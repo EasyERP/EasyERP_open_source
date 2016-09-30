@@ -1,0 +1,149 @@
+<%var currencySymb = model.currency && model.currency._id ? model.currency._id.symbol : '$'%>
+<div class="_invoiceTemplate">
+
+    <div class="ribbon">
+        <div class="ribbon-inner <%=(model.workflow) ? model.workflow.status === 'Done' ? 'ribbon-green' : model.workflow.status === 'In Progress' ? 'ribbon-blue' : 'ribbon-grey' : 'ribbon-grey'%>"><%=(model.workflow) ? model.workflow.name : ''%></div>
+    </div>
+    <div class="extractPdf">
+        <div class="_templateHeader">
+            <% if (App && App.organizationSettings) {%>
+            <div class="_headerLeftPart">
+                <div class="_orgName"><b><%=App.organizationSettings.name%></b></div>
+                <div class="_orgLabel"><%=App.organizationSettings.address.country%></div>
+            </div>
+            <% } %>
+            <div class="_headerRightPart">
+                <div class="_entityBlock">
+                    <div class="_entityTitle">ORDER</div>
+                    <div class="_entityNumber"><b><%=model.name || ''%></b></div>
+                </div>
+            </div>
+        </div>
+        <div class="_templateDateBlock">
+            <div class="_rightPart">
+                <table class="_templateDateTable tableFixed">
+                    <colgroup>
+                        <col width="60%">
+                        <col width="40%">
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="_dateLeftPart">
+                            <div class="_billingBlock">
+                                <div class="_billingTitle">Bill to</div>
+                                <div class="_billingCustomerName"><%=(model.supplier && model.supplier.name)?model.supplier.name.first + ' ' + model.supplier.name.last:""%></div>
+                            </div>
+                        </td>
+                        <td class="_dateRightPart">
+                            <table class="tableFixed">
+                                <colgroup>
+                                    <col width="100%">
+                                    <col width="100px">
+                                </colgroup>
+                                <tbody>
+                                <tr>
+                                    <td>Expected Date :</td>
+                                    <td><%=model.expectedDate%></td>
+                                </tr>
+                                <% if (model.orderDate) {%>
+                                <tr>
+                                    <td>Order Date :</td>
+                                    <td><%=model.orderDate%></td>
+                                </tr>
+                                <% } %>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <table class="_templateTable tableFixed">
+            <colgroup>
+                <col width="30px">
+                <% if (model.forSales) {%>
+                <col width="50%">
+                <col width="50%">
+                <col width="40px">
+                <col width="70px">
+                <col width="60px">
+                <col width="100px">
+                <% } else {%>
+                <col width="100%">
+                <col width="70px">
+                <col width="80px">
+                <col width="60px">
+                <col width="100px">
+                <% }%>
+
+            </colgroup>
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Product & Description</th>
+                <% if (model.forSales) {%>
+                <th>Description</th>
+                <% }%>
+                <th>Qty</th>
+                <th>Unit Price</th>
+                <th>Taxes</th>
+                <th>Amount</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% model.products.forEach(function(product, index){ %>
+            <tr>
+                <td><%=index + 1%></td>
+                <td><span><%=product.product ? product.product.name : '- - -' %></span>
+                    <div class="_orgLabel"><%=product.product && product.product.info ? product.product.info.description : '' %></div></td>
+                <% if (model.forSales) {%>
+                <td><div><%=product.jobs ? product.jobs.name : ' --- '%></div>
+                    <div class="_orgLabel"><%=product.jobs ? product.jobs.description : '' %></div></td>
+                <% } %>
+                <td><%=product.quantity || ''%></td>
+                <td><%=currencySymb%><%=product.unitPrice ? currencySplitter(product.unitPrice.toString()): ''%></td>
+                <td><%=currencySymb%><%=product.taxes ? currencySplitter(product.taxes.toString()): ''%></td>
+                <td><%=currencySymb%><%=product.subTotal ? currencySplitter(product.subTotal.toString()): ''%></td>
+            </tr>
+            <tr class="hairlineWrap">
+                <td colspan="8">
+                    <hr class="hairline"/>
+                </td>
+            </tr>
+            <% }); %>
+            </tbody>
+        </table>
+        <table class="_templateTableFooter tableFixed">
+            <colgroup>
+                <col width="100%">
+                <col width="100px">
+            </colgroup>
+            <tbody>
+            <tr>
+                <td>Sub Total</td>
+                <td><%=currencySymb%><%=(model.paymentInfo) ? model.paymentInfo.unTaxed  : '0.00'%></td>
+            </tr>
+            <% if ( model.paymentInfo.discount) {%>
+            <td> Discount(<%=(model.paymentInfo) ? model.paymentInfo.discount  : '0.00'%>%) </td>
+            <td><%=currencySymb%>(-)<%=(model.paymentInfo && model.paymentInfo.discount) ?  currencySplitter((((model.paymentInfo.discount/100) * model.paymentInfo.unTaxed).toFixed(2)).toString())  : '0.00'%></td>
+            </tr>
+            <% } %>
+            <tr class="_totalRow">
+                <td><b>Total</b></td>
+                <td><b><%=currencySymb%><%=(model.paymentInfo) ? currencySplitter(model.paymentInfo.total) : ''%></b></td>
+            </tr>
+            <% if (model && model.paymentInfo && model.paymentInfo.total !== model.paymentInfo.balance) {%>
+            </tr>
+            <% } %>
+
+            </tbody>
+        </table>
+    </div>
+
+    <!--<div class="notes">
+        <div class="head">Notes</div>
+        <div>Thanks for your business</div>
+    </div>-->
+
+</div>

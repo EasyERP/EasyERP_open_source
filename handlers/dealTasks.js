@@ -83,7 +83,7 @@ var Module = function (models, event) {
                     if (err){
                         return console.log(err);
                     }
-                    if (!settings.defaultEmail && settings.contact){
+                    if (settings && !settings.defaultEmail && settings.contact){
                         mailOptions.from = settings.contact.email;
                     }
                     mailer.sendEmailFromTask(mailOptions, cb);

@@ -14,12 +14,12 @@ module.exports = (function () {
         companyDate: Date,
         contact    : {type: ObjectId, ref: 'Customers', default: null},
         contactDate: Date,
-        dueDate   : {type: Date, default: Date.now},
+        dueDate    : {type: Date, default: Date.now},
         workflow   : {type: ObjectId, ref: 'workflows', default: null},
         type       : {type: String, default: ''},
         notes      : {type: Array, default: []},
         attachments: {type: Array, default: []},
-        editedBy: {
+        editedBy   : {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date, default: Date.now}
         },
@@ -27,11 +27,10 @@ module.exports = (function () {
         ID: Number
     }, {collection: 'DealTasks'});
 
-    mongoose.model('DealTasks', tasksSchema);
-
     if (!mongoose.Schemas) {
         mongoose.Schemas = {};
     }
 
+    mongoose.model('DealTasks', tasksSchema);
     mongoose.Schemas.DealTasks = tasksSchema;
 })();

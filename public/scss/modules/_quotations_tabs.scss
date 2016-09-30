@@ -1,0 +1,66 @@
+$quotationsTabBorderColor: #7f7f80;
+$quotationsTabLinkColor: #3e88b9;
+
+.quotationsTabs {
+  border-top: 1px solid $quotationsTabBorderColor;
+  padding-top: 10px;
+
+  a {
+    color: $quotationsTabLinkColor;
+  }
+
+  .half-block {
+    margin-right: 0;
+  }
+
+
+
+  .list2 {
+  //  td,
+  //  th {
+  //    text-align: right;
+  //  }
+
+    .statusInfo {
+      text-align: right;
+    }
+
+    thead {
+      tr {
+        border-top: none;
+      }
+
+      th {
+        font-size: 12px;
+      }
+    }
+
+    .productDescr {
+      border: none;
+      min-height: 10px;
+      font-size: 12px;
+      padding: 14px 5px 5px;
+      text-align: right;
+    }
+  }
+
+  .forNum {
+    position: relative;
+
+    &:before {
+      position: absolute;
+      top: 50%;
+      right: 0;
+      transform: translate(0, -50%);
+    }
+  }
+
+  .selectJobTd {
+    position: relative;
+    overflow: visible;
+
+    .newSelectList {
+      right: 0;
+    }
+  }
+}

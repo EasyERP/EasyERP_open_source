@@ -437,7 +437,7 @@ HTTP/1.1 200 OK
      *
      */
     router.patch('/:id', authStackMiddleware, accessStackMiddleware, handler.putchModel);
-    router.patch('/current/:id', authStackMiddleware, accessStackMiddleware, handler.putchModel);
+    router.patch('/current/:id', authStackMiddleware, /* accessStackMiddleware,*/ handler.putchModel); // commented for change Pass
 
 
     /**

@@ -5,11 +5,10 @@ module.exports = (function () {
         name: {type: String, default: ''}
     }, {collection: 'Degrees'});
 
-    mongoose.model('Degrees', degreesSchema);
-
     if (!mongoose.Schemas) {
         mongoose.Schemas = {};
     }
 
+    mongoose.model('Degrees', degreesSchema);
     mongoose.Schemas.Degree = degreesSchema;
 })();

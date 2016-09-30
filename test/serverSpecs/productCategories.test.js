@@ -3,7 +3,7 @@ var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var aggent;
 
-require('../../config/development');
+require('../../config/environment/development');
 
 describe('ProductCategories Specs', function () {
     'use strict';
@@ -13,12 +13,13 @@ describe('ProductCategories Specs', function () {
 
         before(function (done) {
             aggent = request.agent(url);
+
             aggent
                 .post('users/login')
                 .send({
-                    login: 'admin',
-                    pass : 'tm2016',
-                    dbId : 'production'
+                    login: 'superAdmin',
+                    pass : '111111',
+                    dbId : 'vasyadb'
                 })
                 .expect(200, done);
         });
@@ -31,11 +32,11 @@ describe('ProductCategories Specs', function () {
 
         it('should create productCategory', function (done) {
             var body = {
-                'fullName'    : 'All/Test',
-                'name'        : 'Test',
-                'nestingLevel': null,
-                'parent'      : '564591f9624e48551dfe3b23',
-                'sequence'    : 0
+                fullName    : 'All/Test',
+                name        : 'Test',
+                nestingLevel: null,
+                parent      : '564591f9624e48551dfe3b23',
+                sequence    : 0
             };
 
             aggent
@@ -61,7 +62,7 @@ describe('ProductCategories Specs', function () {
                     aggent
                         .get('category/' + parentId)
                         .expect(200)
-                        .end(function(err, res) {
+                        .end(function (err, res) {
                             var body;
 
                             if (err) {
@@ -90,11 +91,11 @@ describe('ProductCategories Specs', function () {
 
         it('should update productCategory', function (done) {
             var body = {
-                'fullName'    : 'All/Testing',
-                'name'        : 'Testing',
-                'nestingLevel': null,
-                'parent'      : '564591f9624e48551dfe3b23',
-                'sequence'    : 0
+                fullName    : 'All/Testing',
+                name        : 'Testing',
+                nestingLevel: null,
+                parent      : '564591f9624e48551dfe3b23',
+                sequence    : 0
             };
 
             aggent
@@ -103,58 +104,55 @@ describe('ProductCategories Specs', function () {
                 .expect(200, done);
         });
 
-        it('should update productCategory with checking to change of parent', function (done) {
-            var body = {
-                'fullName'    : 'All/Testing',
-                'name'        : 'Testing',
-                'nestingLevel': null,
-                'parent'      : '564591f9624e48551dfe3b23',
-                'sequence'    : 0
-            };
+        /*it('should update productCategory with checking to change of parent', function (done) {
+         var body = {
+         fullName    : 'All/Testing',
+         name        : 'Testing',
+         nestingLevel: null,
+         parent      : '564591f9624e48551dfe3b23',
+         sequence    : 0
+         };
 
-            aggent.get('category/' + id).expect(200).end(function(err, res) {
-                var body;
-                var nameFirst;
+         aggent.get('category/' + id).expect(200).end(function (err, res) {
+         var data;
+         var nameFirst;
 
-                if (err) {
-                    return done(err);
-                }
+         if (err) {
+         return done(err);
+         }
 
-                body = res.body;
-                nameFirst = body.name;
-                //console.log(res.body);
-                aggent
-                    .put('category/' + id)
-                    .send(body)
-                    .expect(200)
-                    .end(function(end, res){
-                        var body;
-                        var nameSecond;
+         data = res.body;
+         nameFirst = data.name;
 
-                        if (err) {
-                            return done(err);
-                        }
+         aggent
+         .put('category/' + id)
+         .send(body)
+         .expect(200)
+         .end(function (error, resp) {
+         var body;
+         var nameSecond;
 
-                        body = res.body;
-                        //console.log(body);
-                        nameSecond = body.name;
+         if (error) {
+         return done(error);
+         }
 
-                        console.log(nameFirst);
-                        console.log(nameSecond);
+         body = resp.body;
 
-                        expect(nameFirst)
-                            .to.eql(nameSecond);
+         nameSecond = body.name;
 
-                        done();
-                    });
-            });
-            /*
-            aggent
-                .put('category/' + id)
-                .send(body)
-                .expect(200, done);
-                */
-        });
+         expect(nameFirst)
+         .to.eql(nameSecond);
+
+         done();
+         });
+         });
+         /!*
+         aggent
+         .put('category/' + id)
+         .send(body)
+         .expect(200, done);
+         *!/
+         });*/
 
         it('should get productCategories Expenses', function (done) {
 
@@ -230,7 +228,7 @@ describe('ProductCategories Specs', function () {
             aggent
                 .delete('category/' + id)
                 .expect(200)
-                .end(function(err, res) {
+                .end(function (err, res) {
                     var id;
                     var parentId;
                     var body;
@@ -243,11 +241,10 @@ describe('ProductCategories Specs', function () {
                     id = body._id;
                     parentId = body.parent;
 
-
                     aggent
                         .get('category/' + parentId)
                         .expect(200)
-                        .end(function(err, res) {
+                        .end(function (err, res) {
                             var body;
 
                             if (err) {
@@ -261,8 +258,8 @@ describe('ProductCategories Specs', function () {
                                 .to.not.include(id);
 
                             done();
-                        })
-                })
+                        });
+                });
         });
 
         it('should fail delete productCategory', function (done) {
@@ -274,6 +271,7 @@ describe('ProductCategories Specs', function () {
     });
 
     describe('productCategories with user without a license', function () { // doesn't work
+        this.timeout(10000);
 
         before(function (done) {
             aggent = request.agent(url);
@@ -283,7 +281,7 @@ describe('ProductCategories Specs', function () {
                 .send({
                     login: 'ArturMyhalko',
                     pass : 'thinkmobiles2015',
-                    dbId : 'production'
+                    dbId : 'vasyadb'
                 })
                 .expect(200, done);
         });
@@ -297,11 +295,11 @@ describe('ProductCategories Specs', function () {
         it('should fail create productCategory', function (done) {
 
             var body = {
-                'fullName'    : 'All/Test',
-                'name'        : 'Test',
-                'nestingLevel': null,
-                'parent'      : null,
-                'sequence'    : 0
+                fullName    : 'All/Test',
+                name        : 'Test',
+                parent      : '57e3c880d1caf534320f415b',
+                nestingLevel: 1,
+                sequence    : 0
             };
 
             aggent

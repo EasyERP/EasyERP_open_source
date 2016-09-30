@@ -5,7 +5,6 @@ var moment = require('../public/js/libs/moment/moment');
 
 var Employee = function (event, models) {
     'use strict';
-
     var EmployeeSchema = mongoose.Schemas.Employee;
     var ProjectSchema = mongoose.Schemas.Project;
     var DepartmentSchema = mongoose.Schemas.Department;
@@ -14,6 +13,7 @@ var Employee = function (event, models) {
     var SourceSchema = mongoose.Schemas.source;
     var birthdaysSchema = mongoose.Schemas.birthday;
     var TransferSchema = mongoose.Schemas.Transfer;
+    var SettingsService = require('../services/settings')(models);
 
     var _ = require('underscore');
     var fs = require('fs');
@@ -1105,32 +1105,32 @@ var Employee = function (event, models) {
         employee.createdBy.date = new Date();
         employee.editedBy.date = new Date();
 
-        event.emit('updateSequence', Model, 'sequence', 0, 0, employee.workflow, employee.workflow, true, false, function (sequence) {
-            var Department = models.get(dbName, 'Department', DepartmentSchema);
+        if (!employee.isEmployee) {
+            event.emit('updateSequence', Model, 'sequence', 0, 0, employee.workflow, employee.workflow, true, false, function (sequence) {
+                employee.sequence = sequence;
+                employee.save(function (error, result) {
+                    if (error) {
+                        return next(error);
+                    }
 
-            employee.sequence = sequence;
+                    if (body.relatedUser) {
+                        UsersModel.findByIdAndUpdate(body.relatedUser, {$set: {relatedEmployee: result._id}}, function (error) {
+                            if (error) {
+                                return next(error);
+                            }
+                        });
+                    }
 
-            employee.save(function (error, result) {
-                if (error) {
-                    return next(error);
-                }
+                    res.send(201, {success: 'A new Employees create success', result: result, id: result._id});
 
-                if (body.relatedUser) {
-                    UsersModel.findByIdAndUpdate(body.relatedUser, {$set: {relatedEmployee: result._id}}, function (error) {
-                        if (error) {
-                            return next(error);
-                        }
-                    });
-                }
+                    if (result.isEmployee) {
+                        event.emit('recalculate', req, {}, next);
+                    }
 
-                res.send(201, {success: 'A new Employees create success', result: result, id: result._id});
-
-                if (result.isEmployee) {
-                    event.emit('recalculate', req, {}, next);
-                }
-                event.emit('recollectVacationDash', {dbName: dbName});
+                    event.emit('recollectVacationDash', {dbName: dbName});
+                });
             });
-        });
+        }
     };
 
     this.createTransfer = function (req, res, next) {
@@ -2321,6 +2321,36 @@ var Employee = function (event, models) {
 
                 res.status(200).send({success: 'Customers updated success', data: response});
             });
+        });
+    };
+
+    this.setSettings = function (req, res, next) {
+        var dbName = req.session.lastDb;
+        var body = req.body;
+
+        body.dbName = dbName;
+
+        SettingsService.setSettings(body, function (err, response) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(response);
+        });
+    };
+
+    this.getSettings = function (req, res, next) {
+        var dbName = req.session.lastDb;
+        var body = req.body;
+
+        body.dbName = dbName;
+
+        SettingsService.getSettings(body, function (err, response) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(response);
         });
     };
 

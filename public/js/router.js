@@ -48,7 +48,7 @@ define([
             var contentTypes = {QUOTATIONS: 'Quotations', ORDERS: 'Orders', INVOICES: 'Invoices'};
 
             if (contentTypes[currentContentType]) {
-                $('.list2 tbody').find('[data-id="false"]').remove();
+                $('.list tbody').find('[data-id="false"]').remove();
             }
 
             $('.loginPanel').removeClass('open');
@@ -94,6 +94,7 @@ define([
             'easyErp/invoiceCharts(/filter=:filter)'                                                        : 'invoiceCharts',
             'easyErp/HrDashboard'                                                                           : 'hrDashboard',
             'easyErp/projectDashboard'                                                                      : 'goToProjectDashboard',
+            'easyErp/customDashboardCharts/:modelId'                                                        : 'goToCustomDashboard',
             // 'easyErp/projectsDashboard'                                                                     : 'goToProjectsDashboard',
             // "easyErp/jobsDashboard(/filter=:filter)"                                                        : "goToJobsDashboard",
             'easyErp/:contentType'                                                                          : 'getList',
@@ -127,13 +128,13 @@ define([
             }
         },
 
-        getOrgSettings : function () {
+        getOrgSettings: function () {
             dataService.getData('/organizationSettings', null, function (response) {
                 if (response && !response.error) {
                     App.organizationSettings = response.data;
-                    if (response.data && response.data.startDate){ //toDo enable StartDate of program
+                    if (response.data && response.data.startDate) { //toDo enable StartDate of program
                         $.datepicker.setDefaults({
-                            firstDay : 1,
+                            firstDay: 1,
                             minDate : new Date(response.data.startDate)
                         });
                     }
@@ -273,6 +274,81 @@ define([
                         self.changeView(contentview);
                         self.changeTopBarView(topbarView);
                     }
+                });
+            }
+        },
+
+        goToCustomDashboard: function (modelId) {
+            var self = this;
+            var currentUser = App.currentUser || {};
+
+            tracker.track({
+                date     : new Date(),
+                eventType: 'userFlow',
+                name     : 'CustomDashboard',
+                message  : 'CustomDashboard',
+                email    : currentUser.email,
+                login    : currentUser.login
+            });
+
+            if (!this.isAuth) {
+                this.checkLogin(function (success) {
+                    if (success) {
+                        self.isAuth = true;
+                        renderDashboard(modelId, self);
+                    } else {
+                        self.redirectTo();
+                    }
+                });
+            } else {
+                renderDashboard(modelId, self);
+            }
+
+            function renderDashboard(modelId, context) {
+                var self = context;
+                var startTime = new Date();
+                var topBarViewUrl = 'views/customDashboard/customDashboard/TopBarView';
+                var contentViewUrl = 'views/customDashboard/customDashboard/ContentView';
+                var contentModelUrl = 'models/CustomDashboardModel';
+
+                if (context.mainView === null) {
+                    context.main("customDashboardCharts");
+                } else {
+                    context.mainView.updateMenu("customDashboardCharts");
+                }
+
+                require([contentModelUrl, contentViewUrl, topBarViewUrl], function (contentModel, contentView, topBarView) {
+                    var getModel = new contentModel();
+                    var contentview;
+                    var topbarView;
+
+                    getModel.urlRoot = getModel.url() + modelId;
+                    //custom.setCurrentVT('list');
+
+                    getModel.fetch({
+                        success: function (model) {
+
+                            topbarView = new topBarView({
+                                name: model.attributes[0].name,
+                                description: model.attributes[0].description,
+                                actionType: 'Content'
+                            });
+
+                            contentview = new contentView({
+                                model: model,
+                                startTime : startTime
+                            });
+
+                            eventsBinder.subscribeTopBarEvents(topbarView, contentview);
+                            context.changeView(contentview);
+                            context.changeTopBarView(topbarView);
+                        },
+                        error  : function (model, response) {
+                            if (response.status === 401) {
+                                Backbone.history.navigate('#login', {trigger: true});
+                            }
+                        }
+                    });
                 });
             }
         },
@@ -457,7 +533,6 @@ define([
                     var topbarView = new TopBarView({
                         startTime: startTime,
                         filter   : filter
-                        // collection: collection
                     });
                     var contentview;
 
@@ -466,7 +541,6 @@ define([
                     contentview = new ContentView({
                         startTime: startTime,
                         filter   : filter
-                        // collection: collection
                     });
 
                 });
@@ -503,12 +577,12 @@ define([
 
             function renderRevenue() {
                 var startTime = new Date();
-                var contentViewUrl = "views/Hours/index";
+                var contentViewUrl = 'views/Hours/index';
 
                 if (self.mainView === null) {
-                    self.main("Efficiency");
+                    self.main('Efficiency');
                 } else {
-                    self.mainView.updateMenu("Efficiency");
+                    self.mainView.updateMenu('Efficiency');
                 }
 
                 require([contentViewUrl], function (contentView) {
@@ -547,19 +621,19 @@ define([
             });
 
             function renderAttendance(context) {
-                var contentViewUrl = "views/Attendance/index";
+                var contentViewUrl = 'views/Attendance/index';
                 var topBarViewUrl = 'views/Attendance/TopBarView';
                 var self = context;
 
                 if (context.mainView === null) {
-                    context.main("Attendance");
+                    context.main('Attendance');
                 } else {
-                    context.mainView.updateMenu("Attendance");
+                    context.mainView.updateMenu('Attendance');
                 }
 
                 require([contentViewUrl, topBarViewUrl], function (contentView, topBarView) {
                     var contentview = new contentView();
-                    var topBar = new topBarView({actionType: "Content"});
+                    var topBar = new topBarView({actionType: 'Content'});
                     self.changeView(contentview);
                     self.changeTopBarView(topBar);
                 });
@@ -1496,6 +1570,7 @@ define([
                     });
 
                     collection.bind('reset', _.bind(createViews, self));
+
                     custom.setCurrentVT('list');
 
                     function createViews() {
@@ -1503,11 +1578,12 @@ define([
                         var contentview;
 
                         collection.unbind('reset');
-
+                        
                         topbarView = new topBarView({
                             actionType: 'Content',
                             collection: collection
                         });
+                        
                         contentview = new contentView({
                             collection: collection,
                             startTime : startTime,

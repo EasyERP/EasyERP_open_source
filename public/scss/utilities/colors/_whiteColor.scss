@@ -1,0 +1,200 @@
+$transparent: transparent;
+
+$black: #000;
+$white: #fff;
+
+$grey-1: #E7E7E7;
+$grey-2: #4d5a75;
+$grey-3: #444;
+$grey-4: #EDEDED;
+$grey-5: #d7d7d7;
+$grey-6: #bdd0fb;
+$grey-7: #2c3e50;
+$grey-8: #364150;
+$grey-9: #2C3542;
+$grey-10: #b4bcc8;
+$grey-11: #3d4957;
+$grey-12: #666666;
+$grey-13: #606C7D;
+
+$green-1: #008000;
+
+$blue-1: #3e88b9;
+$blue-2: #7eadcc;
+
+$red-1: #E55253;
+
+$yellow-1: #FFE332;
+
+$tilte-color: $blue-1;
+//for hover
+$fontColor-2: $black;
+//$mainText-color: #fff;
+$mainText-color: $fontColor-2;
+$mainText-color-selected: $tilte-color;
+$overiewText-color: $fontColor-2;
+$mainBlack-color: #DBDBDB;
+
+/*== Top Bar =======================*/
+$top-font-color: $grey-12;
+
+/*== Lights =========================*/
+$green-lights-color: $green-1;
+$yellow-lights-color: #FFA500;
+
+
+
+
+
+/*== login panel ====================*/
+$login-text: $grey-10;
+$login-hover-text: $white;
+
+/*==Sub MENU, Top-bar =========================*/
+$bg-submenu: $grey-8;
+$submenu-text-color: $grey-10;
+$submenu-active-text-color: $white;
+$submenu-arrow: $grey-13;
+$submenu-opened: $blue-2;
+$normal-submenu-text: $grey-2;
+$current-submenu-text: $tilte-color;
+$non-active-submenu-text: desaturate($normal-submenu-text, 19%);
+$creatBtn-color: $mainText-color;
+$submenu-selected: lighten($bg-submenu, 5%);
+$submenu-hover: $grey-9;
+$submenu-border: $grey-11;
+
+/*==Main menu==========================*/
+$bg-main: $white;
+$bg-main-menu: $grey-2;
+$main-menu-text: $white;
+$bg-main-menu-selected: $tilte-color;
+$span-color: $bg-main-menu-selected;
+$grey: $normal-submenu-text;
+
+/*== Borders=========================*/
+$border-color-main: #7f7f80;
+$border-color: $border-color-main;
+$border-color-selected: $bg-main-menu-selected;
+
+/*== Filters ======================*/
+
+$selected-filters-color: $tilte-color;
+$filter-icon-color: $normal-submenu-text;
+$bg-drop-down-color: $bg-main;
+$bg-hover-drop-down-color: lighten($bg-main, 5%);
+$bg-hover-drop-down-color-active: lighten($bg-main, 15%);
+$filter-border-color: $border-color-main;
+$filter-text-color: $mainText-color;
+$filter-text-color-hover: $grey;
+
+/*== Customer ======================*/
+
+$link-color: desaturate($bg-main-menu-selected, 15%);
+
+/*==LIST ============================*/
+
+$defaultBgColorOdd-color: $grey-4;
+$list-color-text: $submenu-text-color;
+$defaultBgHover-color: darken($bg-main, 15%);
+$list-border-color: $grey-5; //$border-color-main
+$list-caption-color: $mainText-color;
+$list-overtime-bg: $yellow-1;
+$forCaption-color: $blue-1;
+$forCaption-text-color: $white;
+
+/*==Form Colum=================================*/
+
+$formColum-main-text-color: $mainText-color;
+$formColum-main-subText-color: $submenu-text-color;
+$formColum-customer-info: $bg-main-menu-selected;
+$input-text-color: #A9A9A9;
+
+/*== TABS ======================================*/
+$whiteText: #fff;
+$bg-butt-color: $bg-main;
+$input-tab-text-color: $input-text-color;
+
+/*== Kanab Opportunities=========================*/
+$kanab-text-color: $input-text-color;
+$name-color: $grey-7;
+$fold-color: $grey-7;
+
+/*== ProjectPM====================================*/
+$th-text-color: $grey;
+
+/*== Vocations ===================================*/
+$name-text-color: $grey;
+
+/*=New User=======================================*/
+$data-font-color: $grey;
+$selected-data-color: lighten($bg-main, 15%);
+
+/*==DashBoard Vocation============================*/
+$captionsColor: $grey;
+$dashBoard-bg-group-color: lighten($bg-main, 1%);
+$dashBoard-bg-color: $defaultBgColorOdd-color;
+$dashBoard-bg-menu-color: $bg-main-menu;
+$dashBoard-bg-menu-hoverColor: $defaultBgHover-color;
+
+$vacantion-tabs-color: $whiteText;
+$vacantion-header-holder: $mainText-color;
+$free: $red-1;//#A22A2D;
+$oneWorkDay: #CC5457;
+$littleWork: #F9A203;
+$normalWork: #3E7F42;
+$overWork: darken($normalWork, 10%);
+$vacation: #3C86E0;
+$inactivate: $white;
+
+/*== Capacity =====================================*/
+
+$capacityColorVacation: $red-1;
+$capacityColorPerson: #F9A203;
+$capacityColorSick: #3C86E0;
+$capacityColorEducation: #3E7F42;
+
+/*== forInfo ======================================*/
+$forInfo-caption-color: #1EBBEA;
+$forInfo-caption-color2: $tilte-color;
+
+/*== Revenu ======================================*/
+//$revenue-by-sales: #ed9409;
+$revenue-by-sales: #C46B00;
+$revenueByDepartment: $tilte-color;
+//$unpaid-wtrack: #fd0001;
+$unpaid-wtrack: $red-1;
+
+/*== Notifikation ===============================*/
+
+$notifikation-error-color: #FE7E86;
+$notifikation-notify-color: #00DB30;
+
+/*== DashBoard =============================*/
+$dashboard-title: $grey-2;
+
+/*== Thumbnail ==============================*/
+$thumbnail-bg: $transparent;
+$status-color: $black;
+
+/*== Dialog =============================*/
+$dialog-bg: $white;
+$dialog-overlay-bg: $grey-3;
+
+/*== Birthday ===========================*/
+$birth-bg: $grey-2;
+$birth-text: $white;
+$birth-title: $white;
+
+/*== History ============================*/
+$history_border_color: $border-color-main;
+$history_name_colro: $blue-1;
+
+/*== Invoice Charts SVG*/
+$main-color-svg: $black;
+$text-color-svg: $black;
+
+/*== Pagination ======================*/
+$pagination-bg: $white;
+$pagination-border: $border-color-main;
+$pagination-border-disabled: $grey-5;

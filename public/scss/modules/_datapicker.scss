@@ -1,3 +1,90 @@
+/*added 22.09 from _main.less*/
+
+#ui-datepicker-div {
+  border-radius: 0 !important;
+  margin-top: 2px;
+  display: none;
+}
+
+
+.ui-datepicker {
+  padding: .2em .2em 0;
+  //background-color: $bg-main;
+  border: 1px solid #eee;
+  box-shadow: 5px 5px rgba(102, 102, 102, 0.1);
+
+  .ui-datepicker-header {
+    .ui-datepicker-prev,
+    .ui-datepicker-next {
+      height: 2em;
+      line-height: 2em;
+      text-align: center;
+      cursor: pointer;
+      position: absolute;
+      top: 2px;
+      width: 2em;
+      font-family: $icon-font;
+      font-size: 14px;
+
+      &:hover {
+        text-decoration: none;
+      }
+
+      span {
+        display: block;
+        width: 7px;
+        height: 8px;
+        margin-top: -4px;
+        margin-left: -3px;
+        text-indent: -99999px;
+        overflow: hidden;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        right: auto;
+        bottom: auto;
+      }
+    }
+
+    .ui-datepicker-prev {
+      left: 2px;
+
+      &:before {
+        content: '\f104';
+      }
+    }
+
+    .ui-datepicker-next {
+      right: 2px;
+
+      &:before {
+        content: '\f105';
+      }
+
+    }
+
+    .ui-datepicker-title {
+      margin: 0 2.3em;
+      line-height: 1.8em;
+      text-align: center;
+
+      select {
+        width: 50%;
+        border: 0;
+        border-bottom: 1px solid #4d5a75;
+
+        option {
+          background-color: $selected-data-color;
+
+          &:hover {
+            background-color: $selected-data-color;
+          }
+        }
+      }
+    }
+  }
+}
+
 .wickedpicker {
   display: none;
 
@@ -63,7 +150,7 @@
   border: 1px solid transparent;
   color: #34495e;
   font-size: 18px;
-  font-family: 'erp-icons';
+  font-family: $icon-font;
   cursor: pointer;
   &:hover {
     text-decoration: none;
@@ -118,4 +205,29 @@
   cursor: pointer; }
 .clearable-picker > [data-clear-picker]:hover {
   color: #a1a1a1;
+}
+
+.ui-datepicker-buttonpane {
+  text-align: center;
+
+  .ui-priority-secondary,
+  .ui-priority-primary {
+    height: 24px;
+    line-height: 22px;
+    margin: 15px 0 10px;
+    display: inline-block;
+    padding: 0 12px;
+    text-align: center;
+    cursor: pointer;
+    white-space: nowrap;
+    font-size: 13px;
+    user-select: none;
+    border: 1px solid #c8c8d3;
+    outline: 0;
+    border-radius: 3px;
+    min-width: 60px;
+  }
+  .ui-priority-primary {
+    margin-left: 10px;
+  }
 }

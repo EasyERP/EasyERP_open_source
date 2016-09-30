@@ -1103,7 +1103,7 @@ var Module = function (models, event) {
             optionsObject.$and = [];
 
             optionsObject.$and.push({_id: {$in: _.pluck(ids, '_id')}});
-            optionsObject.$and.push({_type: {$in: ['InvoicePayment', 'ProformaPayment']}});
+            // optionsObject.$and.push({_type: {$in: ['InvoicePayment', 'ProformaPayment']}});
 
             Payment.aggregate([{
                 $match: optionsObject
@@ -1348,7 +1348,7 @@ var Module = function (models, event) {
             Payment = models.get(req.session.lastDb, 'InvoicePayment', PaymentSchema);
             Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
             removable = false;
-        } else if (mid === 95) {
+        } else if (mid === 95 || mid === 99) {
             PaymentSchema = mongoose.Schemas.ProformaPayment;
             Payment = models.get(req.session.lastDb, 'ProformaPayment', PaymentSchema);
             Invoice = models.get(req.session.lastDb, 'Proforma', ProformaSchema);
@@ -1360,7 +1360,7 @@ var Module = function (models, event) {
             PaymentSchema = mongoose.Schemas.DividendInvoicePayment;
             Payment = models.get(req.session.lastDb, 'dividendInvoicePayment', PaymentSchema);
             Invoice = models.get(req.session.lastDb, 'dividendInvoice', DividendInvoiceSchema);
-        } else if (109) {
+        } else if (mid === 109) {
             PaymentSchema = mongoose.Schemas.purchasePayments;
             Payment = models.get(req.session.lastDb, 'purchasePayments', PaymentSchema);
             Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);

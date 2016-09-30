@@ -1,0 +1,337 @@
+._invoiceTemplate.noMargin {
+  margin: 0;
+}
+
+._invoiceTemplate {
+  max-width: 820px;
+  background-color: #fff;
+  padding: 0.700000in 0.400000in 0.700000in 0.40000in;
+  margin: 40px auto;
+  box-shadow: 0 0 6px #ccc;
+  position: relative;
+  font-size: 9pt;
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+
+  td, th {
+    padding: 8px 10px;
+  }
+
+  .ribbon {
+    position: absolute !important;
+    top: -5px;
+    left: -5px;
+    overflow: hidden;
+    width: 96px;
+    height: 94px;
+    border-bottom-right-radius: 92px;
+    .ribbon-inner {
+      text-align: center;
+      color: #FFF;
+      top: 24px;
+      left: -31px;
+      width: 135px;
+      padding: 3px;
+      position: relative;
+      -webkit-transform: rotate(-45deg);
+      -ms-transform: rotate(-45deg);
+      transform: rotate(-45deg);
+      line-height: 10px;
+      height: 18px;
+      &:before, &:after {
+        content: "";
+        border-top: 5px solid transparent;
+        border-left: 5px solid;
+        border-left-color: inherit;
+        border-right: 5px solid transparent;
+        border-bottom: 5px solid;
+        border-bottom-color: inherit;
+        position: absolute;
+        top: 12px;
+        -webkit-transform: rotate(-45deg);
+        -ms-transform: rotate(-45deg);
+        transform: rotate(-45deg);
+      }
+      &:before {
+        left: -1px;
+        border-left: 3px solid transparent;
+        margin-left: 5px;
+      }
+      &:after {
+        right: 2px;
+        top: 13px;
+        margin-right: 6px;
+        border-bottom: 3px solid transparent;
+      }
+    }
+  }
+
+  ._templateHeader {
+    &:after {
+      content: '';
+      display: table;
+      clear: both;
+    }
+  }
+  ._headerLeftPart {
+    float: left;
+    line-height: 20px;
+  }
+  ._headerRightPart {
+    float: right;
+    text-align: right;
+  }
+  ._entityTitle {
+    font-size: 28pt;
+  }
+  ._entityNumber {
+    color: #817d7d;
+    font-weight: bold;
+    line-height: 3;
+    font-size: 13px;
+  }
+  ._balanceBlock {
+    ._balanceTitle {
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 2;
+    }
+    ._balanceValue {
+      font-weight: 800;
+    }
+  }
+  ._orgName {
+    font-weight: 800;
+    font-size: 12px;
+  }
+  ._orgLabel {
+    font-size: 12px;
+    color: #817d7d;
+    white-space: normal;
+  }
+  .notes {
+    margin-top: 20px;
+    div {
+      font-size: 10px;
+      margin: 10px 0px 5px 0;
+    }
+    .head {
+      font-size: 13px;
+      color: #817d7d;
+      margin-top: 0;
+    }
+  }
+}
+
+//td, th {
+//  padding: 8px 10px;
+//}
+
+._templateTable {
+  margin-top: 20px;
+  table-layout: fixed;
+  font-size: 12px;
+  thead {
+    background-color: #3c3d3a;
+    color: #fff;
+    text-align: left;
+  }
+  tbody {
+    font-size: 10px;
+  }
+  td:nth-child(n+4), th:nth-child(n+4) {
+    text-align: right;
+  }
+}
+
+._templateDateBlock {
+  margin: 20px 0 10px 0;
+  ._billingBlock {
+    font-size: 12px;
+
+    ._billingTitle {
+      color: #817d7d;
+    }
+    ._billingCustomerName {
+      color: #428bca;
+      padding-top: 10px;
+    }
+  }
+  ._leftPart,
+  ._rightPart {
+    white-space: nowrap;
+  }
+}
+
+._templateTableFooter {
+  width: 50%;
+  float: right;
+  text-align: right;
+  tr {
+    height: 40px;
+  }
+  ._totalRow {
+    font-weight: 900;
+  }
+  ._balanceRow {
+    font-weight: 900;
+    background-color: #f5f4f3;
+  }
+}
+
+td._dateRightPart,
+td._dateLeftPart {
+  padding: 0;
+}
+
+._dateRightPart {
+  td {
+
+  }
+}
+
+._templateDateTable {
+  ._dateLeftPart {
+    text-align: left;
+    vertical-align: bottom;
+  }
+  tr {
+    td {
+      padding: 5px 0;
+      text-align: right;
+      &:first-child {
+        color: #817d7d;
+      }
+    }
+  }
+}
+
+.hairline {
+  margin: 0 !important;
+  height: 1px !important;
+  border-top: none !important;
+  border-bottom: 1px solid #585858 !important;
+  transform: scaleY(0.33) !important;
+}
+
+.ribbon {
+  .ribbon-blue {
+    background-color: #2c96dd;
+    border-color: #1e7ab8
+  }
+  .ribbon-green {
+    background: #1aaf5d;
+    border-color: #138345
+  }
+  .ribbon-grey {
+    background: #94a5a6;
+    border-color: #788e8f
+  }
+}
+
+//.ribbon .ribbon-success {
+//  background: #1fcd6d;
+//  border-color: #18a155
+//}
+//.ribbon .ribbon-overdue {
+//  background: #f59d00;
+//  border-color: #c27c00
+//}
+//.ribbon .ribbon-error {
+//  background: #c46766;
+//  border-color: #953b39
+//}
+//.ribbon .ribbon-void {
+//  background: #474747;
+//  border-color: #1a1a1a
+//}
+
+tr.hairlineWrap {
+  td {
+    padding: 0 !important;
+  }
+}
+
+@media print {
+  ._invoiceTemplate {
+    margin: 0 !important;
+    box-shadow: none !important;
+    padding: 0.580000in 0.350000in 0.580000in 0.50000in;
+  }
+  .ribbon {
+    display: none !important;
+  }
+  ._templateTable {
+    td {
+      border-bottom: none !important;
+    }
+    tbody {
+      font-size: 10px !important;
+      tr {
+        page-break-inside: avoid !important;
+        page-break-after: auto !important;
+      }
+    }
+  }
+  ._templateDateTable {
+    td {
+      font-size: 7pt !important;
+    }
+  }
+  ._templateTable {
+    tr {
+      th {
+        font-size: 7pt !important;
+      }
+      td {
+        font-size: 6pt !important;
+        div {
+          font-size: 6pt !important;
+        }
+      }
+    }
+  }
+  ._templateTableFooter {
+    td {
+      font-size: 7pt !important;
+    }
+    tr {
+      height: 30px !important;
+    }
+  }
+  ._templateDateBlock {
+    font-size: 10px !important;
+  }
+  ._orgName {
+    font-size: 8pt !important;
+  }
+  ._orgLabel {
+    font-size: 7pt !important;
+    line-height: 1 !important;
+  }
+  ._entityTitle {
+    font-size: 21pt !important;
+  }
+  ._entityNumber {
+    font-size: 8pt !important;
+    line-height: 1 !important;
+  }
+  ._balanceTitle {
+    font-size: 6pt !important;
+    padding-top: 16px !important;
+  }
+  ._balanceValue {
+    font-size: 10pt !important;
+  }
+  ._billingTitle {
+    font-size: 8pt !important;
+  }
+  ._billingCustomerName {
+    color: #000 !important;
+    font-size: 7pt !important;
+    padding-top: 3pt !important;
+  }
+}

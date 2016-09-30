@@ -1,0 +1,266 @@
+.oe_sortable,
+.oe_sortable_sub {
+  position: relative;
+  height: 30px;
+  padding-right: 20px;
+  text-align: right;
+  cursor: pointer;
+  &:before {
+    position: absolute;
+    right: 5px;
+    top: 9px;
+    font-family: $icon-font;
+    content: '\f0dc';
+  }
+  &.sortUp,
+  &.sortDn {
+    &:before {
+      display: none;
+    }
+  }
+  &.sortUp {
+    .up {
+      &:before {
+        position: absolute;
+        right: 5px;
+        top: 8px;
+        font-family: $icon-font;
+        content: '\f0de';
+      }
+    }
+  }
+  &.sortDn {
+    .down {
+      &:before {
+        position: absolute;
+        right: 5px;
+        bottom: 8px;
+        font-family: $icon-font;
+        content: '\f0dd';
+      }
+    }
+  }
+}
+
+.stripedList {
+  table-layout: fixed;
+  background-color: #fff;
+  color: #293544;
+
+  tr {
+    height: 40px;
+  }
+  td,th {
+    padding: 6px 12px;
+    text-align: left;
+    word-break: break-word;
+  }
+  th {
+    border: 1px solid #bdcfeb;
+    font-family: $semibold-font-family;
+  }
+  td {
+    border: 1px solid #eaeaea;
+    line-height: 1.5;
+  }
+  thead {
+    tr {
+
+    }
+    th {
+      background-color: #c6d8f5;
+    }
+  }
+  tbody {
+    tr {
+      &:hover {
+        //background-color: #c6d8f5;
+        border: 1px solid #bdcfeb;
+        transition: all .2s ease;
+
+        th[rowspan], td[rowspan] {
+          background-color: transparent;
+        }
+
+        th, td  {
+          background-color: #c6d8f5;
+          border: 1px solid #bdcfeb;
+          transition: all .2s ease;
+        }
+        &:nth-child(odd) {
+          //background-color: #c6d8f5;
+          th, td {
+            background-color: #c6d8f5;
+            border: 1px solid #bdcfeb;
+          }
+
+          th[rowspan], td[rowspan] {
+            background-color: transparent;
+          }
+        }
+      }
+      &:nth-child(odd) {
+        background-color: #f2f7fd;
+        td {
+          border: 1px solid #e7edf3;
+        }
+      }
+    }
+  }
+
+  .oe_sortable,
+  .oe_sortable_sub {
+    position: relative;
+    height: 30px;
+    text-align: left;
+    cursor: pointer;
+    &:before {
+      display: none;
+    }
+    &:after {
+      font-family: 'erp-icons';
+      content: '\f0dc';
+      margin-left: 10px;
+    }
+    &.sortUp,
+    &.sortDn {
+      &:before {
+        display: none;
+      }
+      &:after {
+        display: none;
+      }
+    }
+    &.sortUp {
+      .up {
+        margin-left: 10px;
+        &:before {
+          display: none;
+        }
+        &:after {
+          font-family: 'erp-icons';
+          content: '\f0de';
+        }
+      }
+    }
+    &.sortDn {
+      .down {
+        margin-left: 10px;
+        &:before {
+          display: none;
+        }
+        &:after {
+          font-family: 'erp-icons';
+          content: '\f0dd';
+        }
+      }
+    }
+  }
+}
+
+// this corrections prevents cells growing
+._tableCompaniesWrap {
+  min-width: 1020px;
+}
+._tableLeadsWrap {
+  min-width: 1153px;
+}
+._tableOpportunitiesWrap {
+  min-width: 1283px;
+}
+._tablePersonsWrap {
+  min-width: 1190px;
+}
+._tableQuotationsWrap,
+._tableSalesQuotationsWrap,
+._tableSalesOrdersWrap {
+  min-width: 1200px;
+}
+._tableSalesInvoicesWrap,
+._tableSalesProformaWrap {
+  min-width: 1350px;
+}
+._tableInvoiceAgingWrap {
+  min-width: 1520px;
+}
+._tableProjectsWrap,
+._tableTacksWrap {
+  min-width: 1375px;
+}
+._tableWtrackWrap {
+  min-width: 1530px;
+}
+._tableEmployeeWrap {
+  min-width: 1410px;
+}
+._tableApplicationsWrap {
+  min-width: 1120px;
+}
+._tableJobPositionWrap {
+  min-width: 1270px;
+}
+._tableOrdersWrap {
+  min-width: 1080px;
+}
+._tableInvoicesWrap {
+  min-width: 1450px;
+}
+._tablePurchasePaymentsWrap,
+._tableManualentryWrap {
+  min-width: 1020px;
+}
+._tableChartOfAccountWrap,
+._tableTackWrap {
+  min-width: 1020px;
+}
+._tableCashTransferWrap {
+  min-width: 900px;
+}
+._tablePayoutWrap,
+._tablePayrollPaymentsWrap {
+  min-width: 800px;
+}
+._tableDividendInvoiceWrap {
+  min-width: 1020px;
+}
+._tableCostCenterWrap {
+  min-width: 1370px;
+}
+._tableExpensesInvoiceWrap {
+  min-width: 990px;
+}
+._tableExpensesPaymentsWrap {
+  min-width: 800px;
+}
+._tableVacationListwrap {
+  min-width: 1400px;
+  .oe_sortable:before {
+    top: 1px;
+  }
+  .vacation-list {
+    thead {
+      th {
+        &.sortDn,
+        &.sortUp {
+          &:after {
+            position: absolute;
+            right: 5px;
+            font-family: $icon-font;
+          }
+        }
+        &.sortDn {
+          &:after {
+            bottom: 0;
+            content: '\f0dd';
+          }
+        }
+        &.sortUp {
+          &:after {
+            top: 0;
+            content: '\f0de';
+          }
+        }
+      }
+    }
+  }
+}

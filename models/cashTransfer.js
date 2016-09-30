@@ -48,4 +48,3 @@ module.exports = (function () {
     mongoose.Schemas.cashTransfer = cashTransferSchema;
 
 })();
-

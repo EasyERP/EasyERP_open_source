@@ -3,7 +3,7 @@ var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var aggent;
 
-require('../../config/development');
+require('../../config/environment/development');
 
 describe('MonthHours Specs', function () {
     describe('MonthHours with admin', function () {
@@ -16,9 +16,9 @@ describe('MonthHours Specs', function () {
             aggent
                 .post('users/login')
                 .send({
-                    login: 'admin',
-                    pass : 'tm2016',
-                    dbId : 'production'
+                    login: 'superAdmin',
+                    pass : '111111',
+                    dbId : 'vasyadb'
                 })
                 .expect(200, done);
         });
@@ -205,7 +205,7 @@ describe('MonthHours Specs', function () {
                 .send({
                     login: 'ArturMyhalko',
                     pass : 'thinkmobiles2015',
-                    dbId : 'production'
+                    dbId : 'vasyadb'
                 })
                 .expect(200, done);
         });

@@ -52,7 +52,12 @@ module.exports = function (moduleId, models) {
                 return callback(err);
             }
 
-            callback(null, result[0].profileAccess.access.editWrite);
+            if (result.length) {
+                callback(null, result[0].profileAccess.access.editWrite);
+            } else {
+                callback(null, null);
+            }
+
         });
 
     };

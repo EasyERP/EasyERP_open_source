@@ -1,6 +1,6 @@
 ﻿var models = function (dbsObject) {
     function get(id, collection, schema) {
-        if(!id){
+        if (!id) {
             throw new Error('Please Authorize before');
         }
         return dbsObject[id].model(collection, schema);
@@ -10,7 +10,7 @@
     };
 
     return {
-        get: get,
+        get       : get,
         connection: connection
     };
 };

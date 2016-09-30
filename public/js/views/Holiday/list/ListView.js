@@ -84,7 +84,7 @@ define([
             var date;
             var id;
             var errors = this.$el.find('.errorContent');
-            var keys = Object.keys(this.changedModels);
+            var keys;
 
             var filled = true;
 
@@ -100,6 +100,8 @@ define([
             }
 
             this.setChangedValueToModel();
+
+            keys = Object.keys(this.changedModels);
 
             keys.forEach(function (id) {
                 model = self.editCollection.get(id) || self.collection.get(id);

@@ -2,17 +2,20 @@ var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var aggent;
-var dbId = 'pavlodb';
+var dbId = 'vasyadb';
 var admin = {
-    login: 'pavlo.demko',
+    login: 'superAdmin',
     pass : '111111',
     dbId : dbId
 };
+
 var bannedUser = {
     login: 'ArturMyhalko',
     pass : 'thinkmobiles2015',
     dbId : dbId
 };
+
+require('../../config/environment/development');
 
 describe('BonusType Specs', function () {
     'use strict';

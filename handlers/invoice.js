@@ -2182,6 +2182,279 @@ var Module = function (models, event) {
 
     };
 
+    this.revenueByCountry = function (req, res, next) {
+        var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+        var data = req.query;
+        var startDay = new Date(data.startDay);
+        var endDay = new Date(data.endDay);
+        var filter = data.filter || {};
+        var matchObject = {
+            _type      : 'wTrackInvoice',
+            invoiceDate: {$gte: startDay, $lte: endDay}
+        };
+        var filterObject = {};
+        var filterMapper = new FilterMapper();
+
+        filterObject = filterMapper.mapFilter(filter);
+
+        Invoice.aggregate([{
+            $match: matchObject
+        }, {
+            $match: filterObject
+        }, {
+            $project: {
+                paymentInfo: 1,
+                invoiceDate: 1,
+                supplier   : 1,
+                currency   : 1
+            }
+        }, {
+            $lookup: {
+                from        : 'Customers',
+                localField  : 'supplier',
+                foreignField: '_id',
+                as          : 'supplier'
+            }
+        }, {
+            $project: {
+                paymentInfo: 1,
+                currency   : 1,
+                supplier   : {$arrayElemAt: ['$supplier', 0]}
+            }
+        }, {
+            $project: {
+                sum    : {$divide: ['$paymentInfo.total', '$currency.rate']},
+                country: '$supplier.address.country'
+            }
+        }, {
+            $group: {
+                _id: '$country',
+                sum: {$sum: '$sum'}
+            }
+        }], function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(result);
+        });
+    };
+
+    this.revenueByCustomer = function (req, res, next) {
+        var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+        var data = req.query;
+        var startDay = new Date(data.startDay);
+        var endDay = new Date(data.endDay);
+        var filter = data.filter || {};
+        var matchObject = {
+            _type      : 'wTrackInvoice',
+            invoiceDate: {$gte: startDay, $lte: endDay}
+        };
+        var filterObject = {};
+        var filterMapper = new FilterMapper();
+
+        filterObject = filterMapper.mapFilter(filter);
+
+        Invoice.aggregate([{
+            $match: matchObject
+        }, {
+            $match: filterObject
+        }, {
+            $project: {
+                paymentInfo: 1,
+                invoiceDate: 1,
+                supplier   : 1,
+                currency   : 1
+            }
+        }, {
+            $lookup: {
+                from        : 'Customers',
+                localField  : 'supplier',
+                foreignField: '_id',
+                as          : 'supplier'
+            }
+        }, {
+            $project: {
+                paymentInfo: 1,
+                currency   : 1,
+                supplier   : {$arrayElemAt: ['$supplier', 0]}
+            }
+        }, {
+            $project: {
+                sum     : {$divide: ['$paymentInfo.total', '$currency.rate']},
+                supplier: {$concat: ['$supplier.name.first', ' ', '$supplier.name.last']}
+            }
+        }, {
+            $group: {
+                _id: '$supplier',
+                sum: {$sum: '$sum'}
+            }
+        }], function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(result);
+        });
+    };
+
+    this.revenueBySales = function (req, res, next) {
+        var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+        var data = req.query;
+        var startDay = new Date(data.startDay);
+        var endDay = new Date(data.endDay);
+        var filter = data.filter || {};
+        var matchObject = {
+            _type      : 'wTrackInvoice',
+            invoiceDate: {$gte: startDay, $lte: endDay}
+        };
+        var filterObject = {};
+        var salesManagers = objectId(CONSTANTS.SALESMANAGER);
+        var salesManagersMatch = {
+            $and: [{
+                $eq: ['$$salesPerson.projectPositionId', salesManagers]
+            }, {
+                $or: [{
+                    $and: [{
+                        $eq: ['$$salesPerson.startDate', null]
+                    }, {
+                        $eq: ['$$salesPerson.endDate', null]
+                    }]
+                }, {
+                    $and: [{
+                        $lte: ['$$salesPerson.startDate', '$invoiceDate']
+                    }, {
+                        $eq: ['$$salesPerson.endDate', null]
+                    }]
+                }, {
+                    $and: [{
+                        $gte: ['$$salesPerson.endDate', '$invoiceDate']
+                    }, {
+                        $eq: ['$$salesPerson.startDate', null]
+                    }]
+                }, {
+                    $and: [{
+                        $lte: ['$$salesPerson.startDate', '$invoiceDate']
+                    }, {
+                        $gte: ['$$salesPerson.endDate', '$invoiceDate']
+                    }]
+                }]
+            }]
+        };
+        var filterMapper = new FilterMapper();
+
+        filterObject = filterMapper.mapFilter(filter);
+
+        Invoice.aggregate([{
+            $match: matchObject
+        }, {
+            $match: filterObject
+        }, {
+            $project: {
+                paymentInfo: 1,
+                invoiceDate: 1,
+                project    : 1,
+                currency   : 1
+            }
+        }, {
+            $lookup: {
+                from        : 'projectMembers',
+                localField  : 'project',
+                foreignField: 'projectId',
+                as          : 'salesPersons'
+            }
+        }, {
+            $project: {
+                salesPersons: {
+                    $filter: {
+                        input: '$salesPersons',
+                        as   : 'salesPerson',
+                        cond : salesManagersMatch
+                    }
+                },
+
+                currency   : 1,
+                paymentInfo: 1
+            }
+        }, {
+            $unwind: {
+                path                      : '$salesPersons',
+                preserveNullAndEmptyArrays: true
+            }
+        }, {
+            $lookup: {
+                from        : 'Employees',
+                localField  : 'salesPersons.employeeId',
+                foreignField: '_id',
+                as          : 'salesPerson'
+            }
+        }, {
+            $project: {
+                paymentInfo: 1,
+                currency   : 1,
+                salesPerson: {$arrayElemAt: ['$salesPerson', 0]}
+            }
+        }, {
+            $project: {
+                sum        : {$divide: ['$paymentInfo.total', '$currency.rate']},
+                salesPerson: {$concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']}
+            }
+        }, {
+            $group: {
+                _id: '$salesPerson',
+                sum: {$sum: '$sum'}
+            }
+        }], function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(result);
+        });
+    };
+
+    this.invoiceByWeek = function (req, res, next) {
+        var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+        var matchObject;
+        var data = req.query;
+        var startDay = new Date(data.startDay);
+        var endDay = new Date(data.endDay);
+        var filter = data.filter || {};
+        var filterMapper = new FilterMapper();
+
+        matchObject = filterMapper.mapFilter(filter);
+
+        Invoice.aggregate([{
+            $match: {
+                _type      : {$in: ['Proforma', 'wTrackInvoice']},
+                invoiceDate: {$gte: startDay, $lte: endDay}
+            }
+        }, {
+            $match: matchObject
+        }, {
+            $project: {
+                week: {$week: '$invoiceDate'},
+                year: {$year: '$invoiceDate'}
+            }
+        },{
+            $group: {
+                _id  : '$week',
+                count: {$sum: 1}
+            }
+        }, {
+            $sort: {
+                _id: 1
+            }
+        }], function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(result);
+        });
+
+    };
+
     this.generateName = function (req, res, next) {
         var project = req.query.projectId;
         var currentDbName = req.session ? req.session.lastDb : null;

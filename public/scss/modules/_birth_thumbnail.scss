@@ -1,0 +1,93 @@
+.week_list {
+  @extend .clearfix;
+
+  .week_title {
+    line-height: 30px;
+    padding-top: 15px;
+    text-align: center;
+    font-size: 30px;
+  }
+}
+
+.thumbnail_birthday_list {
+  @extend .clearfix;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+
+  >li {
+    width: 380px;
+    min-height: 130px;
+    border: 1px solid #7f7f80;
+    padding: 5px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    float: left;
+  }
+
+  .avatar {
+    width: 40%;
+    height: 120px;
+    text-align: center;
+    overflow: hidden;
+    float:left;
+
+    &:before {    /* create a full-height inline block pseudo=element */
+      display: inline-block;
+      height: 100%;
+      vertical-align: middle;  /* vertical alignment of the inline element */
+      content: ' ';
+    }
+
+    .avatar_img {
+      display: inline-block;
+      width: 100%;
+      vertical-align: middle;
+      font: 16px/1 $base-font-family;
+
+      img {
+        width: 100%;
+      }
+    }
+  }
+
+  .birthday_info {
+    width: 55%;
+    padding: 0;
+    margin: 0;
+    margin-left: 5%;
+    list-style: none;
+    float: left;
+
+    .readMore {
+      display: block;
+      text-align: center;
+    }
+  }
+}
+
+.birthday_info {
+  text-align: center;
+
+  .user_name {
+    display: inline-block;
+    margin-bottom: 10px;
+    line-height: 25px;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .birthday_day {
+    line-height: 25px;
+  }
+
+  .readMore {
+    text-decoration: none;
+    color: #000;
+
+    .fa {
+      display: inline-block;
+      margin-top: 5px;
+    }
+  }
+}

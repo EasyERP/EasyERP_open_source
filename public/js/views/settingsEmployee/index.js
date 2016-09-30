@@ -6,8 +6,17 @@ define([
     'views/weeklyScheduler/list/ListView',
     'views/scheduledPay/list/ListView',
     'views/payrollComponentTypes/list/ListView',
-    'views/payrollStructureTypes/list/ListView'
-], function ($, _, Backbone, listTemplate, WeeklySchedulerView, ScheduledPayView, PayrollComponentTypeView, PayrollStructureTypeView) {
+    'views/payrollStructureTypes/list/ListView',
+    'views/employeeProfileSettings/Index'
+], function ($,
+             _,
+             Backbone,
+             listTemplate,
+             WeeklySchedulerView,
+             ScheduledPayView,
+             PayrollComponentTypeView,
+             PayrollStructureTypeView,
+             EmployeeProfileSettings) {
 
     var SettingsEmployeeListView = Backbone.View.extend({
         el      : '#content-holder',
@@ -89,6 +98,16 @@ define([
             });
         },
 
+        getProfiles: function () {
+            var self = this;
+
+            if (self.profiles) {
+                self.profiles.undelegateEvents();
+            }
+
+            self.profiles = new EmployeeProfileSettings();
+        },
+
         render: function () {
             var self = this;
             var $currentEl = this.$el;
@@ -101,6 +120,7 @@ define([
             self.getPayrollEarningsType();
             self.getPayrollDeductionsType();
             self.getPayrollStructureType();
+            self.getProfiles();
         }
 
     });

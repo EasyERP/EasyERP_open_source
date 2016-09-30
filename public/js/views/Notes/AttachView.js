@@ -26,7 +26,7 @@ define([
         addAttach: function (event) {
             var s;
 
-            if ($(event.target).closest('.importContainer')) {
+            if ($(event.target).closest('.importContainer').length) {
                 //this.import = true;
                 this.contentType = 'import';
             }

@@ -42,7 +42,6 @@ define([
             var rowTdValExp = 0;
             var row;
             var rowTd;
-
             var expFooter = $('#expFooter');
             var grossFooter = $('#grossFooter');
 

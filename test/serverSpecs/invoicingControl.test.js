@@ -3,7 +3,7 @@ var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var aggent;
 
-require('../../config/development');
+require('../../config/environment/development');
 
 describe('InvoicingControl Specs', function () {
     'use strict';
@@ -15,9 +15,9 @@ describe('InvoicingControl Specs', function () {
             aggent
                 .post('users/login')
                 .send({
-                    login: 'admin',
-                    pass : 'tm2016',
-                    dbId : 'production'
+                    login: 'superAdmin',
+                    pass : '111111',
+                    dbId : 'vasyadb'
                 })
                 .expect(200, done);
         });

@@ -22,7 +22,7 @@
         sequence     : {type: Number, default: 0},
         main         : {type: Boolean, default: false},
         productsCount: {type: Number, default: 0},
-        externalId: {type: String, default: null},
+        externalId   : {type: String, default: null}
     }, {collection: 'ProductCategories'});
 
     mongoose.model('ProductCategory', CategorySchema);

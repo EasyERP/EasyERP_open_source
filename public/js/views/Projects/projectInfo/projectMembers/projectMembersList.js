@@ -40,7 +40,7 @@ define([
             'click #cancelMember'                              : 'deleteItems',
             'click .editable'                                  : 'editRow',
             'click #saveMember'                                : 'saveItem',
-            'click .fa-trash-o'                                : 'removeMember'
+            'click .icon-trash'                                : 'removeMember'
         },
 
         editRow: function (e) {

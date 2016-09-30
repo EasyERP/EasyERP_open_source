@@ -79,13 +79,15 @@
 
         validate: function (attrs) {
             var errors = [];
+
             Validation.checkDateField(errors, true, attrs.dateBirth, 'Date of Birth');
+            Validation.checkNameField(errors, true, attrs.employmentType, 'Personal Information / Employment type');
             Validation.checkNameField(errors, true, attrs.name.first, 'First name');
             Validation.checkNameField(errors, true, attrs.name.last, 'Last name');
             Validation.checkPhoneField(errors, false, attrs.workPhones.phone, 'Phone');
             Validation.checkPhoneField(errors, false, attrs.workPhones.mobile, 'Mobile');
             Validation.checkEmailField(errors, false, attrs.workEmail, 'Work Email');
-            Validation.checkEmailField(errors, false, attrs.personalEmail, 'Personal Email');
+            Validation.checkEmailField(errors, true, attrs.personalEmail, 'Personal Email');
             Validation.checkCountryCityStateField(errors, false, attrs.workAddress.country, 'Country');
             Validation.checkCountryCityStateField(errors, false, attrs.workAddress.state, 'State');
             Validation.checkCountryCityStateField(errors, false, attrs.workAddress.city, 'City');

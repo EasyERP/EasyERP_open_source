@@ -22,6 +22,345 @@
   }
 }
 
+
+.kanban {
+  @extend .noPaddingMargin;
+  min-width: 100%;
+  //table-layout: fixed;
+
+  tbody {
+    width: 100%;
+  }
+
+  .opportunity-header {
+    margin-bottom: 7px;
+    > h3 {
+      float: right;
+      text-align: right;
+
+    }
+    h4 {
+      color: $name-color;
+      font-weight: bold;
+    }
+  }
+
+  .opportunity-content {
+    margin-top: -7px;
+    margin-bottom: -3px;
+
+    p {
+      display: block;
+      line-height: 18px;
+      clear: left;
+      color: $black;
+    }
+  }
+
+  .column {
+    min-height: 100%;
+    width: auto;
+    min-width: 200px;
+    max-width: 400px;
+    height: auto;
+    vertical-align: top;
+
+    .item {
+      word-wrap: break-word;
+      margin: 5px 15px;
+      width: calc(100% - 30px);
+      min-height: 40px;
+      text-align: left;
+      border: 1px solid #7f7f80;//$thin-border $border-color-main;
+      background-color: $bg-main;
+      color: $kanab-text-color;
+      cursor: move;
+      transition: border-color 1s ease, box-shadow 1s ease;
+      @extend  .defaultBorRad;
+
+      &.active {
+        box-shadow: 0 1px 10px #656565;
+        transition: border-color 1s ease, box-shadow 1s ease;
+      }
+
+      .inner {
+        padding: 5px;
+        .application-header {
+        }
+        p {
+          width: 100%;
+          &.width-auto {
+            @extend %text-overflow;
+            display: block;
+            max-width: 100%;
+            width: auto;
+            float: left;
+          }
+
+          &.text-right {
+            text-align: right;
+          }
+
+          &.red {
+            color: #FF2121;
+          }
+        }
+      }
+
+      .task-header {
+        line-height: 21px;
+
+        p.right {
+          text-align: right;
+          line-height: 21px;
+          width: 100%;
+        }
+      }
+
+      .task-content {
+        position: relative;
+
+        &:after {
+          content: '';
+          display: table;
+          clear: both;
+        }
+
+        .info {
+          padding: 5px 5px 2px 0;
+          width: auto;
+        }
+
+        .bottom {
+          position: absolute;
+          left: 0;
+          top: auto;
+          right: auto;
+          bottom: 5px;
+        }
+
+        .avatar-small {
+          overflow: hidden;
+          position: relative;
+          width: 26px;
+          height: 26px;
+          img {
+            width: 100%;
+            height: auto;
+          }
+        }
+      }
+    }
+
+    h2 {
+      width: auto;
+      padding: 6px;
+      text-align: center;
+      white-space: nowrap;
+
+      span {
+        font-weight: normal;
+        font-size: 11px;
+        line-height: 11px;
+        &.text {
+          @extend %text-overflow;
+          margin-right: 45px;
+          display: block;
+          line-height: 20px;
+        }
+        span {
+          font-weight: normal;
+          line-height: 13px;
+          font-size: 18px;
+        }
+      }
+    }
+
+    .columnNameDiv {
+      background: $bg-main;
+      height: 35px;
+      position: relative;
+
+      &.task {
+        height: 42px;
+      }
+
+      .columnName {
+        padding-bottom: 5px;
+        margin-bottom: 5px;
+        min-height: 30px;
+
+        .totalCount {
+          float: right;
+          padding: 2px 5px;
+          border: 1px solid $border-color-main;
+          position: absolute;
+          top: 4px;
+          right: 28px;
+          color: $fold-color;
+          @extend .defaultBorRad;
+        }
+
+        .fold-unfold {
+          display: block;
+          position: absolute;
+          top: 4px;
+          right: 4px;
+          width: 17px;
+          height: 17px;
+          border-radius: 17px;
+          border: 1px solid $border-color-main;
+          line-height: 19px;
+          margin: 0 2px 0 4px;
+          cursor: pointer;
+          color: $fold-color;
+          &:before {
+            font-size: 16px;
+            line-height: 14px;
+            display: block;
+            text-align: center;
+            padding-right: 1px;
+          }
+        }
+
+        .text {
+          color: $bg-main-menu-selected;
+          font-size: 13px;
+          .dollar {
+            margin-left: 5px;
+          }
+        }
+      }
+
+      &:hover .foldUnfold img,
+      &.selected .foldUnfold img {
+        margin: -20px 6px 3px 0;
+        width: 13px;
+        display: block;
+        float: right;
+        cursor: pointer;
+      }
+    }
+
+    .remaining,
+    .revenue {
+      margin-left: 3px;
+      font-size: 13px;
+      color: #4c4c4c;
+    }
+
+    &.rotate h2 {
+      position: relative;
+      display: inline-block;
+      top: 60px;
+      right: 15px;
+      font-size: 28px;
+      font-weight: normal;
+      color: grey;
+      transform: rotate(90deg);
+    }
+
+    &.rotate .dropDownMenu {
+      top: 21px;
+    }
+
+    &.lastColumn .dropDownOpened {
+      right: 0;
+    }
+
+    &.fold {
+      width: 40px;
+      min-width: 40px;
+      min-height: 100px;
+
+      .columnNameDiv {
+        top: 0;
+        left: 0;
+        background-color: $bg-main;
+        width: 40px;
+        z-index: 100;
+
+        .columnName {
+          border-width: 0;
+          text-align: center;
+          height: 17px;
+
+          .text {
+            width: auto;
+          }
+
+          .fold-unfold {
+            display: none;
+          }
+
+          .totalCount {
+            position: absolute;
+            display: block;
+            width: 40px;
+            border: 0;
+            color: $mainText-color-selected;
+            font-size: 18px;
+            line-height: 26px;
+            float: none;
+            text-align: center;
+            top: 0;
+            left: 0;
+            padding: 0;
+          }
+
+          .text {
+            color: $mainText-color-selected;
+            margin: 0 auto;
+            text-align: center;
+            position: absolute;
+            transform: rotate(90deg);
+            font-size: 18px !important;
+          }
+        }
+      }
+
+      .item {
+        display: none !important;
+      }
+      &:hover {
+        .columnNameDiv {
+          .columnName {
+            .totalCount, .text {
+              color: $mainText-color-selected+22;
+            }
+          }
+        }
+        cursor: pointer;
+        .text {
+          color: white;
+        }
+      }
+    }
+  }
+
+  .dropDownMenu {
+    height: 10px;
+    width: 10px;
+    float: right;
+    margin: 5px;
+    padding: 3px 5px !important;
+    position: absolute;
+    top: 16px;
+    right: 0;
+    z-index: 1;
+
+    & > li > a {
+      text-decoration: none;
+      text-align: left;
+      color: #34495E;
+    }
+  }
+}
+
+.kanban .column .item .inner {
+  padding: 5px 5px 8px;
+}
+
 .kanban {
   .column {
     h2 {
@@ -31,15 +370,6 @@
     }
   }
 }
-
-//.list {
-//  tbody {
-//    td.errorContent {
-//      border: 1px double $error-content-border;
-//    }
-//  }
-//}
-
 
 .deleteTasks {
   span {

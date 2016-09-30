@@ -76,8 +76,6 @@ HTTP/1.1 200 OK
      */
     router.get('/', accessStackMiddleware, handler.getByViewType);
 
-    router.get('/:id', accessStackMiddleware, handler.getById);
-
     /**
      *@api {get} /quotations/getFilterValues/ Request FilterValues
      *
@@ -87,8 +85,8 @@ HTTP/1.1 200 OK
      *
      * @apiSuccess {Object} FilterValues
      * @apiSuccessExample Success-Response:
-HTTP/1.1 200 OK
-[
+     HTTP/1.1 200 OK
+     [
      {
          "_id": null,
          "Order date": [
@@ -97,9 +95,11 @@ HTTP/1.1 200 OK
              ...
          ]
      }
-]
+     ]
      */
-    router.get('/getFilterValues', accessStackMiddleware, handler.getFilterValues);
+    router.get('/getFilterValues', handler.getFilterValues);
+
+    router.get('/:id', accessStackMiddleware, handler.getById);
 
     /**
      *@api {post} /quotations/ Request for creating new Quotation

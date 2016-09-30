@@ -10,7 +10,7 @@
             </li>
             <% _.forEach(parent.subModules, function(child, index){%>
             <li class="<%=(child.href===currentModule)?'selected':''%>">
-                <a href="#easyErp/<%=child.href%>" class="sub_item"><%=child.mname%></a>
+                <a href="#easyErp/<%=child.href%>" class="subItem"><%=child.mname%></a>
             </li>
             <%}) %>
         </ul>

@@ -1,0 +1,206 @@
+.topbarHolder {
+  position: fixed;
+  height: 40px;
+  width: 100%;
+  background-color: #2b3643;
+  z-index: 300;
+
+  .topbarLogo {
+    float: left;
+    display: block;
+    width: 200px;
+    height: 40px;
+    padding-left: 39px;
+    padding-right: 20px;
+    box-sizing: border-box;
+
+    .mainLogo {
+      font-size: 22px;
+      line-height: 40px;
+      font-family: $light-font-family;
+    }
+  }
+  .sidebarToggler {
+    position: relative;
+    top: 12px;
+    height: 17px;
+    width: 19px;
+    float: right;
+    cursor: pointer;
+    opacity: .75;
+    &:hover {
+      opacity: 1;
+    }
+
+    span {
+      position: absolute;
+      height: 1px;
+      width: 19px;
+      background: #a7b5c6;
+      transition: all ease .3s;
+      &:first-child {
+        top: 2px;
+      }
+
+      &:last-child {
+        bottom: 2px;
+      }
+
+      &:nth-child(2) {
+        top: 8px;
+      }
+    }
+  }
+  .loginPanel {
+    position: relative;
+    display: inline-block;
+    float: right;
+    padding: 9px 6px 7px 8px;
+    margin-right: 40px;
+    cursor: pointer;
+    &:hover {
+      background-color: #3f4f62;
+    }
+
+    &.open {
+      .loginList {
+        display: block;
+      }
+    }
+
+    .dropdownButton {
+
+      &:after {
+        content: "\f107";
+        display: inline-block;
+        float: right;
+        font-size: 12px;
+        font-family: $icon-font;
+        line-height: 20px;
+        color: #fff;
+        width: 20px;
+        text-align: center;
+      }
+    }
+
+    .iconEmployee {
+      float: left;
+      margin-top: -5px;
+      margin-right: 5px;
+      height: 29px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .userName {
+      display: inline-block;
+      font-size: 13px;
+      font-weight: 300;
+      color: #c6cfda;
+    }
+    .loginList {
+      display: none;
+      box-shadow: 5px 5px rgba(102, 102, 102, .1);
+      right: 0;
+      top: 35px;
+      min-width: 120px;
+      position: absolute;
+      z-index: 1000;
+      float: left;
+      list-style: none;
+      text-shadow: none;
+      padding: 0;
+      background-color: #fff;
+      margin: 10px 0 0;
+      border: 1px solid #eee;
+      a {
+        &:hover {
+          background-color: #f6f6f6;
+        }
+      }
+
+      &:before {
+        position: absolute;
+        top: -7px;
+        right: 9px;
+        display: inline-block !important;
+        border-right: 7px solid transparent;
+        border-bottom: 7px solid #eee;
+        border-left: 7px solid transparent;
+        border-bottom-color: rgba(0, 0, 0, .2);
+        content: '';
+      }
+      &:after {
+        position: absolute;
+        top: -6px;
+        right: 10px;
+        display: inline-block !important;
+        border-right: 6px solid transparent;
+        border-bottom: 6px solid #fff;
+        border-left: 6px solid transparent;
+        content: '';
+      }
+
+      > li {
+        > a {
+          padding: 8px 16px;
+          text-decoration: none;
+          display: block;
+          clear: both;
+          line-height: 18px;
+          white-space: nowrap;
+        }
+      }
+    }
+  }
+}
+
+.top-bar {
+  &:empty {
+    display: none !important;
+  }
+}
+
+#top-bar {
+
+  #createBtnHolder,
+  .createBtnHolder {
+    margin-top: 6px;
+  }
+
+  #createBtnHolder {
+    .btnBlue {
+      height: 26px;
+      width: 68px;
+      border: 0;
+      line-height: 26px !important;
+      font-size: 13px;
+      color: #fff;
+    }
+  }
+
+  ._filterDropDownWrap {
+    margin-top: 7px;
+  }
+}
+
+.top-bar-deleteBtn {
+  display: block;
+  height: 26px;
+  width: 68px;
+  padding: 0;
+  background: #7eadcc;
+  line-height: 26px !important;
+  font-size: 13px;
+  color: #fff !important;
+  text-align: center;
+  transition: all .3s;
+  border-radius: 3px;
+
+  &:hover {
+    text-decoration: none;
+  }
+
+  &:after {
+    content: 'Delete';
+  }
+}

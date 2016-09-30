@@ -49,7 +49,7 @@ define([
 
             e.preventDefault();
 
-            if (!$target.hasClass('_acountingListItem')){
+            if (!$target.hasClass('_acountingListItem')) {
                 $target = $target.closest('._acountingListItem');
             }
 
@@ -78,7 +78,7 @@ define([
 
         render: function () {
             this.$el.html(this.template({
-                data: [{_id: 'currency', name: 'Currency'}, {
+                data: [{_id: 'currency', name: 'Currencies'}, {
                     _id : 'paymentmethods',
                     name: 'Bank Accounts'
                 }, {_id: 'paymentterms', name: 'Payment Terms'}]

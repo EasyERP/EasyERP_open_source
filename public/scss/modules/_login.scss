@@ -1,0 +1,277 @@
+.notRegister {
+  input {
+    &:not([type="checkbox"]) {
+      border-color: #ff9393;
+      &:focus {
+        border-color: #ff9393;
+      }
+    }
+  }
+}
+
+.loginWrap {
+  margin-top: 100px;
+
+  .formActions{
+    line-height: 29px;
+  }
+}
+
+.forgotWrap {
+  margin-top: 69px;
+}
+
+.login {
+
+  &WrapBase {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  &Title {
+    color: #4e5a64;
+    font-size: 30px;
+    font-weight: 300;
+    font-family: $light-font-family;
+    white-space: nowrap;
+
+    &Block {
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+  }
+
+  &Container {
+    margin: auto 0;
+
+    .selectDd {
+      float: right;
+    }
+  }
+
+  &Content {
+    padding: 0 80px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    height: 100vh;
+  }
+
+  &Forgot {
+    color: #a4aab2;
+    font-size: 13px;
+  }
+
+  &Copyright {
+    margin: 0 0 25px 0;
+    text-align: right;
+    font-size: 13px;
+    color: #a9b5be;
+  }
+}
+
+.formGroup {
+  margin-bottom: 25px;
+}
+
+.rememberCheck {
+
+  &Wrap {
+    position: relative;
+    display: inline-block;
+    padding-left: 30px;
+    margin-bottom: 15px;
+    line-height: 18px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all .3s;
+    color: #a4aab2;
+
+    input {
+      position: absolute;
+      z-index: -1;
+      opacity: 0;
+
+      ~ span {
+        &:after {
+          content: '';
+          position: absolute;
+          display: none;
+        }
+      }
+
+      &:checked {
+        ~ span {
+          &:after {
+            display: block;
+            left: 6px;
+            top: 2px;
+            width: 4px;
+            height: 9px;
+            border: solid #666;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+          }
+        }
+      }
+    }
+
+    > span {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 19px;
+      width: 19px;
+      border: 1px solid #d9d9d9;
+    }
+  }
+}
+
+.forgot {
+
+  &Pass {
+    margin-right: 1em;
+    color: #a4aab2;
+
+    &:hover {
+      color: #337ab7;
+      text-decoration: none;
+    }
+  }
+
+  &Description {
+    margin: 22px 0;
+    color: #a0a9b4;
+    font-size: 15px;
+    line-height: 22px;
+  }
+}
+
+@media (max-width: 1600px) {
+  .login {
+    &Content {
+      padding: 0 60px;
+    }
+  }
+}
+
+@media (max-width: 1500px) {
+  .login {
+    &Content {
+      padding: 0 40px;
+    }
+    &Title {
+      font-size: 26px;
+    }
+  }
+}
+
+@media (min-width: 992px) {
+  .loginWrapper {
+    display: flex;
+    align-items: flex-end;
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1220px) {
+  .loginContent {
+    padding: 0 20px;
+  }
+
+  .loginTitle {
+    font-size: 23px;
+  }
+}
+
+@media (max-width: 992px) {
+  .loginTitle {
+    font-size: 20px;
+  }
+
+  .selectDd {
+    margin-top: 0.67em;
+  }
+}
+
+@media (max-width: 767px) {
+  .login {
+    &Container {
+      .loginTitle {
+        margin-bottom: 30px;
+      }
+      .selectDd {
+        float: left;
+        clear: both;
+      }
+
+      input {
+        &:not([type="checkbox"]) {
+          &.inputField {
+            margin-bottom: 25px;
+          }
+        }
+      }
+    }
+
+    &Wrapper {
+      .selectDd {
+        width: 230px;
+      }
+    }
+
+    &Wrap {
+      margin-top: 25px;
+    }
+
+    &Copyright {
+      position: absolute;
+      bottom: calc((50vh - 272px) / 4);
+      margin: 0;
+      right: 40px;
+    }
+  }
+
+  .formActions {
+    white-space: nowrap;
+  }
+
+  .loginWrapper,
+  .sliderContainer {
+    height: 100%;
+  }
+
+  .sliderWrap {
+    display: none;
+  }
+}
+
+//iphone6
+@media (max-width: 667px) {
+  .sliderWrap {
+    display: none;
+  }
+
+  .login {
+    &Content {
+      height: 100%;
+    }
+    &Copyright {
+      position: static;
+      margin: 20px 0;
+    }
+  }
+}
+
+@media (max-width: 410px) {
+  .login {
+
+    &Content {
+      padding: 0 20px;
+    }
+
+    &Copyright {
+      right: auto;
+      left: 20px;
+    }
+  }
+}

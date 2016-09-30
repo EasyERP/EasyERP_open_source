@@ -1,3 +1,387 @@
+#mainmenu-holder {
+  display: block;
+  float: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  background: $bg-main;
+  height: 30px;
+  @extend .noPaddingMargin;
+  z-index: 1000;
+  nav {
+    //.left;
+    float: left;
+
+    background: $bg-main-menu;
+
+    ul {
+      @extend .noPaddingMargin;
+      display: block;
+      height: 30px;
+
+      li {
+        height: 30px;
+        width: 120px;
+        text-align: center;
+        color: $main-menu-text;
+        line-height: 30px;
+        overflow: hidden;
+        //.left;
+        float: left;
+        position: relative;
+        cursor: pointer;
+
+        a {
+          letter-spacing: 1.5px;
+          color: $main-menu-text;
+          font-size: 0.75rem;
+          text-decoration: none;
+          display: block;
+          @extend .fullsize;
+          line-height: 28px;
+          font-weight: 400;
+          text-transform: uppercase;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+
+        &.hover {
+          height: 30px;
+
+          a {
+            text-decoration: underline;
+            display: block;
+          }
+        }
+
+        &.selected {
+          background-color: $bg-main-menu-selected;
+          height: 30px;
+          border: 0;
+          -webkit-transition: all ease .5s;
+          -moz-transition: all ease .5s;
+          transition: all ease .5s;
+
+          a {
+            font-size: 0.75rem;
+            color: #fff;
+            text-decoration: none;
+            display: block;
+            letter-spacing: 1.5px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.sideMenu {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 200;
+  width: auto;
+  height: calc(100% - 40px);
+  background-color: $bg-submenu;
+  font-family: $light-font-family;
+  max-width: 200px;
+  float: left;
+  margin-right: -100%;
+
+  nav {
+    width: 200px;
+
+    ul {
+      @extend .clearfix;
+      li {
+        position: relative;
+        display: block;
+        height: 40px;
+        width: 100%;
+        list-style: none;
+        line-height: 40px;
+        background: $bg-submenu;
+        text-align: left;
+      }
+    }
+    > ul {
+      > li {
+        border-top: 1px solid #3d4957;
+        &:first-child {
+          border-top: none;
+        }
+      }
+    }
+
+    .root {
+      text-align: left;
+
+      ul {
+        display: none;
+        height: auto;
+        padding: 8px 0;
+        background-color: #364150;
+
+        li {
+          border-top: 1px solid #364150;
+          height: 31px;
+
+          .subItem {
+            display: block;
+            padding-left: 39px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 300;
+            line-height: 31px;
+            color: $submenu-text-color;
+          }
+
+          &:hover, &.selected {
+            background-color: $submenu-selected;
+          }
+
+          &:first-child {
+            border-top: none;
+            display: none;
+          }
+        }
+      }
+
+      .icons {
+        padding: 0 11px;
+        font-size: inherit;
+        text-rendering: auto;
+        transform: translate(0, 0);
+      }
+
+      > a, .icons {
+        color: $submenu-text-color;
+        font-size: 16px;
+        line-height: 40px;
+        display: block;
+        float: left;
+        text-decoration: none;
+        text-shadow: none;
+        font-weight: 300;
+      }
+      .icons {
+        line-height: 38px;
+      }
+
+      .icon-Sales:before {
+        content: "\e043";
+      }
+      .icon-Project:before {
+        content: "\e02d";
+      }
+      .icon-HR:before {
+        content: "\e001";
+      }
+      .icon-Accounting:before {
+        content: "\e04b";
+      }
+      .icon-Payroll:before {
+        content: "\e025";
+      }
+      .icon-Purchases:before {
+        content: "\e04e";
+      }
+      .icon-Expenses:before {
+        content: "\e077";
+      }
+      .icon-Settings:before {
+        content: "\e09a";
+      }
+
+      &:hover,
+      &.opened {
+        cursor: pointer;
+        height: 40px;
+        background-color: $submenu-hover;
+      }
+
+      &.active {
+        background-color: $submenu-opened;
+        a, .icons {
+          color: $submenu-active-text-color;
+        }
+        &:before {
+          color: $submenu-active-text-color;
+        }
+        &:after {
+          content: '';
+          position: absolute;
+          right: 0;
+          top: 8px;
+          background: 0 0;
+          width: 0;
+          height: 0;
+          border-top: 12px solid transparent;
+          border-bottom: 12px solid transparent;
+          border-right: 12px solid #fff;
+        }
+        &.opened {
+          &:before {
+            transform: rotate(-90deg);
+            color: $submenu-active-text-color;
+          }
+        }
+      }
+
+      &:before {
+        float: right;
+        width: 30px;
+        text-align: center;
+        display: inline;
+        font-size: 12px;
+        font-family: $icon-font;
+        height: auto;
+        content: "\f104";
+        font-weight: 300;
+        text-shadow: none;
+        position: absolute;
+        top: 0;
+        right: 14px;
+        line-height: 40px;
+        color: $submenu-arrow;
+        transition: all 0.3s;
+      }
+
+      &.opened {
+        height: auto;
+        ul {
+          display: block;
+        }
+        &:before {
+          transform: rotate(90deg);
+        }
+      }
+    }
+  }
+
+  .logo {
+    position: absolute;
+    bottom: 15px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    width: 100%;
+    margin: 0 auto;
+
+    a {
+      font-size: 35px;
+      text-decoration: none;
+      color: $submenu-opened;
+
+    }
+  }
+
+  .sidebar_toggler {
+    position: absolute;
+    top: 10px;
+    left: 100%;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    margin: 0;
+    width: 24px;
+    height: 24px;
+    background-color: $bg-submenu;
+    border-left: 1px solid $submenu-border;
+    &:before {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-75%, -50%);
+      content: '';
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 5px 6px 5px 0;
+      border-color: transparent $submenu-active-text-color transparent transparent;
+    }
+  }
+
+  .login_panel {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: auto;
+    bottom: auto;
+
+    width: 100%;
+
+    .dropdown-button {
+      text-indent: 5px;
+      cursor: pointer;
+      padding: 5px;
+      max-width: 200px;
+      width: 100%;
+      float: left;
+      height: auto;
+
+      &:hover {
+        background: $bg-main-menu-selected;
+        color: #fff;
+      }
+    }
+
+    .login_list {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      z-index: 999;
+
+      li {
+        text-align: left;
+        color: $submenu-text-color;
+        background: $bg-submenu;
+        &:hover {
+          background-color: $submenu-selected;
+        }
+      }
+
+      a {
+        display: block;
+        padding-left: 39px;
+        text-decoration: none;
+        font-size: 14px;
+        line-height: 40px;
+        color: $submenu-text-color;
+      }
+      &.opened {
+        display: block;
+      }
+    }
+
+    .user_name {
+      display: block;
+      line-height: 30px;
+      color: $login-text;
+      font-size: 14px;
+      font-weight: 300;
+      &:hover {
+        color: $login-hover-text;
+      }
+    }
+
+    .iconEmployee {
+      border-radius: 3px;
+      margin: 4px auto;
+      width: 29px;
+      height: 29px;
+    }
+  }
+  //}
+}
+
+
+
 .template-switcher {
   > .btn-list {
     [class^="icon-"],

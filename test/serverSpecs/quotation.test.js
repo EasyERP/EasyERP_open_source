@@ -3,7 +3,8 @@ var expect = require('chai').expect;
 var CONSTANTS = require('../../constants/constantsTest');
 var url = 'http://localhost:8089/';
 var aggent;
-var db = 'production';
+var db = 'vasyadb';
+require('../../config/environment/development');
 
 describe('Quotation Specs', function () {
     'use strict';
@@ -16,8 +17,8 @@ describe('Quotation Specs', function () {
             aggent
                 .post('users/login')
                 .send({
-                    login: 'admin',
-                    pass : 'tm2016',
+                    login: 'superAdmin',
+                    pass : '111111',
                     dbId : db
                 })
                 .expect(200, done);
@@ -185,8 +186,8 @@ describe('Quotation Specs', function () {
 
                     expect(Object.keys(first).length).to.be.lte(11);
                     expect(Object.keys(first.workflow).length).to.be.equal(3);
-                    expect(Object.keys(first.paymentInfo).length).to.be.equal(1);
-                    expect(Object.keys(first.currency).length).to.be.equal(2);
+                    expect(Object.keys(first.paymentInfo).length).to.be.equal(2);
+                    expect(Object.keys(first.currency).length).to.be.equal(1);
                     expect(Object.keys(first.project).length).to.be.equal(2);
 
                     done();
@@ -281,50 +282,27 @@ describe('Quotation Specs', function () {
 
         it('should update quotation', function (done) {
             var body = {
-                validate      : false,
-                supplier      : CONSTANTS.SUPPLIER,
-                project       : CONSTANTS.PROJECT,
-                workflow      : CONSTANTS.WORKFLOW,
-                orderDate     : '5 Feb, 2016',
-                expectedDate  : '2 Feb, 2016',
-                name          : 'PO',
-                invoiceControl: '',
-                invoiceRecived: false,
-                paymentTerm   : '',
-                fiscalPosition: '',
-                destination   : '',
-                incoterm      : '',
-                products      : [
-                    {
-                        product      : CONSTANTS.PRODUCT,
-                        unitPrice    : '500',
-                        quantity     : '1',
-                        scheduledDate: '28 Dec, 2015',
-                        taxes        : '0.00',
-                        description  : '',
-                        subTotal     : '500',
-                        jobs         : CONSTANTS.JOB
-                    }
-                ],
-
-                _id: id,
-
-                groups: {
-                    owner: CONSTANTS.OWNER,
-                    users: [],
-                    group: []
+                currency: {
+                    _id : '565eab29aeb95fa9c0f9df2d',
+                    name: 'USD'
                 },
 
-                whoCanRW   : 'everyOne',
-                paymentInfo: {total: '1500', unTaxed: '1500', taxes: '0.00'},
-                deliverTo  : CONSTANTS.DELIVERTO,
-                isOrder    : false,
-                type       : 'Not Ordered',
-                forSales   : true,
-
-                currency: {
-                    _id : CONSTANTS.DOLLAR,
-                    name: 'USD'
+                supplier    : '5717873cc6efb4847a5bc78c',
+                products    : [{
+                    product  : '5540d528dacb551c24000003',
+                    unitPrice: 10000,
+                    quantity : '1',
+                    taxes    : null,
+                    subTotal : 10000,
+                    jobs     : '57e3bef6c3f192452b44a699'
+                }],
+                project     : '5747f6df5c66305667bff462',
+                expectedDate: '1 Sep, 2016',
+                paymentInfo : {
+                    total   : 10000,
+                    unTaxed : 10000,
+                    taxes   : 0,
+                    discount: 0
                 }
             };
 
@@ -342,9 +320,8 @@ describe('Quotation Specs', function () {
                     expect(body)
                         .to.be.instanceOf(Object);
                     expect(body)
-                        .to.have.property('result')
-                        .and.to.have.property('currency')
-                        .and.to.have.property('_id', CONSTANTS.DOLLAR);
+                        .to.have.property('currency')
+                        .and.to.have.deep.property('_id._id', CONSTANTS.DOLLAR);
 
                     done();
                 });
@@ -381,8 +358,7 @@ describe('Quotation Specs', function () {
                     expect(body)
                         .to.be.instanceOf(Object);
                     expect(body)
-                        .to.have.property('result')
-                        .and.to.have.property('isOrder', true);
+                        .to.have.property('isOrder', true);
 
                     done();
                 });
@@ -424,7 +400,7 @@ describe('Quotation Specs', function () {
                 .send({
                     login: 'ArturMyhalko',
                     pass : 'thinkmobiles2015',
-                    dbId :  db
+                    dbId : db
                 })
                 .expect(200, done);
         });

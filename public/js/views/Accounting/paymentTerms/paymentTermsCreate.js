@@ -29,7 +29,7 @@ define([
         },
 
         events: {
-            'keypress #paymentTermCount'               : 'keypressHandler'
+            'keypress #paymentTermCount': 'keypressHandler'
         },
 
         keypressHandler: function (e) {
@@ -39,20 +39,24 @@ define([
         saveItem: function () {
             var self = this;
             var thisEl = this.$el;
-
             var name = thisEl.find('#paymentTermName').val();
             var count = thisEl.find('#paymentTermCount').val();
+            var data;
 
-            var data = {
-                name: name,
-                count : count || 1
+            if (!name) {
+                return App.render({type: 'error', message: 'Please, fill field "Name"'});
+            }
+
+            data = {
+                name : name,
+                count: count || 1
             };
 
             this.currentModel.save(data, {
                 wait   : true,
                 success: function (res, model) {
                     self.hideDialog();
-                    $('#paymentTermsTable').append(_.template(tableEL, {elem : model}));
+                    $('#paymentTermsTable').append(_.template(tableEL, {elem: model}));
                     self.collection.add(res);
                 },
 

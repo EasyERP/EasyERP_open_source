@@ -87,7 +87,7 @@ define([
 
             $target.closest('.propertyFormList').addClass('active');
 
-            if ( property === 'social.LI' ){
+            if (property === 'social.LI') {
                 value = value.replace('linkedin', '[]');
             }
 
@@ -111,7 +111,7 @@ define([
         cancelChanges: function (e) {
             e.preventDefault();
             this.modelChanged = {};
-            this.renderAbout();
+            this.renderAbout(true);
         },
 
         showNewSelect: function (e) {
@@ -202,10 +202,14 @@ define([
 
          },*/
 
-        renderAbout: function () {
+        renderAbout: function (cancel) {
             var self = this;
             var $thisEl = this.$el;
-            $thisEl.find('.aboutHolder').html(_.template(aboutTemplate, this.formModel.toJSON()));
+
+            if (cancel) {
+                $thisEl.find('.aboutHolder').html(_.template(aboutTemplate, this.formModel.toJSON()));
+            }
+
             common.canvasDraw({model: this.formModel.toJSON()}, this);
         },
 

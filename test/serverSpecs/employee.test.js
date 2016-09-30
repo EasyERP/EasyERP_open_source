@@ -3,7 +3,7 @@ var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var aggent;
 
-require('../../config/development');
+require('../../config/environment/test');
 
 describe('Employee Specs', function () {
     'use strict';
@@ -17,8 +17,8 @@ describe('Employee Specs', function () {
             aggent
                 .post('users/login')
                 .send({
-                    login: 'admin',
-                    pass : 'tm2016',
+                    login: 'test',
+                    pass : '1234567890',
                     dbId : 'production'
                 })
                 .expect(200, done);
@@ -636,7 +636,8 @@ describe('Employee Specs', function () {
                     expect(body)
                         .to.be.instanceOf(Object);
                     expect(body)
-                        .to.have.property('_id');
+                        .to.have.property('n')
+                        .and.equal(1);
 
                     done();
                 });

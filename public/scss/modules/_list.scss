@@ -1,0 +1,1005 @@
+#wrapper {
+
+  .listWrap {
+    display: flex;
+    height: calc(100vh - 121px);
+    border-bottom: 1px solid #ededed;
+
+    &.leadsList {
+      .name {
+        color: #508bbd;
+        font-size: 15px;
+        font-family: $bold-font-family;
+      }
+      .compactRow {
+        &:first-child {
+          display: flex;
+          align-items: center;
+
+          .name {
+            @extend %text-overflow;
+            flex-grow: 1;
+            width: 1px;
+            padding-right: 10px;
+          }
+          .stage {
+            flex-shrink: 0;
+          }
+        }
+      }
+    }
+
+    &.opportunitiesList {
+
+      .opportunity {
+        color: #508bbd;
+        font-size: 15px;
+        font-family: $bold-font-family;
+      }
+
+      .revenue {
+        font-size: 10px;
+      }
+    }
+
+    &.personList {
+
+      .firstName {
+        color: #508bbd;
+        font-size: 15px;
+        font-family: $bold-font-family;
+      }
+
+      .email {
+        font-size: 10px;
+      }
+
+      .compactRowWrap {
+        min-height: 60px;
+      }
+    }
+
+    &.companiesList {
+      .firstName {
+        color: #508bbd;
+        font-size: 15px;
+        font-family: $bold-font-family;
+      }
+
+      .email {
+        font-size: 10px;
+      }
+
+      .compactRowWrap {
+        min-height: 60px;
+      }
+    }
+
+    &.quotationsList,
+    &.ordersList,
+    &.invoicesList,
+    &.proformaList {
+      .firstName {
+        color: #508bbd;
+        font-size: 15px;
+        font-family: $bold-font-family;
+      }
+    }
+
+    .form-holder {
+      padding: 10px;
+    }
+  }
+
+  .salary-list {
+
+    tbody#listTable {
+      .subRow {
+        &:hover {
+          background-color: transparent;
+        }
+      }
+    }
+  }
+
+  .ui-dialog {
+    .list2 {
+      thead, tbody {
+        td {
+          height: 20px;
+          line-height: 1;
+          text-align: left;
+        }
+      }
+
+      thead {
+        th {
+          padding-top: 5px;
+        }
+      }
+    }
+  }
+
+  .tableFixed {
+    table-layout: fixed;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .invisible_border {
+    // invisible border for td
+    border: 1px solid transparent !important;
+  }
+
+  .hireFireTable {
+    margin-bottom: 10px;
+  }
+
+  .report-list {
+    tr {
+      td {
+        &:first-child {
+          padding: 0;
+        }
+      }
+    }
+  }
+
+  .hireFireTable {
+    margin-bottom: 10px;
+  }
+
+  ._invoiceTable {
+    &.list tbody tr,
+    &.list2 tbody tr,
+    &.list thead tr,
+    &.list2 thead tr {
+      border-top: none;
+    }
+    &.list tbody tr,
+    &.list2 tbody tr {
+      vertical-align: baseline;
+    }
+  }
+
+  ._deleteHeader {
+    th {
+      border-top: 1px solid #ECECEC;
+      border-bottom: 1px solid #ECECEC;
+      background-color: #F9F8F8;
+
+      &:first-child {
+        border-left: 1px solid #ECECEC;
+      }
+
+      &.deleteCell {
+        border-top: none;
+        border-bottom: none;
+        border-left: 1px solid #ECECEC;
+        background-color: #fff;
+      }
+    }
+  }
+
+  .productItem.deleteRow {
+    td.deleteCell {
+      .icon-close5 {
+        color: #fab2b1;
+        cursor: pointer;
+        font-size: 15px;
+      }
+    }
+  }
+
+  ._profitTitle {
+    border-bottom: 2px solid #808080;
+  }
+
+  ._profitSubTitle {
+    border-bottom: 1px solid #808080;
+  }
+
+  .list tbody td.expand {
+    cursor: pointer;
+    text-align: center;
+  }
+
+  ._btnsBlockFixed {
+    position: fixed;
+    right: 40px;
+    top: 85px;
+  }
+
+  ._profitTableWrap,
+  ._balanceSheetTableWrap,
+  ._closeMonthTableWrap,
+  ._incomeTableWrap,
+  ._cashFlowTableWrap,
+  ._totalCashFlow,
+  ._totalBalanceTableWrap,
+  ._trialBalanceTableWrap {
+    padding: 0 20px;
+    margin: 0 20px;
+    background-color: #fff;
+  }
+
+  ._profitTableWrap,
+  ._totalBalanceTableWrap {
+    .list {
+      thead {
+        th {
+          font-family: $base-font-family;
+
+          &._profitSubTitle,
+          &._profitTitle {
+            padding-bottom: 2px;
+            vertical-align: bottom;
+          }
+
+          &._profitTitle {
+            padding-left: 0;
+          }
+
+          &._profitSubTitle {
+            padding-left: 25px;
+          }
+        }
+      }
+
+      thead,
+      tbody,
+      tfoot {
+        th, td, tr {
+          height: 23px;
+          color: #666674;
+          text-align: left;
+        }
+
+        tr {
+          border: none;
+        }
+      }
+
+      tbody {
+        tr {
+          &.mainTr {
+            td {
+              &:nth-child(2) {
+                padding-left: 29px;
+              }
+            }
+          }
+
+          &.childRow {
+            td {
+              &:nth-child(2) {
+                padding-left: 44px;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .list,
+    .list2 {
+      .enableTableOdd {
+        tr:not(.innerRow):hover {
+          background-color: #fff;
+        }
+      }
+
+      thead {
+        tr {
+          &._profitSubTitle {
+            padding-left: 25px;
+          }
+        }
+      }
+    }
+  }
+
+  ._totalAmountTable {
+    width: 400px;
+    border-collapse: separate;
+    border-spacing: 0 5px;
+    color: #666;
+    float: right;
+
+    tr {
+      td {
+        padding: 5px 10px;
+
+        &:last-child {
+          text-align: right;
+        }
+
+        label {
+          color: #666;
+        }
+      }
+
+      &:nth-child(n+2) {
+        border-top: 1px solid #eee;
+      }
+    }
+
+    ._markedRow {
+      background-color: #F9F8F8;
+
+      td {
+        border-top: 1px solid #ECECEC;
+        border-bottom: 1px solid #ECECEC;
+
+        &:first-child {
+          border-left: 1px solid #ECECEC;
+        }
+
+        &:last-child {
+          border-right: 1px solid #ECECEC;
+        }
+      }
+    }
+
+    ._inputBordered {
+      text-align: right;
+    }
+  }
+
+  ._closeMonthWrap,
+  ._cashFlowWrap {
+    .list {
+      background-color: #fff;
+      thead,
+      tbody,
+      tfoot {
+        th, td {
+          height: 23px;
+          color: #666674;
+          text-align: left;
+
+          &:last-child {
+            padding-right: 15px;
+            text-align: right;
+          }
+        }
+
+        tr.childRow {
+          border-top: 0;
+        }
+      }
+      thead {
+        tr {
+          border-top: 0;
+
+          th {
+            font-family: $base-font-family;
+
+            &:first-child {
+              width: 50px;
+            }
+          }
+        }
+      }
+    }
+
+    .mainTr {
+      cursor: pointer;
+    }
+
+    .containerContent {
+      padding: 0;
+    }
+  }
+
+  ._profitWrap,
+  ._balanceSheetWrap,
+  ._closeMonthWrap,
+  ._cashFlowWrap,
+  ._trialBalanceWrap {
+    min-height: 100%;
+    padding-top: 20px;
+    background-color: #f2f5fa;
+
+    .containerContent {
+      padding: 0;
+    }
+  }
+
+  ._inputBordered {
+    height: 32px;
+    line-height: 1.42857143;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    padding: 5px 8px;
+    color: #555;
+    vertical-align: middle;
+    background-color: #fff;
+  }
+
+  ._incomeTableWrap {
+    padding: 20px;
+    .list {
+      thead {
+        th {
+          font-family: $base-font-family;
+        }
+      }
+
+      thead,
+      tbody,
+      tfoot {
+        th, td {
+          height: 23px;
+          color: #666674;
+          text-align: left;
+        }
+      }
+    }
+  }
+
+  ._totalAmountContainer {
+    &._createPopup {
+      ._totalAmountTable {
+        margin-right: 30px;
+
+        ._profitTableWrap {
+          padding: 0 20px;
+
+          .list {
+            thead {
+              th {
+                font-family: $base-font-family;
+
+                &._profitSubTitle,
+                &._profitTitle {
+                  padding-bottom: 2px;
+                  vertical-align: bottom;
+                }
+
+                &._profitTitle {
+                  padding-left: 0;
+                }
+
+                &._profitSubTitle {
+                  padding-left: 25px;
+                }
+              }
+            }
+
+            thead,
+            tbody,
+            tfoot {
+              th, td, tr {
+                height: 23px;
+                color: #666674;
+                text-align: left;
+              }
+
+              tr {
+                border: none;
+              }
+            }
+
+            tbody {
+              tr {
+                &.mainTr {
+                  cursor: pointer;
+                  td {
+                    &:nth-child(2) {
+                      padding-left: 29px;
+                    }
+                  }
+                }
+
+                &.childRow {
+                  td {
+                    &:nth-child(2) {
+                      padding-left: 44px;
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          .list,
+          .list2 {
+            thead {
+              tr {
+                &._profitSubTitle {
+                  padding-left: 25px;
+                }
+              }
+            }
+
+            .enableTableOdd {
+              tr:not(.innerRow):hover {
+                background-color: #fff;
+              }
+            }
+          }
+        }
+
+        ._incomeTableWrap {
+          padding: 0 20px;
+          .list {
+            thead {
+              th {
+                font-family: $base-font-family;
+              }
+            }
+
+            thead,
+            tbody,
+            tfoot {
+              th, td {
+                height: 23px;
+                color: #666674;
+                text-align: left;
+              }
+            }
+          }
+        }
+
+        ._profitTitle {
+          border-bottom: 2px solid #808080;
+        }
+
+        ._profitSubTitle {
+          border-bottom: 1px solid #808080;
+        }
+
+        .paymentsContainer,
+        .invoiceAttachments {
+          h3 {
+            margin: 15px;
+            color: #333;
+          }
+        }
+
+        .paymentsContainer {
+          max-width: 820px;
+          margin: 0 auto;
+
+          .list {
+            thead {
+              background-color: #f5f4f3;
+
+              th {
+                font-family: $base-font-family;
+              }
+            }
+          }
+        }
+
+        .invoiceAttachments {
+          max-width: 820px;
+          margin: 0 auto;
+
+          .attachWrapper {
+            padding: 13px 0 20px;
+          }
+        }
+
+        .tableLeft {
+          tbody {
+            td {
+              text-align: left;
+            }
+          }
+
+          thead {
+            th, .oe_sortable {
+              text-align: left;
+            }
+          }
+        }
+
+        .tableRight {
+          .list {
+            tbody {
+              td {
+                text-align: right;
+              }
+            }
+
+            thead {
+              th {
+                text-align: right;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  ._cashFlowTableWrap,
+  ._totalCashFlow {
+
+    .list,
+    .list2 {
+      tbody {
+        tr {
+          border-top: 0;
+        }
+      }
+    }
+  }
+
+  ._cashFlowTableWrap {
+    .list {
+      .mainTr {
+        td {
+          &:first-child {
+            padding-left: 20px;
+          }
+        }
+      }
+    }
+  }
+
+  ._totalCashFlow {
+
+    .list,
+    .list2 {
+      tbody {
+        tr {
+          &:last-child {
+            border-bottom: 0;
+          }
+        }
+      }
+    }
+  }
+
+  ._balanceSheetTableWrap {
+    + ._balanceSheetTableWrap,
+    + ._totalBalanceTableWrap {
+      padding-top: 20px;
+    }
+  }
+
+  ._totalBalanceTableWrap,
+  ._trialBalanceTableWrap {
+    padding-bottom: 20px;
+  }
+
+  ._balanceSheetTableWrap,
+  ._totalBalanceTableWrap,
+  ._trialBalanceTableWrap {
+    .list {
+      thead {
+        tr {
+          border-top: 0;
+          th {
+            text-align: left;
+            &:first-child {
+              width: 50px;
+            }
+          }
+        }
+      }
+      tbody {
+        tr {
+          td {
+            height: 23px;
+          }
+
+          &.mainTr {
+            td {
+              &:first-child {
+                text-align: left;
+              }
+            }
+          }
+
+          &.childTr {
+            td {
+              &:first-child {
+                text-align: right;
+              }
+            }
+          }
+
+          &.subTr {
+            border-top: 0;
+          }
+        }
+      }
+
+      thead,
+      tbody,
+      tfoot {
+        tr {
+          td, th {
+            color: #666674;
+            &:last-child {
+              text-align: right;
+            }
+          }
+        }
+      }
+
+      tfoot {
+        tr {
+          td {
+            text-align: left;
+          }
+        }
+      }
+    }
+  }
+
+  .list,
+  .list2 {
+
+    &.preventHover {
+      .enableTableOdd {
+        tr:not(.innerRow):hover {
+          background-color: transparent;
+        }
+      }
+    }
+  }
+
+  #groupList,
+  .groupList {
+    margin: 10px 10px 0 10px;
+    font-size: 14px;
+
+    li {
+
+      ul {
+        clear: both;
+        li {
+          clear: both;
+        }
+      }
+
+      .dotted-line {
+        display: none;
+        width: 20px;
+        height: 12px;
+        border-bottom: 1px dotted black;
+        margin-right: 2px;
+        float: left;
+      }
+
+      &.parent {
+
+        > .content {
+
+          .text {
+            padding-left: 26px !important;
+            position: relative;
+
+            &:before {
+              content: '\f115';
+              position: absolute;
+              top: 2px;
+              right: auto;
+              bottom: auto;
+              left: 0;
+              line-height: 24px;
+              color: $tilte-color;
+              font-family: $icon-font;
+              font-size: 20px;
+            }
+          }
+        }
+      }
+
+      &.child {
+
+        .dotted-line {
+          display: none;
+          width: 40px;
+          height: 12px;
+          margin-right: 2px;
+          border-bottom: 1px dotted black;
+          float: left;
+        }
+
+        .text {
+          padding-left: 0;
+          background-image: none;
+        }
+      }
+
+      .text {
+        display: block;
+        padding-left: 17px;
+        background: no-repeat 0 50%;
+        cursor: pointer;
+      }
+
+      .edit {
+        display: none;
+        width: 16px;
+        height: 25px;
+        margin-right: 5px;
+        color: $tilte-color;
+        background: no-repeat 0 50%;
+        float: right;
+        font-size: 16px;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+
+      .trash {
+        display: none;
+        width: 13px;
+        height: 25px;
+        margin-right: 5px;
+        color: $tilte-color;
+        background: no-repeat 0 50%;
+        float: right;
+        font-size: 16px;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    .content {
+      display: block;
+      height: 28px;
+      padding-left: 6px;
+      margin: 2px 0;
+      line-height: 25px;
+      border: 1px solid $border-color-main;
+      background: $bg-main;
+
+      &:hover {
+        background-color: $bg-hover-drop-down-color-active;
+
+        > .text {
+          .edit,
+          .trash {
+            display: block;
+          }
+        }
+      }
+
+      .text {
+        color: $mainText-color;
+      }
+    }
+
+    ._groupListItem {
+      ._trashCircle {
+        position: relative;
+        top: -1px;
+        display: inline-block;
+        height: 20px;
+        width: 20px;
+        line-height: 20px;
+        text-align: center;
+        border-radius: 50%;
+        cursor: pointer;
+
+        &:hover {
+          background-color: #e8e8e8;
+          color: #3e88b9;
+        }
+      }
+      ._text {
+        display: inline-block;
+        margin-top: 1px;
+      }
+    }
+  }
+
+  #sourceUsers,
+  #targetUsers,
+  #sourceGroups,
+  #targetGroups {
+    width: 250px;
+    height: 150px;
+    margin: 5px;
+    border: 1px solid #7f7f80; //$thin-border $border-color-main;
+    overflow-x: hidden;
+
+    li {
+      cursor: pointer;
+      line-height: 20px;
+      padding-left: 10px;
+      border-bottom: 1px solid #7f7f80; //$thin-border $border-color-main;
+      color: $mainText-color;
+
+      &:hover {
+        background-color: $bg-hover-drop-down-color-active;
+      }
+    }
+  }
+
+  #targetUsers {
+    height: 150px;
+    float: none !important;
+  }
+
+  #sourceUsers, #sourceGroups {
+    margin-left: 150px;
+  }
+
+  .listContent {
+
+    table {
+      width: 100%;
+    }
+  }
+
+  .listContentWrap {
+    width: 300px;
+    border-right: 1px solid #ededed;
+    flex-shrink: 0;
+
+    .listContentTitle {
+      position: relative;
+
+      #searchContainer {
+        top: -26px;
+      }
+    }
+
+    .search-options {
+      min-width: 277px;
+    }
+  }
+
+  .listContentTitle {
+    .dropBtn {
+      display: block;
+      height: 26px;
+      width: 26px;
+      border: 1px solid #bebebe;
+      font-size: 19px;
+      line-height: 28px;
+      border-radius: 3px;
+    }
+  }
+
+  .listOpen {
+
+    .top-bar {
+      display: none !important;
+    }
+
+    #content-holder {
+      height: 100% !important;
+      //overflow: hidden;
+    }
+
+    .listContentTitle {
+      h3 {
+        float: left;
+      }
+    }
+
+    .pagination {
+      margin: 5px 0 10px;
+    }
+  }
+
+  ._listModalColumn {
+    width: 33.333%;
+    padding: 0 10px;
+    float: left;
+  }
+
+  ._listModal {
+    &:after {
+      content: '';
+      display: table;
+      clear: both;
+    }
+    ._modalSelect {
+      display: block;
+    }
+  }
+}

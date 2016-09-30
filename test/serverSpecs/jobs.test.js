@@ -4,7 +4,7 @@ var url = 'http://localhost:8089/';
 var host = process.env.HOST;
 var aggent;
 
-require('.././development');
+require('../../config/environment/development');
 
 describe('jobs Specs', function () {
     'use strict';
@@ -12,6 +12,7 @@ describe('jobs Specs', function () {
     var projectId;
 
     describe('Jobs with admin', function () {
+        this.timeout(10000);
 
         before(function (done) {
             aggent = request.agent(url);
@@ -19,11 +20,12 @@ describe('jobs Specs', function () {
             aggent
                 .post('users/login')
                 .send({
-                    login: 'admin',
-                    pass : 'tm2016',
-                    dbId : 'production'
+                    login: 'superAdmin',
+                    pass : '111111',
+                    dbId : 'vasyadb'
                 })
                 .expect(200, done);
+
         });
 
         after(function (done) {
@@ -170,7 +172,7 @@ describe('jobs Specs', function () {
                 .send({
                     login: 'ArturMyhalko',
                     pass : 'thinkmobiles2015',
-                    dbId : 'production'
+                    dbId : 'vasyadb'
                 })
                 .expect(200, done);
         });

@@ -4,7 +4,7 @@ var url = 'http://localhost:8089/';
 var host = process.env.HOST;
 var aggent;
 
-require('../../config/development');
+require('../../config/environment/development');
 
 describe('BonusType Specs', function () {
     'use strict';
@@ -17,9 +17,9 @@ describe('BonusType Specs', function () {
             aggent
                 .post('users/login')
                 .send({
-                    login: 'admin',
-                    pass : 'tm2016',
-                    dbId : 'production'
+                    login: 'superAdmin',
+                    pass : '111111',
+                    dbId : 'vasyadb'
                 })
                 .expect(200, done);
         });
@@ -32,9 +32,9 @@ describe('BonusType Specs', function () {
 
         it('should create chartOfAccount', function (done) {
             var body = {
-                'account': 'TestBank',
-                'code'    : 100001,
-                'type'     : 'Bank and Cash'
+                account: 'TestBank',
+                code   : 100001,
+                type   : '57da4d62713d3fe825f074b3'
             };
 
             aggent
@@ -71,10 +71,10 @@ describe('BonusType Specs', function () {
 
         it("should patch chartOfAccount's", function (done) {
             var body = [{
-                '_id'    : id,
-                'account': 'BankTest',
-                'code'   : 100002,
-                'type'   : 'Banks'
+                _id    : id,
+                account: 'BankTest',
+                code   : 100002,
+                type   : '57da4d62713d3fe825f074b5'
             }];
 
             aggent
@@ -97,7 +97,7 @@ describe('BonusType Specs', function () {
 
         it('should get chartOfAccount with options', function (done) {
             var query = {
-                sort : {
+                sort: {
                     account: -1
                 }
             };
@@ -171,7 +171,7 @@ describe('BonusType Specs', function () {
                 .send({
                     login: 'ArturMyhalko',
                     pass : 'thinkmobiles2015',
-                    dbId : 'production'
+                    dbId : 'vasyadb'
                 })
                 .expect(200, done);
         });
@@ -186,8 +186,8 @@ describe('BonusType Specs', function () {
 
             var body = {
                 'account': 'TestBank',
-                'code'    : 100001,
-                'type'     : 'Bank and Cash'
+                'code'   : 100001,
+                'type'   : 'Bank and Cash'
             };
 
             aggent

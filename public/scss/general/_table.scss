@@ -48,9 +48,6 @@
   }
 }
 
-//from vacationList.less in less/modules.This was row 1400 in main.css
-
-
 .vacation-list {
   font-family: inherit;
   text-shadow: none;
@@ -180,22 +177,18 @@
   }
 }
 
-.vacation-list, .salary-list, .subSalary-list {
+.vacation-list,
+.salary-list,
+.subSalary-list {
   .newSelectList {
     color: #000;
   }
   tbody {
     tr {
-      //&:not(.subRow):hover {
-      //  td {
-      //    &:not(.selectedType) {
-      //      color: #fff;
-      //    }
-      //  }
-      //}
       td {
         & > div {
           float: right;
+
           a {
             font-size: 12px;
             line-height: 20px;
@@ -208,8 +201,6 @@
     }
   }
 }
-
-//from 2414 main.less
 
 .groupsAndUser {
   display: none;
@@ -242,53 +233,6 @@
   }
 }
 
-
-
-//from 2418 main.less
-/* Don`t remove this styles
-table#workflows {
-  width: 40%;
-
-  tr {
-    a {
-      margin-left: 3px;
-
-      &.edit {
-        display: none;
-      }
-
-      &.delete {
-        display: none;
-      }
-    }
-
-    &:hover {
-      a.edit:not(.hidden) {
-        display: inline;
-      }
-
-      a.delete:not(.hidden) {
-        display: inline;
-      }
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    td {
-      min-width: 40%;
-
-      &.edit-status {
-        width: 20%;
-      }
-    }
-  }
-}
-*/
-
-
-//from row 879 main.less
 #modulesAccessTable {
   display: none;
 
@@ -332,7 +276,6 @@ table#workflows {
   }
 }
 
-//from list.less in less/general. Row 905 in main.css
 .salary-list {
   tbody#listTable {
     .subRow {
@@ -340,141 +283,6 @@ table#workflows {
         background-color: transparent;
       }
     }
-  }
-}
-
-.list,
-.list2 {
-  &:not(.stripedList) {
-    font-family: $base-font-family; //@fontRegular;
-    width: 100%;
-
-    td, th {
-      height: 23px;
-      padding: 0 6px;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      box-sizing: border-box;
-      color: #000000; //@mainText-color;
-      font-size: 12px;
-    }
-
-    th {
-      &.oe_sortable,
-      &.oe_sortable_sub {
-        height: 30px;
-        padding-right: 20px;
-      }
-    }
-    thead {
-      tr {
-        border: none;
-        height: 30px;
-        vertical-align: middle;
-      }
-
-      th {
-        font-family: $semibold-font-family; //@fontSemiBold;
-        text-align: right;
-      }
-    }
-
-    tbody {
-
-      td {
-        text-align: right;
-        height: 45px;
-        &.changeContent {
-          border-top: 2px solid #5cb85c; //@success;
-          border-bottom: 2px solid #5cb85c; //@success;
-        }
-      }
-
-      tr {
-        &:last-child {
-          border-bottom: 1px solid #d7d7d7; //@thin-border @list-border-color;
-        }
-      }
-    }
-
-    tbody,
-    thead {
-      tr {
-        border-top: 1px solid #d7d7d7; //@thin-border @list-border-color;
-      }
-    }
-
-    tfoot {
-      td {
-        text-align: right;
-      }
-    }
-
-    thead, tfoot {
-      tr {
-        background: inherit !important; //hover should not work in a hover and footer tr
-      }
-    }
-
-    .notForm {
-      input {
-        margin-top: 3px;
-        cursor: pointer;
-        display: inline-block;
-        vertical-align: top;
-      }
-    }
-
-    .enableTableOdd {
-      tr {
-        &:not(.innerRow) {
-          &:hover {
-            background-color: #ededed; //@defaultBgColorOdd-color;
-          }
-        }
-      }
-    }
-
-    .centerCell {
-      text-align: center;
-    }
-
-    .leftBorderNone {
-      border-left: none;
-    }
-
-    .cancelled {
-      a {
-        text-decoration: line-through;
-      }
-    }
-    &.enable_hover {
-      tbody {
-        tr {
-          &:hover {
-            background-color: #d9d9d9; //@defaultBgHover-color;
-          }
-        }
-      }
-    }
-
-    .overtime {
-      //add new color for overtime tr
-      background-color: #ffe332 !important; //@list-overtime-bg !important;
-    }
-
-    thead th:first-of-type {
-      width: 15%;
-    }
-
-    .datepicker {
-      width: 90%
-    }
-
-    .datepicker.notVisible {
-      display: none;
-    }
-
   }
 }
 
@@ -495,22 +303,13 @@ table#workflows {
   }
 }
 
-.tableFixed {
-  //  for table layout FIXED
-  table-layout: fixed;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 .invisible_border {
-  // invisible border for td
   border: 1px solid transparent !important;
 }
+
 .hireFireTable {
   margin-bottom: 10px;
 }
-
-//Class for jobDashboard-jornalEntry
 
 .report-list {
   tr {
@@ -524,12 +323,9 @@ table#workflows {
 
 .forCaption {
   color: #ffffff !important; //@forCaption-text-color !important;
-  background-color: #3e88b9; //@forCaption-color;
+  background-color: #7eadcc; //@forCaption-color;
 }
 
-
-
-//from mein.less 4568
 .grid {
   min-width: 100%;
   font-size: 11px;
@@ -565,7 +361,6 @@ table#workflows {
       padding: 0 7px;
       line-height: 20px;
       display: block;
-      box-sizing: border-box;
 
       &.view {
         overflow: hidden;
@@ -596,11 +391,16 @@ table#workflows {
           position: absolute;
           top: 1px;
           right: 10px;
-          font-size: 14px;
+          //font-size: 14px;
+          font-size: 8px;
           line-height: 21px;
           cursor: pointer;
           width: 12px;
           text-align: center;
+          &:before {
+            //content: '\e90f';
+            //content: '\e912';
+          }
         }
       }
       &.dayOfMonth {
@@ -613,7 +413,6 @@ table#workflows {
         display: table-cell;
       }
     }
-
 
     td {
       &.dashboardWeek {
@@ -783,13 +582,11 @@ table#workflows {
       }
 
       span.projectItem {
+        @extend %text-overflow;
         padding-left: 30px;
         text-align: center;
         width: 105px;
-        padding-right: 0px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        padding-right: 0;
       }
       span.projectHours {
         display: block;
@@ -875,10 +672,12 @@ table#workflows {
 #forInfo {
   overflow: hidden;
   .forInfo-half-block {
+
     &.left {
       width: 65%;
       margin-right: 1%;
     }
+
     &.right {
       width: 34%;
     }
@@ -912,6 +711,7 @@ table#workflows {
       border-right-width: 0;
       cursor: pointer;
     }
+
     .expand {
       border-left-width: 0;
       text-align: center;
@@ -952,6 +752,7 @@ table#workflows {
   #jobsItem{
     border-bottom: 1px solid #d7d7d7 !important;
   }
+
   .innerTableProject {
     padding: 5px 0 5px 20px;
     .list > thead tr{
@@ -986,11 +787,9 @@ table#workflows {
     td {
 
       span{
+        @extend %text-overflow;
         display: inline-block;
         width: 99%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
         line-height: 12px;
       }
       a {
@@ -1244,9 +1043,7 @@ table#workflows {
   table-layout: fixed;
 
   th, td {
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    vertical-align: middle;
+    @extend %text-overflow;
   }
   tr thead tr{
     border-top: none;
@@ -1260,14 +1057,14 @@ table#workflows {
     }
     tr {
       border-top: 1px solid #d7d7d7;
-    &:first-child {
-      //border-top: 0;
-    }
-    &:last-child {
-      border-bottom: 0;
+      &:first-child {
+        //border-top: 0;
+      }
+      &:last-child {
+        border-bottom: 0;
+      }
     }
   }
- }
 
   tfoot {
     margin-right: 17px;
@@ -1311,9 +1108,30 @@ table#workflows {
   }
 
   ._payRoll-TableBody
-    td{
-      border: 1px solid #d7d7d7;
-    }
+  td{
+    border: 1px solid #d7d7d7;
+  }
+}
+
+.payRoll-expenses {
+  //для позиционирования label в ui-dialog
+  width: 70% !important;
+  margin: 0 auto;
+  padding-top: 25px !important;
+  //overflow: hidden;
+
+  .payRoll-name {
+    //float: left;
+    padding-right: 5px;
+  }
+
+  .payRoll-edit {
+    float: right;
+  }
+
+  .payRoll-edit, .payRoll-name {
+    margin-bottom: 15px;
+  }
 }
 
 .payRoll-expenses{
@@ -1375,3 +1193,66 @@ table#workflows {
   }
 }
 
+/*22.09 added from _main.less*/
+#profileTableWrapper {
+  width: calc(100% - 170px);
+  .list {
+    thead {
+      tr {
+        border-top: 1px solid #7f7f80;
+      }
+    }
+  }
+}
+
+
+.deleteRow {
+  &:hover {
+    .fa-trash-o {
+      display: inline-block;
+    }
+  }
+  .fa-trash-o {
+    display: none;
+  }
+}
+
+
+
+/*28.09 added from modules/acounting*/
+._acountingTableBlock {
+  flex-grow: 1;
+  overflow: auto;
+
+  .list {
+    thead {
+      tr {
+        background-color: #f7f7f7;
+        border-top: 0;
+      }
+    }
+
+    tr {
+      &:hover {
+        .goToEdit,
+        .goToRemove {
+          visibility: visible;
+        }
+      }
+
+      td, th {
+        overflow: hidden;
+        text-align: left;
+
+        &:first-child {
+          padding-left: 30px;
+        }
+      }
+    }
+
+    .goToEdit,
+    .goToRemove {
+      visibility: hidden;
+    }
+  }
+}

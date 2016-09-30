@@ -1,12 +1,15 @@
 .col1-4 {
   width: 25%;
 }
+
 .col1-3 {
   width: 33%;
 }
+
 .col4-10 {
   width: 40%;
 }
+
 .col6-10 {
   width: 60%;
 }
@@ -15,20 +18,16 @@
   padding-top: 30px !important;
 
   .taskTop {
-    display: -webkit-box;
-    display: -moz-box;
-    display: -ms-flexbox;
-    display: -webkit-flex;
     display: flex;
 
     .editTags {
       padding: 0 5px;
-      float: right;
       height: 20px;
       line-height: 18px;
       color: #fff;
       font-size: 13px;
       border-radius: 3px;
+      float: right;
     }
   }
 
@@ -158,8 +157,9 @@
 
 .ui-dialog-buttonset {
   border: none;
-  border-top: 1px solid #d7d7d7;
+  border-top: 1px solid #7eadcc;
   padding-top: 10px;
+  float: none;
 
   .btn + .btn {
     margin-left: 10px;
@@ -278,10 +278,8 @@
     }
 
     span {
+      @extend %text-overflow;
       display: block;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
       text-transform: uppercase;
       font-size: 12px;
       color: $tab-list-color;

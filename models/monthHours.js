@@ -28,4 +28,3 @@ module.exports = (function () {
 
     mongoose.Schemas.MonthHours = monthHoursSchema;
 })();
-

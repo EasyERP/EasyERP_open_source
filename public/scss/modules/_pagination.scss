@@ -1,0 +1,262 @@
+.pagination {
+  margin: 5px 10px 0;
+
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+
+  & > div {
+    float: left;
+    padding: 0 5px;
+  }
+
+  .countOnPage {
+    @extend .clearfix;
+    //text-align: left;
+    & > div {
+      float: left;
+    }
+    span {
+      padding: 1px 3px;
+    }
+    .page-list {
+      padding: 1px 3px;
+      a {
+        display: block;
+        float: left;
+      }
+    }//cant find in templates
+  }
+
+  .pageList {
+    position: relative;
+    .itemsNumber {
+      text-decoration: none;
+      display: inline-block;
+      padding: 0 5px;
+      &:hover {
+        padding-bottom: 4px;
+        border-bottom: 1px solid #7f7f80;//@border-color-main;
+      }
+    }
+    a.selectedItemsNumber {
+      border-bottom: 1px solid #7f7f80;//@border-color-main;
+      padding-bottom: 4px;
+    }
+    button {
+      background-color: white;
+      background-image: none;
+      border-radius: 0;
+      width: 27px;
+      margin: 0 0 0 5px;
+      margin: 0 0 0 5px;
+      line-height: 10px;
+      font-size: 12px;
+      padding: 3px 2px;
+      &:hover {
+        background-color: #F7F8F9;
+      }
+    }
+  }//cant find in templates
+
+  .nextPrev {
+    float: right;
+
+    button {
+      &:before {
+        font-size: 18px;
+        line-height: 18px;
+      }
+    }
+
+    div, button {
+      float: left;
+    }
+    span {
+      padding: 0 3px;
+      line-height: 20px;
+    }
+    .first_ShowPage, .last_ShowPage,
+    .previous_Page, .next_Page, .currentPageList, .current_ShowPage {
+      border: 1px solid #7f7f80;//@thin-border @pagination-border;
+      background: transparent;
+      line-height: 14px;
+      font-size: 15px;
+      width: 20px;
+      height: 20px;
+      display: block;
+      text-align: center;
+      &:hover {
+        color: #808080;//lighten(@mainText-color, 50%);
+      }
+      &[disabled] {
+        color: #808080;//lighten(@mainText-color, 50%);
+        border-color:#d7d7d7;// @pagination-border-disabled;
+        cursor: default;
+      }
+    }
+
+    .current_ShowPage {
+      width: 30px;
+      margin: 0 -2px 0 5px;
+      font-size: 12px;
+      color: #000000 !important;//@mainText-color !important;
+      &:focus {
+        box-shadow: 0 0 5px #3e88b9;//@border-color-selected;
+        outline: medium none;
+      }
+    }
+
+    .first_ShowPage, .last_ShowPage {
+      width: 30px;
+    }
+
+    .previous_Page, .next_Page {
+      margin: 0 3px;
+    }
+
+    .currentPageList {
+      margin: 0 5px;
+      width: 26px;
+    }
+
+    .allPage {
+      position: relative;
+    }
+
+    ul {
+      background-color:  #4d5a75;//@bg-main-menu;
+      border: 1px solid #7f7f80;//@thin-border @pagination-border;
+      position: absolute;
+      bottom: 23px;
+      left: 5px;
+      display: none;
+      font-size: 12px;
+      li {
+        a {
+          display: block;
+          width: 22px;
+          height: 20px;
+          line-height: 20px;
+          text-align: center;
+          &:hover {
+            background-color: #3e88b9;//@bg-main-menu-selected;
+            color: white;
+            text-decoration: none;
+          }
+        }
+      }
+    }
+
+    #pageList {
+      background-color: #ffffff;//@pagination-bg;
+      border: 1px solid #7f7f80;//@thin-border @pagination-border;
+      border-bottom-color: transparent;
+      position: absolute;
+      bottom: 100%;
+      left: 5px;
+      display: none;
+
+      li {
+        display: block;
+        width: 24px;
+        height: 20px;
+        line-height: 20px;
+        text-align: center;
+        font-size: 12px;
+        cursor: pointer;
+        &:hover {
+          background-color: #7f7f80;// @bg-main-menu-selected;
+          color: white;
+          text-decoration: none;
+        }
+      }
+    }
+  }
+}
+
+.nextPrev {
+  button {
+    position: relative;
+
+    &.fa-angle-double-right,
+    &.fa-angle-double-left,
+    &.fa-angle-left,
+    &.fa-angle-right,
+    &.fa-angle-up{
+      &:before {
+        top:2px;
+      }
+    }
+
+
+    &.fa-angle-up {
+      position: relative;
+    }
+  }
+}
+
+
+/*23.09 added from _main.less*/
+.miniPagination, .miniPaginationPersons {
+  $width: 60px;
+  $height: 20px;
+  width: $width*4;
+  margin: 0 auto;
+  text-align: center;
+  height: $height;
+
+
+  > div {
+    cursor: pointer;
+    margin-top: 3px;
+    height: $height;
+    line-height: $height;
+    float: left;
+    border: 1px solid #7f7f80;//$thin-border silver;
+    border-right: none;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+
+      span {
+        color: $overiewText-color;
+      }
+    }
+
+    &.not-active {
+      color: silver;
+      background: none;
+      cursor: default;
+
+      &:hover {
+        background: none;
+
+        span {
+          color: $mainText-color;
+        }
+      }
+    }
+    span {
+      color: $mainText-color;
+    }
+  }
+
+  .last, .lastPersons {
+    border-right: 1px solid #7f7f80;//$thin-border silver !important;
+  }
+
+  .first, .last, .firstPersons, .lastPersons {
+    width: $width/3*2;
+  }
+
+  .prev, .next, .prevPersons, .nextPersons {
+    width: $width;
+  }
+
+  .prev, .next {
+    width: $width;
+  }
+}

@@ -65,6 +65,7 @@ define([
                 years = self.model.get('years');
 
                 relatedEmployeeId = App.currentUser.relatedEmployee ? App.currentUser.relatedEmployee._id : null;
+
                 if (relatedEmployeeId) {
                     employeeArray = self.model.get('employees');
                     relatedEmployee = _.find(employeeArray, function (el) {

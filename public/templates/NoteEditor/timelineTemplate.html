@@ -1,0 +1,71 @@
+<div id="timeLineBody" class="noteMainContainer timeNote">
+    <% notes = notes || [];%>
+    <% notes.reverse();%>
+    <%_.each(notes, function(val,key){ %>
+    <% var login = val.user ? (App.currentUser._id === val.user._id) ? 'You': val.user.login : '' %>
+    <% var classType = val.history ? 'historyContent' : 'noteContent' %>
+
+    <div id="<%=val._id%>" class="noteContainer <%=classType%>">
+        <div class="<%=val.history ? '' : 'contentHolder'%>">
+            <div class="noteBody">
+                <%if (val.history) {%>
+                <%var name = val.history.collectionName%>
+                <span class="dateNote"><%=val.date%></span>
+                <div class="itemCircleWrap">
+                    <div class="itemCircle">
+                    <span class="icon-edit-list"></span>
+                    </div>
+                </div>
+                <div class="changed_field">
+                    <%if (val.history.prevValue){%>
+                    <span class="changedFieldName"><b><%= login %></b> changed <%= val.name ? 'on ' + val.name + ' : ' : '' %><b><%= val.history.changedField %></b></span>
+                    <span>from <b><%= val.history.prevValue %></b></span>
+                    <span> to </span>
+                    <%} else {%>
+                    <span class="changedFieldName"><b><%= login %></b> added <%= val.name ? 'on ' + val.name + ' : ' : '' %> <b><%= val.history.changedField %></b></span>
+                    <%}%>
+                    <span><b><%= val.history.newValue %></b></span>
+                </div>
+                <%} else if (val.pay) {%>
+
+                <span class="dateNote"><%=val.date%></span>
+                <div class="itemCircleWrap">
+                    <div class="itemCircle">
+                        <span class="icon-usd"></span>
+                    </div>
+                </div>
+                <div class="changed_field">
+                    <span class="changedFieldName"><b><%= login %></b> received Payment of </span>
+                    <span><b><%= val.pay %></b></span>
+                </div>
+
+                <%} else if (val.attachment) {%>
+                <span class="dateNote"><%=val.date%></span>
+                <div class="itemCircleWrap">
+                    <div class="itemCircle">
+                        <span class="icon-edit-list2" aria-hidden="true"></span>
+                    </div>
+                </div>
+                <span class="noteType"><b><%=login%></b> left an Attachment </span>
+
+                <div class="noteType loadAttach"><a href="download/<%= val.attachment.shortPas%>" id="<%= val.attachment._id%>"><%=' ' + val.attachment.name  %></a></div>
+
+                <a href="javascript:;" data-type="del" class="editDelNote"></a>
+                <%} else {%>
+                <span class="dateNote"><%=val.date%></span>
+                <div class="itemCircleWrap">
+                    <div class="itemCircle">
+                        <span class="icon-coment" aria-hidden="true"></span>
+                    </div>
+                </div>
+                <span class="noteType"><b><%=login%></b> left a Note</span>
+
+                <div class="noteText <%=!val.note ? 'hidden' : ''%>"><%= val.note ? val.note.replace(/</g,"&#60;").replace(/>/g,"&#62;").replace(/\n/g,"<br/>") : ''%> </div>
+
+                <a href="javascript:;" data-type="del" class="editDelNote"></a>
+                <%}%>
+            </div>
+        </div>
+    </div>
+    <% }); notes.reverse(); %>
+</div>

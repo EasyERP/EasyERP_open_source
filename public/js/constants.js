@@ -71,9 +71,11 @@ define([], function () {
         CASHTRANSFER      : 'cashTransfer',
         REPORTSDASHBOARD  : 'reportsDashboard',
         CONTRACTJOBS      : 'contractJobs',
+        CUSTOMDASHBOARD   : 'customDashboard',
         PROJECTSDASHBOARD : 'projectsDashboard',
         FOLLOWERS         : 'followers',
         MANUALENTRY       : 'manualEntry',
+        CUSTOMDASHBOARDCHARDS   : 'customDashboardCharts',
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
@@ -208,6 +210,7 @@ define([], function () {
             PAYMENT_METHOD_DD          : 'paymentMethod/',
             DEALTASKS                  : '/DealTasks/',
             CONTRACTJOBS               : '/contractJobs/',
+            CUSTOMDASHBOARD            : '/customDashboard/',
             PROJECTSDASHBOARD          : '/projectsDashboard/',
             FOLLOWERS                  : '/followers/',
             MANUALENTRY                : '/journalEntries/'

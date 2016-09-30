@@ -3,13 +3,13 @@
         <div class="inner">
             <ul class="dialog-tabs _btnsBlockFixed" data-class="mainTabs">
                 <li class="right">
-                    <button id="editButton" class="btn">
+                    <button id="editButton" class="btn" title="Edit">
                         <span class="icon-pencil2"></span>
                     </button>
-                    <button id="exportToPdf" class="btn ">
+                    <button id="exportToPdf" class="btn " title="Download in PDF format">
                         <span class="icon-pdf"></span>
                     </button>
-                    <button class="btn attach_file" id="attachment_file">
+                    <button class="btn attach_file" id="attachment_file" title="Attach">
                         <span class="icon-attach"></span>
                     </button>
                     <%if(model.workflow && model.workflow.status !== 'Cancelled'){%>

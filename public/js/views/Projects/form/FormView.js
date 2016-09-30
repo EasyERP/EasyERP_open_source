@@ -1607,13 +1607,13 @@ define([
                 }
 
                 /*if (accessElement.module === 72) {
-                    if (accessElement.access.read) {
-                        paralellTasks.push(self.getProjectMembers);
-                    } else {
-                        $thisEl.find('#projectMembersTab').parent().remove();
-                        $thisEl.find('div#projectMembers').parent().remove();
-                    }
-                }*/
+                 if (accessElement.access.read) {
+                 paralellTasks.push(self.getProjectMembers);
+                 } else {
+                 $thisEl.find('#projectMembersTab').parent().remove();
+                 $thisEl.find('div#projectMembers').parent().remove();
+                 }
+                 }*/
 
             });
 
@@ -1632,6 +1632,8 @@ define([
 
             $('ul.export').hide();
             $('#top-bar-deleteBtn').hide();
+            $('#top-bar-exportToCsvBtn').parent('.btn').hide();
+            $('#top-bar-exportToXlsxBtn').parent('.btn').hide();
             $('#createQuotation').show();
 
             $thisEl.find('#StartDate').datepicker({

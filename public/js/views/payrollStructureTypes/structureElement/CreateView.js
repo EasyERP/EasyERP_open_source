@@ -269,6 +269,7 @@ define([
             });
             var buttons = [
                 {
+                    class: 'btn',
                     text : 'Cancel',
                     click: function () {
                         self.hideDialog();
@@ -279,6 +280,7 @@ define([
                 buttons.unshift(
                     {
                         id   : 'create-weeklyScheduler-dialog',
+                        class: 'btn blue',
                         text : 'Update',
                         click: function () {
                             self.saveItem();
@@ -289,6 +291,7 @@ define([
                 buttons.unshift(
                     {
                         id   : 'create-weeklyScheduler-dialog',
+                        class: 'btn blue',
                         text : 'Create',
                         click: function () {
                             self.saveItem();

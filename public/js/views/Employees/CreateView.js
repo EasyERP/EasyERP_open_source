@@ -14,7 +14,21 @@ define([
     'moment',
     'helpers',
     'dataService'
-], function (Backbone, $, _, CreateTemplate, EmployeeModel, TransferModel, common, populate, AttachView, AssigneesView, ParentView, CONSTANTS, moment, helpers, dataService) {
+], function (Backbone,
+             $,
+             _,
+             CreateTemplate,
+             EmployeeModel,
+             TransferModel,
+             common,
+             populate,
+             AttachView,
+             AssigneesView,
+             ParentView,
+             CONSTANTS,
+             moment,
+             helpers,
+             dataService) {
     'use strict';
 
     var CreateView = ParentView.extend({
@@ -81,10 +95,14 @@ define([
         },
 
         events: {
-            'mouseenter .avatar': 'showEdit',
-            'mouseleave .avatar': 'hideEdit',
-            'click td.editable' : 'editJob',
-            'click .icon-attach': 'clickInput'
+            'mouseenter .avatar'   : 'showEdit',
+            'mouseleave .avatar'   : 'hideEdit',
+            'click td.editable'    : 'editJob',
+            'click .icon-attach'   : 'clickInput',
+            'keyup #personalEmail' : 'onEmailEdit',
+            'change #personalEmail': 'onEmailEdit',
+            'paste #personalEmail' : 'onEmailEdit',
+            'cut #personalEmail'   : 'onEmailEdit'
         },
 
         clickInput: function () {
@@ -210,6 +228,30 @@ define([
             $(e.target).closest('.attachFile').remove();
         },
 
+        onEmailEdit: function (e) {
+            var $targetEl = $(e.target);
+            var enteredEmail = $targetEl.val();
+            var $thisEl = this.$el;
+            var $userName = $thisEl.find('#userName');
+
+            function retriveUserName(str) {
+                var symbolPos;
+
+                str = str || '';
+                symbolPos = str.indexOf('@');
+
+                if (symbolPos === -1) {
+                    symbolPos = str.length;
+                }
+
+                return str.substring(0, symbolPos);
+            }
+
+            if ($userName.length) {
+                $userName.text(retriveUserName(enteredEmail));
+            }
+        },
+
         fileSizeIsAcceptable: function (file) {
             if (!file) {
                 return false;
@@ -238,6 +280,7 @@ define([
             var sourceId;
             var groupsId;
             var dataType;
+            var userName;
             var manager;
             var marital;
             var employmentType;
@@ -280,6 +323,7 @@ define([
             gender = $thisEl.find('#genderDd').attr('data-id') || null;
             $tr = $jobTable.find('tr.transfer');
             sourceId = $thisEl.find('#sourceDd').attr('data-id');
+            userName = $.trim($thisEl.find('#userName').text());
             homeAddress = {};
             fireArray = [];
             hireArray = [];
@@ -380,6 +424,7 @@ define([
                 nationality    : nationality,
                 isEmployee     : isEmployee,
                 lastFire       : lastFire,
+                userName       : userName,
                 groups         : {
                     owner: $thisEl.find('#allUsersSelect').attr('data-id') || null,
                     users: usersId,
@@ -389,7 +434,6 @@ define([
                 whoCanRW: whoCanRW,
                 hire    : hireArray,
                 fire    : fireArray
-                // transfer: transferArray
             };
 
             employeeModel.save(data, {
@@ -428,10 +472,6 @@ define([
 
                     transferModel = new TransferModel();
                     transferModel.save(transfer, {
-                        success: function (model) {
-
-                        },
-
                         error: function (model, xhr) {
                             self.errorNotification(xhr);
                         }

@@ -1,21 +1,56 @@
 <div class="form-holder">
     <div class="settings_modal">
         <form method="post" action="" class="form" id="invoiceForm">
-            <fieldset>
-                <div class="clearfix"></div>
-                <h3><%= name ? 'Update' : 'New'%> <%= type %> Structure Element</h3>
-                <div class="clearfix"></div>
-                <div class="setting_element half-block left">
-                    <span>Name: </span>
-                    <input id="structureComponentName" maxlength="40" size="40" type="text" value="<%= name || ''%>">
-                </div>
-                <div class="setting_element half-block right">
-                    <dl class="opp-info">
-                        <label for="range">Based on range</label>
-                        <div class="check_wrap">
-                            <input id="range" type="checkbox"/>
-                        </div>
+            <div class="clearfix"></div>
+            <h3><%= name ? 'Update' : 'New'%> <%= type %> Structure Element</h3>
+            <div class="clearfix"></div>
+            <div class="setting_element half-block left">
+                <span class="_setInputTitle">Name: </span>
+                <input id="structureComponentName"
+                       maxlength="40"
+                       size="40"
+                       type="text"
+                       value="<%= name || ''%>">
+            </div>
+            <div class="setting_element half-block right">
+                <dl class="opp-info">
+                    <label for="range">Based on range</label>
 
+<<<<<<< HEAD
+                    <div class="check_wrap">
+                        <input id="range" type="checkbox"/>
+                    </div>
+                    <dt>
+                        <label style="display: none"
+                               for="minRange"
+                               class="minRange">Min Range
+                        </label>
+                    </dt>
+                    <dd>
+                        <input style="display: none"
+                               class="minRange"
+                               id="minRange" value="0"/>
+                    </dd>
+                    <dt>
+                        <label style="display: none"
+                               class="maxRange"
+                               for="maxRange">Max Range
+                        </label>
+                    </dt>
+                    <dd>
+                        <input style="display: none"
+                               class="maxRange"
+                               id="maxRange"
+                               value="0"/>
+                    </dd>
+                </dl>
+            </div>
+            <div class="setting_element half-block left">
+                <span class="_setInputTitle">Formula: </span>
+                <span id="formula"></span>
+                <span>
+                    <a href="javascript:;" id="addFormulaElement">...</a>
+=======
                         <dt><label style="display: none" for="minRange" class="minRange">Min Range</label></dt>
                         <dd><input style="display: none" class="minRange" id="minRange" value="0"/></dd>
                         <dt><label style="display: none" class="maxRange" for="maxRange">Max Range</label></dt>
@@ -25,12 +60,11 @@
                 <div class="setting_element half-block left">
                     <span>Formula: </span>
                     <span id="formula"></span>
-                <span>
-                    <a href="javascript:;" id="addFormulaElement">...</a>
+                    <span>
+                    <a href="javascript:;" id="addFormulaElement">Add formula</a>
+>>>>>>> origin/develop
                 </span>
-                </div>
-
-            </fieldset>
+            </div>
         </form>
     </div>
 </div>

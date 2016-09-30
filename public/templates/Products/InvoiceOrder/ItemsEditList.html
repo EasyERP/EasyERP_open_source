@@ -19,7 +19,7 @@
     </td>
     <% if (forSales) {%>
         <% if (product.jobs) { %>
-            <td data-name="jobs" data-content="<%=product.jobs._id%>" class="text-overflow jobs selectJobTd ">
+            <td data-name="jobs" data-content="<%=product.jobs._id%>" class="textEllipsis jobs selectJobTd ">
                 <div class="jobsWescWrap _newSelectListWrap ">
                     <a class="<%=editable ? 'current-selected jobs' : ''%>" id="jobs" data-id="<%=product.jobs._id%>" href="javascript:;"><%=product.jobs.name%></a>
                     <textarea class="jobsDescription"><%=product.jobs.description%></textarea>

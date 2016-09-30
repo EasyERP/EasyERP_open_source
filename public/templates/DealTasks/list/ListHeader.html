@@ -9,28 +9,47 @@
       <li><input type="checkbox"  value="null" checked="checked"><span>Undefinded</span></li>
 	</ul>-->
 <div id="searchContainer"></div>
-<table class="list task-list withCheckbox">
-    <thead>
-    <tr>
-        <th class="centerCell">
-            <input type="checkbox" id="checkAll"/>
-        </th>
-        <th class="centerCell">N</th>
-        <th class="oe_sortable" data-sort="dueDate">Due Date<span class="arrow down"></span><span
-                class="arrow up"></span></th>
-        <th class="oe_sortable" data-sort="description">Title<span class="arrow down"></span><span
-                class="arrow up"></span></th>
-        <th class="oe_sortable" data-sort="workflow.name">Status<span class="arrow down"></span><span
-                class="arrow up"></span></th>
-        <th class="oe_sortable" data-sort="category.name">Category<span class="arrow down"></span><span
-                class="arrow up"></span></th>
-        <th class="oe_sortable" data-sort="assignedTo.name.first">Assigned to<span class="arrow down"></span><span
-                class="arrow up"></span></th>
-        <th class="oe_sortable" data-sort="deal.name">Associated with<span class="arrow down"></span><span
-                class="arrow up"></span></th>
-
-    </tr>
-    </thead>
-    <tbody id="listTable"></tbody>
-</table>
+<div class="_tableTackWrap">
+    <table class="list stripedList">
+        <colgroup>
+            <col width="43px">
+            <col width="11%">
+            <col width="42%">
+            <col width="10%">
+            <col width="10%">
+            <col width="13%">
+            <col width="14%">
+        </colgroup>
+        <thead>
+        <tr>
+            <th class="centerCell">
+                <input type="checkbox" id="checkAll"/>
+            </th>
+            <th class="oe_sortable" data-sort="dueDate">Due Date
+                <span class="arrow down"></span>
+                <span class="arrow up"></span>
+            </th>
+            <th class="oe_sortable" data-sort="description">Title
+                <span class="arrow down"></span>
+                <span class="arrow up"></span>
+            </th>
+            <th class="oe_sortable" data-sort="workflow.name">Status
+                <span class="arrow down"></span>
+                <span class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="category.name">Category
+                <span class="arrow down"></span>
+                <span class="arrow up"></span>
+            </th>
+            <th class="oe_sortable" data-sort="assignedTo.name.first">Assigned to
+                <span class="arrow down"></span>
+                <span class="arrow up"></span>
+            </th>
+            <th class="oe_sortable" data-sort="deal.name">Associated with
+                <span class="arrow down"></span>
+                <span class="arrow up"></span>
+            </th>
+        </tr>
+        </thead>
+        <tbody id="listTable"></tbody>
+    </table>
 </div>

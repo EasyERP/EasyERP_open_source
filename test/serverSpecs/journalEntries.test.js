@@ -3,12 +3,13 @@ var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var aggent;
 
-require('../../config/development');
+require('../../config/environment/development');
 
 describe('journalEntries Specs', function () {
     'use strict';
 
     var id;
+    this.timeout(10000);
 
     describe('journalEntries with admin', function () {
         before(function (done) {
@@ -17,9 +18,9 @@ describe('journalEntries Specs', function () {
             aggent
                 .post('users/login')
                 .send({
-                    login: 'admin',
-                    pass : 'tm2016',
-                    dbId : 'production'
+                    login: 'superAdmin',
+                    pass : '111111',
+                    dbId : 'vasyadb'
                 })
                 .expect(200, done);
         });
@@ -170,8 +171,8 @@ describe('journalEntries Specs', function () {
 
         it('should get data for balanceSheet view', function (done) {
             var query = {
-                'startDate': '1 Feb, 2016',
-                'endDate'  : '28 Feb, 2016'
+                startDate: '1 Feb, 2016',
+                endDate  : '28 Feb, 2016'
             };
 
             aggent
@@ -203,8 +204,8 @@ describe('journalEntries Specs', function () {
 
         it('should get data for cashFlow view', function (done) {
             var query = {
-                'startDate': '1 Feb, 2016',
-                'endDate'  : '28 Feb, 2016'
+                startDate: '1 Feb, 2016',
+                endDate  : '28 Feb, 2016'
             };
 
             aggent
@@ -290,19 +291,18 @@ describe('journalEntries Specs', function () {
 
         it('should get data for Inventory Report view', function (done) {
             var query = {
-                'startDate': '1 Feb, 2016',
-                'endDate'  : '2 Feb, 2016',
-                filter  : {
-                    salesManager: {
-                        key  : "salesManager._id"
-                    }
-                }
+                viewType                       : 'list',
+                page                           : 1,
+                count                          : 50,
+                'filter[date][value][0]'       : 'Mon Aug 01 2016 17:24:51 GMT+0300 (EEST)',
+                'filter[date][value][1]'       : 'Wed Aug 31 2016 23:59:59 GMT+0300 (EEST)',
+                'filter[salesManager][value][]': '55b92ad221e4b7c40f00004f',
+                contentType                    : 'inventoryReport'
             };
 
             aggent
                 .get('journalEntries/getInventoryReport')
                 .query(query)
-                .query({'filter[salesManager][value][0]': '55b92ad221e4b7c40f00004f'})
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -331,7 +331,7 @@ describe('journalEntries Specs', function () {
         it('should get data to export to Xlsx', function (done) {
 
             aggent
-                .get('journalEntries/exportToCsv/%7B%22startDate%22%3A%7B%22key%22%3A%22startDate%22%2C%22value%22%3A%222016-05-01T14%3A36%3A15.282Z%22%7D%2C%22endDate%22%3A%7B%22key%22%3A%22endDate%22%2C%22value%22%3A%222016-05-31T20%3A59%3A59.999Z%22%7D%7D')
+                .get('journalEntries/exportToXlsx/?filter=%7B%22date%22%3A%7B%22value%22%3A%5B%222015-12-31T22%3A00%3A00.000Z%22%2C%222015-12-31T22%3A00%3A00.000Z%22%5D%7D%7D')
                 .expect(200)
                 .end(function (err, res) {
                     if (err) {
@@ -345,7 +345,7 @@ describe('journalEntries Specs', function () {
         it('should get data to export to Csv', function (done) {
 
             aggent
-                .get('journalEntries/exportToCsv/%7B%22startDate%22%3A%7B%22key%22%3A%22startDate%22%2C%22value%22%3A%222016-05-01T14%3A36%3A15.282Z%22%7D%2C%22endDate%22%3A%7B%22key%22%3A%22endDate%22%2C%22value%22%3A%222016-05-31T20%3A59%3A59.999Z%22%7D%7D')
+                .get('journalEntries/exportToCsv/?filter=%7B%22date%22%3A%7B%22value%22%3A%5B%222015-12-31T22%3A00%3A00.000Z%22%2C%222015-12-31T22%3A00%3A00.000Z%22%5D%7D%7D')
                 .expect(200)
                 .end(function (err, res) {
                     if (err) {
@@ -562,7 +562,7 @@ describe('journalEntries Specs', function () {
                 .send({
                     login: 'ArturMyhalko',
                     pass : 'thinkmobiles2015',
-                    dbId : 'production'
+                    dbId : 'vasyadb'
                 })
                 .expect(200, done);
         });

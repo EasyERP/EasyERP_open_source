@@ -347,9 +347,9 @@ define([
 
             if (this.forSales) {
                 this.$el.find('#supplierDd').removeClass('current-selected');
-                populate.get('#projectDd', '/projects/getForDd', {}, 'name', this, false, false);
+                populate.get('#projectDd', '/projects/getForDd', {}, 'name', this);
             } else {
-                populate.get2name('#supplierDd', CONSTANTS.URLS.SUPPLIER, {}, this, false, true);
+                populate.get2name('#supplierDd', CONSTANTS.URLS.SUPPLIER, {}, this);
             }
 
             dataService.getData('/projects/getForWtrack', null, function (projects) {

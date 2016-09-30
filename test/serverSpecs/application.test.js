@@ -4,7 +4,7 @@ var url = 'http://localhost:8089/';
 var host = process.env.HOST;
 var aggent;
 
-require('../../config/development');
+require('../../config/environment/development');
 
 describe('Application Specs', function () {
     'use strict';
@@ -17,9 +17,9 @@ describe('Application Specs', function () {
             aggent
                 .post('users/login')
                 .send({
-                    login: 'admin',
-                    pass : 'tm2016',
-                    dbId : 'production'
+                    login: 'superAdmin',
+                    pass : '111111',
+                    dbId : 'vasyadb'
                 })
                 .expect(200, done);
         });
@@ -232,7 +232,8 @@ describe('Application Specs', function () {
                     expect(body)
                         .to.be.instanceOf(Object);
                     expect(body)
-                        .to.have.property('_id');
+                        .to.have.property('n')
+                        .and.equal(1);
 
                     done();
                 });
@@ -255,7 +256,7 @@ describe('Application Specs', function () {
                 .send({
                     login: 'ArturMyhalko',
                     pass : 'thinkmobiles2015',
-                    dbId : 'production'
+                    dbId : 'vasyadb'
                 })
                 .expect(200, done);
         });

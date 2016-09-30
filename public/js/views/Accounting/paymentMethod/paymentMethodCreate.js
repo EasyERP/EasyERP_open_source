@@ -61,7 +61,7 @@ define([
 
         chooseOption: function (e) {
             var $target = $(e.target);
-            $target.parents('dd').find('.current-selected').text($target.text()).attr('data-id', $(e.target).attr('id'));
+            $target.parents('.account-wrapper').find('.current-selected').text($target.text()).attr('data-id', $(e.target).attr('id'));
 
             this.hideNewSelect();
         },
@@ -76,18 +76,18 @@ define([
             var bank = thisEl.find('#bankName').val();
 
             var data = {
-                currency: currency,
-                name    : name,
-                account : account,
-                chartAccount : chartAccount,
-                bank    : bank
+                currency    : currency,
+                name        : name,
+                account     : account,
+                chartAccount: chartAccount,
+                bank        : bank
             };
 
             this.currentModel.save(data, {
                 wait   : true,
                 success: function (res, model) {
                     self.hideDialog();
-                    $('#paymentMethodsTable').append(_.template(tableEL, {elem : model}));
+                    $('#paymentMethodsTable').append(_.template(tableEL, {elem: model}));
                     self.collection.add(res);
                 },
 

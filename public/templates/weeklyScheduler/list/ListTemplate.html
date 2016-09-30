@@ -2,12 +2,11 @@
 
 <tr data-id="<%=weeklyScheduler._id%>">
         <td data-content="number" class="centerCell"><%=startNumber + index + 1%></td>
-
         <td data-content="weeklyScheduler" data-id="<%=weeklyScheduler ? weeklyScheduler._id : null%>">
-                <a href="javascript:;"><span title="Delete" class="icon-trash"></span></a> <span> <%=weeklyScheduler.name%></span></td>
-
+                <a href="javascript:;" title="Delete" class="icon-trash _correctionPosition"></a>
+                <span><%=weeklyScheduler.name%></span>
+        </td>
         <td data-type="input" data-content="totalHours"><%=weeklyScheduler.totalHours%></td>
-        
         <td data-type="input" data-content="1"><%=weeklyScheduler['1']%></td>
         <td data-type="input" data-content="2"><%=weeklyScheduler['2']%></td>
         <td data-type="input" data-content="3"><%=weeklyScheduler['3']%></td>
@@ -15,6 +14,6 @@
         <td data-type="input" data-content="5"><%=weeklyScheduler['5']%></td>
         <td data-type="input" data-content="6"><%=weeklyScheduler['6']%></td>
         <td data-type="input" data-content="7"><%=weeklyScheduler['7']%></td>
-    </tr>
+</tr>
 
 <% }) %>

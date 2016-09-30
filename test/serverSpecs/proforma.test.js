@@ -3,10 +3,13 @@ var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var CONSTANTS = require('../../constants/constantsTest');
 var aggent;
-var db = 'production';
+var db = 'vasyadb';
+
+require('../../config/environment/development');
 
 describe('Invoice Specs', function () {
     'use strict';
+    this.timeout(10000);
 
     describe('Proforma with admin', function () {
 
@@ -16,8 +19,8 @@ describe('Invoice Specs', function () {
             aggent
                 .post('users/login')
                 .send({
-                    login: 'admin',
-                    pass : 'tm2016',
+                    login: 'superAdmin',
+                    pass : '111111',
                     dbId : db
                 })
                 .expect(200, done);
@@ -333,7 +336,7 @@ describe('Invoice Specs', function () {
                         .and.to.have.property('name')
                         .and.to.have.property('first')
                         .and.to.be.a('string');
-                    if (first.salesPerson){
+                    if (first.salesPerson) {
                         expect(first)
                             .to.have.property('salesPerson')
                             .and.to.have.property('name')
@@ -341,7 +344,6 @@ describe('Invoice Specs', function () {
                             .and.to.be.a('string');
                         expect(Object.keys(first.salesPerson).length).to.be.equal(2);
                     }
-
 
                     if (first.dueDate) {
                         expect(Date.parse(first.dueDate)).to.be.a('number');

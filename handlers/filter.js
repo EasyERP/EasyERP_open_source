@@ -1977,6 +1977,18 @@ var Filters = function (models) {
                 salesmanager: {$arrayElemAt: ['$salesmanager', 0]}
             }
         }, {
+            $project: {
+                workflow    : 1,
+                project     : 1,
+                supplier    : 1,
+                salesmanager: {
+                    _id : {$ifNull: ['$salesmanager._id', 'None']},
+                    name: {
+                        $concat: ['$salesmanager.name.first', ' ', '$salesmanager.name.last']
+                    }
+                }
+            }
+        }, {
             $group: {
                 _id: null,
 
@@ -1999,9 +2011,7 @@ var Filters = function (models) {
                 salesManager: {
                     $addToSet: {
                         _id : '$salesmanager._id',
-                        name: {
-                            $concat: ['$salesmanager.name.first', ' ', '$salesmanager.name.last']
-                        }
+                        name: {$ifNull: ['$salesmanager.name', 'Empty']}
                     }
                 },
 
@@ -2782,14 +2792,6 @@ var Filters = function (models) {
             }
 
             result = result.length ? result[0] : {};
-
-            result.isPaid = [{
-                _id : 'true',
-                name: 'Paid'
-            }, {
-                _id : 'false',
-                name: 'Unpaid'
-            }];
 
             res.status(200).send(result);
         });

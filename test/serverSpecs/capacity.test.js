@@ -4,7 +4,8 @@ var url = 'http://localhost:8089/';
 var CONSTANTS = require('../../constants/constantsTest');
 var aggent;
 
-require('.././development');
+
+require('../../config/environment/development');
 
 describe('Capacity Specs', function () {
     'use strict';
@@ -15,9 +16,9 @@ describe('Capacity Specs', function () {
             aggent
                 .post('users/login')
                 .send({
-                    login: 'admin',
-                    pass : 'tm2016',
-                    dbId : 'production'
+                    login: 'superAdmin',
+                    pass : '111111',
+                    dbId : 'vasyadb'
                 })
                 .expect(200, done);
         });
@@ -199,7 +200,7 @@ describe('Capacity Specs', function () {
                 .send({
                     login: 'ArturMyhalko',
                     pass : 'thinkmobiles2015',
-                    dbId : 'production'
+                    dbId : 'vasyadb'
                 })
                 .expect(200, done);
         });

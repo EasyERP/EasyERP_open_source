@@ -18,7 +18,7 @@ define([
                 return {
                     _id          : item._id,
                     name         : item[field],
-                    level        : item.projectShortDesc || item.count || item.email  || '',
+                    level        : item.projectShortDesc || item.count || item.email || '',
                     imageSrc     : item.imageSrc || '',
                     chartAccount : item.chartAccount || null,
                     currency     : item.currency || item.symbol || '',
@@ -29,11 +29,11 @@ define([
             }));
 
             if (isCreate) {
-                //add check on data-id exist. if not set first one in responseObj
-                //if element was sat from model data-id exist.
+                // add check on data-id exist. if not set first one in responseObj
+                // if element was set from model data-id exist.
                 if (!curEl.attr('data-id')) {
                     if (canBeEmpty) {   // took off element Select from responseObj, changed on default select at start
-                        curEl.text("Select");
+                        curEl.text('Select');
                     } else {
                         curEl.text(content.responseObj[id][defaultId].name).attr('data-id', content.responseObj[id][defaultId]._id);
                         curEl.attr('data-type', content.responseObj[id][defaultId].type);

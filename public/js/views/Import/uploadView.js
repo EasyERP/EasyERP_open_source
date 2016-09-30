@@ -25,7 +25,8 @@ define([
             'change .changeTableBtn'        : 'changeCombobox',
             'click #changeTableCombobox'    : 'changeTableCombobox',
             'click #changeDelimeterCombobox': 'changeDelimeterCombobox',
-            'click .item'                   : 'checkItem'
+            'click .item'                   : 'checkItem',
+            click                           : 'closeSelectView'
         },
 
         initialize: function (options) {
@@ -191,6 +192,13 @@ define([
             $thisEl.find('#forImport').html(this.importTemplate);
         },
 
+        closeSelectView: function () {
+            var $thisEl = this.$el;
+
+            $thisEl.find('#changeDelimeterCombobox').removeClass('open');
+            $thisEl.find('#changeTableCombobox').removeClass('open');
+        },
+
         checkItem: function (e) {
             var thisEl = this.$el;
             var $target = $(e.target);
@@ -203,12 +211,9 @@ define([
                 App.currentUser.delimiter = this.delimeter;
             }
 
-
             thisEl.find('.item').removeClass('active');
             $target.addClass('active');
         },
-
-
 
         changeCombobox: function (e) {
             var thisEl = this.$el;
@@ -255,12 +260,14 @@ define([
             var $combobox = $('#changeDelimeterCombobox');
 
             $combobox.toggleClass('open');
+            e.stopPropagation();
         },
 
         changeTableCombobox: function (e) {
             var $combobox = $('#changeTableCombobox');
 
             $combobox.toggleClass('open');
+            e.stopPropagation();
         },
 
         importFiles: function (e) {
@@ -348,7 +355,6 @@ define([
             $thisEl.find('.item').removeClass('active');
             $thisEl.find('.item[data-imp="' + this.checkedItem + '"]').addClass('active');
             $thisEl.find('.item[data-delimeter="' + this.delimeter + '"]').addClass('active');
-
 
             $thisEl.find('.importContainer').on('drop', function (e) {
                 if (e.originalEvent.dataTransfer && e.originalEvent.dataTransfer.files.length) {

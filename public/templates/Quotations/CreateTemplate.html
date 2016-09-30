@@ -9,111 +9,148 @@
                 </ul>-->
                 <div class="clearfix"></div>
                 <!--<div class="dialog-tabs-items mainTabs">-->
-                   <!-- <div class="dialog-tabs-item mainTabs active">-->
-                        <div class="topInputHolder">
-                            <%if(visible) {%>
-                            <h2>Request for Quotation</h2>
-                            <%}%>
-                            <div class="half-block left">
-                                <dl class="person-info">
-                                    <dt><label for="supplierDd">
-                                        <%if (forSales) {%>
-                                        Customer
-                                        <% } else { %>
-                                        Supplier
-                                        <% } %>
-
-                                    </label></dt>
-
+                <!-- <div class="dialog-tabs-item mainTabs active">-->
+                <div class="topInputHolder">
+                    <%if(visible) {%>
+                    <h2>Request for Quotation</h2>
+                    <%}%>
+                    <div class="half-block left">
+                        <dl class="person-info">
+                            <dt>
+                                <label for="supplierDd">
                                     <%if (forSales) {%>
-                                    <dd>
-                                        <span id="supplierDd"></span>
-                                    </dd>
-                                    <dt><label for="projectDd">Project</label></dt>
-                                    <dd class="_newSelectListWrap">
-                                        <a id="projectDd" class="current-selected" href="javascript:;">Select</a>
-                                    </dd>
-                                    <% }  else {%>
-                                    <dd class="_newSelectListWrap">
-                                        <a id="supplierDd" class="current-selected" href="javascript:;">Select</a>
-                                    <dt><label for="deliveryDd">Deliver To</label></dt>
-                                    <dd class="_newSelectListWrap">
-                                        <a id="deliveryDd" class="current-selected" href="javascript:;">YourCompany</a>
-                                    </dd>
-                                    </dd>
+                                    Customer
+                                    <% } else { %>
+                                    Supplier
                                     <% } %>
-                                    <dt><label for="expectDate">Expected Date</label></dt>
-                                    <dd><input id="expectDate" placeholder="" type="text" readonly/>
-                                    </dd>
 
-                                </dl>
-                            </div>
-                            <div class="half-block left">
-                                <dl class="person-info">
-                                    <dt><label for="orderDate">Order Date</label></dt>
-                                    <dd>
-                                        <input class="extrainfo" type="text" name="orderDate" id="orderDate" value=""
-                                               readonly="" placeholder="Order Date">
-                                    </dd>
-                                    <dt><label for="currencyDd">Currency</label></dt>
-                                    <dd class="_newSelectListWrap">
-                                        <a id="currencyDd" class="current-selected" href="javascript:;">Select</a>
-                                    </dd>
-                                </dl>
-                            </div>
-                            <div class="clearfix"></div>
+                                </label>
+                            </dt>
+                            <%if (forSales) {%>
+                            <dd>
+                                <span id="supplierDd"></span>
+                            </dd>
+                            <dt>
+                                <label for="projectDd">Project</label>
+                            </dt>
+                            <dd class="_newSelectListWrap">
+                                <a id="projectDd"
+                                   class="current-selected"
+                                   href="javascript:;">Select
+                                </a>
+                            </dd>
+                            <% }  else {%>
+                            <dd class="_newSelectListWrap">
+                                <a id="supplierDd"
+                                   class="current-selected"
+                                   href="javascript:;">Select
+                                </a>
+                            </dd>
+                            <dt>
+                                <label for="deliveryDd">Deliver To</label>
+                            </dt>
+                            <dd class="_newSelectListWrap">
+                                <a id="deliveryDd"
+                                   class="current-selected"
+                                   href="javascript:;">YourCompany
+                                </a>
+                            </dd>
+                            <% } %>
+                            <dt>
+                                <label for="expectDate">Expected Date</label>
+                            </dt>
+                            <dd>
+                                <div class="_inputIconWrap">
+                                    <input id="expectDate"
+                                           placeholder=""
+                                           type="text"
+                                           readonly/>
+                                    <label></label>
+                                </div>
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="half-block left">
+                        <dl class="person-info">
+                            <dt>
+                                <label for="orderDate">Order Date</label>
+                            </dt>
+                            <dd>
+                                <div class="_inputIconWrap">
+                                    <input class="extrainfo"
+                                           type="text"
+                                           name="orderDate"
+                                           id="orderDate"
+                                           value=""
+                                           readonly=""
+                                           placeholder="Order Date"/>
+                                    <label></label>
+                                </div>
+                            </dd>
+                            <dt>
+                                <label for="currencyDd">Currency</label>
+                            </dt>
+                            <dd class="_newSelectListWrap">
+                                <a id="currencyDd"
+                                   class="current-selected"
+                                   href="javascript:;">Select
+                                </a>
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="clearfix"></div>
+                <!--   <ul class="dialog-tabs" data-class="childTabs">
+                       <li><a class="active" href="javascript:;">Products</a></li>
+                       &lt;!&ndash;<li><a href="javascript:;">Bid</a></li>&ndash;&gt;
+                       <li><a href="javascript:;">Deliveries & Invoices</a></li>
+                   </ul>-->
+                <div class="clearfix"></div>
+                <div class="dialog-tabs-items childTabs">
+                    <div class="dialog-tabs-item childTabs active">
+                        <div id="productItemsHolder">
+
                         </div>
-                        <div class="clearfix"></div>
-                     <!--   <ul class="dialog-tabs" data-class="childTabs">
-                            <li><a class="active" href="javascript:;">Products</a></li>
-                            &lt;!&ndash;<li><a href="javascript:;">Bid</a></li>&ndash;&gt;
-                            <li><a href="javascript:;">Deliveries & Invoices</a></li>
-                        </ul>-->
-                        <div class="clearfix"></div>
-                        <div class="dialog-tabs-items childTabs">
-                            <div class="dialog-tabs-item childTabs active">
-                                <div id="productItemsHolder">
+                    </div>
+                    <!--      <div class="dialog-tabs-item childTabs">
+                              <div class="delivery-invoices-container">
+                                  <div class="half-block left">
+                                      <dl class="quotation-info">
 
-                                </div>
-                            </div>
-                      <!--      <div class="dialog-tabs-item childTabs">
-                                <div class="delivery-invoices-container">
-                                    <div class="half-block left">
-                                        <dl class="quotation-info">
-
-                                            <dt><label for="destination">Destination</label></dt>
-                                            <dd class="_newSelectListWrap"><a id="destination" class="current-selected"
-                                                   href="javascript:;">Select</a></dd>
-                                            <dt><label for="incoterm">Incoterm</label></dt>
-                                            <dd class="_newSelectListWrap"><a id="incoterm" class="current-selected" href="javascript:;">Select</a>
-                                            </dd>
-                                        </dl>
-                                    </div>
-                                    <div class="half-block left">
-                                        <dl class="quotation-info">
-                                            <dt><label for="invoicingControl">Invoicing Control</label></dt>
-                                            <dd class="_newSelectListWrap"><a id="invoicingControl" class="current-selected" href="javascript:;">Select</a>
-                                            </dd>
-                                            &lt;!&ndash;<dt><label for="invoiceReceived">Invoice Received</label></dt>&ndash;&gt;
-                                            &lt;!&ndash; <dd><input id="invoiceReceived" type="checkbox" class="checkbox left" disabled></dd>&ndash;&gt;
-                                            &lt;!&ndash;<dt><label for="paymentTerm">Payment Term</label></dt>
-                                            <dd><a id="paymentTerm" class="current-selected"
-                                                   href="javascript:;">Select</a>
-                                            </dd>&ndash;&gt;
-                                            <dt><label for="fiscalPosition">Fiscal Position</label></dt>
-                                            <dd class="_newSelectListWrap">
-                                                <a id="fiscalPosition" class="current-selected" href="javascript:;">Select</a>
-                                            </dd>
-                                        </dl>
-                                    </div>
-                                </div>
-                            </div>-->
-                     <!--   </div>-->
-                        <div class="clearfix"></div>
-                   <!-- </div>-->
-                   <!-- <div class="dialog-tabs-item mainTabs">
-                        <div class="assignees-container"></div>
-                    </div>-->
+                                          <dt><label for="destination">Destination</label></dt>
+                                          <dd class="_newSelectListWrap"><a id="destination" class="current-selected"
+                                                 href="javascript:;">Select</a></dd>
+                                          <dt><label for="incoterm">Incoterm</label></dt>
+                                          <dd class="_newSelectListWrap"><a id="incoterm" class="current-selected" href="javascript:;">Select</a>
+                                          </dd>
+                                      </dl>
+                                  </div>
+                                  <div class="half-block left">
+                                      <dl class="quotation-info">
+                                          <dt><label for="invoicingControl">Invoicing Control</label></dt>
+                                          <dd class="_newSelectListWrap"><a id="invoicingControl" class="current-selected" href="javascript:;">Select</a>
+                                          </dd>
+                                          &lt;!&ndash;<dt><label for="invoiceReceived">Invoice Received</label></dt>&ndash;&gt;
+                                          &lt;!&ndash; <dd><input id="invoiceReceived" type="checkbox" class="checkbox left" disabled></dd>&ndash;&gt;
+                                          &lt;!&ndash;<dt><label for="paymentTerm">Payment Term</label></dt>
+                                          <dd><a id="paymentTerm" class="current-selected"
+                                                 href="javascript:;">Select</a>
+                                          </dd>&ndash;&gt;
+                                          <dt><label for="fiscalPosition">Fiscal Position</label></dt>
+                                          <dd class="_newSelectListWrap">
+                                              <a id="fiscalPosition" class="current-selected" href="javascript:;">Select</a>
+                                          </dd>
+                                      </dl>
+                                  </div>
+                              </div>
+                          </div>-->
+                    <!--   </div>-->
+                    <div class="clearfix"></div>
+                    <!-- </div>-->
+                    <!-- <div class="dialog-tabs-item mainTabs">
+                         <div class="assignees-container"></div>
+                     </div>-->
                 </div>
                 <div class="clearfix"></div>
             </div>

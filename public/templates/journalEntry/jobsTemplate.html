@@ -1,0 +1,113 @@
+<div class="_journalentryForm form">
+    <div class="topInputHolder">
+        <div class="ribbon">
+            <div class="ribbon-inner ribbon-grey"><%=model.workflow.name%></div>
+        </div>
+        <h3> «<%=model.name%>» in «<%=model.project.name%>»</h3>
+        <h5>From <%=model.tCardMinDate%> to <%=model.tCardMaxDate%></h5>
+    </div>
+    <div class="clearfix"></div>
+    <% var adr = (model.totalRevenue/(100 * (model.totalWorked - model.totalQAWorked -
+    model.totalDesignWorked))).toFixed(2)%>
+
+    <div class="_desc">
+        <div>
+            <div class="half-block right">
+                <dl class="opp-info">
+                   <!-- <dt><label for="status" class="semiBold">Status</label></dt>
+                    <dd>
+                        <span id="status"><%=model.workflow.name%></span>
+                    </dd>-->
+                  <!--  <dt><label for="type" class="semiBold">Type</label></dt>
+                    <dd>
+                        <span id="type"><%=model.type%></span>
+                    </dd>-->
+                    <%if (model.quotation) {%>
+                    <dt><label for="Quotation_Order" class="semiBold">Source <%=model.quotation.isOrder ? 'Order' : 'Quotation'%></label></dt>
+                    <dd>
+                        <span id="Quotation_Order"><%=model.quotation.name%></span>
+                    </dd>
+                    <% } %>
+                    <%if (model.invoice && model.invoice._id) {%>
+                    <dt><label for="Source_Invoice" class="semiBold">Source Invoice</label></dt>
+                    <dd>
+                        <span id="Source_Invoice"><%=model.invoice.name%></span>
+                    </dd>
+                    <% } %>
+                   <!-- <dt><label for="countEmploy" class="semiBold">Count of Employees</label></dt>
+                    <dd>
+                        <span id="countEmploy"><%=model.revenue.length%></span>
+                    </dd>-->
+                    <dt><label for="adr" class="semiBold">ADR</label></dt>
+                    <dd>
+                        <span id="adr"><%=adr%> </span>
+                    </dd>
+                    <dt><label for="cost" class="semiBold">Cost</label></dt>
+                    <dd>
+                        <span id="cost"
+                              class="money"><%= currencySplitter((model.costTotal/100).toFixed(2)) || 0%></span>
+                    </dd>
+                    <dt><label for="revenue" class="semiBold">Revenue</label></dt>
+                    <dd>
+                        <span id="revenue" class="money"><%= currencySplitter((model.revenueTotal/100).toFixed(2)) || 0%></span>
+                    </dd>
+                    <dt><label for="profit" class="semiBold">Profit</label></dt>
+                    <dd>
+                        <span id="profit"
+                              class="money"><%= currencySplitter((model.profitTotal/100).toFixed(2)) || 0%></span>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+
+
+        <!--<span>SPRINT "<%=model.name%>" in "<%=model.project.name%>"</span>-->
+        <!--<span>from <%=model.tCardMinDate%> to <%=model.tCardMaxDate%></span>-->
+        <!--<span>Status <%model.workflow.name%></span>-->
+        <!--<span>Type <%model.type%></span>-->
+        <!--<%if (model.quotation) {%>-->
+        <!--<span>Source Quotation/Order <%model.quotation.name%></span>-->
+        <!--<% } %>-->
+        <!--<%if (model.invoice) {%>-->
+        <!--<span>Source Invoice <%model.invoice.name%></span>-->
+        <!--<% } %>-->
+
+        <!--<span>Count of Employees <%=model.revenue.length%></span>-->
+        <!--<span>ADR <%=adr%></span>-->
+        <!--<span>COST <%= currencySplitter((model.costTotal/100).toFixed(2)) || 0%></span>-->
+        <!--<span>REVENUE <%= currencySplitter((model.revenueTotal/100).toFixed(2)) || 0%></span>-->
+        <!--<span>PROFIT <%= currencySplitter((model.profitTotal/100).toFixed(2)) || 0%></span>-->
+
+
+    </div>
+    <div class="list-container">
+        <table class="list">
+            <thead>
+            <tr>
+                <th class="centerCell">#</th>
+                <th>Resource</th>
+                <th>Job Position</th>
+                <th>Department</th>
+                <th>Hours</th>
+
+            </tr>
+            </thead>
+
+            <tbody id="wTracks" class="enableTableOdd">
+            <% model.revenue.forEach(function(element,i){ %>
+            <%if(element && element.employee && element.employee._id){%>
+            <tr data-id="<%=element.employee._id%>" id="<%=model._id + '_' + element.employee._id%>"
+                class="<%=employee.toString() === element.employee._id ? 'greyBorder' : ''%>">
+                <td class="centerCell"><%=i+1%></td>
+                <td><%=element.employee.name%></td>
+                <td><%=element.employee.jobPosition%></td>
+                <td><%=element.department%></td>
+                <td><%=currencySplitter(element.employee.worked.toFixed())%></td>
+            </tr>
+            <%}%>
+            <% })%>
+            </tbody>
+        </table>
+    </div>
+
+</div>

@@ -576,7 +576,7 @@ define([
 
             rect = height / (data.length);
 
-            gradient = d3.select('svg.leadsByNameBarChart').append("linearGradient")
+            gradient = d3.select('svg.leadsByNameBarChart').append('linearGradient')
                 .attr({
                     'y1'           : 0,
                     'y2'           : 0,

@@ -1,0 +1,54 @@
+<div class="form-holder _listModalWrap">
+    <form method="post" action="" class="form" id="customDashboardForm">
+        <div class="dialog-tabs-items">
+            <div class="dialog-tabs-item active">
+                <div class="_listModal _customDashboardDialog">
+                    <div class="_listModalTitle _pl-10"><label><b>Custom Dashboard</b></label></div>
+                    <div class="_listModalColumn">
+                        <div class="_modalList">
+                           <label for="name">Name</label>
+                           <input type="text" class="title-input blueback" id="name" placeholder="New Dashboard Name..." required maxlength="48"/>
+                        </div>
+                    </div>
+                    <div class="_listModalColumn">
+                        <div class="_modalList">
+                            <label for="numOfRows">Select number of rows</label>
+                            <select class=" optionSelect _formCustomSelect" id="numOfRows">
+                                <option>4</option>
+                                <option>5</option>
+                                <option>6</option>
+                                <option>7</option>
+                                <option>8</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="_listModalColumn">
+                        <div class="_modalList">
+                            <label for="numOfColumns">Select number of columns</label>
+                            <select class=" optionSelect _formCustomSelect" id="numOfColumns">
+                                <option>6</option>
+                                <option>7</option>
+                                <option>8</option>
+                                <option>9</option>
+                                <option>10</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="_listModalColumnFull clearfix">
+                        <div class="_modalList">
+                            <label for="description">Description</label>
+                            <textarea id="description" maxlength="200"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <div class="clearfix"></div>
+                <div class="attach-container"></div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="dialog-tabs-item">
+                <div class="assignees-container"></div>
+            </div>
+        </div>
+    </form>
+</div>

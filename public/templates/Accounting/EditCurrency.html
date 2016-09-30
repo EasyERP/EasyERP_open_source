@@ -1,0 +1,10 @@
+<div class="form-holder _dialogWrap">
+    <div class="_dialogMainTitle">Currency Code</div>
+    <div class="_dialogBlock">
+        <div class="_dialogRow"><span id="allCurrencies"><%=model.name%></span></div>
+        <div class="_dialogRow">Symbol</div>
+        <div class="_dialogRow"><input id="currencySymbol" value="<%=model.symbol%>"></div>
+        <div class="_dialogRow">Decimal Places</div>
+        <div class="_dialogRow"><input id="decPlaces" type="number" value="<%= model.decPlace || 0%>" readonly></div>
+    </div>
+</div>

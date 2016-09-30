@@ -69,6 +69,7 @@
 
         validate: function (attrs) {
             var errors = [];
+            Validation.checkNameField(errors, true, attrs.employmentType, 'Personal Information / Employment type');
             Validation.checkNameField(errors, true, attrs.name.first, 'First name');
             Validation.checkNameField(errors, true, attrs.name.last, 'Last name');
             Validation.checkEmailField(errors, false, attrs.personalEmail, 'Email');

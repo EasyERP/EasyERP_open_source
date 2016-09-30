@@ -1,10 +1,9 @@
 <% payrollComponentTypes.forEach(function(payrollComponentType, index){ %>
-
 <tr data-id="<%=payrollComponentType._id%>">
-        <td data-content="number" class="centerCell"><%=startNumber + index + 1%></td>
-
-        <td data-content="payrollComponentType" data-id="<%=payrollComponentType ? payrollComponentType._id : null%>">
-                <a href="javascript:;"><span title="Delete" class="icon-trash"></span></a> <span> <%=payrollComponentType.name%></span></td>
-    </tr>
-
+    <td data-content="number" class="centerCell"><%=startNumber + index + 1%></td>
+    <td data-content="payrollComponentType" data-id="<%=payrollComponentType ? payrollComponentType._id : null%>">
+        <a href="javascript:;" title="Delete" class="icon-trash _correctionPosition"></a>
+        <span> <%=payrollComponentType.name%></span>
+    </td>
+</tr>
 <% }) %>

@@ -1,0 +1,139 @@
+<ul class="content">
+</ul>
+<div class="form-holder _orgSettingsWrap">
+    <form class="form _orgSettings">
+        <div class="_formGroup">
+            <div class="col m-2">
+                <label class="">Your Logo</label>
+            </div>
+            <div class="col m-8 inputBox">
+                <div class="avatar">
+                    <div class="upload">Edit
+                        <input type="file" value="Edit" id="inputImg">
+                    </div>
+                    <canvas id="avatar"
+                            width="140"
+                            height="140">
+                    </canvas>
+                </div>
+            </div>
+        </div>
+        <div class="_formGroup">
+            <div class="col m-2">
+                <label class="col m-2 _orgName">Organization Name</label>
+            </div>
+            <div class="col m-8 inputBox">
+                <input class="editable _formControl"  id="name" value="<%=model.name%>"/>
+            </div>
+        </div>
+        <div class="_formGroup">
+            <div class="col m-2">
+                <label class="col m-2 _orgName">Industry</label>
+            </div>
+            <div class="col m-8 inputBox">
+                <a class="current-selected _currencySelection" href="javascript:;" id="industry" data-id="<%=model.industry ? model.industry._id : ''%>"><%=model.industry ? model.industry.name : 'Select'%></a>
+            </div>
+        </div>
+        <div class="_formGroup ">
+            <h4>Company Address</h4>
+            <div class="col m-8 m-offset-2 inputBox">
+                <div class="row">
+                    <div class="col m-8">
+                        <input class="editable _formControl" placeholder="Street"  id="address_street" value="<%=model.address ? model.address.street : ''%>"/>
+                    </div>
+                    <div class="col m-4">
+                        <input class="editable _formControl" placeholder="City" id="address_city" value="<%=model.address ? model.address.city : ''%>" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="_formGroup">
+            <div class="col m-8 m-offset-2 inputBox">
+                <div class="row">
+                    <div class="col m-4">
+                        <input class="editable _formControl" placeholder="State" type="text" id="address_state" value="<%=model.address ? model.address.state : ''%>"/>
+                    </div>
+                    <div class="col m-4">
+                        <input class="editable _formControl" placeholder="Zip Code" type="text" id="address_zip" value="<%=model.address ? model.address.zip : ''%>"/>
+                    </div>
+                    <div class="col m-4 _newSelectListWrap">
+                        <a class="current-selected _countrySelection" href="javascript:;" id="country" data-id="<%=model.address && model.address.country ? model.address.country : ''%>"><%=model.address && model.address.country ? model.address.country : 'Select'%></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="_formGroup">
+            <div class="col m-8 m-offset-2 inputBox">
+                <div class="row">
+                    <div class="col m-4">
+                        <input class="editable _formControl" placeholder="Phone" type="text" id="phone" value="<%=model.phone%>"/>
+                    </div>
+                    <div class="col m-4">
+                        <input class="editable _formControl" placeholder="Fax" type="text" id="address_fax" value="<%=model.address ? model.address.fax : ''%>"/>
+                    </div>
+                    <div  class="col m-4">
+                        <input class="editable _formControl" placeholder="Website" type="text" id="website" value="<%=model.website%>">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="_formGroup _primaryContactWrap">
+            <div class="col m-2">
+                <label class="col m-2 ">Primary Contact</label>
+            </div>
+            <div class="col m-3 inputBox _newSelectListWrap">
+                <a class="current-selected _currencySelection _" href="javascript:;" id="contact" data-id="<%=model.contact ? model.contact._id : ''%>"><%=model.contact ? model.contact.login : 'Select'%></a>
+                <p id="email" class=""><%=model.contact ? model.contact.email : ''%></p>
+            </div>
+            <div class="col m-4">
+                <a href="javascript:;" id="changeEmail" class="blue">Change</a>
+                <%if (model.defaultEmail) {%>
+                <p class="_text-muted">Email will be sent with your organizational email address in the from field</p>
+                <%} else {%>
+                <p class="_text-muted">Email will be sent with 'easyerp no-replay@easyerp.com'  in the from field</p>
+                <%}%>
+            </div>
+
+        </div>
+        <div class="_formGroup">
+            <h4>Regional Settings</h4>
+            <div class="col m-2">
+                <label >Base Currency <div class="_smallText">(Currency used for accounting)</div></label>
+            </div>
+            <div class="col m-4 inputBox _newSelectListWrap">
+                <a class="current-selected _currencySelection" href="javascript:;" data-id="<%=model.currency ? model.currency._id : ''%>" id="currency" data-value="<%=model.currency ? model.currency.name : ''%>"><%=model.currency ? model.currency.name : 'Select'%></a>
+            </div>
+        </div>
+        <div class="_formGroup">
+            <div class="col m-2">
+                <label >Start Date</label>
+            </div>
+            <div class="col m-4 inputBox">
+                <input id="startDate" class="extrainfo _formControl" type="text" name="startDate" value="<%=model.startDate%>" readonly>
+            </div>
+        </div>
+        <div class="_formGroup">
+            <div class="col m-10 m-offset-2">
+                <a href="javascript:;" id="saveBtn" class="btn blue btnSave">Save</a>
+            </div>
+        </div>
+        <div class="cropImages form" style="display:none;">
+            <div class="formTitle">
+                <h3 class="left">Crop Images</h3>
+
+                <div class="clearfix"></div>
+            </div>
+            <br/>
+
+            <div class="image_input" style="float: left;margin-right: 20px;"></div>
+            <img class="image_output"/>
+
+            <div class="clearfix"></div>
+        </div>
+    </form>
+</div>
+
+
+
+
+

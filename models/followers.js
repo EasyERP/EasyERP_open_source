@@ -27,4 +27,3 @@ module.exports = (function () {
 
     mongoose.Schemas.followers = Schema;
 })();
-

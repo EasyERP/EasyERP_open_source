@@ -1,0 +1,44 @@
+._taskTimeBlock {
+
+  .inputDateActionBlock {
+    float: left;
+
+    .timepicker {
+      border: none;
+      height: auto;
+    }
+  }
+}
+
+._taskDueDate,
+#timepickerOne {
+  width: 100px !important;
+  text-align: left !important;
+}
+
+._addTaskTitleBlock {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  white-space: nowrap;
+
+  >label {
+    width: auto !important;
+    height: auto !important;
+  }
+  > .current-selected {
+    line-height: 30px;
+    margin-right: 10px;
+  }
+
+  ._taskTimeBlock {
+    display: flex;
+    align-items: center;
+
+    #categoryHolder {
+      margin-right: 20px;
+    }
+  }
+}

@@ -1,13 +1,13 @@
-// require('../../config/development');
+require('../../config/environment/development');
 
 var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var host = process.env.HOST;
 var aggent;
-var dbId = 'pavlodb';
+var dbId = 'vasyadb';
 var admin = {
-    login: 'pavlo.demko',
+    login: 'superAdmin',
     pass : '111111',
     dbId : dbId
 };
@@ -22,6 +22,7 @@ describe('Opportunity Specs', function () {
     var id;
 
     describe('Opportunity with admin', function () {
+        this.timeout(10000);
 
         before(function (done) {
             aggent = request.agent(url);
@@ -162,8 +163,7 @@ describe('Opportunity Specs', function () {
                 viewType     : 'list',
                 contentType  : 'Opportunities',
                 page         : 1,
-                count        : 100,
-                newCollection: false
+                count        : 100
             };
 
             aggent
@@ -232,7 +232,7 @@ describe('Opportunity Specs', function () {
                     }
 
                     expect(Object.keys(first.editedBy).length).to.be.equal(2);
-                    expect(Object.keys(first).length).to.be.lte(11);
+                    expect(Object.keys(first).length).to.be.lte(12);
 
                     done();
                 });

@@ -25,12 +25,16 @@ define([
             'click #top-bar-exportBtn'      : 'export',
             'click #top-bar-exportToCsvBtn' : 'exportToCsv',
             'click #top-bar-exportToXlsxBtn': 'exportToXlsx',
-            'change .inputAttach'           : 'importFiles'
+            'change .inputAttach'           : 'importFiles',
+            'click #top-bar-moveToEditBtn'  : 'moveToEdit',
+            'click #top-bar-saveAllBtn'     : 'onSaveAllEvent',
+            'click #top-bar-removeAllBtn'   : 'onRemoveAllEvent'
         },
 
         initialize: function (options) {
             this.actionType = options.actionType || 'Content';
-
+            this.dashboardName = options.name || '';
+            this.dashboardDescription = options.description || '';
             this.render();
         },
 
@@ -105,6 +109,21 @@ define([
             this.trigger('editKanban');
         },
 
+        moveToEdit: function(event){
+            event.preventDefault();
+            this.trigger('moveToEdit');
+        },
+
+        onSaveAllEvent: function(event){
+            event.preventDefault();
+            this.trigger('saveAllEvent');
+        },
+        
+        onRemoveAllEvent: function(event){
+            event.preventDefault();
+            this.trigger('removeAllEvent');
+        },        
+
         render: function () {
             var viewType = Custom.getCurrentVT();
 
@@ -117,10 +136,12 @@ define([
             }
 
             this.$el.html(this.template({
-                viewType     : viewType,
-                contentType  : this.contentType,
-                headerType   : this.headerType,
-                contentHeader: this.contentHeader
+                viewType            : viewType,
+                contentType         : this.contentType,
+                headerType          : this.headerType,
+                contentHeader       : this.contentHeader,
+                dashboardName       : this.dashboardName,
+                dashboardDescription: this.dashboardDescription
             }));
 
             Common.displayControlBtnsByActionType(this.actionType, viewType);

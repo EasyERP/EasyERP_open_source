@@ -97,13 +97,13 @@ define([
                     el.find('input').attr('maxlength', '6');
                 }
 
-                el.find('.editing').keydown(function (e) {
-                    var code = e.keyCode;
+                el.find('.editing').keydown(function (event) {
+                    var code = event.keyCode;
 
                     if (keyCodes.isEnter(code)) {
                         self.setChangedValueToModel();
-                    } else if (!isName && !keyCodes.isDigit(code) && !keyCodes.isBspaceAndDelete(code)) {
-                        e.preventDefault();
+                    } else if (!isName && !keyCodes.isDigit(code) && !keyCodes.isBspaceAndDelete(code) && !keyCodes.isDecimalDot(code)) {
+                        event.preventDefault();
                     }
                 });
             }

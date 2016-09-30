@@ -1,13 +1,12 @@
 <div id="top-bar-orders">
-    <div id="createBtnHolder" class="btnsBlock">
-        <a href="javascript:;" class="fa fa-times" title="Remove" id="removeOrder"></a>
+    <div id="createBtnHolder" class="projectInfoTopBar">
+        <a href="javascript:;" class="btn blue slim" title="Remove" id="removeOrder">Delete</a>
     </div>
 </div>
-<div id="ordersTable">
-    <table class="list task-list tableFixed">
+<div id="ordersTable" class="_ordersTableWrap">
+    <table class="list stripedList">
         <colgroup>
-            <col width="30">
-            <col width="30">
+            <col width="43px">
             <col width="20%">
             <col width="20%">
             <col width="20%">
@@ -18,7 +17,6 @@
         <thead>
         <tr>
             <th class="notForm centerCell"><input type="checkbox" id="checkAll_orders" class="checkAll"/></th>
-            <th class="centerCell">N</th>
             <th class="oe_sortable" data-sort="name">Number<span class="arrow down"></span><span
                     class="arrow up"></span></th>
             <th class="oe_sortable" data-sort="supplier.name.first">Customer<span class="arrow down"></span><span

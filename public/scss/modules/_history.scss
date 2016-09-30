@@ -1,0 +1,34 @@
+.history_item {
+  padding: 10px 5px;
+  border-bottom: 1px solid #7f7f80;//@thin-border @history_border_color;
+  .history_header {
+    @extend .clearfix;
+    margin-bottom: 10px;
+    .editBy {
+      float: left;
+
+      &_name {
+        color:  #3e88b9;// @history_name_colro;
+      }
+    }
+    .date{
+      float: right;
+    }
+  }
+
+  .history_body {
+    .history_changed {
+      @extend .clearfix;
+      margin-bottom: 10px;
+      .changedFieldName {
+        float: left;
+        width: 100px;
+      }
+      .changed_field {
+        float: left;
+        margin-left: 130px;
+      }
+    }
+  }
+
+}

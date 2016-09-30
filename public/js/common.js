@@ -8,7 +8,7 @@
     var checkBackboneFragment = function (url) {
 
         if (Backbone.history.fragment === url) {
-            Backbone.history.fragment = "";
+            Backbone.history.fragment = '';
         }
 
         Backbone.history.navigate(url, {trigger: true});
@@ -18,7 +18,7 @@
         utcDateString = new Date(utcDateString);
 
         if (hours) {
-            utcDateString = utcDateString ? moment(utcDateString).format("DD MMM, YYYY HH:mm") : null;
+            utcDateString = utcDateString ? moment(utcDateString).format("DD MMM, YYYY HH:mm A") : null;
         } else {
             utcDateString = utcDateString ? moment(utcDateString).format("DD MMM, YYYY") : null;
         }
@@ -29,14 +29,13 @@
 
     var utcDateToLocaleFullDateTime = function (utcDateString) {
         utcDateString = new Date(utcDateString);
-        utcDateString = utcDateString ? moment(utcDateString).format("dddd, D MM YYYY HH:mm:s") : null;
 
-        return utcDateString;
+        return moment(utcDateString).format('dddd, D MM YYYY HH:mm A');
     };
 
     var utcDateToLocaleDateTime = function (utcDateString, notHours) {
         if (!notHours) {
-            utcDateString = utcDateString ? moment(utcDateString).format('D/M/YYYY hh:mm') : null;
+            utcDateString = utcDateString ? moment(utcDateString).format('D/M/YYYY hh:mm A') : null;
         } else {
             utcDateString = utcDateString ? moment(utcDateString).format('D/M/YYYY') : null;
         }
@@ -44,7 +43,7 @@
     };
 
     var utcDateToLocaleHours = function (utcDateString, notHours) {
-        utcDateString = utcDateString ? moment(utcDateString).format('HH:mm') : null;
+        utcDateString = utcDateString ? moment(utcDateString).format('HH:mm A') : null;
 
         return utcDateString;
     };
@@ -551,6 +550,29 @@
         }, function (response) {
             callback(response.data);
         });
+    };
+    var getinvoiceByWeek = function (filter, callback) {
+        dataService.getData('/invoices/invoiceByWeek', filter, function (response) {
+            callback(response);
+        });
+    };
+    var getRevenueBySales = function (filter, callback) {
+        dataService.getData('/invoices/revenueBySales', filter,
+            function (response) {
+                callback(response);
+            });
+    };
+    var getRevenueByCountry = function (filter, callback) {
+        dataService.getData('/invoices/revenueByCountry', filter,
+            function (response) {
+                callback(response);
+            });
+    };
+    var getRevenueByCustomer = function (filter, callback) {
+        dataService.getData('/invoices/revenueByCustomer', filter,
+            function (response) {
+                callback(response);
+            });
     };
     var getSalary = function (filter, callback) {
         dataService.getData('/employees/getSalaryForChart', {
@@ -1276,6 +1298,10 @@
         getSalary                         : getSalary,
         getSalaryByDepartment             : getSalaryByDepartment,
         utcDateToLocaleHours              : utcDateToLocaleHours,
-        getLeads                          : getLeads
+        getLeads                          : getLeads,
+        getinvoiceByWeek                  : getinvoiceByWeek,
+        getRevenueBySales                 : getRevenueBySales,
+        getRevenueByCustomer              : getRevenueByCustomer,
+        getRevenueByCountry               : getRevenueByCountry
     }
 });

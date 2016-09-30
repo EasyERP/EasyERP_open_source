@@ -4,8 +4,8 @@
 <% collection.forEach(function(project){ %>
 <div class="thumbnail thumbnailElement" id="<%=project._id%>">
     <div class="dropDown">
-        <a href="#easyErp/Tasks/kanban/<%= project._id %>" class="icon icon-btn">r</a>
-        <a href="javascript:;" id="<%=project._id %>" class="icon icon-btn project">i</a>
+        <a href="#easyErp/Tasks/kanban/<%= project._id %>" class="icon icon-btn"></a>
+        <a href="javascript:;" id="<%=project._id %>" class="icon icon-btn project"></a>
     </div>
     <div class="inner">
         <div class="project-text left">
@@ -36,13 +36,14 @@
         </div>
     </div>
     <div class="bottom">
-        <div class="half-block left">
-            <div class="left"><label>Project Type: </label>&nbsp;</div>
-            <div class="forProjectsTypes _newSelectListWrap">
-                <a class="current-selected"
-                   href="javascript:;"><%=project.projecttype? project.projecttype:'Select'%></a>
+        <div class="_thumbnailDescripiton">
+            <div class="_projectsTypeWrap">
+                <div class="left"><label>Project Type: </label>&nbsp;</div>
+                <div class="forProjectsTypes _newSelectListWrap">
+                    <a class="current-selected"
+                       href="javascript:;"><%=project.projecttype? project.projecttype:'Select'%></a>
+                </div>
             </div>
-
             <p class="inner">
                 <a id="<%= project._id%>" class="tasksByProject" href="#easyErp/Tasks/kanban/<%= project._id %>"><%=project.task.length%>Tasks</a>
             </p>
@@ -60,11 +61,9 @@
                 <!--<span class="status <%=(project.workflow && project.workflow.status) ? project.workflow.status.toLowerCase().split(' ').join('') : ''%>"><%=(project.workflow) ? project.workflow.status : ''%></span>-->
             </div>
         </div>
-        <div class="half-block right">
-            <div class="avatar right"
-                 data-id="<%=(project.salesManager && project.salesManager._id) ? project.salesManager._id: ''%>">
-                <img alt="" src=""/>
-            </div>
+        <div class="avatar right"
+             data-id="<%=(project.salesManager && project.salesManager._id) ? project.salesManager._id: ''%>">
+            <img alt="" src=""/>
         </div>
     </div>
 </div>

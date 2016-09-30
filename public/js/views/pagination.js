@@ -243,6 +243,8 @@ define([
                 sortObject[sortField] = sortConst;
             });
 
+            this.sort = sortObject;
+
             data = {
                 sort: sortObject
             };

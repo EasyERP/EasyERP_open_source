@@ -2,7 +2,7 @@ var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var aggent;
-var db = 'pavlodb';
+var db = 'vasyadb';
 
 
 describe('Company Specs', function () {
@@ -17,7 +17,7 @@ describe('Company Specs', function () {
             aggent
                 .post('users/login')
                 .send({
-                    login: 'pavlo.demko',
+                    login: 'superAdmin',
                     pass : '111111',
                     dbId : db
                 })
@@ -218,7 +218,7 @@ describe('Company Specs', function () {
                     expect(first)
                         .and.to.have.property('fullName');
 
-                    expect(Object.keys(first).length).to.be.equal(5);
+                    expect(Object.keys(first).length).to.be.equal(7);
 
                     done();
                 });

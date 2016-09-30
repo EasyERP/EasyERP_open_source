@@ -4,7 +4,7 @@ var url = 'http://localhost:8089/';
 var CONSTANTS = require('../../constants/constantsTest');
 var aggent;
 
-require('.././development');
+require('../../config/environment/development');
 
 describe('Journal Specs', function () {
     'use strict';
@@ -17,9 +17,9 @@ describe('Journal Specs', function () {
             aggent
                 .post('users/login')
                 .send({
-                    login: 'admin',
-                    pass : 'tm2016',
-                    dbId : 'production'
+                    login: 'superAdmin',
+                    pass : '111111',
+                    dbId : 'vasyadb'
                 })
                 .expect(200, done);
         });

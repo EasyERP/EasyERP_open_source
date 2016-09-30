@@ -1,0 +1,39 @@
+.settings_modal {
+  .check_wrap {
+    float: left;
+    width: 20px;
+  }
+  .setting_element {
+    margin-bottom: 20px;
+
+    .fa {
+      color: #000;//@mainText-color;
+      text-decoration: none;
+      vertical-align: top;
+    }
+    .fa, .selected {
+      line-height: 30px;
+    }
+    .setting_title {
+      display: inline-block;
+    }
+    .selected {
+      vertical-align: top;
+      padding-left: 15px;
+    }
+
+  }
+  .settings_list {
+    .content {
+      margin: 0;
+      border-width: 0 0 1px 0 !important;
+    }
+  }
+  .resultFormula {
+    text-align: center;
+  }
+}
+
+._setInputTitle {
+  line-height: 22px;
+}

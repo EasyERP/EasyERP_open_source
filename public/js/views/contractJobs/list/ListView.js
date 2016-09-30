@@ -112,6 +112,8 @@ define([
                 sort: sortObject
             };
 
+            this.sort = sortObject;
+
             data.filter = filter;
 
             if (this.viewType) {

@@ -1,52 +1,44 @@
-<div class="form-holder">
+<div class="form-holder _weeklySheduler">
     <form method="post" action="" class="form" id="invoiceForm">
-        <fieldset>
-            <div class="clearfix"></div>
-            <br>
-            <h3>New Weekly Scheduler</h3>
-            <div class="clearfix"></div>
-            <br><br>
-            <table class="list task-list">
-                <col width="40%">
-                <col width="7%">
-                <col width="7%">
-                <col width="7%">
-                <col width="7%">
-                <col width="7%">
-                <col width="7%">
-                <col width="7%">
+        <h3 class="_dialogTableTitle">New Weekly Scheduler</h3>
+        <table class="list _dialogTable">
+            <colgroup>
+                <col width="250px">
                 <col width="11%">
-                <thead>
-                <tr>
-                    <th></th>
-                    <th>Mo</th>
-                    <th>Tu</th>
-                    <th>We</th>
-                    <th>Th</th>
-                    <th>Fr</th>
-                    <th>Sa</th>
-                    <th>Su</th>
-                    <th>Hours</th>
-                </tr>
-                </thead>
-                <tbody id="listTable" class="enableTableOdd">
-                <tr>
-                    <td id="weeklySchedulerName">
-                        <input class="statusInfo" maxlength="20" size="10" type="text" placeholder="Name">
-                    </td>
-
-                    <td data-type="input" data-content="1"><input class="statusInfo" maxlength="2" size="2" type="number" value="0" min="0" max="24"></td>
-                    <td data-type="input" data-content="2"><input class="statusInfo" maxlength="2" size="2" type="number" value="0" min="0" max="24"></td>
-                    <td data-type="input" data-content="3"><input class="statusInfo" maxlength="2" size="2" type="number" value="0" min="0" max="24"></td>
-                    <td data-type="input" data-content="4"><input class="statusInfo" maxlength="2" size="2" type="number" value="0" min="0" max="24"></td>
-                    <td data-type="input" data-content="5"><input class="statusInfo" maxlength="2" size="2" type="number" value="0" min="0" max="24"></td>
-                    <td data-type="input" data-content="6"><input class="statusInfo" maxlength="2" size="2" type="number" value="0" min="0" max="24"></td>
-                    <td data-type="input" data-content="7"><input class="statusInfo" maxlength="2" size="2" type="number" value="0" min="0" max="24"></td>
-
-                    <td id="totalHours"><span>0</span></td>
-                </tr>
-                </tbody>
-            </table>
-        </fieldset>
+                <col width="11%">
+                <col width="11%">
+                <col width="11%">
+                <col width="11%">
+                <col width="11%">
+                <col width="11%">
+                <col width="23%">
+            </colgroup>
+            <thead>
+            <tr>
+                <th></th>
+                <th>Mo</th>
+                <th>Tu</th>
+                <th>We</th>
+                <th>Th</th>
+                <th>Fr</th>
+                <th>Sa</th>
+                <th>Su</th>
+                <th>Hours</th>
+            </tr>
+            </thead>
+            <tbody id="listTable" class="enableTableOdd">
+            <tr>
+                <td id="weeklySchedulerName"><input class="statusInfo" maxlength="20" size="10" type="text" placeholder="Name"></td>
+                <td data-type="input" data-content="1"><input class="statusInfo" maxlength="2" size="2" type="number" value="0" min="0" max="24"></td>
+                <td data-type="input" data-content="2"><input class="statusInfo" maxlength="2" size="2" type="number" value="0" min="0" max="24"></td>
+                <td data-type="input" data-content="3"><input class="statusInfo" maxlength="2" size="2" type="number" value="0" min="0" max="24"></td>
+                <td data-type="input" data-content="4"><input class="statusInfo" maxlength="2" size="2" type="number" value="0" min="0" max="24"></td>
+                <td data-type="input" data-content="5"><input class="statusInfo" maxlength="2" size="2" type="number" value="0" min="0" max="24"></td>
+                <td data-type="input" data-content="6"><input class="statusInfo" maxlength="2" size="2" type="number" value="0" min="0" max="24"></td>
+                <td data-type="input" data-content="7"><input class="statusInfo" maxlength="2" size="2" type="number" value="0" min="0" max="24"></td>
+                <td id="totalHours"><span>0</span></td>
+            </tr>
+            </tbody>
+        </table>
     </form>
 </div>

@@ -109,7 +109,7 @@ var Module = function (models) {
                     if (err){
                         return console.log(err);
                     }
-                    if (!settings.defaultEmail && settings.contact){
+                    if (settings && !settings.defaultEmail && settings.contact){
                         mailOptions.from = settings.contact.email;
                     }
                     mailer.sendAddedFollower(mailOptions, cb);

@@ -6,12 +6,11 @@ module.exports = (function () {
         name: String
     }, {collection: 'deliverTo'});
 
-    mongoose.model('DeliverTo', DeliverToSchema);
-
     if (!mongoose.Schemas) {
         mongoose.Schemas = {};
     }
 
+    mongoose.model('DeliverTo', DeliverToSchema);
     mongoose.Schemas.DeliverTo = DeliverToSchema;
 })();
 

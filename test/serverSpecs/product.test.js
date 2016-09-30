@@ -3,22 +3,23 @@ var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var aggent;
 
-require('../../config/development');
+require('../../config/environment/development');
 
 describe('Product Specs', function () {
     'use strict';
 
     describe('Product with admin', function () {
         var id;
+        this.timeout(10000);
 
         before(function (done) {
             aggent = request.agent(url);
             aggent
                 .post('users/login')
                 .send({
-                    login: 'admin',
-                    pass : 'tm2016',
-                    dbId : 'production'
+                    login: 'superAdmin',
+                    pass : '111111',
+                    dbId : 'vasyadb'
                 })
                 .expect(200, done);
         });
@@ -57,7 +58,7 @@ describe('Product Specs', function () {
             };
 
             aggent
-                .post('product')
+                .post('products')
                 .send(body)
                 .expect(200)
                 .end(function (err, res) {
@@ -83,7 +84,7 @@ describe('Product Specs', function () {
             var body = {};
 
             aggent
-                .post('product')
+                .post('products')
                 .send(body)
                 .expect(400, done);
         });
@@ -146,7 +147,7 @@ describe('Product Specs', function () {
             };
 
             aggent
-                .get('product')
+                .get('products')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -218,37 +219,37 @@ describe('Product Specs', function () {
                 });
         });
 
-        it('should get products totalCollectionLength', function (done) {
-            var query = {
-                filter: {
-                    canBeSold: {
-                        key: 'canBeSold'
-                    }
-                }
-            };
+        /*it('should get products totalCollectionLength', function (done) {
+         var query = {
+         filter: {
+         canBeSold: {
+         key: 'canBeSold'
+         }
+         }
+         };
 
-            aggent
-                .get('products/totalCollectionLength')
-                .query(query)
-                .query({'filter[canBeSold][value][0]': true})
-                .expect(200)
-                .end(function (err, res) {
-                    var body = res.body;
+         aggent
+         .get('products/totalCollectionLength')
+         .query(query)
+         .query({'filter[canBeSold][value][0]': true})
+         .expect(200)
+         .end(function (err, res) {
+         var body = res.body;
 
-                    if (err) {
-                        return done(err);
-                    }
+         if (err) {
+         return done(err);
+         }
 
-                    expect(body)
-                        .to.be.instanceOf(Object);
+         expect(body)
+         .to.be.instanceOf(Object);
 
-                    expect(body)
-                        .to.have.property('count')
-                        .and.to.be.gte(1);
+         expect(body)
+         .to.have.property('count')
+         .and.to.be.gte(1);
 
-                    done();
-                });
-        });
+         done();
+         });
+         });*/
 
         it('should get product by id', function (done) {
             var query = {
@@ -289,24 +290,11 @@ describe('Product Specs', function () {
 
         it('should get products for list', function (done) {
             var query = {
-                contentType: 'Product',
+                contentType: 'Products',
                 count      : '1',
 
-                filter: {
-                    productType: {
-                        key  : 'info.productType',
-                        value: ['Product', '']
-
-                    },
-
-                    canBeSold: {
-                        key  : 'canBeSold',
-                        value: ['true', '']
-                    }
-                },
-
-                page    : '1',
-                viewType: 'list'
+                'filter[canBePurchased][key]'    : 'canBePurchased',
+                'filter[canBePurchased][value][]': true
             };
 
             aggent
@@ -322,18 +310,16 @@ describe('Product Specs', function () {
 
                     expect(body)
                         .to.be.instanceOf(Object)
-                        .and.to.have.property('data')
+                        .and.to.have.property('success')
                         .and.to.be.instanceOf(Array)
                         .and.to.have.deep.property('[0]');
-                    expect(body.data.length)
-                        .to.be.equal(1);
-                    expect(body.data[0])
+                    expect(body.success.length)
+                        .to.be.equal(5);
+                    expect(body.success[0])
                         .to.have.property('canBeSold', true);
-                    expect(body.data[0])
+                    expect(body.success[0])
                         .to.have.property('info')
-                        .and.to.have.property('productType', 'Product');
-                    expect(body)
-                        .and.to.have.property('total');
+                        .and.to.have.property('productType', 'Service');
 
                     done();
                 });
@@ -363,7 +349,7 @@ describe('Product Specs', function () {
                 .send({
                     login: 'ArturMyhalko',
                     pass : 'thinkmobiles2015',
-                    dbId : 'production'
+                    dbId : 'vasyadb'
                 })
                 .expect(200, done);
         });
@@ -403,7 +389,7 @@ describe('Product Specs', function () {
             };
 
             aggent
-                .post('product')
+                .post('products')
                 .send(body)
                 .expect(403, done);
         });
@@ -414,7 +400,7 @@ describe('Product Specs', function () {
         it('should fail get Product for View', function (done) {
 
             aggent
-                .get('products/')
+                .get('products')
                 .expect(404, done);
         });
 

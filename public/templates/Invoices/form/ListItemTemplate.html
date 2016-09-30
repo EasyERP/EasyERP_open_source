@@ -1,12 +1,13 @@
 <table id="listTable">
-    <% invoices.forEach(function(invoice, index){ %>
-    <% var currency =(invoice.currency && invoice.currency._id ? invoice.currency._id.symbol : '')%>
+    <% invoices.forEach(function(invoice, index){%>
+    <% var currency =(invoice.currency && invoice.currency._id) ? invoice.currency._id.symbol : ''%>
 
     <tr class="compactView" data-id="<%=invoice._id%>">
         <td class="checkboxRow">
             <label>
-                <input type="checkbox" value="<%=invoice._id%>" class="checkbox <%=invoice.removable ? '' : 'notRemovable'%>"  <%if (!invoice.removable) { %>
-                disabled='disabled'
+                <input type="checkbox" value="<%=invoice._id%>"
+                       class="checkbox <%=invoice.removable ? '' : 'notRemovable'%>" <%if (!invoice.removable) { %>
+                disabled="disabled"
                 <% } %>/>
             </label>
         </td>
@@ -14,12 +15,15 @@
             <div class="compactRowWrap">
                 <div class="compactRow">
                     <div class="firstName"><%=invoice.name%></div>
-                    <div class="supplier"><%=invoice.supplier && invoice.supplier.name ?  invoice.supplier.name.first + ' ' + invoice.supplier.name.last%></div>
+                    <div class="supplier"><%=invoice.supplier && invoice.supplier.name ? invoice.supplier.name.first + '
+                        ' + invoice.supplier.name.last : ''%>
+                    </div>
                 </div>
                 <div class="compactRow">
                     <div class="balance"><%=currency %><%=currencySplitter(invoice.paymentInfo.balance)%></div>
                     <div class="total"><%=currency %><%=(invoice.paymentInfo) ?
-                        currencySplitter(invoice.paymentInfo.total) : '0.00'%></div>
+                        currencySplitter(invoice.paymentInfo.total) : '0.00'%>
+                    </div>
                     <div class="status"><%if(invoice.workflow){%>
                         <%if(invoice.workflow.status === 'In Progress'){%>
                         <span class="<%= invoice.workflow.status.toLowerCase().replace(' ', '') %>"><%= invoice.workflow.name %></span>
@@ -32,7 +36,8 @@
                         <%}%>
                         <% } else {%>
                         <span> </span>
-                        <%}%></div>
+                        <%}%>
+                    </div>
                 </div>
             </div>
         </td>

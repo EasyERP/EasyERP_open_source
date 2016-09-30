@@ -2,10 +2,10 @@ var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var aggent;
-var dbId = 'production';
+var dbId = 'vasyadb';
 var admin = {
-    login: 'admin',
-    pass : 'tm2016',
+    login: 'superAdmin',
+    pass : '111111',
     dbId : dbId
 };
 var bannedUser = {
@@ -16,6 +16,8 @@ var bannedUser = {
 
 describe("User Specs", function () {
     'use strict';
+    this.timeout(10000);
+
     describe("Create User block", function () {
         var id;
         var idCur;

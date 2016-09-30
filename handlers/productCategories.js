@@ -146,9 +146,9 @@ var Categories = function (models, event) {
 
             newModelId = category._id;
 
-            updateParentsCategory(req, newModelId, parentId, 'add', function () {
-                if (err) {
-                    return next(err);
+            updateParentsCategory(req, newModelId, parentId, 'add', function (error) {
+                if (error) {
+                    return next(error);
                 }
 
                 res.status(200).send(category);

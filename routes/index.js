@@ -83,6 +83,8 @@ module.exports = function (app, mainDb) {
     var followersRouter = require('./followers')(models);
     var accountTypesRouter = require('./accountTypes')(models);
 
+    var customChartRouter = require('./customChart')(models);
+    var customDashboardRouter = require('./customDashboard')(models);
     var logger = require('../helpers/logger');
     var exportToPdf = require('../helpers/pdfExtractor');
     var async = require('async');
@@ -203,6 +205,8 @@ module.exports = function (app, mainDb) {
     app.use('/contractJobs', contractJobsRouter);
     app.use('/projectsDashboard', projectsDashboardRouter);
     app.use('/followers', followersRouter);
+    app.use('/customChart', customChartRouter);
+    app.use('/customDashboard', customDashboardRouter);
     app.use('/accountTypes', accountTypesRouter);
 
     /**
@@ -394,12 +398,12 @@ module.exports = function (app, mainDb) {
         var status = err.status || 500;
 
         if (process.env.NODE_ENV === 'production') {
-            if (status === 401) {
-                logger.log('', err.message + '\n' + err.message);
-            }
             res.status(status).send({error: err.message});
         } else {
             res.status(status).send({error: err.message + '\n' + err.stack});
+        }
+
+        if (status !== 401) {
             logger.error(err.message + '\n' + err.stack);
         }
     }

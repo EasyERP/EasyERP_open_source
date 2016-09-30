@@ -7,6 +7,210 @@ $input-text: #3e88b9;
 $border-color: #7f7f80;
 $top-font-color: #666666;
 
+
+//Added from _main.less
+.thumbnail {
+  //.thumbnail;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-pack: justify;
+  -moz-box-pack: justify;
+  -ms-flex-pack: justify;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+
+  float: left;
+  margin-top: 4px;
+  margin-left: 4px;
+  position: relative;
+  display: block;
+  background: transparent !important;
+  border: 1px solid #7f7f80;
+  width: 280px;
+  min-height: 130px;
+  cursor: pointer;
+  .dropDown {
+    position: absolute;
+    top: 5px;
+    right: 2px;
+    .icon {
+      font-size: 19px;
+    }
+    a {
+      &:hover {
+        color: $mainText-color-selected;
+      }
+    }
+  }
+
+  .inner {
+    padding: 5px;
+
+    &:after {
+      content: '';
+      display: table;
+      clear: both;
+    }
+  }
+
+  .bottom {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: justify;
+    -moz-box-pack: justify;
+    -ms-flex-pack: justify;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+    -webkit-box-align: start;
+    -moz-box-align: start;
+    -webkit-align-items: flex-start;
+    -ms-flex-align: start;
+    align-items: flex-start;
+
+    bottom:0;
+    position: absolute;
+    width: 100%;;
+
+    ._thumbnailDescripiton {
+
+    }
+    .avatar {
+      flex-shrink: 0;
+      align-self: flex-end;
+    }
+
+    //.half-block {
+    //  &:last-child {
+    //    text-align: right;
+    //  }
+    //
+    //  .left {
+    //    label {
+    //      color: $status-color;
+    //      line-height: 16px;
+    //    }
+    //  }
+    //
+    //}
+  }
+
+  span, p, h2{
+    color: #4c4c4c;
+    font-size: 13px;
+  }
+
+  span {
+    font-family: $base-font-family;
+    position: relative;
+
+    &.status {
+      &.pending {
+        color: #EAE874;
+      }
+
+      &.inprogress {
+        color: #67C2EF;
+      }
+
+      &.done {
+        color: #BDEA74;
+      }
+
+      &.cancelled {
+        color: #FF5454;
+      }
+    }
+  }
+
+  a.tasksByProject {
+    cursor: pointer;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  p {
+    font-family: $base-font-family;
+
+    span {
+      font-weight: normal !important;
+    }
+  }
+
+  h2 {
+    font-family: $base-font-family;
+    margin: 0 0 8px;
+  }
+
+  &:hover {
+    border: 1px solid $border-color-main;
+    box-shadow: 0 0 4px $border-color-selected;
+  }
+
+  .avatar {
+    padding: 5px;
+    width: 44px;
+    height: 44px;
+
+    img {
+      height: auto;
+      width: 100%;
+    }
+
+    canvas {
+      height: auto;
+      width: 100%;
+    }
+
+    .upload {
+      overflow: hidden;
+      font-size: 15px;
+      line-height: 18px;
+      text-align: center;
+      display: block;
+      height: 0;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      color: #fff;
+      cursor: pointer;
+      input {
+        position: absolute;
+        top: 0;
+        height: 20px;
+        opacity: 0;
+        background: rgba(0, 0, 0, 0.5);
+        margin: 0;
+        padding: 0;
+        width: 100%;
+      }
+    }
+  }
+
+  .project-text {
+    width: 180px;
+    span {
+      color: $mainText-color;
+    }
+    span.bold {
+      @extend %text-overflow;
+      display: block;
+      max-width: 150px;
+    }
+  }
+}
+
+
 .flex {
   display: flex;
 
@@ -137,7 +341,6 @@ $top-font-color: #666666;
       padding: 2px;
       line-height: 9px;
       text-decoration: none !important;
-      box-sizing: border-box;
       text-align: center;
     }
   }
@@ -172,13 +375,11 @@ $top-font-color: #666666;
     justify-content: flex-start;
     align-content: stretch;
     padding: 35px 0 4px 12px;
-    box-sizing: border-box;
 
     .thumbnail {
       &.product {
         position: relative;
         flex: 1 1 200px;
-        box-sizing: border-box;
         padding: 8px;
         min-width: 150px;
         margin: 4px;

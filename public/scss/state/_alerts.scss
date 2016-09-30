@@ -1,0 +1,40 @@
+.alert {
+  padding: 15px 15px 15px 35px;
+  position: relative;
+  &:before {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    //font-family: 'FontAwesome';
+    font-family: $icon-font;
+  }
+}
+
+.alertDanger {
+  &:before {
+    //content: '\f071';
+    content: '\e922';
+  }
+}
+
+.redText {
+  color: #E55253;//@red-1 !important;
+}
+
+.alertSuccess {
+  &:before {
+    content: '\f05d';
+  }
+}
+
+.invoiced {
+  color: #3C86E0;//@vacation !important;
+}
+
+.paid {
+  color: #2d5d30;//@overWork !important;
+}
+
+.unpaid {
+  color:  #E55253;//@free !important;
+}

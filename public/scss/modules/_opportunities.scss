@@ -8,6 +8,21 @@
   }
 }
 
+.opportunity-content {
+  .fa-comment-o,
+  .fa-paperclip {
+    color: #2c3e50;
+  }
+  .fa {
+    &:nth-child(n+2) {
+      margin-left: 10px;
+    }
+  }
+  .projectType {
+    color: #549ecf;
+  }
+}
+
 .propertyBox {
   position: relative;
   display: table;
@@ -125,24 +140,6 @@
   }
 }
 
-
-
-.selectCompany {
-  .addCompanyBtn {
-    width: 100%;
-    margin: 0;
-    padding: 15px !important;
-    height: auto;
-    color: $black;
-    font-size: 16px;
-
-    &:hover {
-      background: $add-company-btn-hover-bg;
-      text-decoration: none;
-    }
-  }
-}
-
 .tagsRow,
 .attachWrapper,
 .selectCompany,
@@ -212,6 +209,44 @@
     width: 100% !important;
     height: 100% !important;
     max-width: 100% !important;
+  }
+}
+
+.selectCompany {
+  position: relative;
+
+  .addCompanyBtn {
+    width: 100%;
+    margin: 0;
+    padding: 15px !important;
+    height: auto;
+    color: $black;
+    font-size: 16px;
+
+    &:hover {
+      background: $add-company-btn-hover-bg;
+      text-decoration: none;
+    }
+  }
+
+  ._companySaveButton {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+  }
+
+  .formTitle {
+    margin-bottom: 0;
+  }
+
+  .propertyBox {
+    margin-bottom: 0;
+    margin-top: 13px;
+
+    + .person-info {
+      margin-top: 20px;
+    }
   }
 }
 
@@ -509,6 +544,10 @@
     }
   }
 }
+
+
+
+
 
 
 

@@ -1,36 +1,53 @@
-<div class="form-holder">
+<div class="form-holder _structureTypes">
     <div class="settings_modal">
-        <form method="post" action="" class="form" id="invoiceForm">
-            <fieldset>
-                <div class="clearfix"></div>
-                <h3 class="setting_title">New Payroll Structure Type</h3>
-
-                <div class="setting_element half-block left">
-                    <span>Name: </span>
-                    <input id="payrollStructureName" maxlength="40" size="40" type="text" value="<%= name || '' %>">
+        <form method="post"
+              action=""
+              class="form"
+              id="invoiceForm">
+            <h3 class="_dialogTableTitle">New Payroll Structure Type</h3>
+            <div class="setting_element half-block left">
+                <span>Name: </span>
+                <input id="payrollStructureName"
+                       maxlength="40"
+                       size="40"
+                       type="text"
+                       value="<%= name || '' %>">
+            </div>
+            <div class="clearfix"></div>
+            <div class="setting_element half-block left"
+                 id="earningComponents"
+                 data-id="earning">
+                <div class="">
+                    <a href="javascript:;"
+                       class="createBtn icon-plus"
+                       data-id="earning"
+                       title="Create">
+                    </a>
+                    <!--<h3 class="setting_title">Earnings:</h3>-->
+                    <a href="javascript:;"
+                       id="earningTypeDd"
+                       class="selected _newSelectListWrap">Earnings:
+                    </a>
                 </div>
-                <div class="clearfix"></div>
-                <div class="setting_element half-block left" id="earningComponents" data-id="earning">
-                    <div class="">
-                        <a href="javascript:;" class="createBtn icon-plus" data-id="earning" title="Create"></a>
-                        <!--<h3 class="setting_title">Earnings:</h3>-->
-                        <a id="earningTypeDd" class="selected" href="javascript:;">Earnings:</a>
-                    </div>
-                    <ul  id="groupList" class="ui-sortable settings_list">
-                    </ul>
+                <ul class="ui-sortable settings_list groupList"></ul>
+            </div>
+            <div class="setting_element half-block right" id="deductionComponents" data-id="deduction">
+                <div class="">
+                    <a href="javascript:;"
+                       class="createBtn icon-plus"
+                       title="Create"
+                       data-id="deduction">
+                    </a>
+                    <!--<h3 class="setting_title">Deductions:</h3>-->
+                    <a id="deductionTypeDd"
+                       class="selected _newSelectListWrap"
+                       href="javascript:;">Deductions:
+                    </a>
                 </div>
-                <div class="setting_element half-block right" id="deductionComponents"  data-id="deduction">
-                    <div class="">
-                        <a href="javascript:;" class="createBtn icon-plus" title="Create" data-id="deduction"></a>
-                        <!--<h3 class="setting_title">Deductions:</h3>-->
-                        <a id="deductionTypeDd" class="selected" href="javascript:;">Deductions:</a>
-                    </div>
-                    <ul id="groupList" class="ui-sortable settings_list">
-                    </ul>
-                </div>
-                <div class="clearfix"></div>
-                <p id="resultFormula" class="resultFormula"></p>
-            </fieldset>
+                <ul class="ui-sortable settings_list groupList"></ul>
+            </div>
+            <div class="clearfix"></div>
+            <p id="resultFormula" class="resultFormula"></p>
         </form>
     </div>
 </div>

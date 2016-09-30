@@ -70,5 +70,7 @@ module.exports = (function () {
     require('./import.js');
     require('./countries.js');
     require('./followers.js');
+    require('./customChart.js');
+    require('./customDashboard.js');
     require('./accountTypes.js');
 })();

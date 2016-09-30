@@ -1,5 +1,5 @@
 // General variables ----
-$serif: sans-serif;
+$defaultFonts: Arial, Helvetica, sans-serif;
 $font-path: '../font/';
 // ----------------------
 
@@ -51,7 +51,7 @@ $base-font : (
         'regular'  : 'OpenSans Regular',
         'semibold' : 'OpenSans SemiBold',
         'bold'     : 'OpenSans Bold',
-        'extrabold': 'OpenSans ExtraBold'
+        'extrabold': 'OpenSans ExtraBo'
 );
 // ----------------------
 // All fonts array
@@ -75,11 +75,11 @@ $fonts: (
 
 // Fonts family variables
 $icon-font: 'erp-icons';
-$light-font-family     : font("base-font", "light"), $serif !default;
-$base-font-family      : font("base-font", "regular"), $serif !default;
-$semibold-font-family  : font("base-font", "semibold"), $serif !default;
-$bold-font-family      : font("base-font", "bold"), $serif !default;
-$extrabold-font-family : font("base-font", "extrabold"), $serif !default;
+$light-font-family     : font("base-font", "light"), $defaultFonts !default;
+$base-font-family      : font("base-font", "regular"), $defaultFonts !default;
+$semibold-font-family  : font("base-font", "semibold"), $defaultFonts !default;
+$bold-font-family      : font("base-font", "bold"), $defaultFonts !default;
+$extrabold-font-family : font("base-font", "extrabold"), $defaultFonts !default;
 // ----------------------
 // Typography -----------
 @function lineHeight($x, $y) {

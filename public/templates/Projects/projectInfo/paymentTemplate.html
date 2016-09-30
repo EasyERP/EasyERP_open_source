@@ -1,16 +1,23 @@
 <div id="top-bar-payments">
     <div id="createBtnHolder" class="btnsBlock">
-        <a href="javascript:;" class="fa fa-times" title="Remove" id="removePayment"></a>
-        <a href="javascript:;" class="fa fa-check" title="Save" id="savePayment"></a>
+        <a href="javascript:;" class="btn blue slim" title="Remove" id="removePayment">Delete</a>
+        <a href="javascript:;" class="btn blue slim" title="Save" id="savePayment">Save</a>
     </div>
 </div>
-<div id="paymentsTable">
-    <table class="list payment-list">
-
+<div id="paymentsTable" class="_paymentsTableWrap">
+    <table class="list stripedList">
+        <colgroup>
+            <col width="43px">
+            <col width="15%">
+            <col width="17%">
+            <col width="14%">
+            <col width="19%">
+            <col width="15%">
+            <col width="20%">
+        </colgroup>
         <thead>
         <tr>
-            <th class=""><input type="checkbox" id="checkAll_payments" class="checkAll"/></th>
-            <th class="centerCell">N</th>
+            <th class="centerCell"><input type="checkbox" id="checkAll_payments" class="checkAll"/></th>
             <th class="oe_sortable" data-sort="assigned.name.first">Assigned<span class="arrow down"></span><span
                     class="arrow up"></span></th>
             <th class="oe_sortable" data-sort="supplier.name.first">Company<span class="arrow down"></span><span
@@ -35,7 +42,6 @@
         <% paymentCollection.forEach(function(payment, index) {%>
         <tr data-id="<%=payment._id%>">
             <td class="notForm centerCell"><input type="checkbox" value="<%=payment._id%>" class="checkbox <%=payment.removable ? '' : 'notRemovable'%>"/></td>
-            <td><%=startNumber + index + 1%></td>
             <td><%=(payment && payment.assigned) ? payment.assigned.name.first + ' ' + payment.assigned.name.last:
                 ''%>
             </td>

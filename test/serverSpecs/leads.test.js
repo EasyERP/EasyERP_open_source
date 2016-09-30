@@ -5,9 +5,9 @@ var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var host = process.env.HOST;
 var aggent;
-var dbId = 'pavlodb';
+var dbId = 'vasyadb';
 var admin = {
-    login: 'pavlo.demko',
+    login: 'superAdmin',
     pass : '111111',
     dbId : dbId
 };
@@ -17,9 +17,13 @@ var bannedUser = {
     dbId : dbId
 };
 
+require('../../config/environment/development');
+
 describe('Leads Specs', function () {
     'use strict';
     var id;
+
+    this.timeout(10000);
 
     describe('Leads with admin', function () {
 
@@ -40,8 +44,8 @@ describe('Leads Specs', function () {
 
         it('should create lead', function (done) {
             var body = {
-                name: 'Subject',
-                workflow : "528ce74ef3f67bc40b00001e"
+                name    : 'Subject',
+                workflow: "528ce74ef3f67bc40b00001e"
             };
 
             aggent
@@ -119,11 +123,10 @@ describe('Leads Specs', function () {
         it('should get Leads for viewType list', function (done) {
 
             var query = {
-                viewType     : 'list',
-                contentType  : 'Leads',
-                page         : 1,
-                count        : 100,
-                newCollection: false
+                viewType   : 'list',
+                contentType: 'Leads',
+                page       : 1,
+                count      : 100
             };
 
             aggent
@@ -166,11 +169,9 @@ describe('Leads Specs', function () {
 
                     expect(firstProject)
                         .to.have.property('source');
-                    expect(firstProject)
-                        .and.to.have.property('createdBy')
-                        .and.to.have.property('date');
-                    expect(firstProject)
-                        .and.to.have.property('createdBy')
+                    /*expect(firstProject)
+                     .and.to.have.property('createdBy')
+                     .and.to.have.property('date');*/
                     if (firstProject.salesPerson) {
                         expect(firstProject.salesPerson)
                             .to.have.property('name')
@@ -183,7 +184,7 @@ describe('Leads Specs', function () {
                             .to.be.a('string');
                     }
 
-                    expect(Object.keys(firstProject.createdBy).length).to.be.equal(2);
+                    //expect(Object.keys(firstProject.createdBy).length).to.be.equal(2);
                     expect(Object.keys(firstProject.workflow).length).to.be.equal(3);
                     expect(Object.keys(firstProject).length).to.be.lte(9);
                     done();
@@ -219,7 +220,7 @@ describe('Leads Specs', function () {
                     expect(body)
                         .to.have.property('workflow')
                         .and.to.be.instanceOf(Object)
-                        .and.to.have.property('_id',  '528ce74ef3f67bc40b00001e');
+                        .and.to.have.property('_id', '528ce74ef3f67bc40b00001e');
                     expect(body)
                         .and.to.have.property('createdBy')
                         .and.to.have.property('date');
@@ -232,7 +233,6 @@ describe('Leads Specs', function () {
                     expect(body)
                         .and.to.have.property('editedBy')
                         .and.to.have.property('user');
-
 
                     done();
                 });
@@ -283,9 +283,7 @@ describe('Leads Specs', function () {
                     expect(bodyRes)
                         .to.be.instanceOf(Object);
                     expect(bodyRes)
-                        .to.have.property('success');
-                    expect(bodyRes)
-                        .to.have.property('result');
+                        .to.have.property('_id');
 
                     done();
                 });
@@ -309,9 +307,7 @@ describe('Leads Specs', function () {
                     expect(bodyRes)
                         .to.be.instanceOf(Object);
                     expect(bodyRes)
-                        .to.have.property('success');
-                    expect(bodyRes)
-                        .to.have.property('result');
+                        .to.have.property('_id');
 
                     done();
                 });

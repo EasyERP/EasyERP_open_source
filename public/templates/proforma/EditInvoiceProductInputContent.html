@@ -16,7 +16,7 @@
     <td data-name="quantity" class=""><span>1</span></td>
     <% var editable = !approved %>
     <td data-name="price" class="<%= editable ? 'editable' : ''%> forNum ">
-        <span class="currencySymbol"><%=(currency && currency._id ? currency._id.symbol : '') %></span><span class="sum">
+        <span class="currencySymbol"><%=(currency && currency._id ? currency._id.symbol : '') %></span><span>
         <% if(editable) { %>
         <input id="editInput" maxlength="9" class="statusInfo" size=7 type="text" value="<%=product.unitPrice%>" />
         <% } else { %>

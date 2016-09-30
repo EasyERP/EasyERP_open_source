@@ -3,7 +3,8 @@ var expect = require('chai').expect;
 var CONSTANTS = require('../../constants/constantsTest');
 var url = 'http://localhost:8089/';
 var aggent;
-var db = 'pavlodb';
+var db = 'vasyadb';
+require('../../config/environment/development');
 
 describe('Project Specs', function () {
     'use strict';
@@ -16,8 +17,8 @@ describe('Project Specs', function () {
             aggent
                 .post('users/login')
                 .send({
-                    login: 'admin',
-                    pass : 'tm2016',
+                    login: 'superAdmin',
+                    pass : '111111',
                     dbId : db
                 })
                 .expect(200, done);

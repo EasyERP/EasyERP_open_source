@@ -11,9 +11,6 @@ b,strong {
   font-weight: bolder; //adedd from normalize.scss
 }
 
-
-//Added from _main.less
-
 html, body {
   margin: 0;
   padding: 0;
@@ -35,8 +32,6 @@ html {
   height: 100%;
 }
 
-/*added from normalize.scss*/
-
 button {
   &::-moz-focus-inner,
   [type="button"]::-moz-focus-inner,
@@ -53,14 +48,6 @@ button {
     outline: 1px dotted ButtonText;
   }
 }
-
-/*
-fieldset {
-  border: 1px solid #c0c0c0;
-  margin: 0 2px;
-  padding: 0.35em 0.625em 0.75em;
-}*/
-
 
 legend {
   box-sizing: border-box;
@@ -102,9 +89,6 @@ legend {
   font: inherit;
 }
 
-
-/*end added from normalize.scss*/
-
 h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, cite, code, del, dfn, img, q, s, samp, small, strike, sub, sup, tt, var, dd, dl, dt, ol, ul, fieldset, form, label, legend, button, table, caption, tbody, tfoot, thead, tr, th, td {
   margin: 0;
   padding: 0;
@@ -140,10 +124,6 @@ q:before, q:after, blockquote:before, blockquote:after {
 
 *:focus {
   outline: 0 !important;
-}
-
-a:focus {
-  outline: thin dotted;
 }
 
 // Hover & Active
@@ -209,7 +189,6 @@ img {
   -ms-interpolation-mode: bicubic;
 }
 
-    /*added from normalize.scss*/
 svg:not(:root) {
   overflow: hidden;
 }
@@ -231,7 +210,6 @@ hr {
   height: 0;
   overflow: visible;
 }
-    /*end added from normalize.scss*/
 
 button,
 input,
@@ -258,7 +236,6 @@ select {
   text-transform: none; //added from normalize.scss
 }
 
-
 button,
 html [type="button"],
 [type="reset"],
@@ -266,9 +243,6 @@ html [type="button"],
   -webkit-appearance: button;
   cursor: pointer; //from normalize.csss
 }
-
-
-
 
 button::-moz-focus-inner,
 input::-moz-focus-inner {
@@ -292,21 +266,51 @@ textarea {
   vertical-align: top;
 }
 
-
-//Added from normilize.scss
-
 a {
   background-color: transparent;
   -webkit-text-decoration-skip: objects;
+  color: $mainText-color;
+  text-decoration: none;
+  &:hover{
+    text-decoration: underline;
+  }
 }
 
 a:active,
-a:hover {
+a:hover, a:focus {
   outline-width: 0;
 }
 
 abbr[title] {
   border-bottom: none;
   text-decoration: underline;
-  text-decoration: underline dotted;
+}
+
+::-webkit-input-placeholder {
+  color: #a0a9b4;
+}
+:-moz-placeholder {
+  color: #a0a9b4;
+}
+::-moz-placeholder {
+  color: #a0a9b4;
+}
+:-ms-input-placeholder {
+  color: #a0a9b4;
+}
+
+:focus::-webkit-input-placeholder {
+  color: transparent !important;
+}
+
+:focus::-moz-placeholder {
+  color: transparent !important;
+}
+
+:focus:-moz-placeholder {
+  color: transparent !important;
+}
+
+:focus:-ms-input-placeholder {
+  color: transparent !important;
 }

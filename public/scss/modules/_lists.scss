@@ -1,13 +1,13 @@
 .countCircle {
-  height: 20px;
+  display: inline-block;
   width: 20px;
+  height: 20px;
+  line-height: 18px;
   color: #fff;
   background: #9a9a9e;
   text-align: center;
-  display: inline-block;
   border-radius: 50%;
   font-size: 12px;
-  line-height: 18px;
 
   &.red {
     background: #ff0000;
@@ -21,9 +21,9 @@
 .dateListElementTitle {
   display: inline-block;
   margin: 20px 20px 0 20px;
-  font-size: 14px;
   color: #8c8e8f;
   text-transform: uppercase;
+  font-size: 14px;
 
   .countCircle {
     margin-left: 8px;
@@ -31,25 +31,18 @@
 }
 
 .dateListItem {
-  display: -webkit-box;
-  display: -moz-box;
-  display: -ms-flexbox;
-  display: -webkit-flex;
   display: flex;
-
   height: 46px;
   margin: 15px 0;
   cursor: pointer;
 
   .dateListCheckboxWrap {
     padding: 0 20px;
-    -webkit-flex-shrink: 0;
     flex-shrink: 0;
   }
 
   .dateListBody {
     min-width: 1px;
-    -webkit-flex-grow: 1;
     flex-grow: 1;
 
     .dateListFooter {
@@ -62,31 +55,21 @@
 }
 
 .dateListHeader {
-  display: -webkit-box;
-  display: -moz-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
   display: flex;
 
   ._tagSmall {
-    -webkit-flex-shrink: 0;
     flex-shrink: 0;
 
     margin-right: 5px;
   }
 
   .dateListDescription {
-    -webkit-flex-grow: 1;
     flex-grow: 1;
   }
 }
 
 ._taskListWrap {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
   display: flex;
-
   height: calc(100vh - 100px);
 
   ._taskListDateBlock {
@@ -94,24 +77,24 @@
     overflow: auto;
 
     ._dateListElement {
-      position: relative;
       max-height: 380px;
       overflow: hidden;
+      position: relative;
       font-size: 14px;
 
       .hideList {
         display: none;
+        height: 20px;
+        line-height: 20px;
+        padding: 0 10px;
+        border-radius: 3px;
         position: absolute;
         right: 10px;
         bottom: 0;
         background-color: #7eadcc;
         color: #fff;
-        font-size: 12px;
-        height: 20px;
-        line-height: 20px;
-        padding: 0 10px;
-        border-radius: 3px;
         cursor: pointer;
+        font-size: 12px;
       }
 
       &.open {
@@ -120,6 +103,7 @@
         .showmore {
           display: none !important;
         }
+
         .hideList {
           display: block;
         }
@@ -135,21 +119,12 @@
 }
 
 ._taskListActivitiesBlock {
-  -webkit-flex-shrink: 0;
   flex-shrink: 0;
-  display: -webkit-box;
-  display: -moz-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-flex-direction: column;
-  -ms-flex-direction: column;
   flex-direction: column;
-
   width: calc(35% + 159px);
 
   ._activityHolderTitle {
-    -webkit-flex-shrink: 0;
     flex-shrink: 0;
 
     padding: 20px;
@@ -212,18 +187,14 @@
   overflow: auto;
 
   ._payrollListItem {
-    display: -webkit-box;
-    display: -moz-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
     display: flex;
-    cursor: pointer;
-    position: relative;
     padding: 8px 20px 8px 30px;
-    background-color: #f7f7f7;
     border: 2px dashed $payroll-border-gray;
     border-radius: 3px;
+    cursor: pointer;
+    background-color: #f7f7f7;
     transition: .2s all ease-in;
+    position: relative;
 
     &.checked {
       background-color: #F8F8F8;
@@ -234,8 +205,8 @@
         position: absolute;
         top: 15px;
         right: 15px;
-        font-family: 'erp-icons';
         color: $payroll-border-blue;
+        font-family: $icon-font;
       }
 
       &._weeklyItem,
@@ -288,7 +259,7 @@
     &._employeesItem {
       ._payrollListImage {
         &:after {
-          font-family: 'erp-icons';
+          font-family: $icon-font;
           margin: auto;
           color: $payroll-border-gray;
           font-size: 24px;
@@ -337,14 +308,9 @@
     }
 
     ._payrollListImage {
-      display: -webkit-box;
-      display: -moz-box;
-      display: -webkit-flex;
-      display: -ms-flexbox;
       display: flex;
-
-      height: 60px;
       width: 60px;
+      height: 60px;
       border: 2px dashed $payroll-border-gray;
       border-radius: 50%;
       background-color: $white;
@@ -352,28 +318,24 @@
     }
 
     ._payrollListBody {
-      display: -webkit-box;
-      display: -moz-box;
-      display: -webkit-flex;
-      display: -ms-flexbox;
       display: flex;
       -webkit-flex-direction: column;
       -ms-flex-direction: column;
       flex-direction: column;
-
       margin-left: 10px;
     }
 
     ._payrollListSteps {
+      text-transform: uppercase;
       color: $payroll-font-indigo2;
       font-family: $semibold-font-family;
       font-size: 10px;
-      text-transform: uppercase;
     }
 
     ._payrollListAction {
       font-size: 20px;
       color: $payroll-font-darkgray;
+
       &:hover {
         text-decoration: none;
       }
@@ -381,8 +343,8 @@
 
     ._payrollListDescription {
       margin-top: 10px;
-      font-size: 12px;
       color: $payroll-font-darkgray;
+      font-size: 12px;
     }
   }
 }
@@ -396,9 +358,10 @@
 ._tagsCellWrap {
   min-width: 100px;
   padding-bottom: 5px;
+
   &:after {
-    content: '';
     display: table;
+    content: '';
     clear: both;
   }
 
@@ -414,8 +377,8 @@
   .Medium,
   .Cold,
   .Trivial {
-    height: 35px;
     width: 30px;
+    height: 35px;
     margin: 0 auto;
     background-image: url('../images/priority_icons.png');
     background-size: 132px;
@@ -438,10 +401,6 @@
 
 ._contractJobsListWrap {
   table-layout: fixed;
-
-  ._contractJobsListItem {
-
-  }
 }
 
 ._contractJobsListItem {
@@ -457,9 +416,11 @@
     &.inProgress  {
       color: #fff;
     }
+
     &.finished {
       background-color: $contractJobs-green-bg;
     }
+
     &.inProgress {
       background-color: $contractJobs-blue-bg;
     }
@@ -479,28 +440,8 @@
     ._contractJobsCustomer {
       font-style: italic;
     }
-    ._contractJobsDates {
-
-    }
-    ._contractJobsSales {
-
-    }
-    ._contractJobsPM {
-
-    }
-    ._contractJobsTotalHour {
-
-    }
-    ._contractJobsDevHours {
-
-    }
-    ._contractJobsADR {
-
-    }
-    ._contractJobsTotalADR {
-
-    }
   }
+
   ._contractJobsInvoiceBlock {
     > div {
       line-height: 20px;
@@ -511,13 +452,8 @@
       line-height: 20px;
     }
   }
-  ._contractJobsCostBlock {
-
-  }
-  ._contractJobsProfitBlock {
-
-  }
 }
+
 //
 //.list tbody tr._contractJobsListItem td {
 //  padding: 10px;
@@ -537,4 +473,239 @@
 
 .semiBold {
   font-family: $semibold-font-family;
+}
+
+.workflow-list-wrapper,
+.workflow-sub-list-wrapper {
+  width: 170px;
+}
+
+.workflow-sub-list {
+  li {
+    @extend %text-overflow;
+  }
+}
+
+.workflow-list,
+.workflow-sub-list {
+  color: #2A6496;
+  width: 100%;
+  font-size: 13px;
+
+  li {
+    position: relative;
+    height: 40px;
+    line-height: 40px;
+    border: 1px solid  transparent;
+
+    &:hover:not(.quickEdit) {
+      background-color: lighten($bg-main, 15%);;
+
+      a {
+        text-decoration: none;
+      }
+
+    }
+    &.active {
+      border-color: $border-color-main;
+      border-right-color: transparent;
+      display: list-item;
+
+      &.first {
+        border-top-color: rgba(0, 0, 0, 0);
+      }
+
+      &:hover {
+        background-color: $defaultBgHover-color;
+      }
+      &:after {
+        display: none;
+      }
+
+      a {
+        text-decoration: none;
+      }
+    }
+
+    &:after {
+      content: '';
+      position: absolute;
+      right: -1px;
+      top: -1px;
+      width: 1px;
+      height: 40px;
+      background-color: $border-color-main;
+    }
+
+    a {
+      padding: 10px 15px;
+      display: inline-block;
+      width: 100%;
+    }
+
+    .editProfileContainer {
+      margin-left: 10px;
+      margin-right: 12px;
+      .editProfileName {
+        width: 100%;
+        padding-left: 5px;
+      }
+    }
+
+    .edit-holder {
+      a {
+        padding: 0;
+      }
+    }
+
+    .wNameEdit {
+      width: 92%;
+      position: relative;
+      top: -10px;
+    }
+
+    .saveAll, .cancelAll {
+      padding: 0;
+      position: relative;
+      top: -30px;
+    }
+  }
+}
+
+.workflow-list {
+  li.active {
+    line-height: 38px;
+    font-family: $semibold-font-family;
+
+    &:hover {
+      background-color: #fff;
+    }
+  }
+}
+
+
+
+/*added from _icons.scss 22.09*/
+
+.btn-list {
+  @extend .defaultBorRad;
+  height: 24px;
+  margin: 0 12px 0 5px;
+  border: 1px solid #7f7f80; //@thin-border @border-color-main;
+  float: left;
+
+  li {
+    display: block;
+    height: 23px;
+    width: 24px;
+    padding: 3px;
+    margin: 0;
+    float: left;
+
+    &:nth-child(n+2) {
+      border-left: 1px solid #7f7f80; //@thin-border @border-color-main;
+    }
+
+    a {
+      display: block;
+      text-align: center;
+
+      &.fa {
+        line-height: 18px;
+        font-size: 16px !important;
+      }
+
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
+
+  .selected {
+    color: #3e88b9;//@selected-filters-color;
+
+    a {
+      color: white;
+    }
+  }
+}
+
+
+/*23.09*/
+.newSelectList {
+  max-width: 200px;
+  text-align: center;
+
+  li {
+    @extend %text-overflow;
+  }
+
+  .miniStylePagination {
+    min-width: 160px;
+    line-height: 28px;
+    text-align: center;
+    position: relative;
+
+    &:hover {
+      background-color: white;
+    }
+
+    .next,
+    .prev {
+      position: absolute;
+      top: 6px;
+      line-height: normal;
+
+      &.disabled {
+        display: none;
+      }
+    }
+
+    .next {
+      right: 5px;
+    }
+
+    .prev {
+      left: 5px;
+    }
+
+    span {
+      padding: 0;
+    }
+  }
+
+  > input#selectInput {
+    width: 100% !important;
+    height: 24px;
+    margin: 0;
+    border: 0;
+    border-bottom: 1px solid #7f7f80;
+    float: left;
+  }
+}
+
+.filter-check-list {
+  display: none;
+  width: 150px;
+  background-color: white;
+  border: 1px solid  silver;
+  position: absolute;
+  top: -1px;
+  right: 118px;
+  z-index: 1000;
+
+  li {
+    @extend %text-overflow;
+    cursor: pointer;
+    line-height: 20px;
+    overflow: hidden;
+
+    &:hover {
+      background-color: #EEE;
+    }
+  }
+
+  input {
+    margin: 0 5px;
+  }
 }

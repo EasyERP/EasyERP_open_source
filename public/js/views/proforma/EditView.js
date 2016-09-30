@@ -347,7 +347,7 @@ define([
 
                     if (productId) {
                         quantity = targetEl.find('[data-name="quantity"] input').val() || $thisEl.find('[data-name="quantity"]').text();
-                        price = helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val()) || helpers.spaceReplacer(targetEl.find('[data-name="price"]').text());
+                        price = helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val()) || helpers.spaceReplacer(targetEl.find('[data-name="price"]').find('.sum').text());
                         price = parseFloat(price) * 100;
 
                         if (isNaN(price) || price <= 0) {

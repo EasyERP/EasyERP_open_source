@@ -1,15 +1,27 @@
 <div id="top-bar-payments">
     <div id="createBtnHolder" class="btnsBlock">
-        <a href="javascript:;" class="fa fa-times" title="Remove" id="removeProforma"></a>
-        <a href="javascript:;" class="fa fa-check" title="Save" id="saveProforma"></a>
+        <a href="javascript:;" class="btn blue slim" title="Remove" id="removeProforma">Delete</a>
+        <a href="javascript:;" class="btn blue slim" title="Save" id="saveProforma">Save</a>
     </div>
 </div>
-<div>
-    <table class="list task-list">
+<div class="_proformaTableWrap">
+    <table class="list stripedList">
+        <colgroup>
+            <col width="43px">
+            <col width="11%">
+            <col width="14%">
+            <col width="12%">
+            <col width="11%">
+            <col width="8%">
+            <col width="8%">
+            <col width="8%">
+            <col width="8%">
+            <col width="8%">
+            <col width="12%">
+        </colgroup>
         <thead>
         <tr>
-            <th class=""><input type="checkbox" id="checkAll_proforma" class="checkAll"/></th>
-            <th class="centerCell">N</th>
+            <th class="centerCell"><input type="checkbox" id="checkAll_proforma" class="checkAll"/></th>
             <th class="oe_sortable" data-sort="supplier.name.first">Customer<span class="arrow down"></span><span
                     class="arrow up"></span></th>
             <th class="oe_sortable" data-sort="name">Proforma Number<span class="arrow down"></span><span
@@ -58,7 +70,6 @@
                 notRemovable
                 <% } %>"/>
         </td>
-        <td><%=startNumber + index + 1%></td>
         <td><%=(invoice.supplier && invoice.supplier.name) ? invoice.supplier.name.first + ' ' +
             invoice.supplier.name.last : ''%>
         </td>
@@ -95,7 +106,7 @@
         <% if (collection.length) {%>
         <tfoot id="listTotal">
         <tr>
-            <td colspan="7"></td>
+            <td colspan="6"></td>
             <td><span id="balance" class="money"><%=currencySplitter((balance).toFixed(2))%></span></td>
             <td><span id="paid" class="money"><%=currencySplitter((paid).toFixed(2))%></span></td>
             <td><span id="total" class="money"><%=currencySplitter((total).toFixed(2))%></span></td>

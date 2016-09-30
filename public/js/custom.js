@@ -183,6 +183,7 @@ define([
                     case CONTENT_TYPES.CASHTRANSFER:
                     case CONTENT_TYPES.REPORTSDASHBOARD:
                     case CONTENT_TYPES.CONTRACTJOBS:
+                    case CONTENT_TYPES.CUSTOMDASHBOARD:
                     case CONTENT_TYPES.PROJECTSDASHBOARD:
                     case CONTENT_TYPES.MANUALENTRY:
                         App.currentViewType = 'list';
@@ -258,6 +259,7 @@ define([
                     case CONTENT_TYPES.CASHTRANSFER:
                     case CONTENT_TYPES.REPORTSDASHBOARD:
                     case CONTENT_TYPES.CONTRACTJOBS:
+                    case CONTENT_TYPES.CUSTOMDASHBOARD:
                     case CONTENT_TYPES.PROJECTSDASHBOARD:
                     case CONTENT_TYPES.MANUALENTRY:
                         App.currentViewType = 'list';

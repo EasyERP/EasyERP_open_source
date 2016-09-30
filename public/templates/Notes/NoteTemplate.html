@@ -46,7 +46,6 @@
             <% notes = notes || [];%>
             <% notes.reverse();
             _.each(notes, function(val, key){ %>
-        <%debugger%>
         <%if (!val.history && !val.attachment && !val.pay) {%>
 
             <div id="<%=val['_id'] %>" class="noteContainer noteInner">
