@@ -1,0 +1,37 @@
+<table class="list tableProjects tableFixed _currencyTable" id="ratesTable">
+    <colgroup>
+        <col width="30%"/>
+        <col width="60%"/>
+        <col width="10%"/>
+    </colgroup>
+    <thead>
+    <tr class="forToggle">
+        <th>Date</th>
+        <th>Rates</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody class="forToggle" id="currencyTable">
+    <% collection.forEach(function(elem,index){ %>
+
+    <tr data-id="<%=elem._id%>">
+        <td><%=elem.date%></td>
+        <td class="rate">
+            <%var currencies = elem && elem.rates ? Object.keys(elem.rates) : [] ;%>
+            <%currencies.forEach(function (el){%>
+            <%var currObj = elem.rates[el];%>
+            <%var array = Object.keys(currObj);%>
+            <%array.forEach(function (to){%>
+            <span class="_tagSmall grey"><%= el + ' / ' + to + '  ' + currObj[to]%></span>
+            <%});%>
+            <%});%>
+        </td>
+        <td>
+            <a href="javascript:;" class="icon-note goToEdit _actionCircleBtn" aria-hidden="true"></a>
+            <a href="javascript:;" class="icon-trash goToRemove _actionCircleBtn" aria-hidden="true"></a>
+        </td>
+    </tr>
+
+    <% }) %>
+    </tbody>
+</table>

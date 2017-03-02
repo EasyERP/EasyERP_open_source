@@ -1,0 +1,48 @@
+<div class="form-holder _newForm">
+    <form method="">
+        <h4 class="_dialogMainTitle">Edit Shipping Method</h4>
+        <div class="_formWrap _enlargedItemMargin">
+            <div class="_formBlock _equal">
+                <div class="_animateInputBox">
+                    <input type="text"
+                           class="_animate "
+                           id="name"
+                           required
+                           value="<%=model.name%>"/>
+                    <label class="_animate">Shipping Method Name</label>
+                </div>
+                <div class="_animateInputBox">
+                    <input type="text"
+                           class="_animate "
+                           id="code"
+                           required
+                           maxlength="48"
+                           value="<%=model.code%>"/>
+                    <label class="_animate">Code</label>
+                </div>
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Account</span>
+                    <div class="_newSelectListWrap">
+                        <a id="account"
+                           name="account"
+                           class="current-selected"
+                           data-id="<%=model.account ? model.account._id: null%>"
+                           href="javascript:;"><%=model.account ? model.account.name : 'Select account'%>
+                        </a>
+                    </div>
+                </div>
+                <div class="_animateInputBox">
+                    <div class="_newSelectListWrap">
+                        <input type="text"
+                               class="_animate "
+                               id="price"
+                               required
+                               maxlength="48"
+                               value="<%=currencySplitter((model.price / 100).toFixed(2))%>"/>
+                        <label class="_animate">Price <%=App.organizationSettings && App.organizationSettings.currency ? App.organizationSettings.currency.symbol : ''%></label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

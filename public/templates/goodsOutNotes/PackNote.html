@@ -1,0 +1,12 @@
+<div class="form-holder _dialogWrap">
+    <div class="_dialogMainTitle">Set Goods as packed</div>
+    <div class="_dialogBlock">
+        <div class="_dialogRow">Tracking refence</div>
+        <div class="_dialogRow"><input id="currencySymbol" value=""></div>
+        <div class="_dialogRow">Shipping method</div>
+        <div class="_dialogRow wrapper"><a class="current-selected" id="shippingMethods" href="javascript:;">Select</a></div>
+        <div class="_dialogRow">Shipping Cost</div>
+        <div class="_dialogRow"><input id="shippingCost" value="<%=model.order && model.order.shippingExpenses ? (model.order.shippingExpenses.amount / 100).toFixed(2) : 0%>"></div>
+    </div>
+</div>
+

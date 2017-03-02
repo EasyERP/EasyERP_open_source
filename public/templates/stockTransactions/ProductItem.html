@@ -1,0 +1,26 @@
+<tr class="productItem deleteRow" id="<%=elem._id%>">
+
+    <td data-name="productName">
+        <div class="_newSelectListWrap">
+        <a class="current-selected" id="productsDd" href="javascript:;" data-id="<%= elem.product ? elem.product._id : ''%>">
+
+            <%=elem.product && elem.product.info ? elem.product.info.SKU || elem.product.name : 'Select' %>
+        </a>
+            <textarea class="productDescr"><%= elem.product && elem.product.info &&  elem.product.info.SKU ? elem.product.name :  ''%></textarea>
+    </td>
+    <td data-name="quantity">
+        <input id="quantity" class="quantity statusInfo" maxlength="9" value="<%=elem.inStock%>" size=7 type="text"/>
+    </td>
+    <td data-name="onHand">
+        <input id="onHand" class="quantity statusInfo" maxlength="9" value="<%=elem.onHand%>" size=7 type="text" readonly/>
+    </td>
+    <td data-name="destination">
+        <input id="destination" class="quantity statusInfo" maxlength="9" value="<%= elem.destination || 0 %>" size=7 type="text" readonly/>
+    </td>
+    <td data-name="after">
+        <input id="after" class="quantity statusInfo" maxlength="9" value="<%= elem.after || 0 %>" size=7 type="text" readonly/>
+    </td>
+    <td class="deleteCell centerCell">
+        <span title="Delete" class="icon-close5 removeJob"></span>
+    </td>
+</tr>

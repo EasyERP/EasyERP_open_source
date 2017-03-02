@@ -1,0 +1,61 @@
+<!--<div id="<%= contentType %>DateFilter" class="vocationFilter _filterDropDownWrap">-->
+    <ul class="dateFilter">
+        <li class="dateRange">
+            <span class="icon-calendar"></span>
+            <span class="startDateValue"></span> - <span class="endDateValue"></span>
+            <span class="icon-arrow-down2"></span>
+        </li>
+        <li>
+            <ul class="frameDetail _filterDropDownBody hidden">
+                <% filterValuesCollection.forEach(function(element) {
+                if (element._id !== 'line') { %>
+                <li class="filterValues checked"
+                    data-id="<%= element._id %>">
+                    <%= !onlyCustom ? element.name : '' %>
+                    <% if (element._id === 'custom') { %>
+                        <li id="<%= contentType %>CustomDateBlock" class="customTime <%= onlyCustom ? '' : 'hidden' %>">
+                            <div class="customTimeItem">
+                                <label for="startDate<%= contentType %>">Start Date: </label>
+                                <input readonly type="text" id="startDate<%= contentType %>" data-name="startDate">
+                            </div>
+                            <div class="customTimeItem">
+                                <label for="endDate<%= contentType %>">End Date: </label>
+                                <input readonly type="text" id="endDate<%= contentType %>" data-name="endDate">
+                            </div>
+                            <div class="buttons">
+                                <button class="updateBtn btn">
+                                    <span>Update</span>
+                                </button>
+                                <button class="cancelBtn btn">
+                                    <span>Cancel</span>
+                                </button>
+                            </div>
+                        </li>
+                    <% } %>
+                <% if (element._id === 'endDate') { %>
+                <li id="<%= contentType %>EndDateBlock" class="customTime <%= onlyEndDate ? '' : 'hidden' %>">
+                    <div class="customTimeItem">
+                        <label for="endDate<%= contentType %>">End Date: </label>
+                        <input readonly type="text" id="endDate<%= contentType %>" data-name="endDate">
+                    </div>
+                    <div class="buttons">
+                        <button class="updateBtn btn">
+                            <span>Update</span>
+                        </button>
+                        <button class="cancelBtn btn">
+                            <span>Cancel</span>
+                        </button>
+                    </div>
+                </li>
+                <% } %>
+                </li>
+                <% } else { %>
+                <li class="listLine"></li>
+                <% }
+                }); %>
+
+            </ul>
+        </li>
+    </ul>
+<!--
+</div>-->

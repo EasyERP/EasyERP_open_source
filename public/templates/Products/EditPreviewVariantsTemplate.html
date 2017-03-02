@@ -1,0 +1,114 @@
+<div class="_createVariantsTable">
+    <table class="stripedList">
+        <thead>
+        <%if (collection[1] && collection[1].length){%>
+        <tr class="forToggle">
+            <th class="centerCell"></th>
+            <% if (collection[3] && collection[3].length) { %>
+            <th class="centerCell"></th>
+            <% } %>
+            <%collection[1].forEach(function(elem1){%>
+            <th  class="centerCell"colspan="<%=collection[2] ? collection[2].length: ''%>"><%= elem1.name %></th>
+            <%})%>
+        </tr>
+        <%if (collection[2]  && collection[2].length){%>
+        <tr class="forToggle">
+            <% if (collection[3] && collection[3].length) { %>
+            <th class="centerCell"></th>
+            <% } %>
+            <th class="centerCell"></th>
+            <%collection[1].forEach(function(elem1){%>
+            <%collection[2].forEach(function(elem2){%>
+            <th class="centerCell"><%= elem2.name %></th>
+            <%})%>
+            <%})%>
+        </tr>
+        <%}%>
+        <%}%>
+        </thead>
+        <tbody class="forToggle" id="currencyTable">
+        <%if (collection[0] && collection[0].length){%>
+        <%collection[0].forEach(function(elem3, index1){%>
+
+        <%if (collection[3] && collection[3].length){%>
+        <%collection[3].forEach(function(elem0, index2){%>
+        <tr>
+            <%if (index2 === 0){%>
+            <th  rowspan="<%=collection[3] ? collection[3].length: ''%>"><%= elem3.name %></th>
+            <%}%>
+            <th><%= elem0.name %></th>
+            <%if (collection[1] && collection[1].length){%>
+            <%collection[1].forEach(function(elem1){%>
+            <%if (collection[2] && collection[2].length){%>
+            <%collection[2].forEach(function(elem2){%>
+            <% var varId = [elem3.id, elem2.id, elem1.id, elem0.id].sort().join('/') %>
+            <td id="<%= varId %>" class="centerCell">
+                <% if (variantsArray.indexOf(varId) < 0) { %>
+                <label class="_customCHeckbox">
+                    <input type="checkbox" class="newVariantCheck" data-value="<%= varId %>" />
+                    <span></span>
+                </label>
+                <% } else { %>
+                <span class="icon-checked2 blue"></span>
+                <% } %>
+            </td>
+            <%})%>
+            <% }%>
+            <%})%>
+            <%}%>
+        </tr>
+        <%})%>
+        <% } else { %>
+        <tr>
+            <th><%= elem3.name %></th>
+            <%if (collection[1] && collection[1].length){%>
+            <%if (collection[2] && collection[2].length){%>
+            <%collection[1].forEach(function(elem2){%>
+            <%collection[2].forEach(function(elem1){%>
+            <% var varId = [elem3.id, elem2.id, elem1.id].sort().join('/') %>
+            <td id="<%=varId %>" class="centerCell">
+                <% if (variantsArray.indexOf(varId) < 0) { %>
+                <label class="_customCHeckbox">
+                    <input type="checkbox" class="newVariantCheck"  data-value="<%= varId %>" />
+                    <span></span>
+                </label>
+                <% } else { %>
+                <span class="icon-checked2 blue"></span>
+                <% } %>
+            </td>
+            <%})%>
+            <%})%>
+            <% } else { %>
+            <%collection[1].forEach(function(elem2){%>
+            <% var varId = [elem3.id, elem2.id].sort().join('/') %>
+            <td id="<%= varId%>" class="centerCell">
+                <% if (variantsArray.indexOf(varId) < 0) { %>
+                <label class="_customCHeckbox">
+                    <input type="checkbox" class="newVariantCheck" data-value="<%= varId %>" />
+                    <span></span>
+                </label>
+                <% } else { %>
+                <span class="icon-checked2 blue"></span>
+                <% } %>
+            </td>
+            <%})%>
+            <%}%>
+            <%} else { %>
+            <td id="<%= elem3.id %>" class="centerCell">
+                <% if (variantsArray.indexOf(elem3.id) < 0) { %>
+                <label class="_customCHeckbox">
+                    <input type="checkbox" class="newVariantCheck" data-value="<%= elem3.id %>" />
+                    <span></span>
+                </label>
+                <% } else { %>
+                <span class="icon-checked2 blue"></span>
+                <% } %></td>
+            <% } %>
+        </tr>
+        <% } %>
+        <%})%>
+        <%}%>
+        </tbody>
+    </table>
+</div>
+<button id="startEditing" class="btn blue">Save Variants</button>

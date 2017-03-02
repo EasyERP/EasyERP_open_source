@@ -1,0 +1,15 @@
+._setEmployeesWrap {
+  padding-top: 30px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+
+  ._setEmployeeItem {
+    width: 42%;
+    margin-bottom: 50px;
+    > .btnsBlock {
+      margin-bottom: 5px;
+    }
+  }
+}

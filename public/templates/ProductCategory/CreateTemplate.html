@@ -1,0 +1,32 @@
+<div class="form-holder _newForm">
+  <form method="post" id="createCategoryForm">
+    <fieldset>
+      <h4 class="_dialogTitlePositioned">Create Category</h4>
+      <div class="_formWrap _enlargedItemMargin">
+        <div class="_formBlock">
+          <div class="_animateInputBox">
+            <input type="text"
+                   class="_animate"
+                   name="categoryName"
+                   id="categoryName"
+                   maxlength="32"
+                   required/>
+            <label class="_animate"
+                   for="categoryName">Category Name</label>
+            <input type="text"
+                   hidden
+                   required/>
+          </div>
+          <div class="_animateSelectBox">
+            <label class="_selectTitle">Parent Category</label>
+            <div class="_newSelectListWrap">
+              <a href="javascript:;"
+                 id="parentCategory"
+                 class="current-selected"></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+  </form>
+</div>

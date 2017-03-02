@@ -1,0 +1,74 @@
+<div class="person-info salesPurchases-container">
+    <div class="separateBlock">Sales & Purchases</div>
+    <div class="_animateInputBox">
+        <input type="text"
+               class="_animate editable"
+               id="reference"
+               maxlength="32"
+               data-id="salesPurchases_reference"
+               value="<%=model.salesPurchases.reference%>"
+               required/>
+        <label class="_animate">Reference</label>
+    </div>
+    <div class="propertyFormList _forCheckBox">
+        <label class="inputBox _newSelectListWrap">
+            <label for="isCustomer">Is Customer</label>
+            <label class="_animatedCheckbox">
+                <input  id="isCustomer" data-id="salesPurchases_isCustomer"
+                        type="checkbox" <%=(model && model.salesPurchases && model.salesPurchases.isCustomer) ? 'checked':''%> />
+                <span></span>
+            </label>
+        </label>
+        <label class="inputBox _newSelectListWrap">
+            <label for="isSupplier">Is Supplier</label>
+            <label class="_animatedCheckbox">
+                <input id="isSupplier"
+                       data-id="salesPurchases_isSupplier"
+                       type="checkbox" <%=(model && model.salesPurchases &&model.salesPurchases.isSupplier) ? 'checked':''%> />
+                <span></span>
+            </label>
+        </label>
+    </div>
+    <div class="_animateSelectBox">
+        <span class="_selectTitle">Sales Team</span>
+        <div class="inputBox _newSelectListWrap">
+            <a id="departmentDd"
+               class="current-selected"
+               data-id="salesPurchases_salesTeam"
+               href="javascript:;"><%=(model && model.salesPurchases && model.salesPurchases.salesTeam) ? model.salesPurchases.salesTeam.name : 'Select Team'%>
+            </a>
+        </div>
+    </div>
+    <div class="_animateSelectBox">
+        <span class="_selectTitle">Sales Person</span>
+        <div class="inputBox _newSelectListWrap">
+            <a id="employeesDd"
+               class="current-selected"
+               data-id="salesPurchases_salesPerson"
+               href="javascript:;"><%=(model && model.salesPurchases && model.salesPurchases.salesPerson) ?
+                model.salesPurchases.salesPerson.fullName : 'Select Person'%>
+            </a>
+        </div>
+    </div>
+    <div class="_animateSelectBox">
+        <span class="_selectTitle">Implemented By</span>
+        <div class="inputBox _newSelectListWrap">
+            <a id="implementedBy"
+               class="current-selected"
+               data-id="salesPurchases_implementedBy"
+               href="javascript:;"><%=(model && model.salesPurchases && model.salesPurchases.implementedBy) ?model.salesPurchases.implementedBy.fullName : 'Select implementer'%>
+            </a>
+        </div>
+    </div>
+    <div class="_animateSelectBox">
+        <span class="_selectTitle">Language</span>
+        <div class="inputBox _newSelectListWrap">
+            <a id="language"
+               class="current-selected"
+               data-id="salesPurchases_language"
+               href="javascript:;">
+                <%=model.salesPurchases.language%>
+            </a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,45 @@
+<div class="_acountingTableWrap">
+    <div class="_acountingTitleBlock _forOverview">
+        <span class="_acountingTitle ">Currency</span>
+        <a href="javascript:;" class="btn blue slim plus" title="Create" id="top-bar-createBtn">New</a>
+    </div>
+    <div class="_acountingTableBlock">
+        <table class="list tableProjects tableFixed _currencyTable">
+            <colgroup>
+                <col width="40%"/>
+                <col width="40%"/>
+                <col width="20%"/>
+            </colgroup>
+            <thead>
+            <tr class="forToggle">
+                <th>Name</th>
+                <th>Symbol</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody class="forToggle" id="currencyTable">
+            <% collection.forEach(function(elem,index){ %>
+
+            <tr data-id="<%=elem._id%>">
+                <% if (App && App.organizationSettings && elem._id === App.organizationSettings.currency._id){ %>
+                <td class="_baseCurrency"><span><%=elem.name%></span><div>(Base Currency)</div></td>
+                <td><span><%=elem.symbol%></span></td>
+                <td>
+                    <a href="javascript:;" class="icon-note goToEdit _actionCircleBtn" aria-hidden="true"></a>
+                    <a href="/#easyErp/organizationSettings" class="goToEdit" aria-hidden="true">Change Base Currency</a>
+                </td>
+                <% } else { %>
+                <td><span><%=elem.name%></span></td>
+                <td><span><%=elem.symbol%></span></td>
+                <td>
+                    <a href="javascript:;" class="icon-note goToEdit _actionCircleBtn" aria-hidden="true"></a>
+                    <a href="javascript:;" class="icon-trash goToRemove _actionCircleBtn" aria-hidden="true"></a>
+                </td>
+                <% }%>
+            </tr>
+
+            <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>

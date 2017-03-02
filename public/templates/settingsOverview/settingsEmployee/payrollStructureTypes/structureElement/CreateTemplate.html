@@ -1,0 +1,56 @@
+<div class="form-holder _newForm">
+    <form method="post" action="" id="invoiceForm">
+        <h4 class="_dialogMainTitle"><%= name ? 'Update' : 'New'%> <%= type %> Structure Element</h4>
+        <div class="_formWrap">
+            <div class="_formBlock _equal">
+                <div class="_formBlock">
+                    <div class="_animateInputBox">
+                        <input type="text"
+                               class="_animate "
+                               id="structureComponentName"
+                               required
+                               autofocus
+                               size="40"
+                               value="<%= name || ''%>"
+                               maxlength="40"/>
+                        <label class="_animate">Name: </label>
+                    </div>
+                    <div class="_modalList">
+                        <div class="_modalLabel">
+                            <label>Formula: </label>
+                        </div>
+                        <span id="formula"></span>
+                        <span class="btn blue slim _addFormulaBtn" id="addFormulaElement">Add formula</span>
+                    </div>
+                </div>
+            </div>
+            <div class="_formBlock _equal">
+                <div class="_basedOnRange">
+                    <label for="range" class="_rangeLabel">Based on range</label>
+                    <label class="_animatedCheckbox">
+                        <input id="range"
+                               type="checkbox"
+                               />
+                        <span></span>
+                    </label>
+                </div>
+                <div class="_animateInputBox minRange" style="display: none">
+                    <input type="number"
+                           class="_animate"
+                           id="minRange"
+                           required
+                           value="0"/>
+                    <label class="_animate">Min Range</label>
+                </div>
+                <div class="_animateInputBox maxRange" style="display: none">
+                    <input type="number"
+                           class="_animate"
+                           id="maxRange"
+                           required
+                           value="0"/>
+                    <label class="_animate">Max Range</label>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

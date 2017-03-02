@@ -1,0 +1,62 @@
+<% invoiceCollection.forEach(function(invoice, index){ %>
+<% var overdue = 0%>
+<% if(invoice.workflow && (invoice.workflow.status === 'Done')){ %>
+<% overdue = new Date(invoice.paymentDate) - new Date(invoice.dueDate) %>
+<% } else if (invoice.paymentInfo && invoice.paymentInfo.balance > 0){ %>
+<% overdue = new Date() - new Date(invoice.dueDate) %>
+<% } %>
+
+
+<tr data-id="<%=invoice._id%>">
+    <td class="notForm centerCell">
+        <label class="_customCHeckbox">
+            <input type="checkbox" value="<%=invoice._id%>"
+            <% if (!invoice.removable) { %>
+            class="checkbox notRemovable" disabled='disabled'
+            <% } else {%>
+            class="checkbox"
+            <% } %>
+            />
+            <span></span>
+        </label>
+    </td>
+    <td><%=(invoice.supplier && invoice.supplier.name) ? invoice.supplier.name:''%>
+    </td>
+    <td><%=invoice.name%></td>
+    <td><%=invoice.paymentDate%></td>
+    <td><%=(invoice.salesPerson && invoice.salesPerson.name) ? invoice.salesPerson.name : ''%>
+    </td>
+    <td><% if (overdue > 0) {%>
+        <span class="red"><%=Math.ceil(overdue / (1000 * 3600 * 24)) + " days"%></span>
+        <% } else {%>
+        <span><%= invoice.dueDate%></span>
+        <%}%>
+    </td>
+    <td class="balance"><%=(invoice.currency && invoice.currency._id ? invoice.currency._id.symbol : '') +
+        (currencySplitter(invoice.paymentInfo.balance))%>
+    </td>
+    <td class="paid"><%=(invoice.currency && invoice.currency._id ? invoice.currency._id.symbol : '') +
+        ((invoice.paymentInfo && invoice.paid) ? currencySplitter(invoice.paid.toFixed(2)) : '0.00')%>
+    </td>
+    <td class="total"><%=(invoice.currency && invoice.currency._id ? invoice.currency._id.symbol : '') +
+        ((invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.total) : '0.00')%>
+    </td>
+    <td class="centerCell" id='<%=invoice._id%>'>
+        <%if(invoice.workflow){%>
+        <%if(invoice.workflow.status === 'In Progress'){%>
+        <span class="<%=invoice.workflow.status.toLowerCase().replace(' ', '')%>"><%=invoice.workflow.name%></span>
+        <% } else {%>
+        <%if(invoice.approved){%>
+        <span class="<%=invoice.workflow.name.toLowerCase()%>"><%=invoice.workflow.name%></span>
+        <% } else {%>
+        <span class="notApproved">Not Approved (<%=invoice.workflow.name%>)</span>
+        <%}%>
+        <%}%>
+        <% } else {%>
+        <span> </span>
+        <%}%>
+    </td>
+    <td><%=invoice.invoiceDate%></td>
+
+</tr>
+<% }) %>

@@ -1,0 +1,41 @@
+<div class="_acountingTableWrap">
+    <div class="_acountingTitleBlock">
+        <a href="javascript:;" class="btn blue slim icon-plus btnPositioned" title="Create" id="top-bar-createBtn">New</a>
+    </div>
+    <div class="_acountingTableBlock">
+        <table class="list tableProjects tableFixed _currencyTable">
+            <colgroup>
+                <col width="25%"/>
+                <col width="25%"/>
+                <col width="25%"/>
+                <col width="25%"/>
+            </colgroup>
+            <thead>
+            <tr class="forToggle">
+                <th>Name</th>
+                <th>Products Count</th>
+                <th>Product Options</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody class="forToggle" id="currencyTable">
+            <% collection.forEach(function(elem,index){ %>
+            <tr data-id="<%=elem._id%>">
+                <td><%=elem.name%></td>
+                <td><%=elem.countProducts%></td>
+                <td>
+                    <%elem.options && elem.options.length && elem.options.forEach(function (opt){%>
+                    <span><%= opt && opt.name + '| ' || '' %></span>
+                    <%})%>
+                </td>
+                <td>
+                    <a href="javascript:;" class="icon-note goToEdit _actionCircleBtn" aria-hidden="true"></a>
+                    <a href="javascript:;" class="icon-trash goToRemove _actionCircleBtn" aria-hidden="true"></a>
+                </td>
+            </tr>
+
+            <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>

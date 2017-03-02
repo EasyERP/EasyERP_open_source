@@ -1,0 +1,81 @@
+<%var currencySymb = model.currency && model.currency._id ? model.currency._id.symbol : '$'%>
+<div class="_invoiceTemplate">
+    <div class="extractPdf">
+        <div class="_templateHeader">
+            <% if (App && App.organizationSettings) {%>
+            <div class="_headerLeftPart">
+                <div class="_orgName"><b><%=App.organizationSettings.name%></b></div>
+                <div class="_orgLabel"><%=App.organizationSettings.address.country%></div>
+            </div>
+            <% } %>
+            <div class="_headerRightPart">
+                <div class="_entityBlock">
+                    <div class="_entityTitle">Stock Return</div>
+                    <div class="_entityNumber"><b><%=model.name || ''%></b></div>
+                </div>
+            </div>
+        </div>
+        <div class="_templateDateBlock">
+            <div class="_rightPart">
+                <table class="_templateDateTable tableFixed">
+                    <colgroup>
+                        <col width="60%">
+                        <col width="40%">
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="_dateLeftPart">
+                            <div class="_billingBlock">
+                                <div class="_billingTitle">Bill to</div>
+                                <div class="_billingCustomerName"><%=(model.order && model.order.supplier )? model.order.supplier.name.first + ' ' + model.order.supplier.name.last:""%></div>
+                                <div><%=helpers.addressMaker(model.order.address )%></div>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <table class="_templateTable tableFixed">
+            <colgroup>
+                <col width="80px">
+                <col width="16%">
+                <col width="16%">
+                <col width="16%">
+                <col width="16%">
+                <col width="16%">
+                <col width="16%">
+            </colgroup>
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Item name</th>
+                <th>SKU</th>
+                <th>Cost</th>
+                <th>Goods Note</th>
+                <th>Warehouse</th>
+                <th>Qty</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% model.orderRows.forEach(function(row, index){ %>
+            <tr>
+                <td><%=index + 1%></td>
+                <td><span><%=row.product ? row.product.name : '- - -' %></span></td>
+                <td><%=row.product && row.product.info ? row.product.info.SKU : '' %></td>
+                <td><%=row.cost || 0%></td>
+                <td><%=row.goodsOutNote ? row.goodsOutNote.name : row.goodsInNote ? row.goodsInNote.name : ''%></td>
+                <td><%=row.warehouse ? row.warehouse.name : ''%></td>
+                <td class="_toFollow"><%=row.quantity || ''%></td>
+            </tr>
+            <% }); %>
+            </tbody>
+        </table>
+    </div>
+
+    <!--<div class="notes">
+        <div class="head">Notes</div>
+        <div>Thanks for your business</div>
+    </div>-->
+
+</div>

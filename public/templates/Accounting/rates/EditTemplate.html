@@ -1,0 +1,25 @@
+<div class="form-holder">
+    <form class="form">
+        <div class="topInputHolder">
+            <h3 class="">Edit Rate</h3>
+        </div>
+        <div class="_listModal">
+            <div class="_modalList  half-block left">
+
+                <div class="_modalLabel">
+                    <span>Currency From <%=elem.currency.name%> to <%=App && App.organizationSettings && App.organizationSettings.currency.name%></span>
+                </div>
+
+                <div class="_modalLabel">
+                    <label>Rate</label>
+                </div>
+                <div class="_modalSelect">
+                    <input id="rate" value="<%=model.rate%>" type="text"/>
+                </div>
+            </div>
+            <div class="_dialogBlock half-block right">
+                <span>SOME DESCRIPTION</span>
+            </div>
+        </div>
+    </form>
+</div>

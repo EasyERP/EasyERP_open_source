@@ -1,0 +1,153 @@
+<div class="form-holder">
+    <form method="post" action="" id="createPersonsForm" class="form">
+        <fieldset>
+            <div class="inner">
+                <ul class="_statusOrderList" data-class="">
+                    <li class="left _statusOrders">
+                        <%var allocateStatus = model.status ? model.status.allocateStatus : 'NOT' %>
+                        <%var fulfillStatus = model.status ? model.status.fulfillStatus : 'NOT' %>
+                        <%var shippingStatus = model.status ? model.status.shippingStatus : 'NOT' %>
+                        <h3 class="left">#<%=model.name%></h3>
+                        <a id="workflowsDd" class="_workflowsDd current-selected"
+                           data-id="<%= model.workflow ? model.workflow._id : ''%>"
+                           href="javascript:;"><%= model.workflow ?
+                            model.workflow.name : ''%></a>
+                        <span class="_allocationed <%=allocateStatus === 'NOA' ? 'icon-checked yellow' : allocateStatus === 'ALL' ? 'icon-checked green' : '_notDid'%>"></span>
+                        <span class="icon-box <%=fulfillStatus === 'NOA' ? 'yellow' : fulfillStatus === 'ALL' ? 'green' : 'red'%> _fullfilled"></span>
+                        <span class="icon-cargo <%=shippingStatus === 'NOA' ? 'yellow' : shippingStatus === 'ALL' ? 'green' : 'red'%> _shipped"></span>
+                    </li>
+                    <li class="right">
+
+                        <button class="btn slim receiveInvoice">
+                            <span>Receive Invoice</span>
+                        </button>
+                    </li>
+                    <li class="right">
+                        <%if(model.workflow && model.workflow.status !== 'Done'){%>
+                        <button class="btn slim prepay">
+                            <span>Prepayment</span>
+                        </button>
+                        <%}%>
+                    </li>
+                    <li class="right fullfillOrderWrap">
+                        <a class="btn fullfillOrder" href="javascript:;">
+                            <span>Fulfill order</span>
+                        </a>
+                        <ul>
+                            <li>
+                                <a id="fulfillAll"><span class="fontBold">Fulfill and ship later</span>
+                                    <span class="help">Create a goods-out note for all items to ship later</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a id="fulfilAndShip"><span class="fontBold">Fulfill and mark as shipped</span>
+                                    <span class="help">Create and close a goods-out note for all items</span>
+                                    <span class="help">Shipment will be made today.</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a id="splitFulfil"><span class="fontBold">Partial/Advanced fulfill</span>
+                                    <span class="help">Fulfil only part of the order, goods-out or drop-ship</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <div class="clearfix"></div>
+                <div class="dialog-tabs-items mainTabs">
+                    <div class="dialog-tabs-item mainTabs active">
+                        <div class="topInputHolder">
+                            <div class="half-block left">
+                                <dl class="opp-info">
+                                    <dt><label>Customer</label></dt>
+                                    <dd>
+                                        <%if(model.supplier){%>
+                                        <a id="supplierDd" data-id="<%=model.supplier._id%>"
+                                           href="#easyErp/Companies/form/<%=model.supplier._id%>"><%=model.supplier.name.first
+                                            + ' ' + model.supplier.name.last%></a>
+                                        <%}%>
+                                    </dd>
+                                    <dt><label for="assignedTo">Assigned To</label></dt>
+                                    <dd>
+                                        <a id="assignedTo" class="current-selected" href="javascript:;"
+                                           data-id="<%=model.salesPerson ? model.salesPerson._id : ''%>"><%=model.salesPerson
+                                            && model.salesPerson.name ? model.salesPerson.name.first +' ' +
+                                            model.salesPerson.name.last : 'Select'%></a>
+                                    </dd>
+
+                                    <dt><label for="expectedDate">Payment Due</label></dt>
+                                    <dd>
+                                        <input id="expectedDate" class="_inputBordered " readonly
+                                               value="<%=model.expectedDate%>">
+                                    </dd>
+                                    <dt><label>Order Date</label></dt>
+                                    <dd>
+                                        <input id="orderDate" class="_inputBordered" readonly
+                                               value="<%=model.orderDate%>">
+                                    </dd>
+
+                                    <dt><label for="currencyDd">Currency</label></dt>
+                                    <dd class="_newSelectListWrap">
+                                        <a id="currencyDd" class="current-selected"
+                                           data-id="<%= model.currency && model.currency._id ? model.currency._id._id : null%>"
+                                           data-symbol="<%= model.currency && model.currency._id ? model.currency._id.symbol : null%>"
+                                           href="javascript:;"><%= model.currency && model.currency._id ?
+                                            model.currency._id.name : ''%></a>
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div class="half-block right">
+                                <dl class="opp-info">
+                                    <dt><label for="account">COGS Account</label></dt>
+                                    <dd class="_newSelectListWrap">
+                                        <a id="account" class="current-selected"
+                                           data-id="<%= model.account ? model.account._id : null%>"
+                                           href="javascript:;"><%= model.account ?model.account.name :
+                                            'Select'%></a>
+                                    </dd>
+
+                                    <dt><label for="priceList">Price List</label></dt>
+                                    <dd class="_modalSelect">
+                                        <a id="priceList" class="current-selected" href="javascript:;"
+                                           data-id="<%=model.priceList ? model.priceList._id : ''%>"><%=model.priceList?model.priceList.name
+                                            : 'Select'%></a>
+                                    </dd>
+
+                                    <dt><label for="warehouseDd">Warehouse</label></dt>
+                                    <dd class="_modalSelect">
+                                        <a id="warehouseDd" class="current-selected" href="javascript:;"
+                                           data-id="<%=model.warehouse ? model.warehouse._id : ''%>"><%=model.warehouse?model.warehouse.name
+                                            : 'Select'%></a>
+                                    </dd>
+
+                                </dl>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div id="productItemsHolder">
+
+                        </div>
+                        <div class="_editAllocateAll ">
+                            <a href="javascript:;" id="allocateAll">
+                                <span>Allocate all</span>
+                            </a>
+                            <a href="javascript:;" id="unallocateAll">
+                                <span>Unallocate All</span>
+                            </a>
+                            <%if(model.workflow && model.workflow.status !== 'Done'){%>
+                            <a href="javascript:;" id="resetPrices">
+                                <span>Reset Prices</span>
+                            </a>
+                            <%}>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+
+            </div>
+            <div class="clearfix"></div>
+        </fieldset>
+    </form>
+    <div class="clearfix"></div>
+</div>

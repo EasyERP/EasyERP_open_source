@@ -1,0 +1,194 @@
+<div class="form-holder _newForm _editWarehouse">
+    <form method="">
+        <h4 class="_dialogMainTitle">Edit Warehouse</h4>
+        <div class="_formWrap _enlargedItemMargin">
+            <div class="_formBlock _equal">
+                <div class="_animateInputBox">
+                    <input type="text"
+                           class="_animate "
+                           id="name"
+                           required
+                           value="<%=model.name%>"/>
+                    <label class="_animate">Warehouse Name</label>
+                </div>
+                <div class="_checkboxWrap">
+                    <div class="_checkboxContainer">
+                        <label class="_animatedCheckbox">
+                            <input id="isOwn"
+                                   type="checkbox"
+                            <%=model.isOwn ? 'checked' : ''%> >
+                            <span></span>
+                        </label>
+                        <label for="isOwn">Is Own</label>
+                    </div>
+                    <div class="_checkboxContainer">
+                        <label class="_animatedCheckbox">
+                            <input id="main"
+                                   type="checkbox"
+                            <%=model.main ? 'checked' : ''%> >
+                            <span></span>
+                        </label>
+                        <label for="main">Mark As Main</label>
+                    </div>
+                </div>
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Account</span>
+                    <div class="_newSelectListWrap">
+                        <a id="account"
+                           name="account"
+                           class="current-selected"
+                           data-id="<%=model.account ? model.account._id: null%>"
+                           href="javascript:;"><%=model.account ? model.account.name : 'Select account'%>
+                        </a>
+                    </div>
+                </div>
+                <div class="_animateInputBox">
+                    <input type="text"
+                           name="street"
+                           class="_animate "
+                           id="address_street"
+                           required
+                           maxlength="60"
+                           value="<%=model.address.street%>"/>
+                    <label class="_animate">Street</label>
+                </div>
+                <div class="_animateInputBox">
+                    <input type="text"
+                           name="city"
+                           class="_animate "
+                           id="address_city"
+                           required
+                           maxlength="60"
+                           value="<%=model.address.city%>"/>
+                    <label class="_animate">City</label>
+                </div>
+            </div>
+            <div class="_formBlock _equal">
+                <div class="_animateInputBox">
+                    <input type="text"
+                           name="state"
+                           class="_animate "
+                           id="address_state"
+                           required
+                           maxlength="32"
+                           value="<%=model.address.state%>"/>
+                    <label class="_animate">State</label>
+                </div>
+                <div class="_animateInputBox">
+                    <input type="text"
+                           name="zip"
+                           class="_animate "
+                           id="address_zip"
+                           required
+                           maxlength="32"
+                           value="<%=model.address.zip%>"/>
+                    <label class="_animate">Zip</label>
+                </div>
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Country</span>
+                    <div class="_newSelectListWrap">
+                        <a id="address_country"
+                           name="address_country"
+                           class="current-selected"
+                           href="javascript:;"><%=model.address.country%>
+                        </a>
+                    </div>
+                </div>
+                <div class="_formBlock _equal">
+                    <div class="checkText <%=model.main ? '' : 'hidden'%>">
+                        <span>If you mark this warehouse as main then it will overwrite the existing one</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="_formWrap" id="zonesAndLocations">
+            <div class="_formBlock">
+                <div class="_zonesAndLocationsTable">
+                    <div class="_tableActions">
+                        <a href="javascript:;"
+                           class="btn blue slim plus right"
+                           title="Create Zone"
+                           id="createZone">New Zone</a>
+                    </div>
+                    <div class="_locationTableWrap">
+                        <table class="stripedList">
+                            <colgroup>
+                                <col width="70px">
+                                <col width="100%">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th>Name</th>
+                            </tr>
+                            </thead>
+                        </table>
+                        <div class="_locationTable">
+                            <table class="stripedList">
+                                <colgroup>
+                                    <col width="70px">
+                                    <col width="100%">
+                                </colgroup>
+                                <tbody>
+                                <%model.zones.forEach(function (zone){%>
+                                <%if (zone && zone._id) {%>
+                                <tr data-id="<%=zone._id%>">
+                                    <td><span title="Delete" class="icon-trash removeZone _circleIconBtn"></span></td>
+                                    <td class="editable zoneName"><%=zone.name%></td>
+                                </tr>
+                                <%}%>
+                                <%});%>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="_formBlock">
+                <div class="_zonesAndLocationsTable">
+                    <div class="_tableActions">
+                        <a href="javascript:;"
+                           class="btn blue slim plus right"
+                           title="Create Location"
+                           id="createLocation">New Location</a>
+                    </div>
+                    <div class="_locationTableWrap">
+                        <table class="stripedList">
+                            <colgroup>
+                                <col width="70px">
+                                <col width="50%">
+                                <col width="50%">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th>Location</th>
+                                <th class="_zone">Zone</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <%model.locations.forEach(function (location){%>
+                            <%if (location && location._id) {%>
+                            <tr data-id="<%=location._id%>">
+                                <td><span title="Delete" class="icon-trash removeLocation _circleIconBtn"></span></td>
+                                <td class="editable locationName">
+                                    <div class="_inputsList"><%=location.name%></div>
+                                </td>
+                                <td class="_newSelectListWrap _locationZoneWrap">
+                                    <a id="zones" name="zones" class="current-selected floatRight"
+                                       data-content="zones"
+                                       data-id="<%= location.zone && location.zone._id
+                    ? location.zone._id : ''%>"><%=location.zone && location.zone.name
+                                        ? location.zone.name : 'Not in zone'%></a>
+                                </td>
+                            </tr>
+                            <%}%>
+                            <%});%>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,54 @@
+<div class="form-holder _newForm">
+    <form method="post" action="" id="invoiceForm">
+        <h4 class="_dialogMainTitle">New Payroll Structure Type</h4>
+        <div class="_formWrap">
+            <div class="_formBlock">
+                <div class="_animateInputBox">
+                    <input type="text"
+                           class="_animate "
+                           id="payrollStructureName"
+                           required
+                           value="<%= name || '' %>"
+                           size="40"
+                           maxlength="40"/>
+                    <label class="_animate">Name: </label>
+                </div>
+            </div>
+        </div>
+        <div class="_formWrap">
+            <div class="setting_element _formBlock _equal"
+                 id="earningComponents"
+                 data-id="earning">
+                <div class="">
+                    <a href="javascript:;"
+                       class="createBtn icon-plus"
+                       data-id="earning"
+                       title="Create">
+                    </a>
+                    <!--<h3 class="setting_title">Earnings:</h3>-->
+                    <a href="javascript:;"
+                       id="earningTypeDd"
+                       class="selected _newSelectListWrap">Earnings:
+                    </a>
+                </div>
+                <ul class="ui-sortable settings_list groupList"></ul>
+            </div>
+            <div class="setting_element _formBlock _equal" id="deductionComponents" data-id="deduction">
+                <div class="">
+                    <a href="javascript:;"
+                       class="createBtn icon-plus"
+                       title="Create"
+                       data-id="deduction">
+                    </a>
+                    <!--<h3 class="setting_title">Deductions:</h3>-->
+                    <a id="deductionTypeDd"
+                       class="selected _newSelectListWrap"
+                       href="javascript:;">Deductions:
+                    </a>
+                </div>
+                <ul class="ui-sortable settings_list groupList"></ul>
+            </div>
+        </div>
+        <p id="resultFormula" class="resultFormula"></p>
+    </form>
+</div>

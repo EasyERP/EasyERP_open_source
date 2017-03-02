@@ -1,0 +1,21 @@
+<% if(unlinkedProducts.length){ unlinkedProducts.forEach(function(product, index){ %>
+
+<tr data-id="<%=product._id%>">
+<td class="<%= !product.fields.name ? 'invalidValue': ''%>"><%=product.fields.name || 'invalid name'%></td>
+<td class="<%= !product.fields.sku ? 'invalidValue': ''%>"><%=product.fields.sku || 'invalid SKU'%>
+</td>
+
+<td>
+    <% if(product.fields.isBuilt){ %>
+    <a href="javascript:;" class="btn slim toCancelBuild" title="Click to cancel build your Product">Cancel Build</a>
+    <% } else if(product.fields.linkedProductId){%>
+    <a href="javascript:;" class="btn slim toUnlink" title="Click to unlink your Product">Unlink</a>
+    <%} else {%>
+    <a href="javascript:;" class="btn slim toLink" title="Click to link your Product">Click to link</a>
+    <a href="javascript:;" class="btn slim toBuild" title="Click to build your Product">Click to build</a>
+    <% }%>
+</td>
+</tr>
+<% }); } else { %>
+<h3>Not found any unlinked products</h3>
+<%}%>

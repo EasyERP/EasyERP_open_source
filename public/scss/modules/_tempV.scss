@@ -1,0 +1,962 @@
+._productCategory,
+._productTypes {
+  ._listModal {
+    dd, dt {
+      margin-top: 0;
+    }
+
+    ._modalSelect {
+      display: flex;
+      align-items: center;
+
+      + ._modalSelect {
+        margin-top: 10px;
+      }
+
+      > label {
+        width:200px;
+      }
+
+      > input, a {
+        flex-grow: 1;
+        width: 100% !important;
+        max-width: 280px !important;
+        height: 30px;
+        padding: 5px;
+        min-height: 30px;
+        //min-height: 35px;
+        line-height: 28px !important;
+        border: 1px solid #c8c8d3;
+        border-radius: 3px;
+        font-size: 12px;
+        cursor: pointer;
+      }
+
+      > a.current-selected {
+        line-height: 20px !important;
+      }
+    }
+    ._inputContainer {
+      display: inline-block;
+      line-height: 28px;
+
+      + ._inputContainer {
+        margin-left: 15px;
+      }
+      ._modalLabel, ._modalSelect {
+        float: left;
+        width: auto;
+      }
+      ._modalSelect > input {
+        width: auto !important;
+        min-height: 30px;
+        margin-right: 10px;
+        font-size: 12px;
+      }
+    }
+  }
+
+  .btn {
+    display: block;
+    margin-top: 10px;
+    clear: both;
+  }
+}
+
+._productTypes {
+  ._listModal {
+    ._modalSelect  {
+      flex-direction: column;
+      align-items: flex-start;
+
+      ._inputContainer {
+
+        + ._inputContainer {
+          margin-left: 0;
+        }
+      }
+    }
+  }
+}
+
+.ui-dialog .form-holder.productForm {
+  padding: 5px 10px 0;
+}
+
+._linkedProductTitle {
+  margin: 18px 0;
+}
+
+.productForm {
+  .form {
+    + .btn,
+    .btn {
+      margin-top: 20px;
+    }
+
+    input + .btn {
+      margin-top: 0;
+    }
+
+    dl  {
+      display: flex;
+      margin-top: 10px;
+
+      &:first-child {
+        margin-top: 0;
+      }
+
+      &.priceBlock {
+        > div + div {
+          margin-left: 25px;
+        }
+      }
+    }
+
+    input:not([type="checkbox"]) {
+      min-height: 20px;
+      line-height: 20px;
+    }
+
+    ._editAllInput {
+      width: 100px;
+    }
+
+    ._inputContaineriner {
+
+      > label {
+        display: flex;
+        align-items: center;
+
+        input {
+          margin-right: 15px;
+        }
+      }
+    }
+
+    ._productModelWrap {
+      display: flex;
+    }
+
+    ._priceBlockWrap {
+      .priceBlock {
+        display: inline-block;
+        width: 100%;
+
+        > div {
+          float: left;
+
+          + div {
+            margin-left: 15px;
+          }
+        }
+      }
+    }
+
+    .dialog-tabs-item{
+      padding-top: 10px;
+    }
+
+    ._stockBlock {
+      margin-top: 10px;
+    }
+
+    ._createEditVariantsWrap {
+      overflow: auto;
+
+      ._createEditVariants {
+        table-layout: auto;
+
+        thead th {
+          min-width: 50px;
+          @extend %text-overflow;
+
+          &:first-child,
+          &:nth-child(2) {
+            max-width: 120px;
+            width: 120px;
+            min-width: 120px;
+            white-space: normal;
+          }
+
+        }
+
+        tbody tr {
+          &:hover {
+            th[rowspan="*"] {
+              background-color: #bdcfeb;
+            }
+          }
+
+          th {
+            &:first-child,
+            &:nth-child(2) {
+              width: 120px;
+              min-width: 120px;
+              max-width: 120px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  ._mainProductsForm {
+
+    ._editingVariantsWrap,
+    ._createdVariantsWrap,
+    ._editedVariantsWrap {
+      flex-direction: column;
+    }
+
+    ._editAllBlock {
+      + ._createEditVariants {
+        margin-top: 20px;
+      }
+    }
+  }
+}
+
+._labelWrap {
+  display: flex !important;
+  align-items: center;
+  line-height: 26px;
+
+  input {
+    margin-right: 10px;
+  }
+}
+
+._editPanel {
+  min-width: 300px;
+  padding: 10px;
+  background-color: #fff;
+
+  &._bordered {
+    border: 1px solid #d8dde6;
+    border-radius: 4px;
+  }
+
+  +._editPanel {
+    margin-top: 10px;
+  }
+
+  ._editable {
+    padding: 5px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    text-align: left;
+  }
+
+  .btn {
+    display: inline-block;
+    margin-right: 3px;
+  }
+
+  ._valueItem {
+    display: inline-block;
+    line-height: 26px;
+  }
+
+  .deleteValue {
+    margin-left: 10px;
+  }
+}
+
+._optionsValues {
+
+  .optionValue {
+
+    &:last-of-type {
+      margin-bottom: 10px;
+    }
+  }
+}
+
+._optionValueForm {
+  display: table;
+  min-height: auto;
+}
+
+._goodOutWrap {
+  border: 1px solid #cdcdcd;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  color: #444;
+  background: #f5f5f5;
+
+  .topPanel {
+    padding: 5px 10px;
+    background-color: #ddd;
+
+    dl {
+      display: flex;
+      float: left;
+
+      dd, dt {
+        width: auto;
+        height: 33px;
+        line-height: 33px;
+        margin-top: 0;
+      }
+
+      dd {
+        margin: 0px 15px 0px 0px;
+      }
+    }
+  }
+
+  ._invoiceTable {
+    tbody tr:last-child{
+      border-bottom: none;
+    }
+
+    th, td {
+      border-right: 1px dotted #ccc;
+      padding: 10px;
+
+      &:last-child {
+        border-right: none;
+      }
+    }
+
+    th.done {
+      > span {
+        color: #00db30;
+        .edited:before {
+          content: "\e909";
+          font-family: 'erp-icons';
+        }
+      }
+    }
+
+    th.undone {
+      > span {
+        color: #e55253;
+        .edited:before {
+          content: "\e908";
+          font-family: 'erp-icons';
+        }
+      }
+    }
+
+    .edited {
+      &:before{
+        margin: 0 5px;
+      }
+    }
+  }
+}
+
+._statusOrders {
+
+  > h3 {
+    height: 26px;
+    line-height: 26px;
+    padding: 0 5px;
+    margin-bottom: 0;
+    background-color: #e7e6e4;
+    font: {
+      size: 14px;
+      family: $semibold-font-family;
+    }
+    color: #364150;
+  }
+
+  ._workflowsDd {
+    display: inline-block;
+    height: 26px;
+    padding: 0 10px;
+    margin-right: 10px;
+    border: 1px solid gray;
+    line-height: 24px;
+  }
+  ._viewEntries {
+    display: inline-block;
+    height: 26px;
+    padding: 0 10px;
+    line-height: 24px;
+    text-align: center;
+  }
+}
+
+._statusOrderList {
+  .right {
+    .btn {
+      margin-right: 15px;
+      margin-bottom: 5px;
+    }
+  }
+  ._invoiced {
+    height: 26px;
+    line-height: 26px;
+    padding: 0 8px;
+    margin-top: 10px;
+    margin-bottom: 0;
+    background-color: #7eadcc;
+    font-size: 14px;
+    font-family: $semibold-font-family;
+    color: #fff;
+
+    > a {
+      color: inherit;
+    }
+  }
+}
+
+._tableOrderList,
+._tableChartList {
+  > .stripedList {
+    min-width: 1000px;
+
+    ._statusOrders {
+      span {
+        margin: 0;
+
+        &._notDid:before {
+          top: -2px;
+        }
+      }
+    }
+  }
+}
+
+.fullfillOrderWrap {
+  position: relative;
+  width: 285px;
+  margin:0 3px;
+  z-index: 10;
+  //display: inline-block;
+
+  .btn {
+    width: 100%;
+    float: right;
+
+    &:after {
+      position: absolute;
+      content: "\e918";
+      right: 7px;
+      top: 7px;
+      height: 18px;
+      font-family: $iconFont;
+      color: #4d5a75;
+      line-height: 1;
+      font-size: 8px;
+      padding: 3px;
+    }
+  }
+
+  ul{
+    width: 285px;
+    //padding-bottom: 20px;
+    border-radius: 5px;
+    border: 1px solid #c8c8d3;
+    top: 25px;
+    position: absolute;
+    z-index: 1;
+    background-color: #f2f2f2;
+    left: 0;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s, opacity 0.3s linear;
+  }
+
+  &:hover{
+    .fullfillOrder {
+      background-color: #f2f2f2 !important;
+
+      + ul{
+        visibility: visible;
+        opacity: 1;
+
+        li {
+          padding: 20px 10px;
+          cursor: pointer;
+
+          &.passiveItem {
+            //background-color: #808080;
+            cursor: not-allowed;
+
+            a {
+              cursor: not-allowed;
+            }
+
+            span, span.help {
+              color: #b4bcc8;
+            }
+          }
+
+
+
+          &.activeItem {
+            //background-color: #7eadcc;
+            //color: #fff;
+
+            &:hover {
+              background-color: #ddd;
+            }
+          }
+
+          &:hover {
+            a {
+              background-color: #ddd;
+            }
+          }
+
+          &:nth-child(n+2){
+            border-top: 1px solid #a1a1a1;
+          }
+
+          a {
+            height: auto;
+            line-height: 1.5;
+            text-align: left;
+            text-decoration: none;
+
+            span {
+              display: block;
+              color: #508bbd;
+
+              &.help {
+                color: #777;
+                font-style: italic;
+              }
+            }
+          }
+
+        }
+      }
+    }
+  }
+}
+
+/*07.10.16*/
+._editAllocateAll {
+  float: right;
+
+  > .btn {
+    margin: 6px 1px;
+    background-color: #F9F8F8;
+  }
+}
+
+._priceListWrap {
+  ._listModal {
+    margin-bottom: 5px;
+  }
+}
+
+._SkuItemsHolder,
+._goodsHolder {
+  .list:not(.stripedList):not(._dialogTable) {
+    tbody {
+      td{
+        text-align: left !important;
+        white-space: normal;
+        word-wrap: break-word;
+
+        &:last-child {
+          text-align: right !important;
+        }
+        &[data-name="from"]{
+          text-align: left !important;
+        }
+      }
+    }
+  }
+}
+
+/*12.10*/
+
+.ui-dialog ._SkuItemsHolder {
+  ._invoiceTable{
+    tbody {
+      tr:last-child {
+        td {
+          padding: 0;
+          height: 1px;
+        }
+      }
+      td {
+        input {
+          text-align: left;
+        }
+      }
+      td[data-name="newShip"] {
+        .receiveLocation {
+          display: flex;
+          align-items: flex-end;
+          flex-wrap: wrap;
+          margin: 5px 0;
+          width: 100%;
+
+          input {
+            width: 60px;
+            //margin: 0 15px 0 55px;
+          }
+          > div:nth-child(2) {
+            flex-grow: 2;
+            align-self: center;
+          }
+          .removeLocation {
+            position: relative;
+
+            top: -2px;
+            margin: 0 -19px 0 5px;
+          }
+        }
+      }
+    }
+  }
+}
+
+
+/*17.10*/
+._invoiceTable {
+  ._newSelectListWrap {
+    white-space: initial;
+    word-break: break-all;
+  }
+}
+
+
+._invoiceTable {
+  tbody {
+    .addProductItem {
+      height: 1px !important;
+      border: 1px solid transparent;
+      border-top: 1px solid #d7d7d7;
+      padding-top: 0;
+    }
+  }
+}
+
+/*20.10.16*/
+
+.productContentWrap {
+  height: 100%;
+}
+
+
+/*21.10.16*/
+._integrationTableWrap {
+  margin-bottom: 20px;
+
+  .stripedList {
+
+    tbody {
+
+      p {
+        line-height: 28px;
+
+        &.native {
+          color: #43ad70;
+        }
+      }
+    }
+
+
+    .dropDownDateRangeContainer {
+      display: flex;
+      align-items: center;
+      margin: 0 auto;
+      float: none;
+      line-height: 1.5;
+
+      .choseDateRange.dropDownDateRange {
+        top: 7px;
+      }
+    }
+  }
+}
+
+
+//._warehouseWrap._integrationForm,
+.ui-dialog ._integrationForm{
+  ._warehouseForm {
+    width: 700px;
+    padding: 0;
+    background-color: #fff;
+  }
+  ._listModal {
+    padding: 10px 20px;
+    font-size: 14px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+    ._modalLabel {
+      line-height: 26px;
+    }
+    ._inputContainer {
+      display: flex;
+      align-items: center;
+      ._modalSelect {
+        input[type='checkbox'] {
+          height: auto;
+          min-height: auto;
+        }
+      }
+    }
+    input, a {
+      //line-height: 35px !important;
+      font-size: 14px;
+    }
+  }
+}
+
+
+
+//31.10.2016
+._tableAddOptionsWrap {
+  .dropDownDateRangeContainer {
+    float: none;
+  }
+}
+
+._integrationTableWrap,
+._tableAddOptionsWrap {
+  .stripedList {
+    .choseDateRange.dropDownDateRange {
+      &:before {
+        content: "\e91e";
+        position: absolute;
+        top: 0;
+        right: 3px;
+        color: #7eadcc;
+        font-family: "erp-icons";
+        font-size: 12px;
+      }
+      &.open{
+        &:before {
+          content: "\e920";
+        }
+      }
+    }
+  }
+}
+
+.product-info {
+  .productType {
+    dt {
+      line-height: 26px;
+    }
+  }
+}
+
+._createEditVariantsWrap {
+  ._editAllBlock {
+    display: flex;
+    align-items: center;
+
+    input {
+      margin: 0 5px;
+    }
+  }
+}
+
+/*02.11.16*/
+.invoiceAttachments {
+  .attachWrapper {
+    padding: 13px 0;
+    .formTitle {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.form-holder {
+  form {
+    dd.canReadAndWrite {
+      padding-bottom: 0;
+      label {
+        line-height: 30px;
+      }
+      ._circleRadioRadianceWrap {
+        padding-top: 0;
+        padding-bottom: 0;
+        + ._circleRadioRadianceWrap {
+          padding-top: 10px;
+        }
+      }
+    }
+    dd {
+      label._customCHeckbox {
+        .checkbox {
+          &:checked {
+            + span {
+              &:before {
+                top: -1px;
+                left: 1px;
+              }
+            }
+          }
+          + span {
+            &:before, &:after {
+              margin-top: 5px;
+              left: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/*07.11.16*/
+._taxBoxWrp {
+  input:not(.checkbox),  .check_wrap {
+    width: 90%;
+  }
+
+  .half-block {
+    width: 45%;
+  }
+
+  .check_wrap {
+    padding: 0 4px;
+    border: 1px solid #c8c8d3;
+    height: 24px;
+    > a.current-selected{
+      line-height: 22px;
+    }
+  }
+
+  ._taxCommentWrp {
+    color:  rgba(121, 121, 121, 0.62);
+  }
+}
+
+/*18.11.2016*/
+
+._overviewPanelWrap {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+._overviewPanelLink {
+  display: flex;
+  flex-basis: 230px;
+  flex-direction: column;
+  margin: 10px;
+  border-radius: 4px;
+  border: 1px solid #d8dde6;
+  text-decoration: none !important;
+
+  &:hover {
+    transition: border-color, box-shadow, 0.35s, 0.35s;
+    border-color: #7eadcc;
+    box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
+  }
+
+  &:nth-child(1){
+    ._overviewImg {
+      background-image: url(../images/erp_icons-01.svg);
+    }
+  }
+
+  &:nth-child(2){
+    ._overviewImg {
+      background-image: url(../images/erp_icons-04.svg);
+    }
+  }
+
+  &:nth-child(3){
+    ._overviewImg {
+      background-image: url(../images/erp_icons-05.svg);
+    }
+  }
+
+  &:nth-child(4){
+    ._overviewImg {
+      background-image: url(../images/erp_icons-08.svg);
+    }
+  }
+
+  &:nth-child(5){
+    ._overviewImg {
+      background-image: url(../images/erp_icons-03.svg);
+    }
+  }
+
+  &:nth-child(6){
+    ._overviewImg {
+      background-image: url(../images/erp_icons-03.svg);
+    }
+  }
+
+  &:nth-child(7){
+    ._overviewImg {
+      background-image: url(../images/erp_icons-06.svg);
+    }
+  }
+
+  &:nth-child(8){
+    ._overviewImg {
+      background-image: url(../images/erp_icons-07.svg);
+    }
+  }
+}
+
+._overviewPanel {
+  height: 290px;
+  min-height: 290px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+
+  ._overviewImg {
+    width: 90px;
+    height: 90px;
+    margin: 50px auto 0;
+    background-repeat: no-repeat;
+    background-position: center center;
+  }
+
+  ._overviewTitle {
+    margin-top: 20px;
+    color: #2d3033;
+    text-align: center;
+    font-size: 13px;
+  }
+
+  ._overviewDesc {
+    border-top: 1px #e2e6e8 dotted;
+    margin-top: 30px;
+    padding: 15px;
+    color: #6c7279;
+  }
+}
+
+._breadcrunmbs {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  padding: 0 10px;
+  font-size: 16px;
+  height: 41px;
+  background-color: #f3f3f3;
+
+  + .form-holder {
+    padding: 0;
+  }
+
+  > a {
+    color: #666;
+  }
+
+  ._breadcrunmbItem {
+    margin-left: 7px;
+  }
+
+  .btn {
+    margin-left: 10px;
+  }
+}
+
+.linkedProduct {
+  .form {
+    width: auto;
+    border: none;
+  }
+}

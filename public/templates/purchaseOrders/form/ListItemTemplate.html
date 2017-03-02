@@ -1,0 +1,42 @@
+<table id="listTable">
+    <% orders.forEach(function(order, index){ %>
+    <% var currency =(order.currency && order.currency._id ? order.currency._id.symbol : '')%>
+
+    <tr data-id="<%=order._id%>"
+    <%if (order.workflow && order.workflow.status === 'Done') { %>
+    class="compactView notEditable"
+    <% } else { %>
+    class="compactView"
+    <%}%>
+    >
+    <td class="checkboxRow">
+        <label class="_customCHeckbox">
+            <input type="checkbox" value="<%=order._id%>"
+            <% if (!order.removable) { %>
+            class="checkbox notRemovable" disabled='disabled'
+            <% } else {%>
+            class="checkbox"
+            <% } %>
+            />
+            <span></span>
+        </label>
+    </td>
+    <td>
+        <div class="compactRowWrap">
+            <div class="compactRow">
+                <div class="firstName"><%- order.name%></div>
+                <div><%= order.supplier && order.supplier.name ? order.supplier.name.last : ''%></div>
+            </div>
+            <div class="compactRow">
+                <div><%= order.orderDate %></div>
+            </div>
+            <div class="compactRow">
+                <div class="total"><%=currency%> <%=(order.paymentInfo) ? currencySplitter(order.paymentInfo.total) : '0.00'%></div>
+                <div><%=order.workflow ? order.workflow.name: 'Undefinded'%>
+                </div>
+            </div>
+        </div>
+    </td>
+    </tr>
+    <% }) %>
+</table>

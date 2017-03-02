@@ -1,0 +1,20 @@
+<% if(unlinkedOrders.length) { unlinkedOrders.forEach(function(order, index){ %>
+<% var currency =(order.currency && order.currency._id ? order.currency._id.symbol : '')%>
+
+<tr data-id="<%=order._id%>">
+    <td><%=order.name%></td>
+    <td><%= (order.supplier && order.supplier.name) ? order.supplier.name : ''%>
+    </td>
+    <td class="total"><%=currency %><%=(order.paymentInfo) ? currencySplitter(order.paymentInfo.total) : '0.00'%></td>
+    <td><%=order.orderDate%></td>
+    <td>
+        <div class="channelImg <%= order.channel && order.channel.type || ''%>" data-content="channelImage"></div>
+        <span><%= order.channel && order.channel.name || ''%></span>
+    </td>
+
+    <td><a href="javascript:;" class="goToUnlinkedProducts">Go to Unlinked Products -></a>
+    </td>
+</tr>
+<% })} else { %>
+<h3>Not found any unlinked orders</h3>
+<%}%>

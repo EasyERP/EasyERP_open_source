@@ -1,0 +1,25 @@
+<div class="form-holder _newForm">
+    <form>
+        <div class="_dialogMainTitle">Edit Category</div>
+        <div class="_formWrap _enlargedItemMargin">
+            <div class="_formBlock">
+                <div class="_animateInputBox">
+                    <input type="text"
+                           class="_animate"
+                           id="name"
+                           value="<%=model.name%>"
+                           required/>
+                    <label class="_animate">Category Name</label>
+                </div>
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Parent Category</span>
+                    <div class="_newSelectListWrap">
+                        <a id="categories"
+                           class="current-selected"
+                           href="javascript:;"><%=model.parent ? model.parent.name : 'Select'%></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

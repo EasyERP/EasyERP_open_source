@@ -1,0 +1,39 @@
+<div class="_acountingTableWrap">
+    <div class="_acountingTitleBlock">
+        <span class="_acountingTitle">Currency Rates</span>
+        <a href="javascript:;" class="btn blue plus" title="Load Rates" id="loadRates" >Load</a>
+    </div>
+    <div class="_acountingTableBlock">
+        <table class="list tableProjects tableFixed _currencyTable" id="ratesTable">
+            <colgroup>
+                <col width="30%"/>
+                <col width="30%"/>
+                <col width="30%"/>
+                <col width="10%"/>
+            </colgroup>
+            <thead>
+            <tr class="forToggle">
+                <th>Currency From</th>
+                <th>Currency To</th>
+                <th>Rate</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody class="forToggle" id="currencyTable">
+            <% collection.forEach(function(elem,index){ %>
+
+            <tr data-id="<%=elem._id%>">
+                <td class="_baseCurrency"><span><%=elem.currency ? elem.currency.name : ''%></span></td>
+                <td><span><%=App && App.organizationSettings && App.organizationSettings.currency.name%></span></td>
+                <td class="rate"><%=elem.rate%></td>
+                <td>
+                    <a href="javascript:;" class="icon-note goToEdit _actionCircleBtn" aria-hidden="true"></a>
+                    <a href="javascript:;" class="icon-trash goToRemove _actionCircleBtn" aria-hidden="true"></a>
+                </td>
+            </tr>
+
+            <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>

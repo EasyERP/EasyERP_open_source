@@ -1,0 +1,57 @@
+<div class="form-holder _newForm">
+    <form class="form notDialog _productCategory" id="leadForm" data-id="<%=model._id%>">
+        <h4 class="_dialogMainTitle">Edit Price List</h4>
+        <div class="_formWrap _enlargedItemMargin">
+            <div class="_formBlock">
+                <div class="_animateInputBox">
+                    <input type="text"
+                           name="priceListName"
+                           class="_animate "
+                           id="priceListName"
+                           required
+                           autofocus
+                           value="<%=model.name%>"
+                           maxlength="32"/>
+                    <label class="_animate">Price List Name</label>
+                </div>
+                <div class="_animateInputBox">
+                    <input type="text"
+                           name="priceListCode"
+                           class="_animate "
+                           id="priceListCode"
+                           required
+                           value="<%= model.priceListCode%>"
+                           maxlength="32"/>
+                    <label class="_animate">Price List Code</label>
+                </div>
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Currency</span>
+                    <div class="_newSelectListWrap">
+                        <a id="currencyDd"
+                           data-id="<%= model && model.currencyId || null%>"
+                           class="current-selected"
+                           href="javascript:;"><%= model && model.currencyName || ''%>
+                        </a>
+                    </div>
+                </div>
+                <div class="_modalLabel">
+                    <label>This is a supplier ("cost") price list</label>
+                </div>
+                <div class="container">
+                    <div class="canReadAndWrite row">
+                        <div class="_circleRadioRadianceWrap col m-6">
+                            <label for="yes" class="">Yes</label>
+                            <input type="radio" name="question" id="yes"  class="_circleRadioRadiance" value="1" <%=model.cost ? checked='checked' : ''%> />
+                            <label for="yes" class="_circleRadioRadianceLabel"></label>
+                        </div>
+                        <div class="_circleRadioRadianceWrap col m-6">
+                            <label for="no" class="">No</label>
+                            <input type="radio" name="question" id="no" value="0" class="_circleRadioRadiance" <%=!model.cost ? checked='checked' : ''%> />
+                            <label for="no" class="_circleRadioRadianceLabel"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

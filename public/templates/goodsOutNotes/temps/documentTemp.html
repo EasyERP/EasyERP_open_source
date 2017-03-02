@@ -1,0 +1,90 @@
+<%var currencySymb = model.currency && model.currency._id ? model.currency._id.symbol : '$'%>
+<div class="_invoiceTemplate">
+    <div class="extractPdf">
+        <div class="_templateHeader">
+            <% if (App && App.organizationSettings) {%>
+            <div class="_headerLeftPart">
+                <div class="_orgName"><b><%=App.organizationSettings.name%></b></div>
+                <div class="_orgLabel"><%=App.organizationSettings.address.country%></div>
+            </div>
+            <% } %>
+            <div class="_headerRightPart">
+                <div class="_entityBlock">
+                    <div class="_entityTitle">Delivery Note</div>
+                    <div class="_entityNumber"><b><%=model.name || ''%></b></div>
+                </div>
+            </div>
+        </div>
+        <div class="_templateDateBlock">
+            <div class="_rightPart">
+                <table class="_templateDateTable tableFixed">
+                    <colgroup>
+                        <col width="60%">
+                        <col width="40%">
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="_dateLeftPart">
+                            <div class="_billingBlock">
+                                <div class="_billingTitle">Bill to</div>
+                                <div class="_billingCustomerName"><%=(model.order && model.order.supplier )? model.order.supplier.name.first + ' ' + model.order.supplier.name.last:""%></div>
+                                <div ><%=(model.order && model.order.address )? model.order.supplier.address.street :""%></div>
+                                <div ><%=(model.order && model.order.supplier )? model.order.supplier.address.city :""%></div>
+                                <div ><%=(model.order && model.order.supplier )? model.order.supplier.address.state :""%></div>
+                                <div ><%=(model.order && model.order.supplier )? model.order.supplier.address.country :""%></div>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <table class="_templateTable tableFixed">
+            <colgroup>
+                <col width="80px">
+                <col width="30%">
+                <col width="14%">
+                <col width="14%">
+                <col width="13%">
+                <col width="17%">
+                <col width="12%">
+            </colgroup>
+            <thead>
+            <tr>
+                <th>Qty</th>
+                <th>Item name</th>
+                <th>SKU</th>
+                <th>Locations</th>
+                <th class="_shipped">Shipped</th>
+                <th class="_thisShipped">This shipment</th>
+                <th class="_toFollow">To follow</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% model.orderRows.forEach(function(row, index){ %>
+            <tr>
+                <td><%=index + 1%></td>
+                <%orderRow = row.orderRowId || {}%>
+                <td><span><%=row.product ? row.product.name : '- - -' %></span></td>
+                <td><%=row.product && row.product.info ? row.product.info.SKU : '' %></td>
+                <td>
+                    <%if (row.locationsDeliver && row.locationsDeliver.length) {%>
+                    <%row.locationsDeliver.forEach(function(elem){%>
+                    <div><span><%=elem.name%></span></div>
+                    <%})} %>
+                </td>
+                <td class="_shipped"><%=row.shipped || ''%></td>
+                <td class="_thisShipped"><%=row.selectedQuantity || ''%></td>
+                <td class="_toFollow"><%=row.quantity || ''%></td>
+            </tr>
+            <% }); %>
+            </tbody>
+        </table>
+    </div>
+
+    <!--<div class="notes">
+        <div class="head">Notes</div>
+        <div>Thanks for your business</div>
+    </div>-->
+
+</div>

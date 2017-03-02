@@ -1,0 +1,17 @@
+<% collection.forEach(function(item, index){ %>
+<tr data-id="<%=item._id%>">
+    <td class="notForm">
+        <label class="_customCHeckbox">
+            <input type="checkbox" value="<%=item._id%>" class="checkbox"/>
+            <span></span>
+        </label>
+    </td>
+
+    <td data-content="name" class="editable"><%=item.createdBy ? item.createdBy.date : ''%></td>
+    <td class="editable"><%=item.description%></td>
+    <td class="editable"><%=item.warehouse ? item.warehouse.name : ''%></td>
+   <!-- <td class="editable"><%=item.location ? item.location.name : ''%></td>-->
+    <td class="editable"><%=item.createdBy && item.createdBy.user  ? item.createdBy.user.login : ''%></td>
+</tr>
+<% }) %>
+

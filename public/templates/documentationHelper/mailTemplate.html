@@ -1,0 +1,201 @@
+<div class="helpContainer">
+
+    <div class="btnHelp" id="btnHelp">
+        <span class="icon-question"></span>
+        <h4>Help</h4>
+    </div>
+
+    <div class="docHelper" id="searchTab">
+        <div class="docHeader">
+            <span class="docBackBtn icon-left-arrow" id="backToSearch"></span>
+            <h4 class="docTitle">Help</h4>
+            <button class="docCloseBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10">
+                    <path d="M6.4,5l3.3-3.3c0.4-0.4,0.4-1,0-1.4s-1-0.4-1.4,0L5,3.6L1.7,0.3c-0.4-0.4-1-0.4-1.4,0s-0.4,1,0,1.4L3.6,5L0.3,8.3 c-0.4,0.4-0.4,1,0,1.4C0.5,9.9,0.7,10,1,10s0.5-0.1,0.7-0.3L5,6.4l3.3,3.3C8.5,9.9,8.7,10,9,10s0.5-0.1,0.7-0.3 c0.4-0.4,0.4-1,0-1.4L6.4,5z"></path>
+                </svg>
+            </button>
+        </div>
+        <div class="docBody _searchFrameContainer" id="searchFrameContainer">
+            <iframe src="javascript:;"
+                    id="searchFrame"
+                    width="300px"
+                    height="250px"
+                    frameborder="0"></iframe>
+            <div class="docActionBlock">
+                <div class="docLogo">
+                    <a href="https://easyerp.com/" target="_blank" >Easy<span>ERP</span></a>
+                </div>
+                <div class="btnGroup">
+                <span class="chatBtn">
+                    <span class="icon-chat" id="chatBtn"></span>
+                </span>
+                    <span class="btn" id="contactUs">Leave a message</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="docHelper" id="contentContainer">
+        <div class="docHeader">
+            <span class="docBackBtn icon-left-arrow" id="back"></span>
+            <h4 class="docTitle">Help</h4>
+            <button class="docCloseBtn" id="close">
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10">
+                    <path d="M6.4,5l3.3-3.3c0.4-0.4,0.4-1,0-1.4s-1-0.4-1.4,0L5,3.6L1.7,0.3c-0.4-0.4-1-0.4-1.4,0s-0.4,1,0,1.4L3.6,5L0.3,8.3 c-0.4,0.4-0.4,1,0,1.4C0.5,9.9,0.7,10,1,10s0.5-0.1,0.7-0.3L5,6.4l3.3,3.3C8.5,9.9,8.7,10,9,10s0.5-0.1,0.7-0.3 c0.4-0.4,0.4-1,0-1.4L6.4,5z"></path>
+                </svg>
+            </button>
+        </div>
+        <div class="docBody">
+            <iframe src="https://easyerp.com/doc1.0/hr/employees/"
+                    width="300px"
+                    height="400px"
+                    frameborder="0"></iframe>
+            <div class="docActionBlock">
+                <div class="docLogo">
+                    <a href="https://easyerp.com/" target="_blank">Easy<span>ERP</span></a>
+                </div>
+                <div class="btnGroup">
+                    <span class="chatBtn">
+                        <span class="icon-chat" id="chatBtn"></span>
+                    </span>
+                    <span class="btn" id="contactUs">Leave a message</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="docHelper" id="mailContainer">
+        <div class="docHeader">
+            <span class="docBackBtn icon-left-arrow" id="back"></span>
+            <h4 class="docTitle">Contact Us</h4>
+            <button class="docCloseBtn">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     width="10"
+                     height="10"
+                     viewBox="0 0 10 10">
+                    <path d="M6.4,5l3.3-3.3c0.4-0.4,0.4-1,0-1.4s-1-0.4-1.4,0L5,3.6L1.7,0.3c-0.4-0.4-1-0.4-1.4,0s-0.4,1,0,1.4L3.6,5L0.3,8.3 c-0.4,0.4-0.4,1,0,1.4C0.5,9.9,0.7,10,1,10s0.5-0.1,0.7-0.3L5,6.4l3.3,3.3C8.5,9.9,8.7,10,9,10s0.5-0.1,0.7-0.3 c0.4-0.4,0.4-1,0-1.4L6.4,5z"></path>
+                </svg>
+            </button>
+        </div>
+        <div class="docBody">
+            <div class="docContent">
+                <div class="_animateInputBox">
+                    <input type="text"
+                           class="_animate forCheck"
+                           id="name"
+                           required
+                           maxlength="48"/>
+                    <label class="_animate">Your Name</label>
+                </div>
+                <div class="_animateInputBox">
+                    <input type="text"
+                           class="_animate forCheck"
+                           id="email"
+                           required
+                           maxlength="48"/>
+                    <label class="_animate">Email</label>
+                </div>
+                <div class="_animateTextareaBox">
+                <textarea id="message"
+                          class="_animate forCheck"
+                          required
+                          maxlength="2500"></textarea>
+                    <label for="message" class="_animate">Message</label>
+                    <span class="attach_file">
+                    <span class="icon-attach"></span>
+                </span>
+                </div>
+
+                <div class="attach-container hidden">
+                    <div class="noteWrapper attachWrapper">
+                        <div class="formTitle">
+                            <h3>Attachments </h3>
+                        </div>
+                        <form enctype="multipart/form-data"
+                              id="formAttach"
+                              action=""
+                              method="POST">
+                            <div id="attachBody">
+                                <ul class="attachContainer"></ul>
+                            </div>
+                            <div class="input-file hidden">
+                                <input type="file"
+                                       value="Choose File"
+                                       id="inputAttach"
+                                       class="inputAttach"
+                                       name="attachfile"
+                                       multiple="multiple">
+                            </div>
+                            <div class="progress" style="float:left;">
+                                <div class="bar">
+                                    <span class="status"></span>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div>
+                    <span>Thank you for your message, we appreciate it</span>
+                </div>
+            </div>
+            <div class="docActionBlock">
+                <div class="docLogo">
+                    <a href="https://easyerp.com/" target="_blank">Easy<span>ERP</span></a>
+                </div>
+                <div class="btnGroup">
+                    <span class="btn" id="cancel">Cancel</span>
+                    <span class="btn" id="send">Send</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="docHelper" id="live">
+        <div class="docHeader">
+            <span class="docBackBtn icon-left-arrow" id="back"></span>
+            <h4 class="docTitle">Live Chat</h4>
+            <button class="docCloseBtn">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     width="10"
+                     height="10"
+                     viewBox="0 0 10 10">
+                    <path d="M6.4,5l3.3-3.3c0.4-0.4,0.4-1,0-1.4s-1-0.4-1.4,0L5,3.6L1.7,0.3c-0.4-0.4-1-0.4-1.4,0s-0.4,1,0,1.4L3.6,5L0.3,8.3 c-0.4,0.4-0.4,1,0,1.4C0.5,9.9,0.7,10,1,10s0.5-0.1,0.7-0.3L5,6.4l3.3,3.3C8.5,9.9,8.7,10,9,10s0.5-0.1,0.7-0.3 c0.4-0.4,0.4-1,0-1.4L6.4,5z"></path>
+                </svg>
+            </button>
+        </div>
+        <div class="docBody">
+            <script>
+                window.ChatraSetup = {
+                    mode    : 'frame',
+                    injectTo: 'chatra-wrapper'
+                };
+            </script>
+            <script>
+                ChatraGroupID = 'YEnWgzh3FcrZRyP4v';
+                (function (d, w, c) {
+                    w.ChatraID = '3u9JyABT7aXGTa8t3';
+                    var s = d.createElement('script');
+                    w[c] = w[c] || function () {
+                            (w[c].q = w[c].q || []).push(arguments);
+                        };
+                    s.async = true;
+                    s.src = (d.location.protocol === 'https:' ? 'https:' : 'http:')
+                        + '//call.chatra.io/chatra.js';
+                    if (d.head) {
+                        d.head.appendChild(s);
+                    }
+                })(document, window, 'Chatra');
+            </script>
+            <!--<button onclick="Chatra('openChat', true)">Открыть чат</button>-->
+            <div class="chatraWrapper" id="chatra-wrapper"></div>
+            <div class="docActionBlock">
+                <div class="docLogo">
+                    <a href="https://easyerp.com/" target="_blank">Easy<span>ERP</span></a>
+                </div>
+                <div class="btnGroup">
+                    <span class="btn" id="cancel">Cancel</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

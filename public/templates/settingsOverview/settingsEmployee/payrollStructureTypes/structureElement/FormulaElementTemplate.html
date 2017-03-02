@@ -1,0 +1,40 @@
+<div class="formulaElement" data-seq="<%= seq %>">
+    <% var elData = elData || {prefix:{}, operand:{}, operation:{}, ratio:1} %>
+    <div class="container">
+        <div class="row">
+            <div class="_newSelectListWrap">
+                <a id="sumSubDd"
+                   class="current-selected"
+                   data-id="<%= elData.prefix.id || 'add' %>"
+                   href="javascript:;">
+                </a>
+            </div>
+            <div class="formulaElementOperand _modalList">
+                <div>&#40;</div>
+                <div class="_newSelectListWrap">
+                    <a id="operandDd"
+                       class="current-selected"
+                       data-id="<%= elData.operand.id || '' %>"
+                       href="javascript:;"><%= elData.operand.name || 'Select' %>
+                    </a>
+                </div>
+                <div class="_newSelectListWrap">
+                    <a id="mulDivDd"
+                       class="current-selected"
+                       data-id="<%= elData.operation.id || 'multiply' %>"
+                       href="javascript:;"><%= elData.operation.name || 'x' %>
+                    </a>
+                </div>
+                <div class="_animateInputBox">
+                    <input class="_animate"
+                           id="ratio"
+                           type="number"
+                           size="5"
+                           value="<%= elData.ratio %>">
+                </div>
+                <div class="icon-trash"></div>
+                <div>&#41;</div>
+            </div>
+        </div>
+    </div>
+</div>

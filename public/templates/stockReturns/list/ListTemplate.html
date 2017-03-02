@@ -1,0 +1,11 @@
+<% collection.forEach(function(item, index){ %>
+<tr data-id="<%=item._id%>">
+    <td><%=item.name%></td>
+    <td><%= item.order && item.order.name%></td>
+    <td><%=item.status && item.status.receivedOn ? item.status.receivedOn : ''%></td>
+    <td><%=item.status && item.status.receivedById ? item.status.receivedById.login : ''%></td>
+    <td class="_statusOrders"><span class="<%=item.status &&  item.status.receivedOn ? 'icon-checked2 green transparented' : 'icon-close3 red transparented'%>"></span>
+    </td>
+</tr>
+<% }) %>
+

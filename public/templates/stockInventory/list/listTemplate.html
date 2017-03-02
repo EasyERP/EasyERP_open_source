@@ -1,0 +1,35 @@
+<% collection.forEach(function(item, index){ %>
+<% var delimiter = '' %>
+<%var currency = App.organizationSettings && App.organizationSettings.currency ? App.organizationSettings.currency.symbol : '$';%>
+
+<tr data-id="<%=item._id%>">
+    <td class="centerCell"><a href="javascript:;" class="transferLocation">→</a></td>
+    <td><%=item.product && item.product.info ? item.product.info.SKU : ''%></td>
+    <td><%=item.product ? item.product.name : ''%></td>
+    <td>
+        <% if (item.variants && item.variants.length) { %>
+        <% _.each(item.variants, function(variant){ %>
+                <span >
+                    <%= delimiter + variant %>
+                    <% delimiter = '|' %>
+                </span>
+        <%})%>
+        <% delimiter = '' %>
+        <% } %>
+    </td>
+    <td><%=item.warehouse ? item.warehouse.name : ''%></td>
+    <td><%=item.createdBy ? item.createdBy.date : ''%></td>
+    <td><%=item.order ?  item.order.name : ''%></td>
+    <td><%=item.location ?  item.location.groupingA : ''%></td>
+    <td><%=item.location ?  item.location.groupingB : ''%></td>
+    <td><%=item.location ?  item.location.groupingC : ''%></td>
+    <td><%=item.location ?  item.location.groupingD : ''%></td>
+    <td class="inStock"><span><%=item.inStock%></span></td>
+    <td class="inStock"><span><%= item.product && item.product.inventory && item.product.inventory.minStockLevel || 0 %></span></td>
+    <td class="allocated"><span><%=item.allocated%></span></td>
+    <td class="onHand"><span><%=item.onHand%></span></td>
+    <td class="cost"><%=currency%><span><%= item.cost%></span></td>
+    <td class="value"><%=currency%><span><%= item.value%></span></td>
+</tr>
+<% }) %>
+

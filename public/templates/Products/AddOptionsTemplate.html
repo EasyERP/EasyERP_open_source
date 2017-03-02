@@ -1,0 +1,62 @@
+<% if (changedProductType && changedProductType.opts && changedProductType.opts.length) { %>
+    <% var optionsArray = Object.keys(checkedObj); %>
+    <% var index; %>
+<% var notRenderButton = 1;%>
+    <div class="_tableAddOptionsWrap">
+        <table class="list stripedList">
+            <tr>
+                <th>Name</th>
+                <% _.each(changedProductType.opts, function (option) { %>
+                <th><div data-optId="<%= option._id %>"><%= option.name %></div></th>
+                <% }) %>
+            </tr>
+            <% if (productVariants && productVariants.length) { %>
+            <% _.each(productVariants, function (product) { %>
+            <tr>
+                <td>
+                    <%= product.name %>
+                    <%= product.info.SKU %>
+                </td>
+                <% _.each(changedProductType.opts, function (opt) { %>
+                <td>
+                    <% var values = {} %>
+                    <% var isFind = 0 %>
+
+                    <% for (var i = 0; i < opt.values.length; i++) { %>
+                    <% values[opt.values[i]._id] = opt.values[i].value; %>
+                    <% } %>
+
+                    <% for (var i = 0; i < product.variants.length; i++) { %>
+                    <% if (Object.keys(values).indexOf(product.variants[i]) >= 0) { %>
+                    <% isFind = 1 %>
+                    <%= values[product.variants[i]] %>
+                    <% } %>
+                    <% } %>
+
+                    <% if (!isFind) { %>
+                    <div class="dropDownDateRangeContainer">
+                        <div class="changeTableCombobox choseDateRange dropDownDateRange">
+                            <% notRenderButton *= 0;%>
+                            <div data-prodId="<%= product._id %>" data-optId="notChecked" data-id="notChecked" class="item active">Please check</div>
+                            <% _.each(opt.values, function (val) { %>
+                            <div data-prodId="<%= product._id %>" data-optId="<%= opt._id %>" data-id="<%= val._id %>" class="item newOpt"><%= val.value %></div>
+                            <% }) %>
+                        </div>
+                    </div>
+                    <% } %>
+                </td>
+                <% }); %>
+            </tr>
+            <% }); %>
+            <% } %>
+        </table>
+    </div>
+<!--
+<% } else { %>
+    Create Product Options with values first, please. Go To <a href="#easyErp/productsSettings">Product Options</a>!
+-->
+<% } %>
+
+<%if (!notRenderButton){%>
+<button id="addOptions" class="addOptions btn blue">Add Options</button>
+<%}%>

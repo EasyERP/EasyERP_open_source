@@ -1,0 +1,38 @@
+<div class="form-holder _newForm">
+    <form method="post" action="" id="stockCorrection">
+        <h4 class="_dialogMainTitle">Add Stock Correction</h4>
+        <div class="_formWrap">
+            <div class="_formBlock">
+
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Warehouse</span>
+                    <div class="_newSelectListWrap">
+                        <a href="javascript:;"
+                           class="current-selected"
+                           id="warehouseDd">Select warehouse</a>
+                    </div>
+                </div>
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Location</span>
+                    <div class="_newSelectListWrap">
+                        <a href="javascript:;"
+                           class="current-selected"
+                           id="locationDd">Select location</a>
+                    </div>
+                </div>
+            </div>
+            <div class="_formBlock">
+                <div class="_animateTextareaBox">
+                        <textarea id="description"
+                                  class="_animate internal_Notes"
+                                  required
+                                  maxlength="500" ></textarea>
+                    <label for="description" class="_animate">Reason</label>
+                </div>
+            </div>
+            <div class="_formBlock">
+                <div id="productItemsHolder"></div>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,25 @@
+<div class="form-holder">
+    <form method="post" action="" class="form" id="stockCorrection">
+        <fieldset>
+            <div class="inner">
+
+                <div class="clearfix"></div>
+                <dt><label for="warehouseDd">Warehouse</label></dt>
+                <dd>
+                    <a id="warehouseDd" href="javascript:;" data-id="<%=model.warehouseTo ? model.warehouseTo._id : ''%>"><%=model.warehouseTo ? model.warehouseTo.name : 'Select'%></a>
+                </dd>
+
+
+
+                <div class="clearfix"></div>
+
+                <div id="productItemsHolder" class="_SkuItemsHolder">
+
+                </div>
+                <div id="goodsHolder" class="_goodsHolder">
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </fieldset>
+    </form>
+</div>

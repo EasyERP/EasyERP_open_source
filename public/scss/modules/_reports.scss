@@ -1,0 +1,220 @@
+//Reports
+
+
+//.salesMonthLine, .lineGraphic, .lineGraphicUnits {
+//  svg {
+//    overflow: visible;
+//    margin-bottom: 70px;
+//  }
+//  .x.axis {
+//    text {
+//      transform: rotate(-45deg);
+//    }
+//  }
+//}
+//
+
+//.dashboardGraphicsWrap.lineTabs,
+//.dashboardGraphicsWrap.salesMonthLine,
+//.dashboardGraphicsWrap.salesChannelLine {
+//  max-width: 100%;
+//  overflow: hidden;
+//}
+//
+////
+/////*16.01.2017*/
+//////.winAndLostOpportunitiesChart {
+//////  .x.axis text {
+//////    transform: rotate(-45deg);
+//////  }
+//////}
+
+
+//12.01.2017
+.salesMonthLine, .lineGraphic, .lineGraphicUnits {
+  //margin-bottom: 70px;
+}
+
+.salesMonthLine, .lineGraphic, .lineGraphicUnits, .salesChannelLine {
+  svg {
+    overflow: visible;
+    margin-bottom: 70px;
+  }
+}
+
+.lineGraphic,
+.lineGraphicUnits {
+  .x.axis {
+    text {
+      transform: rotate(-40deg);
+    }
+  }
+}
+
+svg.salesPercent,
+svg.salesUnits {
+  overflow: visible;
+}
+
+.dashboardGraphicsWrap.lineTabs,
+.dashboardGraphicsWrap.salesMonthLine,
+.dashboardGraphicsWrap.salesChannelLine {
+  overflow: visible;
+  margin-bottom: 70px;
+}
+
+._dashLineItem {
+  overflow: auto !important;
+}
+
+.winAndLostOpportunitiesChart {
+  .x.axis  text{
+    transform: rotate(-45deg);
+  }
+}
+
+._dashBoardDescription {
+  margin-bottom: 5px;
+}
+
+//.dashboardGraphicsWrap {
+//  margin: 20px;
+//  width: calc(100% - 40px);
+//  background-color: #fff;
+//  border: 1px solid #d7dde4;
+//  box-shadow: 5px 5px 10px rgba(126, 142, 159, 0.4);
+//}
+
+._chartsFilterBlock {
+  .choseSaleRange {
+    padding: 20px;
+    padding-bottom: 0;
+
+    .item {
+      margin-bottom: 0;
+    }
+  }
+
+
+  ._filterDropDownWrap {
+    position: absolute;
+    top: 7px;
+    right: 0;
+  }
+
+  ._filterDropDownWrap > ul {
+    background: transparent;
+  }
+
+  ._filterDropDownWrap > ul > li {
+    background-color: #fff;
+
+    &.dateRange {
+      border: 1px solid #d7dde4;
+      border-radius: 4px;
+      text-align: center;
+      background: #fff;
+    }
+  }
+
+  ._filterDropDownBody {
+    margin-top: 15px;
+    display: block;
+    animation: reveal 0.2s ease-out;
+
+    &:before, &:after {
+      position: absolute;
+      right: 10px;
+      content: "";
+      width: 0;
+      height: 0;
+      border-top: none;
+      border-right: 8px solid transparent;
+      border-left: 8px solid transparent;
+    }
+
+    &:before {
+      top: -7px;
+      border-bottom: 7px solid #c2c2c2;
+    }
+
+    &:after {
+      top: -6px;
+      border-bottom: 7px solid #ffffff;
+    }
+  }
+}
+
+
+//styles for feature Tooltip
+
+//.tooltip {
+//  position: relative;
+//  width: 100%;
+//  max-width: 200px;
+//  height: auto;
+//  padding: 5px;
+//  border: 1px solid #d7dde4;
+//  border-radius: 4px;
+//  background-color: #fff;
+//  box-shadow: 5px 5px 10px rgba(126, 142, 159, 0.4);
+//
+//  &:before, &:after {
+//    position: absolute;
+//    right: 50%;
+//    content: "";
+//    width: 0;
+//    height: 0;
+//    border-top: none;
+//    border-right: 8px solid transparent;
+//    border-left: 8px solid transparent;
+//  }
+//
+//  &.top {
+//    &:before {
+//      top: -7px;
+//      border-bottom: 7px solid #c2c2c2;
+//    }
+//
+//    &:after {
+//      top: -6px;
+//      border-bottom: 7px solid #ffffff;
+//    }
+//  }
+//
+//  &.bottom {
+//    &:before {
+//      top: auto;
+//      bottom: -7px;
+//      border-bottom: 7px solid #c2c2c2;
+//    }
+//
+//    &:after {
+//      top: auto;
+//      bottom: -6px;
+//      border-bottom: 7px solid #ffffff;
+//    }
+//  }
+//
+//}
+
+
+
+@-webkit-keyframes reveal {
+  0% {
+    opacity: 0;
+  }
+  1% {
+    opacity: 0;
+    -webkit-transform: scale(0.98) translateY(-15px);
+    transform: scale(0.98) translateY(-15px);
+  }
+  80% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+  100% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+}

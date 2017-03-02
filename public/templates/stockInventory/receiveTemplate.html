@@ -1,0 +1,95 @@
+<div class="form-holder">
+    <% var delimiter = '' %>
+    <form method="post" action="" class="form _SkuItemsHolder" id="stockCorrection">
+        <fieldset>
+            <div class="inner">
+
+                <table class="list _projectTableLeftAlign tableFixed _invoiceTable">
+                    <colgroup>
+                        <col width="100px">
+                        <col width="100px">
+                        <col width="100px">
+                        <col width="100px">
+                        <col width="40px">
+                        <col width="100px">
+                    </colgroup>
+                    <thead>
+                    <tr class="productListItemsColumns _deleteHeader">
+                        <th >
+                            SKU
+                        </th>
+                        <th>
+                            Product
+                        </th>
+                        <th>
+                            Options
+                        </th>
+                        <th >
+                            Location
+                        </th>
+                        <th >
+                            Quantity
+                        </th>
+                        <th >
+                            Transfer to locations
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody id="tbodyProducts">
+                    <tr></tr>
+
+                    <tr class="productItem deleteRow" id="<%=elem._id%>" data-id="<%=elem.warehouse ? elem.warehouse._id : ''%>">
+
+                        <td data-name="productName">
+                            <span  id="productsDd"  data-id="<%= elem.product ? elem.product._id : ''%>">
+
+                                <%=elem.product && elem.product.info ? elem.product.info.SKU : 'Select' %>
+                            </span>
+                        </td>
+                        <td data-name="description">
+                            <%= elem.product ? elem.product.name :  ''%>
+                        </td>
+                        <td class="editable">
+                            <% if (elem.variants && elem.variants.length) { %>
+                            <% _.each(elem.variants, function(variant){ %>
+                            <span ><%= delimiter + variant %><% delimiter = '|' %></span>
+                            <%})%>
+                            <% delimiter = '' %>
+                            <% } %>
+                        </td>
+                        <td data-name="location">
+                            <%= elem.location ? elem.location.name :  ''%>
+                        </td>
+                        <td data-name="ordered">
+                            <input id="ordered" class="quantity statusInfo" maxlength="9" value="<%=elem.onHand%>" size=7 type="text" readonly/>
+                        </td>
+                        <td data-name="newShip">
+                            <div class="receiveLocation">
+                                <div>
+                                    <input id="newShip" class="quantity" maxlength="9" value="<%=elem.onHand%>" size=7 type="text"/>
+                                    into
+                                </div>
+                                <div>
+                                    <a class="current-selected" id="locationDd" href="javascript:;" data-id="<%= elem.location ? elem.location._id : ''%>">
+                                       Select
+                                    </a>
+                                </div>
+                            </div>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="invisible_border"></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="clearfix"></div>
+                <div id="totalAmountContainer" class="_totalAmountContainer _createPopup">
+
+                </div>
+
+                <div class="clearfix"></div>
+            </div>
+        </fieldset>
+    </form>
+</div>

@@ -1,0 +1,55 @@
+<div class="form-holder">
+    <form class="form notDialog _optionValueForm" id="leadForm" data-id="<%=model._id%>">
+        <div class="half-block left">
+            <div class="moduleList aboutHolder">
+                <div class="person-info">
+                    <div class="propertyFormList">
+                        <label>Name</label>
+                        <div class="inputBox">
+                            <input class="editable" id="name" value="<%=model.name%>"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="_editPanel">
+                <p class="fontBold">Change types which you want to use in your options, please. You can't uncheck them
+                    if there are existing products with this variants.</p>
+                <div id="productTypes" data-id="<%= model._id %>">
+                    <% _.forEach(productTypes, function(item, key) { %>
+                    <label class="_labelWrap">
+                        <input data-id="<%= item._id %>" type="checkbox" <%= (checkedPrTypes.indexOf(item._id) >= 0) ?
+                        'checked' : '' %> value="<%= item.name %>">
+                        <span><%= item.name %></span>
+                    </label>
+                    <% }) %>
+                    <button id="saveChangeTypes" class="btn blue">Save</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="half-block right">
+            <div id="optionsValuesData">
+                <%if (values.length) {%>
+                <div class="_editPanel">
+                    <% _.each(values, function (item) { %>
+                    <div class="valueItem" data-id="<%= item._id %>">
+                <span class="_valueItem">
+                    <%= item.value %>
+                </span>
+                        <button class="deleteValue icon-close3"></button>
+                    </div>
+                    <% }) %>
+                </div>
+                <% } else {%>
+                <div class="_editPanel">No Option Values found</div>
+                <%}%>
+            </div>
+            <div id="optionsValues" class="_optionsValues" data-id="<%= model._id %>">
+                <button id="saveNewOptionsValue" class="btn blue">Save Values</button>
+                <button id="addNewOptionsValue" class="btn blue">Add New Value</button>
+            </div>
+        </div>
+    </form>
+
+</div>
+

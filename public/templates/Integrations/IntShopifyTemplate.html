@@ -1,0 +1,108 @@
+<div class="_progressbarWrap">
+    <ul class="dialog-tabs" data-class="mainTabs">
+        <li><a class="active tabs" href="javascript:;">Import</a></li>
+        <li><a href="javascript:;" class="tabs">Settings</a></li>
+        <li><a href="javascript:;" class="conflictBtn">Conflict</a></li>
+    </ul>
+    <div class="dialog-tabs-items mainTabs">
+        <div class="dialog-tabs-item mainTabs active">
+            <div class="_progressBarItems">
+                <div class="_statusInfo">
+                    <p>products</p>
+                    <p id="statusProductsBar" class="_statusProductBar">0%</p>
+                </div>
+                <div class="_progressBarContainer">
+                    <div class="bar _progressBar" id="productsBar" ></div>
+                </div>
+                <div class="_statusInfo">
+                    <p>customers</p>
+                    <p id="statusCustomersBar" class="_statusProductBar">0%</p>
+                </div>
+                <div class="_progressBarContainer">
+                    <div class="bar _progressBar" id="customersBar" ></div>
+                </div>
+                <div class="_statusInfo">
+                    <p>orders</p>
+                    <p id="statusOrdersBar" class="_statusProductBar">0%</p>
+                </div>
+                <div class="_progressBarContainer">
+                    <div class="bar _progressBar" id="ordersBar" ></div>
+                </div>
+            </div>
+            <h3>Shopify E-commerce</h3>
+            <div class="btnsBlock">
+                <button>Don`t import my products from Shopify</button>
+                <button  id="importMagentoBtn">Import my products from Shopify</button>
+                <button   id="matchMyProducts">Match my products from Shopify</button>
+            </div>
+            <h4>Status:</h4>
+            <ul id="statusBlock"></ul>
+        </div>
+        <div class="dialog-tabs-item mainTabs">
+            <div id="magentoConnectionBlock">
+                <div class="_warehouseWrap _integrationForm">
+                    <div class="_warehouseForm">
+                        <div class="_listModal">
+                            <div class="_modalList _selectBlock">
+                                <div class="_inputContainer">
+                                    <div class="_modalLabel"><label>Active</label></div>
+                                    <div class="_modalSelect"><input id="active" type="checkbox"></div>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                            <h3>Shopify API Settings</h3>
+                            <div class="_modalList">
+                                <div class="_modalLabel"><label>Base URL</label></div>
+                                <div class="_modalSelect"> <input id="baseURL" type="text" value="<%= credentials.baseUrl || '' %>"
+                                                                  placeholder="Example: http://mymagento.com"></div>
+                            </div>
+                            <div class="_modalList">
+                                <div class="_modalLabel"><label>User Name</label></div>
+                                <div class="_modalSelect"> <input id="apiuser" type="text" value="<%= credentials.username || '' %>"
+                                                                  placeholder="Example: apiuser"></div>
+                            </div>
+                            <div class="_modalList">
+                                <div class="_modalLabel"><label>Password</label></div>
+                                <div class="_modalSelect"> <input id="apipassword" type="password" value="<%= credentials.password || '' %>"
+                                                                  placeholder="Example: apipassword"></div>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <dl class="_listModal">
+                            <h3>For import from shopify use:</h3>
+                            <div class="_modalList">
+                                <dt class="_modalLabel"><label>Warehouse</label></dt>
+                                <dd class="_modalSelect">
+                                    <a id="warehouse" class="current-selected" href="javascript:;"
+                                       data-id="<%= (credentials.warehouseSettings && credentials.warehouseSettings.warehouse && credentials.warehouseSettings.warehouse.id) || ''%>">
+                                        <%= (credentials.warehouseSettings && credentials.warehouseSettings.warehouse &&
+                                        credentials.warehouseSettings.warehouse.name) || 'Select'%></a>
+                                </dd>
+                            </div>
+                            <div class="_modalList">
+                                <dt  class="_modalLabel"><label>Location</label></dt>
+                                <dd class="_modalSelect">
+                                    <a id="location"
+                                       class="current-selected <%= (credentials.warehouseSettings && credentials.warehouseSettings.location && credentials.warehouseSettings.location.id) ? '' : 'jobs'%> "
+                                       href="javascript:;"
+                                       data-id="<%= (credentials.warehouseSettings && credentials.warehouseSettings.location && credentials.warehouseSettings.location.id) || ''%>">
+                                        <%= (credentials.warehouseSettings && credentials.warehouseSettings.location &&
+                                        credentials.warehouseSettings.location.name) || 'Select'%></a>
+                                </dd>
+                            </div>
+                        </dl>
+                        <button id="testConnection" class="btn slim">Test Connection</button>
+                        <button id="saveBtn" class="btn slim">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="dialog-tabs-item mainTabs">
+            <div id="conflictItems">
+                Conflict items is not
+            </div>
+        </div>
+    </div>
+    <button id="backBtn" class="btn slim blue">Back</button>
+</div>
+

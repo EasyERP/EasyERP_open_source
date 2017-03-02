@@ -1,0 +1,15 @@
+<table id="listTable">
+    <% options.forEach(function(option, index){ %>
+    <tr class="compactView" data-id="<%=option._id%>">
+        <td class="checkboxRow">
+            <label class="_customCHeckbox">
+                <input type="checkbox" value="<%= option._id %>" class="checkbox"/>
+                <span></span>
+            </label>
+        </td>
+        <td>
+            <%= option.name %>
+        </td>
+    </tr>
+    <% }); %>
+</table>

@@ -1,0 +1,80 @@
+<div class="_accountingSettingWrap">
+    <div class="col m-6 l-4 settingItem">
+        <div class="_animateSelectBox">
+            <span class="_selectTitle">Default Sale Tax Account</span>
+            <div class="_newSelectListWrap">
+                <a href="javascript:;"
+                   id="salesTax"
+                   class="account current-selected"
+                   data-id="<%=model && model.salesTax ? model.salesTax._id : null%>">
+                    <%=model && model.salesTax ? model.salesTax.name : 'Select'%>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col m-6 l-4 settingItem">
+        <div class="_animateSelectBox">
+            <span class="_selectTitle">Default Purchase Tax Account</span>
+            <div class="_newSelectListWrap">
+                <a href="javascript:;"
+                   id="purchaseTax"
+                   class="account current-selected"
+                   data-id="<%=model && model.purchaseTax ? model.purchaseTax._id : null%>">
+                    <%=model && model.purchaseTax ? model.purchaseTax.name : 'Select'%>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col m-6 l-4 settingItem">
+        <div class="_animateSelectBox">
+            <span class="_selectTitle">Default Payable Tax Account</span>
+            <div class="_newSelectListWrap">
+                <a href="javascript:;"
+                   id="payableTax"
+                   class="account current-selected"
+                   data-id="<%=model && model.payableTax ? model.payableTax._id : null%>">
+                    <%=model && model.payableTax ? model.payableTax.name : 'Select'%>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col m-6 l-4 settingItem">
+        <div class="_animateSelectBox">
+            <span class="_selectTitle">Default Carried Tax Account</span>
+            <div class="_newSelectListWrap">
+                <a href="javascript:;"
+                   id="carriedTax"
+                   class="account current-selected"
+                   data-id="<%=model && model.carriedTax ? model.carriedTax._id : null%>">
+                    <%=model && model.carriedTax ? model.carriedTax.name : 'Select'%>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col m-6 l-4 settingItem">
+        <div class="_animateSelectBox">
+            <span class="_selectTitle">Default Shipping Expenses Account</span>
+            <div class="_newSelectListWrap">
+                <a href="javascript:;"
+                   id="shipping"
+                   class="account current-selected"
+                   data-id="<%=model && model.shipping ? model.shipping._id : null%>">
+                    <%=model && model.shipping ? model.shipping.name : 'Select'%>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col m-6 l-4 settingItem">
+        <div class="_animateSelectBox">
+            <span class="_selectTitle">Default Sales Discount Account</span>
+            <div class="_newSelectListWrap">
+                <a href="javascript:;"
+                   id="discount"
+                   class="account current-selected"
+                   data-id="<%=model && model.discount ? model.discount._id : null%>">
+                    <%=model && model.discount ? model.discount.name : 'Select'%>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

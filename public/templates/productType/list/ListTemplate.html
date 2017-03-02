@@ -1,0 +1,12 @@
+<% productTypesCollection.forEach(function(option, index){ %>
+    <tr data-id="<%= option._id %>" %>">
+        <td class="notForm">
+            <label class="_customCHeckbox">
+                <input type="checkbox" value="<%= option._id %>" class="checkbox listCB"/>
+                <span></span>
+            </label>
+        </td>
+        <td><span class="blue"><%=option.name%></span></td>
+        <td><span class="blue"><%=option.countProducts%></span></td>
+    </tr>
+<% }) %>

@@ -1,0 +1,62 @@
+<div id="conflictBlock">
+        <% if ((Object.keys(conflictItems)).length) { %>
+        <% var keysSKUs = Object.keys(conflictItems) %>
+        <div class="_integrationTableWrap">
+            <table class="list stripedList">
+                <colgroup>
+                    <col width="120px">
+                    <col width="100px">
+                    <col width="400px">
+                    <col width="150px">
+                    <col width="150px">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th class="centerCell">Action</th>
+                    <th class="centerCell">SKU</th>
+                    <th class="centerCell">Name</th>
+                    <th class="centerCell">Qty</th>
+                    <th class="centerCell">Price</th>
+                </tr>
+                </thead>
+                <tbody>
+                <% _.each(keysSKUs ,function (key) { %>
+                <% var conflict = conflictItems[key][0] %>
+                <% var native = conflictItems[key][1] %>
+                <% var header = Object.keys(conflictItems[key][0]) %>
+                <tr >
+                    <td class="centerCell">
+                        <div class="dropDownDateRangeContainer">
+                            <div data-sku="<%= key %>" class="changeTableCombobox choseDateRange dropDownDateRange">
+                                <div data-action="skip" class="item active">skip</div>
+                                <div data-action="import" class="item">duplicate</div>
+                                <div data-action="merge" class="item">merge</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="centerCell">
+                        <p><%= key %></p>
+                        <p class="native"><%= key %></pclass>
+                    </td>
+                    <td class="centerCell">
+                        <p><%= conflict.name || '' %></p>
+                        <p class="native">  <%= native.name || '' %></p>
+                    </td>
+                    <td class="centerCell">
+                        <p><%= conflict.qty || '' %></p>
+                        <p class="native"><%= native.qty || '' %></p>
+                    </td>
+                    <td class="centerCell">
+                        <p><%= conflict.price || '' %></p>
+                        <p class="native"><%= native.price || '' %></p>
+                    </td>
+                </tr>
+                <% }) %>
+                </tbody>
+            </table>
+        </div>
+        <button id="saveChanges" class="btn blue slim">Save changes</button>
+    <% } else { %>
+        <div id="conflictInformation">Conflict items is not found</div>
+    <% } %>
+</div>

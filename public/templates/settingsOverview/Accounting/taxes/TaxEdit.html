@@ -1,0 +1,64 @@
+<div class="form-holder _newForm">
+    <div class="_dialogMainTitle">Edit <%=model.fullName%></div>
+    <div class="_formWrap">
+        <div class="_formBlock _equal">
+            <div class="_animateInputBox">
+                <input type="text"
+                       class="_animate "
+                       id="code"
+                       value="<%=model.code%>"
+                       autofocus
+                       required
+                       maxlength="3"/>
+                <label class="_animate">Code</label>
+            </div>
+            <div class="_animateInputBox">
+                <input type="text"
+                       class="_animate "
+                       id="name"
+                       value="<%=model.name%>"
+                       required
+                       maxlength="16"/>
+                <label class="_animate">Name</label>
+            </div>
+            <div class="_animateInputBox _taxRateSelect">
+                <input type="text"
+                       class="_animate forNum"
+                       id="rate"
+                       value="<%=(model.rate * 100).toFixed(2)%>"
+                       required
+                       maxlength="5"/>
+                <label class="_animate">Rate</label>
+                <span class="_persentItem">%</span>
+            </div>
+            <div class="_animateSelectBox">
+                <span class="_selectTitle">Country</span>
+                <div class="_newSelectListWrap">
+                    <a id="country"
+                       class="current-selected"
+                       href="javascript:;"
+                       data-id="<%=model.country || null%>"> <%=model.country || 'Select country'%>
+                    </a>
+                </div>
+            </div>
+            <div class="_formRow" id="budgeted">
+                <label class="_animatedCheckbox">
+                    <input id="default"
+                           type="checkbox"
+                           <%=model.isDefault ? 'checked' : ''%>/>
+                    <span></span>
+                </label>
+                <label for="default">Set As Default</label>
+            </div>
+        </div>
+        <div class="_formBlock _equal">
+            <div>
+            <span>Tax codes (eg "T" or "N") are used across EasyErp for sales, products and accounting.</span>
+            </div>
+            <br/>
+            <div class="checkText <%=model.isDefault ? '' : 'hidden'%>">
+                <span>If you check Set As Default then it will overwrite the old Default tax</span>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,42 @@
+<div class="form-holder">
+
+    <form class="form notDialog _productCategory" id="leadForm" data-id="<%=model._id%>">
+        <div class="_listModal">
+            <div class="half-block left">
+                <div class="inner">
+                    <div class="_modalSelect">
+                         <label>Price list name</label>
+                        <input class="editable" id="name" value="<%=model.name%>"/>
+                    </div>
+                    <div class="_modalSelect">
+                        <label>Price list code</label>
+                        <input class="editable" id="priceListCode" value="<%= model.priceListCode%>"/>
+                    </div>
+                    <div class="_modalSelect">
+                        <label for="currencyDd">Currency</label>
+                        <a class="current-selected" id="currencyDd"
+                           data-id="<%= model && model.currencyId || null%>"
+                           href="javascript:;"><%= model && model.currencyName || ''%></a>
+                    </div>
+                </div>
+            </div>
+            <div class="half-block right">
+
+                <label>This is a supplier ("cost") price list</label>
+                <div class="canReadAndWrite">
+                    <div class="_circleRadioRadianceWrap">
+                        <label for="yes" class="">Yes</label>
+                        <input type="radio" name="question" id="yes"  class="_circleRadioRadiance" value="1" <%=model.cost ? checked='checked' : ''%> />
+                        <label for="yes" class="_circleRadioRadianceLabel"></label>
+                    </div>
+                    <div class="_circleRadioRadianceWrap">
+                        <label for="no" class="">No</label>
+                        <input type="radio" name="question" id="no" value="0" class="_circleRadioRadiance" <%=!model.cost ? checked='checked' : ''%> />
+                        <label for="no" class="_circleRadioRadianceLabel"></label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button id="savePriceList" class="btn blue left">Save</button>
+    </form>
+</div>

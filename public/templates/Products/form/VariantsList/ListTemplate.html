@@ -1,0 +1,37 @@
+<%var delimiter = '';%>
+<%collection.forEach(function (product){%>
+<tr id="<%=product._id%>" class="<%= id === product._id? 'red' : ''%>">
+    <td>
+        <img src="<%=product.imageSrc%>" width="50px" alt="Main image"></td>
+    <td><%=product.name%></td>
+    <td><%=product.info.SKU%></td>
+    <td class="variant">
+        <% if (product.variants && product.variants.length && product.variants[0].length) { %>
+        <% _.each(product.variants[0], function(variant){ %>
+        <span id="<%=variant._id%>" title="<%= variant.value %>">
+                    <%= delimiter + ((variant.value) ? variant.value : 'deleted') %>
+                    <% delimiter = '|' %>
+                </span>
+        <%})%>
+        <% delimiter = '' %>
+        <% } else { %>
+        this product has no variants
+        <% } %>
+    </td>
+    <td>
+        <ul>
+
+            <% product.channels.forEach(function(channel){ %>
+            <li>
+                <div class="channelImg <%= channel.type || ''%>" data-content="channelImage" title="<%= channel.name || ''%>"></div>
+            </li>
+
+            <% }); %>
+        </ul>
+    </td>
+    <td>
+        <a href="javascript:;" class="icon-trash goToRemoveVariant _actionCircleBtn" aria-hidden="true"></a>
+    </td>
+</tr>
+
+<%})%>

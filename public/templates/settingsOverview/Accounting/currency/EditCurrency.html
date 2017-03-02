@@ -1,0 +1,39 @@
+<div class="form-holder _newForm">
+    <h4 class="_dialogMainTitle">Currency Code</h4>
+    <div class="_formWrap _enlargedItemMargin">
+        <div class="_formBlock _equal">
+            <div class="_animateInputBox">
+                <div class="_staticLabel">Currencies</div>
+                <div class="_staticInfo" id="allCurrencies"><%=model.name%></div>
+            </div>
+        </div>
+        <div class="_formBlock _equal">
+            <div class="_animateInputBox">
+                <input type="text"
+                       class="_animate"
+                       id="currencySymbol"
+                       value="<%=model.symbol%>"
+                       required/>
+                <label class="_animate">Symbol</label>
+            </div>
+        </div>
+        <div class="_formBlock _equal">
+            <div class="_animateInputBox">
+                <span class="_staticLabel">Decimal Places</span>
+                <input type="text"
+                       class="_animate"
+                       id="decPlaces"
+                       value="<%= model.decPlace || 0%>"
+                       required
+                       readonly/>
+            </div>
+            <div class="_formRow">
+                <label class="_animatedCheckbox">
+                    <input id="active" type="checkbox" <%=model.active ? checked="checked" : ""%>>
+                    <span></span>
+                </label>
+                <label for="active">Active</label>
+            </div>
+        </div>
+    </div>
+</div>

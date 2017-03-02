@@ -1,0 +1,314 @@
+/*Apps Header*/
+/*thease pseudo #top-bar styles need attach to #top-bar styles because equels with them*/
+._appsTitleWrap {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  height: 40px;
+  min-width: 910px;
+  padding: 0 10px;
+  border-bottom: 1px solid #283038;
+  clear: both;
+  background: #364150;
+
+  .header {
+    flex-grow: 1;
+    h3 {
+      color: #fff;
+      font-family: 'OpenSans Regular', sans-serif, Verdana;
+    }
+  }
+}
+
+/*Progress Bar wrapper*/
+._progressbarWrap {
+  padding: 20px;
+
+  .dialog-tabs-items {
+    padding: 20px 0;
+
+    h4 {
+      font-size: 16px;
+    }
+
+    ._progressBarItems {
+      width: 75%;
+      min-width: 300px;
+
+      ._statusInfo {
+        display: flex;
+        padding-bottom: 5px;
+        > p {
+          text-transform: uppercase;
+          width: 80px;
+        }
+        > ._statusProductBar {
+          flex-grow: 2;
+          text-align: center;
+        }
+      }
+
+      .bar._progressBar {
+        width: 0;
+      }
+
+    }
+
+    .btnsBlock {
+      margin: 10px 0px;
+      button {
+        background-color: #f2f2f2;
+        border: 1px solid #d8dde6;
+        border-radius: 4px;
+        margin: 5px 0;
+        padding: 10px;
+        float: left;
+        color: green;
+
+        &:first-child {
+          color: red;
+        }
+
+        +button {
+          margin-left: 15px;
+        }
+      }
+    }
+
+    #statusBlock {
+      color: green;
+    }
+  }
+}
+
+/*Apps Wrapper*/
+._appsWrap {
+  display: table;
+  width: 100%;
+  min-width: 910px;
+  min-height: calc(100vh - 80px);
+  padding: 10px 20px 20px 20px;
+  background-color: #E4E7E9;
+  .app {
+    width: 100%;
+    height: 130px;
+    border: 2px solid #d8dde6;
+    border-radius: 4px;
+    margin-top: 15px;
+    padding: 15px 20px;
+    padding-left: 7px;
+    float: left;
+    background-color: #fff;
+
+    .mainContent {
+      display: flex;
+      align-items: center;
+      font-size: 16px;
+
+      [data-content="channelInfo"] {
+        width: 220px;
+        margin-left: 5px;
+        h3 {
+          margin-bottom: 10px;
+          line-height: initial;
+          font-family: $bold-font-family;
+          font-size: 24px;
+          line-height: 24px;
+        }
+        p {
+          font-size: 14px;
+          color: #89929B;
+          line-height: 24px;
+          b{
+            display: block;
+          }
+        }
+      }
+
+      [data-content="connectingStatus"]{
+        display: flex;
+        flex-grow: 1;
+        margin-left: 20px;
+        min-width: 200px;
+      }
+    }
+
+    [data-content="channelStat"] {
+      width: calc(100% - 370px);
+      display: flex;
+      flex-grow: 1;
+      align-items: center;
+      justify-content: flex-end;
+      > div {
+        display: inline-block;
+        vertical-align: top;
+        text-align: center;
+        color: #89929B;
+        font-family: $semibold-font-family;
+        + div {
+          margin-left: 45px;
+          &:not(.settingsContainer) {
+            padding: 10px;
+            border: 2px solid transparent;
+            border-radius: 15px;
+            background: transparent;
+            transition: all 0.05s ease-in-out;
+            &:hover {
+              border: 2px solid #7eadcc;
+              background: #f6f6f6;
+            }
+          }
+        }
+        .channelRowValue {
+          > span {
+            color: #000;
+            font-family:$bold-font-family;
+            font-size: 20px;
+          }
+        }
+      }
+      [data-content="settings"] {
+        .count {
+          cursor: pointer;
+          display: block;
+          line-height: 1;
+          transform-origin: 50% 45%;
+          transform: rotate(0);
+          transition: transform .7s linear;
+
+          &:before {
+            font-size: 35px;
+            line-height: 26px;
+            color: #828B95;
+            position: relative;
+          }
+
+          &:hover{
+            transform: rotate(360deg);
+          }
+        }
+      }
+
+      .connection {
+        color: white !important;
+        display: inline-block;
+        border: 1px solid transparent;
+        padding: 5px;
+        line-height: 1;
+        font-size: 14px !important;
+        text-transform: uppercase;
+
+        &.success {
+          background: #28cc28;
+          &:before {
+            font-family: 'erp-icons';
+            content: '\f05d';
+          }
+        }
+
+        &.error {
+          background: #ff1810;
+          color: white !important;
+
+          &:before {
+            font-family: 'erp-icons';
+            content: '\f057';
+          }
+        }
+      }
+    }
+  }
+}
+
+[data-content="connectingStatus"] {
+
+  .btn.connection {
+    min-width: 120px;
+  }
+}
+
+.miniApp {
+  width: 160px;
+  height: 50px;
+  margin: 5px 10px;
+  padding: 5px;
+  float: left;
+  img {
+    width: 150px;
+    height: 40px;
+  }
+  &:hover {
+    background: #e3e3e3;
+  }
+}
+
+._channelNameContainer {
+  font-size: 14px;
+  + .ui-dialog-buttonpane {
+    margin-top: 10px !important;
+  }
+
+  .mainContent {
+    display: flex;
+    align-items: center;
+  }
+  ._listModal {
+    flex-grow: 1;
+    ._modalLabel {
+      label {
+        font-size: 18px;
+        line-height: 26px;
+        color: #3e88b9;
+      }
+    }
+  }
+}
+
+._appsWrap .app,
+._channelNameContainer {
+  .channelImg {
+    display: inline-block;
+    width: 95px;
+    height: 95px;
+  }
+}
+
+._inventoryProductWrap {
+  ul {
+    display: table;
+    vertical-align: middle;
+    li {
+      display: table-cell;
+      vertical-align: middle;
+      float: left;
+
+      .channelImg {
+        display: table-cell;
+
+        + span {
+          min-height: 25px;
+          display: table-cell;
+          padding: 0 5px;
+          vertical-align: middle;
+        }
+      }
+    }
+  }
+}
+
+.channelImg {
+  width: 40px;
+  height: 40px;
+
+  &.magento {
+    background: url('../images/magento.svg') center center no-repeat;
+  }
+
+  &.shopify {
+    background: url('../images/shopify.svg') center center no-repeat;
+  }
+
+  &.etsy {
+    background: url('../images/etsy.svg') center center no-repeat;
+  }
+}

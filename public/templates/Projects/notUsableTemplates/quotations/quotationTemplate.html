@@ -1,0 +1,42 @@
+<div id="top-bar-quotations" class="projectInfoTopBar">
+    <div id="createBtnHolder" class="btnsBlock _underTabs">
+        <a href="javascript:;" class="icon-plus btn blue slim" title="Create" id="createQuotation">New</a>
+        <a href="javascript:;" class="btn blue slim" title="Remove" id="removeQuotation">Delete</a>
+    </div>
+</div>
+<div class="clearfix"></div>
+<div id="quotationTable" class="_tableWrap _quotationTableWrap">
+    <table class="list stripedList">
+        <colgroup>
+            <col width="43px">
+            <col width="20%">
+            <col width="20%">
+            <col width="20%">
+            <col width="15%">
+            <col width="15%">
+            <col width="10%">
+        </colgroup>
+        <thead>
+        <tr>
+            <th class="centerCell"><input type="checkbox" id="checkAll_quotations" class="checkAll"/></th>
+            <th class="oe_sortable" data-sort="name">Name<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="supplier.name.first">Customer<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="projectmanager.name.first">Sales Person<span
+                    class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable sortDn" data-sort="paymentInfo.total">Total<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <!--<th class="oe_sortable" data-sort="type">Type<span class="arrow down"></span><span-->
+            <!--class="arrow up"></span></th>-->
+            <th class="oe_sortable" data-sort="workflow">Status<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="orderDate">Date<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+        </tr>
+        </thead>
+        <tbody id="listTableQuotation"></tbody>
+        <tfoot id="listTotalQuotation"></tfoot>
+    </table>
+</div>

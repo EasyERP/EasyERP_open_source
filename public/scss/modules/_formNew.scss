@@ -1,0 +1,302 @@
+._newForm {
+  position: relative;
+
+  ._dialogTitlePositioned {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0 1.5rem;
+    color: #969696;
+    font-family: $semibold-font-family;
+    line-height: 52px;
+    @include rem('font-size', 18px);
+  }
+
+  ._dialogMainTitle {
+    padding: 0 1.5rem;
+    color: #969696;
+    font-family: $semibold-font-family;
+    line-height: 52px;
+    text-align: right;
+    @include rem('font-size', 18px);
+
+    + ._formWrap {
+      padding-top: 0;
+    }
+  }
+
+  .dialog-tabs {
+    padding-top: 0.75rem;
+    margin: 0 1.5rem;
+    border-color: #c8c8d3;
+  }
+
+  ._formLabel {
+    line-height: 26px;
+  }
+
+  ._formInput,
+  ._formTextarea {
+    border: 1px solid #c8c8d3;
+  }
+
+  ._formInput {
+    height: 26px;
+    line-height: 24px;
+  }
+
+  ._leadForm {
+
+    .dialog-tabs-items {
+      .dialog-tabs-item {
+        > ._formWrap {
+          padding-bottom: 0;
+        }
+      }
+      > ._formWrap {
+        padding-top: 0;
+      }
+    }
+  }
+}
+
+//start correction
+._newForm {
+  &._employeeEdit {
+    .withEndContract {
+      margin-top: 10px;
+      user-select: none;
+
+      > span {
+        cursor: pointer;
+      }
+    }
+    .dialog-tabs {
+      padding-top: 2rem;
+    }
+  }
+
+  &._editApplication {
+    .dialog-tabs {
+      padding-top: 2rem;
+    }
+    ._acrionButtons {
+      float: right;
+      margin-top: 8px;
+      .btn + .btn {
+        margin-left: 3px;
+      }
+    }
+  }
+
+  &._newManualEntry {
+    ._dialogTitlePositioned {
+      top: 5px;
+    }
+    ._btnWrap {
+      margin-bottom: 20px;
+    }
+    ._addRow {
+      margin-top: 20px;
+      margin-left: auto;
+    }
+  }
+
+  &._ordersDialog {
+    ._formWrap {
+      padding: 0 .75rem;
+
+      &:last-child {
+        padding-bottom: 1rem;
+      }
+    }
+  }
+}
+//end correction
+
+._formBlock {
+  .attachWrapper {
+    max-height: 150px;
+    padding: 0;
+    overflow: auto;
+  }
+}
+
+.form-holder {
+  &._newForm {
+    padding: 0;
+
+    ul.dialog-tabs li a {
+      border: 0;
+      border-bottom: 2px solid transparent;
+
+      &.active {
+        background-color: transparent;
+        border: 0;
+        border-bottom: 2px solid #7eadcc;
+        color: #3e88b9;
+        font-family: inherit;
+      }
+    }
+  }
+}
+
+._formBlock {
+
+  &._equal {
+    width: 300px;
+  }
+
+  ._formRow,
+  ._formColumn {
+    display: flex;
+  }
+
+  ._formRow {
+
+    ._formRowItem {
+      margin: 5px 0;
+
+      + ._formRowItem {
+        margin-left: 10px;
+      }
+
+      &:first-child {
+        flex-shrink: 0;
+      }
+
+      &:nth-child(n+2) {
+        flex-grow: 1;
+      }
+    }
+  }
+
+  ._formColumn {
+    flex-direction: column;
+
+    ._formColumnItem {
+      margin: 5px 0;
+    }
+  }
+}
+
+._formRowItem {
+  &:first-child {
+    width: 40%;
+  }
+}
+
+._formBlock {
+  padding-left: .75rem;
+  padding-right: .75rem;
+}
+
+._formWrap {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  padding: 1.5rem .75rem;
+
+  + ._formWrap {
+    padding-top: 0;
+  }
+
+  ._formBlock {
+    flex-grow: 1;
+  }
+
+  ._titleBlueBorder {
+    padding-top: 0;
+    margin: 0 14px 20px 14px;
+  }
+}
+
+// start correction
+._formWrap {
+
+  ._formBlock {
+
+    .addUserAndGroup {
+      margin-top: 0;
+      margin-bottom: 8px;
+    }
+  }
+
+}
+
+.assignees-container {
+
+  &._innedFlexDiv {
+    > div {
+      display: flex;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+  }
+
+  ._animateSelectBox {
+    margin-top: 20px;
+  }
+}
+
+._employeeCreate,
+._employeeEdit {
+
+  .assignees-container {
+
+    ._animateSelectBox {
+      margin-top: 0;
+    }
+  }
+}
+// end correction
+
+._groupsAndUserWrap {
+  position: relative;
+
+  ._groupsAndUserTitle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #fff;
+    width: calc(100% - 15px);
+    line-height: 20px;
+    border-bottom: 1px solid #cccccc;
+  }
+
+  ._groupsAndUserBlock {
+    max-height: 200px;
+    overflow: auto;
+  }
+
+  .groupsAndUser {
+    margin: 20px 0 0;
+
+    &:empty {
+      display: none;
+
+      + ._groupsAndUserTitle {
+        display: none;
+      }
+    }
+  }
+}
+
+._avatarBlock {
+  padding-left: .75rem;
+  padding-right: .75rem;
+
+  .avatar {
+    margin: 0;
+  }
+}
+
+._formAvatar {
+  ._avatarImg {
+    position: relative;
+    width: 135px;
+    margin: 5px 0;
+    border: 1px solid #7eadcc;
+    overflow: hidden;
+  }
+}

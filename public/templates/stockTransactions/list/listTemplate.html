@@ -1,0 +1,26 @@
+<% collection.forEach(function(item, index){ %>
+<tr data-id="<%=item._id%>">
+    <td class="notForm">
+        <label class="_customCHeckbox">
+            <input type="checkbox" value="<%=item._id%>"
+            <% if (item.notRemovable) { %>
+            class="checkbox notRemovable" disabled='disabled'
+            <% } else {%>
+            class="checkbox"
+            <% } %>
+            />
+            <span></span>
+        </label>
+    </td>
+
+    <td data-content="name" class="editable"><%=item.createdBy ? item.createdBy.date : ''%></td>
+    <td class="editable"><%=item.name%></td>
+    <td class="editable"><%=item.warehouse ? item.warehouse.name : ''%></td>
+    <td class="editable"><%=item.warehouseTo ? item.warehouseTo.name : ''%></td>
+    <td class="centerCell _statusOrders"> <span class="<%=item.status &&  item.status.printed ? 'icon-checked2 green transparented' : 'icon-close3 red transparented'%>"></span></td>
+    <td class="centerCell _statusOrders"> <span class="<%=item.status &&  item.status.packed ? 'icon-checked2 green transparented' : 'icon-close3 red transparented'%>"></span></td>
+    <td class="centerCell _statusOrders"> <span class="<%=item.status &&  item.status.shipped ? 'icon-checked2 green transparented' : 'icon-close3 red transparented'%>"></span></td>
+    <td class="centerCell _statusOrders"> <span class="<%=item.status &&  item.status.received ? 'icon-checked2 green transparented' : 'icon-close3 red transparented'%>"></span></td>
+</tr>
+<% }) %>
+

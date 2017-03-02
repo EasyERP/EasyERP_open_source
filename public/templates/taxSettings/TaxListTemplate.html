@@ -1,0 +1,49 @@
+<div class="_acountingTableWrap">
+    <div class="_acountingTitleBlock">
+        <span class="_acountingTitle">Taxes</span>
+        <a href="javascript:;" class="btn blue icon-plus" title="Create" id="top-bar-createBtn">Add</a>
+    </div>
+    <div class="_acountingTableBlock">
+        <table class="list tableProjects tableFixed _currencyTable">
+            <colgroup>
+                <col width="10%"/>
+                <col width="20%"/>
+                <col width="20%"/>
+                <col width="20%"/>
+                <col width="20%"/>
+                <col width="10%"/>
+            </colgroup>
+            <thead>
+            <tr class="forToggle">
+                <th>Code</th>
+                <th>Name</th>
+                <th>Rate</th>
+                <th>Country</th>
+                <th>Default</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody class="forToggle" id="taxTable">
+            <% collection.forEach(function(elem,index){ %>
+
+            <tr data-id="<%=elem._id%>">
+               <td><%=elem.code%></td>
+               <td><%=elem.name%></td>
+               <td><span class="fontSemiBold"><%=(elem.rate * 100).toFixed(2)%> %</span></td>
+               <td><%=elem.country%></td>
+               <td>
+                   <%if (elem.isDefault) {%>
+                    <input type="checkbox" checked="checked" disabled/>
+                   <%}%>
+               </td>
+                <td>
+                    <a href="javascript:;" class="icon-note goToEdit _actionCircleBtn" aria-hidden="true"></a>
+                    <a href="javascript:;" class="icon-trash goToRemove _actionCircleBtn" aria-hidden="true"></a>
+                </td>
+            </tr>
+
+            <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,72 @@
+<div class="_editAllocateAll">
+    <%if (!notEditable && forSales) {%>
+    <span class="btn slim <%=model && model.shippingExpenses && model.shippingExpenses.amount ? 'disabled' : ''%>" id="selectShippingMethod">Add Shipping Method</span>
+    <span class="btn slim" id="allocateAll">Allocate all</span>
+    <span class="btn slim" id="unallocateAll">Unallocate All</span>
+    <%}%>
+    <% if(model.orderDate && model.workflow && model.workflow.status !== 'Done'){ %>
+    <span class="btn slim" id="resetPrices">Reset Prices</span>
+    <%}%>
+</div>
+
+<table class="list tableFixed _invoiceTable forSCU">
+    <colgroup>
+        <%if (expense){%>
+        <col width="180px">
+        <col width="120px">
+        <col width="120px">
+        <col width="70px">
+        <col width="80px">
+        <col width="80px">
+        <col width="80px">
+        <col width="30px">
+        <%} else {%>
+        <col width="140px">
+        <col width="180px">
+        <col width="140px">
+        <col width="120px">
+        <col width="100px">
+        <col width="80px">
+        <col width="80px">
+        <col width="100px">
+        <col width="30px">
+        <%}%>
+
+    </colgroup>
+    <thead>
+    <tr class="productListItemsColumns _deleteHeader ">
+        <%if (!expense){%>
+        <th data-sort="Product">
+            SKU
+        </th>
+        <%}%>
+
+        <th data-sort="description">
+            Info
+        </th>
+        <th data-sort="account">
+            Account
+        </th>
+        <th>
+            Tax Code
+        </th>
+        <th  data-sort="quantity">
+            Quantity
+        </th>
+        <th data-sort="unitPrice">
+            Unit Price
+        </th>
+        <th data-sort="taxes">
+            Taxes
+        </th>
+        <th data-sort="subtotal">
+            Subtotal
+        </th>
+        <th class="">
+        </th>
+    </tr>
+    </thead>
+    <tbody id="productList"></tbody>
+</table>
+
+<div id="totalAmountContainer" class="_totalAmountContainer"></div>

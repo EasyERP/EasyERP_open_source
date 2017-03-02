@@ -1,0 +1,35 @@
+<% paymentCollection.forEach(function(element, index) {%>
+<tr data-id="<%=element._id%>">
+    <td class="notForm centerCell">
+        <label class="_customCHeckbox">
+            <input type="checkbox" value="<%=element._id%>" class="checkbox"/>
+           <!-- <% if (element.order && element.order.project) { %>
+            class="checkbox"
+            <% } else {%>
+            class="checkbox notRemovable" disabled='disabled'
+            <% } %>
+            />-->
+            <span></span>
+        </label>
+    </td>
+    </td>
+    <td><%=element.name %></td>
+    <td><%=element.order ? element.order.name : ''%></td>
+    <td><%=element.workflow ? element.workflow.name : ''%></td>
+    <td><%=element.customer ? element.customer.name : ''%></td>
+    <td><%=element.warehouse ? element.warehouse.name : '' %></td>
+    <td class="centerCell _statusOrders"><span
+            class="<%=element.status &&  element.status.printedOn ? 'icon-checked2 green transparented' : 'icon-close3 red transparented'%>"></span>
+    </td>
+    <td class="centerCell _statusOrders"><span
+            class="<%=element.status &&  element.status.pickedOn ? 'icon-checked2 green transparented' : 'icon-close3 red transparented'%>"></span>
+    </td>
+    <td class="centerCell _statusOrders"><span
+            class="<%=element.status &&  element.status.packedOn ? 'icon-checked2 green transparented' : 'icon-close3 red transparented'%>"></span>
+    </td>
+    <td class="centerCell _statusOrders"><span
+            class="<%=element.status &&  element.status.shippedOn ? 'icon-checked2 green transparented' : 'icon-close3 red transparented'%>"></span>
+    </td>
+
+</tr>
+<%})%>

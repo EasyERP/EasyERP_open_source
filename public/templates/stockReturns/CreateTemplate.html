@@ -1,0 +1,141 @@
+<div class="form-holder _newForm">
+    <form method="post" action="" id="stockCorrection">
+        <h4 class="_dialogMainTitle">Create Return Sales</h4>
+        <div class="_formWrap">
+            <div class="_formBlock">
+                <div id="productItemsHolder">
+                    <table class="list _projectTableLeftAlign tableFixed _invoiceTable">
+                        <colgroup>
+                            <col width="200px">
+                            <col width="20%">
+                            <col width="15%">
+                            <col width="15%">
+                            <col width="20%">
+                            <col width="25%">
+                            <col width="20%">
+                        </colgroup>
+                        <thead>
+                        <tr class="productListItemsColumns _deleteHeader">
+                            <th class="width20" data-sort="Product">
+                                Product
+                            </th>
+                            <th class="width20" data-sort="subtotal">
+                                <%if (!purchase) {%>
+                                Goods-out Note
+                                <%} else {%>
+                                Goods-in Note
+                                <%}%>
+                            </th>
+                            <th class="width20" data-sort="unitPrice">
+                                Quantity
+                            </th>
+                            <th class="width20" data-sort="unitPrice">
+                                <%if (!purchase) {%>
+                                Shipped
+                                <%} else {%>
+                                Max return
+                                <%}%>
+                            </th>
+                            <th class="width20" data-sort="taxes">
+                                Shipping Date
+                            </th>
+                            <th class="width20" data-sort="taxes">
+                                Warehouse
+                            </th>
+                            <th class="width20" data-sort="taxes">
+                                Return Quantity
+                            </th>
+
+                            <th class="deleteCell"></th>
+                        </tr>
+                        </thead>
+                        <tbody id="tbodyProducts">
+                        <%model.products.forEach(function (product){ %>
+                        <%product.goodsNotes.forEach(function (note){ %>
+                        <tr id="<%=note._id%>" data-id="<%=product._id%>">
+                            <td class="product _whiteSpaceNormal" data-id="<%=product.product._id%>">
+                                <%=product.product.info.SKU + ' ( ' +
+                                product.product.name + ' )'%>
+                            </td>
+                            <td class="goodsNote" data-id="<%=note._id%>"><%=note.name%></td>
+                            <td><%=product.quantity%></td>
+                            <%if (!purchase) {%>
+                            <td class="shipped"><%=note.quantity%></td>
+                            <%} else {%>
+                            <%var quantity = note.quantity; %>
+                            <%if (note.goodsInNote && note.goodsInNote._id) {%>
+                            <%quantity = note.goodsInNote.onHand;%>
+                            <%}%>
+                            <td class="shipped"><%=quantity%></td>
+                            <%}%>
+                            <td><%=moment(new Date(note.status.shippedOn || note.status.receivedOn)).format("DD MMM,YYYY")%>
+                            </td>
+                            <td class="warehouse" data-id="<%=note.warehouse._id%>"><%=note.warehouse.name%></td>
+                            <td>
+                                <%if (!cancel) {%>
+                                <input class="returnQuantity" name="returnQuantity" value="0" type="number" min="0"
+                                       max="<%=note.quantity%>"/>
+                                <%} else {%>
+                                <span class="returnQuantity"><%=quantity%></span>
+                                <%}%>
+                            </td>
+                            <td class="deleteCell centerCell">
+                                <span title="Delete" class="icon-close5 remove"></span>
+                            </td>
+                        </tr>
+                        <%});%>
+                        <%});%>
+                        </tbody>
+                        <tbody>
+                        <tr>
+                            <td class="">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td class="invisible_border">&nbsp;</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="_formBlock half-block left">
+                <%if (!purchase) {%>
+                <h3 class="fontBold textGrey">Items will be returned to their initial warehouses and locations</h3>
+                <%} else {%>
+                <%if (!cancel) {%>
+                <h3 class="fontBold textGrey">Items will be written-off from warehouse</h3>
+                <%} else {%>
+                <h3 class="fontBold textGrey">To cancel Order you have to write-off maximum available products, that are on Hand in Warehouse from this Purchase</h3>
+                <%}%>
+                <%}%>
+                <!-- <div class="_circleRadioRadianceWrap">
+                     <label for="defaultShipAdress">
+                         Make available for sale in warehouse
+                         <span>Items will be returned to their initial warehouses and locations</span>
+                     </label>
+                     <input id="defaultShipAdress" name="shippingAddress" maxlength="4"  value="0" type="radio"  class="_circleRadioRadiance onlyNumber shippingRadio" checked/>
+                     <label for="defaultShipAdress" class="_circleRadioRadianceLabel"></label>
+                 </div>
+                 <div class="_circleRadioRadianceWrap">
+                     <label for="anotherShipAdress">
+                         Write-off items
+                     </label>
+                     <input id="anotherShipAdress" name="shippingAddress" maxlength="4"  value="1" type="radio"  class="_circleRadioRadiance onlyNumber shippingRadio" />
+                     <label for="anotherShipAdress" class="_circleRadioRadianceLabel"></label>
+                 </div>  -->
+            </div>
+            <div class="_formBlock half-block left">
+                <div class="m-5">
+                    <input id="date" class="_inputBordered " readonly value="<%=model.orderDate%>">
+                </div>
+                <div class="clearfix"></div>
+                <div class="_animateTextareaBox offsetTop">
+                        <textarea id="description"
+                                  class="_animate internal_Notes"
+                                  required
+                                  maxlength="500"></textarea>
+                    <label for="description" class="_animate">Description</label>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

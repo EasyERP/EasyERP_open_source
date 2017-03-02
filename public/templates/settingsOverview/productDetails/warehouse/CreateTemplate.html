@@ -1,0 +1,100 @@
+<div class="form-holder _newForm">
+    <form method="post" action=""  id="invoiceForm">
+        <h4 class="_dialogMainTitle">New <%=title%></h4>
+        <div class="_formWrap _enlargedItemMargin">
+            <div class="_formBlock _equal">
+                <div class="_animateInputBox">
+                    <input type="text"
+                           class="_animate "
+                           id="name"
+                           required
+                           maxlength="48"/>
+                    <label class="_animate">Warehouse Name</label>
+                </div>
+                <div class="_checkboxWrap">
+                    <div class="_checkboxContainer">
+                        <label class="_animatedCheckbox">
+                            <input id="isOwn"
+                                   type="checkbox"
+                                   checked>
+                            <span></span>
+                        </label>
+                        <label for="isOwn">Is Own</label>
+                    </div>
+                    <div class="_checkboxContainer">
+                        <label class="_animatedCheckbox">
+                            <input id="main"
+                                   type="checkbox"
+                                   checked>
+                            <span></span>
+                        </label>
+                        <label for="main">Mark As Main</label>
+                    </div>
+                </div>
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Account</span>
+                    <div class="_newSelectListWrap">
+                        <a id="account"
+                           name="account"
+                           class="current-selected"
+                           href="javascript:;">Select account
+                        </a>
+                    </div>
+                </div>
+                <div class="_animateInputBox">
+                    <input type="text"
+                           name="street"
+                           class="_animate "
+                           id="street"
+                           required
+                           maxlength="60"/>
+                    <label class="_animate">Street</label>
+                </div>
+                <div class="_animateInputBox">
+                    <input type="text"
+                           name="city"
+                           class="_animate "
+                           id="city"
+                           required
+                           maxlength="60"/>
+                    <label class="_animate">City</label>
+                </div>
+            </div>
+            <div class="_formBlock _equal">
+                <div class="_animateInputBox">
+                    <input type="text"
+                           name="state"
+                           class="_animate "
+                           id="state"
+                           required
+                           maxlength="32"/>
+                    <label class="_animate">State</label>
+                </div>
+                <div class="_animateInputBox">
+                    <input type="text"
+                           name="zip"
+                           class="_animate "
+                           id="zip"
+                           required
+                           maxlength="32"/>
+                    <label class="_animate">Zip</label>
+                </div>
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Country</span>
+                    <div class="_newSelectListWrap">
+                        <a id="country"
+                           name="address_country"
+                           class="current-selected"
+                           href="javascript:;">Select country
+                        </a>
+                    </div>
+                </div>
+                <div class="_formBlock _equal">
+                    <div class="checkText">
+                        <span>If you mark this warehouse as main then it will overwrite the existing one</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,49 @@
+<div class="_acountingTableWrap">
+    <div class="_tableWrap _tableChartList">
+        <table class="list stripedList">
+            <colgroup>
+                <col width="20%"/>
+                <col width="20%"/>
+                <col width="10%"/>
+                <col width="10%"/>
+                <col width="10%"/>
+                <col width="10%"/>
+                <col width="10%"/>
+            </colgroup>
+            <thead>
+            <tr class="forToggle">
+                <th>Product</th>
+                <th>SKU</th>
+                <th>Taxes</th>
+                <th>Gross sales</th>
+                <th>Gross sales Percent</th>
+                <th>Units Sold</th>
+                <th>Units Percent</th>
+            </tr>
+            </thead>
+            <tbody class="forToggle" id="taxTable">
+            <% collection.forEach(function(elem, index){ %>
+
+            <tr data-id="<%=elem._id%>">
+                <td><a href='<%= '/#easyErp/Products/tform/' + elem._id %>'><%=elem.product%></a></td>
+                <td><%=elem.sku%></td>
+                <td><span class="money"><%=currencySplitter((elem.taxes / 100).toFixed(2))%></span></td>
+                <td><span class="money"><%=currencySplitter((elem.total / 100).toFixed(2))%></span></td>
+                <td><%=currencySplitter(elem.productPercentSales.toFixed(2))%> %</td>
+                <td><%=elem.units%></td>
+                <td><%=currencySplitter(elem.productPercentUnits.toFixed(2))%> %</td>
+            </tr>
+
+            <% }) %>
+            </tbody>
+            <tfoot>
+            <%var firstEl = collection.length ? collection[0] : {};%>
+            <td colspan="3">Total</td>
+            <td><%=currencySplitter(((firstEl.totalSold || 0) / 100).toFixed(2))%></td>
+            <td>100 %</td>
+            <td><%=firstEl.totalUnits || 0%></td>
+            <td>100 %</td>
+            </tfoot>
+        </table>
+    </div>
+</div>

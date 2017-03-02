@@ -1,0 +1,53 @@
+<div class="form-holder _newForm">
+    <h4 class="_dialogMainTitle">Edit Rate</h4>
+    <div class="_formWrap">
+        <div class="_formBlock _equal">
+            <div class="_animateInputBox">
+                <span class="_staticLabel">Close Date</span>
+                <span class="_staticInfo" id="date"><%=model.date%></span>
+            </div>
+        </div>
+        <div class="_formBlock _equal">
+            <a href="javascript:;" id="createRate" class="btn slim blue icon-plus">New</a>
+        </div>
+    </div>
+    <div class="_formWrap">
+        <div class="_formBlock _equal">
+            <table class="stripedList" id="ratesTable">
+                <colgroup>
+                    <col width="40%"/>
+                    <col width="40%"/>
+                    <col width="20%"/>
+                    <col width="40px"/>
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>Currency From</th>
+                    <th>Currency To</th>
+                    <th>Rate</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody class="forToggle" id="currencyTable">
+                <%var rates = model.rates;%>
+
+                <%Object.keys(rates).forEach(function (currencyFrom){%>
+                <%Object.keys(rates[currencyFrom]).forEach(function (currencyTo){%>
+                <tr>
+                    <td class="from" data-content="currency"><%=currencyFrom%></td>
+                    <td class="to" data-content="currency"><%=currencyTo%></td>
+                    <td class="rate editable" data-type="input"><%=rates[currencyFrom][currencyTo]%></td>
+                    <td>
+                        <a href="javascript:;" class="icon-trash goToRemove _actionCircleBtn" aria-hidden="true"></a>
+                    </td>
+                </tr>
+                <%});%>
+                <%});%>
+                </tbody>
+                <tbody class="forToggle"  id="create">
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

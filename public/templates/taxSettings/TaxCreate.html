@@ -1,0 +1,38 @@
+<div class="form-holder _dialogWrap _taxBoxWrp">
+    <div class="_dialogMainTitle">Create Tax</div>
+
+    <div class="half-block left">
+        <div class="_dialogBlock ">
+            <div class="_dialogRow">Code</div>
+            <div class="_dialogRow"><input id="code" maxlength="3"/></div>
+            <div class="_dialogRow">Name</div>
+            <div class="_dialogRow"><input id="name" maxlength="16"/></div>
+            <div class="_dialogRow">Rate</div>
+            <div class="_dialogRow"><input id="rate" class="forNum" maxlength="5" value="0"/><span
+                    class="fontSemiBold">%</span></div>
+            <div class="_dialogRow">Country</div>
+            <div class="_dialogRow check_wrap">
+                <a class="current-selected" id="country" href="javascript:;">Select</a>
+            </div>
+            <div class="_dialogRow">
+                <label for="default">
+                    <label class="_customCHeckbox flex">
+                        <input id="default" class="checkbox" type="checkbox"/>
+                        <span></span>
+                        <span>Set As Default</span>
+                    </label>
+                    <!--<span>Set As Default</span>-->
+                </label>
+            </div>
+
+        </div>
+
+    </div>
+    <div class="half-block right _taxCommentWrp">
+        <div class="_dialogBlock">
+            <span> Tax codes (eg "T" or "N") are used across EasyErp for sales, products and accounting.
+            Please, enter Rate in range from 0.01% up to 100%.
+        </span>
+        </div>
+    </div>
+</div>

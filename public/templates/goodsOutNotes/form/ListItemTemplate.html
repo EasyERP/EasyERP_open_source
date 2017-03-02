@@ -1,0 +1,34 @@
+<table id="listTable">
+    <% collection.forEach(function(item, index){ %>
+
+    <tr class="compactView" data-id="<%=item._id%>">
+        <td class="checkboxRow">
+            <label class="_customCHeckbox">
+                <input type="checkbox" value="<%=item._id%>" class="checkbox" />
+              <!--  <% if (item.order && item.order.project) { %>
+                class="checkbox"
+                <% } else {%>
+                class="checkbox notRemovable" disabled='disabled'
+                <% } %>
+                />-->
+                <span></span>
+            </label>
+        </td>
+        <td>
+            <div class="compactRowWrap">
+                <div class="compactRow">
+                    <div class="supplier firstName"><%=item.customer ? item.customer.name : ''%></div>
+                </div>
+
+                <div class="compactRow">
+                    <div class="supplier firstName"><%=item.name%></div>
+                </div>
+                <div class="compactRow">
+                    <div class="date"><%= item.date || '' %></div>
+                </div>
+        <td></td>
+            </div>
+        </td>
+    </tr>
+    <% }) %>
+</table>

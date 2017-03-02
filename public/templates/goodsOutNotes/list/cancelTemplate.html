@@ -1,0 +1,15 @@
+<tr data-id="<%=model._id%>">
+    <td class="notForm"><input type="checkbox" value="<%=model._id%>" class="checkbox"/></td>
+    <td><%=model.startNumber%></td>
+    <td><%=(model && model.assigned) ? model.assigned.name.first + ' ' + model.assigned.name.last : ''%></td>
+    <td><%=(model.supplier && model.supplier.name) ? model.supplier.name.first + ' ' + model.supplier.name.last : ''
+        %>
+    </td>
+    <td><%=model.invoice ? model.invoice.name : ''%></td>
+    <td><%=(model.paymentMethod) ? model.paymentMethod.name : ''%></td>
+    </td>
+
+    <td data-type="dtPicker" class="editable date" data-content="date">
+        <%=model.date%>
+    </td>
+</tr>

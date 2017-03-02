@@ -1,0 +1,17 @@
+<ul class="content">
+</ul>
+<div id="forInfo" class="accounting _accountingWrap">
+    <div class="_acountingListWrap">
+        <ul class="acountingList-js _acountingList">
+            <% data.forEach(function(wId, index){ %>
+            <li data-id="<%=wId._id%>" class="_acountingListItem">
+                <a href="javascript:;" data-id="<%=wId._id%>" class="workflow"><%=wId.name%></a>
+            </li>
+            <% }) %>
+        </ul>
+    </div>
+    <div id="tax-holder" class="tabs"></div>
+    <div id="default-holder" class="tabs hidden"></div>
+</div>
+<div class="clearfix"></div>
+

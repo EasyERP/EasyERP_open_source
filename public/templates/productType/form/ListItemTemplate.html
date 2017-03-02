@@ -1,0 +1,15 @@
+<table id="listTable">
+    <% productTypes.forEach(function(productType, index){ %>
+    <tr class="compactView" data-id="<%=productType._id%>">
+        <td class="checkboxRow">
+            <label class="_customCHeckbox">
+                <input type="checkbox" value="<%= productType._id %>" class="checkbox"/>
+                <span></span>
+            </label>
+        </td>
+        <td>
+            <%= productType.name %>
+        </td>
+    </tr>
+    <% }); %>
+</table>

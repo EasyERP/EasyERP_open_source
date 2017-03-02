@@ -1,0 +1,13 @@
+    <div class="_overviewPanelWrap">
+        <%data.forEach(function (el){%>
+        <a href="javascript:;" class="_overviewPanelLink">
+            <div id="<%=el._id%>" class="_overviewPanel mainSettings">
+                <div class="_overviewImg"></div>
+                <div class="_overviewTitle"><span><%=el.name%></span></div>
+                <div class="_overviewDesc"></div>
+            </div>
+        </a>
+        <% })%>
+    </div>
+
+

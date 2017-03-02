@@ -1,0 +1,110 @@
+<div class="form-holder _newForm _ordersDialog">
+    <form method="post" action="" id="createPersonsForm">
+        <h4 class="_dialogMainTitle">Add New Order</h4>
+        <div class="_formWrap">
+            <div class="_formBlock _equal">
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Status</span>
+                    <div class="_newSelectListWrap">
+                        <a id="workflowsDd"
+                           class="current-selected"
+                           href="javascript:;">Select status
+                        </a>
+                    </div>
+                </div>
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Customer</span>
+                    <div class="_newSelectListWrap">
+                        <%if (!project) {%>
+                        <a id="customerDd" class="current-selected" href="javascript:;">Select customer</a>
+                        <%} else {%>
+                        <span id="customerDd" class="_staticInfo">Select</span>
+                        <%}%>
+                    </div>
+                </div>
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Bank Account</span>
+                    <div class="_newSelectListWrap">
+                        <a id="paymentMethod"
+                           class="current-selected"
+                           href="javascript:;">Select bank account</a>
+
+                    </div>
+                </div>
+            </div>
+            <div class="_formBlock _equal">
+                <div class="_animateInputBox">
+                    <span class="_staticLabel">Order Date</span>
+                    <input type="text"
+                           name="orderDate"
+                           class="_animate "
+                           id="orderDate"
+                           required
+                           readonly
+                           value=""
+                           maxlength="48"/>
+                </div>
+                <div class="_animateInputBox">
+                    <span class="_staticLabel">Payment Due</span>
+                    <input type="text"
+                           class="_animate "
+                           id="expectDate"
+                           required
+                           readonly/>
+                </div>
+                <%if (!project) {%>
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Price List</span>
+                    <div class="_newSelectListWrap">
+                        <a id="priceList"
+                           data-id=""
+                           class="current-selected"
+                           href="javascript:;">Select price list
+                        </a>
+                    </div>
+                </div>
+                <% } %>
+            </div>
+            <div class="_formBlock _equal">
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Warehouse</span>
+                    <div class="_newSelectListWrap">
+                        <a id="warehouseDd"
+                           data-id=""
+                           class="current-selected"
+                           href="javascript:;">Select warehouse
+                        </a>
+                    </div>
+                </div>
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Currency</span>
+                    <div class="_newSelectListWrap">
+                        <a id="currencyDd"
+                           data-id=""
+                           class="current-selected"
+                           href="javascript:;">Select currency
+                        </a>
+                    </div>
+                </div>
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Assigned To</span>
+                    <div class="_newSelectListWrap">
+                        <a id="assignedTo"
+                           data-id=""
+                           class="current-selected"
+                           href="javascript:;">Select Assignee
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="_formWrap">
+            <div class="_formBlock">
+<!--
+                <span class="btn blue slim _resetPriceBtn" id="resetPrices">Reset Prices</span>
+-->
+                <div id="productItemsHolder"></div>
+            </div>
+        </div>
+    </form>
+</div>

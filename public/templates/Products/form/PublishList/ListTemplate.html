@@ -1,0 +1,25 @@
+<%collection.forEach(function (channel){
+var published = product.channels.find(function(el){
+return el._id === channel._id;
+});
+%>
+<tr id="<%=channel._id%>">
+    <td>
+        <div class="channelImg <%= channel.type || ''%>" data-content="channelImage"></div>
+    </td>
+    <td>
+        <%= channel.channelName || ''%>
+    </td>
+    <td>
+        <span class="<%= published ? 'icon-checked2 green transparented' : 'icon-close3 red transparented'%>"></span>
+    </td>
+    <td>
+        <% if(published){ %>
+        <a href="javascript:;" class="unpublish">Unpublish from <%= channel.channelName%></a>
+        <% } else {%>
+        <a href="javascript:;" class="publish">Publish to <%= channel.channelName%></a>
+        <%}%>
+    </td>
+</tr>
+
+<%})%>

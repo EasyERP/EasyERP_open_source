@@ -1,0 +1,10 @@
+<% collection.forEach(function(elem,index){ %>
+    <tr data-id="<%=elem._id%>">
+        <td><%=elem.name%></td>
+        <td><%=elem.sku%></td>
+        <td><%=elem.onHand%></td>
+        <td><%=elem.minStockLevel%></td>
+        <td><%=elem.amtLow%></td>
+        <td><%=elem.awaiting%></td>
+    </tr>
+<% }) %>

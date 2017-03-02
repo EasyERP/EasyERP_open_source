@@ -1,0 +1,80 @@
+.pageWrapper {
+
+  .flex {
+
+    .addProduct {
+
+      a {
+        position: fixed;
+        top: 47px;
+        left: 446px;
+      }
+    }
+  }
+
+  &.collapsed {
+
+    .flex {
+
+      .addProduct {
+
+        a {
+          left: 286px;
+        }
+      }
+    }
+
+    .sideMenu {
+      > .mCustomScrollBox {
+        > .mCSB_scrollTools {
+          display: none !important;
+        }
+      }
+    }
+  }
+}
+
+.sideMenu {
+  .mCSB_inside > .mCSB_container {
+    margin-right: 0;
+  }
+}
+
+#companyList {
+  > ul {
+    &:empty {
+      display: none;
+    }
+  }
+}
+
+._formBlock {
+  ._addFormulaBtn {
+    margin-top: 10px;
+  }
+}
+
+#editedVariants {
+  margin-bottom: 20px;
+}
+
+.ui-dialog .dialog-tabs-items .dialog-tabs-item ._popupAttachments .formTitle {
+  margin-top: 0;
+}
+
+._resetPriceBtn {
+  margin: 5px 0;
+}
+
+._stockCorrectionForm {
+  ._animateInputBox._fixedWidth {
+    width: 202px;
+  }
+}
+
+._editWarehouse {
+
+  ._formWrap {
+    padding-bottom: 0;
+  }
+}

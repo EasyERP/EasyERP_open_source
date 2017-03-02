@@ -1,0 +1,70 @@
+<div class="_newForm">
+    <% if(word){ %>
+    <h3 id="publishChannel" class="_dialogMainTitle">View <%= word%> listings for:</h3>
+    <%}%>
+    <div class="_formWrap">
+        <% if(channel) {%>
+        <div class="_formBlock _equal">
+
+            <div class="_productChannel">
+                <div class="_channelInfo">
+                    <span class="_channel">Channel:</span>
+                    <span class="_channelName"><%= channel.channelName || ''%></span>
+                </div>
+                <div class="channelImg <%= channel.type || ''%>" data-content="channelImage"></div>
+            </div>
+
+        </div>
+        <% } else {%>
+        <div class="_formBlock _equal">
+            <div class="_animateSelectBox">
+                <span class="_selectTitle">Only Connected Channel</span>
+                <div class="_newSelectListWrap">
+                    <a id="channel"
+                       class="current-selected"
+                       href="javascript:;">
+                        Select Connected Channel
+                    </a>
+                </div>
+            </div>
+        </div>
+        <% } %>
+
+        <% if(action === 'publish' || action === 'singlePublish'){%>
+        <div class="_formBlock _equal">
+            <div class="_animateSelectBox">
+                <span class="_selectTitle">Price List</span>
+                <div class="_newSelectListWrap">
+                    <a id="priceList"
+                       class="current-selected"
+                       href="javascript:;">
+                        Select Price List
+                    </a>
+                </div>
+            </div>
+            <div class="<%= channel && channel.type === 'etsy' ? '' : 'hidden'%>" id="forShipping">
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Shipping Profile</span>
+                    <div class="_newSelectListWrap">
+                        <a id="shippingTemps"
+                           class="current-selected"
+                           href="javascript:;">Select shipping profile
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <a id="reloadShipTemps"
+                       class="btn"
+                       target="_blank"
+                       href="javascript:;">Reload
+                    </a>
+                    <a class="icon-plus"
+                       target="_blank"
+                       href="https://www.etsy.com/your/shops/TestersCrafts/tools/shipping-profiles/create">
+                    </a>
+                </div>
+            </div>
+        </div>
+        <%}%>
+    </div>
+</div>

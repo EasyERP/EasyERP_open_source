@@ -1,0 +1,22 @@
+<div class="form-holder _newForm _stockCorrectionForm">
+    <form method="post" id="stockCorrection">
+        <h4 class="_dialogMainTitle">Goods-Out for order <span id="name">#<span class="blue"><%=model.name%></span></span></h4>
+        <div class="_formWrap">
+            <div class="_formBlock">
+                <div class="_animateInputBox _fixedWidth">
+                    <label for="date" class="_staticLabel">Date</label>
+                    <input class="_animate"
+                           id="date"
+                           readonly
+                           required/>
+                </div>
+            </div>
+            <div class="_formBlock">
+                <div id="productItemsHolder" class="_SkuItemsHolder"></div>
+            </div>
+            <div class="_formBlock">
+                <div id="goodsHolder" class="_goodsHolder"></div>
+            </div>
+        </div>
+    </form>
+</div>

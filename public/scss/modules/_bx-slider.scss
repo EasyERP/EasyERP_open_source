@@ -1,0 +1,266 @@
+/** VARIABLES 
+===================================*/
+$controls: 'images/controls.png';
+
+/** RESET AND LAYOUT
+===================================*/
+
+._sliderWrap {
+  padding: 0 22px;
+}
+
+.bx-wrapper {
+  position: relative;
+  margin: 0 ;
+  padding: 0;
+  *zoom: 1;
+  -ms-touch-action: pan-y;
+  touch-action: pan-y;
+  img {
+    max-width: 100%;
+    display: block;
+  }
+}
+
+.bx-wrapper {
+
+  &:hover {
+
+    .imageButtonsBlock {
+      opacity: 1;
+      visibility: visible;
+      transition: all .2s ease-in-out .2s;
+    }
+  }
+}
+
+.bxslider {
+  margin: 0;
+  padding: 0;
+
+  .imageButtonsBlock {
+    position: absolute;
+    display: flex;
+    width: 100%;
+    top: 0;
+    left: calc(50% - 200px);
+    opacity: 0;
+    visibility: hidden;
+    transition: all .1s ease-in-out;
+
+    [class^="icon-"],
+    [class*=" icon-"] {
+      padding: 10px;
+      background-color: #fff;
+
+      &:hover {
+        &:before {
+          color: #7eadcc;
+        }
+      }
+
+      &:before {
+        cursor: pointer;
+        transition: all .2s ease;
+        @include rem('font-size', 28px)
+      }
+
+    }
+  }
+}
+
+ul.bxslider {
+  list-style: none;
+}
+
+.bx-viewport {
+  -webkit-transform: translatez(0);
+}
+
+/** THEME
+===================================*/
+
+.bx-wrapper {
+  box-shadow: none;
+  border:  none;
+  background: #fff;
+
+  .bx-pager,
+  .bx-controls-auto {
+    position: absolute;
+    bottom: -30px;
+    width: 100%;
+  }
+}
+
+/* LOADER */
+.bx-wrapper .bx-loading {
+  min-height: 50px;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2000;
+}
+
+/* PAGER */
+.bx-wrapper {
+  .bx-pager {
+    text-align: center;
+    font-size: .85em;
+    font-family: Arial;
+    font-weight: bold;
+    color: #666;
+    padding-top: 20px;
+    &.bx-default-pager a {
+      background: #666;
+      text-indent: -9999px;
+      display: block;
+      width: 10px;
+      height: 10px;
+      margin: 0 5px;
+      outline: 0;
+      -moz-border-radius: 5px;
+      -webkit-border-radius: 5px;
+      border-radius: 5px;
+      &:hover,
+      &.active,
+      &:focus {
+        background: #000;
+      }
+    }
+  }
+  .bx-pager-item,
+  .bx-controls-auto .bx-controls-auto-item {
+    display: inline-block;
+    *zoom: 1;
+    *display: inline;
+  }
+  .bx-pager-item {
+    font-size: 0;
+    line-height: 0;
+  }
+}
+
+
+/* AUTO CONTROLS (START / STOP) */
+.bx-wrapper .bx-controls-auto {
+  text-align: center;
+  .bx-start {
+    display: block;
+    text-indent: -9999px;
+    width: 10px;
+    height: 11px;
+    outline: 0;
+    background: url($controls) -86px -11px no-repeat;
+    margin: 0 3px;
+    &:hover,
+    &.active,
+    &:focus {
+      background-position: -86px 0;
+    }
+  }
+  .bx-stop {
+    display: block;
+    text-indent: -9999px;
+    width: 9px;
+    height: 11px;
+    outline: 0;
+    background: url($controls) -86px -44px no-repeat;
+    margin: 0 3px;
+
+    &:hover,
+    &.active,
+    &:focus {
+      background-position: -86px -33px;
+    }
+  }
+}
+
+._productSliderThumbnails {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 10px;
+
+  > a {
+    padding: 2px;
+    width: 100px;
+    height: 100px;
+    opacity: .5;
+    border: 2px solid transparent;
+    text-align: center;
+
+    &.active {
+      opacity: 1;
+      border-color: #7eadcc;
+    }
+
+    img {
+      width: auto;
+      max-width: 100%;
+      height: auto;
+      min-height: 100%;
+      max-height: 100%;
+    }
+  }
+}
+
+._productSlider {
+
+  .bx-viewport {
+    width: 400px !important;
+    height: 400px;
+    margin: 0 auto;
+  }
+
+  .bxslider {
+    height: 400px;
+
+    li {
+      height: 100%;
+      display: flex;
+      justify-content: center;
+
+      img {
+        width: auto;
+        max-width: 100%;
+        height: auto;
+        min-height: 100%;
+        max-height: 100%;
+      }
+    }
+  }
+}
+
+/* PAGER WITH AUTO-CONTROLS HYBRID LAYOUT */
+.bx-wrapper {
+  .bx-controls.bx-has-controls-auto.bx-has-pager {
+    .bx-pager {
+      text-align: left;
+      width: 80%;
+    }
+    .bx-controls-auto {
+      right: 0;
+      width: 35px;
+    }
+  }
+}
+
+/* IMAGE CAPTIONS */
+.bx-wrapper .bx-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background: #666;
+  background: rgba(80, 80, 80, 0.75);
+  width: 100%;
+  span {
+    color: #fff;
+    font-family: Arial;
+    display: block;
+    font-size: .85em;
+    padding: 10px;
+  }
+}

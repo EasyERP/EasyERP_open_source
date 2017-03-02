@@ -1,0 +1,52 @@
+<div class="form-holder _newForm">
+    <form class="notDialog _productTypes" id="leadForm" data-id="<%=model._id%>">
+        <h4 class="_dialogMainTitle">Edit Product Type</h4>
+        <div class="_formWrap _enlargedItemMargin">
+            <div class="_formBlock">
+                <div class="_animateInputBox">
+                    <input type="text"
+                           class="_animate "
+                           id="name"
+                           required
+                           autofocus
+                           value="<%=model.name%>"
+                           maxlength="32"/>
+                    <label class="_animate">Product Type</label>
+                </div>
+                <%if (model.options && model.options.length) {%>
+                <p class="_productOptionsTitle">Please link Product Options to this Product type</p>
+                <%}%>
+                <div class="productOptions" id="productOptions" data-id="<%= model._id %>">
+                    <div class="row">
+                        <% _.forEach(model.options, function(item, key) { %>
+                        <div class="col m-6">
+                            <label class="_customCHeckbox">
+                                <input data-id="<%= item._id %>"
+                                       checked
+                                <%=model.countProducts ? "disabled" : ''%>
+                                type="checkbox"
+                                value="<%= item.name %>">
+                                <span><%= item.name %></span>
+                            </label>
+                            <label><%= item.value %></label>
+                        </div>
+                        <% }) %>
+
+                        <% _.forEach(options, function(item, key) { %>
+                        <div class="col m-6">
+                            <label class="_customCHeckbox">
+                                <input data-id="<%= item._id %>"
+                                       type="checkbox"
+                                       value="<%= item.name %>">
+                                <span><%= item.name %></span>
+                            </label>
+                            <label><%= item.value %></label>
+                        </div>
+                        <% }) %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+

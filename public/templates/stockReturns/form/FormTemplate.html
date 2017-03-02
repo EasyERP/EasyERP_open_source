@@ -1,0 +1,40 @@
+<div class="form-holder">
+    <form method="post" action="" class="form" id="goodsNote">
+        <fieldset>
+            <div class="inner">
+                <div class="_goodOutWrap">
+                    <div class="topPanel">
+                        <h2>Stock Returns <span id="name">#<a class="blue" href="javascript:;"><%=model.name%></a></span>
+                        </h2>
+                        <dl class="opp-info">
+                            <dt class="fontBold"><label>Received By:  </label></dt>
+                            <dd class="_newSelectListWrap">
+                                <span href="javascript:;"><%=model.status && model.status.receivedById ?  model.status.receivedById.login : '___'%></span>
+                            </dd>
+                            <dt class="fontBold"><label>Date:  </label></dt>
+                            <dd class="_newSelectListWrap">
+                                <%if (model.status.receivedOn) {%>
+                                <span id="date"><%=model.date || ''%></span>
+                                <%} else {%>
+                                <input id="date" class="_inputBordered " readonly/>
+                                <%}%>
+                            </dd>
+                            <dt class="fontBold"><label>Description:  </label></dt>
+                            <dd class="_newSelectListWrap">
+                                <span href="javascript:;"><%=model.description ||  '___'%></span>
+                            </dd>
+                        </dl>
+                        <div class="right">
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+
+                <div id="templateDiv">
+
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </fieldset>
+    </form>
+</div>

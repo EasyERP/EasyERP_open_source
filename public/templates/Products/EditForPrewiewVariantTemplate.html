@@ -1,0 +1,52 @@
+<% if (changedProductType && changedProductType.opts && changedProductType.opts.length) { %>
+<% var optionsArray = Object.keys(checkedObj); %>
+<% var index; %>
+<% _.each(changedProductType.opts, function (option) { %>
+<% index = optionsArray.indexOf(option._id) %>
+<% if ((option._id) && (index >= 0 || !optionsArray.length)) { %>
+<div class="editPanel _prodOptPanel">
+    <div class="_mainCheckbox">
+        <label class="_animatedCheckbox">
+            <input class="optionsForVariants"
+                   id="<%= option._id %>"
+            <% if (optionsArray.length) { %> checked disabled <% } %> data-id="<%= option._id %>" type="checkbox" value="<%= option.name %>">
+            <span></span>
+        </label>
+        <label class="fontBold" for="<%= option._id %>"><%= option.name %></label>
+    </div>
+    <div class="_prodOptCheckWrap">
+        <% _.each(option.values, function (value) { %>
+        <label class="_prodOptCheckItem" data-id="<%= value._id %>">
+            <label class="_customCHeckbox">
+                <input class="optionValue" <% if (optionsArray.length && checkedObj && checkedObj[option._id] && checkedObj[option._id].indexOf(value._id) >= 0) {%>
+                checked disabled
+                <% } %>
+
+                <% if (!checkedObj[option._id]){%>
+                disabled
+                <% } %>
+                data-id="<%= value._id %>" type="checkbox" value="<%= value.value%>"
+                />
+                <span></span>
+            </label>
+            <span class="_checklabel"><%= value.value %></span>
+        </label>
+        <% }) %>
+    </div>
+
+    <%if (!option.values.length) {%>
+    <%if (!option._id) {%>
+    <!--<%var link = "#easyErp/productsSettings";%>
+    Create Product Options for this Product Type first, please. Go To <a href="<%=link%>">Product Options</a>!-->
+    <% } else {%>
+    <%var link = "#easyErp/productsSettings";%>
+    Create Options Values first, please. Go To <a href="<%=link%>">Product Options</a>!
+    <%}%>
+    <%}%>
+</div>
+<% } %>
+<% }) %>
+<% } %>
+<div>
+    <button id="createVariants" class="createVariants btn blue">Create Variants</button>
+</div>

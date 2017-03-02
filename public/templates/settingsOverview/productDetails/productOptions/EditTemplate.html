@@ -1,0 +1,61 @@
+<div class="form-holder _newForm">
+    <form id="leadForm" data-id="<%=model._id%>">
+        <h4 class="_dialogMainTitle">Edit product option</h4>
+        <div class="_formWrap">
+            <div class="_formBlock _equal">
+                <div class="person-info">
+                    <div class="_animateInputBox propertyFormList">
+                        <div class="inputBox">
+                            <input type="text"
+                                   class="_animate  editable"
+                                   id="name"
+                                   value="<%=model.name%>"
+                                   required/>
+                            <label class="_animate">Name</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="_editPanel">
+                    <p class="fontSemiBold">Please check product types which you want to link this product option to. You can't uncheck them if there are some products linked to this product optional.</p>
+                    <div id="productTypes" data-id="<%= model._id %>">
+                        <% _.forEach(productTypes, function(item, key) { %>
+                        <label class="_labelWrap">
+                            <label class="_customCHeckbox">
+                                <input data-id="<%= item._id %>"
+                                       type="checkbox" <%= (checkedPrTypes.indexOf(item._id) >= 0) ?
+                                'checked' : '' %> value="<%= item.name %>">
+                                <span></span>
+                            </label>
+                            <span><%= item.name %></span>
+                        </label>
+                        <% }) %>
+                    </div>
+                </div>
+            </div>
+
+            <div class="_formBlock _equal">
+                <div id="optionsValuesData">
+                    <%if (values.length) {%>
+                    <div class="_editPanel">
+                        <% _.each(values, function (item) { %>
+                        <div class="valueItem"
+                             data-id="<%= item._id %>">
+                            <span class="_valueItem">
+                                <%= item.value %>
+                            </span>
+                            <span class="deleteValue icon-trash _circleIconBtn"></span>
+                        </div>
+                        <% }) %>
+                    </div>
+                    <% } else {%>
+                    <div class="_editPanel">No Option Values found</div>
+                    <%}%>
+                </div>
+                <div id="optionsValues" class="_optionsValues" data-id="<%= model._id %>">
+                    <span id="saveNewOptionsValue" class="btn blue">Save Values</span>
+                    <span id="addNewOptionsValue" class="btn blue">Add New Value</span>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

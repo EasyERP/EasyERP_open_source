@@ -1,0 +1,52 @@
+<div class="_reports-card-wrap">
+    <div class="_reportCardContainer">
+        <div data-type="<%= salesReports.type %>" class="_reportCard">
+            <h3 class="_reportCardTitle mainSettings"
+                id="<%=salesReports._id%>"><%=salesReports.name%></h3>
+            <div class="_reportCardsWrap">
+                <%salesReports.data.forEach(function (el){%>
+                <div id="<%=el._id%>"
+                     data-type="<%= el.type %>"
+                     class="_overviewPanell mainSettings">
+                    <div class="_overviewTitle"><%=el.name%></div>
+                    <div class="_overviewDesc"><%=el.description%></div>
+                </div>
+                <% })%>
+            </div>
+        </div>
+    </div>
+
+    <div class="_reportCardContainer">
+        <div data-type="<%= inventoryReports.type %>" class="_reportCard">
+            <h3 class="_reportCardTitle mainSettings"
+                id="<%=inventoryReports._id%>"><%=inventoryReports.name%></h3>
+            <div class="_reportCardsWrap">
+                <%inventoryReports.data.forEach(function (el){%>
+                <div id="<%=el._id%>"
+                     data-type="<%= el.type %>"
+                     class="_overviewPanell mainSettings">
+                    <div class="_overviewTitle"><%=el.name%></div>
+                    <div class="_overviewDesc"><%=el.description%></div>
+                </div>
+                <% })%>
+            </div>
+        </div>
+    </div>
+
+    <div class="_reportCardContainer">
+        <div data-type="<%= salesReports.type %>" class="_reportCard">
+            <h3 class="_reportCardTitle mainSettings"
+                id="<%=stockInventory._id%>"><%=stockInventory.name%></h3>
+            <div class="_reportCardsWrap">
+                <%stockInventory.data.forEach(function (el){%>
+                <div id="<%=el._id%>"
+                     data-type="<%= el.type %>"
+                     class="_overviewPanell mainSettings">
+                    <div class="_overviewTitle"><%=el.name%></div>
+                    <div class="_overviewDesc"><%=el.description%></div>
+                </div>
+                <% })%>
+            </div>
+        </div>
+    </div>
+</div>

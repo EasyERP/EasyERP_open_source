@@ -1,0 +1,85 @@
+<div class="form-holder _listModalWrap">
+    <form method="post" action="" class="form _warehouseForm" id="invoiceForm">
+        <fieldset>
+            <div class="clearfix"></div>
+            <br>
+            <div class="topInputHolder">
+                <h3 class="">New <%=title%></h3>
+            </div>
+            <div class="clearfix"></div>
+            <div class="_listModal">
+                <div class="half-block left">
+                    <div class="_modalList">
+                        <div class="_modalLabel">
+                            <label>Warehouse Name</label>
+                        </div>
+                        <div class="_modalSelect">
+                            <input id="name" type="text" placeholder="Warehouse Name"/>
+                        </div>
+                    </div>
+                    <div class="_modalList _selectBlock">
+                        <div class="_inputContainer">
+                            <div class="_modalLabel">
+                                <label>Is Own</label>
+                            </div>
+                            <div class="_modalSelect"><input id="isOwn" type="checkbox" checked/></div>
+                        </div>
+                        <div class="_inputContainer">
+                            <div class="_modalLabel">
+                                <label>Mark As Main</label>
+                            </div>
+                            <div class="_modalSelect"><input id="main" type="checkbox"/></div>
+                        </div>
+
+                    </div>
+                    <div class="_modalList">
+                        <div class="_modalLabel"><label for="account">Account</label></div>
+                        <div class="_modalSelect _newSelectListWrap">
+                            <a class="account current-selected" id="account" name="account">Select</a>
+                        </div>
+                    </div>
+                    <div class="_modalList">
+                        <div class="_modalLabel"><label for="street">Street</label></div>
+                        <div class="_modalSelect">
+                            <input type="text" class="address" id="street" name="street" placeholder="Street..."
+                                   maxlength="60"/>
+                        </div>
+                    </div>
+                    <div class="_modalList">
+                        <div class="_modalLabel ">
+                            <label for="city">City</label>
+                        </div>
+                        <div class="_modalSelect">
+                            <input type="text" class="address" id="city" name="city" placeholder="City" maxlength="60"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="half-block left">
+                    <div class="_modalList">
+                        <div class="_modalLabel">
+                            <label for="state">State</label>
+                        </div>
+                        <div class="_modalSelect">
+                            <input type="text" class="address" id="state" name="state" placeholder="State"
+                                   maxlength="32"/>
+                        </div>
+                    </div>
+                    <div class="_modalList">
+                        <div class="_modalLabel">
+                            <label for="zip">Zip</label>
+                        </div>
+                        <div class="_modalSelect">
+                            <input type="text" class="address" id="zip" name="zip" placeholder="ZIP" maxlength="32"/>
+                        </div>
+                    </div>
+                    <div class="_modalList">
+                        <div class="_modalLabel"><label for="country">Country</label></div>
+                        <div class="_modalSelect _newSelectListWrap">
+                            <a class="address current-selected" id="country" name="address_country">Select</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>

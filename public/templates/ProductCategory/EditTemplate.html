@@ -1,0 +1,33 @@
+<div class="form-holder _newForm">
+  <form method="post" id="createDepartmentForm">
+    <h4 class="_dialogTitlePositioned">Edit Product Category</h4>
+    <div class="_formWrap _enlargedItemMargin">
+      <div class="_formBlock">
+        <div class="_animateInputBox">
+          <input type="text"
+                 class="_animate"
+                 name="categoryName"
+                 id="categoryName"
+                 maxlength="32"
+                 placeholder="Category Name"
+                 required
+                 value="<%=model.name%>"/>
+          <label for="categoryName" class="_animate">Department Name</label>
+        </div>
+        <div class="_animateSelectBox">
+          <span class="_selectTitle">Parent Category</span>
+          <div class="_newSelectListWrap">
+            <a id="parentCategory"
+               class="current-selected"
+               href="javascript:;"
+               data-id="<%=(model.parent) ? model.parent._id: ''%>"
+               data-level="<%=model.nestingLevel || ''%>"
+               data-fullname="<%=model.fullName%>">
+              <%=model.parent ? model.parent.name : model.name%>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

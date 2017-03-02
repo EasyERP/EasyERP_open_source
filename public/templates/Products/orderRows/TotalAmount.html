@@ -1,0 +1,130 @@
+<div id="minScheduleDate">
+    <span></span>
+</div>
+<%var curVal;%>
+<%if (model && model.currency && model.currency._id) {%>
+<%curVal = model.currency._id.symbol%>
+<%} else {%>
+<%curVal = "$"%>
+<%}%>
+<%var unTaxed;%>
+<%var taxes;%>
+<%var total;%>
+<%var discount;%>
+<%var balance;%>
+<%var shipping = model && model.sourceDocument ?  model.sourceDocument.shippingExpenses : model && model.shippingExpenses ? model.shippingExpenses : {};%>
+<%var shipAmount = shipping && shipping.amount ? shipping.amount : 0;%>
+<table class="_totalAmountTable">
+    <tbody>
+    <tr>
+        <td>
+            <label>
+                Untaxed Amount
+            </label>
+        </td>
+        <td></td>
+        <%if (model && model.paymentInfo && model.paymentInfo.unTaxed) {%>
+        <%unTaxed = model.paymentInfo.unTaxed - (shipping && shipping.amount ? shipping.amount / 100 : 0);%>
+        <%} else {%>
+        <%unTaxed = 0.00%>
+        <%}%>
+        <td>
+            <span class="currencySymbol"><%=curVal %></span>
+            <span id="totalUntaxes"><%=currencySplitter(unTaxed.toFixed(2))%></span>
+        </td>
+    </tr>
+    <td>
+        <label>Shipping</label>
+    </td>
+    <td></td>
+    <td>
+        <span class="currencySymbol"><%=curVal%></span>
+        <span id="shippingExpenses"><%=currencySplitter((shipAmount / 100).toFixed(2))%></span>
+    </td>
+    <tr class="taxes">
+        <td>
+            <label>Taxes</label>
+        </td>
+        <td></td>
+        <%if (model && model.paymentInfo && model.paymentInfo.taxes) {%>
+        <%taxed = model.paymentInfo.taxes%>
+        <%} else {%>
+        <%taxed = "0.00"%>
+        <%}%>
+        <td>
+            <span class="currencySymbol"><%=curVal %></span>
+            <span id="taxes"><%=currencySplitter(taxed)%></span>
+        </td>
+    </tr>
+    <%if (discountVisible) {%>
+    <tr class="discount">
+        <%if (model && model.paymentInfo && model.paymentInfo.discount) {%>
+        <%discount = model.paymentInfo.discount / 100%>
+        <%} else {%>
+        <%discount = "0.00"%>
+        <%}%>
+        <%if (model && model.paymentInfo && model.paymentInfo.unTaxed && model.paymentInfo.discount) {%>
+        <%unTaxed = '-'+discount.toFixed(2)%>
+        <%} else {%>
+        <%unTaxed = "0.00"%>
+        <%}%>
+        <td class="discount-wrap">
+            <label>Discount</label>
+        </td>
+        <td>
+            <input class="percentage _inputBordered forNum discountPercentage" maxlength="5" id="discount" <%= notEditable? 'disabled' : '' %>
+                   value="<%=discount%>" <%= model && (model.approved || (model.workflow && model.workflow.status ===
+            'Done') ) ? 'readonly' : ''%> \>
+        </td>
+        <td>
+            <span class="currencySymbol"><%=curVal %></span>
+            <span id="discountSum"><%=currencySplitter(unTaxed)%></span>
+        </td>
+    </tr>
+    <%}%>
+    <tr class="totalAmount _markedRow">
+        <td>
+            <label class="" data-original-title="" title="">Total</label>
+        </td>
+        <td></td>
+        <%if (model && model.paymentInfo && model.paymentInfo.total) {%>
+        <%total = model.paymentInfo.total%>
+        <%} else {%>
+        <%total = "0.00"%>
+        <%}%>
+        <td>
+            <span class="currencySymbol"><%=curVal %></span>
+            <span id="totalAmount"><%=currencySplitter(total)%></span>
+        </td>
+    </tr>
+    <%if (balanceVisible) {%>
+    <tr class="balance _markedRow">
+        <td>
+            <label>Balance</label>
+        </td>
+        <td></td>
+        <%if (model && model.paymentInfo && model.paymentInfo.balance) {%>
+        <%balance = model.paymentInfo.balance%>
+        <%} else {%>
+        <%balance = "0.00"%>
+        <%}%>
+        <td>
+            <span class="currencySymbol"><%=curVal %></span>
+            <span id="balance"><%=currencySplitter(balance)%></span>
+        </td>
+    </tr>
+    <%}%>
+    <%if (model && model.prepayment && model.prepayment.sum) {%>
+    <tr class="prepayment _markedRow">
+        <td>
+            <label>Prepaid</label>
+        </td>
+        <td></td>
+        <td>
+            <span class="currencySymbol"><%=curVal %></span>
+            <span id="prepayment"><%=currencySplitter((model.prepayment.sum / 100).toFixed(2))%></span>
+        </td>
+    </tr>
+    <%}%>
+    </tbody>
+</table>

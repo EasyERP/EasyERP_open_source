@@ -1,0 +1,79 @@
+<div class="_acountingTableWrap">
+    <div class="_acountingTableBlock">
+        <table class="list tableProjects tableFixed _currencyTable">
+            <thead>
+            <%if (collection[1] && collection[1].length){%>
+                <tr class="forToggle">
+                    <th></th>
+                    <% if (collection[3] && collection[3].length) { %>
+                        <th></th>
+                    <% } %>
+                    <%collection[1].forEach(function(elem1){%>
+                        <th colspan="<%=collection[2] ? collection[2].length: ''%>"><%= elem1.name %></th>
+                    <%})%>
+                </tr>
+                <%if (collection[2]  && collection[2].length){%>
+                <tr class="forToggle">
+                    <% if (collection[3] && collection[3].length) { %>
+                        <th></th>
+                    <% } %>
+                    <th></th>
+                    <%collection[1].forEach(function(elem1){%>
+                        <%collection[2].forEach(function(elem2){%>
+                            <th><%= elem2.name %></th>
+                        <%})%>
+                    <%})%>
+                </tr>
+            <%}%>
+            <%}%>
+            </thead>
+            <tbody class="forToggle" id="currencyTable">
+            <%if (collection[0] && collection[0].length){%>
+                <%collection[0].forEach(function(elem3, index1){%>
+
+                    <%if (collection[3] && collection[3].length){%>
+                        <%collection[3].forEach(function(elem0, index2){%>
+                            <tr>
+                                <%if (index2 === 0){%>
+                                    <th  rowspan="<%=collection[3] ? collection[3].length: ''%>"><%= elem3.name %></th>
+                                <%}%>
+                                    <th><%= elem0.name %></th>
+                                <%if (collection[1] && collection[1].length){%>
+                                    <%collection[1].forEach(function(elem1){%>
+                                        <%if (collection[2] && collection[2].length){%>
+                                            <%collection[2].forEach(function(elem2){%>
+                                                <td id="<%=elem0.name + '/' + elem1.name + '/' + elem2.name + '/' + elem3.name %>">&#9989;</td>
+                                            <%})%>
+                                        <% }%>
+                                    <%})%>
+                                <%}%>
+                            </tr>
+                        <%})%>
+                    <% } else { %>
+                        <tr>
+                            <th><%= elem3.name %></th>
+                            <%if (collection[1] && collection[1].length){%>
+                                <%if (collection[2] && collection[2].length){%>
+                                    <%collection[1].forEach(function(elem2){%>
+                                        <%collection[2].forEach(function(elem1){%>
+                                            <td id="<%= elem1.name + '/' + elem2.name + '/' + elem3.name %>">&#9989;</td>
+                                        <%})%>
+                                    <%})%>
+                                <% } else { %>
+                                    <%collection[1].forEach(function(elem2){%>
+                                        <td id="<%= elem2.name + '/' + elem3.name %>">&#9989;</td>
+                                    <%})%>
+                                <%}%>
+                            <%} else { %>
+                                <td id="<%= elem3.name %>">&#9989;</td>
+                            <% } %>
+                        </tr>
+                    <% } %>
+                <%})%>
+            <%}%>
+            </tbody>
+        </table>
+        <button id="saveVariants" class="btn blue">Save Variants</button>
+        <button id="cancelVariants" class="btn blue">Cancel</button>
+    </div>
+</div>

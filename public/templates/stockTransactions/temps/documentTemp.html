@@ -1,0 +1,94 @@
+<%var currencySymb = model.currency && model.currency._id ? model.currency._id.symbol : '$'%>
+<div class="_invoiceTemplate">
+    <div class="extractPdf">
+        <div class="_templateHeader">
+            <% if (App && App.organizationSettings) {%>
+            <div class="_headerLeftPart">
+                <div class="_orgName"><b><%=App.organizationSettings.name%></b></div>
+                <div class="_orgLabel"><%=App.organizationSettings.address.country%></div>
+            </div>
+            <% } %>
+            <div class="_headerRightPart">
+                <div class="_entityBlock">
+                    <div class="_entityTitle">Transaction Note</div>
+                    <div class="_entityNumber"><b><%=model.name || ''%></b></div>
+                </div>
+            </div>
+        </div>
+        <div class="_templateDateBlock">
+            <div class="_rightPart">
+                <table class="_templateDateTable tableFixed">
+                    <colgroup>
+                        <col width="60%">
+                        <col width="40%">
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="_dateLeftPart">
+                            <div class="_billingBlock">
+                                <div class="_billingTitle">Address</div>
+                                <div class="_billingCustomerName"><%=model.warehouseTo ? model.warehouseTo.name : ''%></div>
+                                <div ><%=(model.warehouseTo && model.warehouseTo.address )? model.warehouseTo.address.street :""%></div>
+                                <div ><%=(model.warehouseTo && model.warehouseTo.address )? model.warehouseTo.address.city :""%></div>
+                                <div ><%=(model.warehouseTo && model.warehouseTo.address )? model.warehouseTo.address.state :""%></div>
+                                <div ><%=(model.warehouseTo && model.warehouseTo.address )? model.warehouseTo.address.country :""%></div>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <table class="_templateTable tableFixed">
+            <colgroup>
+                <col width="80px">
+                <col width="30%">
+                <col width="14%">
+                <col width="14%">
+                <col width="13%">
+                <col width="17%">
+                <col width="12%">
+            </colgroup>
+            <thead>
+            <tr>
+                <th>Qty</th>
+                <th>Item name</th>
+                <th>SKU</th>
+                <th class="_shipped">Ship</th>
+                <th class="_shipped">Locations From</th>
+                <th class="_thisShipped">Locations To</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% model.orderRows.forEach(function(row, index){ %>
+            <tr>
+                <td><%=index + 1%></td>
+                <td><span><%=row.product ? row.product.name : '- - -' %></span></td>
+                <td><%=row.product && row.product.info ? row.product.info.SKU : '' %></td>
+                <td class="_shipped"><%=row.quantity || ''%></td>
+                <td class="_shipped">
+                    <%if (row.locationsDeliver && row.locationsDeliver.length){%>
+                    <%row.locationsDeliver.forEach(function(elem){%>
+                    <span><%=elem.name || ''%></span>
+                    <%})} %>
+                </td>
+
+                <td class="_shipped">
+                    <%if (row.locationsReceived && row.locationsReceived.length){%>
+                    <%row.locationsReceived.forEach(function(elem){%>
+                    <span><%=elem.location ? elem.location.name : ''%></span>
+                    <%})
+                    } %>
+                </td>
+            </tr>
+            <% }); %>
+            </tbody>
+        </table>
+    </div>
+
+    <!--<div class="notes">
+        <div class="head">Notes</div>
+        <div>Thanks for your business</div>
+    </div>-->
+
+</div>

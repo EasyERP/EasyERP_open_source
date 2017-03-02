@@ -1,0 +1,47 @@
+<% orderCollection.forEach(function(order, index){ %>
+<% var currency =(order.currency && order.currency._id ? order.currency._id.symbol : '')%>
+
+<tr data-id="<%=order._id%>"
+<%if (order.workflow && order.workflow.status === 'Done') { %>
+class="notEditable"
+<% } %>>
+<td class="notForm centerCell">
+    <label class="_customCHeckbox">
+        <input type="checkbox" value="<%=order._id%>"
+        <% if (!order.removable) { %>
+        class="checkbox notRemovable" disabled='disabled'
+        <% } else {%>
+        class="checkbox"
+        <% } %>
+        />
+        <span></span>
+    </label>
+</td>
+<td><%=order.name%></td>
+<%var allocateStatus = order.status ? order.status.allocateStatus : 'NOT' %>
+<%var fulfillStatus = order.status ? order.status.fulfillStatus : 'NOT' %>
+<%var shippingStatus = order.status ? order.status.shippingStatus : 'NOT' %></td>
+<td><%=(order.supplier && order.supplier.name) ? order.supplier.name : ''%></td>
+<td class="centerCell _statusOrders"><span
+        class="icon-box <%=fulfillStatus === 'NOA' ? 'yellow' : fulfillStatus === 'ALL' ? 'green' : 'red'%> _fullfilled"
+        title=" <%=fulfillStatus === 'NOA' ? 'Partially Received' : fulfillStatus === 'ALL' ? 'Received' : 'Not Received'%>"></span>
+</td>
+<td><%=order.workflow ? order.workflow.name: 'Undefinded'%></td>
+<td class="balance"><%=currency %><% if (order.paymentBalance) { %>
+    <%= currencySplitter((order.paymentBalance / 100).toFixed(2)) %>
+    <% } else { %>
+    0
+    <% } %>
+</td>
+<td class="paid"><%=currency %><% if (order.paymentsPaid) { %>
+    <%= currencySplitter((order.paymentsPaid / 100).toFixed(2)) %>
+    <% } else { %>
+    0
+    <% } %>
+</td>
+<td class="total"><%=currency %><%=(order.paymentInfo) ? currencySplitter(order.paymentInfo.total) : '0.00'%>
+</td>
+
+<td><%=order.orderDate%></td>
+</tr>
+<% }) %>

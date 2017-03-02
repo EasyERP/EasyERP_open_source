@@ -1,0 +1,45 @@
+<table class="list tableProjects tableProform">
+
+    <colgroup span="5">
+        <col width="40%">
+        <col width="15%">
+        <col width="15%">
+        <col width="15%">
+        <col width="15%">
+    </colgroup>
+
+    <thead>
+    <tr>
+        <th colspan="5" class="forCaption">Proformas</th>
+    </tr>
+    <tr>
+        <th>Proforma</th>
+        <th>Status</th>
+        <th>Amount</th>
+        <th>Paid</th>
+        <th>Balance</th>
+    </tr>
+    </thead>
+    <tbody id="proformRevenue">
+    <%var currencyClassVal;%>
+    <%invoceStats.forEach(function(stat){%>
+    <%currencyClassVal = currencyClass(stat.currency._id)%>
+    <tr>
+        <td><%=stat.name%></td>
+        <td><%=stat.status%></td>
+        <td class="<%=currencyClassVal%>"><%=currencySplitter(stat.paymentInfo.ammount.toFixed(2))%></td>
+        <td class="<%=currencyClassVal%>"><%=currencySplitter(stat.paymentInfo.paid.toFixed(2))%></td>
+        <td class="<%=currencyClassVal%>"><%=currencySplitter(stat.paymentInfo.balance.toFixed(2))%></td>
+    </tr>
+    <%})%>
+    </tbody>
+    <tfoot>
+    <tr>
+        <td colspan="2">Total:</td>
+        <td class="dollar"><%=currencySplitter(invoceStat.ammount.toFixed(2))%></td>
+        <td class="dollar"><%=currencySplitter(invoceStat.paid.toFixed(2))%></td>
+        <td class="dollar"><%=currencySplitter(invoceStat.balance.toFixed(2))%></td>
+    </tr>
+
+    </tfoot>
+</table>

@@ -1,0 +1,83 @@
+<div class="form-holder">
+    <fieldset>
+        <div class="inner">
+            <ul class="_btnsBlockFixed">
+                <%var shippingStatus = model.status ? model.status.shippingStatus : 'NOT' %>
+                <%var workflow = model.workflow ? model.workflow._id : null%>
+
+                <li class="right ">
+                    <%if (workflow !== unlinkedWorkflowId) {%>
+                    <%if (shippingStatus !== 'NOT' || model.prepayment.date || model.stockReturns.date) {%>
+                    <a id="viewJournalEntries"
+                       class="icon-edit-list2 _viewEntries btn slim"
+                       href="javascript:;" title="Journal Entries">
+                    </a>
+                    <%}%>
+                    <button id="editButton" class="btn slim" title="Edit">
+                        <span class="icon-pencil2"></span>
+                    </button>
+                    <button id="exportToPdf" class="btn slim" title="Download PDF">
+                        <span class="icon-pdf"></span>
+                    </button>
+                    <button class="btn slim attach_file" id="attachment_file" title="Attach file">
+                        <span class="icon-attach"></span>
+                    </button>
+
+                    <%var classNamePayment = model.workflow && model.workflow.status !== 'Done' ? 'activeItem' :
+                    'passiveItem';%>
+                    <%var classNameRefund = model.prepayment && model.prepayment.sum ? 'activeItem' : 'passiveItem';%>
+                    <%if (model.workflow.status !== 'Done' && model.workflow.status !== 'Cancelled') {%>
+                <li class="right fullfillOrderWrap">
+                    <a class="btn slim fullfillOrder" href="javascript:;">
+                        <span>Payments</span>
+                    </a>
+                    <ul>
+                        <li class="<%=classNamePayment%> prepay">
+                            <a <!--class="prepay"--><span class="fontBold">Create prepayment</span></a>
+                        </li>
+                        <li class="<%=classNameRefund%> refund">
+                            <a <!--class="refund"--><span class="fontBold">Refund</span></a>
+                        </li>
+                    </ul>
+                </li>
+                <%}%>
+                <%if(model.workflow && model.workflow.status !== 'Done'){%>
+                <%if(model.workflow && model.workflow.status !== 'Cancelled'){%>
+                <button class="btn slim editButton" title="Go To Edit">
+                    <span>Go to Edit to Receive Invoice</span>
+                </button>
+                <%}%>
+                <%}%>
+                <%} else {%>
+                <% var filter = {order: {key: 'fields.order', value: [model._id]}};%>
+                <% var href = '#easyErp/integrationUnlinkedProducts/list/filter=' +
+                encodeURIComponent(JSON.stringify(filter)) + '?fromForm=true';%>
+                <%model.conflictTypes && model.conflictTypes.forEach(function (el){%>
+                <%if (el.type === 'product') {%>
+                <a class="btn slim" href="<%= href%>">Go to unlinked products</a>
+                <% }%>
+                <%if (el.type === 'paymentMethod') {%>
+                <a class="btn slim" href="javascript:;" id="createPaymentMethod">Create Payment Method</a>
+                <% }%>
+                <%if (el.type === 'customer') {%>
+                <a class="btn slim" href="javascript:;" id="selectCustomer">Select Customer</a>
+                <% }%>
+                <%})%>
+                <%}%>
+                </li>
+            </ul>
+            <div class="clearfix"></div>
+            <div class="_templateInvoiceWrp">
+                <div id="templateDiv" class="_templateDiv"></div>
+                <div class="addingInfoWrp">
+                    <div id="historyDiv" class="_pureTemplate"></div>
+                    <div id="attachments" class="invoiceAttachments"></div>
+                </div>
+            </div>
+
+        </div>
+        <div class="clearfix"></div>
+    </fieldset>
+
+    <div class="clearfix"></div>
+</div>

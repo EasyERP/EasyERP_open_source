@@ -1,0 +1,31 @@
+<div class="inner-holder _settingsHolder _warehouseWrap">
+    <div class="workflow-list-wrapper left">
+        <ul class="workflow-list itemsList">
+            <% collection.forEach(function(item,index){ %>
+            <li>
+                <a href="javascript:;" data-id="<%= item._id%>" title="<%= item.name %>" class="items"><%=item.name
+                    %></a>
+            </li>
+            <% }) %>
+        </ul>
+    </div>
+    <div class="_warehouseForm left">
+        <div class="half-block left">
+            <div id="content" class=" ">
+
+            </div>
+        </div>
+        <div class="half-block right">
+            <div id="zonesAndLocations" class="">
+
+            </div>
+        </div>
+    </div>
+    <!--<div class="_warehouseForm">-->
+    <!--<div id="zonesAndLocations" class="_listModal">-->
+
+    <!--</div>-->
+    <!--</div>-->
+
+</div>
+

@@ -1,0 +1,59 @@
+<div class="form-holder">
+    <form method="post" action="" id="createCategoryForm" class="form">
+        <fieldset>
+            <div class="inner">
+                <div class="half-block left">
+                    <dl class="priceList-info">
+                        <dt><label for="priceListName">Price List Name</label></dt>
+                        <dd><input type="text" class="title-input blueback" name="priceListName" id="priceListName"
+                                   maxlength="32" placeholder="Price List Name" required/><input type="text" hidden
+                                                                                                 required/></dd>
+                        <dt><label for="priceListCode">Price List Code</label></dt>
+                        <dd><input type="text" class="title-input blueback" name="priceListCode" id="priceListCode"
+                                   maxlength="32" placeholder="Price List Code" required/><input type="text" hidden
+                                                                                                 required/></dd>
+                        <dt><label for="currencyDd">Currency</label></dt>
+                        <dd>
+                            <a id="currencyDd" href="javascript:;" class="current-selected">Select</a>
+                        </dd>
+                    </dl>
+                </div>
+
+                <div class="half-block right">
+                    <label>This is a supplier ("cost") price list</label>
+                    <div class="canReadAndWrite">
+                        <div class="_circleRadioRadianceWrap">
+                            <label for="yes" class="">Yes</label>
+                            <input type="radio" name="question" id="yes"  class="_circleRadioRadiance" value="1">
+                            <label for="yes" class="_circleRadioRadianceLabel"></label>
+                        </div>
+                        <div class="_circleRadioRadianceWrap">
+                            <label for="no" class="">No</label>
+                            <input type="radio" name="question" id="no" value="0" class="_circleRadioRadiance" checked="">
+                            <label for="no" class="_circleRadioRadianceLabel"></label>
+                        </div>
+                    </div>
+                    <dl class="opp-info">
+                        <!--<dt><label>This is a supplier ("cost") price list</label></dt>-->
+                        <!--<dd class="canReadAndWrite">-->
+                            <!--<div class="_circleRadioRadianceWrap">-->
+                                <!--<label for="yes" class="">Yes</label>-->
+                                <!--<input type="radio" name="question" id="yes"  class="_circleRadioRadiance" value="1">-->
+                                <!--<label for="yes" class="_circleRadioRadianceLabel"></label>-->
+                            <!--</div>-->
+                            <!--<div class="_circleRadioRadianceWrap">-->
+                                <!--<label for="no" class="">No</label>-->
+                                <!--<input type="radio" name="question" id="no" value="0" class="_circleRadioRadiance" checked="">-->
+                                <!--<label for="no" class="_circleRadioRadianceLabel"></label>-->
+                            <!--</div>-->
+                        <!--</dd>-->
+                        <!--<dd>-->
+                            <!--<label for="yes" class=""><input type="radio" name="question" id="yes" value="1">Yes</label>-->
+                            <!--<label for="no" class=""><input type="radio" name="question" id="no" value="0" checked="">No</label>-->
+                        <!--</dd>-->
+                    </dl>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>

@@ -1,0 +1,41 @@
+<div class="form-holder _newForm">
+    <form method="post" action="" class="form" id="stockCorrection">
+        <h4 class="_dialogMainTitle">Add New Transfer</h4>
+        <div class="_formWrap">
+            <div class="_formBlock _equal">
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">From</span>
+                    <div class="_newSelectListWrap">
+                        <a href="javascript:;"
+                           class="current-selected"
+                           id="warehouseFrom">Select</a>
+                    </div>
+                </div>
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">To</span>
+                    <div class="_newSelectListWrap">
+                        <a href="javascript:;"
+                           class="current-selected"
+                           id="warehouseTo">Select</a>
+                    </div>
+                </div>
+            </div>
+            <div class="_formBlock _equal">
+                <div class="_animateTextareaBox">
+                        <textarea id="description"
+                                  class="_animate internal_Notes"
+                                  required
+                                  maxlength="2500"></textarea>
+                    <label for="description" class="_animate">Description</label>
+                    <span class="attach_file icon-attach"></span>
+                </div>
+                <div class="attach-container"></div>
+            </div>
+        </div>
+        <div class="_formWrap">
+            <div class="_formBlock">
+                <div id="productItemsHolder"></div>
+            </div>
+        </div>
+    </form>
+</div>

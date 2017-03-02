@@ -1,0 +1,35 @@
+<div class="form-holder">
+    <form class="form notDialog _productTypes" id="leadForm" data-id="<%=model._id%>">
+        <div class="_listModal">
+            <div class="half-block">
+                <div class="inner">
+                    <div class="_modalSelect">
+                        <label>Product Type</label>
+                    </div>
+                    <div class="_modalSelect">
+                        <input class="editable" id="name" value="<%=model.name%>"/>
+                    </div>
+                </div>
+                <div class="_modalSelect">
+                    <p class="_productOptionsTitle">Change please types witch options you want to use in your product type.</p>
+                </div>
+                <div id="productOptions" class="_modalList _modalSelect _selectBlock" data-id="<%= model._id %>">
+                    <% _.forEach(options, function(item, key) { %>
+                    <div class="_inputContainer">
+                        <div class="_modalSelect">
+                            <input data-id="<%= item._id %>" <%= (checkedOptions.indexOf(item._id) >= 0) ? 'checked'
+                            : '' %>
+                            type="checkbox"
+                            value="<%= item.name %>">
+                        </div>
+                        <div class="_modalLabel">
+                            <%= item.name %>
+                        </div>
+                    </div>
+                    <% }) %>
+                    <button id="saveProductType" class="btn blue">Save</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

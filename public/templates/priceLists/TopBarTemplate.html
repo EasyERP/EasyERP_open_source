@@ -1,0 +1,20 @@
+<h3><%=contentHeader%></h3>
+<div id="createBtnHolder" class="btnsBlock">
+    <a href="#home/action-<%=contentType%>/Create" class="btn blue slim icon-plus" title="Create" id="top-bar-createBtn">New</a>
+    <a href="#home/action-<%=contentType%>/Edit" class="btn blue slim" title="Edit" id="top-bar-editBtn">Edit</a>
+    <a href="javascript:;" class="btn blue slim" title="Remove" id="top-bar-deleteBtn">Delete</a>
+</div>
+<div id="template-switcher" class="template-switcher right">
+    <ul class="btn-list changeContentIndex">
+        <li><a href="javascript:;" class="icon2 icon-btn dark" data-shift="left" id="leftBtn">(</a></li>
+        <li><a href="javascript:;" class="icon2 icon-btn dark" data-shift="right" id="rightBtn">)</a></li>
+    </ul>
+    <ul class="btn-list">
+        <li><a href="javascript:;"
+               class="changeContentView icon-list5 <%= (viewType == 'list') ? 'selected' : ''%>"
+               data-view-type="list" id="listBtn"></a></li>
+        <li><a href="javascript:;"
+               class="changeContentView icon-rect2 <%= (viewType == 'form') ? 'selected' : ''%>"
+               data-view-type="form" id="formBtn"></a></li>
+    </ul>
+</div>

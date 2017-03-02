@@ -1,0 +1,282 @@
+<div class="_breadcrunmbs">
+    <a href="#easyErp/settingsOverview">Settings Overview</a>
+    <span class="_breadcrunmbItem"> / Organization Profile</span>
+    <span class="btn blue slim positioned saveBtn right">Save</span>
+</div>
+<div>
+    <ul class="content"></ul>
+    <div class="form-holder _orgSettingsWrap">
+        <form class="form _orgSettings">
+            <div class="_formGroup">
+                <div class="col m-3 l-2  hide-xs">
+                    <label class="">Your Logo</label>
+                </div>
+                <div class="col m-8 inputBox">
+                    <div class="avatar">
+                        <div class="upload">Edit
+                            <input type="file" value="Edit" id="inputImg">
+                        </div>
+                        <canvas id="avatar"
+                                width="140"
+                                height="140">
+                        </canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="_formGroup">
+
+                <div class="col m-3 l-2 hide-xs">
+                    <label class="_orgName">Organization Name</label>
+                </div>
+                <div class="col m-8 inputBox">
+                    <div class="_animateInputBox">
+                        <input type="text"
+                               class="_animate editable"
+                               id="name"
+                               value="<%=model.name%>"
+                               autofocus
+                               required/>
+                        <label class="_animate">Organization Name</label>
+                    </div>
+                </div>
+            </div>
+            <div class="_formGroup">
+                <div class="col m-3 l-2 hide-xs">
+                    <label class="_orgName">Industry</label>
+                </div>
+                <div class="col m-8 inputBox">
+                    <div class="_animateSelectBox">
+                        <span class="_selectTitle">Industry</span>
+                        <div class="_newSelectListWrap">
+                            <a class="address current-selected"
+                               id="industry"
+                               data-id="<%=model.industry ? model.industry._id : ''%>"><%=model.industry ? model.industry.name :
+                                'Select'%></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="_formGroup ">
+                <h4 class="col m-8 m-offset-3 l-offset-2">Company Address</h4>
+                <div class="col m-8 m-offset-3 l-offset-2 inputBox">
+                    <div class="row">
+                        <div class="col m-8">
+                            <div class="_animateInputBox">
+                                <input type="text"
+                                       class="_animate editable"
+                                       id="address_street"
+                                       required
+                                       value="<%=model.address ? model.address.city : ''%>"/>
+                                <label class="_animate">Street</label>
+                            </div>
+                        </div>
+                        <div class="col m-4">
+                            <div class="_animateInputBox">
+                                <input type="text"
+                                       class="_animate editable"
+                                       id="address_city"
+                                       required
+                                       value="<%=model.address ? model.address.street : ''%>"/>
+                                <label class="_animate">City</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="_formGroup">
+                <div class="col m-8 m-offset-3 l-offset-2 inputBox">
+                    <div class="row">
+                        <div class="col m-4">
+                            <div class="_animateInputBox">
+                                <input type="text"
+                                       class="_animate editable"
+                                       id="address_state"
+                                       required
+                                       value="<%=model.address ? model.address.state : ''%>"/>
+                                <label class="_animate">State</label>
+                            </div>
+                        </div>
+                        <div class="col m-4">
+                            <div class="_animateInputBox">
+                                <input type="text"
+                                       class="_animate editable"
+                                       id="address_zip"
+                                       required
+                                       value="<%=model.address ? model.address.zip : ''%>"/>
+                                <label class="_animate">Zip Code</label>
+                            </div>
+                        </div>
+                        <div class="col m-4 _newSelectListWrap">
+                            <div class="_animateSelectBox">
+                                <span class="_selectTitle">Country</span>
+                                <div class="_newSelectListWrap">
+                                    <a class="address current-selected"
+                                       id="country"
+                                       name="country"
+                                       data-id="<%=model.address && model.address.country ? model.address.country : ''%>">
+                                        <%=model.address && model.address.country ? model.address.country : 'Select'%></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="_formGroup">
+                <div class="col m-8 m-offset-3 l-offset-2 inputBox">
+                    <div class="row">
+                        <div class="col m-4">
+                            <div class="_animateInputBox">
+                                <input type="text"
+                                       class="_animate editable"
+                                       id="phone"
+                                       required
+                                       value="<%=model.phone%>"/>
+                                <label class="_animate">Phone</label>
+                            </div>
+                        </div>
+                        <div class="col m-4">
+                            <div class="_animateInputBox">
+                                <input type="text"
+                                       class="_animate editable"
+                                       id="address_fax"
+                                       required
+                                       value="<%=model.address ? model.address.fax : ''%>"/>
+                                <label class="_animate">Fax</label>
+                            </div>
+                        </div>
+                        <div class="col m-4">
+                            <div class="_animateInputBox">
+                                <input type="text"
+                                       class="_animate editable"
+                                       id="website"
+                                       required
+                                       value="<%=model.website%>">
+                                <label class="_animate">Website</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="_formGroup _primaryContactWrap">
+                <div class="col m-3 l-2 hide-xs">
+                    <label>Primary Contact</label>
+                </div>
+                <div class="col m-3 inputBox _primaryListWrap">
+                    <div class="_animateSelectBox">
+                        <span class="_selectTitle">Contact</span>
+                        <div class="_newSelectListWrap">
+                            <a class="address current-selected"
+                               id="contact"
+                               data-id="<%=model.contact ? model.contact._id : ''%>"><%=model.contact ? model.contact.login :
+                                'Select contact'%>
+                            </a>
+                        </div>
+                    </div>
+                    <p id="email" class=""><%=model.contact ? model.contact.email : ''%></p>
+                </div>
+                <div class="col m-4">
+                    <%if (model.defaultEmail) {%>
+                    <p class="_text-muted">Email will be sent from your organization email address</p>
+                    <%} else {%>
+                    <p class="_text-muted">Email will be sent from 'easyerp no-replay@easyerp.com'</p>
+                    <%}%>
+
+                </div>
+                <h4 class="col m-8 m-offset-3 l-offset-2">Configure Email Policy</h4>
+                <div class="col m-8 m-offset-3 l-offset-2">
+                    <div class="row">
+                        <div class="_configureEmailPolicy canReadAndWrite">
+                            <div class="col s-12 m-6 l-6">
+                                <div class="_circleRadioRadianceWrap">
+                                    <label for="defaultEmailEnable" class="_forRadio">
+                                        Send emails from <b>'easyerp no-replay@easyerp.com'</b></label>
+                                    <input id="defaultEmailEnable" name="choosedType" maxlength="4" type="radio"
+                                           class="_circleRadioRadiance onlyNumber" <%=model.defaultEmail ? 'checked' : ''%>/>
+                                    <label for="defaultEmailEnable" class="_circleRadioRadianceLabel"></label>
+                                </div>
+                            </div>
+                            <div class="col s-12 m-6 l-6">
+                                <div class="_circleRadioRadianceWrap">
+                                    <label for="defaultEmailDisable" class="_forRadio">
+                                        Send mails using organization email addresses</label>
+                                    <input id="defaultEmailDisable" name="choosedType" maxlength="4" type="radio"
+                                           class="_circleRadioRadiance onlyNumber" <%=model.defaultEmail ? '' : 'checked'%>/>
+                                    <label for="defaultEmailDisable" class="_circleRadioRadianceLabel"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="_formGroup _primaryContactWrap">
+                <div class="col m-3 l-2 hide-xs">
+                    <label>Contact Name</label>
+                </div>
+                <div class="col m-8 inputBox">
+                    <div class="_animateInputBox">
+                        <input type="text"
+                               class="_animate editable"
+                               id="contactName"
+                               required
+                               value="<%=model.contactName%>">
+                        <label class="_animate">Name</label>
+                    </div>
+                </div>
+            </div>
+            <div class="_formGroup">
+                <h4>Regional Settings</h4>
+                <div class="col m-3 l-2 hide-xs">
+                    <label>Base Currency
+                        <div class="_smallText">(Currency used for accounting)</div>
+                    </label>
+                </div>
+                <div class="col m-4 inputBox _newSelectListWrap">
+                    <div class="_animateSelectBox">
+                        <span class="_selectTitle">Currency</span>
+                        <div class="_newSelectListWrap">
+                            <a id="currency"
+                               data-id="<%=model.currency ? model.currency._id : ''%>"
+                               data-value="<%=model.currency ? model.currency.name : ''%>"
+                               class="current-selected"
+                               href="javascript:;">
+                                <%=model.currency ? model.currency.name : 'Select currency'%></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="_formGroup">
+                <div class="col m-3 l-2 hide-xs">
+                    <label>Start Date
+                        <div class="_smallText">(You can set start date only 1 time and this value cannot be changed)</div>
+                    </label>
+                </div>
+                <div class="col m-4 inputBox">
+                    <div class="_animateInputBox">
+                        <span class="_staticLabel">Date</span>
+                        <input class="_animate extrainfo"
+                               type="text"
+                               name="startDate"
+                               placeholder="Start Date"
+                               id="startDate"
+                               value="<%=model.startDate%>"
+                               readonly="">
+                    </div>
+                </div>
+            </div>
+            <div class="cropImages form" style="display:none;">
+                <div class="formTitle">
+                    <h3 class="left">Crop Images</h3>
+                    <div class="clearfix"></div>
+                </div>
+                <br/>
+                <div class="image_input" style="float: left;margin-right: 20px;"></div>
+                <img class="image_output"/>
+                <div class="clearfix"></div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+

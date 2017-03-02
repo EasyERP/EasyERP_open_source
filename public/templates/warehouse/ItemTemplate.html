@@ -1,0 +1,56 @@
+<div>
+    <div class="_listModal">
+        <div class="_modalList">
+            <div class="_modalLabel"><label>Warehouse Name</label></div>
+            <div class="_modalSelect"><input id="name" type="text" placeholder="Warehouse Name"
+                                             value="<%=model.name%>"/>
+            </div>
+        </div>
+        <div class="_modalList _selectBlock">
+            <div class="_inputContainer">
+                <div class="_modalLabel"><label>Is Own</label></div>
+                <div class="_modalSelect"><input id="isOwn" type="checkbox" <%=model.isOwn ? 'checked' : ''%>/></div>
+            </div>
+            <div class="_inputContainer">
+                <div class="_modalLabel"><label>Main</label></div>
+                <div class="_modalSelect"><input id="main" type="checkbox" <%=model.main ? 'checked' : ''%>/></div>
+            </div>
+        </div>
+        <div class="_modalList">
+            <div class="_modalLabel"><label for="account">Account</label></div>
+            <div class="_modalSelect _newSelectListWrap">
+                <a class="account current-selected" id="account" name="account"
+                   data-id="<%=model.account ? model.account._id: null%>"><%=model.account ? model.account.name :
+                    'Select'%></a>
+            </div>
+        </div>
+        <div class="_modalList">
+            <div class="_modalLabel"><label for="address_street">Street</label></div>
+            <div class="_modalSelect"><input type="text" class="address" id="address_street" name="street"
+                                             placeholder="Street..." maxlength="60" value="<%=model.address.street%>"/>
+            </div>
+        </div>
+        <div class="_modalList">
+            <div class="_modalLabel"><label for="address_city">City</label></div>
+            <div class="_modalSelect"><input type="text" class="address" id="address_city" name="city"
+                                             placeholder="City" maxlength="60" value="<%=model.address.city%>"/></div>
+        </div>
+
+        <div class="_modalList">
+            <div class="_modalLabel"><label for="address_state">State</label></div>
+            <div class="_modalSelect"><input type="text" class="address" id="address_state" name="state"
+                                             placeholder="State" maxlength="32" value="<%=model.address.state%>"/></div>
+        </div>
+        <div class="_modalList">
+            <div class="_modalLabel"><label for="address_zip">Zip</label></div>
+            <div class="_modalSelect"><input type="text" class="address" id="address_zip" name="zip" placeholder="ZIP"
+                                             maxlength="32" value="<%=model.address.zip%>"/></div>
+        </div>
+        <div class="_modalList">
+            <div class="_modalLabel"><label for="address_country">Country</label></div>
+            <div class="_modalSelect _newSelectListWrap"><a class="address current-selected" id="address_country"
+                                                            name="address_country"><%=model.address.country%></a></div>
+        </div>
+    </div>
+
+</div>

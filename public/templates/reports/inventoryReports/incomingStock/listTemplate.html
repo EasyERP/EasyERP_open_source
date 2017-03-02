@@ -1,0 +1,15 @@
+<% collection.forEach(function(elem,index){ %>
+<tr data-id="<%=elem._id%>">
+    <td><%=elem.products%></td>
+    <td><%elem.variants.forEach(function (el, ind){%>
+        <%var symbol = ind !== elem.variants.length - 1 ? ' | ' : '';%>
+        <span><%=el && el.name ? el.name + symbol  : 'This product has no variants'%></span>
+        <%});%>
+    </td>
+    <td><%=elem.sku%></td>
+    <td><%=elem.purchaseOrder%></td>
+    <td><%=elem.onHand%></td>
+    <td><%=elem.incomingStock%></td>
+    <td><span class="money"><%=currencySplitter((elem.total / 100).toFixed(2))%></span></td>
+</tr>
+<% }) %>

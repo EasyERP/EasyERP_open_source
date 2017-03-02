@@ -1,0 +1,25 @@
+<ul class="bxslider">
+    <% images.forEach(function (item) { %>
+    <li id="<%= item._id %>">
+        <img src="<%= item.imageSrc %>" alt="notFound">
+        <div class="imageButtonsBlock" data-imageId="<%= item._id %>">
+            <div class="mainImage icon-checkImage"></div>
+            <div class="deleteImage icon-deleteImage"></div>
+            <div class="attachImage icon-addImage"></div>
+        </div>
+    </li>
+    <% }); %>
+</ul>
+<input id="inputAttach" type="file">
+<canvas id="avatar">
+    <input type="file" value="Edit" id="File1">
+</canvas>
+<div id="bx-pager" class="_productSliderThumbnails">
+    <% var i = 0; %>
+    <% images.forEach(function (thumb) { %>
+    <a data-slide-index="<%= i %>" href="">
+        <img src="<%= thumb.imageSrc %>" alt="notFound">
+    </a>
+    <% i = i + 1; %>
+    <% }); %>
+</div>

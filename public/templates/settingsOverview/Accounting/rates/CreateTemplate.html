@@ -1,0 +1,47 @@
+<div class="form-holder _newForm">
+    <h4 class="_dialogMainTitle">Create Rates</h4>
+    <div class="_formWrap">
+        <div class="_formBlock _equal">
+            <div class="_animateInputBox">
+                <span class="_staticLabel">Close Date</span>
+                <input class="_animate"
+                       type="text"
+                       id="date"
+                       readonly="">
+            </div>
+        </div>
+        <div class="_formBlock _equal">
+            <a href="javascript:;" id="add" class="btn slim blue icon-plus">Add</a>
+        </div>
+    </div>
+    <div class="_formWrap">
+        <div class="_formBlock">
+            <table class="stripedList" id="ratesTable">
+                <colgroup>
+                    <col width="40%"/>
+                    <col width="40%"/>
+                    <col width="20%"/>
+                    <col width="40px"/>
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>Currency From</th>
+                    <th>Currency To</th>
+                    <th>Rate</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody class="forToggle" id="currencyTable">
+                <tr>
+                    <td><a class="from current-selected" href="javascript:;" data-content="currency">From</a></td>
+                    <td><a class="to current-selected" href="javascript:;" data-content="currency">To</a></td>
+                    <td class="rate editable" data-type="input">1</td>
+                    <td>
+                        <a href="javascript:;" class="icon-trash goToRemove _actionCircleBtn" aria-hidden="true"></a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

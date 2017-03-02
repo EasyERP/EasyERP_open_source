@@ -1,0 +1,78 @@
+<div class="form-holder _newForm">
+    <h3 class="_dialogMainTitle">Edit Bank Accounts</h3>
+    <div class="_formWrap">
+        <div class="_formBlock _equal">
+            <div class="_animateInputBox">
+                <input type="text"
+                       class="_animate "
+                       id="paymentMethodName"
+                       value="<%=model.name%>"
+                       required/>
+                <label class="_animate">Name</label>
+            </div>
+            <div class="_animateInputBox">
+                <input type="text"
+                       class="_animate "
+                       id="account"
+                       value="<%=model.account%>"
+                       required/>
+                <label class="_animate">IBAN</label>
+            </div>
+            <div class="_animateSelectBox">
+                <span class="_selectTitle">Chart of Account</span>
+                <div class="_newSelectListWrap">
+                    <a id="chartAccount"
+                       class="current-selected"
+                       href="javascript:;"
+                       data-id="<%=model.chartAccount ? model.chartAccount._id : null%>">
+                        <%=model.chartAccount ? model.chartAccount.name : 'Select'%>
+                    </a>
+                </div>
+            </div>
+            <div class="_animateSelectBox">
+                <span class="_selectTitle">Currency</span>
+                <div class="_newSelectListWrap">
+                    <a id="currency"
+                       class="current-selected"
+                       href="javascript:;"
+                       data-id="<%=model.currency%>"><%=model.currency%>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="_formBlock _equal">
+            <div class="_animateInputBox">
+                <input type="text"
+                       class="_animate "
+                       id="bankName"
+                       value="<%=model.bank%>"
+                       required/>
+                <label class="_animate">Short Bank Name</label>
+            </div>
+            <div class="_animateInputBox">
+                <input type="text"
+                       class="_animate"
+                       id="address"
+                       value="<%=model.address%>"
+                       required/>
+                <label class="_animate">Bank Address</label>
+            </div>
+            <div class="_animateInputBox">
+                <input type="text"
+                       class="_animate "
+                       id="owner"
+                       value="<%=model.owner%>"
+                       required/>
+                <label class="_animate">Owner</label>
+            </div>
+            <div class="_animateInputBox">
+                <input type="text"
+                       class="_animate "
+                       id="swiftCode"
+                       value="<%=model.swiftCode%>"
+                       required/>
+                <label class="_animate">SWIFT Code</label>
+            </div>
+        </div>
+    </div>
+</div>

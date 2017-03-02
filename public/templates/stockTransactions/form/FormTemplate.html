@@ -1,0 +1,83 @@
+<div class="form-holder">
+    <form method="post" action="" class="form" id="goodsNote">
+        <fieldset>
+            <div class="inner">
+                <div class="_goodOutWrap">
+                    <div class="topPanel">
+                        <h2><span><%=model.name%></span></h2>
+                            <dt class="fontBold"><label for="adjustedDate">Date:</label></dt>
+                            <dd class="_newSelectListWrap">
+                        <span id="adjustedDate"
+                              href="javascript:;"><%=model.createdBy ? model.createdBy.date : ''%></span>
+                            </dd>
+                            <dt class="fontBold"><label for="adjustedDate">Tracking ref:</label></dt>
+                            <dd class="_newSelectListWrap">
+                        <span id="name"
+                              href="javascript:;"><%=model.reference || '___'%></span>
+                            </dd>
+                            <dt class="fontBold"><label for="adjustedDate">Shipping method:</label></dt>
+                            <dd class="_newSelectListWrap">
+                        <span id="name"
+                              href="javascript:;"><%=model.shippingMethod ? model.shippingMethod.name : '___'%></span>
+                            </dd>
+                        </dl>
+                        <div class="right">
+                            <button id="printPdf" class="btn ">
+                                <span class="icon-print">Print</span>
+                            </button>
+                            <button class="btn sendEmail">
+                                <span>Send email</span>
+                            </button>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <table class="list _projectTableLeftAlign tableFixed _invoiceTable">
+                        <colgroup>
+                            <col width="25%">
+                            <col width="25%">
+                            <col width="25%">
+                            <col width="25%">
+                        </colgroup>
+                        <thead>
+                        <tr class="productListItemsColumns _deleteHeader">
+                            <%var printed = model.status && model.status.printed%>
+                             <%var packed = model.status && model.status.packed%>
+                            <%var shipped = model.status && model.status.shipped%>
+                            <%var received = model.status && model.status.received%>
+
+                            <th  class="<%= printed ? 'done' : 'undone'%>" title="This will mark the goods-out note as printed. You'll need to 'unprint' it in order to print again, to prevent multiple copies in the warehouse.">
+                                Print <span class="right"><span class="edited "><%= printed ?  model.status.printedOn : '' %></span></span>
+                            </th>
+                             <th  class="<%=packed ? 'done' : 'undone'%>" title="Add a tracking reference shipping method, weight and number of boxes when you mark the goods out note as packed.">
+                                Pack <span class="right"><span class="edited "><%= packed ?  model.status.packedOn : '' %></span></span>
+                            </th>
+                            <th  class="<%=shipped ? 'done' : 'undone'%>" title="Shipping a goods-out note will remove the items from stock and if you're using Cost of Sales accounting will also create the Cost of Sale entries for the sale.">
+                                Ship <span class="right"><span class="edited "><%= shipped ?  model.status.shippedOn : '' %></span></span>
+                            </th>
+                            <th  class="<%=received ? 'done' : 'undone'%>" title="Shipping a goods-out note will remove the items from stock and if you're using Cost of Sales accounting will also create the Cost of Sale entries for the sale.">
+                                Receive <span class="right"><span class="edited "><%= received ?  model.status.receivedOn : '' %></span></span>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        <tr class="<%=received ? 'hidden' : ''%>" >
+                            <td><a id="printPdf" class="btn <%=shipped ? 'hidden' : ''%> changeStatus <%=printed ? 'done' : ''%>" href="javascript:;" data-id="printed"><%=printed ? 'Unprint' : 'Print'%></a></td>
+                            <td><a id="packBtn" class="btn <%=shipped ? 'hidden' : ''%> <%=packed ? 'done changeStatus' : ''%>" href="javascript:;" data-id="packed"><%=packed ? 'Unpack' : 'Pack'%></a></td>
+                            <td><a class="btn changeStatus <%=shipped  ? 'hidden' : ''%>" href="javascript:;" data-id="shipped"><%=shipped ? 'Unship' : 'Ship'%></a></td>
+                            <td><a id="receiveBtn"  class="btn <%=(received || !shipped) ? 'hidden' : ''%>" href="javascript:;" data-id="received"><%=received ? '' : 'Receive'%></a></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!--<div class="clearfix"></div>-->
+
+                <div id="templateDiv">
+
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="attachments _stockTransactions"></div>
+        </fieldset>
+    </form>
+</div>

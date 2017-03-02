@@ -1,0 +1,66 @@
+<div class="_acountingTableWrap">
+    <div class="_tableWrap _tableChartList">
+        <table class="list stripedList  ">
+            <colgroup>
+                <col width="20%"/>
+                <col width="20%"/>
+                <col width="10%"/>
+                <col width="10%"/>
+                <col width="10%"/>
+                <col width="10%"/>
+                <col width="10%"/>
+            </colgroup>
+            <thead>
+            <tr class="forToggle">
+                <th>Sales Channel Name</th>
+                <th>Orders</th>
+                <th>Ordered Quantity</th>
+                <th>Gross Sales</th>
+                <th>Total Sales</th>
+                <th>Tax</th>
+                <th>Shipping</th>
+            </tr>
+            </thead>
+            <tbody class="forToggle" id="taxTable">
+            <% var totalGross_sales = 0 %>
+            <% var totalDiscount = 0 %>
+            <% var totalShipping = 0 %>
+            <% var totalTaxes = 0 %>
+            <% var totalTotal_sales = 0 %>
+            <% var totalQuantity = 0 %>
+            <% var totalOrders = 0 %>
+
+            <% collection.forEach(function(elem,index){ %>
+                <tr data-id="<%=elem._id%>">
+                    <td><%= elem._id %></td>
+                    <td><%= elem.orders %></td>
+                    <td><%= elem.quantity %></td>
+
+                    <% totalGross_sales += elem.gross_sales %>
+                    <% totalDiscount += elem.discount %>
+                    <% totalShipping += elem.shipping %>
+                    <% totalTaxes += elem.taxes %>
+                    <% totalTotal_sales += elem.total_sales %>
+                    <% totalQuantity += elem.quantity %>
+                    <% totalOrders += elem.orders %>
+
+                    <td><span class="money"><%= currencySplitter(elem.gross_sales.toFixed(2)) %></span></td>
+                    <td><span class="money"><%= currencySplitter(elem.total_sales.toFixed(2)) %></span></td>
+                    <td><span class="money"><%= currencySplitter(elem.taxes.toFixed(2)) %></span></td>
+                    <td><span class="money"><%= currencySplitter(elem.shipping.toFixed(2)) %></span></td>
+                </tr>
+            <% }) %>
+            </tbody>
+            <tfoot>
+            <%var firstEl = collection.length ? collection[0] : {};%>
+            <td colspan="1">Total</td>
+            <td><%= totalOrders %></td>
+            <td><%= totalQuantity %></td>
+            <td><span class="money"><%=currencySplitter(totalGross_sales.toFixed(2))%></span></td>
+            <td><span class="money"><%=currencySplitter(totalTotal_sales.toFixed(2))%></span></td>
+            <td><span class="money"><%=currencySplitter(totalTaxes.toFixed(2))%></span></td>
+            <td><span class="money"><%=currencySplitter(totalShipping.toFixed(2))%></span></td>
+            </tfoot>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,150 @@
+<div class="form-holder employee">
+    <form class="form employee" id="employeeForm" data-id="<%=model._id%>">
+        <ul class="chart-tabs">
+            <li><a class="active" id="overviewTab" href="javascript:;">Overview</a></li>
+            <li><a href="javascript:;" id="timesheetTab" class="">Time Card</a></li>
+            <li><a href="javascript:;" class="countable" id="quotationsTab">Quotations<span></span></a></li>
+            <li><a href="javascript:;" class="countable" id="ordersTab">Orders<span></span></a></li>
+            <li><a href="javascript:;" class="countable" id="proformaTab">Proforma<span></span></a></li>
+            <li><a href="javascript:;" class="countable" id="invoicesTab">Invoices<span></span></a></li>
+            <li><a href="javascript:;" class="countable" id="paymentsTab">Payments<span></span></a></li>
+            <li><a href="javascript:;" class="" id="commentsTab">Other Info</a></li>
+            <li><a href="javascript:;" class="" id="assigneesTab">Assignees</a></li>
+        </ul>
+        <div class="clearfix"></div>
+        <div class="dialog-tabs-items">
+            <div class="dialog-tabs-item active">
+                <div class="half-block left">
+                    <dl class="project-edit-info">
+                        <dt>
+                            <label for="projectName">Project Name </label>
+                        </dt>
+                        <dd>
+                            <input type="text" class="title-input blueback" name="projectName" id="projectName" required
+                                   value="<%=model.name%>" maxlength="32"/>
+                        </dd>
+                        <dt>
+                            <label for="projectShortDesc">Project Short Description </label>
+                        </dt>
+                        <dd>
+                            <input type="text" class="title-input blueback" name="projectShortDesc"
+                                   id="projectShortDesc" required value="<%=model.projectShortDesc%>" maxlength="32"/>
+                        </dd>
+                        <dt>
+                            <label for="salesManager">Sales Manager</label>
+                        </dt>
+                        <dd>
+                            <label id="salesManager"><%=model.salesManager ? (model.salesManager.fullName):''%></label>
+                        </dd>
+                        <dt>
+                            <label for="projectManager">Project Manager</label>
+                        </dt>
+                        <dd>
+                            <label id="projectManager"><%=model.projectManager ? (model.projectManager.fullName):''%></label>
+                        </dd>
+
+                        <dt><label for="projectTypeDD">Project Type </label></dt>
+                        <dd class="_newSelectListWrap">
+                            <a id="projectTypeDD" data-id="<%=model.projecttype?model.projecttype:''%>"
+                               class="current-selected" href="javascript:;"><%=model.projecttype? model.projecttype:'Select'%></a>
+                        </dd>
+                        <dt>
+                            <label for="customerDd">Project Customer </label>
+                        </dt>
+                        <dd class="_newSelectListWrap">
+                            <a id="customerDd" data-id="<%=model.customer?model.customer._id:''%>"
+                               class="current-selected " href="javascript:;"><%=model.customer?(model.customer.fullName):'Select'%></a>
+                        </dd>
+
+                        <dt>
+                            <label for="workflowsDd">Status</label>
+                        </dt>
+                        <dd class="_newSelectListWrap">
+                            <a id="workflowsDd" data-id="<%=(model.workflow) ? model.workflow._id : ''%>"
+                               class="current-selected " href="javascript:;"><%=(model.workflow)?model.workflow.name:'Undefinded'%></a>
+                        </dd>
+                        <dt><label for="health">Health</label></dt>
+                        <dd id="health">
+                            <div class="health-container">
+                                <a href="javascript:;" data-value="<%=model.health%>" class="health<%=model.health%> "></a>
+                                <ul>
+                                    <li>
+                                        <div class="health1"></div>
+                                    </li>
+                                    <li>
+                                        <div class="health2"></div>
+                                    </li>
+                                    <li>
+                                        <div class="health3"></div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </dd>
+                    </dl>
+                </div>
+                <div class="half-block right" id="projectChart"></div>
+                <div class="clearfix"></div>
+
+                <div id="forInfo" class="_projectsTablesWrap">
+                    <div class="forInfo-half-block left" id="detailsLeft"></div>
+                    <div class="forInfo-half-block right" id="detailsRight"></div>
+                </div>
+
+            </div>
+
+            <div class="clearfix"></div>
+            <div class="dialog-tabs-item">
+                <div id="timesheet" class="tableResponsive _projectTableVisible"></div>
+            </div>
+            <div class="dialog-tabs-item">
+                <div id="quotations"></div>
+            </div>
+            <div class="dialog-tabs-item">
+                <div id="orders"></div>
+            </div>
+            <div class="dialog-tabs-item">
+                <div id="proforma"></div>
+            </div>
+            <div class="clearfix"></div>
+            <div class="dialog-tabs-item" id="invoice">
+                <div id="invoices"></div>
+            </div>
+            <div class="clearfix"></div>
+            <div class="dialog-tabs-item">
+                <div id="payments"></div>
+            </div>
+
+            <div class="clearfix"></div>
+            <div class="dialog-tabs-item">
+                <div id="comments">
+                    <br>
+                    <dt><label for="payment_method">Bank Account</label></dt>
+                    <dd class="_newSelectListWrap">
+                        <a id="payment_method" class="current-selected" href="javascript:;" data-id="<%= (model.paymentMethod) ? model.paymentMethod._id : ''%>"><%= (model.paymentMethod) ? model.paymentMethod.name : 'Select'%></a>
+                    </dd>
+                    <dt><label for="payment_terms">Payment Terms</label></dt>
+                    <dd class="_newSelectListWrap">
+                        <a id="payment_terms" class="current-selected" href="javascript:;" data-id="<%= (model.paymentTerms) ? model.paymentTerms._id : ''%>"><%=(model.paymentTerms) ? model.paymentTerms.name :  'Select'%></a>
+                    </dd>
+                    <div class="textarea-wrapper">
+                        <textarea type="text" class="projectDescriptionEdit _bigTextArea" name="description"
+                                  placeholder="Add a Description..." id="description"
+                                  maxlength="500"><%=model.description%></textarea>
+                    </div>
+
+                    <div id="divForNote" class="_projectAttachField"></div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <div class="dialog-tabs-item">
+                <div id="assignees">
+                    <div id="assignees-container"></div>
+                </div>
+                <h3> Project Members</h3>
+                <div id="projectMembers" class="projectMembers _projectTableVisible _tableAlignLeft">
+                    <div id="projectMembers-container"></div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

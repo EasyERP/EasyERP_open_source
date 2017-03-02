@@ -1,0 +1,14 @@
+<% collection.forEach(function(elem,index){ %>
+<tr data-id="<%=elem._id%>">
+    <td><%=elem.name%></td>
+    <td><%=elem.sku%></td>
+    <td class="centerCell">
+        <div class="channelImg <%=elem.channelLink.type%> right" data-content="channelImage"
+             title="<%=elem.channelLink.name%>">
+        </div>
+    </td>
+    <td><%=elem.price%></td>
+    <td><%=elem.unitsSold%></td>
+    <td><%=moment(new Date(elem.dateLinked)).format('DD MMM, YYYY')%></td>
+</tr>
+<% }) %>

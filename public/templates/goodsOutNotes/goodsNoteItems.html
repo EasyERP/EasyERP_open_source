@@ -1,0 +1,119 @@
+<b>Goods Notes</b>
+<table class="list _projectTableLeftAlign tableFixed _invoiceTable">
+    <colgroup>
+        <col width="100px">
+        <col width="150px">
+        <col width="10%">
+        <col width="10%">
+        <col width="10%">
+        <col width="10%">
+        <col width="10%">
+        <col width="10%">
+        <col width="10%">
+        <col width="10%">
+        <col width="10%">
+        <col width="30px">
+    </colgroup>
+    <thead>
+    <tr class="productListItemsColumns _deleteHeader">
+        <th class="width20">
+            Goods note ID
+        </th>
+        <th class="width20">
+            Warehouse name
+        </th>
+        <th class="width20">
+            Order
+        </th>
+        <th class="width20">
+           Printed
+        </th>
+        <th class="width20">
+            By
+        </th>
+        <th class="width20">
+            Picked
+        </th>
+        <th class="width20">
+            By
+        </th>
+        <th class="width20">
+            Packed
+        </th>
+        <th class="width20">
+            By
+        </th>
+        <th class="width20">
+        Shipped
+        </th>
+        <th class="width20">
+            By
+        </th>
+        <th class="deleteCell"></th>
+    </tr>
+    </thead>
+    <tbody id="tbodyProducts">
+
+    <%goodsNotes.forEach(function(elem){%>
+    <tr class="productItem deleteRow" id="<%=elem._id%>">
+
+        <td data-name="productName" class="">
+
+            <span class="current-selected" id="productsDd" href="javascript:;" data-id="">
+<%= elem ? elem.name : ''%>
+            </span>
+        </td>
+        <td data-name="warehouse">
+            <%= elem.warehouse ? elem.warehouse.name :  ''%>
+        </td>
+        <td data-name="order">
+            <%= elem.order ? elem.order.name :  ''%>
+        </td>
+        <td data-name="printed">
+
+            <%= elem.status && elem.status.printedById  ? elem.status.printedById.login :  ''%>
+        </td>
+        <td data-name="printed">
+            <%= elem.status ? elem.status.printedOn :  ''%>
+        </td>
+        <td data-name="picked">
+            <%= elem.status && elem.status.pickedById ? elem.status.pickedById.login :  ''%>
+
+        </td>
+        <td data-name="printed">
+            <%= elem.status ? elem.status.pickedOn :  ''%>
+        </td>
+        <td data-name="packed">
+
+            <%= elem.status && elem.status.packedById ? elem.status.packedById.login :  ''%>
+        </td>
+        <td data-name="packed">
+            <%= elem.status ? elem.status.packedOn :  ''%>
+        </td>
+        <td data-name="shipped">
+
+            <%= elem.status && elem.status.shippedById ? elem.status.shippedById.login :  ''%>
+        </td>
+        <td data-name="shipped">
+            <%= elem.status ? elem.status.shippedOn :  ''%>
+        </td>
+        <td class="deleteCell centerCell">
+            <%if (elem.status && ! elem.status.shipped){%>
+            <span title="Delete" class="icon-close5 removeJob"></span>
+            <%}%>
+        </td>
+    </tr>
+    <%})%>
+
+    <tr>
+        <td class="invisible_border">&nbsp;</td>
+    </tr>
+    <tr>
+        <td class="invisible_border">&nbsp;</td>
+    </tr>
+    </tbody>
+</table>
+<div class="clearfix"></div>
+<div id="totalAmountContainer" class="_totalAmountContainer _createPopup">
+
+</div>

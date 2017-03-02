@@ -1,0 +1,21 @@
+<h3><%=contentType%></h3>
+<div id="createBtnHolder" class="btnsBlock">
+    <a href="javascript:;" class="btn blue slim icon-plus" title="New Category" id="top-bar-createBtn">New Category</a>
+    <a href="javascript:;" class="btn blue slim" title="Save" id="top-bar-saveBtn">Save</a>
+    <a href="javascript:;" class="btn blue slim" title="Edit" id="top-bar-editBtn">Edit</a>
+    <a href="javascript:;" class="btn blue slim" id="top-bar-deleteBtn" title="Remove">Delete</a>
+</div>
+<div id="template-switcher" class="template-switcher right">
+    <ul class="btn-list">
+        <li><a href="javascript:;"
+               class="changeContentView icon-tiles2 <%= (viewType == 'thumbnails') ? 'selected' : ''%>"
+               data-view-type="thumbnails" id="thumbBtn"></a></li>
+        <li><a href="javascript:;"
+               class="changeContentView icon-list5 <%= (viewType == 'list') ? 'selected' : ''%>"
+               data-view-type="list" id="listBtn"></a></li>
+        <li><a href="javascript:;"
+               class="changeContentView icon-rect2 <%= (viewType == 'form') ? 'selected' : ''%>"
+               data-view-type="form" id="formBtn"></a></li>
+    </ul>
+</div>
+

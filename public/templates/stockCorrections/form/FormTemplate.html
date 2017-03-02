@@ -1,0 +1,79 @@
+<div class="form-holder">
+    <form method="post" action="" class="form" id="stockCorrection">
+        <fieldset>
+            <div class="inner">
+
+                <div class="clearfix"></div>
+
+                <div class="half-block left">
+                    <dl class="opp-info">
+                        <dt><label for="adjustedDate">Date</label></dt>
+                        <dd class="_newSelectListWrap">
+                            <span id="adjustedDate" href="javascript:;"><%=model.createdBy ? model.createdBy.date : ''%></span>
+                        </dd>
+
+                        <dt><label for="warehouseDd">Warehouse</label></dt>
+                        <dd class="_newSelectListWrap">
+                            <span id="warehouseDd" href="javascript:;"><%=model.warehouse ? model.warehouse.name : ''%></span>
+                        </dd>
+
+                        <!--<dt><label for="locationDd">Location</label></dt>
+                        <dd class="_newSelectListWrap">
+                            <span id="locationDd" href="javascript:;"><%=model.location ? model.location.name : ''%></span>
+                        </dd>-->
+                        <dt><label for="description">Description</label></dt>
+                        <dd class="_newSelectListWrap">
+                            <textarea type="text" name="description" id="description" maxlength="500" readonly><%=model.description%></textarea>
+                        </dd>
+                        <dt><label for="adjustedBy">Adjusted By</label></dt>
+                        <dd class="_newSelectListWrap">
+                            <span id="adjustedBy" href="javascript:;"><%=model.createdBy  && model.createdBy.user ? model.createdBy.user.login : ''%></span>
+                        </dd>
+
+                    </dl>
+                </div>
+                <table class="list _projectTableLeftAlign tableFixed _invoiceTable">
+                    <colgroup>
+                        <col width="100px">
+                        <col width="100px">
+                        <col width="100px">
+                        <col width="100px">
+                        <col width="30px">
+                    </colgroup>
+                    <thead>
+                    <tr class="productListItemsColumns _deleteHeader">
+                        <th class="width20" data-sort="Product">
+                            Product
+                        </th>
+                        <th class="width20" data-sort="unitPrice">
+                            Adjusted
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody id="tbodyProducts">
+                    <% model.orderRows.forEach(function(elem){%>
+                    <tr>
+                        <td><%=elem.product ? elem.product.name : ''%></td>
+                        <td><%=elem.quantity%></td>
+
+                    </tr>
+                    <% })%>
+
+                    <tr>
+                        <td class="invisible_border">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td class="invisible_border">&nbsp;</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="clearfix"></div>
+
+                <div id="productItemsHolder">
+
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </fieldset>
+    </form>
+</div>

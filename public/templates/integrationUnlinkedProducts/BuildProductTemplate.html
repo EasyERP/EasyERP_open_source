@@ -1,0 +1,35 @@
+<div  class="form-holder _newForm">
+    <form action="">
+        <div class="_formWrap _enlargedItemMargin">
+            <div class="_formBlock">
+                    <div class="_animateInputBox">
+                        <input type="text"
+                               id="name"
+                               class="_animate"
+                               required
+                               autofocus
+                               maxlength="32"
+                               value="<%= model.fields.name || '' %>">
+                        <label class="_animate">Product name </label>
+                    </div>
+                    <div class="_animateInputBox">
+                        <input type="text"
+                               id="sku"
+                               class="_animate"
+                               required
+                               autofocus
+                               maxlength="32"
+                               value="<%= model.fields.sku || '' %>">
+                        <label class="_animate">Product SKU </label>
+                    </div>
+                </div>
+        </div>
+    </form>
+    <!--<label for="name">Product name </label>-->
+    <!--<input type="text" id="name" placeholder="Product name"-->
+           <!--value="<%= model.fields.name || '' %>">-->
+    <!--<label for="sku">Product SKU </label>-->
+    <!--<input type="text" id="sku" placeholder="Product SKU"-->
+           <!--value="<%= model.fields.sku || '' %>">-->
+</div>
+
