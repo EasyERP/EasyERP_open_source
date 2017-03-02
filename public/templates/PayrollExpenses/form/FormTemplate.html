@@ -1,85 +1,61 @@
-<div class="tableFixedWrap payRoll-list-wrap">
-    <table class="list payRoll-list tableFixed">
-        <colgroup class="borders" span="7">
-            <col span="1" width="5%">
-            <col span="1" width="5%">
-            <col span="1" width="30%">
-            <col span="1" width="15%">
-            <col span="1" width="15%">
-            <col span="1" width="15%">
+<div id="payRoll-Table">
+    <table class="list enable_hover stripedList" id="payRoll-listTable">
+        <colgroup>
+            <col width="43px">
+            <col width="32%">
+            <col width="17%">
+            <col width="17%">
+            <col width="17%">
+            <col width="17%">
         </colgroup>
-        <!--<thead>-->
-        <!--<tr>-->
-            <!--<th  class="centerCell"><a id="expandAll">#</a></th>-->
-            <!--<th class="notForm"><input type="checkbox" class="checkAll"/></th>-->
-            <!--<th class="oe_sortable" data-sort="employee.name.first">Complete Name<span class="arrow down"></span><span-->
-                    <!--class="arrow up"></span></th>-->
-            <!--<th>Month</th>-->
-            <!--<th class="oe_sortable" data-sort="calc">Calc<span class="arrow down"></span><span-->
-                    <!--class="arrow up"></span></th>-->
-            <!--<th class="oe_sortable" data-sort="paid">Paid<span class="arrow down"></span><span-->
-                    <!--class="arrow up"></span></th>-->
-            <!--<th class="oe_sortable" data-sort="diff">Diff<span class="arrow down"></span><span-->
-                    <!--class="arrow up"></span></th>-->
-        <!--</tr>-->
-        <!--</thead>-->
-
+        <thead>
         <tr>
-            <td id="payRoll-Table" colspan="9">
-                <div class="scrollit">
-                    <table class="list enable_hover tableFixed" id="payRoll-listTable">
-                        <colgroup class="borders" span="7">
-                            <col span="1" width="5%">
-                            <col span="1" width="5%">
-                            <col span="1" width="30%">
-                            <col span="1" width="15%">
-                            <col span="1" width="15%">
-                            <col span="1" width="15%">
-                        </colgroup>
-                        <thead>
-                        <tr>
-                            <th  class="centerCell"><a id="expandAll">#</a></th>
-                            <th class="notForm"><input type="checkbox" class="checkAll"/></th>
-                            <th class="oe_sortable" data-sort="employee.name.first">Complete Name<span class="arrow down"></span><span
-                                    class="arrow up"></span></th>
-                            <th>Month</th>
-                            <th class="oe_sortable" data-sort="calc">Calc<span class="arrow down"></span><span
-                                    class="arrow up"></span></th>
-                            <th class="oe_sortable" data-sort="paid">Paid<span class="arrow down"></span><span
-                                    class="arrow up"></span></th>
-                            <th class="oe_sortable" data-sort="diff">Diff<span class="arrow down"></span><span
-                                    class="arrow up"></span></th>
-                        </tr>
-                        </thead>
-                        <tbody id="payRoll-TableBody">
-                        <% var total = 0;%>
-                        <% collection.forEach(function(model, index){ %>
+            <th class="notForm centerCell">
+                <label class="_customCHeckbox">
+                    <input type="checkbox" id="checkAll"/>
+                    <span></span>
+                </label>
+            </th>
+            <th class="oe_sortable" data-sort="employee.name.first">Complete Name<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th>Month</th>
+            <th class="oe_sortable" data-sort="calc">Calc<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="paid">Paid<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="diff">Diff<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+        </tr>
+        </thead>
+        <tbody id="payRoll-TableBody">
+        <% var total = 0;%>
+        <% collection.forEach(function(model, index){ %>
 
-                        <tr data-id="<%=model._id%>" class="mainTr">
-                            <td data-content="number" class="centerCell"><%=index+1%></td>
-                            <td class="notForm"><input id="<%=model._id%>" type="checkbox" value="<%=model._id%>" class="checkbox"/></td>
-                            <td class="" data-id="<%=model.employee._id%>" data-content="employee"><%=model.employee ? model.employee.name.first + ' ' + model.employee.name.last : ''%></td>
-                            <td data-content="dataKey"><%=model.month + '/' + model.year%></td>
-                            <td data-type="input" data-content="onCash" data-cash="<%=model.calc%>" class="autoCalc cash calc money"><%=currencySplitter(model.calc.toFixed(2))%></td>
-                            <td data-type="input" data-content="onCash" data-cash="<%=model.paid%>" class="autoCalc cash paid money"><%=currencySplitter(model.paid.toFixed(2))%></td>
-                            <td data-content="onCash" data-cash="<%=model.diff%>" class="diff
+        <tr data-id="<%=model._id%>" class="mainTr">
+            <td class="notForm centerCell">
+                <label class="_customCHeckbox">
+                    <input id="<%=model._id%>" type="checkbox" value="<%=model._id%>" class="checkbox"/>
+                    <span></span>
+                </label>
+            </td>
+            <td data-id="<%=model.employee._id%>" data-content="employee"><%=model.employee ? model.employee.name.first + ' ' + model.employee.name.last : ''%></td>
+            <td data-content="dataKey"><%=model.month + '/' + model.year%></td>
+            <td data-type="input" data-content="onCash" data-cash="<%=model.calc%>" class="autoCalc cash calc money"><%=currencySplitter(model.calc.toFixed(2))%></td>
+            <td data-type="input" data-content="onCash" data-cash="<%=model.paid%>" class="autoCalc cash paid money"><%=currencySplitter(model.paid.toFixed(2))%></td>
+            <td data-content="onCash" data-cash="<%=model.diff%>" class="diff
                                 <% if (model.diff < 0) { %>
                                 negativeMoney"><%=currencySplitter((model.diff * (-1)).toFixed(2))%>
-                            </td>
-                            <%} else {%>
-                            money"><%=currencySplitter(model.diff.toFixed(2))%></td>
-                            <%}%>
-                        </tr>
-
-                        <% }) %>
-                        </tbody>
-                    </table>
-                </div>
             </td>
+            <%} else {%>
+            money"><%=currencySplitter(model.diff.toFixed(2))%></td>
+            <%}%>
         </tr>
+
+        <% }) %>
+        </tbody>
         <tfoot id="payRoll-listTotal">
         <tr>
-            <td colspan="5"></td>
+            <td colspan="4"></td>
             <td>
                 <label>Calc: </label>
                 <span data-id="value" class="money" id="totalCalc" data-cash="0">0</span>

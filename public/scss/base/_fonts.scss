@@ -12,25 +12,31 @@ $first: 1;
   }
 }
 
-@font-face {
-  font-family: 'Icons';
-  src: url("../font/easyERP.eot");
-  src: url("../font/easyERP.eot?#iefix") format('embedded-opentype'),
-  url("../font/easyERP.woff") format('woff'),
-  url("../font/easyERP.ttf") format('truetype'),
-  url("../font/easyERP.svg#quartzregular") format('svg');
-}
+//@font-face {
+//  font-family: 'erp-icons';
+//  src:  url('../font/erp-icons.eot?fd9hsz');
+//  src:  url('../font/erp-icons.eot?fd9hsz#iefix') format('embedded-opentype'),
+//  url('../font/erp-icons.ttf?fd9hsz') format('truetype'),
+//  url('../font/erp-icons.woff?fd9hsz') format('woff'),
+//  url('../font/erp-icons.svg?fd9hsz#icomoon') format('svg');
+//  font-weight: normal;
+//  font-style: normal;
+//}
+
+
 
 @font-face {
   font-family: 'erp-icons';
-  src:  url('../font/erp-icons.eot?fd9hsz');
-  src:  url('../font/erp-icons.eot?fd9hsz#iefix') format('embedded-opentype'),
-  url('../font/erp-icons.ttf?fd9hsz') format('truetype'),
-  url('../font/erp-icons.woff?fd9hsz') format('woff'),
-  url('../font/erp-icons.svg?fd9hsz#icomoon') format('svg');
+  src:  url('../font/erp-icons.eot?u45cw');
+  src:  url('../font/erp-icons.eot?u45cw#iefix') format('embedded-opentype'),
+  url('../font/erp-icons.ttf?u45cw') format('truetype'),
+  url('../font/erp-icons.woff?u45cw') format('woff'),
+  url('../font/erp-icons.svg?u45cw#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
+
+
 
 [class^="icon-"],
 [class*=" icon-"] {

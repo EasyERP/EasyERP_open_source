@@ -570,6 +570,7 @@ define([
                 buttons = [
                     {
                         text : this.isPaid ? 'Close' : 'Cancel',
+                        class: 'btn',
                         click: self.hideDialog
                     }
                 ];
@@ -592,14 +593,12 @@ define([
             }
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'edit-invoice-dialog',
-                title        : 'Edit Invoice',
-                width        : self.isWtrack ? '1200' : '900',
-                position     : {my: 'center bottom', at: 'center', of: window},
-                buttons      : buttons
+                autoOpen   : true,
+                dialogClass: 'edit-invoice-dialog',
+                title      : 'Edit Invoice',
+                width      : self.isWtrack ? '1200' : '900',
+                position   : {my: 'center bottom', at: 'center', of: window},
+                buttons    : buttons
 
             });
 

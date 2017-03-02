@@ -3,7 +3,7 @@
 
     </div>
 </div>
-<div id="payRoll-Table">
+<div class="_payRollListTable" id="payRoll-Table">
     <table class="list stripedList" id="payRoll-listTable">
         <colgroup>
             <col width="42px">
@@ -16,7 +16,12 @@
         </colgroup>
         <thead>
         <tr>
-            <th class="centerCell"><input type="checkbox" class="totalRowCB" id="checkAll"/></th>
+            <th class="centerCell">
+                <label class="_customCHeckbox">
+                    <input type="checkbox" id="checkAll"/>
+                    <span></span>
+                </label>
+            </th>
             <th>Month</th>
             <th>Calc</th>
             <th>Paid</th>
@@ -29,4 +34,3 @@
         <tfoot id="payRoll-listTotal"></tfoot>
     </table>
 </div>
-

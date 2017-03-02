@@ -1,37 +1,48 @@
 ﻿<div id="searchContainer"></div>
 <div class="_tableManualentryWrap">
-    <table class="list stripedList">
+    <table class="list stripedList _rowColorGrouping">
         <colgroup>
             <col width="42px">
+            <col width="10%">
             <col width="18%">
             <col width="18%">
+            <col width="12%">
             <col width="18%">
-            <col width="18%">
-            <col width="16%">
+            <col width="12%">
             <col width="12%">
         </colgroup>
         <thead>
         <tr>
-            <th class="centerCell"><input type="checkbox" id="checkAll"/></th>
+
+            <th class="centerCell">
+                <label class="_customCHeckbox">
+                    <input type="checkbox" id="checkAll"/>
+                    <span></span>
+                </label>
+            </th>
+            <th class="oe_sortable" data-sort="timestamp">Number<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
             <th class="oe_sortable" data-sort="journal.name">Journal<span class="arrow down"></span><span
-                class="arrow up"></span></th>
+                    class="arrow up"></span></th>
             <th class="oe_sortable" data-sort="date">Accounting date<span class="arrow down"></span><span
-                class="arrow up"></span></th>
-            <th class="oe_sortable" data-sort="sourceDocument.name">Source document<span class="arrow down"></span><span
-                class="arrow up"></span></th>
-            <th class="oe_sortable" data-sort="debitAccount.name">Debit Account<span class="arrow down"></span><span
-                class="arrow up"></span></th>
-            <th class="oe_sortable" data-sort="creditAccount.name">Credit Account<span class="arrow down"></span><span
-                class="arrow up"></span></th>
-            <th class="oe_sortable" data-sort="debit">Sum<span class="arrow down"></span><span
-                class="arrow up"></span></th>
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="sourceDocument.name">Source document<span
+                    class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="account.name">Account<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="debit">Debit<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="credit">Credit<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
         </tr>
         </thead>
         <tbody id="listTable" class="enableTableOdd"></tbody>
         <tfoot id="listFooter">
         <tr>
-            <td colspan="6"></td>
+            <td colspan="6">Total</td>
             <td id="totalDebit" class="money"></td>
+            <td id="totalCredit" class="money"></td>
         </tr>
         </tfoot>
 

@@ -18,21 +18,11 @@
     </thead>
     <tbody id="proformRevenue">
     <tr>
-        <td>Quotations</td>
-        <%if (proformValues && proformValues.quotations) {%>
-        <td id="quotCount"><%=proformValues.quotations.count%></td>
-        <td id="quotSum" class="<%=currencyClass(classCurrency)%>" data-value="<%=proformValues.quotations.sum%>"><%=currencySplitter(proformValues.quotations.sum.toFixed(2))%>
-        </td>
-        <% } else { %>
-        <td>0</td>
-        <td>0</td>
-        <% } %>
-    </tr>
-    <tr>
         <td>Orders</td>
         <%if (proformValues && proformValues.orders) {%>
         <td id="orderCount"><%=proformValues.orders.count%></td>
-        <td id="orderSum" class="<%=currencyClass(classCurrency)%>" data-value="<%=proformValues.orders.sum%>"><%=currencySplitter(proformValues.orders.sum.toFixed(2))%>
+        <td id="orderSum" class="<%=currencyClass(classCurrency)%>" data-value="<%=proformValues.orders.sum%>">
+            <%=currencySplitter(proformValues.orders.sum.toFixed(2))%>
         </td>
         <% } else { %>
         <td>0</td>
@@ -40,10 +30,11 @@
         <% } %>
     </tr>
     <tr>
-        <td>Not Quoted</td>
+        <td>Not Ordered</td>
         <%if (proformValues && proformValues.jobs) {%>
         <td id="jobsCount"><%=proformValues.jobs.count%></td>
-        <td id="jobsSum" class="<%=currencyClass(classCurrency)%>" data-value="<%=proformValues.jobs.sum%>"><%=currencySplitter(proformValues.jobs.sum.toFixed(2))%>
+        <td id="jobsSum" class="<%=currencyClass(classCurrency)%>" data-value="<%=proformValues.jobs.sum%>">
+            <%=currencySplitter(proformValues.jobs.sum.toFixed(2))%>
         </td>
         <% } else { %>
         <td>0</td>
@@ -53,20 +44,14 @@
     </tbody>
     <tfoot>
     <tr>
-        <td>Total:</td>
+        <td>Total</td>
         <td id="totalCount"
-            data-value="proformValues.orders.count +
-            proformValues.quotations.count +
-            proformValues.jobs.count"><%=currencySplitter((proformValues.orders.count +
-            proformValues.quotations.count +
-            proformValues.jobs.count).toString())%>
+            data-value="proformValues.orders.count + proformValues.jobs.count">
+            <%=currencySplitter((proformValues.orders.count + proformValues.jobs.count).toString())%>
         </td>
         <td id="totalSum" class="<%=currencyClass(classCurrency)%>"
-            data-value="proformValues.quotations.sum +
-            proformValues.orders.sum +
-            proformValues.jobs.sum"><%=currencySplitter((proformValues.quotations.sum +
-            proformValues.orders.sum +
-            proformValues.jobs.sum).toFixed(2))%>
+            data-value="proformValues.orders.sum + proformValues.jobs.sum">
+            <%=currencySplitter((proformValues.orders.sum + proformValues.jobs.sum).toFixed(2))%>
         </td>
     </tr>
 

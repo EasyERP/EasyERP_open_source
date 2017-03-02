@@ -5,7 +5,7 @@ define([
     'text!templates/DividendInvoice/list/ListHeader.html',
     'views/DividendInvoice/CreateView',
     'views/DividendInvoice/EditView',
-    'models/InvoiceModel',
+    'models/InvoicesModel',
     'views/DividendInvoice/list/ListItemView',
     'collections/salesInvoices/filterCollection',
     'common',
@@ -142,6 +142,10 @@ define([
             var id = $(e.target).closest('tr').data('id');
             var model = new invoiceModel({validate: false});
             var self = this;
+
+            if ($(e.target).closest('tfoot').length) {
+                return;
+            }
 
             e.preventDefault();
 

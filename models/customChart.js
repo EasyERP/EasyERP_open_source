@@ -11,6 +11,7 @@
         nameId     : {type: String},
         type       : {type: String},
         dataset    : {type: String},
+        forSales   : {type: Boolean},
         colorScheme: {type: String},
         dashboard  : {type: ObjectId, ref: 'CustomDashboard'},
         startDate  : {type: String},

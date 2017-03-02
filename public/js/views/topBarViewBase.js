@@ -35,6 +35,7 @@ define([
             this.actionType = options.actionType || 'Content';
             this.dashboardName = options.name || '';
             this.dashboardDescription = options.description || '';
+
             this.render();
         },
 
@@ -63,6 +64,7 @@ define([
 
         onChangeContentViewType: function (e) {
             e.preventDefault();
+            e.stopPropagation();
             Custom.changeContentViewType(e, this.contentType, this.collection);
         },
 
@@ -100,7 +102,6 @@ define([
 
         onDeleteEvent: function (event) {
             event.preventDefault();
-
             this.trigger('deleteEvent');
         },
 
@@ -109,25 +110,26 @@ define([
             this.trigger('editKanban');
         },
 
-        moveToEdit: function(event){
+        moveToEdit: function (event) {
             event.preventDefault();
             this.trigger('moveToEdit');
         },
 
-        onSaveAllEvent: function(event){
+        onSaveAllEvent: function (event) {
             event.preventDefault();
             this.trigger('saveAllEvent');
         },
-        
-        onRemoveAllEvent: function(event){
+
+        onRemoveAllEvent: function (event) {
             event.preventDefault();
             this.trigger('removeAllEvent');
-        },        
+        },
 
-        render: function () {
+        render: function (options) {
             var viewType = Custom.getCurrentVT();
+            var title = this.contentHeader || this.contentType;
 
-            $('title').text(this.contentType);
+            $('title').text(title.toUpperCase());
 
             if (viewType && viewType === 'tform') {
                 this.$el.addClass('position');
@@ -135,15 +137,18 @@ define([
                 this.$el.removeClass('position');
             }
 
-            this.$el.html(this.template({
-                viewType            : viewType,
-                contentType         : this.contentType,
-                headerType          : this.headerType,
-                contentHeader       : this.contentHeader,
-                dashboardName       : this.dashboardName,
-                dashboardDescription: this.dashboardDescription
-            }));
-
+            if (!options || !options.hide) {
+                this.$el.html(this.template({
+                    viewType            : viewType,
+                    contentType         : this.contentType,
+                    headerType          : this.headerType,
+                    contentHeader       : this.contentHeader,
+                    dashboardName       : this.dashboardName,
+                    dashboardDescription: this.dashboardDescription
+                }));
+            } else {
+                this.$el.html('');
+            }
             Common.displayControlBtnsByActionType(this.actionType, viewType);
 
             return this;

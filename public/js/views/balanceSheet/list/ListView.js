@@ -40,7 +40,8 @@ define([
 
         events: {
             'click .mainTr'                                    : 'showHidden',
-            'click .childTr'                                   : 'showHiddenSub',
+            'click .subTr'                                     : 'showHiddenSurtrs',
+            //'click .childTr'                                   : 'showHiddenSub',
             'click .newSelectList li:not(.miniStylePagination)': 'viewSourceDocument',
             'click .current-selected'                          : 'showNewSelect'
         },
@@ -59,7 +60,7 @@ define([
             this.sort = options.sort || {};
             this.defaultItemsNumber = this.collection.namberToShow || 100;
             this.page = options.collection.page;
-            dateRange = custom.retriveFromCash('balanceSheetDateRange');
+            /*dateRange = custom.retriveFromCash('balanceSheetDateRange');*/
 
             this.filter = options.filter || custom.retriveFromCash('balanceSheet.filter');
 
@@ -67,24 +68,36 @@ define([
                 this.filter = {};
             }
 
-            if (!this.filter.startDate) {
-                this.filter.startDate = {
-                    key  : 'startDate',
-                    value: new Date(dateRange.startDate)
-                };
-                this.filter.endDate = {
-                    key  : 'endDate',
-                    value: new Date(dateRange.endDate)
+            dateRange = this.filter.date ? this.filter.date.value : [];
+
+            if (!this.filter.date) {
+                this.filter.date = {
+                    key  : 'date',
+                    value: [new Date(dateRange.startDate), new Date(dateRange.endDate)]
                 };
             }
 
-            this.startDate = new Date(this.filter.startDate.value);
-            this.endDate = new Date(this.filter.endDate.value);
+            this.startDate = new Date(dateRange[0]);
+            this.endDate = new Date(dateRange[1]);
+            this.contentCollection = reportCollection;
+
+            custom.cacheToApp('balanceSheet.filter', this.filter);
+
+            /*if (!this.filter.startDate) {
+             this.filter.startDate = {
+             key  : 'startDate',
+             value: new Date(dateRange.startDate)
+             };
+             this.filter.endDate = {
+             key  : 'endDate',
+             value: new Date(dateRange.endDate)
+             };
+             }
+
+             this.startDate = new Date(this.filter.startDate.value);
+             this.endDate = new Date(this.filter.endDate.value);*/
 
             this.render();
-
-            this.contentCollection = reportCollection;
-            custom.cacheToApp('balanceSheet.filter', this.filter);
 
             this.responseObj['#source'] = [
                 {
@@ -205,11 +218,50 @@ define([
             var self = this;
             var $target = $(e.target);
             var $tr = $target.closest('tr');
+            var level = $tr.attr('data-level') + 1;
             var dataId = $tr.attr('data-id');
             var $body = this.$el;
-            var childTr = $body.find("[data-main='" + dataId + "']");
+            var childTr = $body.find("[data-main='" + dataId + "'], [data-id='" + dataId + "'], [data-category='" + dataId + "'], [data-parent='" + dataId + "']").not('.mainTr');
             var span = $tr.find('.expand').find('span');
             var sign = $.trim(span.attr('class'));
+
+            childTr.find('.subTr, .childTr');
+
+            //  childTr.find('[data-level=' + level + ']');
+            /*[data-level='" + level + "']*/
+            if (sign === 'icon-caret-right') {
+                span.removeClass('icon-caret-right');
+                span.addClass('icon-caret-down');
+            } else {
+                span.removeClass('icon-caret-down');
+                span.addClass('icon-caret-right');
+
+                childTr.each(function (tr) {
+                    self.showHiddenSurtrs(null, $(this), true);
+                });
+            }
+
+            childTr.toggleClass('hidden');
+        },
+
+        showHiddenSurtrs: function (e, target, hide) {
+            var self = this;
+            var $target = e ? $(e.target) : null;
+            var $tr = $target ? $target.closest('tr') : target;
+            var dataId = $tr.attr('data-ident');
+            var $body = this.$el;
+            var childTr = $body.find("[data-parent='" + dataId + "']");
+            var span = $tr.find('.expand').find('span');
+            var sign = $.trim(span.attr('class'));
+            var level = $tr.attr('data-level') + 1;
+
+            if (!childTr.length) {
+                childTr = $body.find("[data-id='" + dataId + "']");
+            }
+
+            childTr.find('.subTr, .childTr');
+
+            childTr.find("[data-level=" + level + "]");
 
             if (sign === 'icon-caret-right') {
                 span.removeClass('icon-caret-right');
@@ -219,26 +271,11 @@ define([
                 span.addClass('icon-caret-right');
 
                 childTr.each(function (tr) {
-                    self.showHiddenSub(null, $(this), true);
+                    self.showHiddenSurtrs(null, $(this), true);
                 });
             }
 
-            childTr.toggleClass('hidden');
-        },
-
-        showHiddenSub: function (e, target, hide) {
-            var $target = e ? $(e.target) : null;
-            var $tr = $target ? $target.closest('tr') : target;
-            var dataId = $tr.attr('data-account');
-            var $body = this.$el;
-            var childTr = $body.find("[data-main='" + dataId + "']");
-            var span = $tr.find('.expand').find('span');
-            var sign = $.trim(span.attr('class'));
-
-            if (sign === 'icon-caret-right') {
-                span.removeClass('icon-caret-right');
-                span.addClass('icon-caret-down');
-            } else {
+            if (hide) {
                 span.removeClass('icon-caret-down');
                 span.addClass('icon-caret-right');
             }
@@ -248,24 +285,63 @@ define([
             }
 
             childTr.toggleClass('hidden');
-
         },
 
+        /*showHiddenSub: function (e, target, hide) {
+         var $target = e ? $(e.target) : null;
+         var $tr = $target ? $target.closest('tr') : target;
+         var dataId = $tr.attr('data-ident');
+         var $body = this.$el;
+         var childTr = $body.find("[data-id='" + dataId + "']");
+         var span = $tr.find('.expand').find('span');
+         var sign = $.trim(span.attr('class'));
+
+         if (sign === 'icon-caret-right') {
+         span.removeClass('icon-caret-right');
+         span.addClass('icon-caret-down');
+         } else {
+         span.removeClass('icon-caret-down');
+         span.addClass('icon-caret-right');
+         }
+
+         if (hide) {
+         span.removeClass('icon-caret-down');
+         span.addClass('icon-caret-right');
+         }
+
+         if (hide) {
+         return childTr.addClass('hidden');
+         }
+
+         childTr.toggleClass('hidden');
+
+         },*/
+
         asyncRenderInfo: function (asyncKeys) {
+            var self = this;
             var body = this.$el;
-            var stDate = this.filter.startDate.value;
-            var endDate = this.filter.endDate.value;
 
             async.each(asyncKeys, function (asyncId) {
                 dataService.getData('journalEntries/getAsyncDataForGL', {
-                    startDate: stDate,
-                    endDate  : endDate,
-                    _id      : asyncId
+                    category : asyncId._id,
+                    filter: self.filter
                 }, function (result) {
                     var journalEntries = result.journalEntries;
-                    var mainTr = body.find("[data-account='" + asyncId + "']");
+                    var mainTr = body.find("[data-ident='" + asyncId._id + "']");
+                    var subTrs = body.find("[data-main='" + asyncId._id + "'], [data-id='" + asyncId._id + "'], [data-category='" + asyncId._id + "'], [data-parent='" + asyncId._id + "']").not('.mainTr');
+
+                    subTrs.find('.subTr, .childTr');
+
+                    if (!mainTr.length) {
+                        mainTr = body.find("[data-id='" + (asyncId._id + asyncId.group) + "']");
+                    }
+
+                    if (!journalEntries.length && !subTrs.length) {
+                        // mainTr.removeClass('mainTr, subTr');
+                        mainTr.find('td.expand').html('');
+                    }
                     journalEntries.forEach(function (entry) {
-                        mainTr.after("<tr data-main='" + asyncId + "' class='subTr hidden'><td></td><td class='leftBorderNone source'><span id='source' class='current-selected icon-caret-down' data-id='" + entry.sourceDocument._id + "' data-name='" + entry.sourceDocument.model + "' data-employee='" + entry.sourceDocument.employee + "'>" + entry.sourceDocument.name + '</span></td><td>' + common.utcDateToLocaleFullDateTime(entry._id) + "</td><td class='money'>" + (entry.debit ? helpers.currencySplitter((entry.debit / 100).toFixed(2)) : helpers.currencySplitter((entry.credit / 100).toFixed(2))) + '</td><td></td></tr>');
+                        mainTr.after("<tr data-parent='" + entry.category + "'data-category='" + (asyncId._id + asyncId.group) + "' data-main='" + asyncId._id + "' class='childTr hidden'><td></td><td class='leftBorderNone source'><span id='source' class='current-selected icon-caret-down' data-id='" + entry.sourceDocument._id + "' data-name='" + entry.sourceDocument.model + "' data-employee='" + entry.sourceDocument.employee + "'>" + entry.sourceDocument.name + '</span></td><td>' + common.utcDateToLocaleFullDateTime(entry._id) + "</td><td class='money'>" + (entry.debit ? helpers.currencySplitter((entry.debit / 100).toFixed(2)) : helpers.currencySplitter((entry.credit / 100).toFixed(2))) + '</td><td></td></tr>');
                     });
                 });
 
@@ -273,32 +349,41 @@ define([
 
         },
 
-        changeDateRange: function () {
-            var stDate = $('#startDate').val();
-            var enDate = $('#endDate').val();
+        changeDateRange: function (dateArray) {
+            /* var stDate = $('#startDate').val();
+             var enDate = $('#endDate').val();*/
             var searchObject;
 
-            this.startDate = new Date(stDate);
-            this.endDate = new Date(enDate);
+            /*this.startDate = new Date(stDate);
+             this.endDate = new Date(enDate);
+
+             if (!this.filter) {
+             this.filter = {};
+             }
+
+             this.filter.startDate = {
+             key  : 'startDate',
+             value: stDate
+             };
+
+             this.filter.endDate = {
+             key  : 'endDate',
+             value: enDate
+             };*/
 
             if (!this.filter) {
                 this.filter = {};
             }
 
-            this.filter.startDate = {
-                key  : 'startDate',
-                value: stDate
+            this.filter.date = {
+                value: dateArray
             };
 
-            this.filter.endDate = {
-                key  : 'endDate',
-                value: enDate
-            };
+            this.startDate = dateArray[0];
+            this.endDate = dateArray[1];
 
             searchObject = {
-                startDate: stDate,
-                endDate  : enDate,
-                filter   : this.filter
+                filter: this.filter
             };
 
             this.collection.showMore(searchObject);
@@ -332,15 +417,45 @@ define([
             $currentEl.append(itemView.render());
 
             this.liabilities.forEach(function (el) {
-                asyncKeys.push(el._id);
+                el.root.forEach(function (elem) {
+                    asyncKeys.push({
+                        _id  : elem._id,
+                        group: 'liabilities'
+                    });
+                });
+
+                asyncKeys.push({
+                    _id  : el.categoryId,
+                    group: 'liabilities'
+                });
             });
 
             this.assets.forEach(function (el) {
-                asyncKeys.push(el._id);
+                el.root.forEach(function (elem) {
+                    asyncKeys.push({
+                        _id  : elem._id,
+                        group: 'assets'
+                    });
+                });
+
+                asyncKeys.push({
+                    _id  : el.categoryId,
+                    group: 'assets'
+                });
             });
 
             this.equity.forEach(function (el) {
-                asyncKeys.push(el._id);
+                el.root.forEach(function (elem) {
+                    asyncKeys.push({
+                        _id  : elem._id,
+                        group: 'equity'
+                    });
+                });
+
+                asyncKeys.push({
+                    _id  : el.categoryId,
+                    group: 'equity'
+                });
             });
 
             this.asyncRenderInfo(asyncKeys);
@@ -377,19 +492,43 @@ define([
 
             this.liabilities.forEach(function (el) {
                 el.root.forEach(function (elem) {
-                    asyncKeys.push(elem._id);
+                    asyncKeys.push({
+                        _id  : elem._id,
+                        group: 'liabilities'
+                    });
+                });
+
+                asyncKeys.push({
+                    _id  : el.categoryId,
+                    group: 'liabilities'
                 });
             });
 
             this.assets.forEach(function (el) {
                 el.root.forEach(function (elem) {
-                    asyncKeys.push(elem._id);
+                    asyncKeys.push({
+                        _id  : elem._id,
+                        group: 'assets'
+                    });
+                });
+
+                asyncKeys.push({
+                    _id  : el.categoryId,
+                    group: 'assets'
                 });
             });
 
             this.equity.forEach(function (el) {
                 el.root.forEach(function (elem) {
-                    asyncKeys.push(elem._id);
+                    asyncKeys.push({
+                        _id  : elem._id,
+                        group: 'equity'
+                    });
+                });
+
+                asyncKeys.push({
+                    _id  : el.categoryId,
+                    group: 'equity'
                 });
             });
 

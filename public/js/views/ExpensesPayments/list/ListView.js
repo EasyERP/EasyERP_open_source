@@ -3,46 +3,25 @@ define([
     'Underscore',
     'text!templates/Pagination/PaginationTemplate.html',
     'text!templates/ExpensesPayments/list/ListHeader.html',
-    'text!templates/ExpensesPayments/list/ListHeader.html',
-    'text!templates/supplierPayments/list/cancelEdit.html',
-    'views/selectView/selectView',
-    'views/supplierPayments/CreateView',
-    'views/Filter/filterView',
+    'views/customerPayments/EditView',
     'models/PaymentModel',
     'views/ExpensesPayments/list/ListItemView',
     'views/ExpensesPayments/list/ListTotalView',
-    'collections/ExpensesPayments/filterCollection',
-    'collections/ExpensesPayments/editCollection',
-    'dataService',
-    'populate',
-    'async',
-    'helpers/keyCodeHelper',
     'views/listViewBase',
     'helpers'
 ], function ($,
              _,
              paginationTemplate,
              listTemplate,
-             ListHeaderForWTrack,
-             cancelEdit,
-             selectView,
-             CreateView,
-             FilterView,
+             EditView,
              currentModel,
              ListItemView,
              ListTotalView,
-             paymentCollection,
-             EditCollection,
-             dataService,
-             populate,
-             async,
-             keyCodes,
              ListViewBase,
              helpers) {
     'use strict';
 
     var PaymentListView = ListViewBase.extend({
-        CreateView   : CreateView,
         listTemplate : listTemplate,
         ListItemView : ListItemView,
         contentType  : 'ExpensesPayments',
@@ -52,17 +31,28 @@ define([
         initialize: function (options) {
             $(document).off('click');
 
-            this.CreateView = CreateView;
-
             this.startTime = options.startTime;
             this.collection = options.collection;
             this.parrentContentId = options.collection.parrentContentId;
             this.sort = options.sort;
             this.filter = options.filter;
             this.page = options.collection.currentPage;
-            this.contentCollection = paymentCollection;
 
             this.render();
+        },
+
+        events: {
+            'click td:not(.notForm)': 'editItem'
+        },
+
+        editItem: function (e) {
+            var id = $(e.target).closest('tr').data('id');
+            var model = this.collection.get(id);
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            return new EditView({model: model});
         },
 
         recalcTotal: function () {
@@ -85,7 +75,7 @@ define([
             $('.ui-dialog ').remove();
 
             $currentEl.html('');
-            $currentEl.append(_.template(ListHeaderForWTrack));
+            $currentEl.append(this.listTemplate);
             $currentEl.append(new ListItemView({
                 collection : this.collection,
                 page       : this.page,
@@ -97,19 +87,7 @@ define([
                 cellSpan: 3,
                 wTrack  : true
             }).render());
-
-            self.renderFilter(self);
-
-            self.renderPagination($currentEl, self);
-
-            setTimeout(function () {
-                self.editCollection = new EditCollection(self.collection.toJSON());
-                self.editCollection.on('saved', self.savedNewModel, self);
-                self.editCollection.on('updated', self.updatedOptions, self);
-
-                self.$listTable = $('#listTable');
-            }, 10);
-
+            
             $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + 'ms</div>');
         }
     });

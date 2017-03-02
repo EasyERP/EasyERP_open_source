@@ -3,36 +3,105 @@ define([
     'Underscore',
     'jQuery',
     'text!templates/main/MainTemplate.html',
+    'models/EmployeesModel',
+    'models/UsersModel',
     'views/menu/LeftMenuView',
+    'views/Employees/EditView',
+    'views/Users/EditView',
     'collections/menu/MenuItems',
     'dataService',
     'constants'
-], function (Backbone, _, $, MainTemplate, LeftMenuView, MenuItemsCollection, dataService, CONSTANTS) {
+], function (Backbone, _, $, MainTemplate, EmployeesModel, UsersModel, LeftMenuView, EmployeeEditView, UserEditView, MenuItemsCollection, dataService, CONSTANTS) {
     'use strict';
     var MainView = Backbone.View.extend({
-        el: '#wrapper',
+        el      : '#wrapper',
+        template: _.template(MainTemplate),
 
         initialize: function (options) {
             this.contentType = options ? options.contentType : null;
-            this.render();
-
             this.collection = new MenuItemsCollection();
-            this.collection.bind('reset', this.createMenuViews, this);
+            this.collection.bind('reset', this.render, this);
+
+            this.bindMouseEvents();
+
+            return this;
         },
 
         events: {
             'click .sidebarToggler': 'expandCollapse',
-            'click #loginPanel'    : 'openLogin'
+            'click #loginPanel'    : 'openLogin',
+            'click #userpage'      : 'goToMyProfile'
+        },
+
+        bindMouseEvents: function () {
+            var $thisEl = this.$el;
+            var _onSubMenuHover;
+            var _onSubMenuLeave;
+
+            /* _.bindAll(this, 'onSubMenuHover', 'onSubMenuLeave');
+             _onSubMenuHover = _.debounce(this.onSubMenuHover, 300);
+             _onSubMenuLeave = _.debounce(this.onSubMenuLeave, 900);
+
+             $thisEl.on('mouseover', '#submenuHolder:not(.preventActions)', _onSubMenuHover);
+             $thisEl.on('mouseleave', '#submenuHolder:not(.preventActions)', _onSubMenuLeave); */
+
         },
 
         expandCollapse: function () {
-            $('#wrapper').toggleClass('collapsed');
+            var url = window.location.hash;
+            var contentType = url.split('/') ? url.split('/')[1] : '';
+            var resizableArray = ['reportsDashboard', 'purchaseDashboard'];
+            var $thisEl = this.$el;
+            var $subMenuHolder = $thisEl.find('#submenuHolder');
 
+            $thisEl.toggleClass('collapsed');
+            $subMenuHolder.toggleClass('preventActions');
+
+            if (resizableArray.indexOf(contentType) > -1) {
+                $(window).trigger('resize');
+            }
         },
 
         openLogin: function (e) {
             e.stopPropagation();
             $(e.target).closest('.loginPanel').toggleClass('open');
+        },
+
+        goToMyProfile: function (e) {
+            var profileName = App.currentUser && App.currentUser.profile && App.currentUser.profile.profileName;
+            var employee;
+            var editView;
+
+            e.preventDefault();
+
+            if (App.currentUser && App.currentUser.relatedEmployee) {
+                employee = new EmployeesModel({_id: App.currentUser._id}); // get employee by relatedUser
+                employee.fetch({
+                    success: function (model) {
+                        model.set('isForProfile', true);
+
+                        return new EmployeeEditView({
+                            profileName: profileName,
+                            currentUser: true,
+                            model      : model
+                        });
+                    },
+
+                    error: function (model, xhr) {
+                        App.render({
+                            type   : 'error',
+                            message: xhr.statusText
+                        });
+                    }
+                });
+
+            } else {
+                editView = new UserEditView({
+                    profileName: profileName,
+                    currentUser: true,
+                    model      : new UsersModel(App.currentUser)
+                });
+            }
         },
 
         createMenuViews: function () {
@@ -70,9 +139,13 @@ define([
             var modules = this.collection.toJSON();
             var rootIndex;
             var childIndex;
+            var i;
+            var j;
 
-            for (var i = modules.length; i--;) {
-                for (var j = modules[i].subModules.length; j--;) {
+            $(window).unbind('resize');
+
+            for (i = modules.length; i--;) {
+                for (j = modules[i].subModules.length; j--;) {
                     if (modules[i].subModules[j].href === contentType) {
                         rootIndex = i;
                         childIndex = j;
@@ -88,13 +161,39 @@ define([
             this.leftMenu.selectMenuItem(rootIndex, childIndex);
         },
 
+        onSubMenuHover: function (e) {
+            var $thisEl = this.$el;
+
+            $thisEl.removeClass('collapsed');
+        },
+
+        onSubMenuLeave: function (e) {
+            var $thisEl = this.$el;
+
+            $thisEl.addClass('collapsed');
+        },
+
         render: function () {
-            var icon;
-            var log;
+            var self = this;
 
-            if (!App || !App.currentUser || !App.currentUser.login) {
+            if (!App.organizationSettings) {
+                dataService.getData('/organizationSettings', null, function (response) {
+                    if (response && !response.error) {
+                        App.organizationSettings = response.data;
+                        if (response.data && response.data.startDate) { // toDo enable StartDate of program
+                            $.datepicker.setDefaults({
+                                firstDay: 1,
+                                minDate : new Date(response.data.startDate)
+                            });
+                        }
 
-                dataService.getData(CONSTANTS.URLS.CURRENT_USER, null, function (response, context) {
+                    }
+                });
+            }
+
+            if (!App.currentUser || !App.currentUser.login) {
+
+                dataService.getData(CONSTANTS.URLS.CURRENT_USER, null, function (response) {
                     var currentUser;
 
                     currentUser = response.user || {};
@@ -109,50 +208,31 @@ define([
 
                     if (currentUser.profile && currentUser.profile.profileName === 'baned') {
                         $('title').text('EasyERP');
-                        context.$el.find('li#userpage').remove();
-                        context.$el.find('#top-bar').addClass('banned');
-                        context.$el.find('#content-holder').append("<div id = 'banned'><div class='icon-banned'></div><div class='text-banned'><h1>Sorry, this user is banned!</h1><p>Please contact the administrator.</p></div></div>");
                     }
-                    if (currentUser && currentUser.relatedEmployee) {
-                        $('#loginPanel .iconEmployee').attr('src', currentUser.relatedEmployee.imageSrc);
 
-                        if (currentUser.relatedEmployee.name) {
-                            $('#loginPanel  #userName').text(currentUser.relatedEmployee.name.first + ' ' + currentUser.relatedEmployee.name.last);
-                        } else {
-                            $('#loginPanel  #userName').text(currentUser.login);
-                        }
-                    } else {
-                        $('#loginPanel .iconEmployee').attr('src', currentUser.imageSrc);
-                        $('#loginPanel  .userName').text(currentUser.login);
-                    }
-                }, this);
+                    self.$el.html(self.template(currentUser));
+                    self.createMenuViews();
+                    self.trigger('rendered');
+                });
 
-                this.$el.html(_.template(MainTemplate));
             } else {
-                this.$el.html(_.template(MainTemplate));
-
-                icon = $('#loginPanel .iconEmployee');
-                log = $('#loginPanel  .userName');
-
                 if (App.currentUser && App.currentUser.profile && App.currentUser.profile.profileName === 'baned') {
                     $('title').text('EasyERP');
-                    this.$el.find('li#userpage').remove();
-                    this.$el.find('#top-bar').addClass('banned');
-                    this.$el.find('#content-holder').append("<div id = 'banned'><div class='icon-banned'></div><div class='text-banned'><h1>Sorry, this user is banned!</h1><p>Please contact the administrator.</p></div></div>");
                 }
-                if (App.currentUser.relatedEmployee) {
-                    $('#loginPanel .iconEmployee').attr('src', App.currentUser.relatedEmployee.imageSrc);
 
-                    if (App.currentUser.relatedEmployee.name) {
-                        $('#loginPanel  #userName').text(App.currentUser.relatedEmployee.name.first + ' ' + App.currentUser.relatedEmployee.name.last);
-                    } else {
-                        $('#loginPanel  #userName').text(App.currentUser.login);
-                    }
-                } else {
-                    icon.attr('src', App.currentUser.imageSrc);
-                    log.text(App.currentUser.login);
-                }
+                self.$el.html(self.template(App.currentUser));
+                self.createMenuViews();
+                self.trigger('rendered');
             }
+
+            this.$el.on('click', function (e) {
+                var $target = $(e.target);
+                var $dateRangeContainer = $target.closest('.dateFilter');
+
+                if (!$dateRangeContainer.length) {
+                    self.$el.find('.dateFilter .frameDetail').addClass('hidden');
+                }
+            });
 
             return this;
         }

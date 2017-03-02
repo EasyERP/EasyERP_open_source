@@ -296,7 +296,8 @@ define([
             this.totalRecords = response.total;
             this.totalPages = Math.ceil(this.totalRecords / this.pageSize);
             this.lastPage = this.totalPages;
-            this.totalValue = response.totalValue;
+            this.totalDebit = response.totalDebit;
+            this.totalCredit = response.totalCredit;
 
             this.trigger('fetchFinished', {
                 totalRecords: this.totalRecords,

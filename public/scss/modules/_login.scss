@@ -1,11 +1,11 @@
-.notRegister {
-  input {
-    &:not([type="checkbox"]) {
-      border-color: #ff9393;
-      &:focus {
-        border-color: #ff9393;
-      }
-    }
+.notRegister input:not([type="checkbox"]),
+input.errorContent:not([type="checkbox"]),
+textarea.errorContent {
+  border-color: #ff9393;
+
+  &:focus {
+    border-color: #ff9393;
+    box-shadow: 0 1px 0 0 #ff9393;
   }
 }
 

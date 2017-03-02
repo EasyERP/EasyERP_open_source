@@ -9,17 +9,26 @@
             <ul class="attachContainer">
                 <% if (attachments){ attachments.reverse();%>
                 <% _.each(attachments, function(data,key){ %>
-                <li class="attachFile_<%=data['_id'] %>"><a href="download/<%=data.shortPas%>"><%=data.name %></a>
-                    <a id="<%=data['_id'] %>" href="javascript:;" class="deleteAttach">Delete</a>
+                <li class="attachFile_<%=data['_id'] %>">
+                    <a href="download/<%=data.shortPas%>"><%=data.name %></a>
+                    <a id="<%=data['_id'] %>"
+                       href="javascript:;"
+                       class="deleteAttach">Delete</a>
                 </li>
                 <% }); attachments.reverse();} %>
             </ul>
         </div>
 
-        <div class="input-file <%=attachments.length ? 'smallBtn' : '' %>" >
-            <span class="atachPlaceHolder"><i class="icon-plus" aria-hidden="true"></i> Attach</span>
-            <input type="file" value="Choose File" id="inputAttach" class="inputAttach" name="attachfile" multiple="multiple" >
-
+        <div class="input-file">
+            <span class="_circleIconBtn icon-plus">
+                <input type="file"
+                       class="inputAttach"
+                       id="inputAttach"
+                       name="attachfile"
+                       value="Choose File"
+                       multiple="multiple" />
+                <span class="_customTooltip">Max file size 10MB</span>
+            </span>
         </div>
         <div class="progress" style="float:left;">
             <div class="bar">
@@ -27,7 +36,5 @@
             </div>
         </div>
     </form>
-
-
 </div>
 

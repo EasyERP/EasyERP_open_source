@@ -139,6 +139,10 @@ define([
                 url += '/filter=' + encodeURI(JSON.stringify(this.filter));
             }
 
+            if ($(e.target).closest('tfoot').length) {
+                return;
+            }
+
             App.ownContentType = true;
 
             Backbone.history.navigate(url, {trigger: true});

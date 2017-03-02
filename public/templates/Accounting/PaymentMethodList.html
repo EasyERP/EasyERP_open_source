@@ -1,7 +1,7 @@
 <div class="_acountingTableWrap">
     <div class="_acountingTitleBlock">
         <span class="_acountingTitle">Bank Accounts</span>
-        <a href="javascript:;" class="btn blue plus" title="Create" id="top-bar-createBtn">Add</a>
+        <a href="javascript:;" class="btn blue icon-plus btnPositioned" title="Create" id="top-bar-createBtn">Add</a>
     </div>
     <div class="_acountingTableBlock">
         <table class="list tableProjects tableFixed _acountingTable">
@@ -32,8 +32,8 @@
                 <td><span><%=elem.chartAccount ? elem.chartAccount.name : '' %></span></td>
                 <td><span><%=elem.currency %></span></td>
                 <td>
-                    <a href="javascript:;" class="icon-note goToEdit" aria-hidden="true"></a>
-                    <a href="javascript:;" class="icon-trash goToRemove" aria-hidden="true"></a>
+                    <a href="javascript:;" class="icon-note goToEdit _actionCircleBtn" aria-hidden="true"></a>
+                    <a href="javascript:;" class="icon-trash goToRemove _actionCircleBtn" aria-hidden="true"></a>
                 </td>
             </tr>
             <% }) %>

@@ -30,9 +30,8 @@ define([
         },
 
         events: {
-            'keypress #paymentTermCount' : 'keypressHandler'
+            'keypress #paymentTermCount': 'keypressHandler'
         },
-
 
         saveItem: function () {
             var self = this;
@@ -49,11 +48,10 @@ define([
             this.currentModel.save(data, {
                 wait   : true,
                 success: function (res, model) {
-                    var el =  $('#currencyTable').find('tr[data-id="' + model._id + '"]');
+                    var el = $('#currencyTable').find('tr[data-id="' + model._id + '"]');
                     self.hideDialog();
 
-
-                    el.after(_.template(tableEL, {elem : model}));
+                    el.after(_.template(tableEL, {elem: model}));
                     el.remove();
                 },
 
@@ -78,12 +76,10 @@ define([
             });
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'edit-dialog',
-                width        : '250px',
-                buttons      : [
+                autoOpen   : true,
+                dialogClass: 'edit-dialog',
+                width      : '250px',
+                buttons    : [
                     {
                         text : 'Save',
                         class: 'btn blue',

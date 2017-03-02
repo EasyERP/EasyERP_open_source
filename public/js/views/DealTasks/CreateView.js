@@ -90,18 +90,18 @@ define([
             }
 
             this.model.save(saveObject, {
-                    wait   : true,
-                    success: function (model) {
-                        var currentModel = model.changed;
+                wait   : true,
+                success: function (model) {
+                    var currentModel = model.changed;
 
-                        self.attachView.sendToServer(null, currentModel);
-                    },
+                    self.attachView.sendToServer(null, currentModel);
+                },
 
-                    error: function (model, xhr) {
-                        self.errorNotification(xhr);
-                    }
+                error: function (model, xhr) {
+                    self.errorNotification(xhr);
+                }
 
-                });
+            });
         },
 
         renderCategory: function () {
@@ -139,11 +139,10 @@ define([
             var self = this;
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                dialogClass  : 'edit-dialog task-edit-dialog',
-                width        : 600,
-                title        : 'Create Task',
-                buttons      : {
+                dialogClass: 'edit-dialog task-edit-dialog',
+                width      : 600,
+                title      : 'Create Task',
+                buttons    : {
                     save: {
                         text : 'Create',
                         class: 'btn blue',
@@ -170,7 +169,6 @@ define([
             populate.get('#contactDd', CONSTANTS.URLS.COMPANIES, {type: 'Person'}, 'fullName', this, false);
             populate.get('#companyDd', CONSTANTS.URLS.COMPANIES, {type: 'Company'}, 'fullName', this, false);
 
-
             this.renderCategory();
 
             this.$el.find('#dueDate').datepicker({
@@ -179,7 +177,7 @@ define([
                 changeYear : true
             });
             this.$el.find('#timepickerOne').wickedpicker({
-                showSeconds: true,
+                showSeconds    : true,
                 secondsInterval: 1,
                 minutesInterval: 1
             });

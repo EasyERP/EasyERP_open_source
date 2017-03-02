@@ -1,83 +1,126 @@
-<div class="form-holder">
-    <form method="post" action="" id="createPaymentForm" class="form">
-        <fieldset>
-            <div class="inner">
-                <div class="topInputHolder">
-                    <h2>Pay Invoice</h2>
+<div class="form-holder _newForm">
+    <form method="post" id="createPaymentForm">
+        <h2 class="_dialogMainTitle"><%=title || 'Create Payment'%></h2>
+        <div class="_formWrap _enlargedItemMargin">
+            <div class="_formBlock _equal">
+                <div class="_animateInputBox">
+                    <span class="_staticLabel">Supplier</span>
+                    <%if(invoice && invoice.supplier && invoice.supplier._id){%>
+                    <span id="supplierDd"
+                          class="_staticInfo"
+                          data-id="<%=invoice.supplier._id%>">
+                            <%=invoice.supplier.name.first + ' ' + invoice.supplier.name.last%></span>
+                    <%} else {%>
+                    <span id="supplierDd" class="_staticInfo">Nan</span>
+                    <%}%>
                 </div>
-                <div class="half-block left">
-                    <dl class="opp-info">
-                        <dt><label for="supplierDD">Supplier</label></dt>
-                        <dd>
-                            <%if(invoice && invoice.supplier && invoice.supplier._id){%>
-                            <a id="supplierDd" class="" href="javascript:;"
-                               data-id="<%=invoice.supplier._id%>"><%=invoice.supplier.name.first + ' ' +
-                                invoice.supplier.name.last%></a>
-                            <%} else {%>
-                            <a id="supplierDd" class="" href="javascript:;">Select</a>
-                            <%}%>
-                        </dd>
-                        <dt>
-                            <label for="paidAmount">Paid Amount</label>
-                        </dt>
-                        <dd id="paidAmountDd" class="<%=currencyClass(currency._id)%>">
-                            <input type="text" name="paidAmount" id="paidAmount" maxlength="10"
-                                   value="<%=invoice.paymentInfo ? invoice.paymentInfo.balance : 0%>">
-                            <span></span>
-                        </dd>
-                        <dt>
-                            <label for="paymentMethod">Bank account
-                            </label>
-                        </dt>
-                        <dd class="_newSelectListWrap">
-                            <a id="paymentMethod" class="current-selected" href="javascript:;">Select</a>
-                        </dd>
-                        <div id='journalDiv'>
-                            <dt>
-                                <label for="paymentMethod">Journal
-                                </label>
-                            </dt>
-                            <dd class="_newSelectListWrap">
-                                <a id="journal" class="current-selected" href="javascript:;">Select</a>
-                            </dd>
+                <%if (prepayment) {%>
+                <div id="prepaidAmountDd" class="_animateInputBox <%=currencyClass(currency._id)%>">
+                    <input type="text"
+                           name="paidAmount"
+                           class="_animate"
+                           id="prepaidAmount"
+                           maxlength="10"
+                           value="<%=invoice.paymentInfo ? invoice.paymentInfo.total - paymentsSum : 0%>">
+                    <label class="_animate" for="prepaidAmount">Prepaid Amount</label>
+                </div>
+                <%} else {%>
+                <div class="_animateInputBox <%=currencyClass(currency._id)%>" id="paidAmountDd" >
+                    <input type="text"
+                           name="paidAmount"
+                           class="_animate"
+                           id="paidAmount"
+                           maxlength="10"
+                           value="<%=invoice.paymentInfo ? invoice.paymentInfo.balance : 0%>"
+                           required/>
+                    <label class="_animate" for="paidAmount">Paid Amount</label>
+                </div>
+                <%}%>
+                <div class="_animateSelectBox _additionalInputWrap">
+                    <span class="_selectTitle">Bank Expenses</span>
+                    <div id="bankExpensesAccount"
+                         class="_newSelectListWrap _bankExpensesAccount">
+                        <a id="bankExpensesAccountDd"
+                           class="current-selected"
+                           href="javascript:;">Select Account</a>
+                    </div>
+                    <div id="bankExpensesDd"
+                         class="_additionalInput <%=currencyClass(currency._id)%>">
+                        <input type="text"
+                               id="bankExpenses"
+                               name="paidAmount"
+                               placeholder="Amount"
+                               maxlength="10"
+                               required
+                               value=""/>
+                    </div>
+                </div>
+                <div id="overPayment" class="hidden _additionalInputWrap">
+                    <div class="_animateSelectBox" id="overPaymentAccount">
+                        <span class="_selectTitle">Over Payment Difference</span>
+                        <div class="_newSelectListWrap">
+                            <a id="overPaymentAccountDd"
+                               class="current-selected"
+                               href="javascript:;">Select</a>
                         </div>
-
-                    </dl>
-                </div>
-                <div class="half-block left">
-                    <dl class="opp-info">
-                        <dt><label for="paymentDate">Date</label></dt>
-                        <dd><input id="paymentDate" class="extrainfo" type="text" name="paymentDate"></dd>
-                        <!--<dt><label for="period">Period</label></dt>
-                        <dd>
-                            <a id="period" class="current-selected" href="javascript:;">Select</a>
-                        </dd>-->
-                        <dt><label for="paymentRef">Invoice</label></dt>
-                        <dd>
-                            <a id="paymentRef" data-id="<%=invoice._id%>" href="javascript:;"><%=invoice.name%></a>
-                            <!--<input type="text" name="paymentRef" id="paymentRef" maxlength="20"-->
-                            <!--value="<%=invoice.name%>" readonly />-->
-                        </dd>
-                        <!--                        <dt><label for="memo">Memo</label></dt>
-                                                <dd><input type="text" name="memo" id="memo" maxlength="20"></dd>-->
-                        <dt><label for="currencyDd">Currency</label></dt>
-                        <dd class="_newSelectListWrap">
-                            <a id="currencyDd" class="current-selected"
-                               data-id="<%= currency && currency._id ? currency._id : null%>"
-                               href="javascript:;"><%= currency ?
-                                currency.name : ''%></a>
-                        </dd>
-                    </dl>
-                </div>
-                <div id="differenceAmountContainer" class="half-block left hidden">
-                    <dt><label>Difference Amount</label></dt>
-                    <dd class="dollar"><span id="differenceAmount"></span></dd>
-                    <!--<dt><label for="paymentDifference">Payment Difference</label></dt>
-                    <dd>
-                        <a id="paymentDifference" class="current-selected" href="javascript:;">Select</a>
-                    </dd>-->
+                    </div>
+                    <div id="overPaymentDiffDd"
+                         class="_additionalInputWrap <%=currencyClass(currency._id)%>">
+                        <input type="text"
+                               name="paidAmount"
+                               id="overPaymentDiff"
+                               class="_animate"
+                               maxlength="10"
+                               value=""
+                               required
+                               readonly/>
+                    </div>
                 </div>
             </div>
-        </fieldset>
+            <div class="_formBlock _equal">
+                <div class="_animateInputBox">
+                    <span class="_staticLabel">Payment Date</span>
+                    <input id="paymentDate"
+                           class="_animate extrainfo"
+                           type="text"
+                           placeholder="Select Payment Date"
+                           name="paymentDate"
+                           required>
+                </div>
+                <div class="_animateInputBox">
+                    <span class="_staticLabel">Source Document</span>
+                    <span class="_staticInfo"
+                          id="paymentRef"
+                          data-id="<%=invoice._id%>"><%=invoice.name%></span>
+                </div>
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Currency</span>
+                    <div class="_newSelectListWrap">
+                        <a id="currencyDd"
+                           class="current-selected"
+                           data-id="<%= currency && currency._id ? currency._id : null%>"
+                           href="javascript:;">
+                            <%= currency ? currency.name : ''%>
+                        </a>
+                    </div>
+                </div>
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Bank account</span>
+                    <div class="_newSelectListWrap">
+                        <a id="paymentMethod"
+                           class="current-selected"
+                           href="javascript:;">Select Bank account</a>
+                    </div>
+                </div>
+                <div class="_animateInputBox" id='journalDiv'>
+                    <span class="_staticLabel">Account</span>
+                    <div class="_staticInfo" id="account"></div>
+                </div>
+            </div>
+            <div id="differenceAmountContainer" class="half-block left hidden">
+                <dt><label>Difference Amount</label></dt>
+                <dd class="dollar"><span id="differenceAmount"></span></dd>
+            </div>
+        </div>
     </form>
 </div>

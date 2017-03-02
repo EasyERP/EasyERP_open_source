@@ -7,7 +7,7 @@ module.exports = (function () {
         name       : {type: String, required: true},
         date       : {type: Date, default: Date.now},
         type       : {type: String, default: ''},
-        transaction: {type: String, enum: ['Invoice', 'Payment', 'Accrual'], default: 'Invoice'},
+        transaction: {type: String, enum: ['invoice', 'payment', 'accrual', 'writeoff'], default: 'Invoice'},
         currency   : {
             name: {type: String, default: 'USD'}
         },

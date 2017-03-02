@@ -97,7 +97,6 @@ module.exports = (function () {
          * @property {String} name
          */
         isOpportunitie: {type: Boolean, default: false, index: true},
-        jobkey        : {type: String},
         name          : {type: String, default: ''},
 
         expectedRevenue: {

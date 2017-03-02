@@ -63,10 +63,11 @@ var Module = function (models) {
         var id = req.params.id;
         var data = req.body;
 
-        ScheduledPay.findByIdAndUpdate(id, data, function (err, result) {
+        ScheduledPay.findByIdAndUpdate(id, data, {new: true}, function (err, result) {
             if (err) {
                 return next(err);
             }
+
             res.status(200).send(result);
         });
     };

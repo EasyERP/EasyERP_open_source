@@ -4,6 +4,45 @@
     var root;
 
     var FILTERS = {
+        wTrackInvoice: {
+            _type: {
+                backend: '_type',
+                type   : 'string'
+            },
+
+            date: {
+                type   : 'date',
+                backend: {
+                    key     : 'invoiceDate',
+                    operator: ['$gte', '$lte']
+                }
+            }
+        },
+
+        Payment: {
+            date: {
+                type   : 'date',
+                backend: {
+                    key     : 'date',
+                    operator: ['$gte', '$lte']
+                }
+            }
+        },
+
+        integrationUnlinkedOrders: {
+            order: {
+                displayName: 'Channel',
+                backend    : 'channel._id'
+            }
+        },
+
+        integrationUnlinkedProducts: {
+            order: {
+                displayName: 'Order',
+                backend    : 'fields.order'
+            }
+        },
+
         wTrack: {
             employee: {
                 displayName: 'Employee',
@@ -74,10 +113,19 @@
                 type       : 'boolean'
             },
 
-            array: ['name', 'country', 'services']
+            channel: {
+                displayName: 'Channel',
+                backend    : 'channel._id'
+            },
+
+            array: ['name', 'country', 'services', 'channel']
         },
 
         DashVacation: {
+            dateFilterArray: [
+                'custom'
+            ],
+
             name: {
                 displayName: 'Employee',
                 backend    : 'employee'
@@ -103,23 +151,27 @@
         },
 
         DealTasks: {
-            name      : {
+            name: {
                 displayName: 'Name',
                 backend    : '_id'
             },
-            category  : {
+
+            category: {
                 displayName: 'Category',
                 backend    : 'category'
             },
+
             assignedTo: {
                 displayName: 'Assigned To',
                 backend    : 'assignedTo'
             },
-            workflow  : {
+
+            workflow: {
                 displayName: 'Status',
                 backend    : 'workflow'
             },
-            deal      : {
+
+            deal: {
                 displayName: 'Deal',
                 backend    : 'deal'
             },
@@ -144,7 +196,12 @@
                 backend    : 'services'
             },
 
-            array: ['name', 'country', 'services']
+            channel: {
+                displayName: 'Channel',
+                backend    : 'channel._id'
+            },
+
+            array: ['name', 'country', 'services', 'channel']
         },
 
         Employees: {
@@ -233,6 +290,14 @@
                 backend    : 'workflow._id'
             },
 
+            date: {
+                type   : 'date',
+                backend: {
+                    key     : 'invoiceDate',
+                    operator: ['$gte', '$lte']
+                }
+            },
+
             array: ['supplier', 'salesPerson', 'project', 'workflow']
         },
 
@@ -269,7 +334,8 @@
                 displayName: 'Journal',
                 backend    : 'journal._id'
             },
-            array  : ['project', 'journal']
+
+            array: ['project', 'journal']
         },
 
         DividendInvoice: {
@@ -281,7 +347,9 @@
             workflow: {
                 displayName: 'Status',
                 backend    : 'workflow._id'
-            }
+            },
+
+            array: ['workflow']
         },
 
         salesProforma: {
@@ -351,6 +419,17 @@
         },
 
         contractJobs: {
+            dateFilterArray: [
+                'thisMonth',
+                'thisFinYear',
+                'line',
+                'lastMonth',
+                'lastQuarter',
+                'lastFinYear',
+                'line',
+                'custom'
+            ],
+
             project: {
                 displayName: 'Project Name',
                 backend    : 'project._id'
@@ -376,16 +455,88 @@
                 backend    : 'projectManager.employeeId'
             },
 
+            date: {
+                type   : 'date',
+                backend: {
+                    key     : 'invoice.invoiceDate',
+                    operator: ['$gte', '$lte']
+                }
+            },
+
             array: ['project', 'customer', 'workflow', 'salesManager', 'projectManager']
         },
 
+        SalesByCountry: {
+            dateFilterArray: [
+                'thisMonth',
+                'thisFinYear',
+                'line',
+                'lastMonth',
+                'lastQuarter',
+                'lastFinYear',
+                'line',
+                'custom'
+            ]
+        },
+
+        LeadsBySale: {
+            dateFilterArray: [
+                'thisMonth',
+                'thisFinYear',
+                'line',
+                'lastMonth',
+                'lastQuarter',
+                'lastFinYear',
+                'line',
+                'custom'
+            ]
+        },
+
+        LeadsBySource: {
+            dateFilterArray: [
+                'thisMonth',
+                'thisFinYear',
+                'line',
+                'lastMonth',
+                'lastQuarter',
+                'lastFinYear',
+                'line',
+                'custom'
+            ]
+        },
+
+        LeadsByName: {
+            dateFilterArray: [
+                'thisMonth',
+                'thisFinYear',
+                'line',
+                'lastMonth',
+                'lastQuarter',
+                'lastFinYear',
+                'line',
+                'custom'
+            ]
+        },
+
         Leads: {
+            dateFilterArray: [
+                'thisMonth',
+                'thisFinYear',
+                'line',
+                'lastMonth',
+                'lastQuarter',
+                'lastFinYear',
+                'line',
+                'custom'
+            ],
+
             contactName: {
                 displayName: 'Contact Name',
                 backend    : 'contactName',
                 type       : 'string'
             },
-            source     : {
+
+            source: {
                 displayName: 'Source',
                 backend    : 'source',
                 type       : 'string'
@@ -397,17 +548,69 @@
             },
 
             salesPerson: {
-                displayName: 'Sales Person',
+                displayName: 'Assigned To',
                 backend    : 'salesPerson._id'
             },
 
             createdBy: {
                 displayName: 'Created By',
                 backend    : 'createdBy.user._id'
+            },
+
+            date: {
+                type   : 'date',
+                backend: {
+                    key     : 'createdBy.date',
+                    operator: ['$gte', '$lte']
+                }
+            },
+
+            array: ['contactName', 'source', 'workflow', 'salesPerson', 'createdBy']
+
+        },
+
+        OpportunitiesConversion: {
+            rangeFilterArray: [
+                'sevenDays',
+                'thirtyDays',
+                'ninetyDays',
+                'twelveMonths'
+            ],
+
+            date: {
+                type   : 'date',
+                backend: {
+                    key     : 'convertedDate',
+                    operator: ['$gte', '$lte']
+                }
+            }
+        },
+
+        WonLost: {
+            rangeFilterArray: [
+                'sevenDays',
+                'thirtyDays',
+                'ninetyDays',
+                'twelveMonths'
+            ],
+
+            date: {
+                type   : 'date',
+                backend: {
+                    key     : 'createdBy.date',
+                    operator: ['$gte', '$lte']
+                }
             }
         },
 
         Opportunities: {
+            rangeFilterArray: [
+                'sevenDays',
+                'thirtyDays',
+                'ninetyDays',
+                'twelveMonths'
+            ],
+
             customer: {
                 displayName: 'Customer',
                 backend    : 'customer'
@@ -423,7 +626,20 @@
                 backend    : 'salesPerson'
             },
 
-            array: ['customer', 'salesPerson', 'workflow']
+            name: {
+                displayName: 'Name',
+                backend    : '_id'
+            },
+
+            date: {
+                type   : 'date',
+                backend: {
+                    key     : 'creationDate',
+                    operator: ['$gte', '$lte']
+                }
+            },
+
+            array: ['customer', 'salesPerson', 'workflow', 'name']
         },
 
         Tasks: {
@@ -473,7 +689,45 @@
             name: {
                 displayName: 'Name',
                 backend    : '_id'
-            }
+            },
+
+            refund: {
+                displayName: 'Type',
+                backend    : 'refund',
+                type       : 'boolean'
+            },
+
+            array: ['assigned', 'supplier', 'paymentMethod', 'name', 'refund']
+        },
+
+        purchasePayments: {
+            assigned: {
+                displayName: 'Assigned',
+                backend    : 'assigned._id'
+            },
+
+            supplier: {
+                displayName: 'Company',
+                backend    : 'supplier._id'
+            },
+
+            paymentMethod: {
+                displayName: 'Payment way',
+                backend    : 'paymentMethod._id'
+            },
+
+            name: {
+                displayName: 'Name',
+                backend    : '_id'
+            },
+
+            refund: {
+                displayName: 'Refund',
+                backend    : 'refund',
+                type       : 'boolean'
+            },
+
+            array: ['assigned', 'supplier', 'paymentMethod', 'name', 'refund']
         },
 
         supplierPayments: {
@@ -529,7 +783,8 @@
             }
         },
 
-        /*DividendPayments: {
+        /*
+         DividendPayments: {
          year: {
          displayName: 'Year',
          backend    : 'year'
@@ -544,7 +799,8 @@
          displayName: 'Status',
          backend    : 'workflow'
          }
-         },*/
+         },
+         */
 
         Products: {
             name: {
@@ -552,11 +808,13 @@
                 backend    : '_id'
             },
 
-            /*productType: {
+            /*
+             productType: {
              displayName: 'Product Type',
              backend    : 'info.productType',
              type       : 'string'
-             },*/
+             },
+             */
 
             canBeSold: {
                 displayName: 'Can be Sold',
@@ -576,9 +834,19 @@
                 type       : 'boolean'
             },
 
+            /* hasJob: {
+             displayName: 'Not assigned Job',
+             backend    : 'job',
+             type       : 'boolean'
+             },*/
+
             productCategory: {
                 displayName: 'Category',
-                backend    : 'accounting.category._id'
+                backend    : 'info.categories'
+            },
+
+            channelLinks: {
+                backend: 'channelLinks.channel'
             },
 
             array: ['name', 'canBeSold', 'canBeExpensed', 'canBePurchased']
@@ -644,6 +912,41 @@
             workflow: {
                 displayName: 'Status',
                 backend    : 'workflow._id'
+            },
+
+            date: {
+                type   : 'date',
+                backend: {
+                    key     : 'invoiceDate',
+                    operator: ['$gte', '$lte']
+                }
+            },
+
+            array: ['supplier', 'workflow']
+        },
+
+        purchaseInvoices: {
+            forSales: {
+                backend: 'forSales',
+                type   : 'boolean'
+            },
+
+            supplier: {
+                displayName: 'Supplier',
+                backend    : 'supplier._id'
+            },
+
+            workflow: {
+                displayName: 'Status',
+                backend    : 'workflow._id'
+            },
+
+            date: {
+                type   : 'date',
+                backend: {
+                    key     : 'invoiceDate',
+                    operator: ['$gte', '$lte']
+                }
             },
 
             array: ['supplier', 'workflow']
@@ -726,6 +1029,91 @@
             array: ['workflow', 'supplier']
         },
 
+        purchaseOrders: {
+            forSales: {
+                backend: 'forSales',
+                type   : 'boolean'
+            },
+
+            supplier: {
+                displayName: 'Supplier',
+                backend    : 'supplier._id'
+            },
+
+            workflow: {
+                displayName: 'Status',
+                backend    : 'workflow._id'
+            },
+
+            array: ['workflow', 'supplier']
+        },
+
+        order: {
+            forSales: {
+                backend: 'forSales',
+                type   : 'boolean'
+            },
+
+            supplier: {
+                displayName: 'Customer',
+                backend    : 'supplier._id'
+            },
+
+            salesPerson: {
+                displayName: 'Assigned To',
+                backend    : 'salesPerson._id'
+            },
+
+            workflow: {
+                displayName: 'Status',
+                backend    : 'workflow._id'
+            },
+
+            allocationStatus: {
+                displayName: 'Allocation Status',
+                backend    : 'status.allocateStatus',
+                type       : 'string'
+            },
+
+            fulfilledStatus: {
+                displayName: 'Fulfilled Status',
+                backend    : 'status.fulfillStatus',
+                type       : 'string'
+            },
+
+            shippingStatus: {
+                displayName: 'Shipping Status',
+                backend    : 'status.shippingStatus',
+                type       : 'string'
+            },
+
+            channel: {
+                displayName: 'Channel',
+                backend    : 'channel._id'
+            },
+
+            name: {
+                displayName: 'Reference',
+                backend    : '_id'
+            },
+
+            /*name: {
+             displayName: 'Reference',
+             backend    : 'name',
+             type       : 'string'
+             },*/
+
+            date: {
+                type   : 'date',
+                backend: {
+                    key     : 'orderDate',
+                    operator: ['$gte', '$lte']
+                }
+            },
+
+            array: ['supplier', 'salesPerson', 'workflow', 'allocationStatus', 'fulfilledStatus', 'shippingStatus', 'channel', 'name']
+        },
+
         PayrollExpenses: {
             employee: {
                 displayName: 'Employee',
@@ -774,26 +1162,62 @@
         },
 
         salaryReport: {
-            employee: {
-                displayName: 'Employee',
-                backend    : '_id'
-            },
+            dateFilterArray: [
+                'custom'
+            ]/* ,
 
-            department: {
-                displayName: 'Department',
-                backend    : 'department._id'
-            },
 
-            onlyEmployees: {
-                displayName: 'Only Employees',
-                backend    : 'onlyEmployees',
-                type       : 'boolean'
-            },
+             employee: {
+             displayName: 'Employee',
+             backend    : '_id'
+             },
 
-            array: ['employee', 'department', 'onlyEmployees']
+             department: {
+             displayName: 'Department',
+             backend    : 'department._id'
+             },
+
+             onlyEmployees: {
+             displayName: 'Only Employees',
+             backend    : 'onlyEmployees',
+             type       : 'boolean'
+             },
+
+             array: ['employee', 'department', 'onlyEmployees']
+             */
+        },
+
+        invoiceCharts: {
+            dateFilterArray: [
+                'custom'
+            ]
+        },
+
+        trialBalance: {
+            dateFilterArray: [
+                'thisMonth',
+                'thisFinYear',
+                'line',
+                'lastMonth',
+                'lastQuarter',
+                'lastFinYear',
+                'line',
+                'custom'
+            ]
         },
 
         journalEntry: {
+            dateFilterArray: [
+                'thisMonth',
+                'thisFinYear',
+                'line',
+                'lastMonth',
+                'lastQuarter',
+                'lastFinYear',
+                'line',
+                'custom'
+            ],
+
             journal: {
                 displayName: 'Journal',
                 backend    : 'journal._id'
@@ -805,14 +1229,25 @@
                 type       : 'string'
             },
 
-            creditAccount: {
-                displayName: 'Credit Account',
-                backend    : 'creditAccount._id'
+            timestamp: {
+                displayName: 'Name',
+                backend    : 'timestamp',
+                type       : 'string'
             },
 
-            debitAccount: {
-                displayName: 'Debit Account',
-                backend    : 'debitAccount._id'
+            debit: {
+                backend    : 'debit',
+                type       : 'integer'
+            },
+
+            credit: {
+                backend    : 'credit',
+                type       : 'integer'
+            },
+
+            account: {
+                displayName: 'Account',
+                backend    : 'account._id'
             },
 
             salesManager: {
@@ -828,9 +1263,17 @@
                 type   : 'string'
             },
 
+            sum: {
+                displayName: 'Debit or Credit Amount',
+                backend    : '_id'
+            },
+
             date: {
-                backend: 'date',
-                type   : 'date'
+                type   : 'date',
+                backend: {
+                    key     : 'date',
+                    operator: ['$gte', '$lte']
+                }
             },
 
             _type: {
@@ -838,10 +1281,34 @@
                 type   : 'string'
             },
 
-            array: ['journal', 'name', 'debitAccount', 'creditAccount']
+            array: ['journal', 'name', 'account', 'timestamp', 'sum']
+        },
+
+        customDashboardCharts: {
+            dateFilterArray: [
+                'thisMonth',
+                'thisFinYear',
+                'line',
+                'lastMonth',
+                'lastQuarter',
+                'lastFinYear',
+                'line',
+                'custom'
+            ]
         },
 
         inventoryReport: {
+            dateFilterArray: [
+                'thisMonth',
+                'thisYear',
+                'line',
+                'lastMonth',
+                'lastQuarter',
+                'lastYear',
+                'line',
+                'custom'
+            ],
+
             project: {
                 displayName: 'Project',
                 backend    : 'project._id'
@@ -859,8 +1326,11 @@
             },
 
             date: {
-                backend: 'date',
-                type   : 'date'
+                type   : 'date',
+                backend: {
+                    key     : 'date',
+                    operator: ['$gte', '$lte']
+                }
             },
 
             array: ['project', 'salesManager', 'type']
@@ -890,6 +1360,230 @@
 
             array: ['workflow', 'name', 'customer', 'type']
 
+        },
+
+        manualEntry: {
+            dateFilterArray: [
+                'thisMonth',
+                'thisYear',
+                'line',
+                'lastMonth',
+                'lastQuarter',
+                'lastYear',
+                'line',
+                'custom'
+            ]
+        },
+
+        cashBook: {
+            dateFilterArray: [
+                'thisMonth',
+                'thisYear',
+                'line',
+                'lastMonth',
+                'lastQuarter',
+                'lastYear',
+                'line',
+                'custom'
+            ]
+        },
+
+        cashFlow: {
+            dateFilterArray: [
+                'thisMonth',
+                'thisYear',
+                'line',
+                'lastMonth',
+                'lastQuarter',
+                'lastYear',
+                'line',
+                'custom'
+            ]
+        },
+
+        balanceSheet: {
+            dateFilterArray: [
+                'endDate'
+               /* 'thisMonth',
+                'thisYear',
+                'line',
+                'lastMonth',
+                'lastQuarter',
+                'lastYear',
+                'line',
+                'custom'*/
+            ]
+        },
+
+        reports: {
+            dateFilterArray: [
+                'thisMonth',
+                'thisYear',
+                'line',
+                'lastMonth',
+                'lastQuarter',
+                'lastYear',
+                'line',
+                'custom'
+            ]
+        },
+
+        profitAndLoss: {
+            dateFilterArray: [
+                'thisMonth',
+                'thisYear',
+                'line',
+                'lastMonth',
+                'lastQuarter',
+                'lastYear',
+                'line',
+                'custom'
+            ]
+        },
+
+        goodsOutNotes: {
+            customer: {
+                displayName: 'Customer',
+                backend    : 'customer._id'
+            },
+
+            warehouse: {
+                displayName: 'Warehouse',
+                backend    : 'warehouse._id'
+            },
+
+            workflow: {
+                displayName: 'Order Status',
+                backend    : 'workflow._id'
+            },
+
+            status: {
+                displayName: 'Status',
+                backend    : 'status',
+                type       : 'boolean'
+            },
+
+            name: {
+                displayName: 'Goods Note ID',
+                backend    : '_id'
+            },
+
+            array: ['workflow', 'warehouse', 'customer', 'status', 'name']
+        },
+
+        stockTransactions: {
+            warehouse  : {
+                displayName: 'From',
+                backend    : 'warehouse'
+            },
+            warehouseTo: {
+                displayName: 'To',
+                backend    : 'warehouseTo'
+            },
+            status     : {
+                displayName: 'Status',
+                backend    : 'status',
+                type       : 'boolean'
+            },
+
+            array: ['warehouse', 'warehouseTo', 'status']
+        },
+
+        invoice: {
+            forSales: {
+                backend: 'forSales',
+                type   : 'boolean'
+            },
+
+            supplier: {
+                displayName: 'Customer',
+                backend    : 'supplier._id'
+            },
+
+            salesPerson: {
+                displayName: 'Assigned',
+                backend    : 'salesPerson._id'
+            },
+
+            project: {
+                displayName: 'Project Name',
+                backend    : 'project._id'
+            },
+
+            workflow: {
+                displayName: 'Status',
+                backend    : 'workflow._id'
+            },
+
+            date: {
+                type   : 'date',
+                backend: {
+                    key     : 'invoiceDate',
+                    operator: ['$gte', '$lte']
+                }
+            },
+
+            array: ['supplier', 'salesPerson', 'project', 'workflow']
+        },
+
+        rates: {
+            date: {
+                type   : 'date',
+                backend: {
+                    key     : 'date',
+                    operator: ['$gte', '$lte']
+                }
+            }
+        },
+
+        stockInventory: {
+            warehouse: {
+                displayName: 'Warehouse',
+                backend    : 'warehouse._id'
+            },
+            location : {
+                displayName: 'Location',
+                backend    : 'location._id'
+            },
+            product  : {
+                displayName: 'Product',
+                backend    : 'product.name',
+                type       : 'string'
+            },
+            SKU      : {
+                displayName: 'SKU',
+                backend    : 'product._id'
+            },
+            order    : {
+                displayName: 'PO ref',
+                backend    : 'order._id'
+            },
+
+            array: ['warehouse', 'location', 'product', 'SKU', 'order']
+        },
+
+        ChartOfAccount: {
+            category: {
+                displayName: 'Category',
+                backend    : 'category._id'
+            },
+
+            account: {
+                displayName: 'Account Name',
+                backend    : 'account',
+                type       : 'string'
+            },
+
+            code    : {
+                displayName: 'Code',
+                backend    : 'code',
+                type       : 'integer'
+            },
+            currency: {
+                displayName: 'Currency',
+                backend    : 'payMethod.currency',
+                type       : 'string'
+            }
         }
     };
 

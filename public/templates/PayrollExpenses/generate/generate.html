@@ -1,16 +1,19 @@
-<div class="form-holder">
-    <div class="clearfix"></div>
-    <h3 class="borderBottom"><%=title%></h3>
-    <div class="clearfix"></div>
-
-    <div class="payRoll-expenses _payRollFormVisible">
-        <dl>
-            <dt><label class="payRoll-name" for="month">Month</label></dt>
-            <dd><a id="month" class="current-selected _newSelectListWrap" data-id="<%=month%>"><%=month%></a></dd>
-
-            <dt><label class="payRoll-name" for="year">Year</label></dt>
-            <dd ><a id="year" class="current-selected _newSelectListWrap" data-id="<%=year%>"><%=year%></a>
-            </dd>
-        </dl>
+<div class="form-holder _newForm">
+    <h4 class="_dialogMainTitle"><%=title%></h4>
+    <div class="_formWrap">
+        <div class="_formBlock">
+            <div class="_animateSelectBox">
+                <span class="_selectTitle">Month</span>
+                <div class="_newSelectListWrap">
+                    <a id="month" class="current-selected" data-id="<%=month%>"><%=month%></a>
+                </div>
+            </div>
+            <div class="_animateSelectBox">
+                <span class="_selectTitle">Year</span>
+                <div class="_newSelectListWrap">
+                    <a id="year" class="current-selected" data-id="<%=year%>"><%=year%></a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

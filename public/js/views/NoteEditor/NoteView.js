@@ -21,13 +21,13 @@ define([
         },
 
         events: {
-            'click .saveNote'     : 'saveNote',
-            'click .cancelNote'   : 'cancelNote',
-            'click #addNote'      : 'createNote',
-            'click .noteWrapper .showmore'   : 'showMore',
-            'click .noteWrapper .hideList'   : 'hideList',
-            'click .editDelNote'  : 'editDelNote',
-            'click .contentHolder': 'showButtons'
+            'click .saveNote'             : 'saveNote',
+            'click .cancelNote'           : 'cancelNote',
+            'click #addNote'              : 'createNote',
+            'click .noteWrapper .showmore': 'showMore',
+            'click .noteWrapper .hideList': 'hideList',
+            'click .editDelNote'          : 'editDelNote',
+            'click .contentHolder'        : 'showButtons'
         },
 
         showButtons: function (e) {
@@ -87,8 +87,12 @@ define([
                         },
                         patch  : true,
                         success: function () {
-                            $('#' + idInt).remove();
-                            if (currentModel.get('notes').length > 3){
+                            if ($('#' + idInt).length) {
+                                $('#' + idInt).remove();
+                            } else {
+                                $target.closest('.noteContainer').remove();
+                            }
+                            if (currentModel.get('notes').length > 3) {
                                 $showMore.removeClass('hidden');
                             } else {
                                 $showMore.addClass('hidden');
@@ -97,7 +101,6 @@ define([
                     });
             }
 
-
         },
 
         cancelNote: function (e) {
@@ -105,7 +108,7 @@ define([
             this.$el.find('#addNoteDiv').empty();
         },
 
-        createNote : function(e){
+        createNote: function (e) {
             this.$el.find('#addNoteDiv').html(_.template(AddNote));
             $(e.target).closest('button').addClass('hidden');
         },
@@ -141,7 +144,7 @@ define([
             var noteObj;
 
             if ($noteArea.val().replace(/ /g, '')) {
-                $noteArea.attr('placeholder', 'Add a Note...').parents('.addNote').removeClass('active');
+                $noteArea.attr('placeholder', 'Add a Note...Max 500 symbols.').parents('.addNote').removeClass('active');
                 $thisEl.find('.title-wrapper').hide();
                 $thisEl.find('.addTitle').hide();
             } else {
@@ -168,6 +171,7 @@ define([
                 noteObj = {};
                 {
                     noteObj.note = val;
+                    noteObj.date = new Date();
                     notes.push(noteObj);
                     formModel.save({notes: notes}, {
                         headers : {
@@ -195,10 +199,11 @@ define([
         },
 
         renderTimeline: function () {
+            var modelObj = this.model.toJSON();
             var notes = this.model.get('notes');
             var $showMore = this.$el.find('.showMoreBtns');
 
-            if (notes.length > 3){
+            if (notes.length > 3) {
                 $showMore.removeClass('hidden');
             } else {
                 $showMore.addClass('hidden');
@@ -216,7 +221,7 @@ define([
 
             modelObj.needNotes = this.needNotes;
 
-            $thisEl.html(this.template({length : modelObj.notes.length}));
+            $thisEl.html(this.template({length: modelObj.notes.length}));
 
             this.renderTimeline();
             return this;

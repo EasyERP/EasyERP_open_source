@@ -26,7 +26,7 @@ define([
         },
 
         chooseOption: function (e) {
-            var holder = $(e.target).parents('dd').find('.current-selected');
+            var holder = $(e.target).parents('ul').closest('.current-selected');
             var currencyElement = $(e.target).parents('dd').find('.current-selected');
             var oldCurrency = currencyElement.attr('data-id');
             var newCurrency = $(e.target).attr('id');
@@ -63,6 +63,7 @@ define([
             var groupsId;
             var usersId;
             var description;
+            var taxCode;
 
             var invoiceDate = $currentEl.find('#invoice_date').val();
             var dueDate = $currentEl.find('#due_date').val();
@@ -95,6 +96,7 @@ define([
                         description = targetEl.find('[data-name="productDescr"] input').val();
                         taxes = 100 * parseFloat((targetEl.find('.taxes').text()).replace(/\s/g, ''));
                         amount = 100 * parseFloat((targetEl.find('.amount').text()).replace(/\s/g, ''));
+                        taxCode = targetEl.find('.current-selected.taxCode').attr('data-id');
 
                         if (!price) {
                             return App.render({
@@ -107,8 +109,12 @@ define([
                             product    : productId,
                             description: description,
                             unitPrice  : price,
-                            taxes      : taxes,
-                            subTotal   : amount
+                            taxes      : [{
+                                taxCode: taxCode || null,
+                                tax    : taxes
+                            }],
+
+                            subTotal: amount
                         });
                     }
                 }
@@ -176,14 +182,12 @@ define([
             var today = new Date();
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'edit-dialog',
-                title        : 'Create Invoice',
-                width        : '900px',
-                position     : {within: $('#wrapper')},
-                buttons      : [
+                autoOpen   : true,
+                dialogClass: 'edit-dialog',
+                title      : 'Create Invoice',
+                width      : '900px',
+                position   : {within: $('#wrapper')},
+                buttons    : [
                     {
                         id   : 'create-invoice-dialog',
                         class: 'btn blue',

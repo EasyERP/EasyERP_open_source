@@ -2,9 +2,11 @@
   background-color: #f2f5fa;
   display: table;
   height: 100%;
-  &+#timeRecivingDataFromServer{
+
+  + #timeRecivingDataFromServer{
     background-color: #f2f5fa;
   }
+
   .dashboard-card {
     background-color: #fff;
     border: 1px solid rgb(216, 221, 230);
@@ -13,94 +15,206 @@
     padding: 20px;
     float: left;
     width: 100%;
+
     .card-title{
       color: #536786;
     }
-  }
-}
 
+    &._overviewPanelHolder {
+      max-width: 1022px;
+      margin: 0 auto;
+      margin-top: 16px;
+      padding: 0px;
+      float: none;
 
-
-
-
-
-
-
-
-
-/*
-
-.textLightGrey {
-  color: #c5c7c7;
-}
-.textBlue {
-  color: #27a0cd;
-}
-
-._multiEllipsis {
-  overflow: hidden;
-  height: 37px;
-  line-height: 25px;
-
-  &:before {
-    content: "";
-    float: left;
-    width: 5px;
-    height: 38px;
-  }
-  &.open {
-    height: auto;
-    ._ellipsisShowMore {
-      display: none;
+      &:last-child {
+        margin-bottom: 16px;
+      }
     }
-    ._ellipsisCloseBtn {
-      display: block;
-      float: right;
-      background-color: #7eadcc;
-      color: #fff;
-      font-size: 12px;
-      height: 20px;
-      line-height: 20px;
-      padding: 0 10px;
-      border-radius: 3px;
+
+    ._overviewPanelWrap {
+      max-width: 100%;
+    }
+
+    ._overviewPanelWrap._headBlock {
+      padding: 20px 0;
+      margin: 0;
+      margin-bottom: 20px;
       cursor: pointer;
+      border-bottom: 1px solid #d8dde6;
+
+      ._overviewTitle {
+        width: 100%;
+        text-align: center;
+      }
+    }
+
+    ._overviewPanelWrap._overviewBlock{
+      padding: 0 10px;
+      justify-content: center;
+    }
+
+    ._overviewPanelLink {
+      margin: 0 10px;
+      margin-bottom: 20px;
+    }
+  }
+}
+
+._statusOrders,
+._statusIndicators {
+
+  > span {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin: 0 5px;
+    text-align: center;
+    border-radius: 50%;
+
+    &._allocationed  {
+      color: #fff !important;
+    }
+
+    &._fullfilled,
+    &._shipped {
+      background-color: transparent !important;
+      font-size: 15px;
+    }
+
+    &._shipped {
+      font-size: 18px;
+    }
+
+    &._notDid {
+      background-color: red;
+      position: relative;
+      line-height: 16px;
+      &:before {
+        color: #fff;
+        content: '!';
+        //position: absolute;
+        //top: -7px;
+        //left: 6px;
+      }
     }
   }
 
-  > *:first-child {
-    float: right;
-    width: 100%;
-    margin-left: -5px;
-  }
+  [class*="icon-"] {
 
-  > p {
-    -ms-word-break: break-all;
-    word-break: break-all;
-  }
+    &.green{
+      background-color: #00db30;
+      color: #00db30;
+    }
 
-  ._ellipsisShowMore {
-    display: block;
-    box-sizing: content-box;
-    -webkit-box-sizing: content-box;
-    -moz-box-sizing: content-box;
-    position: relative;
-    top: -14px;
-    height: 14px;
-    left: 100%;
-    float: right;
-    width: 68px;
-    padding-right: 5px;
-    margin-left: -68px;
-    background-color: #7eadcc;
-    color: #fff;
-    line-height: 13px;
-    font-size: 10px;
-    text-align: center;
-    cursor: pointer;
-    border-radius: 3px;
-  }
-  ._ellipsisCloseBtn {
-    display: none;
+    &.yellow {
+      background-color:#dfdf2e;
+      color:#dfdf2e;
+    }
+
+    &.red {
+      background-color: #ff0000;
+      color: #ff0000;
+    }
+
+
+
+    &.transparented {
+      background-color: transparent !important;
+    }
   }
 }
-*/
+
+._reportIcon,
+._stockDetailsIcon {
+  width: 130px;
+  margin: 37px auto;
+}
+
+._reportIcon {
+
+  svg {
+    fill: #7eadcc;
+  }
+}
+
+._reportCardContainer {
+  width: 610px;
+  margin-top: 25px;
+}
+
+._reportCard {
+  padding: 20px 25px 25px;
+  background-color: #fff;
+  border-radius: 3px;
+  box-shadow: 0 10px 12px 2px rgba(0,0,0,0.14),
+              0 5px 18px 1px rgba(0,0,0,0.12);
+
+  ._reportCardsWrap {
+    display: flex;
+  }
+
+  ._overviewPanell {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-width: 140px;
+    max-width: 170px;
+    height: 140px;
+    border-radius: 3px;
+    cursor: pointer;
+    border: 1px solid #7eadcc;
+
+    + ._overviewPanell {
+      margin-left: 25px;
+    }
+
+    ._overviewTitle {
+      margin-top: 15px;
+      color: #2d3033;
+      text-align: center;
+      font-family: $semibold-font-family;
+      font-size: 16px;
+    }
+
+    ._overviewDesc {
+      border-top: 1px solid #7eadcc;
+      margin-top: 15px;
+      padding: 15px;
+      color: #6c7279;
+    }
+  }
+}
+
+._reports-card-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f2f5fa;
+  height: 100%;
+}
+
+._reportCardTitle {
+  margin-bottom: 20px;
+  font-family: $semibold-font-family;
+  text-align: center;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+._stockDetailsIcon {
+
+  > div {
+    height: 26px;
+    border: 4px solid #7eadcc;
+    border-radius: 7px;
+
+    + div {
+      margin-top: 8px;
+    }
+    
+    &:first-child {
+      background-color: #7eadcc;
+    }
+  }
+}

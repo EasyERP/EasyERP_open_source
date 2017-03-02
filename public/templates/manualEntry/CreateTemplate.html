@@ -1,69 +1,87 @@
-<div class="form-holder">
-    <form method="post" action="" class="form _manualEntry">
-        <fieldset>
-            <div class="inner">
-                <div class="topInputHolder">
-                    <h2>Manual Entry <a href="javascript:;" class="btn blue slim plus right" title="Create Journal" id="createBtn" style="display: block;">New Journal</a></h2>
-
+<div class="form-holder _newForm _newManualEntry">
+    <form method="post" action="" class="_manualEntry">
+        <h4 class="_dialogTitlePositioned">Manual Entry</h4>
+        <div class="_formWrap">
+            <div class="_formBlock _equal _btnWrap">
+                <a href="javascript:;"
+                   class="btn blue slim icon-plus"
+                   title="Create Journal"
+                   id="createBtn">New Journal
+                </a>
+            </div>
+            <div class="_formBlock _equal">
+                <div class="_animateInputBox">
+                    <span class="_staticLabel">Date</span>
+                    <input type="text"
+                           class="_animate"
+                           id="date"
+                           placeholder="Choose date"
+                           readonly/>
+                </div>
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Source Document</span>
+                    <div class="_newSelectListWrap">
+                        <a id="sourceDocumentDd"
+                           class="current-selected">Select source document</a>
+                    </div>
+                </div>
+                <div id="employeesDdWrap" class="_animateSelectBox">
+                    <span class="_selectTitle">Source Document</span>
+                    <div class="_newSelectListWrap">
+                        <a id="employeesDd"
+                           class="current-selected">Select employee</a>
+                    </div>
                 </div>
             </div>
-            <div class="half-block left">
-                <dl>
-                    <dt class="group">
-                        <label>Date</label>
-                    </dt>
-                    <dd>
-                        <input id="date" readonly/>
-                    </dd>
-                    <dt class="group">
-                        <label>Source Document</label>
-                    </dt>
-                    <dd>
-                        <a class="current-selected" id="sourceDocumentDd">Select</a><a id="employeesDd" class="current-selected">Select</a>
-                    </dd>
-
-                </dl>
-
+            <div class="_formBlock _equal">
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Journal</span>
+                    <div class="_newSelectListWrap">
+                        <a id="journalsDd"
+                           class="current-selected">Select journal</a>
+                    </div>
+                </div>
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Currency</span>
+                    <div class="_newSelectListWrap">
+                        <a id="currencyDd"
+                           class="current-selected">Select currency</a>
+                    </div>
+                </div>
             </div>
-            <div class="half-block right">
-                <dl>
-                    <dt class="group">
-                        <label>Journal</label>
-                    </dt>
-                    <dd>
-                        <a class="current-selected" id="journalsDd">Select</a>
-                    </dd>
-                    <dt class="group">
-                        <label>Currency</label>
-                    </dt>
-                    <dd>
-                        <a class="current-selected" id="currencyDd">Select</a>
-                    </dd>
-                </dl>
-
-            </div>
-            <div class="clearfix">
-                <table class="list">
+            <div class="_formBlock _equal">
+                <table class="stripedList">
+                    <colgroup>
+                        <col width="200px">
+                        <col width="50%">
+                        <col width="50%">
+                        <col width="40px">
+                    </colgroup>
                     <thead>
                     <tr>
-                        <th>Debit Account</th>
-                        <th>Credit Account</th>
+                        <th>Account</th>
                         <th>Debit</th>
                         <th>Credit</th>
+                        <th></th>
                     </tr>
-                    <tbody class="enableTableOdd">
-                    <tr id="dataTr">
-                        <td id="debitAccountDd">
-                            <!--<a id="debitAccountDd" class="errorContent current-selected">Select</a>--></td>
-                        <td id="creditAccountDd">
-                            <!--<a id="creditAccountDd" class="errorContent current-selected">Select</a>--></td>
-                        <td class="editable money" data-type="input" id="debit">0</td>
-                        <td class="editable money" data-type="input" id="credit">0</td>
+                    </thead>
+                    <tbody class="enableTableOdd" id="manualTableBody">
+                    <tr id="dataTrDebit" class="trs">
+                        <td><a id="debitAccountDd" class="current-selected" href="javascript:;">Select</a></td>
+                        <td class="editable money debit" data-type="input">0</td>
+                        <td class="money credit" data-type="input">0</td>
+                        <td></td>
+                    </tr>
+                    <tr id="dataTrCredit" class="trs">
+                        <td><a id="creditAccountDd" class="current-selected" href="javascript:;">Select</a></td>
+                        <td class="money debit" data-type="input">0</td>
+                        <td class="editable money credit" data-type="input">0</td>
+                        <td></td>
                     </tr>
                     </tbody>
-                    </thead>
                 </table>
+                <a href="javascript:;" class="btn blue slim _addRow" id="addNewRow">Add new row</a>
             </div>
-        </fieldset>
+        </div>
     </form>
 </div>

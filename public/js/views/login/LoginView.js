@@ -143,6 +143,7 @@ define([
                 success: function () {
                     Custom.runApplication(true);
 
+                    App.storage.save('currentDb', currentDb);
                     FlurryAgent.logEvent('login', data);
                 },
 
@@ -150,7 +151,7 @@ define([
                     $loginForm.addClass('notRegister');
                     App.render({
                         type   : 'error',
-                        message: 'Wrong Password or such user doesn\'t registered'
+                        message: 'Wrong password, or user is not registered'
                     });
                 }
             });

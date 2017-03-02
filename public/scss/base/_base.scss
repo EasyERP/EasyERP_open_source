@@ -1,9 +1,14 @@
 * {
   box-sizing: border-box;
+
   &:before,
   &:after {
     box-sizing: border-box;
   }
+}
+
+:root {
+  text-rendering: geometricPrecision;
 }
 
 b,strong {
@@ -21,7 +26,7 @@ body {
   font-family: $base-font-family; // @fontRegular;
   font-size: 12px;
   height: 100%;
-
+  cursor: default;
 }
 
 html {
@@ -30,23 +35,6 @@ html {
   -ms-text-size-adjust: 100%;
   width: 100%;
   height: 100%;
-}
-
-button {
-  &::-moz-focus-inner,
-  [type="button"]::-moz-focus-inner,
-  [type="reset"]::-moz-focus-inner,
-  [type="submit"]::-moz-focus-inner {
-    border-style: none;
-    padding: 0;
-  }
-
-  &:-moz-focusring,
-  [type="button"]:-moz-focusring,
-  [type="reset"]:-moz-focusring,
-  [type="submit"]:-moz-focusring {
-    outline: 1px dotted ButtonText;
-  }
 }
 
 legend {
@@ -58,38 +46,54 @@ legend {
   white-space: normal;
 }
 
-[type="checkbox"],
-[type="radio"] {
-  box-sizing: border-box;
-  padding: 0;
-}
+a,
+abbr,
+acronym,
+address,
+button,
+blockquote,
+cite,
+code,
+caption,
+del,
+dfn,
 
-[type="number"]::-webkit-inner-spin-button,
-[type="number"]::-webkit-outer-spin-button {
-  height: auto;
-}
 
-[type="search"] {
-  -webkit-appearance: textfield;
-  outline-offset: -2px;
 
-  &::-webkit-search-cancel-button,
-  &::-webkit-search-decoration {
-    -webkit-appearance: none;
-  }
-}
-
-::-webkit-input-placeholder {
-  color: inherit;
-  opacity: 0.54;
-}
-
-::-webkit-file-upload-button {
-  -webkit-appearance: button;
-  font: inherit;
-}
-
-h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, cite, code, del, dfn, img, q, s, samp, small, strike, sub, sup, tt, var, dd, dl, dt, ol, ul, fieldset, form, label, legend, button, table, caption, tbody, tfoot, thead, tr, th, td {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+pre,
+img,
+q,
+s,
+samp,
+small,
+strike,
+sub,
+sup,
+tt,
+var,
+dd,
+dl,
+dt,
+ol,
+ul,
+fieldset,
+form,
+label,
+legend,
+table,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td {
   margin: 0;
   padding: 0;
   border: 0;
@@ -118,20 +122,6 @@ ol, ul {
   list-style: none;
 }
 
-q:before, q:after, blockquote:before, blockquote:after {
-  content: "";
-}
-
-*:focus {
-  outline: 0 !important;
-}
-
-// Hover & Active
-a:hover,
-a:active {
-  outline: 0;
-}
-
 article,
 aside,
 details,
@@ -156,16 +146,16 @@ video {
 
 audio:not([controls]) {
   display: none;
-  height: 0; //added from normalize.scss
+  height: 0;
 }
 
 progress {
-  vertical-align: baseline; //added from normalize.scss
+  vertical-align: baseline;
 }
 
 template,
 [hidden] {
-  display: none; //added from normalize.scss
+  display: none;
 }
 
 sub,
@@ -222,7 +212,7 @@ textarea {
 }
 
 optgroup {
-  font-weight: bold;  //added from normalize.scss
+  font-weight: bold;
 }
 
 button,
@@ -233,7 +223,7 @@ input {
 
 button,
 select {
-  text-transform: none; //added from normalize.scss
+  text-transform: none;
 }
 
 button,
@@ -241,7 +231,24 @@ html [type="button"],
 [type="reset"],
 [type="submit"] {
   -webkit-appearance: button;
-  cursor: pointer; //from normalize.csss
+  cursor: pointer;
+}
+
+button {
+  &::-moz-focus-inner,
+  [type="button"]::-moz-focus-inner,
+  [type="reset"]::-moz-focus-inner,
+  [type="submit"]::-moz-focus-inner {
+    border-style: none;
+    padding: 0;
+  }
+
+  &:-moz-focusring,
+  [type="button"]:-moz-focusring,
+  [type="reset"]:-moz-focusring,
+  [type="submit"]:-moz-focusring {
+    outline: 1px dotted ButtonText;
+  }
 }
 
 button::-moz-focus-inner,
@@ -264,6 +271,7 @@ input[type="search"]::-webkit-search-decoration {
 textarea {
   overflow: auto;
   vertical-align: top;
+  resize: none;
 }
 
 a {
@@ -277,8 +285,25 @@ a {
 }
 
 a:active,
-a:hover, a:focus {
+a:hover,
+a:focus {
   outline-width: 0;
+}
+
+q:before,
+q:after,
+blockquote:before,
+blockquote:after {
+  content: "";
+}
+
+*:focus {
+  outline: 0 !important;
+}
+
+a:hover,
+a:active {
+  outline: 0;
 }
 
 abbr[title] {
@@ -313,4 +338,35 @@ abbr[title] {
 
 :focus:-ms-input-placeholder {
   color: transparent !important;
+}
+
+[type="checkbox"],
+[type="radio"] {
+  box-sizing: border-box;
+  padding: 0;
+}
+
+[type="number"]::-webkit-inner-spin-button,
+[type="number"]::-webkit-outer-spin-button {
+  height: auto;
+}
+
+[type="search"] {
+  -webkit-appearance: textfield;
+  outline-offset: -2px;
+
+  &::-webkit-search-cancel-button,
+  &::-webkit-search-decoration {
+    -webkit-appearance: none;
+  }
+}
+
+::-webkit-input-placeholder {
+  color: inherit;
+  opacity: 0.54;
+}
+
+::-webkit-file-upload-button {
+  -webkit-appearance: button;
+  font: inherit;
 }

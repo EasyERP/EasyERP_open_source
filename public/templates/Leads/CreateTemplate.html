@@ -1,180 +1,233 @@
-<div class="form-holder _listModalWrap">
-    <form method="post" action="" class="form" id="leadForm">
+<div class="form-holder _newForm">
+    <form method="post" action="" class="_leadForm" id="leadForm">
+        <h4 class="_dialogTitlePositioned">Add New Lead</h4>
+        <ul class="dialog-tabs">
+            <li><a href="javascript:;" class="active">Lead</a></li>
+            <li><a href="javascript:;">Person</a></li>
+            <li><a href="javascript:;">Company</a></li>
+        </ul>
         <div class="dialog-tabs-items">
             <div class="dialog-tabs-item active">
-                <div class="_listModal _leadsDialog">
-                    <div class="_listModalColumn">
-                        <div class="_listModalTitle"><label><b>Lead</b></label></div>
-                        <div class="_modalList">
-                            <div class="_modalLabel"><label for="name">Subject</label></div>
-                            <div class="_modalSelect"><input type="text" class="title-input blueback" id="name"
-                                                             placeholder="Describe the lead..." required
-                                                             maxlength="48"/></div>
+                <div class="_formWrap _enlargedItemMargin">
+                    <div class="_formBlock">
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate "
+                                   id="name"
+                                   required
+                                   maxlength="48"/>
+                            <label class="_animate">Subject</label>
                         </div>
-                        <div class="_modalList">
-                            <div class="_modalLabel"><label for="sourceDd">Source</label></div>
-                            <div class="_modalSelect _newSelectListWrap"><a id="sourceDd" class="current-selected"
-                                                                            href="javascript:;">Select</a></div>
+                        <div class="_animateSelectBox">
+                            <span class="_selectTitle">Source</span>
+                            <div class="_newSelectListWrap">
+                                <a id="sourceDd"
+                                   class="current-selected"
+                                   href="javascript:;">Select source
+                                </a>
+                            </div>
                         </div>
-                        <div class="_modalList">
-                            <div class="_modalLabel"><label for="salesPerson">Assigned to</label></div>
-                            <div class="_modalSelect _newSelectListWrap"><a id="salesPerson" class="current-selected"
-                                                                            href="javascript:;">Select</a></div>
+                        <div class="_animateSelectBox">
+                            <span class="_selectTitle">Assigned to</span>
+                            <div class="_newSelectListWrap">
+                                <a id="salesPerson"
+                                   class="current-selected"
+                                   href="javascript:;">Select assignee
+                                </a>
+                            </div>
                         </div>
-                        <div class="_modalList">
-                            <div class="_modalLabel"><label for="workflowsDd">Stage</label></div>
-                            <div class="_modalSelect _newSelectListWrap"><a id="workflowsDd" class="current-selected"
-                                                                            href="javascript:;">Select</a></div>
+                        <div class="_animateSelectBox">
+                            <span class="_selectTitle">Stage</span>
+                            <div class="_newSelectListWrap">
+                                <a id="workflowsDd"
+                                   class="current-selected"
+                                   href="javascript:;">Select stage
+                                </a>
+                            </div>
                         </div>
-                        <div class="_modalList">
-                            <div class="_modalLabel"><label for="priorityDd">Priority</label></div>
-                            <div class="_modalSelect _newSelectListWrap"><a id="priorityDd" class="current-selected"
-                                                                            href="javascript:;">Select</a></div>
+                        <div class="_animateSelectBox">
+                            <span class="_selectTitle">Priority</span>
+                            <div class="_newSelectListWrap">
+                                <a id="priorityDd"
+                                   class="current-selected"
+                                   href="javascript:;">Select priority
+                                </a>
+                            </div>
                         </div>
-                        <div class="_modalList">
-                            <div class="_modalLabel"><label for="expectedClosingDate">Close Date</label></div>
-                            <div class="_modalSelect"><input class="extrainfo" type="text" name="Close Date"
-                                                             placeholder="Close Date" id="expectedClosingDate"
-                                                             readonly=""></div>
-                        </div>
-                    </div>
-                    <div class="_listModalColumn">
-                        <div class="_listModalTitle"><label><b>Person</b></label></div>
-                        <div class="_modalList">
-                            <div class="_modalSelect _newSelectListWrap"><a id="customerDd" class="current-selected"
-                                                                            href="javascript:;">Select</a></div>
-                        </div>
-                        <div class="_modalList">
-                            <div class="_modalLabel"><label for="first">First Name </label></div>
-                            <div class="_modalSelect"><input type="text" class="name" id="first"
-                                                             placeholder="First Name" maxlength="32"/></div>
-                        </div>
-                        <div class="_modalList">
-                            <div class="_modalLabel"><label for="last">Last Name </label></div>
-                            <div class="_modalSelect"><input type="text" class="name" id="last" placeholder="Last Name"
-                                                             maxlength="32"/></div>
-                        </div>
-                        <div class="_modalList">
-                            <div class="_modalLabel"><label for="last">Job Position</label></div>
-                            <div class="_modalSelect"><input type="text" id="jobPosition" placeholder="Job Position"
-                                                             maxlength="32"/></div>
-                        </div>
-                        <div class="_modalList">
-                            <div class="_modalLabel"><label for="dateBirthOnCreate">Date of Birthday</label></div>
-                            <div class="_modalSelect"><input class="extrainfo" type="text" name="Date of Birth"
-                                                             placeholder="Date of Birthday" id="dateBirthOnCreate"
-                                                             readonly=""></div>
-                        </div>
-                        <div class="_modalList">
-                            <div class="_modalLabel"><label for="email">Email </label></div>
-                            <div class="_modalSelect"><input type="text" id="email" placeholder="e.g. email@site.com"
-                                                             maxlength="48"/></div>
-                        </div>
-                        <!--                    <div><label for="jobPos">Job Position</label></div><div><input type="text" id="jobPos" placeholder="Job Position" maxlength="32"/></div>-->
-                        <div class="_modalList">
-                            <div class="_modalLabel"><label for="phone">Phone Number</label></div>
-                            <div class="_modalSelect"><input type="text" id="phone" placeholder="Phone Number"
-                                                             maxlength="32"/></div>
-                        </div>
-                        <!--<div class="_modalList">-->
-                        <!--<div class="_modalLabel"><label for="mobile">Mobile </label></div>-->
-                        <!--<div class="_modalSelect"><input type="text" id="mobile" placeholder="Mobile number" maxlength="32"/></div>-->
-                        <!--</div>-->
-                        <!--                    <div><label for="workflowNamesdiv">Workflow Name </label></div><div>
-                                                <a id="workflowNamesdiv" class="current-selected" href="javascript:;"></a>
-                        </div>-->
-                        <div class="_modalList">
-                            <div class="_modalLabel"><label for="skype">Skype</label></div>
-                            <div class="_modalSelect"><input type="text" id="skype" value="" placeholder="Skype"
-                                                             maxlength="256"/></div>
-                        </div>
-                        <div class="_modalList">
-                            <div class="_modalLabel"><label for="LI">LinkedIn</label></div>
-                            <div class="_modalSelect"><input type="text" id="LI" placeholder="LinkedIn"
-                                                             maxlength="256"/></div>
+                        <div class="_animateInputBox">
+                            <span class="_staticLabel">Close Date</span>
+                            <input class="_animate extrainfo"
+                                   type="text"
+                                   name="Close Date"
+                                   placeholder="Close Date"
+                                   id="expectedClosingDate"
+                                   readonly="">
                         </div>
                     </div>
-                    <div class="_listModalColumn">
-                        <div class="_listModalTitle"><label><b>Company</b></label></div>
-                        <div class="_modalList">
-                            <div class="_modalSelect _newSelectListWrap"><a id="companyDd" class="current-selected"
-                                                                            href="javascript:;">Select</a></div>
+                </div>
+            </div>
+            <div class="dialog-tabs-item">
+                <div class="_formWrap _enlargedItemMargin">
+                    <div class="_formBlock">
+                        <div class="_animateSelectBox">
+                            <span class="_selectTitle">Person</span>
+                            <div class="_newSelectListWrap">
+                                <a id="customerDd"
+                                   class="current-selected"
+                                   href="javascript:;">Select person
+                                </a>
+                            </div>
                         </div>
-                        <div class="_modalList">
-                            <div class="_modalLabel"><label for="company">Company Name</label></div>
-                            <div class="_modalSelect"><input type="text" id="company" data-id=""
-                                                             placeholder="Company Name" maxlength="32"/></div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate name"
+                                   id="first"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">First Name</label>
                         </div>
-
-                        <div class="_modalList">
-                            <div class="_modalLabel"><label for="street">Street</label></div>
-                            <div class="_modalSelect"><input type="text" class="address" id="street" name="street"
-                                                             placeholder="Street" maxlength="60"/></div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate name"
+                                   id="last"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">Last Name</label>
                         </div>
-                        <div class="_modalList">
-                            <div class="_modalLabel"><label for="city">City</label></div>
-                            <div class="_modalSelect"><input type="text" class="address" id="city" name="city"
-                                                             placeholder="City" maxlength="60"/></div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="jobPosition"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">Job Position</label>
                         </div>
-                        <div class="_modalList">
-                            <div class="_modalLabel"><label for="state">State</label></div>
-                            <div class="_modalSelect"><input type="text" class="address" id="state" name="state"
-                                                             placeholder="State" maxlength="32"/></div>
+                        <div class="_animateInputBox">
+                            <span class="_staticLabel">Date of Birthday</span>
+                            <input class="_animate extrainfo"
+                                   type="text"
+                                   name="Date of Birth"
+                                   id="dateBirthOnCreate"
+                                   required
+                                   readonly="">
                         </div>
-                        <div class="_modalList">
-                            <div class="_modalLabel"><label for="zip">Zip Code</label></div>
-                            <div class="_modalSelect"><input type="text" class="address" id="zip" name="zip"
-                                                             placeholder="Zip Code" maxlength="32"/></div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="email"
+                                   required
+                                   maxlength="48"/>
+                            <label class="_animate">Email</label>
                         </div>
-                        <div class="_modalList">
-                            <div class="_modalLabel"><label for="country">Country</label></div>
-                            <div class="_modalSelect _newSelectListWrap"><a class="address current-selected"
-                                                                            id="country" name="country">Select</a></div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="phone"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">Phone Number</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="skype"
+                                   value=""
+                                   required
+                                   maxlength="256"/>
+                            <label class="_animate">Skype</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="LI"
+                                   required
+                                   maxlength="256"/>
+                            <label class="_animate">LinkedIn</label>
                         </div>
                     </div>
-                    <div class="clearfix"></div>
-                    <div class="_modalList">
-                        <div class="area_holder">
-                            <div class="_modalLabel"><label for="internalNotes">Internal Notes</label></div>
-                            <div class="_modalSelect">
-                                <textarea id="internalNotes" class="internal_Notes" placeholder="Internal notes"
-                                          maxlength="2500"/>
-                                <span class="attach_file icon-attach"></span>
+                </div>
+            </div>
+            <div class="dialog-tabs-item">
+                <div class="_formWrap _enlargedItemMargin">
+                    <div class="_formBlock">
+                        <div class="_animateSelectBox">
+                            <span class="_selectTitle">Company</span>
+                            <div class="_newSelectListWrap">
+                                <a id="companyDd"
+                                   class="current-selected"
+                                   href="javascript:;">Select company
+                                </a>
+                            </div>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="company"
+                                   data-id=""
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">Company Name</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate address"
+                                   id="street"
+                                   name="street"
+                                   required
+                                   maxlength="60"/>
+                            <label class="_animate">Street</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate address"
+                                   id="city"
+                                   name="city"
+                                   required
+                                   maxlength="60"/>
+                            <label class="_animate">City</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate address"
+                                   id="state"
+                                   name="state"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">State</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate address"
+                                   id="zip"
+                                   name="zip"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">Zip Code</label>
+                        </div>
+                        <div class="_animateSelectBox">
+                            <span class="_selectTitle">Country</span>
+                            <div class="_newSelectListWrap">
+                                <a class="address current-selected"
+                                   id="country"
+                                   name="country">Select country
+                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="clearfix"></div>
-                <div class="half-block left withPadivingLeft">
-                    <!--<div class="formTitle">
-                        <h3 class="left">Extra Info</h3>
-                        <div class="clearfix"></div>
-                    </div>
-                    <dl class="opp-info">
-                      <div><h4>Categorization</h4></div><div>&nbsp;</div>
-                      <div><label>Status </label></div><div>&nbsp;</div>
-                      <div><h4>Mailings</h4></div><div>&nbsp;</div>
-                      <div><label>Opt-Out </label></div><div><input type="checkbox" id="optout" /></div>
-                      <div><h4>Misc</h4></div><div>&nbsp;</div>
-                      <div><label>Active </label></div><div><input type="checkbox" checked="checked" id="active" /></div>
-                      <div><label>Referred By </label></div><div><input type="text" id="reffered" /></div>
-                      <div></div><div></div>
-                    </dl>-->
-                </div>
-
-                <div class="half-block left withPadivingLeft">
-                    <!--<div class="formTitle">
-                        <h3 class="left">Internal Notes</h3>
-                        <div class="clearfix"></div>
-                    </div>
-                    <textarea id="internalNotes"></textarea>-->
-                </div>
-                <div class="clearfix"></div>
-                <div class="attach-container"></div>
-                <div class="clearfix"></div>
             </div>
-            <div class="dialog-tabs-item">
-                <div class="assignees-container"></div>
+            <div class="_formWrap">
+                <div class="_formBlock">
+                    <div class="_animateTextareaBox">
+                        <textarea id="internalNotes"
+                                  class="_animate internal_Notes"
+                                  required
+                                  maxlength="2500" ></textarea>
+                        <label for="internalNotes" class="_animate">Internal Notes</label>
+                        <span class="attach_file icon-attach"></span>
+                    </div>
+                    <div class="attach-container"></div>
+                </div>
             </div>
         </div>
     </form>

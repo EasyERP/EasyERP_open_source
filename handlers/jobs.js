@@ -1,5 +1,3 @@
-/*TODO remove caseFilter methid after testing filters*/
-
 var mongoose = require('mongoose');
 var async = require('async');
 
@@ -8,17 +6,25 @@ var Module = function (models, event) {
 
     var JobsSchema = mongoose.Schemas.jobs;
     var wTrackSchema = mongoose.Schemas.wTrack;
-    var QuotationSchema = mongoose.Schemas.Quotation;
-    var jobsInvoiceSchema = mongoose.Schemas.wTrackInvoice;
     var ProjectSchema = mongoose.Schemas.Project;
-    var PaymentSchema = mongoose.Schemas.Payment;
     var ProjectMembersSchema = mongoose.Schemas.ProjectMember;
     var journalEntrySchema = mongoose.Schemas.journalEntry;
+
     var CONSTANTS = require('../constants/mainConstants.js');
     var exporter = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').jobs;
     var objectId = mongoose.Types.ObjectId;
     var FilterMapper = require('../helpers/filterMapper');
+    var filterMapper = new FilterMapper();
+
+    var ProductService = require('../services/products')(models);
+    var AvailabilityService = require('../services/productAvailability')(models);
+    var JournalEntryHandler = require('./journalEntry');
+    var jobsService = require('../services/jobs')(models);
+    var ProductPriceService = require('../services/productPrice')(models);
+    var ProductCategoryService = require('../services/productCategory')(models);
+    var JournalEntryService = require('../services/journalEntry')(models);
+    var _journalEntryHandler = new JournalEntryHandler(models, event);
 
     var salesManagerMatchForDashboard = {
         $and: [
@@ -197,17 +203,17 @@ var Module = function (models, event) {
         }
     }, {
         $project: {
-            order        : {
+            order: {
                 $cond: {
                     if: {
-                        $eq: ['$type', 'Not Quoted']
+                        $eq: ['$type', 'Not Ordered']
                     },
 
                     then: -1,
                     else: {
                         $cond: {
                             if: {
-                                $eq: ['$type', 'Quoted']
+                                $eq: ['$type', 'Ordered']
                             },
 
                             then: 0,
@@ -216,6 +222,7 @@ var Module = function (models, event) {
                     }
                 }
             },
+
             hoursQA      : {$sum: '$wTracksQa.worked'},
             hoursDesign  : {$sum: '$wTracksDesign.worked'},
             hoursIOS     : {$sum: '$wTracksIOS.worked'},
@@ -239,7 +246,8 @@ var Module = function (models, event) {
                     cond : salesManagerMatchForDashboard
                 }
             },
-            payment      : {
+
+            payment: {
                 paid : {$sum: '$payments.paidAmount'},
                 count: {$size: '$payments'}
             }
@@ -327,14 +335,15 @@ var Module = function (models, event) {
         }
     }, {
         $project: {
-            cost      : '$elements',
-            costQA    : {
+            cost  : '$elements',
+            costQA: {
                 $filter: {
                     input: '$elements',
                     as   : 'el',
                     cond : {$eq: ['$$el.department', objectId(CONSTANTS.QADEPARTMENT)]}
                 }
             },
+
             costDesign: {
                 $filter: {
                     input: '$elements',
@@ -343,13 +352,14 @@ var Module = function (models, event) {
                 }
             },
 
-            costIOS    : {
+            costIOS: {
                 $filter: {
                     input: '$elements',
                     as   : 'el',
                     cond : {$eq: ['$$el.department', objectId('55b92ace21e4b7c40f00000f')]}
                 }
             },
+
             costAndroid: {
                 $filter: {
                     input: '$elements',
@@ -357,21 +367,24 @@ var Module = function (models, event) {
                     cond : {$eq: ['$$el.department', objectId('55b92ace21e4b7c40f000010')]}
                 }
             },
-            costUnity  : {
+
+            costUnity: {
                 $filter: {
                     input: '$elements',
                     as   : 'el',
                     cond : {$eq: ['$$el.department', objectId('56e175c4d62294582e10ca68')]}
                 }
             },
-            costDotNet : {
+
+            costDotNet: {
                 $filter: {
                     input: '$elements',
                     as   : 'el',
                     cond : {$eq: ['$$el.department', objectId('55b92ace21e4b7c40f000012')]}
                 }
             },
-            costWeb    : {
+
+            costWeb: {
                 $filter: {
                     input: '$elements',
                     as   : 'el',
@@ -383,7 +396,8 @@ var Module = function (models, event) {
                     }
                 }
             },
-            costDev    : {
+
+            costDev: {
                 $filter: {
                     input: '$elements',
                     as   : 'el',
@@ -393,7 +407,8 @@ var Module = function (models, event) {
                     }
                 }
             },
-            costROR    : {
+
+            costROR: {
                 $filter: {
                     input: '$elements',
                     as   : 'el',
@@ -405,57 +420,19 @@ var Module = function (models, event) {
         $project: {}
     }];
 
-    /*function caseFilter(filter) {
-     var condition;
-     var resArray = [];
-     var filtrElement = {};
-     var key;
-     var filterName;
-     var filterNameKeys = Object.keys(filter);
-     var i;
-
-     for (i = filterNameKeys.length - 1; i >= 0; i--) {
-     filterName = filterNameKeys[i];
-     condition = filter[filterName].value;
-     key = filter[filterName].key;
-
-     switch (filterName) {
-     case 'workflow':
-     filtrElement[key] = {$in: condition.objectID()};
-     resArray.push(filtrElement);
-     break;
-     case 'type':
-     filtrElement[key] = {$in: condition};
-     resArray.push(filtrElement);
-     break;
-     case 'project':
-     filtrElement[key] = {$in: condition.objectID()};
-     resArray.push(filtrElement);
-     break;
-     case 'salesManager':
-     filtrElement[key] = {$in: condition.objectID()};
-     resArray.push(filtrElement);
-     break;
-     case 'paymentsCount':
-     filtrElement[key] = {$in: condition.toNumber()};
-     resArray.push(filtrElement);
-     break;
-     // skip default;
-     }
-     }
-
-     return resArray;
-     }*/
-
     this.create = function (req, res, next) {
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
         var data = req.body;
         var newModel;
         var jobId;
         var projectId;
+        var productType = data.productType;
+        var warehouse = data.warehouse;
+        var categoryIds = data.categoryIds;
+        var body;
 
         data.workflow = CONSTANTS.JOBSINPROGRESS;
-        data.type = 'Not Quoted';
+        data.type = 'Not Ordered';
         data.wTracks = [];
 
         data.project = objectId(data.project);
@@ -465,6 +442,8 @@ var Module = function (models, event) {
             date: new Date()
         };
 
+        delete data.productType;
+
         newModel = new JobsModel(data);
 
         newModel.save(function (err, model) {
@@ -472,15 +451,33 @@ var Module = function (models, event) {
                 return next(err);
             }
 
-            jobId = model._id;
-            projectId = model.project;
+            body = {
+                job      : model._id,
+                warehouse: warehouse,
+                name     : model.name,
+                info     : {
+                    productType: productType,
+                    categories : categoryIds
+                }
+            };
+
+            ProductService.createProduct({
+                body  : body,
+                dbName: req.session.lastDb,
+                uId   : req.session.uId
+            }, function (err, product) {
+                if (err) {
+                    return next(err);
+                }
+
+                AvailabilityService.createAvailabilityJob({product: product._id});
+            });
 
             res.status(200).send({success: model});
         });
     };
 
     this.getData = function (req, res, next) {
-        var filterMapper = new FilterMapper();
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
         var JournalEntryModel = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var queryObject;
@@ -548,13 +545,15 @@ var Module = function (models, event) {
         }
 
         if (filter && typeof filter === 'object') {
-            queryObject = filterMapper.mapFilter(filter, 'jobsDashboard'); // caseFilter(filter);
+            queryObject = filterMapper.mapFilter(filter, {
+                contentType: 'jobsDashboard'
+            });
         }
 
         if (forDashboard) { // add for jobsDash need refactor
             queryObjectStage2.$or = [];
-            queryObjectStage2.$or.push({type: 'Not Quoted'});
-            queryObjectStage2.$or.push({'invoice._type': 'wTrackInvoice'});
+            queryObjectStage2.$or.push({type: 'Not Ordered'});
+            queryObjectStage2.$or.push({'invoice._type': 'Invoices'});
             queryObjectStage2.$or.push({quotation: {$exists: true}});
         }
 
@@ -704,10 +703,10 @@ var Module = function (models, event) {
                 }
             }, {
                 $project: {
-                    order        : {
+                    order: {
                         $cond: {
                             if: {
-                                $eq: ['$type', 'Not Quoted']
+                                $eq: ['$type', 'Not Ordered']
                             },
 
                             then: -1,
@@ -723,6 +722,7 @@ var Module = function (models, event) {
                             }
                         }
                     },
+
                     hoursQA      : {$sum: '$wTracksQa.worked'},
                     hoursDesign  : {$sum: '$wTracksDesign.worked'},
                     hoursIOS     : {$sum: '$wTracksIOS.worked'},
@@ -827,7 +827,7 @@ var Module = function (models, event) {
                     'project._id'      : '$root.project._id',
                     'project.name'     : '$root.project.name',
                     budget             : '$root.budget',
-                    'quotation'        : '$root.quotation.paymentInfo.total',
+                    quotation          : '$root.quotation.paymentInfo.total',
                     invoice            : '$root.invoice.paymentInfo.total',
                     payment            : '$root.payment',
                     hoursQA            : '$root.hoursQA',
@@ -857,7 +857,8 @@ var Module = function (models, event) {
                 async.each(jobs, function (job, cb) {
                     var aggregateArr;
 
-                    ArrayTasks = ['cost', 'costQA', 'costDesign', 'costIOS', 'costAndroid', 'costUnity', 'costDotNet', 'costWeb', 'costROR', 'costDev'];
+                    ArrayTasks = ['cost', 'costQA', 'costDesign', 'costIOS', 'costAndroid',
+                        'costUnity', 'costDotNet', 'costWeb', 'costROR', 'costDev'];
 
                     aggregateArr = [{
                         $match: {
@@ -894,14 +895,16 @@ var Module = function (models, event) {
                         }
                     }, {
                         $project: {
-                            cost      : '$elements',
-                            costQA    : {
+                            cost: '$elements',
+
+                            costQA: {
                                 $filter: {
                                     input: '$elements',
                                     as   : 'el',
                                     cond : {$eq: ['$$el.department', objectId(CONSTANTS.QADEPARTMENT)]}
                                 }
                             },
+
                             costDesign: {
                                 $filter: {
                                     input: '$elements',
@@ -910,13 +913,14 @@ var Module = function (models, event) {
                                 }
                             },
 
-                            costIOS    : {
+                            costIOS: {
                                 $filter: {
                                     input: '$elements',
                                     as   : 'el',
                                     cond : {$eq: ['$$el.department', objectId('55b92ace21e4b7c40f00000f')]}
                                 }
                             },
+
                             costAndroid: {
                                 $filter: {
                                     input: '$elements',
@@ -924,21 +928,24 @@ var Module = function (models, event) {
                                     cond : {$eq: ['$$el.department', objectId('55b92ace21e4b7c40f000010')]}
                                 }
                             },
-                            costUnity  : {
+
+                            costUnity: {
                                 $filter: {
                                     input: '$elements',
                                     as   : 'el',
                                     cond : {$eq: ['$$el.department', objectId('56e175c4d62294582e10ca68')]}
                                 }
                             },
-                            costDotNet : {
+
+                            costDotNet: {
                                 $filter: {
                                     input: '$elements',
                                     as   : 'el',
                                     cond : {$eq: ['$$el.department', objectId('55b92ace21e4b7c40f000012')]}
                                 }
                             },
-                            costWeb    : {
+
+                            costWeb: {
                                 $filter: {
                                     input: '$elements',
                                     as   : 'el',
@@ -950,7 +957,8 @@ var Module = function (models, event) {
                                     }
                                 }
                             },
-                            costDev    : {
+
+                            costDev: {
                                 $filter: {
                                     input: '$elements',
                                     as   : 'el',
@@ -960,7 +968,8 @@ var Module = function (models, event) {
                                     }
                                 }
                             },
-                            costROR    : {
+
+                            costROR: {
                                 $filter: {
                                     input: '$elements',
                                     as   : 'el',
@@ -1050,9 +1059,6 @@ var Module = function (models, event) {
         var sort = {'budget.budgetTotal.costSum': -1};
         var query = [];
         var i;
-
-        var filterMapper = new FilterMapper();
-
         var data = req.query;
         var forDashboard = data.forDashboard;
 
@@ -1065,13 +1071,15 @@ var Module = function (models, event) {
         }
 
         if (filter && typeof filter === 'object') {
-            queryObject = filterMapper.mapFilter(filter, 'jobsDashboard'); // caseFilter(filter);
+            queryObject = filterMapper.mapFilter(filter, {
+                contentType: 'jobsDashboard'
+            });
         }
 
         if (forDashboard) { // add for jobsDash need refactor
             queryObjectStage2.$or = [];
-            queryObjectStage2.$or.push({type: 'Not Quoted'});
-            queryObjectStage2.$or.push({'invoice._type': 'wTrackInvoice'});
+            queryObjectStage2.$or.push({type: 'Not Ordered'});
+            queryObjectStage2.$or.push({'invoice._type': 'Invoices'});
             queryObjectStage2.$or.push({quotation: {$exists: true}});
         }
 
@@ -1195,14 +1203,10 @@ var Module = function (models, event) {
         var ArrayTasks = [];
         var sort = {'budget.budgetTotal.costSum': -1};
         var query = [];
-        var i;
-
-        var filterMapper = new FilterMapper();
-
         var data = req.query;
         var forDashboard = data.forDashboard;
-
         var filter = data.filter ? JSON.parse(data.filter) : JSON.stringify({});
+        var i;
 
         if (data && data.project) {
             filter.project = {};
@@ -1211,13 +1215,15 @@ var Module = function (models, event) {
         }
 
         if (filter && typeof filter === 'object') {
-            queryObject = filterMapper.mapFilter(filter, 'jobsDashboard'); // caseFilter(filter);
+            queryObject = filterMapper.mapFilter(filter, {
+                contentType: 'jobsDashboard'
+            });
         }
 
         if (forDashboard) { // add for jobsDash need refactor
             queryObjectStage2.$or = [];
-            queryObjectStage2.$or.push({type: 'Not Quoted'});
-            queryObjectStage2.$or.push({'invoice._type': 'wTrackInvoice'});
+            queryObjectStage2.$or.push({type: 'Not Ordered'});
+            queryObjectStage2.$or.push({'invoice._type': 'Invoices'});
             queryObjectStage2.$or.push({quotation: {$exists: true}});
         }
 
@@ -1341,10 +1347,11 @@ var Module = function (models, event) {
         var _id = query._id || null;
         var filter = query.filter;
         var matchObject = {};
-        var filterMapper = new FilterMapper();
 
         if (filter && typeof filter === 'object') {
-            matchObject = filterMapper.mapFilter(filter, 'projectsDashboard'); // caseFilter(filter);
+            matchObject = filterMapper.mapFilter(filter, {
+                contentType: 'projectsDashboard'
+            });
         }
 
         if (_id) {
@@ -1565,10 +1572,11 @@ var Module = function (models, event) {
         var query = req.query;
         var filter = query.filter;
         var matchObject = {};
-        var filterMapper = new FilterMapper();
 
         if (filter && typeof filter === 'object') {
-            matchObject = filterMapper.mapFilter(filter, 'projectsDashboard'); // caseFilter(filter);
+            matchObject = filterMapper.mapFilter(filter, {
+                contentType: 'projectsDashboard'
+            });
         }
 
         JobsModel.aggregate([{
@@ -1666,647 +1674,24 @@ var Module = function (models, event) {
     };
 
     function getForOverview(req, res, next, options) {
-        var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
         var projectId = req.params.id;
-        var data = req.query;
         var match = {
             project: objectId(projectId)
         };
         var query = options ? options.query : null;
+        var opt = {
+            dbName: req.session.lastDb,
+            query : query || match
+        };
 
-        JobsModel
-            .aggregate([{
-                $match: query || match
-            }, {
-                $lookup: {
-                    from        : 'journalentries',
-                    localField  : '_id',
-                    foreignField: 'sourceDocument._id',
-                    as          : 'journalentries'
-                }
-            }, {
-                $project: {
-                    journalentries: {
-                        $filter: {
-                            input: '$journalentries',
-                            as   : 'je',
-                            cond : {
-                                $or: [{
-                                    $eq: ['$$je.journal', objectId('56cc727e541812c07197356c')]
-                                }, {
-                                    $eq: ['$$je.journal', objectId('56cc734b541812c071973572')]
-                                }, {
-                                    $eq: ['$$je.journal', objectId('56cc7383541812c071973574')]
-                                }]
-                            }
-                        }
-                    },
-
-                    type       : 1,
-                    name       : 1,
-                    description: 1,
-                    project    : 1,
-                    invoice    : 1,
-                    quotation  : 1,
-                    workflow   : 1
-                }
-            }, {
-                $lookup: {
-                    from        : 'Project',
-                    localField  : 'project',
-                    foreignField: '_id',
-                    as          : 'project'
-                }
-            }, {
-                $lookup: {
-                    from        : 'Invoice',
-                    localField  : 'invoice',
-                    foreignField: '_id',
-                    as          : 'invoice'
-                }
-            }, {
-                $lookup: {
-                    from        : 'workflows',
-                    localField  : 'workflow',
-                    foreignField: '_id',
-                    as          : 'workflow'
-                }
-            }, {
-                $lookup: {
-                    from        : 'Quotation',
-                    localField  : 'quotation',
-                    foreignField: '_id',
-                    as          : 'quotation'
-                }
-            }, {
-                $project: {
-                    journalentries: 1,
-                    type          : 1,
-                    name          : 1,
-                    description   : 1,
-                    project       : {$arrayElemAt: ['$project', 0]},
-                    invoice       : {$arrayElemAt: ['$invoice', 0]},
-                    quotation     : {$arrayElemAt: ['$quotation', 0]},
-                    workflow      : {$arrayElemAt: ['$workflow', 0]}
-                }
-            }, {
-                $project: {
-                    journalentries: 1,
-                    type          : 1,
-                    name          : 1,
-                    'project._id' : '$project._id',
-                    'project.name': '$project.name',
-                    invoice       : {
-                        $cond: [{$eq: ['$invoice._type', 'writeOff']}, null, {
-                            _id     : '$invoice._id',
-                            name    : '$invoice.name',
-                            currency: '$invoice.currency'
-                        }]
-                    },
-
-                    quotation: {
-                        _id     : '$quotation._id',
-                        name    : '$quotation.name',
-                        currency: '$quotation.currency',
-                        isOrder : '$quotation.isOrder'
-                    },
-
-                    jobPriceQuotation: {
-                        $filter: {
-                            input: '$quotation.products',
-                            as   : 'products',
-                            cond : {
-                                $eq: ['$$products.jobs', '$_id']
-                            }
-                        }
-                    },
-
-                    jobPriceInvoice: {
-                        $filter: {
-                            input: '$invoice.products',
-                            as   : 'products',
-                            cond : {
-                                $eq: ['$$products.jobs', '$_id']
-                            }
-                        }
-                    },
-
-                    workflow: {
-                        _id : '$workflow._id',
-                        name: '$workflow.name'
-                    },
-
-                    description: 1
-                }
-            }, {
-                $project: {
-                    journalentries: 1,
-                    project       : 1,
-                    type          : 1,
-                    description   : 1,
-                    name          : 1,
-                    invoice       : 1,
-                    quotation     : 1,
-                    workflow      : 1,
-                    jobPrice      : {$cond: [{$eq: ['$jobPriceInvoice', null]}, {$arrayElemAt: ['$jobPriceQuotation', 0]}, {$arrayElemAt: ['$jobPriceInvoice', 0]}]}
-                }
-            }, {
-                $unwind: {
-                    path                      : '$journalentries',
-                    preserveNullAndEmptyArrays: true
-                }
-            }, {
-                $group: {
-                    _id        : '$_id',
-                    name       : {$first: '$name'},
-                    invoice    : {$first: '$invoice'},
-                    project    : {$first: '$project'},
-                    description: {$first: '$description'},
-                    type       : {$first: '$type'},
-                    quotation  : {$first: '$quotation'},
-                    workflow   : {$first: '$workflow'},
-                    cost       : {$sum: '$journalentries.debit'},
-                    jobPrice   : {$first: '$jobPrice.unitPrice'}
-                }
-            }, {
-                $lookup: {
-                    from        : 'wTrack',
-                    localField  : '_id',
-                    foreignField: 'jobs',
-                    as          : 'tCards'
-                }
-            }, {
-                $unwind: {
-                    path                      : '$tCards',
-                    preserveNullAndEmptyArrays: true
-                }
-            }, {
-                $sort: {
-                    'tCards.dateByWeek': 1,
-                    'tCards.1'         : -1,
-                    'tCards.2'         : -1,
-                    'tCards.3'         : -1,
-                    'tCards.4'         : -1,
-                    'tCards.5'         : -1
-                }
-            }, {
-                $project: {
-                    name             : 1,
-                    invoice          : 1,
-                    type             : 1,
-                    quotation        : 1,
-                    workflow         : 1,
-                    description      : 1,
-                    cost             : 1,
-                    jobPrice         : 1,
-                    tCards           : 1,
-                    project          : 1,
-                    totalQAWorked    : {$cond: [{$eq: ['$tCards.department', objectId('55b92ace21e4b7c40f000011')]}, '$tCards.worked', 0]},
-                    totalDesignWorked: {$cond: [{$eq: ['$tCards.department', objectId('55bb1f14cb76ca630b000006')]}, '$tCards.worked', 0]}
-
-                }
-            }, {
-                $group: {
-                    _id              : '$_id',
-                    name             : {$first: '$name'},
-                    invoice          : {$first: '$invoice'},
-                    type             : {$first: '$type'},
-                    project          : {$first: '$project'},
-                    quotation        : {$first: '$quotation'},
-                    workflow         : {$first: '$workflow'},
-                    description      : {$first: '$description'},
-                    cost             : {$first: '$cost'},
-                    jobPrice         : {$first: '$jobPrice'},
-                    totalWorked      : {$sum: '$tCards.worked'},
-                    tCards           : {$push: '$tCards'},
-                    tCardMinDate     : {$first: '$tCards'},
-                    tCardMaxDate     : {$last: '$tCards'},
-                    totalQAWorked    : {$sum: '$totalQAWorked'},
-                    totalDesignWorked: {$sum: '$totalDesignWorked'}
-                }
-            }, {
-                $unwind: {
-                    path                      : '$tCards',
-                    preserveNullAndEmptyArrays: true
-                }
-            }, {
-                $group: {
-                    _id: {
-                        _id       : '$_id',
-                        employee  : '$tCards.employee',
-                        department: '$tCards.department'
-                    },
-
-                    tCardDateByWeek  : {$last: '$tCards.dateByWeek'},
-                    name             : {$first: '$name'},
-                    project          : {$first: '$project'},
-                    invoice          : {$first: '$invoice'},
-                    type             : {$first: '$type'},
-                    tCardMinDate     : {$first: '$tCardMinDate'},
-                    tCardMaxDate     : {$last: '$tCardMaxDate'},
-                    quotation        : {$first: '$quotation'},
-                    description      : {$first: '$description'},
-                    workflow         : {$first: '$workflow'},
-                    cost             : {$first: '$cost'},
-                    jobPrice         : {$first: '$jobPrice'},
-                    worked           : {$sum: '$tCards.worked'},
-                    totalWorked      : {$first: '$totalWorked'},
-                    totalQAWorked    : {$first: '$totalQAWorked'},
-                    totalDesignWorked: {$first: '$totalDesignWorked'}
-                }
-            }, {
-                $project: {
-                    name        : 1,
-                    invoice     : 1,
-                    type        : 1,
-                    quotation   : 1,
-                    workflow    : 1,
-                    cost        : 1,
-                    project     : 1,
-                    description : 1,
-                    jobPrice    : 1,
-                    tCardMinDate: 1,
-                    tCardMaxDate: 1,
-                    totalWorked : {
-                        $cond: [{$eq: ['$totalWorked', 0]}, 1, '$totalWorked']
-                    },
-
-                    totalQAWorked    : 1,
-                    totalDesignWorked: 1,
-                    worked           : 1,
-                    tCardDateByWeek  : 1
-                }
-            }, {
-                $project: {
-                    name             : 1,
-                    invoice          : 1,
-                    type             : 1,
-                    quotation        : 1,
-                    workflow         : 1,
-                    project          : 1,
-                    cost             : 1,
-                    tCardMinDate     : 1,
-                    tCardMaxDate     : 1,
-                    jobPrice         : 1,
-                    totalWorked      : 1,
-                    totalQAWorked    : 1,
-                    description      : 1,
-                    totalDesignWorked: 1,
-                    worked           : 1,
-                    tCardDateByWeek  : 1,
-                    revenue          : {
-                        $cond: {
-                            if: {
-                                $eq: ['$invoice', {}]
-                            },
-
-                            then: {
-                                $cond: {
-                                    if  : {$eq: ['$quotation', {}]},
-                                    then: {
-                                        $multiply: [{$divide: ['$worked', '$totalWorked']}, '$jobPrice']
-                                    },
-                                    else: {
-                                        $divide: [{$multiply: [{$divide: ['$worked', '$totalWorked']}, '$jobPrice']}, '$quotation.currency.rate']
-                                    }
-                                }
-                            },
-                            else: {
-                                $divide: [{$multiply: [{$divide: ['$worked', '$totalWorked']}, '$jobPrice']}, '$invoice.currency.rate']
-                            }
-                        }
-                    }
-                }
-            }, {
-                $lookup: {
-                    from        : 'Employees',
-                    localField  : '_id.employee',
-                    foreignField: '_id',
-                    as          : 'employee'
-                }
-            }, {
-                $lookup: {
-                    from        : 'Department',
-                    localField  : '_id.department',
-                    foreignField: '_id',
-                    as          : 'department'
-                }
-            }, {
-                $project: {
-                    name             : 1,
-                    invoice          : 1,
-                    type             : 1,
-                    quotation        : 1,
-                    workflow         : 1,
-                    project          : 1,
-                    cost             : 1,
-                    jobPrice         : 1,
-                    tCardMinDate     : 1,
-                    description      : 1,
-                    tCardMaxDate     : 1,
-                    totalWorked      : 1,
-                    totalQAWorked    : 1,
-                    totalDesignWorked: 1,
-                    worked           : 1,
-                    revenue          : 1,
-                    tCardDateByWeek  : 1,
-                    employee         : {
-                        $arrayElemAt: ['$employee', 0]
-                    },
-
-                    department: {
-                        $arrayElemAt: ['$department', 0]
-                    }
-                }
-            }, {
-                $lookup: {
-                    from        : 'transfers',
-                    localField  : 'employee._id',
-                    foreignField: 'employee',
-                    as          : 'employee.transfer'
-                }
-            }, {
-                $project: {
-                    name             : 1,
-                    invoice          : 1,
-                    type             : 1,
-                    quotation        : 1,
-                    project          : 1,
-                    description      : 1,
-                    workflow         : 1,
-                    cost             : 1,
-                    jobPrice         : 1,
-                    totalWorked      : 1,
-                    totalQAWorked    : 1,
-                    totalDesignWorked: 1,
-                    tCardMinDate     : 1,
-                    tCardMaxDate     : 1,
-                    worked           : 1,
-                    revenue          : 1,
-                    employee         : 1,
-                    department       : '$department.name',
-
-                    transfer: {
-                        $filter: {
-                            input: '$employee.transfer',
-                            as   : 'transfer',
-                            cond : {
-                                $lte: [{$add: [{$multiply: [{$year: '$$transfer.date'}, 100]}, {$week: '$$transfer.date'}]}, '$tCardDateByWeek']
-                            }
-                        }
-                    }
-                }
-            }, {
-                $unwind: {
-                    path                      : '$transfer',
-                    preserveNullAndEmptyArrays: true
-                }
-            }, {
-                $sort: {
-                    'transfer.date': -1
-                }
-            }, {
-                $group: {
-                    _id              : '$_id',
-                    name             : {
-                        $first: '$name'
-                    },
-                    project          : {
-                        $first: '$project'
-                    },
-                    invoice          : {
-                        $first: '$invoice'
-                    },
-                    type             : {
-                        $first: '$type'
-                    },
-                    quotation        : {
-                        $first: '$quotation'
-                    },
-                    workflow         : {
-                        $first: '$workflow'
-                    },
-                    description      : {
-                        $first: '$description'
-                    },
-                    cost             : {
-                        $first: '$cost'
-                    },
-                    jobPrice         : {
-                        $first: '$jobPrice'
-                    },
-                    tCardMinDate     : {
-                        $first: '$tCardMinDate'
-                    },
-                    tCardMaxDate     : {
-                        $first: '$tCardMaxDate'
-                    },
-                    worked           : {
-                        $first: '$worked'
-                    },
-                    totalWorked      : {
-                        $first: '$totalWorked'
-                    },
-                    revenue          : {
-                        $first: '$revenue'
-                    },
-                    employee         : {
-                        $first: '$employee'
-                    },
-                    department       : {
-                        $first: '$department'
-                    },
-                    transfer         : {
-                        $first: '$transfer'
-                    },
-                    totalQAWorked    : {
-                        $first: '$totalQAWorked'
-                    },
-                    totalDesignWorked: {
-                        $first: '$totalDesignWorked'
-                    }
-                }
-            }, {
-                $lookup: {
-                    from        : 'JobPosition',
-                    localField  : 'transfer.jobPosition',
-                    foreignField: '_id',
-                    as          : 'jobPosition'
-                }
-            }, {
-                $project: {
-                    name             : 1,
-                    invoice          : 1,
-                    type             : 1,
-                    quotation        : 1,
-                    project          : 1,
-                    workflow         : 1,
-                    cost             : 1,
-                    tCardMinDate     : 1,
-                    tCardMaxDate     : 1,
-                    description      : 1,
-                    jobPrice         : 1,
-                    totalWorked      : 1,
-                    totalQAWorked    : 1,
-                    totalDesignWorked: 1,
-                    worked           : 1,
-                    revenue          : 1,
-                    employee         : 1,
-                    department       : 1,
-                    jobPosition      : {
-                        $arrayElemAt: ['$jobPosition', 0]
-                    }
-                }
-            }, {
-                $group: {
-                    _id              : '$_id._id',
-                    name             : {
-                        $first: '$name'
-                    },
-                    invoice          : {
-                        $first: '$invoice'
-                    },
-                    project          : {
-                        $first: '$project'
-                    },
-                    type             : {
-                        $first: '$type'
-                    },
-                    quotation        : {
-                        $first: '$quotation'
-                    },
-                    workflow         : {
-                        $first: '$workflow'
-                    },
-                    description      : {
-                        $first: '$description'
-                    },
-                    cost             : {
-                        $first: '$cost'
-                    },
-                    tCardMinDate     : {
-                        $first: '$tCardMinDate'
-                    },
-                    tCardMaxDate     : {
-                        $first: '$tCardMaxDate'
-                    },
-                    jobPrice         : {
-                        $first: '$jobPrice'
-                    },
-                    totalWorked      : {
-                        $sum: '$worked'
-                    },
-                    totalQAWorked    : {
-                        $first: '$totalQAWorked'
-                    },
-                    totalDesignWorked: {
-                        $first: '$totalDesignWorked'
-                    },
-                    totalRevenue     : {
-                        $sum: '$revenue'
-                    },
-
-                    revenue: {
-                        $push: {
-                            employee: {
-                                _id        : '$employee._id',
-                                name       : {
-                                    $concat: ['$employee.name.first', ' ', '$employee.name.last']
-                                },
-                                jobPosition: '$jobPosition.name',
-                                worked     : '$worked'
-                            },
-
-                            department: '$department',
-                            revenue   : '$revenue'
-                        }
-                    }
-                }
-            }, {
-                $project: {
-                    name             : 1,
-                    invoice          : 1,
-                    type             : 1,
-                    description      : 1,
-                    quotation        : 1,
-                    workflow         : 1,
-                    cost             : 1,
-                    project          : 1,
-                    tCardMinDate     : 1,
-                    tCardMaxDate     : 1,
-                    jobPrice         : 1,
-                    totalWorked      : 1,
-                    totalQAWorked    : 1,
-                    totalDesignWorked: 1,
-                    worked           : 1,
-                    revenue          : 1,
-                    totalRevenue     : 1,
-                    profit           : {
-                        $subtract: ['$totalRevenue', '$cost']
-                    }
-                }
-            }, {
-                $group: {
-                    _id         : null,
-                    revenueTotal: {
-                        $sum: '$totalRevenue'
-                    },
-                    profitTotal : {
-                        $sum: '$profit'
-                    },
-                    costTotal   : {
-                        $sum: '$cost'
-                    },
-                    workedTotal : {
-                        $sum: '$totalWorked'
-                    },
-                    root        : {
-                        $push: '$$ROOT'
-                    }
-                }
-            }, {
-                $unwind: {
-                    path                      : '$root',
-                    preserveNullAndEmptyArrays: true
-                }
-            }, {
-                $project: {
-                    _id              : '$root._id',
-                    name             : '$root.name',
-                    invoice          : '$root.invoice',
-                    type             : '$root.type',
-                    quotation        : '$root.quotation',
-                    workflow         : '$root.workflow',
-                    cost             : '$root.cost',
-                    project          : '$root.project',
-                    jobPrice         : '$root.jobPrice',
-                    totalWorked      : '$root.totalWorked',
-                    worked           : '$root.worked',
-                    revenue          : '$root.revenue',
-                    totalRevenue     : '$root.totalRevenue',
-                    profit           : '$root.profit',
-                    tCardMinDate     : '$root.tCardMinDate',
-                    tCardMaxDate     : '$root.tCardMaxDate',
-                    revenueTotal     : 1,
-                    profitTotal      : 1,
-                    costTotal        : 1,
-                    description      : '$root.description',
-                    workedTotal      : 1,
-                    totalQAWorked    : '$root.totalQAWorked',
-                    totalDesignWorked: '$root.totalDesignWorked'
-                }
+        jobsService.getForOverview(opt, function (err, result) {
+            if (err) {
+                return next(err);
             }
-            ], function (err, jobs) {
-                if (err) {
-                    return next(err);
-                }
 
-                if (query) {
-                    return res.status(200).send(jobs.length ? jobs[0] : {});
-                }
+            res.status(200).send(result);
+        });
 
-                res.status(200).send(jobs);
-            });
     }
 
     this.getForOverview = function (req, res, next) {
@@ -2324,7 +1709,7 @@ var Module = function (models, event) {
             return res.status(200).send([]);
         }
 
-        queryObj = {type: 'Not Quoted', project: objectId(pId)};
+        queryObj = {type: 'Not Ordered', project: objectId(pId)};
 
         if (all) {
             queryObj = {project: objectId(pId)};
@@ -2352,10 +1737,12 @@ var Module = function (models, event) {
         var JobsModel = models.get(dbName, 'jobs', JobsSchema);
         var wTrack = models.get(dbName, 'wTrack', wTrackSchema);
         var id = req.params._id;
+        var waterfallTasks;
+        var removeWTrack;
+        var removeProduct;
 
         JobsModel.findByIdAndRemove(id, function (err, result) {
             var jobId;
-            var projectId;
 
             if (err) {
                 return next(err);
@@ -2363,27 +1750,86 @@ var Module = function (models, event) {
 
             if (result) {
                 jobId = result.get('_id');
-                projectId = result.get('project');
 
-                wTrack.find({jobs: jobId}, function (err, result) {
+                removeProduct = function (cb) {
+                    var product;
+
+                    async.waterfall([
+                        function (wCb) {
+                            var options = {
+                                dbName: dbName,
+                                query : {job: jobId}
+                            };
+
+                            ProductService.findOneAndRemove(options, wCb);
+                        },
+
+                        /*function (opt, wCb) {
+                            var options = {
+                                dbName   : dbName,
+                                query    : {_id: {$in: opt.categoriesIds}},
+                                setObject: {$inc: {productsCount: -1}}
+                            };
+
+                            product = opt.product;
+
+                            ProductCategoryService.update(options, wCb);
+
+                        },*/
+
+                        function (wCb) {
+                            var options = {
+                                dbName: dbName,
+                                query : {product: product}
+                            };
+
+                            ProductPriceService.remove(options, wCb);
+                        },
+
+                        function (wCb) {
+                            var options = {
+                                dbName: dbName,
+                                query : {'sourceDocument._id': product}
+                            };
+
+                            JournalEntryService.remove(options, wCb);
+                        }
+                    ], function (err) {
+                        if (err) {
+                            return cb(err);
+                        }
+
+                        cb(null);
+                    });
+
+                };
+
+                removeWTrack = function (cb) {
+                    wTrack.remove({jobs: jobId}, function (err, result) {
+                        if (err) {
+                            return cb(err);
+                        }
+                        cb();
+
+                        event.emit('recollectVacationDash', {dbName: dbName});
+                    });
+
+                };
+
+                waterfallTasks = [removeProduct, removeWTrack];
+
+                async.waterfall(waterfallTasks, function (err, result) {
                     if (err) {
                         return next(err);
                     }
 
-                    async.each(result, function (wTrackEl, cb) {
-                        var _id = wTrackEl.get('_id');
-
-                        wTrack.findByIdAndRemove(_id, function () {
-                            cb();
-                        });
-                    }, function () {
-                        event.emit('recollectVacationDash', {dbName: dbName});
-                    });
-
+                    res.status(200).send(result);
                 });
             }
+            else {
+                res.status(200).send(result);
+            }
 
-            res.status(200).send(result);
         });
     };
 
@@ -2396,7 +1842,6 @@ var Module = function (models, event) {
             user: req.session.uId,
             date: new Date()
         };
-
         var project;
         var query;
         var products;
@@ -2416,13 +1861,125 @@ var Module = function (models, event) {
             delete data._id;
 
             JobsModel.findByIdAndUpdate(id, query, {new: true}, function (err, result) {
+                var waterFallTasks;
+
+                var workflow = result && result.workflow ? result.workflow.toJSON() : null;
                 if (err) {
                     return next(err);
                 }
 
-                event.emit('recollectVacationDash', {dbName: dbName});
+                function createCosts(wCb) {
+                    _journalEntryHandler.createCostsForJob({
+                        req     : req,
+                        jobId   : objectId(id),
+                        workflow: CONSTANTS.JOBSFINISHED,
+                        callback: wCb
+                    });
+                }
 
-                res.status(200).send(result);
+                function getJobCosts(wCb) {
+
+                    JobsModel
+                        .aggregate([{
+                            $match: {
+                                _id: objectId(id)
+                            }
+                        }, {
+                            $lookup: {
+                                from        : 'Products',
+                                localField  : '_id',
+                                foreignField: 'job',
+                                as          : 'product'
+                            }
+                        }, {
+                            $project: {
+                                product: {$arrayElemAt: ['$product', 0]}
+                            }
+                        }, {
+                            $lookup: {
+                                from        : 'journalentries',
+                                localField  : 'product._id',
+                                foreignField: 'sourceDocument._id',
+                                as          : 'journalentries'
+                            }
+                        }, {
+                            $unwind: {
+                                path                      : '$journalentries',
+                                preserveNullAndEmptyArrays: true
+                            }
+                        }, {
+                            $group: {
+                                _id : '$_id',
+                                cost: {$sum: '$journalentries.debit'}
+                            }
+                        }], function (err, result) {
+                            var cost;
+
+                            if (err) {
+                                return wCb(err);
+                            }
+
+                            cost = result && result.length ? result[0].cost : 0;
+
+                            wCb(null, cost);
+                        });
+                }
+
+                function findAvailabilty(cost, wCb) {
+                    var options = {
+                        dbName: dbName,
+                        job   : id
+                    };
+
+                    ProductService.getAvailabilityByJob(options, function (err, opt) {
+                        if (err) {
+                            return wCb(err);
+                        }
+
+                        wCb(null, {
+                            id     : opt._id,
+                            account: opt.account,
+                            cost   : cost
+                        });
+                    });
+                }
+
+                function updateAvailabilty(data, wCb) {
+                    var options = {
+                        dbName: dbName,
+                        id    : data.id,
+                        body  : {
+                            onHand: 1,
+                            cost  : data.cost
+                        }
+                    };
+
+                    AvailabilityService.updateById(options, function (err) {
+                        if (err) {
+                            return wCb(err);
+                        }
+
+                        wCb(null, data);
+                    });
+                }
+
+                function callBack(err) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    event.emit('recollectVacationDash', {dbName: dbName});
+
+                    res.status(200).send(result);
+                }
+
+                waterFallTasks = [createCosts, getJobCosts, findAvailabilty, updateAvailabilty];
+
+                if (workflow === CONSTANTS.JOBSFINISHED) {
+                    async.waterfall(waterFallTasks, callBack);
+                } else {
+                    callBack();
+                }
             });
         } else if (data.products && data.products.length) {
             products = JSON.parse(data.products);
@@ -2459,7 +2016,6 @@ var Module = function (models, event) {
         var query = {_id: objectId(_id)};
 
         getForOverview(req, res, next, {query: query});
-
     };
 };
 

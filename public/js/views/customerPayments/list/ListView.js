@@ -35,7 +35,7 @@ define([
             'click td.editable'                                : 'editRow',
             'change .editable '                                : 'setEditable',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
-            'click td:not(input.checkbox)'                     : 'editItem'
+            'click td:not(.notForm)'                           : 'editItem'
         },
 
         initialize: function (options) {
@@ -62,6 +62,7 @@ define([
             var model = this.collection.get(id);
 
             e.preventDefault();
+            e.stopPropagation();
 
             return new EditView({model: model});
         },

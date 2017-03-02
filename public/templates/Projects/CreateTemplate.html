@@ -1,84 +1,63 @@
-<div class="form-holder _createNewProjectDialog">
-    <form method="post" action="" id="createProjectForm" class="form">
-        <div class="inner">
-            <ul class="dialog-tabs">
-                <li><a class="active" href="javascript:;">Main</a></li>
-                <li><a href="javascript:;">Assignees</a></li>
-                <li><a href="javascript:;">Other Info</a></li>
-                <!--<li><a href="javascript:;">Bonus</a></li>-->
-            </ul>
-            <div class="clearfix"></div>
-            <div class="dialog-tabs-items">
-                <div class="dialog-tabs-item active">
-                    <div class="half-block left projectNote">
-                        <div class="inner">
-                            <div class="textarea-wrapper">
-                                <textarea class="projectDescriptionCreate"
-                                          name="description"
-                                          placeholder="Add a Description..."
-                                          id="description"
-                                          maxlength="500">
-                                    </textarea>
-                            </div>
+<div class="form-holder _newForm">
+    <form method="post" action="" id="createProjectForm">
+        <h4 class="_dialogTitlePositioned">Create project</h4>
+        <ul class="dialog-tabs">
+            <li><a class="active" href="javascript:;">Main</a></li>
+            <li><a href="javascript:;">Assignees</a></li>
+            <li><a href="javascript:;">Other Info</a></li>
+        </ul>
+        <div class="dialog-tabs-items">
+            <div class="dialog-tabs-item active">
+                <div class="_formWrap _enlargedItemMargin">
+                    <div class="_formBlock">
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate title-input blueback"
+                                   name="projectName"
+                                   id="projectName"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">Project Name</label>
                         </div>
-                        <div class="clearfix"></div>
-                    </div>
-                    <div class="half-block left">
-                        <dl class="project-edit-info">
-                            <dt>
-                                <label for="projectName">Project Name </label>
-                            </dt>
-                            <dd>
-                                <input type="text"
-                                       class="title-input blueback"
-                                       name="projectName"
-                                       id="projectName"
-                                       required
-                                       maxlength="32"
-                                       placeholder="Project Name"/>
-                            </dd>
-                            <dt>
-                                <label for="projectShortDesc">Project Short Description </label>
-                            </dt>
-                            <dd>
-                                <input type="text"
-                                       class="title-input blueback"
-                                       name="projectShortDesc"
-                                       id="projectShortDesc"
-                                       required
-                                       maxlength="32"
-                                       placeholder="Project Short Description"/>
-                            </dd>
-                            <dt>
-                                <label for="projectTypeDD">Project Type </label>
-                            </dt>
-                            <dd class="_newSelectListWrap">
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate title-input blueback"
+                                   name="projectShortDesc"
+                                   id="projectShortDesc"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">Project Short Description</label>
+                        </div>
+                        <div class="_animateSelectBox">
+                            <span class="_selectTitle">Project Type</span>
+                            <div class="_newSelectListWrap">
                                 <a id="projectTypeDD"
                                    class="current-selected"
-                                   href="javascript:;"></a>
-                            </dd>
-                            <dt>
-                                <label for="customerDd">Project Customer</label>
-                            </dt>
-                            <dd class="_newSelectListWrap">
+                                   href="javascript:;">Select project Type
+                                </a>
+                            </div>
+                        </div>
+                        <div class="_animateSelectBox">
+                            <span class="_selectTitle">Project Customer</span>
+                            <div class="_newSelectListWrap">
                                 <a id="customerDd"
                                    class="current-selected"
-                                   href="javascript:;">
+                                   href="javascript:;">Select project customer
                                 </a>
-                            </dd>
-                            <dt>
-                                <label for="workflowsDd">Status</label>
-                            </dt>
-                            <dd id="selectWorkflow" class="_newSelectListWrap">
+                            </div>
+                        </div>
+                        <div class="_animateSelectBox">
+                            <span class="_selectTitle">Status</span>
+                            <div class="_newSelectListWrap">
                                 <a id="workflowsDd"
                                    class="current-selected"
-                                   href="javascript:;">
+                                   href="javascript:;">Select project Status
                                 </a>
-                            </dd>
-                            <dt>
-                                <label for="health">Health</label>
-                            </dt>
-                            <dd id="health" class="health-wrapper">
+                            </div>
+                        </div>
+                        <div class="_animateHealthBox">
+                            <span class="_healthLabel">Health</span>
+                            <div id="health" class="health-wrapper _healthWrapper">
                                 <div class="_healthDd">
                                     <a href="javascript:;"
                                        data-value="1"
@@ -96,74 +75,68 @@
                                         </li>
                                     </ul>
                                 </div>
-                            </dd>
-                            <dt>
-                                <label for="StartDate">Start Date</label>
-                            </dt>
-                            <dd id="startDate">
-                                <div class="_inputIconWrap">
-                                    <input class="extrainfo blueback"
-                                           type="text"
-                                           name="StartDate"
-                                           id="StartDate"
-                                           value=""
-                                           readonly
-                                           placeholder="Start Date"/>
-                                    <label></label>
-                                </div>
-                            </dd>
-                            <dt>
-                                <label for="EndDateTarget">Target End Date</label>
-                            </dt>
-                            <dd id="targetEndDate">
-                                <div class="_inputIconWrap">
-                                    <input class="extrainfo blueback"
-                                           type="text"
-                                           name="TargetEndtDate"
-                                           id="EndDateTarget"
-                                           value=""
-                                           readonly
-                                           placeholder="Target End Date"/>
-                                    <label></label>
-                                </div>
-                            </dd>
-                        </dl>
+                            </div>
+                        </div>
+                        <div class="_animateInputBox">
+                            <span class="_staticLabel">Start Date</span>
+                            <input type="text"
+                                   class="_animate extrainfo blueback"
+                                   name="StartDate"
+                                   id="StartDate"
+                                   placeholder="Choose start date"
+                                   required
+                                   readonly/>
+                        </div>
+                        <div class="_animateInputBox" id="targetEndDate">
+                            <span class="_staticLabel">Target End Date</span>
+                            <input type="text"
+                                   class="_animate extrainfo blueback"
+                                   name="TargetEndtDate"
+                                   id="EndDateTarget"
+                                   placeholder="Choose end date"
+                                   required
+                                   readonly/>
+                        </div>
+                        <div class="_animateTextareaBox">
+                            <textarea class="_animate projectDescriptionCreate"
+                                      name="description"
+                                      id="description"
+                                      required
+                                      maxlength="500"></textarea>
+                            <label for="description" class="_animate">Project description</label>
+                        </div>
                     </div>
-                    <div class="clearfix"></div>
-                    <div class="attach-container"></div>
-                </div>
-                <div class="dialog-tabs-item">
-                    <div class="assignees-container"></div>
-                </div>
-                <!--<div class="dialog-tabs-item">
-                    <div class="bonus-container"></div>
-                </div>-->
-                <div class="dialog-tabs-item">
-                    <dl>
-                        <dt>
-                            <label for="paymentMethod">Bank Account</label>
-                        </dt>
-                        <dd class="_newSelectListWrap">
-                            <a id="paymentMethod"
-                               class="current-selected"
-                               href="javascript:;"
-                               data-id="">Select
-                            </a>
-                        </dd>
-                        <dt>
-                            <label for="paymentTerms">Payment Terms</label>
-                        </dt>
-                        <dd class="_newSelectListWrap">
-                            <a id="paymentTerms"
-                               class="current-selected"
-                               href="javascript:;"
-                               data-id="">Select
-                            </a>
-                        </dd>
-                    </dl>
                 </div>
             </div>
-            <div class="clearfix"></div>
+            <div class="dialog-tabs-item">
+                <div class="assignees-container _formWrap _innedFlexDiv _enlargedItemMargin"></div>
+            </div>
+            <div class="dialog-tabs-item">
+                <div class="_formWrap _enlargedItemMargin">
+                    <div class="_formBlock">
+                        <div class="_animateSelectBox">
+                            <span class="_selectTitle">Bank Account</span>
+                            <div class="_newSelectListWrap">
+                                <a id="paymentMethod"
+                                   class="current-selected"
+                                   href="javascript:;"
+                                   data-id="">Select bank account
+                                </a>
+                            </div>
+                        </div>
+                        <div class="_animateSelectBox">
+                            <span class="_selectTitle">Payment Terms</span>
+                            <div class="_newSelectListWrap">
+                                <a id="paymentTerms"
+                                   class="current-selected"
+                                   href="javascript:;"
+                                   data-id="">Select payment terms
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </form>
 </div>

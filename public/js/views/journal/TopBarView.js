@@ -9,6 +9,7 @@ define([
     var TopBarView = BaseView.extend({
         el         : '#top-bar',
         contentType: CONSTANTS.JOURNAL,
+        contentHeader: 'Journal',
         template   : _.template(ContentTopBarTemplate)
     });
 

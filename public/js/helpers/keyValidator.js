@@ -1,10 +1,14 @@
-define(function(){
-    "use strict";
-    function validator(e, isDot){
+define(function () {
+    'use strict';
+
+    function validator(e, isDot, isMinus) {
         var dannyArr = [0, 8];
         var index;
-        if (isDot){
-            dannyArr.push(46);
+        if (isDot) {
+            dannyArr.push(46, 190);
+        }
+        if (isMinus) {
+            dannyArr.push(45);
         }
 
         index = dannyArr.indexOf(e.which);

@@ -1,6 +1,7 @@
 <div class="form-holder">
     <form class="form notDialog" id="productForm" data-id="<%=_id%>">
-        <div class="clearfix"></div>
+        <div class="clearfix">
+        </div>
         <div class="avatar left">
             <img alt="" src="<%=imageSrc%>"/>
         </div>
@@ -14,7 +15,7 @@
             </div>
             <div class="half-block left">
                 <dl class="product-info">
-                    <dt><label>Can be Solid</label></dt>
+                    <dt><label>Can be Sold</label></dt>
                     <dd><input type="checkbox" disabled class="checkbox left" <% if(canBeSold) { %> checked <% } %>/>
                     </dd>
                     <dt><label>Can be Expensed</label></dt>

@@ -13,6 +13,10 @@ define([
         el         : '#top-bar',
         contentType: CONSTANTS.SALESINVOICES,
         template   : _.template(ContentTopBarTemplate),
+        events     : {
+            'click #magentoExport' : 'magentoInvoiceExport',
+            'click #magentoImport' : 'magentoInvoiceImport'
+        },
 
         initialize: function (options) {
             this.actionType = options.actionType;
@@ -27,6 +31,16 @@ define([
             this.render();
 
             this.hideSaveCancelBtns();
+        },
+
+        magentoInvoiceExport: function (event) {
+            event.preventDefault();
+            this.trigger('exportToMagento');
+        },
+
+        magentoInvoiceImport: function (event) {
+            event.preventDefault();
+            this.trigger('importFromMagento');
         },
 
         hideSaveCancelBtns: function () {

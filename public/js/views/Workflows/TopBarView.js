@@ -34,7 +34,7 @@ define([
         render: function () {
             var $thisEl = this.$el;
 
-            $thisEl.find('title').text(this.contentType);
+            $('title').text(this.contentType);
             $thisEl.html(this.template({contentType: this.contentType}));
             Common.displayControlBtnsByActionType(this.actionType);
 

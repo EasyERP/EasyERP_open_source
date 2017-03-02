@@ -15,8 +15,13 @@
         </colgroup>
         <thead>
         <tr>
-            <th class="centerCell"><input type="checkbox" id="checkAll"/></th>
-            <th class="oe_sortable" data-sort="supplier.name.first">Supplier<span class="arrow down"></span><span
+            <th class="centerCell">
+                <label class="_customCHeckbox">
+                    <input type="checkbox" id="checkAll"/>
+                    <span></span>
+                </label>
+            </th>
+            <th class="oe_sortable" data-sort="supplier.name">Supplier<span class="arrow down"></span><span
                     class="arrow up"></span></th>
             <th class="oe_sortable" data-sort="name">Invoice Number<span class="arrow down"></span><span
                     class="arrow up"></span></th>
@@ -42,7 +47,7 @@
         <tbody id="listTable" class="enableTableOdd"></tbody>
         <tfoot id="listTotal">
         <tr>
-            <td colspan="5"></td>
+            <td colspan="5">Total</td>
             <td class="money"><span id="balance"></span></td>
             <td class="money"><span id="paid"></span></td>
             <td class="money"><span id="total"></span></td>

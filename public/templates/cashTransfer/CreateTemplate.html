@@ -1,26 +1,43 @@
-<div class="form-holder">
-    <div class="clearfix"></div>
-    <h3 class="borderBottom">Cash Transfer</h3>
-    <div class="clearfix"></div>
-    <form method="post" action="" id="createJournalForm" class="createJournalForm form">
-        <dl class="journal-info">
-            <dt><label for="date">Date</label></dt>
-            <dd><input id="date" name="date" value="" readonly></dd>
-
-            <dt><label>From</label></dt>
-            <dd class="cashBalanceRow _newSelectListWrap">
-                <a id="debitAccount" class="current-selected" href="javascript:;">Select</a>
-                <label class="cashBalance">Balance</label>
-                <span id="maxAmount" class=""></span>
-            </dd>
-
-            <dt><label>To</label></dt>
-            <dd class="_newSelectListWrap">
-                <a id="creditAccount" class="current-selected" href="javascript:;">Select</a>
-            </dd>
-
-            <dt><label>Amount</label></dt>
-            <dd><input id="amount" value="0" class=""/> <span id="currency"></span></dd>
-        </dl>
+<div class="form-holder _newForm">
+    <h3 class="_dialogMainTitle">Cash Transfer</h3>
+    <form method="post" id="createJournalForm" class="createJournalForm">
+        <div class="_formWrap _enlargedItemMargin">
+            <div class="_formBlock">
+                <div class="_animateInputBox">
+                    <span class="_staticLabel">Date</span>
+                    <input id="date"
+                           name="date"
+                           class="_animate"
+                           value=""
+                           required
+                           placeholder="Date"
+                           readonly>
+                </div>
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">From</span>
+                    <div class="cashBalanceRow _newSelectListWrap">
+                        <a id="debitAccount" class="current-selected" href="javascript:;">Select Account</a>
+                    </div>
+                </div>
+                <div class="cashBalanceBlock">
+                    <span class="_cashTitle">Balance</span>
+                    <span id="maxAmount" class="_cashValue"></span>
+                </div>
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">To</span>
+                    <div class="cashBalanceRow _newSelectListWrap">
+                        <a id="creditAccount" class="current-selected" href="javascript:;">Select Account</a>
+                    </div>
+                </div>
+                <div class="_animateInputBox _currency">
+                    <input id="amount"
+                           value="0"
+                           class="_animate"
+                           required/>
+                    <label for="amount" class="_animate">Amount</label>
+                    <span class="_currencyValue" id="currency"></span>
+                </div>
+            </div>
+        </div>
     </form>
 </div>

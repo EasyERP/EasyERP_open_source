@@ -1,124 +1,160 @@
-<div class="form-holder">
-    <div class="inner">
-        <div class="clearfix"></div>
-        <div class="topInputHolder">
-            <div class="thirdPartBlock left">
-                <dl class="person-info">
-                    <dt><label for="project">Project</label></dt>
-                    <dd>
-                        <span id="project"><%= project.name %></span>
-                    </dd>
-                </dl>
-                <dl class="person-info">
-                    <dt><label for="jobName">Job Name</label></dt>
-                    <dd>
-                        <% if (jobs && jobs._id) {%>
-                        <input id="jobName" value="<%=jobs.name%>" readonly/>
-                        <% } else {%>
-                        <input id="jobName" maxlength="36"/>
-                        <% } %>
-                    </dd>
-                </dl>
-                <dl class="person-info">
-                    <dt><label for="jobDescription">Description</label></dt>
-                    <dd>
-                        <% if (jobs && jobs._id) {%>
-                        <textarea id="jobDescription"><%=jobs.description%></textarea>
-                        <% } else {%>
-                        <textarea id="jobDescription"/>
-                        <% } %>
-                    </dd>
-                </dl>
+<div class="form-holder _newForm _viewProject">
+    <h4 class="_dialogMainTitle">Project <%= project.name %></h4>
+    <div class="_formWrap _enlargedItemMargin">
+        <div class="_formBlock">
+            <div class="_animateInputBox">
+                <% if (jobs && jobs._id) {%>
+                <input type="text"
+                       id="jobName"
+                       class="_animate"
+                       value="<%=jobs.name%>"
+                       readonly
+                       required/>
+                <% } else {%>
+                <input type="text"
+                       id="jobName"
+                       class="_animate"
+                       required
+                       maxlength="36"/>
+                <% } %>
+                <label class="_animate">Job Name</label>
             </div>
-            <div class="thirdPartBlock left">
-                <dl class="person-info">
-                    <div class="miniAvatarCustomer miniAvatar"
-                         data-id="<%=(project.customer && project.customer._id) ? project.customer._id: ''%>">
-                        <img alt="" src="" class="avatar"/>
-                    </div>
-                    <div class="miniAvatarInfo">
-                        <dt><label for="customer">Customer</label></dt>
-                        <dd>
-                            <span id="customer"><%= project.customer &&  project.customer.name ? project.customer.name.first + ' ' + project.customer.name.last : '' %></span>
-                        </dd>
-                    </div>
-                </dl>
+            <div class="_animateTextareaBox">
+                <% if (jobs && jobs._id) {%>
+                <textarea id="jobDescription"
+                          class="_animate"
+                          required><%=jobs.description%></textarea>
+                <% } else {%>
+                <textarea id="jobDescription"
+                          class="_animate"
+                          required></textarea>
+                <% } %>
+                <label for="jobDescription" class="_animate">Description</label>
             </div>
-            <div class="thirdPartBlock left">
-                <dl class="person-info">
-                    <div class="miniAvatarPM miniAvatar"
-                         data-id="<%=( project.salesmanager &&  project.salesmanager._id) ?  project.salesmanager._id: ''%>">
-                        <img alt="" src="" class="avatar"/>
-                    </div>
-                    <div class="miniAvatarInfo">
-                        <dt><label for="salesManager">SM</label></dt>
-                        <dd>
-                            <span id="salesManager"><%= project.salesmanager && project.salesmanager.name ?  project.salesmanager.name.first + ' ' +  project.salesmanager.name.last : ''%></span>
-                        </dd>
-                    </div>
-                </dl>
 
-            </div>
-            <div class="clearfix"></div>
         </div>
-        <div class="clearfix"></div>
-        <div class="topContentHolder">
-            <div id="wTrackItemsHolder" class="_wTrackItemsHolder">
-                <table id="rawTable" class="list tableFixed _invoiceTable">
-                    <colgroup>
-                        <col width="13%">
-                        <col width="10%">
-                        <col width="8%">
-                        <col width="12%">
-                        <col width="12%">
-                        <col width="5%">
-                        <col width="5%">
-                        <col width="5%">
-                        <col width="5%">
-                        <col width="5%">
-                        <col width="5%">
-                        <col width="5%">
-                        <col width="10%">
-                        <col width="30px">
-                    </colgroup>
-                    <thead>
-                    <tr  class="_deleteHeader">
-                        <th>Employee</th>
-                        <th>Department</th>
-                        <th>Generate&nbspBy</th>
-                        <th>Start&nbspDate</th>
-                        <th>End&nbspDate / Hours</th>
-                        <th>Mo</th>
-                        <th>Tu</th>
-                        <th>We</th>
-                        <th>Th</th>
-                        <th>Fr</th>
-                        <th>Sa</th>
-                        <th>Su</th>
-                        <th>Approx Hours</th>
-                        <th class="deleteCell"></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr id="addNewItem" class="_addNewItem">
-                        <td colspan="13">
-                            <a href="javascript:;" id="addNewEmployeeRow">Add an Item</a>
-                        </td>
-                    </tr>
-                    </tbody>
-                    <tfoot>
-                    <tr>
-                        <td colspan="14" class="invisible_border">&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td colspan="14" class="invisible_border">&nbsp;</td>
-                    </tr>
-
-                    </tfoot>
-                </table>
+        <div class="_formBlock">
+            <% if (!jobs) {%>
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Product Type</span>
+                    <div class="_newSelectListWrap">
+                        <a class="current-selected"
+                           id="productType">Select product type
+                        </a>
+                    </div>
+                </div>
+            <% } %>
+            <div class="_animateSelectBox">
+                <span class="_selectTitle">Warehouse</span>
+                <div class="_newSelectListWrap">
+                    <% if (jobs && jobs._id) {%>
+                    <a id="warehouse" href="javascript:;"><%=jobs.warehouse ? jobs.warehouse.name : ''%></a>
+                    <% } else {%>
+                    <a class="current-selected" id="warehouse">Select warehouse</a>
+                    <% } %>
+                </div>
+            </div>
+            <span class="_variantsLabel">Product Categories</span>
+            <div id="variantsCategoriesBlock" class="_variantsBlock">
+                <div class="_checkCategoriesWrap">
+                    <ul id="checkedProductCategories" class="_checkCategories"></ul>
+                    <span id="showBtn" class="_arrow"></span>
+                </div>
+                <ul id="productCategories" class="_categoriesList"></ul>
             </div>
         </div>
-        <div class="clearfix"></div>
+        <div class="col m-2">
+            <div class="row">
+                <div class="col m-12">
+                    <dl class="person-info">
+                        <div class="miniAvatarCustomer miniAvatar"
+                             data-id="<%=(project.customer && project.customer._id) ? project.customer._id: ''%>">
+                            <img alt="" src="" class="avatar"/>
+                        </div>
+                        <div class="miniAvatarInfo">
+                            <dt>
+                                <label for="customer">Customer</label>
+                            </dt>
+                            <dd>
+                                <span id="customer"><%= project.customer &&  project.customer.name ? project.customer.name.first + ' ' + project.customer.name.last : '' %></span>
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+                <div class="col m-12">
+                    <dl class="person-info">
+                        <div class="miniAvatarPM miniAvatar"
+                             data-id="<%=( project.salesmanager &&  project.salesmanager._id) ?  project.salesmanager._id: ''%>">
+                            <img alt="" src="" class="avatar"/>
+                        </div>
+                        <div class="miniAvatarInfo">
+                            <dt><label for="salesManager">SM</label></dt>
+                            <dd>
+                                <span id="salesManager"><%= project.salesmanager && project.salesmanager.name ?  project.salesmanager.name.first + ' ' +  project.salesmanager.name.last : ''%></span>
+                            </dd>
+                        </div>
+                    </dl>
+
+                </div>
+            </div>
+        </div>
+        <div class="_formBlock">
+            <div class="topContentHolder">
+                <div id="wTrackItemsHolder" class="_wTrackItemsHolder">
+                    <table id="rawTable" class="list tableFixed _invoiceTable">
+                        <colgroup>
+                            <col width="13%">
+                            <col width="10%">
+                            <col width="8%">
+                            <col width="12%">
+                            <col width="12%">
+                            <col width="5%">
+                            <col width="5%">
+                            <col width="5%">
+                            <col width="5%">
+                            <col width="5%">
+                            <col width="5%">
+                            <col width="5%">
+                            <col width="10%">
+                            <col width="30px">
+                        </colgroup>
+                        <thead>
+                        <tr class="_deleteHeader">
+                            <th>Employee</th>
+                            <th>Department</th>
+                            <th>Generate&nbspBy</th>
+                            <th>Start&nbspDate</th>
+                            <th>End&nbspDate / Hours</th>
+                            <th>Mo</th>
+                            <th>Tu</th>
+                            <th>We</th>
+                            <th>Th</th>
+                            <th>Fr</th>
+                            <th>Sa</th>
+                            <th>Su</th>
+                            <th>Approx Hours</th>
+                            <th class="deleteCell"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr id="addNewItem" class="_addNewItem">
+                            <td colspan="13">
+                                <a href="javascript:;" id="addNewEmployeeRow">Add an Item</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <td colspan="14" class="invisible_border">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td colspan="14" class="invisible_border">&nbsp;</td>
+                        </tr>
+
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="clearfix"></div>
 </div>

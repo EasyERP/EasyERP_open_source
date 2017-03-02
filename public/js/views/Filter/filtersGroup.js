@@ -44,7 +44,6 @@ define([
                     this.renderContent();
                 }, 700);
 
-
             _.bindAll(this, 'filteredCollectionChange');
 
             this.filteredCollection.on('change', this.filteredCollectionChange);
@@ -90,17 +89,17 @@ define([
             var currentValue = $currentElement.attr('data-value');
             var filterGroupElement = $currentElement.closest('.filterGroup');
             var groupType = filterGroupElement.attr('data-value');
-            var collectionElement;
-            var intVal;
-            var index;
-            var elementState;
             var currentFilter = App.filtersObject.filter;
             var filterValues = currentFilter ? currentFilter[this.filterViewName] : null;
+            var collectionElement;
+            var elementState;
+            var intVal;
+            var index;
 
             $currentElement.toggleClass('checkedValue');
             elementState = $currentElement.hasClass('checkedValue');
             intVal = parseInt(currentValue, 10);
-            currentValue = (isNaN(intVal) || currentValue.length === 24) ? currentValue : intVal;
+            currentValue = (intVal.toString().length !== currentValue.length || isNaN(intVal) || currentValue.length === 24) ? currentValue : intVal;
             collectionElement = this.collection.findWhere({_id: currentValue});
 
             if (elementState) {

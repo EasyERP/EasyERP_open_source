@@ -47,7 +47,7 @@ define([
                     self.hideDialog();
                     tags = $('.tags [data-id="' + model._id + '"]');
 
-                    tags.each(function(){
+                    tags.each(function () {
                         $(this).attr('data-color', model.color).text(model.name);
                     });
                 },
@@ -74,7 +74,7 @@ define([
                     success: function (res, model) {
                         self.hideDialog();
                         var tags = $('[data-id="' + model._id + '"]');
-                        tags.each(function(){
+                        tags.each(function () {
                             $(this).remove();
                         });
                     },
@@ -100,16 +100,14 @@ define([
             });
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                position     : {
+                autoOpen   : true,
+                position   : {
                     at: "top+38%"
                 },
-                dialogClass  : 'edit-tag-dialog',
-                title        : 'Edit Tag',
-                width        : '300px',
-                buttons      : [
+                dialogClass: 'edit-tag-dialog',
+                title      : 'Edit Tag',
+                width      : '300px',
+                buttons    : [
                     {
                         text : 'Save',
                         class: 'btn blue',

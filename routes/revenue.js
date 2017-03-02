@@ -108,8 +108,7 @@ HTTP/1.1 200 OK
      * @apiName getTotalInvoiceBySales
      * @apiGroup Revenue
      *
-     * @apiParam (?Field=value) {String} startDate
-     * @apiParam (?Field=value) {String} endDate
+     * @apiParam (?Field=value) {Object} filter="{date: {value: ["Sun Jan 01 2017 00:00:00 GMT+0200 (EET)","Tue Jan 31 2017 00:00:00 GMT+0200 (EET)"]}}" Filter object of period of time
      *
      * @apiSuccess {Object} totalInvoiceBySales
      * @apiSuccessExample Success-Response:
@@ -121,10 +120,7 @@ HTTP/1.1 200 OK
             "payment": 92400,
             "name": "Larysa Popp"
         },
-        {
-            "payment": 7334300,
-            "name": null
-        }
+        ...
     ]
 }
      * */

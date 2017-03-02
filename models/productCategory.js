@@ -18,11 +18,16 @@
             date: {type: Date, default: Date.now}
         },
 
-        nestingLevel : {type: Number, default: 0},
-        sequence     : {type: Number, default: 0},
-        main         : {type: Boolean, default: false},
-        productsCount: {type: Number, default: 0},
-        externalId   : {type: String, default: null}
+        nestingLevel       : {type: Number, default: 0},
+        sequence           : {type: Number, default: 0},
+        main               : {type: Boolean, default: false},
+        integrationId      : {type: String, default: ''},
+        taxesAccount       : {type: ObjectId, ref: 'chartOfAccount', default: null},
+        debitAccount       : {type: ObjectId, ref: 'chartOfAccount', default: null},
+        creditAccount      : {type: ObjectId, ref: 'chartOfAccount', default: null},
+        bankExpensesAccount: {type: ObjectId, ref: 'chartOfAccount', default: null},
+        otherIncome        : {type: ObjectId, ref: 'chartOfAccount', default: null},
+        otherLoss          : {type: ObjectId, ref: 'chartOfAccount', default: null}
     }, {collection: 'ProductCategories'});
 
     mongoose.model('ProductCategory', CategorySchema);

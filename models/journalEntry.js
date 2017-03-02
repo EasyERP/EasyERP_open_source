@@ -6,12 +6,13 @@ module.exports = (function () {
 
     var Schema = mongoose.Schema;
     var journalEntriesSchema = new Schema({
-        date    : {type: Date, default: Date.now},
-        type    : {type: String, default: ''},
-        journal : {type: ObjectId, ref: 'journal', default: null, require: true},
-        account : {type: ObjectId, ref: 'chartOfAccount', default: null},
+        date   : {type: Date, default: Date.now},
+        type   : {type: String, default: ''},
+        journal: {type: ObjectId, ref: 'journal', default: null},
+        account: {type: ObjectId, ref: 'chartOfAccount', default: null},
+
         currency: {
-            name: {type: String, default: 'USD'},
+            _id : {type: String, ref: 'currency', default: null},
             rate: {type: Number, default: 1}
         },
 
@@ -32,8 +33,12 @@ module.exports = (function () {
             name    : {type: String, default: ''}
         },
 
-        debit : {type: Number, default: 0},
-        credit: {type: Number, default: 0}
+        debit    : {type: Number, default: 0},
+        credit   : {type: Number, default: 0},
+        debitFC  : {type: Number, default: 0},
+        creditFC : {type: Number, default: 0},
+        reversed : {type: Boolean, default: false},
+        timestamp: {type: String}
     }, {collection: 'journalentries', discriminatorKey: '_type'});
 
     var manualEntrySchema = journalEntriesSchema.extend({});

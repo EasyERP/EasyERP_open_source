@@ -422,6 +422,7 @@ module.exports = function (models) {
      *
      * */
     router.get('/Invoices', handler.getInvoiceFilters);
+    router.get('/purchaseInvoices', handler.getInvoiceFilters);
 
     /**
      *@api {get} /filter/salesInvoices Request filter for SalesInvoices
@@ -552,7 +553,7 @@ module.exports = function (models) {
          ]
      }
      */
-    router.get('/salesProforma', handler.getSalesProformaFilters);
+    router.get('/invoice', handler.getSalesInvoicesFilters);
 
     /**
      *@api {get} /filter/customerPayments Request filter for CustomerPayments
@@ -616,6 +617,7 @@ module.exports = function (models) {
          ]
      }
      */
+    router.get('/purchasePayments', handler.getPurchasePaymentsFilters);
     router.get('/customerPayments', handler.getCustomerPaymentsFilters);
 
     /**
@@ -828,6 +830,8 @@ module.exports = function (models) {
      * */
     router.get('/salesOrders', handler.getSalesOrdersFilters);
 
+    router.get('/order', handler.getOrderFilters);
+
     /**
      *@api {get} /filter/Orders Request filter for Orders
      *
@@ -860,6 +864,7 @@ module.exports = function (models) {
      }
      * */
     router.get('/Orders', handler.getOrdersFilters);
+    router.get('/purchaseOrders', handler.getOrdersFilters);
 
     /**
      *@api {get} /filter/Leads Request filter for Leads
@@ -1467,12 +1472,8 @@ module.exports = function (models) {
                  "name": "Ordered"
              },
              {
-                 "_id": "Not Quoted",
-                 "name": "Not Quoted"
-             },
-             {
-                 "_id": "Quoted",
-                 "name": "Quoted"
+                 "_id": "Not Ordered",
+                 "name": "Not Ordered"
              },
              ...
 
@@ -1635,6 +1636,14 @@ module.exports = function (models) {
      *
      * */
     router.get('/inventoryReport', handler.getInventoryReportFilters);
+
+    router.get('/goodsOutNotes', handler.getGoodsOutNotesFilters);
+
+    router.get('/stockTransactions', handler.getStockTransactionsFilters);
+
+    router.get('/stockInventory', handler.getProductsAvailabilityFilters);
+
+    router.get('/ChartOfAccount', handler.getChartOfAccountFilters);
 
     return router;
 };

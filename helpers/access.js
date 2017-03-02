@@ -8,6 +8,10 @@ module.exports = function (moduleId, models) {
 
     var getAccess = function (req, uId, mid, callback) {
         models.get(req.session.lastDb, 'Users', user).findById(uId, function (err, user) {
+            if (err) {
+                return callback(err);
+            }
+
             if (user) {
                 models.get(req.session.lastDb, 'Profile', profile).aggregate([
                     {
@@ -43,6 +47,10 @@ module.exports = function (moduleId, models) {
                 return callback(err);
             }
 
+            if (!result.length) {
+                return callback();
+            }
+
             callback(null, result[0].profileAccess.access.read);
         });
     };
@@ -52,19 +60,23 @@ module.exports = function (moduleId, models) {
                 return callback(err);
             }
 
-            if (result.length) {
-                callback(null, result[0].profileAccess.access.editWrite);
-            } else {
-                callback(null, null);
+            if (!result.length) {
+                return callback();
             }
 
+            callback(null, result[0].profileAccess.access.editWrite);
         });
 
     };
+
     var getDeleteAccess = function (req, uId, mid, callback) {
         getAccess(req, uId, mid, function (err, result) {
             if (err) {
                 return callback(err);
+            }
+
+            if (!result.length) {
+                return callback();
             }
 
             callback(null, result[0].profileAccess.access.del);

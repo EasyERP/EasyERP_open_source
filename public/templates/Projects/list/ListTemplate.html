@@ -3,8 +3,12 @@ var notRemovable = project.notRemovable%>
 <tr data-index="<%= index %>" data-id="<%=project._id%>"
     class="stage-<%=(project.workflow) ? project.workflow._id : ''%>">
     <td class="notForm centerCell">
-        <input type="checkbox" value="<%=project._id%>"
-               class="checkbox  <%= notRemovable ? 'notRemovable' : ''%>" <%= notRemovable ? disabled='disabled': ''%>/></td>
+        <label class="_customCHeckbox">
+            <input type="checkbox" value="<%=project._id%>"
+                   class="checkbox  <%= notRemovable ? 'notRemovable' : ''%>" <%= notRemovable ? disabled='disabled': ''%>/>
+            <span></span>
+        </label>
+    </td>
     <!-- <td class="notForm centerCell <%= notRemovable ? 'notRemovable' : ''%>">
          <input type="checkbox" value="<%=project._id%>"
                 class="checkbox"</td>-->
@@ -16,9 +20,9 @@ var notRemovable = project.notRemovable%>
     <new Date(project.EndDate))) ?
     "class='red-border' " : " "%>><%=project.EndDate%></td>
     <td><%=project.TargetEndDate%></td>
-    <td>
+  <!--  <td>
         <progress name="projectProgress" max="100" value="<%=project.progress%>"/>
-    </td>
+    </td>-->
     <td id='<%=project._id%>'>
         <div class="_newSelectListWrap">
             <a href="javascript:;" class="stageSelect"><%=(project.workflow) ? project.workflow.name : 'Undefined'%></a>
@@ -27,7 +31,7 @@ var notRemovable = project.notRemovable%>
     <td class="health-wrapper centerCell" data-id="<%=project._id%>">
         <div class="health-container">
             <a href="javascript:;" data-value="<%=project.health%>" class="health<%=project.health%>"></a>
-            <ul class="with-div">
+            <ul>
                 <li>
                     <div class="health1"></div>
                 </li>

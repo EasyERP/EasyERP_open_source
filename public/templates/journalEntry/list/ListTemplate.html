@@ -1,30 +1,70 @@
+<%var checkObj = {};%>
+<% var className = 1;%>
+<% var timestamp = collection.length ? collection[0].timestamp : null;%>
 <% collection.forEach(function(journalEntry, index){ %>
-<tr data-index="<%= index %>" data-id="<%=journalEntry._id%>">
-    <!--<td class="notForm centerCell"><input type="checkbox" value="<%=journalEntry._id%>" class="checkbox"/></td>-->
-    <td><%=journalEntry.journal ? journalEntry.journal.name : ''%></td>
+
+<% className = (timestamp === journalEntry.timestamp) ? className : className * (-1);%>
+<% timestamp = journalEntry.timestamp;%>
+
+<% var currency = journalEntry.currency && journalEntry.currency._id ? journalEntry.currency._id.symbol : '';%>
+<%if (!checkObj[journalEntry.timestamp]) {%>
+<%checkObj[journalEntry.timestamp] = true;%>
+<%var suf = journalEntry.sourceDocument && journalEntry.sourceDocument.name === 'None' ? 'ME_' : 'JE_'%>
+<tr data-index="<%= className %>" data-id="<%=journalEntry._id%>">
+
+    <td><a title="Click to filter" class="clickToFilter textBlue" href="javascript:;"
+           data-id="<%=journalEntry.timestamp%>" data-group="timestamp">
+        <%=journalEntry.timestamp ? suf + journalEntry.timestamp : ''%></a></td>
+
     <td><%=journalEntry.date%></td>
 
-    <td class="source">
-        <span id="source"
-              class="current-selected icon-caret-down"
-              data-id="<%=journalEntry.sourceDocument._id%>"
-              data-name="<%=journalEntry.sourceDocument.model%>"
-              data-employee="<%=journalEntry.sourceDocument.employee%>"><%=journalEntry.sourceDocument.name%>
-        </span>
+    <td class="source"><span id="source" class="current-selected"
+                             data-id="<%=journalEntry.sourceDocument._id%>"
+                             data-name="<%=journalEntry.sourceDocument.model%>"
+                             data-employee="<%=journalEntry.sourceDocument.employee%>"><%=journalEntry.sourceDocument.name%></span>
     </td>
-    <td><%=journalEntry.debitAccount ? journalEntry.debitAccount.name : ''%></td>
-    <td><%=journalEntry.creditAccount ? journalEntry.creditAccount.name : ''%></td>
 
-    <%if (journalEntry.debit) {%>
-    <td class="money" data-amount="<%= journalEntry.debit%>">
-        <%=currencySplitter(journalEntry.debit.toFixed(2))%>
-    </td>
-    <%}%>
+    <td><a title="Click to filter" class="clickToFilter textBlue" href="javascript:;"
+           data-id="<%=journalEntry.account ? journalEntry.account._id : null%>" data-group="account"><%=journalEntry.account
+        ? journalEntry.account.name : ''%></a></td>
 
-    <%if (journalEntry.credit) {%>
-    <td class="moeny" data-amount="<%=journalEntry.credit%>">
-        <%=currencySplitter(journalEntry.credit.toFixed(2))%>
+    <td class="<%=journalEntry.debit? 'money' : ''%>" data-amount="<%= journalEntry.debit%>"><%=journalEntry.debit ?
+        currencySplitter(journalEntry.debit.toFixed(2)) : '&nbsp'%>
+        <%if (journalEntry.debitFC) {%>
+        (<%=currency %><%=currencySplitter(journalEntry.debitFC.toFixed(2))%>)
+        <%}%>
     </td>
-    <%}%>
+
+    <td class="<%=journalEntry.credit ? 'money' : ''%>" data-amount="<%=journalEntry.credit%>"><%=journalEntry.credit ?
+        currencySplitter(journalEntry.credit.toFixed(2)) : '&nbsp'%>
+        <%if (journalEntry.creditFC) {%>
+        (<%=currency %><%=currencySplitter(journalEntry.creditFC.toFixed(2))%>)
+        <%}%>
+    </td>
 </tr>
+
+<%} else {%>
+<tr data-index="<%= className %>" data-id="<%=journalEntry._id%>">
+
+    <td colspan="3"></td>
+
+    <td><a title="Click to filter" class="clickToFilter textBlue" href="javascript:;"
+           data-id="<%=journalEntry.account ? journalEntry.account._id : null%>" data-group="account"><%=journalEntry.account
+        ? journalEntry.account.name : ''%></a></td>
+
+    <td class="<%=journalEntry.debit? 'money' : ''%>" data-amount="<%= journalEntry.debit%>"><%=journalEntry.debit ?
+        currencySplitter(journalEntry.debit.toFixed(2)) : '&nbsp'%>
+        <%if (journalEntry.debitFC) {%>
+        (<%=currency %><%=currencySplitter(journalEntry.debitFC.toFixed(2))%>)
+        <%}%>
+    </td>
+
+    <td class="<%=journalEntry.credit ? 'money' : ''%>" data-amount="<%=journalEntry.credit%>"><%=journalEntry.credit ?
+        currencySplitter(journalEntry.credit.toFixed(2)) : '&nbsp'%>
+        <%if (journalEntry.creditFC) {%>
+        (<%=currency %><%=currencySplitter(journalEntry.creditFC.toFixed(2))%>)
+        <%}%>
+    </td>
+</tr>
+<%}%>
 <% }) %>

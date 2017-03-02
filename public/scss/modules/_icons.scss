@@ -3,95 +3,52 @@
   font-family: $icon-font;
   text-decoration: none;
   display: block;
-  //line-height: 28px;
+
   &:hover {
     text-decoration: none;
   }
 }
 
-
 .icon-btn {
-  @extend .noPaddingMargin;
-  @extend .fullsize;
   display: block;
   text-align: center;
   cursor: pointer;
   font-weight: 100 !important;
-
+  @extend .noPaddingMargin;
+  @extend .fullsize;
 
   &:before {
     content:'\72';
   }
+
   &.project {
     font-size: 15px !important;
+
     &:before {
       content:'\f0c9';
     }
   }
 }
 
-
 .caret {
   display: inline-block;
-  width: 0;
   height: 0;
-  margin-left: 2px;
-  vertical-align: middle;
+  width: 0;
   border-top: 4px solid;
   border-right: 4px solid transparent;
   border-left: 4px solid transparent;
+  margin-left: 2px;
+  vertical-align: middle;
 }
 
 .funnelIcon {
   display: inline-block;
-  height: 100%;
-  vertical-align: top;
+  height: 18px;
+  padding: 0 3px;
+  border-right: 1px solid $border-color-main;
   background-color: $transparent;
   color: #fff;
-  font-size: 100%;
-  line-height: 18px !important;
-  width: 15px;
+  line-height: 20px;
+  font-size: 10px;
   text-align: center;
-  margin-right: 3px;
-  border-right: 1px solid $border-color-main;
 }
-
-//.btn-list {
-//  height: 24px;
-//  border: 1px solid #7f7f80; //@thin-border @border-color-main;
-//  float: left;
-//  margin: 0 12px 0 5px;
-//  @extend .defaultBorRad;
-//
-//  li {
-//    padding: 3px;
-//    margin: 0;
-//    display: block;
-//    float: left;
-//    height: 23px;
-//    width: 24px;
-//
-//    &:nth-child(n+2) {
-//      border-left: 1px solid #7f7f80; //@thin-border @border-color-main;
-//    }
-//
-//    a {
-//      display: block;
-//      text-align: center;
-//      &.fa {
-//        line-height: 18px;
-//        font-size: 16px !important;
-//      }
-//      &:hover {
-//        text-decoration: none;
-//      }
-//    }
-//  }
-//
-//  .selected {
-//    color: #3e88b9;//@selected-filters-color;
-//    a {
-//      color: white;
-//    }
-//  }
-//}

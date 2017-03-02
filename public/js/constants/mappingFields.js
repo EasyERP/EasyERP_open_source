@@ -57,6 +57,8 @@ define([], function () {
             'imageSrc'                    : 'Image src',
             'name'                        : 'Name',
             'info.productType'            : 'Product type',
+            'info.SKU'                    : 'SKU',
+            'inventory.weight'            : 'Weight',
             'info.salePrice'              : 'Sale price',
             'info.isActive'               : 'Is active',
             'info.barcode'                : 'Barcode',

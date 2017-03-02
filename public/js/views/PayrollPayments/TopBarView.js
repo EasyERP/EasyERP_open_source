@@ -8,9 +8,10 @@ define([
     'constants'
 ], function (Backbone, $, _, ContentTopBarTemplate, Custom, Common, CONSTANTS) {
     var TopBarView = Backbone.View.extend({
-        el         : '#top-bar',
-        contentType: CONSTANTS.PAYROLLPAYMENTS,
-        template   : _.template(ContentTopBarTemplate),
+        el           : '#top-bar',
+        contentType  : CONSTANTS.PAYROLLPAYMENTS,
+        contentHeader: 'Payroll Payments',
+        template     : _.template(ContentTopBarTemplate),
 
         events: {
             'click a.changeContentView': 'changeContentViewType',
@@ -41,7 +42,7 @@ define([
         render: function () {
             var viewType = Custom.getCurrentVT();
 
-            $('title').text(this.contentType);
+            $('title').text(this.contentHeader);
 
             this.$el.html(this.template({viewType: viewType, contentType: this.contentType}));
             Common.displayControlBtnsByActionType('Content', viewType);

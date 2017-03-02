@@ -1,53 +1,70 @@
-<div class="form-holder _earningsType">
-    <div class="settings_modal">
-        <form method="post"
-              action=""
-              class="form"
-              id="invoiceForm">
-            <h3 class="_dialogTableTitle">Edit Payroll <%= type %> Type</h3>
-            <div class="setting_element half-block left">
-                <span>Name: </span>
-                <input id="payrollComponentTypeName"
-                       maxlength="40"
-                       size="40"
-                       type="text"
-                       value="<%= model.name %>">
-                <div class="_setInputTitle">
-                    <span>Formula: </span>
-                    <span id="formula"></span>
+<div class="form-holder _newForm">
+    <form method="post" action="" id="invoiceForm">
+        <h3 class="_dialogMainTitle">Edit Payroll <%= type %> Type</h3>
+        <div class="_formWrap">
+            <div class="_formBlock _equal">
+                <div class="_animateInputBox">
+                    <input type="text"
+                           class="_animate "
+                           id="payrollComponentTypeName"
+                           required
+                           value="<%= model.name %>"
+                           size="40"
+                           maxlength="40"/>
+                    <label class="_animate">Name: </label>
+                </div>
+                <div class="_animateInputBox">
+                    <span class="_staticLabel">Formula: </span>
+                    <div class="_staticInfo" id="formula"></div>
+                </div>
+                <!--<div class="_modalList">-->
+                    <!--<div class="row">-->
+                        <!--<div class="col m-3">-->
+                            <!--<div class="_modalLabel">-->
+                                <!--<label>Formula: </label>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="col m-9">-->
+                            <!--<span class="_payrollFormulaOutput" id="formula"></span>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            </div>
+            <div class="_formBlock _equal">
+                <div class="_animateInputBox">
+                    <input type="text"
+                           class="_animate"
+                           id="minRange"
+                           required
+                           value="<%= model.minRange || 0 %>"
+                           size="20"
+                           maxlength="20"/>
+                    <label class="_animate">Min Range: </label>
+                </div>
+                <div class="_animateInputBox">
+                    <input type="text"
+                           class="_animate"
+                           id="maxRange"
+                           required
+                           value="<%= model.maxRange || 0 %>"
+                           size="20"
+                           maxlength="20"/>
+                    <label class="_animate">Max Range: </label>
                 </div>
             </div>
-            <div class="setting_element half-block right">
-                <dl>
-                    <dt>
-                        <span>Min Range: </span>
-                    </dt>
-                    <dd>
-                        <input id="minRange"
-                               maxlength="20"
-                               size="20"
-                               type="text"
-                               value="<%= model.minRange || 0 %>">
-                    </dd>
-                    <dt>
-                        <span>Max Range: </span>
-                    </dt>
-                    <dd>
-                        <input id="maxRange"
-                               maxlength="20"
-                               size="20"
-                               type="text"
-                               value="<%= model.maxRange || 0 %>">
-                    </dd>
-                </dl>
+        </div>
+        <div class="_formWrap">
+            <div class="_formBlock">
+                <div class="_animateTextareaBox">
+                        <textarea id="payrollComponentTypeComment"
+                                  class="_animate internal_Notes"
+                                  name="comment"
+                                  required
+                                  cols="3"
+                                  maxlength="2500"><%= model.description%></textarea>
+                    <label for="payrollComponentTypeComment" class="_animate">Comment: </label>
+                </div>
             </div>
-            <div class="clearfix"></div>
-            <span class="_setInputTitle">Comment:</span>
-            <textarea name="comment"
-                      id="payrollComponentTypeComment"
-                      cols="3"
-                      rows="10"><%= model.description%>
-            </textarea>
-        </form>
-    </div>
+        </div>
+    </form>
 </div>

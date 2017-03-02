@@ -22,6 +22,7 @@ define([
             _.bindAll(this, 'saveItem');
             this.model = new ProjectModel();
             this.responseObj = {};
+            this.url = '#easyErp/Projects/list';
             this.render();
         },
 
@@ -35,16 +36,17 @@ define([
         hideHealth: projects.hideHealth,
 
         chooseOption: function (e) {
-            $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
+            $(e.target).parents('ul').closest('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
             this.hideHealth();
         },
 
         chooseHealthDd: function (e) {
-            $(e.target).parents('#health').find('a').attr('class', $(e.target).attr('class')).attr('data-value', $(e.target).attr('class').replace('health', '')).parent().find('ul').toggle();
+            e.stopPropagation();
+            $(e.target).parents('#health').find('a').attr('class', $(e.target).attr('class')).attr('data-value', $(e.target).attr('class').replace('health', '')).closest('.health-wrapper').toggleClass('open');
         },
 
         showHealthDd: function (e) {
-            $(e.target).parent().find('ul').toggle();
+            $(e.target).closest('.health-wrapper').toggleClass('open');
             return false;
         },
 
@@ -58,8 +60,6 @@ define([
             var value;
             var mid = 39;
             var validation = true;
-            var custom = $thisEl.find('#customerDd').text();
-
             var customer = $thisEl.find('#customerDd').attr('data-id');
             var projecttype = $thisEl.find('#projectTypeDD').data('id');
             var workflow = $thisEl.find('#workflowsDd').data('id');
@@ -78,7 +78,7 @@ define([
             var startDate;
             var targetEndDate;
 
-            if (custom === 'Select') {
+            if (!customer) {
                 value = 'Customer';
                 return App.render({
                     type   : 'error',
@@ -171,7 +171,7 @@ define([
                     },
                     wait   : true,
                     success: function (model) {
-                        self.attachView.sendToServer(null, model.changed);
+                        self.attachView.sendToServer(null, model.changed, self);
                     },
 
                     error: function (model, xhr) {
@@ -190,11 +190,10 @@ define([
             var $thisEl;
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                dialogClass  : 'edit-dialog',
-                width        : '900',
-                title        : 'Create Project',
-                buttons      : {
+                dialogClass: 'edit-dialog',
+                width      : '500',
+                title      : 'Create Project',
+                buttons    : {
                     save: {
                         text : 'Create',
                         class: 'btn blue',

@@ -20,10 +20,10 @@ define([
         FormView     : null,
 
         events: {
-            'click .compactView:not(.checkbox)': 'goToForm',
-            'click .closeBtn'                  : 'returnToList',
-            'click #sortBy'                    : 'openSortDrop',
-            'click #editButton'                : 'editItem'
+            'click .compactView:not(.checkbox)'              : 'goToForm',
+            'click .closeBtn'                                : 'returnToList',
+            'click #sortBy'                                  : 'openSortDrop',
+            'click #editButton, .editButton, #selectCustomer': 'editItem'
         },
 
         initialize: function (options) {
@@ -53,11 +53,18 @@ define([
             $target.closest('.dropDown').toggleClass('open');
         },
 
-        editItem: function (e) {
+        editItem: function (e, options) {
             var EditView = this.EditView;
-            e.preventDefault();
 
-            this.editView = new EditView({model: this.currentModel, forSales: this.forSales});
+            if (e) {
+                e.preventDefault();
+            }
+
+            if (!options) {
+                options = {model: this.currentModel, forSales: this.forSales};
+            }
+
+            this.editView = new EditView(options);
             this.editView.render();
 
         },
@@ -135,7 +142,7 @@ define([
             data = {
                 sort: sortObject
             };
-            
+
             this.sort = sortObject;
 
             data.filter = filter;
@@ -206,9 +213,16 @@ define([
         renderFormView: function (modelId, cb) {
             var self = this;
             var model;
+            var setObj = {};
 
             model = new this.ContentModel();
-            model.urlRoot = model.url() + modelId;
+
+            if (model.idAttribute) {
+                setObj[model.idAttribute] = modelId;
+                model.set(setObj);
+            } else {
+                model.urlRoot = model.url() + modelId; // toDO change on idAttribute
+            }
 
             model.fetch({
                 success: function (model) {
@@ -218,7 +232,6 @@ define([
                     }
 
                     self.currentModel = model;
-
                     self.formView = new self.FormView({
                         model: model,
                         el   : '#formContent'
@@ -230,7 +243,7 @@ define([
                     self.listenTo(self.formView, 'itemChanged', self.changeList);
                     self.selectedId = model.id;
 
-                    if (cb && typeof cb === 'function') {
+                    if (typeof cb === 'function') {
                         cb();
                     }
                 },
@@ -247,9 +260,12 @@ define([
         changeList: function (options) {
             var $thisEl = this.$el;
             var $currentEl = $thisEl.find('[data-id="' + this.selectedId + '"]');
+            var i;
 
-            for (var i in options) {
-                $currentEl.find('[data-key="' + i + '"]').html(options[i]);
+            for (i in options) {
+                if (options.hasOwnProperty(i)) {
+                    $currentEl.find('[data-key="' + i + '"]').html(options[i]);
+                }
             }
         },
 
@@ -294,7 +310,15 @@ define([
 
             dataService.deleteData(url, {contentType: this.contentType, ids: ids}, function (err) {
                 if (err) {
-                    return App.render({
+
+                    if (err.responseJSON && err.responseJSON.error) {
+                        return App.render({
+                            type   : 'error',
+                            message: err.responseJSON.error
+                        });
+                    }
+
+                    App.render({
                         type   : 'error',
                         message: 'Can\'t remove items'
                     });
@@ -314,6 +338,7 @@ define([
                             if (collectionObj.length) {
                                 self.renderFormView(needId);
                             } else {
+                                self.filter = null;
                                 self.returnToList();
                             }
                         }

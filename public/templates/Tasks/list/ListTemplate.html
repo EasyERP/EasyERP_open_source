@@ -1,10 +1,15 @@
 <% tasksCollection.forEach(function(task, index){ %>
 <tr data-index="<%=index%>" data-id="<%= task._id%>"
     class="stage-<%=(task.workflow) ? task.workflow.status.toLowerCase() : ''%>">
-    <td class="centerCell"><input type="checkbox" value="<%=task._id%>" class="checkbox"/></td>
+    <td class="centerCell">
+        <label class="_customCHeckbox">
+            <input type="checkbox" value="<%=task._id%>" class="checkbox"/>
+            <span></span>
+        </label>
+    </td>
     <td><%=(task.project) ? task.project.name : ''%><%=task.taskCount%></td>
     <td><%=task.summary%></td>
-    <td>
+    <td class="_forProject">
         <a href="/#easyErp/Projects/form/<%= task.project._id%>" data-id="<%=task.project._id%>" class="project"><%=task.project.name%></a>
     </td>
     <td id='stages_<%=task._id%>'>

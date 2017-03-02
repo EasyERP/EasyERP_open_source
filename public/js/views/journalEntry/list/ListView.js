@@ -1,4 +1,5 @@
 define([
+    'Backbone',
     'Underscore',
     'jQuery',
     'views/listViewBase',
@@ -17,7 +18,8 @@ define([
     'common',
     'moment',
     'custom'
-], function (_,
+], function (Backbone,
+             _,
              $,
              ListViewBase,
              listTemplate,
@@ -53,8 +55,9 @@ define([
         EmployeesModel   : EmployeesModel,
 
         events: {
-            'click .newSelectList li:not(.miniStylePagination)': 'viewSourceDocument',
-            'click .current-selected'                          : 'showNewSelect'
+            //'click .newSelectList li:not(.miniStylePagination)': 'viewSourceDocument',
+            'click .source'       : 'viewSourceDocument',
+            'click .clickToFilter': 'addFilter'
         },
 
         initialize: function (options) {
@@ -68,7 +71,8 @@ define([
             this.sort = options.sort;
             this.page = options.collection.currentPage;
             this.contentCollection = contentCollection;
-            this.totalValue = options.collection.totalValue;
+            this.totalDebit = options.collection.totalDebit;
+            this.totalCredit = options.collection.totalCredit;
 
             this.filter = options.filter || custom.retriveFromCash('journalEntry.filter');
 
@@ -80,7 +84,6 @@ define([
 
             if (!this.filter.date) {
                 this.filter.date = {
-                    key  : 'date',
                     value: [new Date(dateRange.startDate), new Date(dateRange.endDate)]
                 };
             }
@@ -102,15 +105,40 @@ define([
             ];
         },
 
+        addFilter: function (e) {
+            var $target = $(e.target);
+            var closestEl = $target.closest('a');
+            var dataId = closestEl.attr('data-id');
+            var dataGroup = closestEl.attr('data-group');
+            var filter = this.filter || {};
+
+            if (filter && !filter[dataGroup]) {
+                filter[dataGroup] = {
+                    key  : 'account._id',
+                    value: []
+                };
+            }
+
+            if (filter && filter[dataGroup]) {
+                filter[dataGroup].value.push(dataId);
+            }
+
+            this.showFilteredPage(filter);
+            this.renderFilter(filter);
+        },
+
         viewSourceDocument: function (e) {
             var $target = $(e.target);
             var id = $target.attr('id');
-            var closestSpan = $target.closest('.current-selected');
+            var closestSpan = $target.closest('.source').find('.current-selected');
             var dataId = closestSpan.attr('data-id');
             var dataName = closestSpan.attr('data-name');
             var dataEmployee = closestSpan.attr('data-employee');
             var model;
             var data;
+            var url;
+
+            dataName = dataName.split('_')[0];
 
             App.startPreload();
 
@@ -176,13 +204,18 @@ define([
                     model.urlRoot = '/journalEntries/employees';
 
                     break;
+                case 'goodsOutNote':
+                    url = '#easyErp/goodsOutNotes/tform/' + dataId;
 
+                    return Backbone.history.navigate(url, {trigger: true});
+                    break;
                 // skip default;
             }
 
             if (model) {
                 model.fetch({
                     data   : data,
+                    wait   : true,
                     success: function (model) {
                         new View({model: model, type: dataName, employee: dataEmployee});
 
@@ -209,31 +242,25 @@ define([
 
         },
 
-        changeDateRange: function () {
+        changeDateRange: function (dateArray) {
             var itemsNumber = $('#itemsNumber').text();
-            var stDate = $('#startDate').val();
-            var enDate = $('#endDate').val();
             var searchObject;
-
-            this.startDate = new Date(stDate);
-            this.endDate = new Date(enDate);
 
             if (!this.filter) {
                 this.filter = {};
             }
 
             this.filter.date = {
-                value: [this.startDate, this.endDate]
+                value: dateArray
             };
 
             searchObject = {
-                page     : 1,
-                startDate: stDate,
-                endDate  : enDate,
-                filter   : this.filter
+                page  : 1,
+                filter: this.filter
             };
 
             this.collection.getFirstPage(searchObject);
+
             this.changeLocationHash(1, itemsNumber, this.filter);
 
             App.filtersObject.filter = this.filter;
@@ -253,11 +280,9 @@ define([
 
             this.changeLocationHash(1, itemsNumber, filter);
             this.collection.getFirstPage({
-                count    : itemsNumber,
-                page     : 1,
-                filter   : filter,
-                startDate: this.startDate,
-                endDate  : this.endDate
+                count : itemsNumber,
+                page  : 1,
+                filter: filter
             });
         },
 
@@ -283,7 +308,7 @@ define([
 
                 $('#reconcileDate').text(common.utcDateToLocaleDate(result.date));
 
-                if (newDate.isSame(date, 'month year date')) {
+                if (newDate.isSame(date, 'month') &&  newDate.isSame(date, 'year') && newDate.isSame(date, 'date')) {
                     same = true;
                 }
 
@@ -297,7 +322,8 @@ define([
 
             $currentEl.prepend(itemView.render());
 
-            this.$el.find('#totalDebit').text(helpers.currencySplitter((this.totalValue / 100).toFixed(2)));
+            this.$el.find('#totalDebit').text(helpers.currencySplitter((this.totalDebit / 100).toFixed(2)));
+            this.$el.find('#totalCredit').text(helpers.currencySplitter((this.totalCredit / 100).toFixed(2)));
 
             App.filtersObject.filter = this.filter;
         }

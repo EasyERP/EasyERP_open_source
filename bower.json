@@ -23,8 +23,9 @@
     "backbone": "~1.2.3",
     "jquery": "~2.1.4",
     "topojson.v0.min": "http://d3js.org/topojson.v0.min.js",
-    "jquery-backstretch": "backstretch#^2.0.4",
-    "malihu-custom-scrollbar-plugin": "^3.1.5",
-    "wickedpicker": "^0.4.1"
+    "jquery-backstretch": "backstretch#2.0.4",
+    "malihu-custom-scrollbar-plugin": "3.1.5",
+    "wickedpicker": "^0.4.1",
+    "bxslider-4": "^4.2.5"
   }
 }

@@ -301,14 +301,12 @@ define([
             }
 
             self.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'create-structureElement-dialog',
-                title        : 'Create WeeklyScheduler',
-                width        : '800px',
-                position     : {within: $('#wrapper')},
-                buttons      : buttons
+                autoOpen   : true,
+                dialogClass: 'create-structureElement-dialog',
+                title      : 'Create WeeklyScheduler',
+                width      : '800px',
+                position   : {within: $('#wrapper')},
+                buttons    : buttons
 
             });
 

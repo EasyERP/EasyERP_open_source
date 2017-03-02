@@ -21,7 +21,7 @@ define([
             this.collection = options.collection;
             this.collection.bind('reset', _.bind(this.render, this));
 
-            this.render();
+          //  this.render();
         },
 
         events: {
@@ -137,8 +137,8 @@ define([
             $td.siblings('.name').append(
                 $('<input maxlength="32">').val($td.siblings('div.name').text().trim()));
             $td.append(
-                $(text).text('Save').addClass('save'),
-                $(text).text('Cancel').addClass('cancel')
+                $(text).text('Save').addClass('save btn blue slim'),
+                $(text).text('Cancel').addClass('cancel btn slim')
             );
         },
 
@@ -188,15 +188,18 @@ define([
             }
         },
 
-        chooseWorkflowDetailes: function (e) {
-            var $target = $(e.target);
+        chooseWorkflowDetailes: function (e, el) {
+            var $target = e ? $(e.target) : el;
             var $thisEl = this.$el;
             var self = this;
             var wId;
             var name;
             var values;
 
-            e.preventDefault();
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
 
             $thisEl.find('.workflow-sub-list>*').remove();
             $thisEl.find('#details').addClass('active').show();
@@ -262,12 +265,15 @@ define([
         },
 
         render: function () {
+            var li;
             var workflowsWIds = _.uniq(_.pluck(this.collection.toJSON(), 'wId'), false).sort();
 
             Custom.setCurrentCL(this.collection.models.length);
             this.$el.html(_.template(ListTemplate, {workflowsWIds: workflowsWIds}));
             this.$el.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
 
+            li = this.$el.find('.workflow-list li').first().find('a.workflow');
+            this.chooseWorkflowDetailes(null, li);
             return this;
         },
 
@@ -279,13 +285,13 @@ define([
             }
         },
 
-       /* createItem: function () {
-            return new CreateView({collection: this.collection});
-        },
+        /* createItem: function () {
+         return new CreateView({collection: this.collection});
+         },
 
-        editItem: function () {
-            return new EditView({collection: this.collection});
-        },*/
+         editItem: function () {
+         return new EditView({collection: this.collection});
+         },*/
 
         addNewStatus: function (e) {
             var $thisEl = this.$el;
@@ -300,8 +306,8 @@ define([
             $thisEl.find('#addNewStatus').hide();
             $thisEl.find('#workflows').append('<div class="addnew row"><div><input type="text" class="nameStatus" maxlength="32" required /></div>' +
                 '<div class="status-edit"><select id="statusesDd"></select></div>' +
-                '<div class="SaveCancel"><a href="javascript:;" id="saveStatus">Save</a>' +
-                '<a  href="javascript:;" id="cancelStatus">Cancel</a></div></div>');
+                '<div class="SaveCancel"><a href="javascript:;" id="saveStatus" class="btn slim blue">Save</a>' +
+                '<a  href="javascript:;" id="cancelStatus" class="btn slim ">Cancel</a></div></div>');
 
             text = '<a href="#">';
 
@@ -338,7 +344,7 @@ define([
             e.preventDefault();
 
             workflowsModel.save({
-                wId     : wId,
+                wId     : wId.trim(),
                 name    : name,
                 status  : status,
                 sequence: length

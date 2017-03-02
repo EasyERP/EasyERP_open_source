@@ -65,6 +65,52 @@ define([
             }
         },
 
+        saveItem: function () {
+            var model;
+            var id;
+            var errors;
+
+            this.setChangedValueToModel();
+
+            errors = this.$el.find('.errorContent');
+
+            for (id in this.changedModels) {
+                model = this.editCollection.get(id) || this.collection.get(id);
+                model.changed = this.changedModels[id];
+            }
+
+            if (errors.length) {
+                return false;
+            }
+
+            this.editCollection.save();
+            this.changedModels = {};
+
+            this.deleteEditable();
+        },
+
+        createItem: function () {
+            var CreateView = this.CreateView || Backbone.View.extend({});
+            var startData = {};
+            var cid;
+            var model;
+
+            this.CurrentModel = this.CurrentModel || Backbone.Model.extend();
+            model = new this.CurrentModel();
+
+            cid = model.cid;
+
+            startData.cid = cid;
+
+            if (this.editCollection) {
+                this.changed = true;
+                this.showSaveCancelBtns();
+                this.editCollection.add(model);
+            }
+
+            return new CreateView(model);
+        },
+
         onChangeInput: function ($element) {
             var max = parseInt($element.attr('data-max'), 10);
             var min = parseInt($element.attr('data-min'), 10);
@@ -267,6 +313,23 @@ define([
             }
 
             return false;
+        },
+
+        savedNewModel: function (modelObject) {
+            var savedRow = this.$el.find('#listTable').find('#false');
+            var modelId;
+            var checkbox = savedRow.find('input[type=checkbox]');
+
+            if (modelObject) {
+                modelId = modelObject._id;
+                savedRow.attr('data-id', modelId);
+                checkbox.val(modelId);
+                checkbox.attr('id', modelId);
+                savedRow.removeAttr('id');
+            }
+
+            this.hideSaveCancelBtns();
+            this.resetCollection(modelObject);
         },
 
         render: function () {

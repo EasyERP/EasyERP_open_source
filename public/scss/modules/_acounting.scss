@@ -2,6 +2,9 @@
   display: flex;
   height: 100%;
   border-top: 1px solid #c7c6c7;
+  &.accounting {
+    overflow: auto;
+  }
 }
 ._acountingListWrap {
   width: 250px;
@@ -36,20 +39,67 @@
   }
 }
 
-._acountingTableWrap {
+._acountingTableWrap, ._chartsTableWrap {
   display: flex;
   flex-direction: column;
   height: 100%;
+
+  #groupList, .grouplist {
+    .content {
+      border: 1px solid #d7d7d7;
+    }
+    li .text {
+      width: 100%;
+    }
+  }
+}
+
+._chartsTableWrap {
+  .btn.item {
+    width: auto;
+    min-width: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+
+    &:before {
+      color: #000;
+    }
+    &.active:before {
+      color: #fff;
+    }
+  }
+
+  ._filterDropDownWrap {
+    margin-right: 10px;
+    float: right;
+  }
 }
 
 ._acountingTitleBlock {
-  display: flex;
-  flex-shrink: 0;
-  justify-content: space-between;
-  align-items: center;
-  height: 65px;
-  padding: 0 30px;
-  border-bottom: 1px solid #d7d7d7;
+  //display: flex;
+  //flex-shrink: 0;
+  //justify-content: space-between;
+  //align-items: center;
+  //height: 65px;
+  //padding: 0 30px;
+
+  > .btnPositioned {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    margin-top: 0;
+  }
+
+  &._forOverview {
+    height: auto;
+  }
+
+  //._filterDropDownWrap{
+  //  width: 165px;
+  //  margin-left: 0;
+  //}
 }
 
 ._acountingTitle {
@@ -58,64 +108,9 @@
   font-family: $light-font-family;
 }
 
-//._acountingTableBlock {
-//  flex-grow: 1;
-//  overflow: auto;
-//
-//  .list {
-//    thead {
-//      tr {
-//        background-color: #f7f7f7;
-//        border-top: 0;
-//      }
-//    }
-//
-//    tr {
-//      &:hover {
-//        .goToEdit,
-//        .goToRemove {
-//          visibility: visible;
-//        }
-//      }
-//
-//      td, th {
-//        overflow: hidden;
-//        text-align: left;
-//
-//        &:first-child {
-//          padding-left: 30px;
-//        }
-//      }
-//    }
-//
-//    .goToEdit,
-//    .goToRemove {
-//      visibility: hidden;
-//    }
-//
-//  }
-//}
 
-//._currencyTable,
-//._paymentTable,
-//._acountingTable {
-//  .goToEdit,
-//  .goToRemove {
-//    visibility: hidden;
-//  }
-//
-//  tr {
-//    &:hover {
-//      .goToEdit,
-//      .goToRemove {
-//        visibility: visible;
-//      }
-//    }
-//  }
-//}
-//
-//._acountingTable {
-//  td {
-//    overflow: hidden;
-//  }
-//}
+.currencyRatesDesc {
+  p + p {
+    margin-top: 15px;
+  }
+}

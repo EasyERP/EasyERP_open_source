@@ -1,6 +1,11 @@
 <% bonusTypeCollection.forEach(function(bonusType, index){ %>
 <tr data-id="<%=bonusType._id%>">
-    <td class="notForm centerCell"><input type="checkbox" value="<%=bonusType._id%>" class="checkbox"/></td>
+    <td class="notForm centerCell">
+        <label class="_customCHeckbox">
+            <input type="checkbox" value="<%=bonusType._id%>" class="checkbox"/>
+            <span></span>
+        </label>
+    </td>
 
     <td data-type="input" data-content="name" class="editable"><%=bonusType.name%></td>
     <td data-content="bonusType" class="editable"><%=bonusType.bonusType%></td>

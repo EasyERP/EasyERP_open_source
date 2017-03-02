@@ -2,7 +2,12 @@
 <% var key = Object.keys(el)[0];%>
 <% var totalObj = el[key]; %>
 <tr class="mainRow" id="<%=key%>">
-    <td class="notForm"><input type="checkbox" data-id="<%=key%>" class="totalRowCB checkbox"/></td>
+    <td class="notForm">
+        <label class="_customCHeckbox">
+            <input type="checkbox" data-id="<%=key%>" class="totalRowCB checkbox"/>
+            <span></span>
+        </label>
+    </td>
     <!--<td class = "notForm centerCell"><input type="checkbox" id="<%=key%>" class="checkAll" /></td>-->
     <td><%=weekSplitter(key)%></td>
     <td data-cash="<%=totalObj.calc.onCash%>" class="total_calc_salary money"><%=currencySplitter(totalObj.calc.onCash.toFixed(2))%>

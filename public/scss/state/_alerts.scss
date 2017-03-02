@@ -38,3 +38,12 @@
 .unpaid {
   color:  #E55253;//@free !important;
 }
+
+.errorContent {
+  &:after {
+    content: '*';
+    margin-left: 2px;
+    color: #E55253;
+    font-size: 14px;
+  }
+}

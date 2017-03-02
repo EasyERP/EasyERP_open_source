@@ -1,4 +1,5 @@
 define([
+    'Backbone',
     'jQuery',
     'Underscore',
     'views/listViewBase',
@@ -11,7 +12,9 @@ define([
     'collections/Leads/filterCollection',
     'common',
     'constants'
-], function ($,
+], function (
+             Backbone,
+             $,
              _,
              listViewBase,
              listTemplate,

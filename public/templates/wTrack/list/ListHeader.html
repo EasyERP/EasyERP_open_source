@@ -1,41 +1,15 @@
-﻿<table class="list holidays projectTimeCardCustomList _timeCardLegend">
-    <thead>
-    <tr id="caption">
-        <th class="centerCell"></th>
-        <th colspan="2">
-            Vacation
-        </th>
-        <th class="V">
-            V
-        </th>
-        <th colspan="2">
-            Personal
-        </th>
-        <th class="P">
-            P
-        </th>
-        <th colspan="2">
-            Sick
-        </th>
-        <th class="S">
-            S
-        </th>
-        <th colspan="2">
-            Education
-        </th>
-        <th class="E">
-            E
-        </th>
-        <th colspan="2">
-            Holyday
-        </th>
-        <th class="H">
-            H
-        </th>
-
-    </tr>
-    </thead>
-</table>
+﻿<div class="_timeCardLegendWrap">
+    <span>Vacation</span>
+    <span class="V _legendEl">V</span>
+    <span>Personal</span>
+    <span class="P _legendEl">P</span>
+    <span>Sick</span>
+    <span class="S _legendEl">S</span>
+    <span>Education</span>
+    <span class="E _legendEl">E</span>
+    <span>Holyday</span>
+    <span class="H _legendEl">H</span>
+</div>
 <div id="searchContainer" class="projectTimeCardCustomSearch _timeCardSearch"></div>
 <div class="_tableWtrackWrap">
     <table class="list stripedList">
@@ -61,20 +35,19 @@
         </colgroup>
         <thead>
         <tr>
-            <th class="centerCell"><input type="checkbox" id="checkAll"/></th>
+            <th class="centerCell">
+                <label class="_customCHeckbox">
+                    <input type="checkbox" id="checkAll"/>
+                    <span></span>
+                </label>
+            </th>
             <th>Type</th>
             <th class="oe_sortable" data-sort="jobs.name">
                 Sprint<span class="arrow down"></span><span class="arrow up"></span>
             </th>
-            <!--<th class="oe_sortable" data-sort="projectmanager.name.first">
-                Assigned<span class="arrow down"></span><span class="arrow up"></span>
-            </th>-->
             <th class="oe_sortable sortDn" data-sort="project.name">
                 Project<span class="arrow down"></span><span class="arrow up"></span>
             </th>
-            <!--<th class="oe_sortable" data-sort="workflow.name">
-                Project Status<span class="arrow down"></span><span class="arrow up"></span>
-            </th>-->
             <th class="oe_sortable" data-sort="customer.name.first">
                 Customer<span class="arrow down"></span><span class="arrow up"></span>
             </th>
@@ -93,9 +66,6 @@
             <th class="oe_sortable" data-sort="week">
                 Week<span class="arrow down"></span><span class="arrow up"></span>
             </th>
-            <!--<th class="oe_sortable" data-sort="rate">-->
-            <!--Rate<span class="arrow down"></span><span class="arrow up"></span>-->
-            <!--</th>-->
             <th class="oe_sortable" data-sort="worked">
                 Hours<span class="arrow down"></span><span class="arrow up"></span>
             </th>
@@ -120,27 +90,12 @@
             <th class="oe_sortable" data-sort="Su">
                 Su<span class="arrow down"></span><span class="arrow up"></span>
             </th>
-            <!--<th class="oe_sortable" data-sort="isPaid">
-                Status<span class="arrow down"></span><span class="arrow up"></span>
-            </th>
-            <th class="oe_sortable" data-sort="revenue">
-                Revenue<span class="arrow down"></span><span class="arrow up"></span>
-            </th>
-            <th class="oe_sortable" data-sort="cost">
-                Cost<span class="arrow down"></span><span class="arrow up"></span>
-            </th>
-            <th>
-                Profit
-            </th>
-            <th class="oe_sortable" data-sort="amount">
-                Amount<span class="arrow down"></span><span class="arrow up"></span>
-            </th>-->
         </tr>
         </thead>
         <tbody id="listTable" class="enableTableOdd"></tbody>
         <tfoot id="listFooter">
         <tr>
-            <td colspan="10"></td>
+            <td colspan="10">Total</td>
             <td><span id="hours">0</span></td>
             <td><span id="monHours">0</span></td>
             <td><span id="tueHours">0</span></td>
@@ -149,13 +104,6 @@
             <td><span id="friHours">0</span></td>
             <td><span id="satHours">0</span></td>
             <td><span id="sunHours">0</span></td>
-            <!--<td></td>-->
-            <!--<td><span id="revenue" class="money">0</span></td>
-            <td><span id="cost" class="money">0</span></td>
-            <td><span id="profit" class="money">0</span></td>
-            <td><span id="amount" class="money">0</span></td>-->
-            <!--<td></td>-->
-        <!--</tr>-->
         </tfoot>
     </table>
 </div>

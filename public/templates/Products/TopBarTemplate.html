@@ -4,16 +4,32 @@
 <h3><%=contentType%></h3>
 <%}%>
 <div id="createBtnHolder" class="btnsBlock">
-    <a href="#home/action-<%=contentType%>/Create" class="btn blue slim plus" title="Create" id="top-bar-createBtn">New</a>
-    <a href="javascript:;" class="btn blue slim" title="Edit" id="top-bar-editBtn">E>dit</a>
+    <a href="javascript:;" class="btn blue slim" title="Go Back" id="top-bar-back">Back</a>
+    <a href="#home/action-<%=contentType%>/Create" class="btn blue slim icon-plus" title="Create"
+       id="top-bar-createBtn">New</a>
+    <a href="javascript:;" class="btn blue slim" title="Edit" id="top-bar-editBtn">Edit</a>
     <a href="javascript:;" class="btn blue slim" title="Remove" id="top-bar-deleteBtn">Delete</a>
-<!--
-    <a href="javascript:;" class="btn blue slim icon-download" title="Import" id="top-bar-importBtn"></a>
--->
-    <span title="Export to csv" id="top-bar-exportToCsvBtn" class="btn slim">Export to Csv</span>
+    <a href="javascript:;" class="btn blue slim" title="publish settings" id="top-bar-publishBtn">Configure Publishing</a>
+    <a href="javascript:;" class="btn blue slim" title="unpublish settings" id="top-bar-unpublishBtn">Configure Unpublishing</a>
+    <!--
+    <a href="javascript:;" class="btn blue slim" title="unlink settings" id="top-bar-unlinkBtn">Unlink from channel</a>
+    -->
+    <a href="javascript:;" class="btn blue slim" title="publish" id="top-bar-toPublishBtn">Publish</a>
+    <a href="javascript:;" class="btn blue slim" title="unpublish" id="top-bar-toUnpublishBtn">Unpublish</a>
+    <a href="javascript:;" class="btn blue slim" title="unlink" id="top-bar-toUnlinkBtn">Unlink</a>
+    <!--
+        <a href="javascript:;" class="btn blue slim icon-download" title="Import" id="top-bar-importBtn"></a>
+    -->
+    <!--<span title="Export to csv" id="top-bar-exportToCsvBtn" class="btn slim">Export to Csv</span>
     <span href="javascript:;" title="Export to xlsx" id="top-bar-exportToXlsxBtn" class="btn slim">Export to Xlsx</span>
+-->
+    <div id="channelStatus">
+        <div class="channelImg" data-content="channelImage"></div>
+        <span></span>
+    </div>
 </div>
 <div id="forImport"></div>
+<% if (!hideNavigate) { %>
 <div id="template-switcher" class="template-switcher right">
     <ul class="btn-list">
         <li><a href="javascript:;"
@@ -27,3 +43,4 @@
                data-view-type="form" id="formBtn"></a></li>
     </ul>
 </div>
+<% } %>

@@ -1,116 +1,89 @@
-<div class="form-holder">
-    <form method="post" action="" id="createOpportunities" class="form notDialog">
-        <fieldset>
-            <div class="inner _listModal">
-               <!-- <ul class="dialog-tabs">
-                    <li><a class="active" href="javascript:;">Main</a></li>
-                    &lt;!&ndash;<li><a href="javascript:;">Lead</a></li>
-                    <li><a href="javascript:;">Assignees</a></li>&ndash;&gt;
-                </ul>-->
-              <!--  <div class="clearfix"></div>
-                <div class="dialog-tabs-items">
-                    <div class="dialog-tabs-item active">-->
-                        <h2 class="modal_title">Add an opportunity</h2>
-                        <div class="subject-info _modalList">
-                            <div class="_modalLabel"><label for="name">Subject</label></div>
-                            <div class="_modalSelect"><input type="text" class="title-input" id="name" required maxlength="48"/></div>
-
-                        </div>
-
-
-                        <div class="opprtunitie-info">
-                            <div class="_modalList">
-                                <div class="_modalLabel"><label for="expectedRevenueValue">Expected Revenue</label></div>
-                                <div class="_modalSelect"><input type="text" id="expectedRevenueValue" class="onlyNumber date-min" value="0"
-                                           maxlength="9"/></div>
-                            </div>
-                            <!--<dt>&nbsp;</dt><dd><input type="text" id="expectedRevenueProgress" value="0" maxlength="32"/>%</dd>-->
-                            <div class="_modalList">
-                                <div class="_modalLabel"><label for="customerDd">Contact</label></div>
-                                <div class="_modalSelect _newSelectListWrap"><a id="customerDd" class="current-selected" href="javascript:;" data-id="<%=parentModel && parentModel.type==='Person' ? parentModel._id : ''%>"><%=parentModel && parentModel.type ==='Person' ? parentModel.fullName : 'Select'%></a></div>
-                            </div>
-
-                            <div class="_modalList">
-                                <div class="_modalLabel"><label for="companyDd">Company</label></div>
-                                <div class="_modalSelect _newSelectListWrap"><a id="companyDd" class="current-selected" href="javascript:;" data-id="<%=parentModel && parentModel.type==='Company' ? parentModel._id : ''%>"><%=parentModel && parentModel.type ==='Company' ? parentModel.fullName : 'Select'%></a></div>
-                            </div>
-
-                            <div class="_modalList">
-                                <div class="_modalLabel"><label for="salesPersonDd">Assigned to</label></div>
-                                <div class="_modalSelect _newSelectListWrap"><a id="salesPersonDd" class="current-selected" href="javascript:;">Select</a></div>
-                            </div>
-
-                            <!--<dt><label for="salesTeamDd">Sales Team</label></dt>-->
-                            <!--<dd><a id="salesTeamDd" class="current-selected" href="javascript:;"></a></dd>-->
-
-                            <div class="_modalList">
-                                <div class="_modalLabel"><label for="workflowDd">Stages</label></div>
-                                <div class="_modalSelect _newSelectListWrap" id="selectWorkflow"><a id="workflowDd" class="current-selected" href="javascript:;"></a></div>
-                            </div>
-
-                            <!--<dt><label for="nextActionDate">Next Action</label></dt>-->
-                            <!--<dd><input type="text" id="nextActionDate" maxlength="32" placeholder="Date" readonly/>-->
-                            <!--</dd>-->
-                            <!-- <dt><label for="nextActionDescription">Next Description</label></dt>
-                             <dd><input type="text" id="nextActionDescription" placeholder="Description"
-                                        maxlength="32"/></dd>-->
-                            <div class="_modalList">
-                                <div class="_modalLabel"><label for="expectedClosing">Expected Closing</label></div>
-                                <div class="_modalSelect"><input type="text" id="expectedClosing" maxlength="32" placeholder="Date" readonly/> </div>
-                            </div>
-                            <!--<dt><label for="priorityDd">Priority</label></dt>
-                            <dd>
-                                <a id="priorityDd" class="current-selected" href="javascript:;">Select</a></dd>
-                            <dt><label for="sourceDd">Source</label></dt>
-                            <dd>
-                                <a id="sourceDd"
-                                   class="current-selected" href="javascript:;">Select</a>
-                            </dd>-->
-                            <div class="_modalList">
-                                <div class="area_holder">
-                                 <textarea id="internalNotes" class="internal_Notes" placeholder="Internal notes..." maxlength="500"
-                                           class="opp-internal-create"></textarea>
-                                    <a href="javascript:;" class="attach_file">
-                                        <span class="icon-attach"></span>
-                                    </a>
-                                </div>
-                                <div class="clearfix"></div>
-                            </div>
-                            <div class="attach-container"></div>
-                        </div>
+<div class="form-holder _newForm">
+    <form method="post" action="" id="createOpportunities">
+        <h2 class="_dialogMainTitle">Add New Opportunity</h2>
+        <div class="_formWrap _enlargedItemMargin">
+            <div class="_formBlock">
+                <div class="_animateInputBox">
+                    <input type="text"
+                           class="_animate"
+                           id="name"
+                           autofocus
+                           required
+                           maxlength="48"/>
+                    <label class="_animate">Subject</label>
+                </div>
+                <div class="_animateInputBox">
+                    <input type="text"
+                           class="_animate onlyNumber date-min"
+                           id="expectedRevenueValue"
+                           value="0"
+                           required
+                           maxlength="9"/>
+                    <label class="_animate">Expected Revenue</label>
+                </div>
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Contact</span>
+                    <div class="_newSelectListWrap">
+                        <a id="customerDd"
+                           class="current-selected"
+                           href="javascript:;"
+                           data-id="<%=parentModel && parentModel.type==='Person' ? parentModel._id : ''%>">
+                            <%=parentModel && parentModel.type ==='Person' ? parentModel.fullName : 'Select contact'%>
+                        </a>
                     </div>
-                  <!--  <div class="dialog-tabs-item">
-                        <div class="half-block left withPaddingLeft">
-                            <dl class="opprtunitie-lead-info">
-                                <dt><label for="street">Street</label></dt>
-                                <dd><input type="text" class="address" id="street" name="street" placeholder="Street..."
-                                           maxlength="60"/></dd>
-                                <dt><label for="city">City</label></dt>
-                                <dd><input type="text" class="address" id="city" name="city" placeholder="City"
-                                           maxlength="60"/></dd>
-                                <dt><label for="state">State</label></dt>
-                                <dd><input type="text" class="address" id="state" name="state" placeholder="State"
-                                           maxlength="32"/></dd>
-                            </dl>
-                        </div>
-                        <div class="half-block left withPaddingLeft">
-                            <dl class="opprtunitie-lead-info">
-                                <dt><label for="zip">Zip</label></dt>
-                                <dd><input type="text" class="address" id="zip" name="zip" placeholder="Zip"
-                                           maxlength="32"/></dd>
-                                <dt><label for="country">Country</label></dt>
-                                <dd><input type="text" class="address" id="country" name="country" placeholder="Country"
-                                           maxlength="32"/></dd>
-                            </dl>
-                        </div>
-
-                    </div>-->
-                    <!--<div class="dialog-tabs-item">
-                        <div class="assignees-container"></div>
-                    </div>-->
-                <!--</div>-->
-               <!-- <div class="clearfix"></div>
-            </div>-->
-        </fieldset>
+                </div>
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Company</span>
+                    <div class="_newSelectListWrap">
+                        <a id="companyDd"
+                           class="current-selected"
+                           href="javascript:;"
+                           data-id="<%=parentModel && parentModel.type==='Company' ? parentModel._id : ''%>">
+                            <%=parentModel && parentModel.type ==='Company' ? parentModel.fullName : 'Select company'%>
+                        </a>
+                    </div>
+                </div>
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Assigned to</span>
+                    <div class="_newSelectListWrap">
+                        <a id="salesPersonDd"
+                           class="current-selected"
+                           href="javascript:;">Select assignee
+                        </a>
+                    </div>
+                </div>
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Stage</span>
+                    <div class="_newSelectListWrap">
+                        <a id="workflowDd"
+                           class="current-selected"
+                           href="javascript:;">Select stage
+                        </a>
+                    </div>
+                </div>
+                <div class="_animateInputBox">
+                    <span class="_staticLabel">Expected Closing</span>
+                    <input type="text"
+                           class="_animate"
+                           id="expectedClosing"
+                           placeholder="Date"
+                           readonly
+                           maxlength="32"/>
+                </div>
+                <div class="_animateTextareaBox">
+                    <textarea id="internalNotes"
+                              placeholder="Description. Max 500 symbols."
+                              class="_animate internal_Notes"
+                              maxlength="500"
+                              required></textarea>
+                    <label for="internalNotes"
+                           class="_animate">Internal notes</label>
+                    <a href="javascript:;"
+                       class="attach_file">
+                        <span class="icon-attach"></span>
+                    </a>
+                </div>
+                <div class="attach-container"></div>
+            </div>
     </form>
 </div>

@@ -6,19 +6,22 @@
     <div id="<%=val._id%>" class="_activitiesListItem">
 
         <div class="_activityListTitle _multiEllipsis showmoreDiv">
-            <p><%= val.name%></p>
-            <span class="_ellipsisShowMore showmore">... show more</span>
-            <span class="_ellipsisCloseBtn hideList">close</span>
+            <div>
+                <p><%= val.name%></p>
+            </div>
+            <span class="_ellipsisShowMore showmore">Show more</span>
+            <span class="_ellipsisCloseBtn hideList">Close</span>
         </div>
+
         <div>
-            <span><b class="blueText"><%= val.changedField%></b></span>
+            <span><b class="textBlue"><%= val.changedField%></b></span>
             <%if (val.prevValue){%>
-            <span class="changedFieldName"> changed  <span>from <b class="blueText"><%= val.prevValue %></b></span><span> to </span></span>
+            <span class="changedFieldName"> changed  <span>from <b class="textBlue"><%= val.prevValue %></b></span><span> to </span></span>
             <%} else {%>
             <span class="changedFieldName">added </span>
             <%}%>
 
-            <span><b class="blueText"><%= val.newValue %></b></span>
+            <span><b class="textBlue"><%= val.newValue %></b></span>
             <span class="textGrey">by <%= login %></span>
             <span class="dateNote"><%=val.date%></span>
         </div>

@@ -1,10 +1,10 @@
 var express = require('express');
 var router = express.Router();
 var ProjectHandler = require('../handlers/project');
-var InvoiceHandler = require('../handlers/invoice');
+var InvoiceHandler = require('../handlers/invoices');
 var WeTrackHandler = require('../handlers/wTrack');
 var JobsHandler = require('../handlers/jobs');
-var QuotationHandler = require('../handlers/quotation');
+var OrderHandler = require('../handlers/order');
 var PaymentsHandler = require('../handlers/payment');
 var authStackMiddleware = require('../helpers/checkAuth');
 var MODULES = require('../constants/modules');
@@ -17,7 +17,7 @@ module.exports = function (models, event) {
     var invoiceHandler = new InvoiceHandler(models);
     var wTrackHandler = new WeTrackHandler(null, models);
     var jobsHandler = new JobsHandler(models);
-    var quotationHandler = new QuotationHandler(models);
+    var orderHandler = new OrderHandler(models);
     var paymentsHandler = new PaymentsHandler(models);
 
     var moduleId = MODULES.PROJECTS;
@@ -690,8 +690,7 @@ module.exports = function (models, event) {
          ]
      }
      */
-    router.get('/:id/quotations', accessStackMiddleWare, quotationHandler.getForProject);
-    router.get('/:id/orders', accessStackMiddleWare, quotationHandler.getForProject);
+    router.get('/:id/orders', accessStackMiddleWare, orderHandler.getForProject);
     router.get('/:id/payments', accessStackMiddleWare, paymentsHandler.getForProject);
 
     /**

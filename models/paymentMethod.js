@@ -9,7 +9,10 @@ module.exports = (function () {
         chartAccount: {type: ObjectId, ref: 'chartOfAccount', default: null},
         currency    : {type: String},
         bank        : {type: String},
-        owner       : {type: String, default: ''}
+        owner       : {type: String, default: ''},
+        fullName    : {type: String, default: ''},
+        address     : {type: String, default: ''},
+        swiftCode   : {type: String, default: ''}
     }, {collection: 'PaymentMethod'});
 
     mongoose.model('PaymentMethod', paymentSchema);

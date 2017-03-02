@@ -5,9 +5,10 @@ define([
     'text!templates/Users/list/ListHeader.html',
     'views/Users/CreateView',
     'views/Users/list/ListItemView',
+    'views/Users/EditView',
     'collections/Users/filterCollection',
     'dataService'
-], function ($, _, ListViewBase, listTemplate, CreateView, ListItemView, ContentCollection) {
+], function ($, _, ListViewBase, listTemplate, CreateView, ListItemView, EditView, ContentCollection) {
     'use strict';
 
     var UsersListView = ListViewBase.extend({
@@ -17,6 +18,10 @@ define([
         contentCollection: ContentCollection,
         contentType      : 'Users', // needs in view.prototype.changeLocationHash
         formUrl          : '#easyErp/Users/form/',
+
+        events: {
+            'click .list td:not(.notForm, .checkbox)': 'gotoEditDialog'
+        },
 
         initialize: function (options) {
             this.startTime = options.startTime;
@@ -29,6 +34,20 @@ define([
             this.contentCollection = ContentCollection;
 
             this.render();
+        },
+
+        gotoEditDialog: function (e) {
+            var id = $(e.target).closest('tr').data('id');
+            var model = this.collection.getElement(id);
+
+            if (!model) {
+                return;
+            }
+
+
+            App.ownContentType = true;
+
+            return new EditView({model: model});
         },
 
         render: function () {

@@ -30,9 +30,8 @@ define([
         },
 
         events: {
-            'keypress #paymentTermCount' : 'keypressHandler'
+            'keypress #paymentTermCount': 'keypressHandler'
         },
-
 
         saveItem: function () {
             var self = this;
@@ -42,18 +41,17 @@ define([
             var count = thisEl.find('#paymentTermCount').val();
 
             var data = {
-                name: name,
-                count :  count || 1
+                name : name,
+                count: count || 1
             };
 
             this.currentModel.save(data, {
                 wait   : true,
                 success: function (res, model) {
-                    var el =  $('#paymentterms-holder').find('tr[data-id="' + model._id + '"]');
+                    var el = $('#paymentterms-holder').find('tr[data-id="' + model._id + '"]');
                     self.hideDialog();
 
-
-                    el.after(_.template(tableEL, {elem : model}));
+                    el.after(_.template(tableEL, {elem: model}));
                     el.remove();
                 },
 
@@ -78,13 +76,11 @@ define([
             });
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'edit-dialog',
-                title        : 'Edit Bank Account',
-                width        : '250px',
-                buttons      : [
+                autoOpen   : true,
+                dialogClass: 'edit-dialog',
+                title      : 'Edit Bank Account',
+                width      : '250px',
+                buttons    : [
                     {
                         text : 'Save',
                         class: 'btn blue',

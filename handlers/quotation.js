@@ -22,8 +22,7 @@ var Module = function (models, event) {
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
     var _ = require('../node_modules/underscore');
-    var HistoryWriter = require('../helpers/historyWriter.js');
-    var historyWriter = new HistoryWriter(models);
+    var HistoryService = require('../services/history.js')(models);
     var currencyHalper = require('../helpers/currency');
     var path = require('path');
     var CONSTANTS = require('../constants/mainConstants.js');
@@ -31,84 +30,7 @@ var Module = function (models, event) {
     var moment = require('../public/js/libs/moment/moment');
 
     var FilterMapper = require('../helpers/filterMapper');
-
-    /*TODO remove after filters check*/
-
-    /*function convertType(array, type) {
-     var i;
-
-     if (type === 'integer') {
-     for (i = array.length - 1; i >= 0; i--) {
-     array[i] = parseInt(array[i], 10);
-     }
-     } else if (type === 'boolean') {
-     for (i = array.length - 1; i >= 0; i--) {
-     if (array[i] === 'true') {
-     array[i] = true;
-     } else if (array[i] === 'false') {
-     array[i] = false;
-     } else {
-     array[i] = null;
-     }
-     }
-     }
-     }*/
-
-    /*function caseFilter(filter) {
-     var condition;
-     var resArray = [];
-     var filtrElement = {};
-     var key;
-     var filterName;
-     var keys = Object.keys(filter);
-     var i;
-
-     for (i = keys.length - 1; i >= 0; i--) {
-     filterName = keys[i];
-     condition = filter[filterName].value;
-     key = filter[filterName].key;
-
-     switch (filterName) {
-     case 'reference':
-     filtrElement[key] = {$in: condition.objectID()};
-     resArray.push(filtrElement);
-     break;
-     case 'project':
-     filtrElement[key] = {$in: condition.objectID()};
-     resArray.push(filtrElement);
-     break;
-     case 'supplier':
-     filtrElement[key] = {$in: condition.objectID()};
-     resArray.push(filtrElement);
-     break;
-     case 'workflow':
-     filtrElement[key] = {$in: condition.objectID()};
-     resArray.push(filtrElement);
-     break;
-     case 'type':
-     filtrElement[key] = {$in: condition};
-     resArray.push(filtrElement);
-     break;
-     case 'salesManager':
-     filtrElement[key] = {$in: condition.objectID()};
-     resArray.push(filtrElement);
-     break;
-     case 'forSales':
-     convertType(condition, 'boolean');
-     filtrElement[key] = {$in: condition};
-     resArray.push(filtrElement);
-     break;
-     case 'isOrder':
-     convertType(condition, 'boolean');
-     filtrElement[key] = {$in: condition};
-     resArray.push(filtrElement);
-     break;
-     // skip default;
-     }
-     }
-
-     return resArray;
-     }*/
+    var filterMapper = new FilterMapper();
 
     function updateOnlySelectedFields(req, res, next, id, data) {
         var dbName = req.session.lastDb;
@@ -156,7 +78,7 @@ var Module = function (models, event) {
                 obj._id = mongoose.Types.ObjectId();
             }
 
-            obj.date = new Date();
+            // obj.date = new Date();
 
             if (!obj.user) {
                 obj.user = {};
@@ -183,7 +105,7 @@ var Module = function (models, event) {
                 historyOptions = {
                     contentType: 'quotation',
                     data       : data,
-                    req        : req,
+                    dbName     : dbName,
                     contentId  : quotation._id
                 };
 
@@ -202,8 +124,8 @@ var Module = function (models, event) {
                         }
 
                         ProductModel.findByIdAndUpdate(productId, {
-                            'info.description' : product.description
-                        }, function(err) {
+                            'info.description': product.description
+                        }, function (err) {
                             var saveObject;
 
                             if (err) {
@@ -215,7 +137,7 @@ var Module = function (models, event) {
                                 type     : _type,
                                 editedBy : editedBy
                             };
-                            if (product.jobDescription){
+                            if (product.jobDescription) {
                                 saveObject.description = product.jobDescription;
                             }
 
@@ -230,16 +152,13 @@ var Module = function (models, event) {
                             });
                         });
 
-
-
-
                     }, function () {
                         var type;
 
                         if (project) {
                             event.emit('fetchJobsCollection', {project: project, dbName: dbName});
                         }
-                        historyWriter.addEntry(historyOptions, function () {
+                        HistoryService.addEntry(historyOptions, function () {
                             if (err) {
                                 return next(err);
                             }
@@ -257,8 +176,8 @@ var Module = function (models, event) {
                                 .populate('editedBy.user', '_id login')
                                 .populate('deliverTo', '_id, name')
                                 .populate('project', '_id name')
-                                .populate('workflow', function (err, quotation){
-                                    getHistory(req, quotation.toJSON(), function(err, quotation){
+                                .populate('workflow', function (err, quotation) {
+                                    getHistory(req, quotation.toJSON(), function (err, quotation) {
                                         if (err) {
                                             return next(err);
                                         }
@@ -267,7 +186,7 @@ var Module = function (models, event) {
                                         if (oldProducts.length > 0) {
                                             async.each(oldProducts, function (oldProduct, cb) {
 
-                                                type = 'Not Quoted';
+                                                type = 'Not Ordered';
 
                                                 JobsModel.findByIdAndUpdate(oldProduct.jobs, {
                                                     type     : type,
@@ -300,7 +219,7 @@ var Module = function (models, event) {
 
                     });
                 } else {
-                    historyWriter.addEntry(historyOptions, function () {
+                    HistoryService.addEntry(historyOptions, function () {
 
                         if (err) {
                             return next(err);
@@ -319,8 +238,8 @@ var Module = function (models, event) {
                             .populate('editedBy.user', '_id login')
                             .populate('deliverTo', '_id, name')
                             .populate('project', '_id name')
-                            .populate('workflow', function (err, quotation){
-                                getHistory(req, quotation.toJSON(), function(err, quotation){
+                            .populate('workflow', function (err, quotation) {
+                                getHistory(req, quotation.toJSON(), function (err, quotation) {
                                     if (err) {
                                         return next(err);
                                     }
@@ -337,14 +256,16 @@ var Module = function (models, event) {
     }
 
     function getHistory(req, quotation, cb) {
-        var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
+        var dbName = req.session.lastDb;
+        var Quotation = models.get(dbName, 'Quotation', QuotationSchema);
 
         var historyOptions = {
-            req: req,
-            id : quotation._id
+            dbName : dbName,
+            id     : quotation._id,
+            forNote: true
         };
 
-        historyWriter.getHistoryForTrackedObject(historyOptions, function (err, history) {
+        HistoryService.getHistoryForTrackedObject(historyOptions, function (err, history) {
             var notes;
 
             if (err) {
@@ -362,7 +283,7 @@ var Module = function (models, event) {
             quotation.notes = _.sortBy(quotation.notes, 'date');
             cb(null, quotation);
 
-        }, true);
+        });
 
     }
 
@@ -402,7 +323,7 @@ var Module = function (models, event) {
         if (contentType === 'salesQuotations') {
             Quotation = models.get(db, 'Quotation', QuotationSchema);
         } else if (contentType === 'salesOrders') {
-            Quotation = models.get(db, 'Order', QuotationSchema);
+            Quotation = Order;
         }
 
         if (req.query.sort) {
@@ -655,8 +576,8 @@ var Module = function (models, event) {
         var Project = models.get(db, 'Project', ProjectSchema);
         var Workflow = models.get(db, 'workflows', WorkflowSchema);
         var Quotation = models.get(db, 'Quotation', QuotationSchema);
-        var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
-        var wTrackModel = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var JobsModel = models.get(db, 'jobs', JobsSchema);
+        var wTrackModel = models.get(db, 'wTrack', wTrackSchema);
         var body = mapObject(req.body);
         var currency = body.currency ? body.currency.name : 'USD';
         var isPopulate = req.body.populate;
@@ -738,12 +659,11 @@ var Module = function (models, event) {
                 historyOptions = {
                     contentType: 'quotation',
                     data       : _quotation.toJSON(),
-                    req        : req,
+                    dbName     : db,
                     contentId  : _quotation._id
                 };
 
                 if (isPopulate) {
-
 
                     async.parallel(parellelTasks, function (err) {
                         var id;
@@ -761,10 +681,10 @@ var Module = function (models, event) {
 
                             JobsModel.findByIdAndUpdate(jobs, {
                                 $set: {
-                                    quotation: id,
-                                    type     : 'Quoted',
-                                    editedBy : editedBy,
-                                    description : product.jobDescription
+                                    quotation  : id,
+                                    type       : 'Quoted',
+                                    editedBy   : editedBy,
+                                    description: product.jobDescription
                                 }
                             }, {new: true}, function (err, result) {
                                 if (err) {
@@ -783,8 +703,7 @@ var Module = function (models, event) {
                                 event.emit('fetchJobsCollection', {project: project, dbName: db});
                             }
 
-
-                            historyWriter.addEntry(historyOptions, function () {
+                            HistoryService.addEntry(historyOptions, function () {
                                 res.status(201).send(_quotation);
                             });
 
@@ -792,7 +711,7 @@ var Module = function (models, event) {
                     });
                 } else {
 
-                    historyWriter.addEntry(historyOptions, function () {
+                    HistoryService.addEntry(historyOptions, function () {
                         res.status(201).send(_quotation);
                     });
                 }
@@ -859,7 +778,6 @@ var Module = function (models, event) {
                 return next(err);
             }
 
-
             if (addNote) {
                 notes = file.map(function (elem) {
                     return {
@@ -907,7 +825,6 @@ var Module = function (models, event) {
         var filter = data.filter || {};
         var key;
         var queryObject = {};
-        var filterMapper = new FilterMapper();
 
         queryObject.$and = [];
 
@@ -924,7 +841,7 @@ var Module = function (models, event) {
                 queryObject.$and.push({isOrder: false});
             }
 
-            queryObject.$and.push(filterMapper.mapFilter(filter, contentType)); // caseFilter(filter);
+            queryObject.$and.push(filterMapper.mapFilter(filter, {contentType: contentType}));
         }
 
         if (data.sort) {
@@ -986,6 +903,13 @@ var Module = function (models, event) {
                 }
             }, {
                 $lookup: {
+                    from        : 'Payment',
+                    localField  : '_id',
+                    foreignField: 'order',
+                    as          : 'payment'
+                }
+            }, {
+                $lookup: {
                     from        : 'currency',
                     localField  : 'currency._id',
                     foreignField: '_id',
@@ -1027,6 +951,7 @@ var Module = function (models, event) {
                     name           : 1,
                     paymentInfo    : 1,
                     project        : {$arrayElemAt: ['$project', 0]},
+                    payment        : {$arrayElemAt: ['$payment', 0]},
                     orderDate      : 1,
                     forSales       : 1,
                     isOrder        : 1,
@@ -1041,6 +966,7 @@ var Module = function (models, event) {
                     paymentInfo      : 1,
                     orderDate        : 1,
                     forSales         : 1,
+                    payment          : 1,
                     'project._id'    : 1,
                     'project.name'   : 1,
                     'workflow._id'   : '$workflow._id',
@@ -1065,6 +991,7 @@ var Module = function (models, event) {
                     name           : 1,
                     paymentInfo    : 1,
                     project        : 1,
+                    payment        : 1,
                     orderDate      : 1,
                     forSales       : 1,
                     workflow       : 1,
@@ -1097,6 +1024,8 @@ var Module = function (models, event) {
                     /* isOrder            : '$root.isOrder',*/
                     currency             : '$root.currency',
                     project              : '$root.project',
+                    paymentPayd          : {$divide: ['$root.payment.paidAmount', '$root.currency.rate']},
+                    paymentBalance       : {$subtract: ['$root.paymentInfo.total', {$divide: ['$root.payment.paidAmount', '$root.currency.rate']}]},
                     proformaCounter      : '$root.proformaCounter',
                     total                : 1
                 }
@@ -1250,7 +1179,7 @@ var Module = function (models, event) {
     this.remove = function (req, res, next) {
         var id = req.params.id;
         var project;
-        var type = 'Not Quoted';
+        var type = 'Not Ordered';
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
         var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);

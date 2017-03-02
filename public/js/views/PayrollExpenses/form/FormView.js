@@ -36,17 +36,17 @@ define([
         },
 
         events: {
-            'click .checkbox'                                : 'checked',
-            'click td.editable'                              : 'editRow',
-            'click .newSelectList li'                        : 'chooseOption',
-            'change .autoCalc'                               : 'autoCalc',
-            'change .editable'                               : 'setEditable',
-            'keydown input.editing'                          : 'keyDown',
-            click                                            : 'removeNewSelect',
-            'click .diff'                                    : 'newPayment',
-            'click .oe_sortable'                             : 'goSort',
+            'click .checkbox'                                          : 'checked',
+            'click td:not(.notForm)'                                   : 'editRow',
+            'click .newSelectList li'                                  : 'chooseOption',
+            'change .autoCalc'                                         : 'autoCalc',
+            'change .editable'                                         : 'setEditable',
+            'keydown input.editing'                                    : 'keyDown',
+            click                                                      : 'removeNewSelect',
+            'click .diff'                                              : 'newPayment',
+            'click .oe_sortable'                                       : 'goSort',
             // 'click .expand'                           : 'renderDialogView',
-            'click .mainTr td:not(.expand, .checkbox, .diff)': 'goToForm'
+            'click .mainTr td:not(.expand, .checkbox, .diff, .notForm)': 'goToForm'
         },
 
         goToForm: function (e) {
@@ -902,6 +902,7 @@ define([
             var elPaid = parseFloat(this.editCollection.get(id).get('paid'));
 
             e.stopPropagation();
+            e.preventDefault();
 
             if (this.$el.find('#false').length) {
                 return false;
@@ -940,12 +941,12 @@ define([
                         $('#top-bar-copy').hide();
                     }
                     if (checkLength === this.collection.length) {
-                        this.$el.find('.checkAll').prop('checked', true);
+                        this.$el.find('#checkAll').prop('checked', true);
                     } else {
-                        this.$el.find('.checkAll').prop('checked', false);
+                        this.$el.find('#checkAll').prop('checked', false);
                     }
                 } else {
-                    this.$el.find('.checkAll').prop('checked', false);
+                    this.$el.find('#checkAll').prop('checked', false);
                     $('#top-bar-deleteBtn').hide();
                     $('#topBarPaymentGenerate').hide();
                     $('#top-bar-copy').hide();
@@ -1126,7 +1127,7 @@ define([
 
             this.filterEmployeesForDD(this);
 
-            $('.checkAll').click(function () {
+            $('#checkAll').click(function () {
                 var totalOld = 0;
                 var totalNew = 0;
                 var totalCalc = 0;

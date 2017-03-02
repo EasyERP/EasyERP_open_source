@@ -85,8 +85,15 @@ define([
         },
 
         cancelNote: function (e) {
-            $(e.target).parents('.addNote').find('#noteArea').attr('placeholder', 'Add a Note...').parents('.addNote').removeClass('active');
-            $(e.target).parents('.addNote').find('#noteArea').val('');
+            $(e.target)
+                .parents('.addNote')
+                .find('#noteArea')
+                .attr('placeholder', 'Add a Note...Max 500 symbols.')
+                .parents('.addNote').removeClass('active');
+            $(e.target)
+                .parents('.addNote')
+                .find('#noteArea')
+                .val('');
             this.$el.find('#getNoteKey').val('');// remove id from hidden field if note editing is cancel
             this.$el.find('.title-wrapper').hide();
             this.$el.find('.addTitle').hide();
@@ -106,7 +113,7 @@ define([
             var editNotes;
 
             if ($(e.target).parents('.addNote').find('#noteArea').val().replace(/ /g, '') || $(e.target).parents('.addNote').find('#noteTitleArea').val().replace(/ /g, '')) {
-                $(e.target).parents('.addNote').find('#noteArea').attr('placeholder', 'Add a Note...').parents('.addNote').removeClass('active');
+                $(e.target).parents('.addNote').find('#noteArea').attr('placeholder', 'Add a Note...Max 500 symbols.').parents('.addNote').removeClass('active');
                 this.$el.find('.title-wrapper').hide();
                 this.$el.find('.addTitle').hide();
             } else {
@@ -161,6 +168,7 @@ define([
                             });
                     } else {
                         noteObj.note = val;
+                        noteObj.date = new Date();
                         noteObj.title = title;
                         notes.push(noteObj);
                         formModel.save({notes: notes}, {

@@ -50,7 +50,7 @@ define([
         },
 
         events: {
-            'click .fa-trash-o'                                : 'deleteItemPressed',
+            'click .icon-trash'                                : 'deleteItemPressed',
             'click td.editable, .current-selected'             : 'showNewSelect',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
             'click .oe_sortable'                               : 'goSort',
@@ -327,7 +327,7 @@ define([
                 });
 
                 $target.append(this.selectView.render().el);
-               // $target.find('input').show();
+                // $target.find('input').show();
 
             }
 

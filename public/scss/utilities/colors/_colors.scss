@@ -52,7 +52,7 @@ $bgWhite: #fff;
 
 $fontColor-1: #4c4c4c;
 
-$textShadow-1: rgba(255, 255, 255, .5);
+$textShadow-1: rgba($white, .5);
 /*==========================================================================*/
 /*==Main menu==========================*/
 $bg-main: #37335B;
@@ -83,10 +83,6 @@ $border-color-main: #4d7188;
 $border-color: $border-color-main;
 $border-color-selected: $bg-main-menu-selected;
 //lighten($border-color-main, 30%);
-
-
-
-
 
 /*== Filters ======================*/
 

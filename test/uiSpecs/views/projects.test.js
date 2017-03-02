@@ -158,7 +158,6 @@ define([
 
             before(function () {
                 window.location.hash = '#easyErp/Projects/form/55b92ad621e4b7c40f00065f';
-
             });
 
             describe('INITIALIZE', function () {

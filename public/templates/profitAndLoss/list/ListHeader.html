@@ -2,86 +2,146 @@
     <div id="searchContainer"></div>
     <div class="containerContent">
         <div class="_profitTableWrap">
-            <table class="list tableFixed">
-                <colgroup>
-                    <col span="1" width="20px">
-                    <col span="2" width="50%">
-                    <col span="1" width="50%">
-                </colgroup>
-                <thead>
-                <tr>
-                    <th colspan="4" class="_profitTitle">INCOME</th>
-                </tr>
-                <tr>
-                    <th colspan="4" class="_profitSubTitle">Gross Profit</th>
-                </tr>
-                <!--<tr id="caption">-->
-                <!--<th class="centerCell">Expand</th>-->
-                <!--<th>Account</th>-->
-                <!--<th>Date</th>-->
-                <!--<th class="countable" data-id="debit">Amount</th>-->
-                <!--</tr>-->
-                </thead>
-                <tbody id="listTableGrossFit" class="enableTableOdd"></tbody>
-                <tfoot>
-                <tr>
-                    <td colspan="4" class="money textRight" id="grossFooter"></td>
-                </tr>
-                </tfoot>
-            </table>
+            <span class="_profitTitle">ORDINARY INCOME / EXPENSES</span>
+            <div class="_profitContent">
+                <table class="list tableFixed">
+                    <colgroup>
+                        <col span="1" width="20px">
+                        <col span="2" width="50%">
+                        <col span="1" width="50%">
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th colspan="4" class="_profitSubTitle">Income</th>
+                    </tr>
+                    </thead>
+                    <tbody id="listTableIncome" class="enableTableOdd"></tbody>
+                    <tfoot>
+                    <tr>
+                        <td colspan="3">Total Income</td>
+                        <td class="money textRight" id="incomeFooter"></td>
+                    </tr>
+                    </tfoot>
+                </table>
+                <table class="list tableFixed">
+                    <colgroup span="4">
+                        <col span="1" width="20px">
+                        <col span="2" width="50%">
+                        <col span="1" width="50%">
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th colspan="4" class="_profitSubTitle">Cost of Goods Sold</th>
+                    </tr>
+                    </thead>
+                    <tbody id="listTableCogs" class="enableTableOdd"></tbody>
+                    <tfoot>
+                    <tr>
+                        <td colspan="3">Total COGS</td>
+                        <td class="money textRight" id="cogsFooter"></td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="_profitSumBlock _profitSubTitle">
+                <span>Gross Profit</span>
+                <span class="money textRight" id="grossProfit"></span>
+            </div>
+            <div class="_profitContent">
+                <table class="list tableFixed">
+                    <colgroup span="4">
+                        <col span="1" width="20px">
+                        <col span="2" width="50%">
+                        <col span="1" width="50%">
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th colspan="4" class="_profitSubTitle">Expenses</th>
+                    </tr>
+                    </thead>
+                    <tbody id="listTableExpenses" class="enableTableOdd"></tbody>
+                    <tfoot>
+                    <tr>
+                        <td colspan="3">Total Expenses</td>
+                        <td class="money textRight" id="expFooter"></td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
         </div>
         <div class="_profitTableWrap">
+            <div class="_profitSumBlock _profitTitle">
+                <span>NET ORDINARY INCOME</span>
+                <span id="netOrdinaryIncome"></span>
+            </div>
+        </div>
+
+        <div class="_profitTableWrap">
+            <span class="_profitTitle">OTHER INCOME / EXPENSES</span>
+            <div class="_profitContent">
+                <table class="list tableFixed">
+                    <colgroup span="4">
+                        <col span="1" width="20px">
+                        <col span="2" width="50%">
+                        <col span="1" width="50%">
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th colspan="4" class="_profitSubTitle">Taxes</th>
+                    </tr>
+                    </thead>
+                    <tbody id="listTableTaxes" class="enableTableOdd"></tbody>
+                    <tfoot>
+                    <tr>
+                        <td colspan="3">Total Taxes</td>
+                        <td class="money textRight" id="taxesFooter"></td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="_profitSumBlock _profitSubTitle">
+                <span>Total Other</span>
+                <span class="money textRight" id="totalOther"></span>
+            </div>
+        </div>
+
+        <div class="_profitTableWrap">
+            <div class="_profitSumBlock _profitTitle">
+                <span>NET INCOME</span>
+                <span id="netIncome"></span>
+            </div>
+        </div>
+
+        <div class="_profitTableWrap">
+            <span class="_profitTitle">DIVIDENDS</span>
             <table class="list tableFixed">
-                <colgroup span="4">
-                    <col span="1" width="20px">
-                    <col span="2" width="50%">
-                    <col span="1" width="50%">
-                </colgroup>
-                <thead>
-                <tr>
-                    <th colspan="4" class="_profitTitle">EXPENSES</th>
-                </tr>
-                <tr>
-                    <th colspan="4" class="_profitSubTitle">Expenses</th>
-                </tr>
-                <!--<tr id="captionExpenses">-->
-                <!--<th class="centerCell">Expand</th>-->
-                <!--<th>Account</th>-->
-                <!--<th>Date</th>-->
-                <!--<th class="countable" data-id="debit">Amount</th>-->
-                <!--</tr>-->
-                </thead>
-                <tbody id="listTableExpenses" class="enableTableOdd"></tbody>
-                <tfoot>
-                <tr>
-                    <td colspan="4" class="money textRight" id="expFooter"></td>
-                </tr>
-                </tfoot>
-            </table>
+            <colgroup span="4">
+                <col span="1" width="20px">
+                <col span="2" width="50%">
+                <col span="1" width="50%">
+            </colgroup>
+            <thead>
+            <tr>
+                <th colspan="4" class="_profitSubTitle">Dividends</th>
+            </tr>
+            </thead>
+            <tbody id="listTableDividends" class="enableTableOdd"></tbody>
+            <tfoot>
+            <tr>
+                <td colspan="3">Total Dividends</td>
+                <td class="money textRight" id="dividendsFooter"></td>
+            </tr>
+            </tfoot>
+        </table>
         </div>
-        <div class="_incomeTableWrap">
-            <table class="list gl-list smallTd tableFixed">
-                <colgroup span="3">
-                    <col width="30%">
-                    <col width="40%">
-                </colgroup>
-                <thead>
-                </thead>
-                <tbody id="total">
-                <tr>
-                    <td class="semiBold">Net Income</td>
-                    <td class="money textRight" id="totalSumm"></td>
-                </tr>
-                <tr>
-                    <td class="semiBold">Dividends</td>
-                    <td class="money textRight" id="dividends"></td>
-                </tr>
-                <tr>
-                    <td class="semiBold">Retained earnings</td>
-                    <td class="money textRight" id="retainedEarnings"></td>
-                </tr>
-                </tbody>
-            </table>
+
+        <div class="_profitTableWrap">
+            <div class="_profitSumBlock _profitTitle">
+                <span>RETAINED EARNINGS</span>
+                <span id="income"></span>
+            </div>
         </div>
+
+
     </div>
 </div>

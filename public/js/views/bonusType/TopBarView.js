@@ -9,7 +9,7 @@ define([
     var topBarView = BaseView.extend({
         el           : '#top-bar',
         contentType  : CONSTANTS.BONUSTYPE,
-        contentHeader: 'BonusType',
+        contentHeader: 'Bonus Type',
         template     : _.template(ContentTopBarTemplate)
     });
 

@@ -2,18 +2,20 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
+    'views/Filter/dateFilter',
     'text!templates/profitAndLoss/TopBarTemplate.html',
     'custom',
     'constants',
     'common',
     'moment'
-], function (Backbone, $, _, ContentTopBarTemplate, Custom, CONSTANTS, common, moment) {
+], function (Backbone, $, _, DateFilterView, ContentTopBarTemplate, Custom, CONSTANTS, common, moment) {
     'use strict';
 
     var TopBarView = Backbone.View.extend({
-        el         : '#top-bar',
-        contentType: CONSTANTS.PROFITANDLOSS,
-        template   : _.template(ContentTopBarTemplate),
+        el           : '#top-bar',
+        contentType  : CONSTANTS.PROFITANDLOSS,
+        contentHeader: 'Profit And Loss',
+        template     : _.template(ContentTopBarTemplate),
 
         initialize: function (options) {
             if (options.collection) {
@@ -24,14 +26,14 @@ define([
         },
 
         events: {
-            'click #updateDate'                 : 'changeDateRange',
+            /*'click #updateDate'                 : 'changeDateRange',
             'click .dateRange'                  : 'toggleDateRange',
             'click #cancelBtn'                  : 'cancel',
             'click li.filterValues:not(#custom)': 'setDateRange',
-            'click #custom'                     : 'showDatePickers'
+            'click #custom'                     : 'showDatePickers'*/
         },
 
-        removeAllChecked: function () {
+       /* removeAllChecked: function () {
             var filter = this.$el.find('ul.dateFilter');
             var li = filter.find('li');
 
@@ -187,25 +189,52 @@ define([
                     defaultDate: endDate
                 })
                 .datepicker('setDate', endDate);
-        },
+        },*/
 
         render: function () {
-            var dateRange = Custom.retriveFromCash('profitAndLossDateRange');
+            var self = this;
+            var dateRange;
             var viewType = Custom.getCurrentVT();
+            var filter = Custom.retriveFromCash('profitAndLoss.filter');
 
-            $('title').text(this.contentType);
+            var startDate;
+            var endDate;
 
-            this.startDate = common.utcDateToLocaleDate(dateRange.startDate);
-            this.endDate = common.utcDateToLocaleDate(dateRange.endDate);
+            if (!this.collection) {
+                dateRange = filter && filter.date ? filter.date.value : [];
+
+                startDate = new Date(dateRange[0]);
+                endDate = new Date(dateRange[1]);
+            } else {
+                startDate = this.collection.startDate;
+                endDate = this.collection.endDate;
+            }
+
+            startDate = moment(startDate).format('D MMM, YYYY');
+            endDate = moment(endDate).format('D MMM, YYYY');
+
+            $('title').text(this.contentHeader || this.contentType);
+
+            /*this.startDate = common.utcDateToLocaleDate(dateRange.startDate);
+            this.endDate = common.utcDateToLocaleDate(dateRange.endDate);*/
 
             this.$el.html(this.template({
                 viewType   : viewType,
-                contentType: this.contentType,
-                startDate  : this.startDate,
-                endDate    : this.endDate
+                contentType: this.contentType
             }));
 
-            this.bindDataPickers(this.startDate, this.endDate);
+            /*this.bindDataPickers(this.startDate, this.endDate);*/
+
+            this.dateFilterView = new DateFilterView({
+                contentType: 'profitAndLoss',
+                el         : this.$el.find('#dateFilter')
+            });
+
+            this.dateFilterView.on('dateChecked', function () {
+                self.trigger('changeDateRange', self.dateFilterView.dateArray);
+            });
+
+            this.dateFilterView.checkElement('custom', [startDate, endDate]);
 
             return this;
         }

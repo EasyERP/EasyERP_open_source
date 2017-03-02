@@ -1,8 +1,8 @@
-module.exports = function(models){
+module.exports = function (models) {
     var mongoose = require('mongoose');
 
     return function composeExpensesAndCache(req, callback) {
-        var PayRollSchema = mongoose.Schemas['PayRoll'];
+        var PayRollSchema = mongoose.Schemas.PayRoll;
         var PayRoll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
         var query = req.query;
         var filter = query.filter || '';
@@ -14,21 +14,13 @@ module.exports = function(models){
         var async = require('async');
         var _ = require('lodash');
 
-        var waterfallTasks = [checkFilter, getResult, calcTotal];
+        var waterfallTasks;
 
         function checkFilter(callback) {
             callback(null, filter);
         }
 
         function getResult(filter, callback) {
-            /*if (filter && typeof filter === 'object') {
-                if (filter.condition && filter.condition === 'or') {
-                    queryObject['$or'] = caseFilter(filter);
-                } else {
-                    queryObject['$and'] = caseFilter(filter);
-                }
-            }*/
-
             query = PayRoll.find(queryObject);
 
             query.exec(function (err, result) {
@@ -38,7 +30,7 @@ module.exports = function(models){
 
                 callback(null, result);
             });
-        };
+        }
 
         function calcTotal(result, callback) {
             var total;
@@ -57,16 +49,18 @@ module.exports = function(models){
                     var obj = {};
 
                     obj[key] = {
-                        date: _.pluck(value, "date")[0],
-                        status: _.pluck(value, "status")[0],
-                        calc: {
-                            onCash: sum(_.pluck(value, "calc"))
+                        date  : _.pluck(value, 'date')[0],
+                        status: _.pluck(value, 'status')[0],
+                        calc  : {
+                            onCash: sum(_.pluck(value, 'calc'))
                         },
+
                         paid: {
-                            onCash: sum(_.pluck(value, "paid"))
+                            onCash: sum(_.pluck(value, 'paid'))
                         },
+
                         diff: {
-                            onCash: sum(_.pluck(value, "diff"))
+                            onCash: sum(_.pluck(value, 'diff'))
                         }
                     };
 
@@ -74,12 +68,10 @@ module.exports = function(models){
                 })
                 .value();
 
-            /*var newResult = _.groupBy(result, function (model) {
-                return model.get('dataKey');
-            });*/
-
-            callback(null, {total: total/*, collection: newResult, allCollection: result*/});
+            callback(null, {total: total});
         }
+
+        waterfallTasks = [checkFilter, getResult, calcTotal];
 
         async.waterfall(waterfallTasks, function (err, result) {
             redisStore.writeToStorage('payrollExpenses', key, JSON.stringify(result));
@@ -92,5 +84,5 @@ module.exports = function(models){
                 callback(null, result);
             }
         });
-    }
+    };
 };

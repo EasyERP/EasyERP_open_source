@@ -1,5 +1,3 @@
-/*TODO remove caseFilter methid after testing filters*/
-
 var mongoose = require('mongoose');
 var RESPONSES = require('../constants/responses');
 var tasksSchema = mongoose.Schemas.Task;
@@ -252,7 +250,7 @@ var Module = function (models, event) {
             if (!obj._id) {
                 obj._id = mongoose.Types.ObjectId();
             }
-            obj.date = new Date();
+            // obj.date = new Date();
             if (!obj.author) {
                 obj.author = req.session.uName;
             }
@@ -289,33 +287,6 @@ var Module = function (models, event) {
             updateTask();
         }
     };
-
-    /*function caseFilter(filter) {
-        var condition = [];
-        var key;
-
-        for (key in filter) {   // added correct fields for Tasks and one new field Summary
-            switch (key) {
-                case 'workflow':
-                    condition.push({'workflow._id': {$in: filter.workflow.value.objectID()}});
-                    break;
-                case 'project':
-                    condition.push({'project._id': {$in: filter.project.value.objectID()}});
-                    break;
-                case 'summary':
-                    condition.push({_id: {$in: filter.summary.value.objectID()}});
-                    break;
-                case 'type':
-                    condition.push({type: {$in: filter.type.value}});
-                    break;
-                case 'assignedTo':
-                    condition.push({'assignedTo._id': {$in: filter.assignedTo.value.objectID()}});
-                    break;
-            }
-        }
-
-        return condition;
-    }*/
 
     function getTasksForKanban(req, res, next) {
         var startTime = new Date();
@@ -523,7 +494,7 @@ var Module = function (models, event) {
                             _id: 1
                         }
                     },
-                    function (err, result) { // added aggregate function for filtration, sort moved to aggregate
+                    function (err, result) {
                         if (err) {
                             return next(err);
                         }
@@ -531,8 +502,7 @@ var Module = function (models, event) {
                         obj = {$and: [{'project._id': {$in: _.pluck(result, '_id')}}]};
 
                         if (data && data.filter) {
-                            // obj.$and.push({$and: caseFilter(data.filter)});
-                            obj.$and.push(filterMapper.mapFilter(data.filter, 'Tasks'));
+                            obj.$and.push(filterMapper.mapFilter(data.filter, {contentType: 'Tasks'}));
                         }
 
                         if (data.sort) {

@@ -1,59 +1,68 @@
-<div class="form-holder">
-    <form method="post" action="" id="createDepartmentForm" class="form">
-        <fieldset>
-            <div class="inner">
-                <ul class="dialog-tabs">
-                    <li><a class="active" href="javascript:;">Main Info</a></li>
-                    <li><a href="javascript:;">Second Info</a></li>
-                </ul>
-                <div class="clearfix">
-                </div>
-                <div class="dialog-tabs-items">
-                    <div class="dialog-tabs-item active">
-                        <div class="half-block left">
-                            <dl class="department-info">
-                                <dt><label for="departmentName">Department Name</label></dt>
-                                <dd><input type="text" class="title-input blueback" name="departmentName" id="departmentName" maxlength="32" placeholder="Department Name" required/><input type="text" hidden required/></dd>
-                                <dt><label for="parentDepartment">Parent Department</label></dt>
-                                <dd class="_newSelectListWrap">
-                                    <a id="parentDepartment" class="current-selected" href="javascript:;"></a>
-                                </dd>
-                            </dl>
+<div class="form-holder _newForm">
+    <form method="post" action="" id="createDepartmentForm">
+        <h4 class="_dialogTitlePositioned">Create departament</h4>
+        <ul class="dialog-tabs">
+            <li><a class="active" href="javascript:;">Main Info</a></li>
+            <li><a href="javascript:;">Second Info</a></li>
+        </ul>
+        <div class="dialog-tabs-items">
+            <div class="dialog-tabs-item active">
+                <div class="_formWrap _enlargedItemMargin">
+                    <div class="_formBlock">
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   name="departmentName"
+                                   class="_animate"
+                                   id="departmentName"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">Department name</label>
                         </div>
-                        <div class="half-block left">
-                            <dl class="department-info">
-                                <dt><label for="departmentManager">Manager</label></dt>
-                                <dd class="_newSelectListWrap">
-                                    <a id="departmentManager" class="current-selected" href="javascript:;"></a>
-                                </dd>
-                                <dt><label for="isDevelopment">Show in Development</label></dt>
-                                <dd>
-                                    <input type="checkbox" id="isDevelopment" checked></input>
-                                </dd>
-                            </dl>
-                        </div>
-                    </div>
-                    <div class="dialog-tabs-item">
-                        <div class="groupsChooser">
-                            <div class="left">
-                                <ul id="sourceUsers">
-
-                                </ul>
-                            </div>
-                            <div class="left">
-                                <div class="swich"></div>
-                            </div>
-                            <div class="left">
-                                <ul id="targetUsers">
-
-                                </ul>
+                        <div class="_animateSelectBox">
+                            <span class="_selectTitle">Parent Department</span>
+                            <div class="_newSelectListWrap">
+                                <a id="parentDepartment"
+                                   class="current-selected"
+                                   href="javascript:;">Select Parent Department
+                                </a>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="clearfix">
+                    <div class="_formBlock">
+                        <div class="_animateSelectBox">
+                            <span class="_selectTitle">Manager</span>
+                            <div class="_newSelectListWrap">
+                                <a id="departmentManager"
+                                   class="current-selected"
+                                   href="javascript:;">Select Manager
+                                </a>
+                            </div>
+                        </div>
+                        <div class="_formRow">
+                            <label class="_animatedCheckbox">
+                                <input id="isDevelopment"
+                                       type="checkbox"
+                                       checked>
+                                <span></span>
+                            </label>
+                            <label for="isDevelopment">Show in Development</label>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </fieldset>
+            <div class="dialog-tabs-item">
+                <div class="_formBlock">
+                    <div class="groupsChooser">
+                        <div class="sourceUsersWrap">
+                            <ul id="sourceUsers"></ul>
+                        </div>
+                        <div class="swich"></div>
+                        <div class="targetUsersWrap">
+                            <ul id="targetUsers"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </form>
 </div>

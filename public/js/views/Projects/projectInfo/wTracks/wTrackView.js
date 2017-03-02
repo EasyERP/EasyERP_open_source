@@ -73,6 +73,54 @@ define([
             this.render();
         },
 
+        deleteItems: function () {
+            var self = this;
+            var $thisEl = this.$el;
+            var $table = $thisEl.find('#listTable');
+            var collection = this.collection;
+            var url = collection.url;
+            var $checkedInputs;
+            var ids = [];
+            var answer;
+            var edited = this.edited || $thisEl.find('tr.false, #false');
+
+            if (!edited.length) { // ToDo refactor
+                this.changed = false;
+            }
+
+            if (this.changed) {
+                return this.cancelChanges();
+            }
+
+            answer = confirm('Really DELETE items ?!');
+
+            if (answer === false) {
+                return false;
+            }
+
+            $checkedInputs = $table.find('input:checked');
+
+            $.each($checkedInputs, function () {
+                var $el = $(this);
+
+                ids.push($el.val());
+            });
+
+            ids = _.compact(ids);
+
+            dataService.deleteData(url, {contentType: this.contentType, ids: ids}, function (err, response) {
+                if (err) {
+                    return App.render({
+                        type   : 'error',
+                        message: 'Can\'t remove items'
+                    });
+                }
+                ids.forEach(function (id) {
+                    $table.find('[data-id="' + id + '"]').remove();
+                });
+            });
+        },
+
         hideDeleteBtnAndUnSelectCheckAll: function () {
             $('#deletewTrack').hide();
             $('#top-bar-generateBtn').hide();
@@ -416,7 +464,7 @@ define([
                         $('#deletewTrack').show();
                         self.$createBtn.hide();
 
-                        if (checkLength === self.collection.length) {
+                        if (checkLength === allInputs.length) {  /*self.collection.length*/
 
                             $('#checkAll').prop('checked', true);
                         }

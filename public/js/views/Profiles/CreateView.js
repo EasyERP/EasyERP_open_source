@@ -5,8 +5,9 @@ define([
     'text!templates/Profiles/CreateProfileTemplate.html',
     'models/ProfilesModel',
     'text!templates/Profiles/ModulesAccessListTemplate.html',
-    'populate'
-], function (Backbone, $, _, CreateProfileTemplate, ProfilesModel, ModulesAccessTemplate, populate) {
+    'populate',
+    'views/selectView/selectView'
+], function (Backbone, $, _, CreateProfileTemplate, ProfilesModel, ModulesAccessTemplate, populate, SelectView) {
     var CreateView = Backbone.View.extend({
         el         : '#content-holder',
         contentType: 'Profiles',
@@ -33,8 +34,25 @@ define([
             return false;
         },
 
-        showNewSelect: function (e, prev, next) {
-            populate.showSelect(e, prev, next, this);
+        showNewSelect: function (e) {
+            var $target = $(e.target);
+
+            e.stopPropagation();
+
+            if ($target.attr('id') === 'selectInput') {
+                return false;
+            }
+
+            if (this.selectView) {
+                this.selectView.remove();
+            }
+
+            this.selectView = new SelectView({
+                e          : e,
+                responseObj: this.responseObj
+            });
+
+            $target.append(this.selectView.render().el);
 
             return false;
         },
@@ -42,7 +60,7 @@ define([
         chooseOption: function (e) {
             var $target = $(e.target);
 
-            $target.parents('dd').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
+            $target.parents('ul').closest('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
             this.$el.find('.newSelectList').hide();
         },
 
@@ -121,13 +139,11 @@ define([
             var formString = this.template();
             var self = this;
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'edit-dialog',
-                width        : 600,
-                title        : 'Create Profile',
-                buttons      : {
+                autoOpen   : true,
+                dialogClass: 'edit-dialog',
+                width      : 500,
+                title      : 'Create Profile',
+                buttons    : {
                     save: {
                         text : 'Create',
                         id   : 'saveBtn',

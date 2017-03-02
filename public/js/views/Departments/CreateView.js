@@ -27,8 +27,9 @@ define([
 
             this.render();
         },
-        
+
         events: {
+            keydown                                            : 'keyDownHandler',
             'click .dialog-tabs a'                             : 'changeTab',
             'click #sourceUsers li'                            : 'addUsers',
             'click #targetUsers li'                            : 'removeUsers',
@@ -39,10 +40,12 @@ define([
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
         },
 
-        keydownHandler: function (e) {
+        keyDownHandler: function (e) {
             switch (e.which) {
-                case 27:
-                    this.hideDialog();
+                case 13:
+                    this.saveItem();
+                    e.stopPropagation();
+                    e.preventDefault();
                     break;
                 default:
                     break;
@@ -209,7 +212,7 @@ define([
         },
 
         chooseOption: function (e) {
-            $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id')).attr('data-level', $(e.target).data('level'));
+            $(e.target).parents('ul').closest('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id')).attr('data-level', $(e.target).data('level'));
         },
 
         render: function () {
@@ -218,9 +221,8 @@ define([
 
             this.$el = $(formString).dialog({
                 autoOpen   : true,
-                resizable  : true,
                 dialogClass: 'create-dialog',
-                width      : '950px',
+                width      : '800px',
                 buttons    : [
                     {
                         text : 'Create',
@@ -236,8 +238,8 @@ define([
                             self.hideDialog();
                         }
                     }]
-
             });
+
             populate.get2name('#departmentManager', CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this, true, true);
             populate.getParrentDepartment('#parentDepartment', CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, this, true, true);
             common.populateUsersForGroups('#sourceUsers', '#targetUsers', null, 1);

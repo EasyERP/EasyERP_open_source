@@ -1,28 +1,42 @@
-<div class="form-holder">
-    <form method="post"
-          action=""
-          id="createEmployeeForm"
-          class="form">
-        <fieldset>
-            <div class="inner">
-                <ul class="dialog-tabs">
-                    <li>
-                        <a href="javascript:;" class="active">Main</a>
-                    </li>
-                    <li>
-                        <a href="javascript:;" class="">Personal Information</a>
-                    </li>
-                    <li>
-                        <a href="javascript:;" class="">Job</a>
-                    </li>
-                    <li>
-                        <a href="javascript:;">Assignees</a>
-                    </li>
-                </ul>
-                <div class="clearfix"></div>
-                <div class="dialog-tabs-items">
-                    <div class="dialog-tabs-item active">
-                        <div class="avatar left">
+<div class="form-holder _newForm _employeeCreate">
+    <form method="post" action="" id="createEmployeeForm">
+        <h4 class="_dialogTitlePositioned">Create Employee</h4>
+        <ul class="dialog-tabs">
+            <li>
+                <a href="javascript:;" class="active">Main</a>
+            </li>
+            <li>
+                <a href="javascript:;" class="">Personal Information</a>
+            </li>
+            <li>
+                <a href="javascript:;" class="">Job</a>
+            </li>
+            <li>
+                <a href="javascript:;" class="">Notes</a>
+            </li>
+            <li>
+                <a href="javascript:;">Assignees</a>
+            </li>
+        </ul>
+        <div class="dialog-tabs-items">
+            <div class="dialog-tabs-item active">
+                <div class="_formWrap">
+                    <div class="_avatarBlock">
+                        <div class="avatar">
+                            <div class="upload">Edit
+                                <input type="file"
+                                       value="Edit"
+                                       id="inputImg"
+                                       accept="image/*">
+                            </div>
+                            <canvas id="avatar"
+                                    width="140"
+                                    height="140">
+                            </canvas>
+                        </div>
+                    </div>
+                    <!--<div class="_avatarBlock">
+                        <div class="avatar">
                             <div class="upload">Edit
                                 <input type="file"
                                        value="Edit"
@@ -36,395 +50,280 @@
                                        id="File1">
                             </canvas>
                         </div>
-                        <div class="avatarInfoContainer employee">
-                            <div class="half-block left">
-                                <dl class="create-employee-info">
-                                    <dt>
-                                        <label for="first">First Name</label>
-                                    </dt>
-                                    <dd>
-                                        <div class="_inputIconWrap">
-                                            <input type="text"
-                                                   id="first"
-                                                   required
-                                                   maxlength="32"
-                                                   placeholder="First Name"/>
-                                            <label></label>
-                                        </div>
-                                    </dd>
-                                    <dt>
-                                        <label for="last">Last Name</label>
-                                    </dt>
-                                    <dd>
-                                        <div class="_inputIconWrap">
-                                            <input type="text"
-                                                   id="last"
-                                                   required
-                                                   maxlength="32"
-                                                   placeholder="Last Name"/>
-                                            <label></label>
-                                        </div>
-                                    </dd>
-                                    <dt>
-                                        <label for="dateBirth">Date of Birthday</label>
-                                    </dt>
-                                    <dd>
-                                        <div class="_inputIconWrap">
-                                            <input type="text"
-                                                   name="dateBirth"
-                                                   id="dateBirth"
-                                                   readonly
-                                                   placeholder="Date of Birthday"/>
-                                            <label></label>
-                                        </div>
-                                    </dd>
-                                    <dt>
-                                        <label for="mobile">Personal Mobile</label>
-                                    </dt>
-                                    <dd>
-                                        <div class="_inputIconWrap">
-                                            <input type="text"
-                                                   id="mobile"
-                                                   maxlength="20"
-                                                   placeholder="Personal Mobile"/>
-                                            <label></label>
-                                        </div>
-                                    </dd>
-                                    <dt>
-                                        <label for="personalEmail">Personal Email</label>
-                                    </dt>
-                                    <dd>
-                                        <div class="_inputIconWrap">
-                                            <input type="text"
-                                                   id="personalEmail"
-                                                   maxlength="48"
-                                                   placeholder="e.g.email@site.com"/>
-                                            <label></label>
-                                        </div>
-                                    </dd>
-                                    <dt>
-                                        <label for="skype">Skype</label>
-                                    </dt>
-                                    <dd>
-                                        <div class="_inputIconWrap">
-                                            <input type="text"
-                                                   id="skype"
-                                                   maxlength="64"
-                                                   placeholder="Skype"/>
-                                            <label></label>
-                                        </div>
-                                    </dd>
-                                    <dt>
-                                        <label for="LI">LinkedIn</label>
-                                    </dt>
-                                    <dd>
-                                        <div class="_inputIconWrap">
-                                            <input type="text"
-                                                   id="LI"
-                                                   placeholder="LinkedIn"
-                                                   maxlength="256"/>
-                                            <label></label>
-                                        </div>
-                                    </dd>
-                                    <dt>
-                                        <label for="FB">Facebook</label>
-                                    </dt>
-                                    <dd>
-                                        <div class="_inputIconWrap">
-                                            <input type="text"
-                                                   id="FB"
-                                                   placeholder="Facebook"
-                                                   maxlength="256"/>
-                                            <label></label>
-                                        </div>
-                                    </dd>
-                                    <dt>
-                                        <label for="relatedUsersDd">Related User</label>
-                                    </dt>
-                                    <dd class="_newSelectListWrap">
-                                        <a id="relatedUsersDd"
-                                           class="current-selected"
-                                           href="javascript:;">
-                                        </a>
-                                    </dd>
-                                </dl>
-                            </div>
-                            <div class="half-block left">
-                                <dl class="create-employee-info">
-                                    <dt>
-                                        <label for="sourceDd">Source </label>
-                                    </dt>
-                                    <dd class="_newSelectListWrap">
-                                        <a id="sourceDd"
-                                           data-id="www.rabota.ua"
-                                           class="current-selected"
-                                           href="javascript:;">www.rabota.ua
-                                        </a>
-                                    <dt>
-                                        <label for="workEmail">Work Email</label>
-                                    </dt>
-                                    <dd>
-                                        <div class="_inputIconWrap">
-                                            <input type="text"
-                                                   id="workEmail"
-                                                   class="blueback"
-                                                   maxlength="48"
-                                                   placeholder="Work Email"/>
-                                            <label></label>
-                                        </div>
-                                    </dd>
-                                    <dt>
-                                        <label for="phone">Work Phone</label>
-                                    </dt>
-                                    <dd>
-                                        <div class="_inputIconWrap">
-                                            <input type="text"
-                                                   id="phone"
-                                                   class="blueback"
-                                                   maxlength="20"
-                                                   placeholder="Work Phone"/>
-                                            <label></label>
-                                        </div>
-                                    </dd>
-                                    <dt>
-                                        <label>Username</label>
-                                    </dt>
-                                    <dd>
-                                        <span id="userName" style="color: #757575; vertical-align: sub;"></span>
-                                    </dd>
-                                </dl>
-                            </div>
-                            <div class="clearfix"></div>
+                    </div>-->
+                    <div class="_formBlock">
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="first"
+                                   autofocus
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">First Name</label>
                         </div>
-                        <div class="clearfix"></div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="last"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">Last Name</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <span class="_staticLabel">Date of Birthday</span>
+                            <input type="text"
+                                   name="dateBirth"
+                                   class="_animate"
+                                   id="dateBirth"
+                                   placeholder="Date of Birthday"
+                                   readonly/>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="mobile"
+                                   required
+                                   maxlength="20"/>
+                            <label class="_animate">Personal Mobile</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="personalEmail"
+                                   required
+                                   maxlength="48"/>
+                            <label class="_animate">Personal Email</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="skype"
+                                   required
+                                   maxlength="64"/>
+                            <label class="_animate">Skype</label>
+                        </div>
                     </div>
-                    <div class="dialog-tabs-item">
-                        <div class="formTitle">
-                            <h3 class="left">
-                                <legend>Citizenship &amp; Other Info</legend>
-                            </h3>
-                            <div class="clearfix"></div>
+                    <div class="_formBlock">
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="LI"
+                                   required
+                                   maxlength="256"/>
+                            <label class="_animate">LinkedIn</label>
                         </div>
-                        <div class="half-block left withPaddingLeft">
-                            <dl class="edit-employee-info">
-                                <dt>
-                                    <label for="nationality">Nationality</label>
-                                </dt>
-                                <dd class="_newSelectListWrap">
-                                    <a id="nationality"
-                                       data-id=""
-                                       class="current-selected"
-                                       href="javascript:;">Select
-                                    </a>
-                                </dd>
-                                <dt>
-                                    <label for="identNo">Identification №</label>
-                                </dt>
-                                <dd>
-                                    <input type="text"
-                                           name="identNo"
-                                           id="identNo"
-                                           class="blueback"
-                                           maxlength="32"
-                                           placeholder="Identification №"/>
-                                </dd>
-                                <dt>
-                                    <label for="passportNo">Passport №</label></dt>
-                                <dd>
-                                    <input type="text"
-                                           name="passportNo"
-                                           id="passportNo"
-                                           class="blueback"
-                                           maxlength="32"
-                                           placeholder="Passport №"/>
-                                </dd>
-                            </dl>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="FB"
+                                   required
+                                   maxlength="256"/>
+                            <label class="_animate">Facebook</label>
                         </div>
-                        <div class="half-block left withPaddingLeft">
-                            <dl class="edit-employee-info">
-                                <dt>
-                                    <label for="bankAccountNo">Bank Account №</label>
-                                </dt>
-                                <dd>
-                                    <input type="text"
-                                           name="bankAccountNo"
-                                           id="bankAccountNo"
-                                           class="blueback"
-                                           maxlength="32"
-                                           placeholder="Bank Account №"/>
-                                </dd>
-                                <dt>
-                                    <label for="otherId">Other Id </label>
-                                </dt>
-                                <dd>
-                                    <input type="text"
-                                           name="otherId"
-                                           id="otherId"
-                                           class="blueback"
-                                           maxlength="32"
-                                           placeholder="Other Id"/>
-                                </dd>
-                            </dl>
-                            <div class="clearfix"></div>
-                        </div>
-                        <div class="clearfix"></div>
-                        <div class="formTitle">
-                            <h3 class="left">
-                                <legend>Contact Information</legend>
-                            </h3>
-                            <div class="clearfix"></div>
-                        </div>
-                        <div class="half-block left withPaddingLeft">
-                            <dl class="edit-employee-info">
-                                <dt>
-                                    <label for="employeeCreateStreet">Street</label>
-                                </dt>
-                                <dd>
-                                    <input type="text"
-                                           name="street"
-                                           placeholder="Street"
-                                           id="employeeCreateStreet"
-                                           class="blueback homeAddress"
-                                           maxlength="60"/>
-                                </dd>
-                                <dt>
-                                    <label for="employeeCreateCity">City</label>
-                                </dt>
-                                <dd>
-                                    <input type="text"
-                                           class="blueback homeAddress"
-                                           name="city"
-                                           placeholder="City"
-                                           id="employeeCreateCity"
-                                           maxlength="60"/>
-                                </dd>
-                                <dt>
-                                    <label for="employeeCreateState">State</label>
-                                </dt>
-                                <dd>
-                                    <input type="text"
-                                           class="blueback homeAddress"
-                                           name="state"
-                                           placeholder="State"
-                                           id="employeeCreateState"
-                                           maxlength="32"/>
-                                </dd>
-                            </dl>
-                        </div>
-                        <div class="half-block left withPaddingLeft">
-                            <dl class="edit-employee-info">
-                                <dt>
-                                    <label for="employeeCreateZip">Zip Code</label>
-                                </dt>
-                                <dd>
-                                    <input type="text"
-                                           name="zip"
-                                           placeholder="Zip Code"
-                                           class="blueback homeAddress"
-                                           id="employeeCreateZip"
-                                           maxlength="32"/>
-                                </dd>
-                                <dt>
-                                    <label for="employeeCreateCountry">Country</label>
-                                </dt>
-                                <dd>
-                                    <a name="country"
-                                       class="blueback homeAddress current-selected"
-                                       id="employeeCreateCountry">Select</a>
-                                </dd>
-                            </dl>
-                            <div class="clearfix"></div>
-                        </div>
-                        <div class="clearfix"></div>
-                        <div class="formTitle">
-                            <h3 class="left">
-                                <legend>Status</legend>
-                            </h3>
-                            <div class="clearfix"></div>
-                        </div>
-                        <div class="half-block left withPaddingLeft">
-                            <dl class="edit-employee-info">
-                                <dt>
-                                    <label for="genderDd">Gender</label>
-                                </dt>
-                                <dd class="_newSelectListWrap">
-                                    <a id="genderDd"
-                                       data-id="male"
-                                       class="current-selected"
-                                       href="javascript:;">male
-                                    </a>
-                                </dd>
-                            </dl>
-                        </div>
-                        <div class="half-block left withPaddingLeft">
-                            <dl class="edit-employee-info">
-                                <dt>
-                                    <label for="maritalDd">Marital status</label>
-                                </dt>
-                                <dd class="_newSelectListWrap">
-                                    <a id="maritalDd"
-                                       data-id="married"
-                                       class="current-selected"
-                                       href="javascript:;">married
-                                    </a>
-                                </dd>
-                            </dl>
-                        </div>
-                        <div class="half-block left withPaddingLeft">
-                            <dl class="edit-employee-info">
-                                <dt>
-                                    <label for="employmentTypeDd">Employment type</label>
-                                </dt>
-                                <dd class="_newSelectListWrap">
-                                    <a id="employmentTypeDd"
-                                       data-id=""
-                                       class="current-selected"
-                                       href="javascript:;">Select
-                                    </a>
-                                </dd>
-                            </dl>
-                        </div>
-                        <div class="clearfix"></div>
-                        <div class="formTitle">
-                            <h3 class="left">Hire Date</h3>
-                            <div class="clearfix"></div>
-                        </div>
-                        <div class="clearfix"></div>
-                        <div class="formTitle">
-                            <h3 class="left">
-                                <legend>Resume</legend>
-                            </h3>
-                            <div class="area_holder">
-                                 <textarea id="internalNotes"
-                                           placeholder="Internal notes..."
-                                           maxlength="500"
-                                           class="internal_Notes opp-internal-create">
-                                 </textarea>
-                                <a href="javascript:;" class="attach_file">
-                                    <span class="icon-attach"></span>
-                                </a>
+                        <div class="_animateSelectBox">
+                            <span class="_selectTitle">Source</span>
+                            <div class="_newSelectListWrap">
+                                <a id="sourceDd"
+                                   class="current-selected"
+                                   data-id="www.rabota.ua"
+                                   href="javascript:;">Select source</a>
                             </div>
-                            <div class="clearfix"></div>
                         </div>
-                        <div class="attach-container"></div>
-                        <div class="cropImages form" style="display:none;">
-                            <div class="formTitle">
-                                <h3 class="left">Crop Images</h3>
-                                <div class="clearfix"></div>
-                            </div>
-                            <div class="image_input" style="float: left;margin-right: 20px;"></div>
-                            <img class="image_output"/>
-                            <div class="clearfix"></div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="workEmail"
+                                   required
+                                   maxlength="48"/>
+                            <label class="_animate">Work Email</label>
                         </div>
-                        <div class="clearfix"></div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="phone"
+                                   required
+                                   maxlength="20"/>
+                            <label class="_animate">Work Phone</label>
+                        </div>
+                        <div>
+                            <label>User Name</label>
+                            <span type="text"
+                                  id="userName"></span>
+                        </div>
+
+                        <!--<dl class="create-employee-info">-->
+
+                        <!--<dt>-->
+                        <!--<label>Username</label>-->
+                        <!--</dt>-->
+                        <!--<dd>-->
+                        <!--<span id="userName" style="color: #757575; vertical-align: sub;"></span>-->
+                        <!--</dd>-->
+                        <!--</dl>-->
                     </div>
-                    <div class="clearfix"></div>
-                    <div class="dialog-tabs-item" id="job">
-                        <div class="clearfix"></div>
-                        <table class="list" id="hireFireTable">
+                </div>
+                <div class="clearfix">
+                    <div class="cropImages form" style="display:none;">
+                        <div class="image_input" style="float: left;margin-right: 20px;"></div>
+                        <img class="image_output"/>
+                    </div>
+                </div>
+            </div>
+            <div class="dialog-tabs-item">
+                <div class="_formWrap">
+                    <h4 class="_titleBlueBorder">Citizenship &amp; Other Info</h4>
+                    <div class="_formBlock _equal">
+                        <div class="_animateSelectBox">
+                            <span class="_selectTitle">Nationality</span>
+                            <div class="_newSelectListWrap">
+                                <a id="nationality"
+                                   data-id=""
+                                   class="current-selected"
+                                   href="javascript:;">Select nationality</a>
+                            </div>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   name="identNo"
+                                   class="_animate"
+                                   id="identNo"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">Identification №</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   name="passportNo"
+                                   class="_animate"
+                                   id="passportNo"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">Passport №</label>
+                        </div>
+                    </div>
+                    <div class="_formBlock _equal">
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   name="bankAccountNo"
+                                   class="_animate"
+                                   id="bankAccountNo"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">Bank Account №</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   name="otherId"
+                                   class="_animate"
+                                   id="otherId"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">Other Id</label>
+                        </div>
+                    </div>
+                    <h4 class="_titleBlueBorder">Contact Information</h4>
+                    <div class="_formBlock _equal">
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   name="street"
+                                   class="_animate homeAddress"
+                                   id="employeeCreateStreet"
+                                   required
+                                   maxlength="60"/>
+                            <label class="_animate">Street</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   name="city"
+                                   class="_animate homeAddress"
+                                   id="employeeCreateCity"
+                                   required
+                                   maxlength="60"/>
+                            <label class="_animate">City</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   name="state"
+                                   class="_animate homeAddress"
+                                   id="employeeCreateState"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">State</label>
+                        </div>
+                    </div>
+                    <div class="_formBlock _equal">
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   name="zip"
+                                   class="_animate homeAddress"
+                                   id="employeeCreateZip"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">Zip Code</label>
+                        </div>
+                        <div class="_animateSelectBox">
+                            <span class="_selectTitle">Country</span>
+                            <div class="_newSelectListWrap">
+                                <a href="javascript:;"
+                                   name="country homeAddress"
+                                   class="current-selected"
+                                   id="employeeCreateCountry">Select country</a>
+                            </div>
+                        </div>
+                    </div>
+                    <h4 class="_titleBlueBorder">Status</h4>
+                    <div class="_formBlock _equal">
+                        <div class="_animateSelectBox">
+                            <span class="_selectTitle">Gender</span>
+                            <div class="_newSelectListWrap">
+                                <a href="javascript:;"
+                                   class="current-selected"
+                                   id="genderDd"
+                                   data-id="male">Male</a>
+                            </div>
+                        </div>
+                        <div class="_animateSelectBox">
+                            <span class="_selectTitle">Employment type</span>
+                            <div class="_newSelectListWrap">
+                                <a href="javascript:;"
+                                   class="current-selected"
+                                   id="employmentTypeDd"
+                                   data-id="">Select employment type</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="_formBlock _equal">
+                        <div class="_animateSelectBox">
+                            <span class="_selectTitle">Marital status</span>
+                            <div class="_newSelectListWrap">
+                                <a href="javascript:;"
+                                   class="current-selected"
+                                   id="maritalDd"
+                                   data-id="married">married</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="dialog-tabs-item" id="job">
+                <div class="_formWrap">
+                    <div class="_formBlock">
+                        <table class="stripedList _employeeJobTable" id="hireFireTable">
+                            <colgroup>
+                                <col width="60px">
+                                <col width="60px">
+                                <col width="85px">
+                                <col width="85px">
+                                <col width="70px">
+                                <col width="70px">
+                                <col width="75px">
+                                <col width="75px">
+                                <col width="97px">
+                                <col width="55px">
+                                <col width="80px">
+                            </colgroup>
                             <thead>
                             <tr>
-                                <th>X</th>
                                 <th>Status</th>
                                 <th>Date</th>
                                 <th>Job position</th>
@@ -441,7 +340,6 @@
                             <tbody>
 
                             <tr class="transfer" data-id="0" data-content="hired">
-                                <td class="remove"></td>
                                 <td>hired</td>
                                 <td class="editable date"><%= moment(new Date()).format('D MMM, YYYY') %></td>
                                 <td class="errorContent _newSelectListWrap">
@@ -497,12 +395,20 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="dialog-tabs-item">
-                        <div class="assignees-container"></div>
+                </div>
+            </div>
+            <div class="dialog-tabs-item">
+                <div class="_formWrap">
+                    <div class="_formBlock">
+                        <div id="attach-container" class="_formNotes">
+                        </div>
+                        <div class="attachments _popupAttachments"></div>
                     </div>
                 </div>
-                <div class="clearfix"></div>
             </div>
-        </fieldset>
+            <div class="dialog-tabs-item">
+                <div class="assignees-container _formWrap _innedFlexDiv"></div>
+            </div>
+        </div>
     </form>
 </div>

@@ -2,32 +2,32 @@
     <form method="post" action="" class="form " id="invoiceForm">
         <fieldset>
             <div class="inner">
-                <ul class="dialog-tabs" data-class="mainTabs">
+                <ul class="dialog-tabs _btnsBlockFixed" data-class="mainTabs">
                     <li class="right">
                         <%if(model.workflow && model.workflow.status !== 'Cancelled'){%>
                         <%if(model.workflow.status === 'New'){%>
                         <%if(model.approved){%>
                         <%if(!model.emailed){%>
-                        <button class="btn sendEmail">
+                        <button class="btn slim sendEmail">
                             <span>Send email</span>
                         </button>
                         <%} else {%>
-                        <button class="btn sendEmail">
+                        <button class="btn slim sendEmail">
                             <span>Resend email</span>
                         </button>
                         <%}%>
-                        <button class="btn newPayment">
+                        <button class="btn slim newPayment">
                             <span>Pay</span>
                         </button>
                         <%} else {%>
                         <%if(isFinancial){%>
-                        <button class="btn sendEmail" style="display: none;">
+                        <button class="btn slim sendEmail" style="display: none;">
                             <span>Send email</span>
                         </button>
-                        <button class="btn newPayment" style="display: none;">
+                        <button class="btn slim newPayment" style="display: none;">
                             <span>Pay</span>
                         </button>
-                        <button class="btn approve">
+                        <button class="btn slim approve">
                             <span>Approve</span>
                         </button>
                         <%} else {%>
@@ -36,7 +36,7 @@
                         <%}%>
                         <%} else if(model.workflow.status === 'Done'){%>
                         <% if(paidAndNotApproved) {%>
-                        <button class="btn approve">
+                        <button class="btn slim approve">
                             <span>Approve</span>
                         </button>
                         <%}%>
@@ -47,13 +47,13 @@
                         </button>
                         <%} else {%>
                         <%if(isFinancial){%>
-                        <button class="btn sendEmail" style="display: none;">
+                        <button class="btn slim sendEmail" style="display: none;">
                             <span>Send email</span>
                         </button>
-                        <button class="btn newPayment" style="display: none;">
+                        <button class="btn slim newPayment" style="display: none;">
                             <span>Pay</span>
                         </button>
-                        <button class="btn approve">
+                        <button class="btn slim approve">
                             <span>Approve</span>
                         </button>
                         <%} else {%>

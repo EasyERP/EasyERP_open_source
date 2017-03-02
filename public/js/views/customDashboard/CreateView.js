@@ -60,13 +60,11 @@ define([
             var notDiv;
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'edit-dialog',
-                title        : 'Edit Company',
-                width        : '1000',
-                buttons      : [
+                autoOpen   : true,
+                dialogClass: 'edit-dialog',
+                title      : 'Edit Company',
+                width      : '1000',
+                buttons    : [
                     {
                         text : 'Create',
                         class: 'btn blue',

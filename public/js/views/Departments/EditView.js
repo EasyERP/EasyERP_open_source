@@ -157,7 +157,7 @@ define([
         },
 
         chooseOption: function (e) {
-            $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id')).attr('data-level', $(e.target).data('level'));
+            $(e.target).parents('ul').closest('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id')).attr('data-level', $(e.target).data('level'));
         },
 
         saveItem: function () {
@@ -249,13 +249,11 @@ define([
             var b;
             var self = this;
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : false,
-                dialogClass  : 'edit-dialog',
-                width        : '950px',
-                title        : 'Edit Department',
-                buttons      : [{
+                autoOpen   : true,
+                dialogClass: 'edit-dialog',
+                width      : '800px',
+                title      : 'Edit Department',
+                buttons    : [{
                     text : 'Save',
                     class: 'btn blue',
                     click: function () {

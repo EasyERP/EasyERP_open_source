@@ -202,13 +202,11 @@ define([
                 model: this.currentModel.toJSON()
             });
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'edit-person-dialog',
-                title        : 'Edit Person',
-                width        : '900',
-                buttons      : [
+                autoOpen   : true,
+                dialogClass: 'edit-person-dialog',
+                title      : 'Edit Person',
+                width      : '900',
+                buttons    : [
                     {
                         text : 'Save',
                         class: 'btn blue',

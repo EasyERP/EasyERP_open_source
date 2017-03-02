@@ -22,15 +22,15 @@
       color: #000;
       text-shadow: none;
     }
-    .fa-plus {
-      line-height: 22px;
-      width: 22px;
-      margin-left: 5px;
-      text-align: center;
-      &:hover {
-        background-color: #f4f4f4;
-      }
-    }
+    //.fa-plus {
+    //  line-height: 22px;
+    //  width: 22px;
+    //  margin-left: 5px;
+    //  text-align: center;
+    //  &:hover {
+    //    background-color: #f4f4f4;
+    //  }
+    //}
   }
 
   &Title {
@@ -50,12 +50,19 @@
   height: 18px;
   line-height: 18px;
   font-size: 14px;
-  color: #fff;
   border-radius: 3px;
+  background-color: #cccbcb;
+
+  &.grey {
+    background-color: #93a5bd;
+    margin: 3px;
+    color: #fff;
+  }
 
   &:empty {
     display: none;
   }
+
 }
 
 .tagsListWrap {
@@ -65,23 +72,29 @@
 
   li {
     display: flex;
+    justify-content: space-between;
     margin-top: 5px;
     overflow: hidden;
 
     span {
+
       &:not(.editTag) {
-        position: relative;
+        flex-grow: 1;
         float: left;
+        position: relative;
+        max-width: 235px;
         height: 30px;
-        width: 235px;
+        padding-left: 5px;
         color: #fff;
         line-height: 30px;
-        padding-left: 5px;
-        flex-grow: 1;
+        font-family: $semibold-font-family;
+        cursor: pointer;
 
         &.selected {
+          cursor: default;
+
           &:after {
-            content: "\e903";
+            content: "\e90b";
             position: absolute;
             right: 8px;
             top: 0;
@@ -91,10 +104,11 @@
           }
         }
       }
+
       &.editTag {
-        float: right;
         height: 30px;
         width: 30px;
+        border-radius: 50%;
         text-align: center;
         line-height: 30px;
         cursor: pointer;
@@ -117,7 +131,7 @@
   display: block;
   width: 235px;
   line-height: 25px;
-  margin-top: 5px;
+  margin: 5px 0;
   padding-left: 5px;
   color: #8c8c8c !important;
 
@@ -179,22 +193,25 @@
 .tags-container {
   margin-top: 8px;
 
-  .editTags {
+  ._tagSmall {
     display: inline-block;
     vertical-align: middle;
+    float: none;
     height: 20px;
     line-height: 16px;
     margin: 5px 0;
     padding: 2px 5px;
-    cursor: pointer;
     font-size: 12px;
     border-radius: 3px;
     color: #fff;
-    border-radius: 3px;
 
     &:before {
       color: #000;
     }
+  }
+
+  ._circleIconBtn {
+    line-height: 24px;
   }
 }
 
@@ -237,11 +254,13 @@
     margin: 0 10px 10px 0;
     border-radius: 3px;
     padding: 3px 6px;
+    cursor: pointer;
 
     &.checked {
       position: relative;
+      cursor: not-allowed;
       &:after {
-        content: "\e903";
+        content: "\e907";
         position: absolute;
         left: 9px;
         top: 7px;

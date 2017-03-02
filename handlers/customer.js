@@ -19,10 +19,12 @@ var Module = function (models, event) {
     var exporter = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Customers;
     var FilterMapper = require('../helpers/filterMapper');
+    var filterMapper = new FilterMapper();
     var HistoryWriter = require('../helpers/historyWriter.js');
+    var Integration = require('../helpers/requestMagento.js')();
     var historyWriter = new HistoryWriter(models);
-    //var app = require('./app');
-    //var io = app.get('io');
+
+    var HistoryService = require('../services/history.js')(models);
 
     var Uploader = require('../services/fileStorage/index');
     var uploader = new Uploader();
@@ -78,52 +80,6 @@ var Module = function (models, event) {
         'editedBy.user'            : '$editedBy.user.login',
         'editedBy.date'            : 1
     };
-
-    /*TODO remove after filters check*/
-
-    /*function caseFilter(filter) {
-     var condition;
-     var resArray = [];
-     var filtrElement = {};
-     var key;
-     var filterName;
-     var keys = Object.keys(filter);
-     var i;
-
-     for (i = keys.length - 1; i >= 0; i--) {
-     filterName = keys[i];
-     condition = filter[filterName].value;
-     key = filter[filterName].key;
-
-     switch (filterName) {
-     case 'country':
-     filtrElement[key] = {$in: condition};
-     resArray.push(filtrElement);
-     break;
-     case 'name':
-     filtrElement[key] = {$in: condition.objectID()};
-     resArray.push(filtrElement);
-     break;
-     case 'letter':
-     filtrElement['name.first'] = new RegExp('^[' + condition.toLowerCase() + condition.toUpperCase() + '].*');
-     resArray.push(filtrElement);
-     break;
-     case 'services':
-     if (condition.indexOf('isCustomer') !== -1) {
-     filtrElement['salesPurchases.isCustomer'] = true;
-     resArray.push(filtrElement);
-     }
-     if (condition.indexOf('isSupplier') !== -1) {
-     filtrElement['salesPurchases.isSupplier'] = true;
-     resArray.push(filtrElement);
-     }
-     break;
-     // skip default
-     }
-     }
-
-     return resArray;
-     }*/
 
     this.getSuppliersForDD = function (req, res, next) {
         /**
@@ -339,9 +295,11 @@ var Module = function (models, event) {
     };
 
     function getData(req, customer, cb) {
-        var TasksSchema = models.get(req.session.lastDb, 'DealTasks', TasksSchema);
-        var Opportunity = models.get(req.session.lastDb, 'Opportunities', OpportunitySchema);
-        var Customers = models.get(req.session.lastDb, 'Customers', CustomerSchema);
+        var dbName = req.session.lastDb;
+        var TasksModel = models.get(dbName, 'DealTasks', TasksSchema);
+        var Opportunity = models.get(dbName, 'Opportunities', OpportunitySchema);
+        var Customers = models.get(dbName, 'Customers', CustomerSchema);
+        var parallelTasks;
 
         customer.opportunities = [];
         customer.contacts = [];
@@ -380,15 +338,13 @@ var Module = function (models, event) {
                 });
         }
 
-        var parallelTasks = [getOppByCustomer];
+        parallelTasks = [getOppByCustomer];
 
         if (customer.type === 'Company') {
             parallelTasks.push(getContactsByCompany);
         }
 
         async.parallel(parallelTasks, function (err, result) {
-            var parallelTasks;
-
             var opps = customer.opportunities.map(function (elem) {
                 return elem._id;
             });
@@ -400,12 +356,15 @@ var Module = function (models, event) {
             var ids = [customer._id].concat(opps, contacts);
 
             var historyOptions = {
-                req: req,
-                id : {$in: ids}
+                dbName : dbName,
+                id     : {$in: ids},
+                forNote: true
             };
 
+            var parallelTasks;
+
             function getHistoryNotes(parallelCb) {
-                historyWriter.getHistoryForTrackedObject(historyOptions, function (err, history) {
+                HistoryService.getHistoryForTrackedObject(historyOptions, function (err, history) {
                     var notes;
                     if (err) {
                         return parallelCb(err);
@@ -430,6 +389,8 @@ var Module = function (models, event) {
 
                                 name = name ? 'contact ' + name.fullName : '';
                                 break;
+
+                            // skip default
                         }
 
                         return {
@@ -442,7 +403,7 @@ var Module = function (models, event) {
 
                     parallelCb(null, notes);
 
-                }, true);
+                });
             }
 
             function getTask(parallelCb) {
@@ -457,7 +418,7 @@ var Module = function (models, event) {
                     findObject.contact = customer._id;
                     resDate = 'contactDate';
                 }
-                TasksSchema.find(findObject)
+                TasksModel.find(findObject)
                     .populate('deal', '_id name')
                     .populate('company', '_id name imageSrc')
                     .populate('contact', '_id name imageSrc')
@@ -475,7 +436,7 @@ var Module = function (models, event) {
                                 task: elem,
                                 _id : elem._id,
                                 user: elem.editedBy.user
-                            }
+                            };
                         });
                         parallelCb(null, res);
                     });
@@ -489,8 +450,11 @@ var Module = function (models, event) {
                     cb(err);
                 }
 
-                customer.notes = customer.notes.concat(results[0], results[1]);
-                customer.notes = _.sortBy(customer.notes, 'date');
+                if (customer && customer.notes) {
+                    customer.notes = customer.notes.concat(results[0], results[1]);
+                    customer.notes = _.sortBy(customer.notes, 'date');
+                }
+
                 cb(null, customer);
             });
 
@@ -509,6 +473,14 @@ var Module = function (models, event) {
 
         if (query && query.id) {
             queryObject._id = objectId(query.id);
+        }
+
+        if (query && query.isSupplier) {
+            queryObject['salesPurchases.isSupplier'] = true;
+        }
+
+        if (query && query.isCustomer) {
+            queryObject['salesPurchases.isCustomer'] = true;
         }
 
         Customers
@@ -639,7 +611,8 @@ var Module = function (models, event) {
     };
 
     this.create = function (req, res, next) {
-        var Customers = models.get(req.session.lastDb, 'Customers', CustomerSchema);
+        var dbName = req.session.lastDb;
+        var Customers = models.get(dbName, 'Customers', CustomerSchema);
         var body = req.body;
         var person = new Customers(body);
 
@@ -656,13 +629,13 @@ var Module = function (models, event) {
             }
 
             historyOptions = {
+                dbName     : dbName,
                 contentType: result.type,
                 data       : result.toJSON(),
-                req        : req,
                 contentId  : result._id
             };
 
-            historyWriter.addEntry(historyOptions, function () {
+            HistoryService.addEntry(historyOptions, function () {
                 getData(req, result.toJSON(), function (err, customer) {
                     if (err) {
                         return next(err);
@@ -753,10 +726,9 @@ var Module = function (models, event) {
         var countQuery;
         var getData;
         var getTotal;
-        var filterMapper = new FilterMapper();
 
         if (filter && typeof filter === 'object') {
-            optionsObject = filterMapper.mapFilter(filter, contentType);
+            optionsObject = filterMapper.mapFilter(filter, {contentType: contentType});
 
             if (filter && filter.services) {
                 if (filter.services.value.indexOf('isCustomer') !== -1) {
@@ -807,15 +779,17 @@ var Module = function (models, event) {
                             case ('list'):
                                 query.sort(sort);
                                 query
-                                    .select('_id createdBy editedBy salesPurchases address.country email name fullName phones.phone')
+                                    .select('_id createdBy magentoId editedBy salesPurchases address.country email name fullName phones.phone')
                                     .populate('createdBy.user', 'login')
+                                    .populate('channel', 'channelName')
                                     .populate('editedBy.user', 'login');
                                 break;
                             case ('thumbnails'):
                                 query.sort(sort);
                                 query
-                                    .select('_id name address.country salesPurchases fullName company')
-                                    .populate('company', '_id name');
+                                    .select('_id name email magentoId address.country salesPurchases fullName company')
+                                    .populate('company', '_id name')
+                                    .populate('channel', 'channelName');
                                 break;
                             // skip default
                         }
@@ -828,6 +802,7 @@ var Module = function (models, event) {
                                     .select('_id editedBy createdBy salesPurchases name fullName email phones.phone phones.mobile address.country')
                                     .populate('salesPurchases.salesPerson', '_id name')
                                     .populate('salesPurchases.salesTeam', '_id name')
+                                    .populate('channel', 'channelName')
                                     .populate('createdBy.user', 'login')
                                     .populate('editedBy.user', 'login');
                                 break;
@@ -835,6 +810,7 @@ var Module = function (models, event) {
                                 query.sort(sort);
                                 query
                                     .select('_id name fullName company address.country salesPurchases')
+                                    .populate('channel', 'channelName')
                                     .populate('company', '_id name address');
                                 break;
                             // skip default
@@ -957,6 +933,7 @@ var Module = function (models, event) {
         var remove = req.headers.remove;
         var data = req.body;
         var obj;
+        var i;
 
         if (data.notes && data.notes.length !== 0 && !remove) {
             obj = data.notes[data.notes.length - 1];
@@ -968,6 +945,15 @@ var Module = function (models, event) {
                 obj.user.login = req.session.uName;
             }
             data.notes[data.notes.length - 1] = obj;
+        }
+
+        //for re-converting date in actual format
+        if (data.notes && data.notes.length) {
+            i = 0;
+
+            for (i; i < data.notes; i++) {
+                data.notes[i].date = new Date(data.notes[i].date);
+            }
         }
 
         data.editedBy = {
@@ -1046,13 +1032,15 @@ var Module = function (models, event) {
     };
 
     this.udateOnlySelectedFields = function (req, res, next) {
-        var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
+        var dbName = req.session.lastDb;
+        var Model = models.get(dbName, 'Customers', CustomerSchema);
         var data = req.body;
         var _id = req.params.id;
         var fileName = data.fileName;
         var updateObject;
         var newDirname;
         var obj;
+        var i;
 
         if (data.notes && data.notes.length !== 0) {
             obj = data.notes[data.notes.length - 1];
@@ -1060,7 +1048,7 @@ var Module = function (models, event) {
             if (!obj._id) {
                 obj._id = mongoose.Types.ObjectId();
             }
-            obj.date = new Date();
+            // obj.date = new Date();
 
             if (!obj.user) {
                 obj.user = {};
@@ -1068,6 +1056,15 @@ var Module = function (models, event) {
                 obj.user.login = req.session.uName;
             }
             data.notes[data.notes.length - 1] = obj;
+        }
+
+        //for re-converting date in actual format
+        if (data.notes && data.notes.length) {
+            i = 0;
+
+            for (i; i < data.notes; i++) {
+                data.notes[i].date = new Date(data.notes[i].date);
+            }
         }
 
         updateObject = data;
@@ -1082,6 +1079,7 @@ var Module = function (models, event) {
             var osType = (os.type().split('_')[0]);
             var path;
             var dir;
+            var resJson;
             var historyOptions;
             if (err) {
                 return next(err);
@@ -1130,15 +1128,26 @@ var Module = function (models, event) {
                 historyOptions = {
                     contentType: result.type,
                     data       : data,
-                    req        : req,
+                    dbName     : dbName,
                     contentId  : result._id
                 };
 
-                historyWriter.addEntry(historyOptions, function () {
-                    getData(req, result.toJSON(), function (err, customer) {
+                HistoryService.addEntry(historyOptions, function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    if (result && result.length) {
+                        resJson = result[0];
+                    } else {
+                        resJson = result;
+                    }
+
+                    getData(req, resJson, function (err, customer) {
                         if (err) {
                             return next(err);
                         }
+
                         res.status(200).send(customer);
                     });
                 });
@@ -1217,8 +1226,9 @@ var Module = function (models, event) {
     };
 
     this.remove = function (req, res, next) {
-        var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
-        var Opportunity = models.get(req.session.lastDb, 'Opportunities', OpportunitySchema);
+        var dbName = req.session.lastDb;
+        var Model = models.get(dbName, 'Customers', CustomerSchema);
+        var Opportunity = models.get(dbName, 'Opportunities', OpportunitySchema);
         var _id = req.params.id;
         var deleteHistory = req.query.deleteHistory;
 
@@ -1242,7 +1252,7 @@ var Module = function (models, event) {
                     return next(err);
                 }
                 if (deleteHistory) {
-                    historyWriter.deleteHistoryById(req, {contentId: _id});
+                    HistoryService.deleteHistory({contentId: _id, dbName: dbName});
                 }
 
                 res.status(200).send({success: 'customer removed'});
@@ -1252,7 +1262,8 @@ var Module = function (models, event) {
     };
 
     this.bulkRemove = function (req, res, next) {
-        var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
+        var dbName = req.session.lastDb;
+        var Model = models.get(dbName, 'Customers', CustomerSchema);
         var body = req.body || {ids: []};
         var deleteHistory = req.query.deleteHistory;
         var ids = body.ids;
@@ -1262,7 +1273,7 @@ var Module = function (models, event) {
                 return next(err);
             }
             if (deleteHistory) {
-                historyWriter.deleteHistoryById(req, {contentId: {$in: ids}});
+                HistoryService.deleteHistory({contentId: {$in: ids}, dbName: dbName});
             }
 
             res.status(200).send(removed);
@@ -1276,10 +1287,9 @@ var Module = function (models, event) {
         var type = req.query.type;
         var filterObj = {};
         var options;
-        var filterMapper = new FilterMapper();
 
         if (filter && typeof filter === 'object') {
-            filterObj = filterMapper.mapFilter(filter, 'Customers');
+            filterObj = filterMapper.mapFilter(filter, {contentType: 'Customers'});
 
             if (filter && filter.services) {
                 if (filter.services.value.indexOf('isCustomer') !== -1) {
@@ -1362,10 +1372,9 @@ var Module = function (models, event) {
         var type = req.query.type;
         var filterObj = {};
         var options;
-        var filterMapper = new FilterMapper();
 
         if (filter && typeof filter === 'object') {
-            filterObj = filterMapper.mapFilter(filter, 'Customers');
+            filterObj = filterMapper.mapFilter(filter, {contentType: 'Customers'});
 
             if (filter && filter.services) {
                 if (filter.services.value.indexOf('isCustomer') !== -1) {

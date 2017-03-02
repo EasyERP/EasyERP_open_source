@@ -69,11 +69,25 @@ define([
             var $target = $(e.target);
             var property = $target.attr('id').replace('_', '.');
             var value = $target.val();
+            var newProperty;
+
 
             $target.closest('.propertyFormList').addClass('active');
 
             if (property === 'social.LI') {
                 value = value.replace('linkedin', '[]');
+            }
+
+            if (property === 'social.LI' || property === 'social.FB') {
+                newProperty = property.slice(-2, property.length);
+
+                if (!this.modelChanged.social) {
+                    this.modelChanged.social = {};
+                }
+
+                this.modelChanged.social[newProperty] = value;
+            } else {
+                this.modelChanged[property] = value;
             }
 
             this.modelChanged[property] = value;
@@ -173,6 +187,14 @@ define([
             var changedListAttr = _.intersection(Object.keys(changedAttrs), changedAttributesForEvent);
             var sendEvent = !!(changedListAttr.length);
 
+            if (changedAttrs.social && Object.keys(changedAttrs).indexOf('social.FB') >= 0) {
+                delete changedAttrs['social.FB'];
+            }
+
+            if (changedAttrs.social && Object.keys(changedAttrs).indexOf('social.LI') >= 0) {
+                delete changedAttrs['social.LI'];
+            }
+
             this.formModel.save(changedAttrs, {
                 patch  : true,
                 wait   : true,
@@ -209,7 +231,8 @@ define([
                         }
                     }
                 },
-                error  : function (model, response) {
+
+                error: function (model, response) {
                     if (response) {
                         App.render({
                             type   : 'error',
@@ -401,20 +424,28 @@ define([
                 modal   : true,
                 title   : 'Convert to opportunity',
                 buttons : {
-                    'Create opportunity': function () {
-                        var createCustomer = ($('select#createCustomerOrNot option:selected').val()) ? true : false;
+                    save: {
+                        text : 'Create opportunity',
+                        class: 'btn blue',
+                        click: function () {
+                            var createCustomer = ($('#createCustomerOrNot input:checked').val()) ? true : false;
 
-                        that.saveDeal({
-                            isOpportunitie: true,
-                            isConverted   : true,
-                            convertedDate : new Date(),
-                            createCustomer: createCustomer
-                        }, 'converted');
+                            that.saveDeal({
+                                isOpportunitie: true,
+                                isConverted   : true,
+                                convertedDate : new Date(),
+                                createCustomer: createCustomer
+                            }, 'converted');
 
+                        }
                     },
 
-                    Cancel: function () {
-                        $(this).dialog('close');
+                    cancel: {
+                        text : 'Cancel',
+                        class: 'btn',
+                        click: function () {
+                            $(this).dialog('close');
+                        }
                     }
                 },
 
@@ -428,7 +459,7 @@ define([
                 changeMonth: true,
                 changeYear : true,
                 onSelect   : function (dateText) {
-                    self.modelChanged['expectedClosing'] = new Date(dateText);
+                    self.modelChanged.expectedClosing = new Date(dateText);
                     $(this).closest('.propertyFormList').addClass('active');
                     self.showButtons();
                 }
@@ -443,7 +474,7 @@ define([
                 maxDate    : '-18y',
                 minDate    : null,
                 onSelect   : function (dateText) {
-                    self.modelChanged['dateBirth'] = new Date(dateText);
+                    self.modelChanged.dateBirth = new Date(dateText);
                     $(this).closest('.propertyFormList').addClass('active');
                     self.showButtons();
                 }
@@ -463,7 +494,8 @@ define([
             $thisEl.find('.attachments').append(
                 new AttachView({
                     model      : this.formModel,
-                    contentType: 'Opportunities'
+                    contentType: 'Opportunities',
+                    noteView   : this.editorView
                 }).render().el
             );
 

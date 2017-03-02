@@ -14,7 +14,7 @@
                 </div>
                 <div class="noteType task noteTopBox clearfix" id="<%= val.task._id%>">
                     <span class="noteUserTitle"><b><%= login %></b> created task</span>
-                    <p class="dateNote"><%=val.date%></p>
+                    <p class="dateNote"><%=val.date.format('DD MMM, YYYY, H:mm:ss')%></p>
                 </div>
                 <div class="noteContent"><a href="javascript:;" ><%=val.task.description  %></a></div>
                 <div class="assignedTo">Assigned To <b><%=val.task && val.task.assignedTo ? val.task.assignedTo.fullName : ''%></b></div>
@@ -26,7 +26,7 @@
                 </div>
                 <div class="history_body">
                     <div class="history_changed singleNote clearfix">
-                        <span class="dateNote"><%=val.date%></span>
+                        <span class="dateNote"><%=val.date.format('DD MMM, YYYY, H:mm:ss')%></span>
                         <div class="changed_field">
                             <%if (val.history.prevValue){%>
                             <span class="changedFieldName"><b><%= login %></b> changed <%= val.name ? 'on ' + val.name + ' : ' : '' %><b><%= val.history.changedField %></b></span>
@@ -46,7 +46,7 @@
                 </div>
                 <div class="noteTopBox clearfix">
                     <span class="noteType"><b><%=login%></b> left a Note</span>
-                    <span class="dateNote"><%=val.date%></span>
+                    <span class="dateNote"><%=val.date.format('DD MMM, YYYY, H:mm:ss')%></span>
                 </div>
                 <%}%>
 

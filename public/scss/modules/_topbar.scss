@@ -1,6 +1,6 @@
 .topbarHolder {
   position: fixed;
-  height: 40px;
+  height: $topbarHeight;
   width: 100%;
   background-color: #2b3643;
   z-index: 300;
@@ -9,7 +9,7 @@
     float: left;
     display: block;
     width: 200px;
-    height: 40px;
+    height: $topbarHeight;
     padding-left: 39px;
     padding-right: 20px;
     box-sizing: border-box;
@@ -38,6 +38,7 @@
       width: 19px;
       background: #a7b5c6;
       transition: all ease .3s;
+
       &:first-child {
         top: 2px;
       }
@@ -87,9 +88,6 @@
       float: left;
       margin-top: -5px;
       margin-right: 5px;
-      height: 29px;
-      border-radius: 50%;
-      display: inline-block;
     }
     .userName {
       display: inline-block;
@@ -154,6 +152,15 @@
   }
 }
 
+.iconEmployee {
+  height: 29px;
+  width: 29px;
+  border-radius: 50%;
+  display: inline-block;
+  font-size: 13px;    // if img is broken
+  text-align: center; // if img is broken
+}
+
 .top-bar {
   &:empty {
     display: none !important;
@@ -161,10 +168,55 @@
 }
 
 #top-bar {
+  flex-shrink: 0;
+  position: relative;
+  height: $topbarHeight; // don't use min-height, it's important to prevent layout braking
+  border-bottom: 1px solid #eaeaea;
+
+  &.banned {
+    border-bottom: 0
+  }
+
+  h3 {
+    line-height: 40px;
+    padding: 0 20px;
+    color: #666666  !important;
+    font-family: $semibold-font-family;
+    font-weight: normal;
+    float: left;
+    overflow: visible;
+  }
+
+  > .btnsBlock {
+    margin-top: 6px;
+
+    > * {
+      margin-right: 7px;
+    }
+  }
+
+  ._filterDropDownWrap {
+    margin-top: 7px;
+  }
+
+  #reconcileDate {
+    color: #333;
+  }
 
   #createBtnHolder,
   .createBtnHolder {
-    margin-top: 6px;
+    margin-top: 7px;
+  }
+
+  ._breadcrunmbs {
+    #createBtnHolder,
+    .createBtnHolder {
+      margin-top: 0;
+
+      .btn {
+        margin-right: 0;
+      }
+    }
   }
 
   #createBtnHolder {
@@ -178,8 +230,11 @@
     }
   }
 
-  ._filterDropDownWrap {
-    margin-top: 7px;
+  ._breadcrunmbs + #createBtnHolder {
+    position: absolute;
+    right: 8px;
+    top: 7px;
+    margin-top: 0;
   }
 }
 
@@ -194,7 +249,7 @@
   color: #fff !important;
   text-align: center;
   transition: all .3s;
-  border-radius: 3px;
+  //border-radius: 3px;
 
   &:hover {
     text-decoration: none;
@@ -203,4 +258,8 @@
   &:after {
     content: 'Delete';
   }
+}
+
+#top-bar-payments {
+  @extend %clearfix;
 }

@@ -481,19 +481,19 @@ define([
                     return false;
                 }
             } /*else if (isMonth) {
-                if (this.startMonth === this.endMonth) {
-                    return false;
-                }
+             if (this.startMonth === this.endMonth) {
+             return false;
+             }
 
-                el.append('<ul class="newSelectList"><li>' + this.startMonth + '</li><li>' + this.endMonth + '</li></ul>');
+             el.append('<ul class="newSelectList"><li>' + this.startMonth + '</li><li>' + this.endMonth + '</li></ul>');
 
-            } else if (isYear) {
-                if (this.startYear === this.endYear) {
-                    return false;
-                }
+             } else if (isYear) {
+             if (this.startYear === this.endYear) {
+             return false;
+             }
 
-                el.append('<ul class="newSelectList"><li>' + this.startYear + '</li><li>' + this.endYear + '</li></ul>');
-            }*/ else {
+             el.append('<ul class="newSelectList"><li>' + this.startYear + '</li><li>' + this.endYear + '</li></ul>');
+             }*/ else {
                 input.removeClass('editing');
                 input.addClass('edited');
 
@@ -661,13 +661,11 @@ define([
             });
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : false,
-                title        : 'Edit Project',
-                dialogClass  : 'edit-dialog',
-                width        : '900px',
-                buttons      : {
+                autoOpen   : true,
+                title      : 'Edit Project',
+                dialogClass: 'edit-dialog',
+                width      : '900px',
+                buttons    : {
                     save: {
                         text : 'Save',
                         class: 'btn',

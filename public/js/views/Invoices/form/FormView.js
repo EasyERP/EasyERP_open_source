@@ -66,10 +66,6 @@ define([
             App.stopPreload();
         },
 
-        clickInput: function () {
-            $('.input-file .inputAttach').click();
-        },
-
         newPayment: function (e) {
             var self = this;
             var mid = this.forSales ? 56 : 109;

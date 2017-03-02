@@ -1,7 +1,7 @@
 <div class="_journalentryForm form">
     <div class="topInputHolder">
         <div class="ribbon">
-            <div class="ribbon-inner ribbon-grey"><%=model.workflow.name%></div>
+            <div class="ribbon-inner ribbon-grey"><%=model.workflow ? model.workflow.name : ''%></div>
         </div>
         <h3> «<%=model.name%>» in «<%=model.project.name%>»</h3>
         <h5>From <%=model.tCardMinDate%> to <%=model.tCardMaxDate%></h5>
@@ -14,44 +14,44 @@
         <div>
             <div class="half-block right">
                 <dl class="opp-info">
-                   <!-- <dt><label for="status" class="semiBold">Status</label></dt>
+                   <!-- <dt><label for="status" class="fontfontSemiBold">Status</label></dt>
                     <dd>
                         <span id="status"><%=model.workflow.name%></span>
                     </dd>-->
-                  <!--  <dt><label for="type" class="semiBold">Type</label></dt>
+                  <!--  <dt><label for="type" class="fontfontSemiBold">Type</label></dt>
                     <dd>
                         <span id="type"><%=model.type%></span>
                     </dd>-->
                     <%if (model.quotation) {%>
-                    <dt><label for="Quotation_Order" class="semiBold">Source <%=model.quotation.isOrder ? 'Order' : 'Quotation'%></label></dt>
+                    <dt><label for="Quotation_Order" class="fontSemiBold">Source <%=model.quotation.isOrder ? 'Order' : 'Quotation'%></label></dt>
                     <dd>
                         <span id="Quotation_Order"><%=model.quotation.name%></span>
                     </dd>
                     <% } %>
                     <%if (model.invoice && model.invoice._id) {%>
-                    <dt><label for="Source_Invoice" class="semiBold">Source Invoice</label></dt>
+                    <dt><label for="Source_Invoice" class="fontSemiBold">Source Invoice</label></dt>
                     <dd>
                         <span id="Source_Invoice"><%=model.invoice.name%></span>
                     </dd>
                     <% } %>
-                   <!-- <dt><label for="countEmploy" class="semiBold">Count of Employees</label></dt>
+                   <!-- <dt><label for="countEmploy" class="fontfontSemiBold">Count of Employees</label></dt>
                     <dd>
                         <span id="countEmploy"><%=model.revenue.length%></span>
                     </dd>-->
-                    <dt><label for="adr" class="semiBold">ADR</label></dt>
+                    <dt><label for="adr" class="fontSemiBold">ADR</label></dt>
                     <dd>
                         <span id="adr"><%=adr%> </span>
                     </dd>
-                    <dt><label for="cost" class="semiBold">Cost</label></dt>
+                    <dt><label for="cost" class="fontSemiBold">Cost</label></dt>
                     <dd>
                         <span id="cost"
                               class="money"><%= currencySplitter((model.costTotal/100).toFixed(2)) || 0%></span>
                     </dd>
-                    <dt><label for="revenue" class="semiBold">Revenue</label></dt>
+                    <dt><label for="revenue" class="fontSemiBold">Revenue</label></dt>
                     <dd>
                         <span id="revenue" class="money"><%= currencySplitter((model.revenueTotal/100).toFixed(2)) || 0%></span>
                     </dd>
-                    <dt><label for="profit" class="semiBold">Profit</label></dt>
+                    <dt><label for="profit" class="fontSemiBold">Profit</label></dt>
                     <dd>
                         <span id="profit"
                               class="money"><%= currencySplitter((model.profitTotal/100).toFixed(2)) || 0%></span>

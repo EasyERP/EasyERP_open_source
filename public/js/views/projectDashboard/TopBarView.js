@@ -7,10 +7,11 @@ define([
     'common'
 ], function (Backbone, $, _, TopBarTemplate, Custom, Common) {
     var TopBarView = Backbone.View.extend({
-        el         : '#top-bar',
-        contentType: 'Dashboard',
-        actionType : null, // Content, Edit, Create
-        template   : _.template(TopBarTemplate),
+        el           : '#top-bar',
+        contentType  : 'Dashboard',
+        contentHeader: 'Dashboard',
+        actionType   : null, // Content, Edit, Create
+        template     : _.template(TopBarTemplate),
 
         events: {
             'click #top-bar-deleteBtn' : 'deleteEvent',

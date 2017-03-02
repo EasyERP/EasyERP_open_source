@@ -2,11 +2,11 @@
 //------ font variables ------
 $baseFontSize: 16;
 
-$fontLight: 'OpenSans Light', sans-serif, Verdana;
-$fontRegular: 'OpenSans Regular', sans-serif, Verdana;
-$fontSemiBold: 'OpenSans SemiBold', sans-serif, Verdana;
-$fontBold: 'OpenSans Bold', sans-serif, Verdana;
-$fontExtraBold: 'OpenSans ExtraBold', sans-serif, Verdana;
+$fontLight     : 'OpenSans Light', sans-serif, Verdana;
+$fontRegular   : 'OpenSans Regular', sans-serif, Verdana;
+$fontSemiBold  : 'OpenSans SemiBold', sans-serif, Verdana;
+$fontBold      : 'OpenSans Bold', sans-serif, Verdana;
+$fontExtraBold : 'OpenSans ExtraBold', sans-serif, Verdana;
 
 $iconFont: 'erp-icons';
 
@@ -93,3 +93,9 @@ $cols           : 12;
 $small-spacing  : 4px;
 $medium-spacing : 16px;
 $large-spacing  : 24px;
+
+// Elements variables
+$paginationHeight: 24px;
+$topbarHeight: 40px;
+$subTopbar: 40px;
+$searchByLetterBlockHeight: 40px;

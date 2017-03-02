@@ -143,7 +143,7 @@ module.exports = function (models, event) {
              "wTracks": [
 
              ],
-             "type": "Not Quoted",
+             "type": "Not Ordered",
              "workflow": "56337c705d49d8d6537832eb",
              "name": "New Sprint"
            }

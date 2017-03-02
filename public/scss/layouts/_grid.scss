@@ -223,3 +223,8 @@ $j: 1;
 .bsReset {
   padding: 0 !important;
 }
+@media (max-width: $medium-screen) {
+  .hide-xs {
+    display: none;
+  }
+}

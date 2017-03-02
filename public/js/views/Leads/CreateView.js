@@ -70,8 +70,10 @@ define([
                     if (customer.type === 'Person') {
                         context.$el.find('#first').val(customer.name.first);
                         context.$el.find('#last').val(customer.name.last);
-                        context.$el.find('#dateBirth').val(customer.dateBirth ? moment(new Date(customer.dateBirth)).format('DD MMM, YYYY') : '');
+                        context.$el.find('#dateBirthOnCreate').val(customer.dateBirth ? moment(new Date(customer.dateBirth)).format('DD MMM, YYYY') : '');
                         context.$el.find('#email').val(customer.email);
+                        context.$el.find('#skype').val(customer.skype);
+                        context.$el.find('#jobPosition').val(customer.jobPosition);
                         context.$el.find('#phone').val(customer.phones.phone);
                         context.$el.find('#LI').val(customer.social.LI.replace('[]', 'linkedin'));
                     }
@@ -88,7 +90,7 @@ define([
         },
 
         chooseOption: function (e) {
-            var holder = $(e.target).parents('._modalSelect').find('.current-selected');
+            var holder = $(e.target).parents('._newSelectListWrap').find('.current-selected');
             holder.text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
             if (holder.attr('id') === 'customerDd') {
                 this.selectCustomer($(e.target).attr('id'));
@@ -96,19 +98,6 @@ define([
             if (holder.attr('id') === 'companyDd') {
                 this.selectCompany($(e.target).attr('id'));
             }
-        },
-
-        changeTab: function (e) {
-            var n;
-            var dialogHolder;
-            var holder = $(e.target);
-
-            holder.closest('.dialog-tabs').find('a.active').removeClass('active');
-            holder.addClass('active');
-            n = holder.parents('.dialog-tabs').find('li').index(holder.parent());
-            dialogHolder = $('.dialog-tabs-items');
-            dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
-            dialogHolder.find('.dialog-tabs-item').eq(n).addClass('active');
         },
 
         changeWorkflows: function () {
@@ -182,7 +171,7 @@ define([
                 afterPage = pageSplited.split('/')[1];
                 location = location.split('/p=')[0] + '/p=1' + '/' + afterPage;
             }
-            $thisEl.find('._modalSelect').find('.address').each(function () {
+            $thisEl.find('._animateInputBox').find('.address').each(function () {
                 var el = $(this);
                 address[el.attr('name')] = $.trim(el.val() || el.text());
             });
@@ -196,15 +185,16 @@ define([
 
             });
             this.model.save({
-                name            : name,
-                skype           : skype,
-                social          : {
+                name  : name,
+                skype : skype,
+                social: {
                     LI: LI.replace('linkedin', '[]'),
                     FB: FB
                 },
+
                 jobPosition     : jobPosition,
                 dateBirth       : dateBirth,
-                company         : company,
+                company         : company || null,
                 campaign        : $('#campaignDd').attr('data-id'),
                 source          : source,
                 customer        : idCustomer || null,
@@ -232,6 +222,7 @@ define([
 
                 whoCanRW: whoCanRW
             }, {
+                wait   : true,
                 headers: {
                     mid: mid
                 },
@@ -259,13 +250,11 @@ define([
             var notDiv;
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'edit-dialog',
-                title        : 'Edit Company',
-                width        : '1000',
-                buttons      : [
+                autoOpen   : true,
+                dialogClass: 'edit-dialog',
+                title      : 'Edit Company',
+                width      : '500',
+                buttons    : [
                     {
                         text : 'Create',
                         class: 'btn blue',
@@ -319,6 +308,7 @@ define([
 
                 self.responseObj['#salesPerson'] = employees;
             });
+
             this.$el.find('#dateBirthOnCreate').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
@@ -331,7 +321,8 @@ define([
             this.$el.find('#expectedClosingDate').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
-                changeYear : true
+                changeYear : true,
+                minDate    : 0
             });
 
             this.delegateEvents(this.events);

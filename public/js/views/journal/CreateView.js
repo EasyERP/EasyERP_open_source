@@ -23,11 +23,10 @@ define([
 
         keyDownHandler: function (e) {
             switch (e.which) {
-                case 27:
-                    this.hideDialog();
-                    break;
                 case 13:
                     this.saveItem();
+                    e.stopPropagation();
+                    e.preventDefault();
                     break;
                 default:
                     break;
@@ -38,8 +37,8 @@ define([
             var $target = $(e.target);
             var id = $target.attr('id');
             var text = $target.text();
-            var $ul = $target.closest('ul');
-            var $element = $ul.closest('dd').find('a');
+            var $ul = $target.parent('ul');
+            var $element = $ul.closest('a.current-selected');
 
             $element.attr('data-id', id);
             $element.text(text);
@@ -56,7 +55,7 @@ define([
             var data = {};
 
             data.name = thisEl.find('#nameInput').val();
-            data.transaction = thisEl.find('#typeDd').attr('data-id');
+            data.transaction = $.trim(thisEl.find('#typeDd').attr('data-id'));
             data.debitAccount = thisEl.find('#debitDd').attr('data-id');
             data.creditAccount = thisEl.find('#creditDd').attr('data-id');
 
@@ -115,12 +114,11 @@ define([
             this.hideSaveCancelBtns();
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'create-dialog',
-                title        : 'Create Journal',
-                buttons      : [
+                autoOpen   : true,
+                width      : '500px',
+                dialogClass: 'create-dialog',
+                title      : 'Create Journal',
+                buttons    : [
                     {
                         id   : 'createBtn',
                         class: 'btn blue',
@@ -140,16 +138,16 @@ define([
             populate.get('#creditDd', '/chartOfAccount/getForDd', {}, 'name', this, true, true);
 
             this.responseObj['#typeDd'] = [{
-                _id : 'Invoice',
+                _id : 'invoice',
                 name: 'Invoice'
             }, {
-                _id : 'Payment',
+                _id : 'payment',
                 name: 'Payment'
             }, {
-                _id : 'Accrual',
+                _id : 'accrual',
                 name: 'Accrual'
             }, {
-                _id : 'WriteOff',
+                _id : 'writeoff',
                 name: 'WriteOff'
             }];
 

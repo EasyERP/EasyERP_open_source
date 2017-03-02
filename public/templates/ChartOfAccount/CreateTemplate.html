@@ -1,34 +1,59 @@
-<div class="form-holder">
-    <div class="popupTitle">Chart of Account</div>
+<div class="form-holder _newForm">
     <form method="post" action="" id="createChartOfAccount" class="form">
-        <dl class="journal-info">
-            <div>
-                <dt><label>Account Type</label></dt>
-                <dd class="_newSelectListWrap">
-                    <a id="accountTypeDd" class="current-selected" href="javascript:;">Select</a>
-                </dd>
-
-                <dt><label for="nameInput">Account Name</label></dt>
-                <dd>
-                    <input id="nameInput" type="text" maxlength="25">
-                </dd>
-
-                <dd class="hidden _subCheckBlock" id="subCheck">
-                    <input type="checkbox" id="subAccount"/><label for="subAccount">Make this a sub-account</label>
-                </dd>
-
-                <div class="subAccount hidden">
-                    <dt><label>Account</label></dt>
-                    <dd class="_newSelectListWrap">
-                        <a id="chartsDd" class="current-selected" href="javascript:;">Select</a>
-                    </dd>
+        <h4 class="_dialogMainTitle">Chart of Accounts</h4>
+        <div class="_formWrap">
+            <div class="_formBlock">
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Account Category</span>
+                    <div class="_newSelectListWrap">
+                        <a id="accountsCategory"
+                           class="current-selected">Select account category</a>
+                    </div>
+                </div>
+                <div class="_animateInputBox">
+                    <input type="text"
+                           class="_animate"
+                           id="nameInput"
+                           required
+                           maxlength="45"/>
+                    <label class="_animate">Account Name</label>
                 </div>
 
-                <dt><label for="code">Account Code</label></dt>
-                <dd>
-                    <input id="code" type="text" maxlength="25">
-                </dd>
+                <div class="_formRow hidden" id="budgeted">
+                    <label class="_animatedCheckbox">
+                        <input id="budgeted"
+                               type="checkbox"
+                               checked>
+                        <span></span>
+                    </label>
+                    <label for="budgeted">Is Budgeted</label>
+                </div>
+
+               <!-- <div class="_formRow hidden" id="subCheck">
+                    <label class="_animatedCheckbox">
+                        <input id="subAccount"
+                               type="checkbox">
+                        <span></span>
+                    </label>
+                    <label for="subAccount">Make this a sub-account</label>
+                </div>-->
+
+                <!--<div class="_animateSelectBox">
+                    <span class="_selectTitle">Account</span>
+                    <div class="_newSelectListWrap">
+                        <a id="chartsDd"
+                           class="current-selected">Select account</a>
+                    </div>
+                </div>-->
+                <div class="_animateInputBox">
+                    <input type="text"
+                           class="_animate"
+                           id="code"
+                           required
+                           maxlength="25"/>
+                    <label class="_animate">Account Code</label>
+                </div>
             </div>
-        </dl>
+        </div>
     </form>
 </div>

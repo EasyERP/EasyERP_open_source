@@ -25,7 +25,7 @@ define([
             'change #currentShowPage'                                      : 'showPage',
             'click .checkbox'                                              : 'checked',
             'click .list td:not(.notForm, .checkbox)'                      : 'gotoForm',
-            'mouseover .currentPageList'                                   : 'showPagesPopup'
+            // 'click .list > tbody > tr > td:not(.notForm, .checkbox)'       : 'gotoForm'
         },
 
         initialize: function (options) {
@@ -43,7 +43,6 @@ define([
             this.makeRender(options);
             this.render();
         },
-
 
         // to remove zombies was needed for event after recieveInvoice on projectInfo
         remove: function () {
@@ -71,8 +70,9 @@ define([
 
             $holder.append(itemView.render());
 
-            if (newModels.totalValue) {
-                $holder.find('#totalDebit').text(helpers.currencySplitter((newModels.totalValue / 100).toFixed(2)));
+            if (!isNaN(parseFloat(newModels.totalDebit))) {
+                $holder.find('#totalDebit').text(helpers.currencySplitter((newModels.totalDebit / 100).toFixed(2)));
+                $holder.find('#totalCredit').text(helpers.currencySplitter((newModels.totalCredit / 100).toFixed(2)));
             }
 
             itemView.undelegateEvents();
@@ -115,7 +115,6 @@ define([
         },
 
         // added methods for edit in listView
-
         savedNewModel: function (modelObject) {
             var savedRow = this.$el.find('#false');
             var modelId;
@@ -387,7 +386,7 @@ define([
         gotoForm: function (e) {
             var id = $(e.target).closest('tr').data('id');
 
-            if (!this.formUrl) {
+            if (!this.formUrl || $(e.target).closest('tfoot').length) {
                 return;
             }
 

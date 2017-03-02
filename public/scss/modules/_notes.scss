@@ -92,9 +92,9 @@
   }
 }
 
-.addTaskTitle {
-  padding: 5px 0;
-}
+//.addTaskTitle {
+//  padding: 5px 0;
+//}
 
 .noteWrapper {
   width: 100%;
@@ -185,6 +185,28 @@
     margin-top: 6px;
     background-color: inherit;
 
+    &.createHolder {
+      .area_holder {
+        textarea {
+          border-top: 0;
+          //border-radius: 0 3px 3px 3px;
+        }
+
+        textarea::-webkit-input-placeholder {
+          color: #a0a9b4 !important;
+        }
+        textarea:-moz-placeholder {
+          color: #a0a9b4 !important;
+        }
+        textarea::-moz-placeholder {
+          color: #a0a9b4 !important;
+        }
+        textarea:-ms-input-placeholder {
+          color: #a0a9b4 !important;
+        }
+      }
+    }
+
     label {
       color: #555;
       display: none;
@@ -236,10 +258,9 @@
       box-sizing: border-box;
       @extend .defaultBorRad;
 
-      &:focus {
-        box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
-        border: 1px solid #7f7f80;//$thin-border $border-color-main;
-      }
+      //&:focus {
+      //  box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
+      //}
 
       &.noteText {
         border-radius: 0 0 3px 3px;
@@ -249,8 +270,7 @@
     .area_holder {
       textarea {
         height: 130px;
-        border-radius: 0 3px 3px 3px;
-        border-top: 0;
+        border-radius: 0;
       }
     }
 
@@ -281,8 +301,9 @@
 
       textarea {
         resize: none;
-        color: $input-text-color;
+        color: $black;
       }
+
 
       input {
         display: block;
@@ -328,7 +349,7 @@
   .timeNote {
     .itemCircleWrap {
       position: absolute;
-      left: 120px;
+      left: -20px;
       top: 0;
       height: 100%;
 
@@ -346,6 +367,7 @@
       }
     }
   }
+
   .itemCircle {
     flex-shrink: 0;
     position: absolute;
@@ -365,14 +387,17 @@
       color: #1aaf5d;
     }
   }
+
   .timeNote {
 
     .noteContainer {
       padding-left: 0;
       margin-top: 0;
+
       &:before {
         display: none;
       }
+
       &:last-child {
         .itemCircleWrap {
           &:before{
@@ -383,12 +408,12 @@
       }
 
       .noteBody {
-        display: flex;
-        align-items: flex-start;
+        position: relative;
         min-height: 45px;
-        padding: 8px 0 0;
+        padding: 10px 0 0 35px;
         border: 0;
         box-shadow: none;
+        @include rem('font-size', 11px);
       }
 
       .noteText {
@@ -401,8 +426,26 @@
         padding: 8px 0 0;
       }
 
-      .noteType + .noteType {
-        margin-left: 10px;
+      .changed_field {
+        color: #879697;
+        line-height: 15px;
+      }
+
+      .dateNote {
+        display: block;
+      }
+
+      .noteType {
+        color: #879697;
+        display: inline-block;
+
+        + .noteType {
+          margin-left: 10px;
+        }
+
+        > a {
+          color: inherit;
+        }
       }
 
       .noteText {
@@ -417,15 +460,15 @@
       }
     }
   }
+
   .dateNote {
-    flex-shrink: 0;
-    width: 130px;
-    margin-right: 48px;
-    color: #879697;
-    font-size: 11px;
+    color: #7eadcc;
+    font-family: $semibold-font-family;
+    @include rem('font-size', 11px);
   }
+
   .editDelNote {
-    flex-shrink: 0;
+    display: inline-block;
     height: 24px;
     width: 24px;
     margin: 2px 5px;
@@ -433,6 +476,7 @@
     text-align: center;
     border: 1px solid #c8c8d3;
     border-radius: 50%;
+
     &:hover {
       text-decoration: none;
       background-color: #efefef;
@@ -444,8 +488,10 @@
       font-family: $icon-font;
     }
   }
+
   .noteWrapper {
     .noteContainer {
+
       &:nth-child(n+3) {
         .itemCircleWrap {
           &:before{
@@ -494,11 +540,38 @@
       }
     }
   }
+
+  ._noteTextarea {
+    margin-top: 15px;
+    margin-bottom: 5px;
+  }
+
   .btn#addNote {
     margin-top: 10px;
+  }
+
+  .noteText {
+    display: inline-block;
   }
 }
 
 .search-view {
   position: relative;
+  background-color: #fff;
+}
+
+._formNotes {
+  ._animateTextareaBox {
+    margin-bottom: 0;
+  }
+
+  .buttons {
+    margin-top: 15px;
+  }
+
+  ._timeline {
+    max-height: 300px;
+    padding: 0 0 10px;
+    overflow: auto;
+  }
 }

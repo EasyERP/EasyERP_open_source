@@ -16,82 +16,82 @@
     <% var adr = (el.jobPrice/(100 * (el.totalWorked - el.totalQAWorked - el.totalDesignWorked)))%>
     <% var tadr = (el.jobPrice/(100 * el.totalWorked))%>
     <%var paymentsInvoice = el.invoice && el.invoice.paymentInfo ? (el.invoice.paymentInfo.total-el.invoice.paymentInfo.balance) / el.invoice.currency.rate : 0; %>
-    <td class="_contractJobsStatusBlock <%=el.workflow.name === 'Finished' ? 'finished' : 'inProgress'%> contractCell">
+    <td class="_contractJobsStatusBlock <%=el.workflow.name === 'Finished' ? 'finished' : 'inProgress'%> contractCell centerCell">
         <span><%=el.workflow ? el.workflow.name : ''%></span></td>
     <td class="_contractJobsJobBlock">
         <div class="_contractJobsName"><%=el.name%> in <a href="#easyErp/Projects/form/<%=el.project._id %>"><%=el.project.name%></a>
         </div>
-        <div class="_contractJobsCustomer"><span class="semiBold">For </span><span><%=el.customer%></span></div>
+        <div class="_contractJobsCustomer"><span class="fontSemiBold">For </span><span><%=el.customer%></span></div>
         <div class="_contractJobsDates"><span
-                class="semiBold"> Timecards from </span><span><%=el.tCardMinDate%></span><span
-                class="semiBold"> to </span><span><%=el.tCardMaxDate%></span></div>
+                class="fontSemiBold"> Timecards from </span><span><%=el.tCardMinDate%></span><span
+                class="fontSemiBold"> to </span><span><%=el.tCardMaxDate%></span></div>
         <%if (el.salesManager && el.salesManager.name) {%>
-        <div class="_contractJobsSales"><span class="semiBold">Sales Manager: </span><span><%=el.salesManager ? el.salesManager.name : ''%></span>
+        <div class="_contractJobsSales"><span class="fontSemiBold">Sales Manager: </span><span><%=el.salesManager ? el.salesManager.name : ''%></span>
         </div>
         <%}%>
         <%if (el.projectManager && el.projectManager.name) {%>
-        <div class="_contractJobsPM"><span class="semiBold">Project Manager: </span><span><%=el.projectManager ? el.projectManager.name : ''%></span>
+        <div class="_contractJobsPM"><span class="fontSemiBold">Project Manager: </span><span><%=el.projectManager ? el.projectManager.name : ''%></span>
         </div>
         <%}%>
-        <div class="_contractJobsTotalHour"><span class="semiBold">Total Hours: </span><span><%=el.totalWorked%></span>
+        <div class="_contractJobsTotalHour"><span class="fontSemiBold">Total Hours: </span><span><%=el.totalWorked%></span>
         </div>
         <%if (el.totalWorked - el.totalQAWorked - el.totalDesignWorked > 0) {%>
-        <div class="_contractJobsDevHours"><span class="semiBold">Development Hours: </span><span><%=(el.totalWorked - el.totalQAWorked - el.totalDesignWorked)%></span>
+        <div class="_contractJobsDevHours"><span class="fontSemiBold">Development Hours: </span><span><%=(el.totalWorked - el.totalQAWorked - el.totalDesignWorked)%></span>
         </div>
         <%}%>
         <%if (adr && isFinite(adr)) {%>
         <div class="_contractJobsADR"><span
-                class="semiBold">ADR: </span><span><%=isFinite(adr) ? adr.toFixed(2): 0%></span></div>
+                class="fontSemiBold">ADR: </span><span><%=isFinite(adr) ? adr.toFixed(2): 0%></span></div>
         <%}%>
         <%if (tadr && isFinite(tadr)) {%>
-        <div class="_contractJobsTotalADR"><span class="semiBold">Total ADR: </span><span><%=isFinite(tadr) ? tadr.toFixed(2): 0%></span>
+        <div class="_contractJobsTotalADR"><span class="fontSemiBold">Total ADR: </span><span><%=isFinite(tadr) ? tadr.toFixed(2): 0%></span>
         </div>
         <%}%>
     </td>
     <td class="_contractJobsInvoiceBlock">
         <%if (el.invoice && el.invoice._id) {%>
-        <div><span class="semiBold"><%=el.invoice.workflow.name%></span></div>
+        <div><span class="fontSemiBold"><%=el.invoice.workflow.name%></span></div>
         <%if (el.invoice.paymentInfo.balance) {%>
-        <div><span class="semiBold">Balance: </span><span class="<%=currencyClass(el.invoice.currency._id)%>"><%=(el.invoice.paymentInfo.balance / 100).toFixed(2)%></span>
+        <div><span class="fontSemiBold">Balance: </span><span class="<%=currencyClass(el.invoice.currency._id)%>"><%=(el.invoice.paymentInfo.balance / 100).toFixed(2)%></span>
         </div>
         <%}%>
-        <div><span class="semiBold">Invoice number: </span><a class="invoice" data-id="<%=el.invoice._id%>"><%=el.invoice
+        <div><span class="fontSemiBold">Invoice number: </span><a class="invoice" data-id="<%=el.invoice._id%>"><%=el.invoice
             && el.invoice.name ? el.invoice.name : ''%></a>
         </div>
-        <div><span class="semiBold">Invoice Date: </span><span><%=el.invoice && el.invoice.date ? utcDateToLocaleDate(new Date(el.invoice.date)) : ''%></span>
+        <div><span class="fontSemiBold">Invoice Date: </span><span><%=el.invoice && el.invoice.date ? utcDateToLocaleDate(new Date(el.invoice.date)) : ''%></span>
         </div>
-        <div><span class="semiBold">Due Date: </span><span><%=el.invoice && el.invoice.dueDate ? utcDateToLocaleDate(new Date(el.invoice.dueDate)) : ''%></span>
+        <div><span class="fontSemiBold">Due Date: </span><span><%=el.invoice && el.invoice.dueDate ? utcDateToLocaleDate(new Date(el.invoice.dueDate)) : ''%></span>
         </div>
         <%}%>
         <%if (el.revenue) {%>
 <!--
-        <div class="semiBold money"><%=currencySplitter((el.revenue/100).toFixed(2))%></div>
+        <div class="fontSemiBold money"><%=currencySplitter((el.revenue/100).toFixed(2))%></div>
 -->
-        <div><span>Quoted: </span><span class="money"><%=el.invoice && el.invoice.name ? 0.00 : currencySplitter((el.revenue/100).toFixed(2))%></span>
+        <div><span class="fontSemiBold">Quoted: </span><span class="money"><%=el.invoice && el.invoice.name ? 0.00 : currencySplitter((el.revenue/100).toFixed(2))%></span>
         </div>
         <%if (proformaSum) {%>
-        <div><span>Proformed: </span><span class="money"><%=currencySplitter((proformaSum/100).toFixed(2))%></span>
+        <div><span class="fontSemiBold">Proformed: </span><span class="money"><%=currencySplitter((proformaSum/100).toFixed(2))%></span>
         </div>
         <%}%>
-        <div><span>Invoiced: </span><span class="money"><%=el.invoice && el.invoice.name ? currencySplitter((el.revenue/100).toFixed(2)) : 0.00%></span>
+        <div><span class="fontSemiBold">Invoiced: </span><span class="money"><%=el.invoice && el.invoice.name ? currencySplitter((el.revenue/100).toFixed(2)) : 0.00%></span>
         </div>
         <%}%>
     </td>
     <td class="_contractJobsRevenueBlock">
-        <div><span class="semiBold">Total: </span><span class="money"><%=currencySplitter(((proformaPaid + paymentsInvoice)/100).toFixed(2))%></span>
+        <div><span class="fontSemiBold">Total: </span><span class="money"><%=currencySplitter(((proformaPaid + paymentsInvoice)/100).toFixed(2))%></span>
         </div>
         <%if (paymentsInvoice) {%>
-        <div><span class="semiBold">By Invoice: </span><span
+        <div><span class="fontSemiBold">By Invoice: </span><span
                 class="money"><%=currencySplitter(((paymentsInvoice)/100).toFixed(2))%></span></div>
         <%}%>
         <%if (proformaPaid) {%>
-        <div><span class="semiBold">By Proforma: </span><span
+        <div><span class="fontSemiBold">By Proforma: </span><span
                 class="money"><%=currencySplitter(((proformaPaid)/100).toFixed(2))%></span></div>
         <%}%>
 
     </td>
     <td class="_contractJobsCostBlock costBlock">
-        <div class="semiBold money"><%=currencySplitter(((el.costMaterials + el.costLabour)/100).toFixed(2))%></div>
+        <div class="fontSemiBold money"><%=currencySplitter(((el.costMaterials + el.costLabour)/100).toFixed(2))%></div>
         <%if (el.costMaterials) {%>
         <div>Materials: <span class="money materials"><%=currencySplitter((el.costMaterials/100).toFixed(2))%></span></div>
         <%}%>

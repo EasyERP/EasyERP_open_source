@@ -1,21 +1,43 @@
 <table id="listTable">
+    <% var delimiter = '' %>
     <% products.forEach(function(product, index){ %>
     <tr class="compactView" data-id="<%=product._id%>">
         <td class="checkboxRow">
-            <label>
+            <label class="_customCHeckbox">
                 <input type="checkbox" value="<%=product._id%>" class="checkbox"/>
+                <span></span>
             </label>
         </td>
         <td>
             <div class="compactRowWrap">
                 <div class="compactRow">
-                    <div class="firstName"><%- product.name %></div>
-                    <div class="country"><%= product.supplier.name.last %></div>
-                    <div class="country"><%= product.orderDate %></div>
+                    <div class="firstName"><%= product.name %></div>
+                    <div class="image"><img src="<%= product.imageSrc%>" height="50" width="50" /></div>
                 </div>
                 <div class="compactRow">
-                    <div class="email"><%= product.paymentInfo.total %></div>
-                    <div class="phone"><%= product.paymentInfo.unTaxed %></div>
+                    <div class="isBundle <% if (product.isBundle) { %> bundle <% } %>">
+                        <% if (product.isBundle) { %>
+                            Bundle
+                        <% } else { %>
+                            Product
+                        <% } %>
+                    </div>
+                    <div>
+                        <% if (product.variants && product.variants.length && Object.keys(product.variants[0]).length) { %>
+                            <% _.each(product.variants, function(variant){ %>
+                                <span title="<%= variant.optionId ? variant.optionId.name : 'unknown' %>">
+                                    <%= delimiter + ((variant.value) ? variant.value : 'deleted') %>
+                                    <% delimiter = '|' %>
+                                </span>
+                            <%})%>
+                            <% delimiter = '' %>
+                        <% } else { %>
+                        this product has no variants
+                        <% } %>
+                    </div>
+                    <div>
+                        SKU: <%= product.info.SKU %>
+                    </div>
                 </div>
             </div>
         </td>

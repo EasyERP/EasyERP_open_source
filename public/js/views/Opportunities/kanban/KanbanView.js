@@ -38,8 +38,7 @@
              helpers,
              Pagination,
              custom,
-             populate
-) {
+             populate) {
     var collection = new OpportunitiesCollection();
     var OpportunitiesKanbanView = Pagination.extend({
         el               : '#content-holder',

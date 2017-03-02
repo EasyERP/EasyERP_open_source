@@ -1,25 +1,54 @@
+<%var checkObj = {};%>
+<% var className = 1;%>
+<% var timestamp = collection.length ? collection[0].timestamp : null;%>
+
 <% collection.forEach(function(journalEntry, index){ %>
-<tr data-index="<%= index %>" data-id="<%=journalEntry._id%>">
-    <td class="notForm centerCell"><input type="checkbox" value="<%=journalEntry._id%>" class="checkbox"/></td>
+
+<% className = (timestamp === journalEntry.timestamp) ? className : className * (-1);%>
+<% timestamp = journalEntry.timestamp;%>
+<%if (!checkObj[journalEntry.timestamp]) {%>
+<%checkObj[journalEntry.timestamp] = true;%>
+<tr data-time="<%=journalEntry.timestamp%>" data-index="<%= className %>" data-id="<%=journalEntry._id%>">
+    <td class="notForm centerCell">
+        <label class="_customCHeckbox">
+            <input type="checkbox" value="<%=journalEntry._id%>" class="checkbox"/>
+            <span></span>
+        </label>
+    </td>>
+    </td>
+    <td><%=journalEntry.timestamp ? 'ME_' + journalEntry.timestamp : ''%></td>
     <td><%=journalEntry.journal ? journalEntry.journal.name : ''%></td>
     <td><%=journalEntry.date%></td>
 
-    <td class="source"><span id="source" class="current-selected icon-caret-down" data-id="<%=journalEntry.sourceDocument._id%>" data-name="<%=journalEntry.sourceDocument.model%>"
-           data-employee="<%=journalEntry.sourceDocument.employee%>"><%=journalEntry.sourceDocument.name%></span></td>
-
-    <td><%=journalEntry.debitAccount ? journalEntry.debitAccount.name : ''%></td>
-    <td><%=journalEntry.creditAccount ? journalEntry.creditAccount.name : ''%></td>
-
-    <%if (journalEntry.debit) {%>
-    <td class="money" data-amount="<%= journalEntry.debit%>">
-        <%=currencySplitter(journalEntry.debit.toFixed(2))%>
+    <td class="source"><span id="source" class="current-selected"
+                             data-id="<%=journalEntry.sourceDocument._id%>"
+                             data-name="<%=journalEntry.sourceDocument.model%>"
+                             data-employee="<%=journalEntry.sourceDocument.employee%>"><%=journalEntry.sourceDocument.name%></span>
     </td>
-    <%}%>
 
-    <%if (journalEntry.credit) {%>
-    <td class="moeny" data-amount="<%=journalEntry.credit%>">
-        <%=currencySplitter(journalEntry.credit.toFixed(2))%>
+    <td><%=journalEntry.account ? journalEntry.account.name : ''%></td>
+
+    <td class="<%=journalEntry.debit? 'money' : ''%>" data-amount="<%= journalEntry.debit%>"><%=journalEntry.debit ?
+        currencySplitter(journalEntry.debit.toFixed(2)) : '&nbsp'%>
     </td>
-    <%}%>
+
+    <td class="<%=journalEntry.credit ? 'money' : ''%>" data-amount="<%=journalEntry.credit%>"><%=journalEntry.credit ?
+        currencySplitter(journalEntry.credit.toFixed(2)) : '&nbsp'%>
+    </td>
 </tr>
+<%} else {%>
+<tr data-time="<%=journalEntry.timestamp%>" data-index="<%= className %>" data-id="<%=journalEntry._id%>">
+    <td colspan="5"></td>
+
+    <td><%=journalEntry.account ? journalEntry.account.name : ''%></td>
+
+    <td class="<%=journalEntry.debit? 'money' : ''%>" data-amount="<%= journalEntry.debit%>"><%=journalEntry.debit ?
+        currencySplitter(journalEntry.debit.toFixed(2)) : '&nbsp'%>
+    </td>
+
+    <td class="<%=journalEntry.credit ? 'money' : ''%>" data-amount="<%=journalEntry.credit%>"><%=journalEntry.credit ?
+        currencySplitter(journalEntry.credit.toFixed(2)) : '&nbsp'%>
+    </td>
+</tr>
+<%}%>
 <% }) %>

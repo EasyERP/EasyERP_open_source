@@ -3,6 +3,11 @@ define([
 ], function ($) {
     'use strict';
     var getData = function (url, data, callback, context) {
+        if (typeof callback !== 'function') {
+            callback = function () {
+            };
+        }
+
         $.get(url, data, function (response) {
             if (context) {
                 callback(response, context);

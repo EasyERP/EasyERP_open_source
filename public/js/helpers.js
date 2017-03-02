@@ -82,6 +82,40 @@ define([
         return date;
     }
 
+    function addressMaker(address) {
+        var result = '';
+
+        if (!address) {
+            return '';
+        }
+
+        if (address.street) {
+            result += address.street;
+        }
+
+        if (address.city) {
+            result += ', ';
+            result += address.city;
+        }
+
+        if (address.state) {
+            result += ', ';
+            result += address.state;
+        }
+
+        if (address.country && address.country !== 'Select') {
+            result += ', ';
+            result += address.country;
+        }
+
+        if (address.zip) {
+            result += ', ';
+            result += address.zip;
+        }
+
+        return result;
+    }
+
     return {
         minFromDates    : minFromDates,
         currencySplitter: currencySplitter,
@@ -89,6 +123,7 @@ define([
         weekSplitter    : weekSplitter,
         spaceReplacer   : spaceReplacer,
         setTimeToDate   : setTimeToDate,
-        makeFilterString: makeFilterString
+        makeFilterString: makeFilterString,
+        addressMaker    : addressMaker
     };
 });

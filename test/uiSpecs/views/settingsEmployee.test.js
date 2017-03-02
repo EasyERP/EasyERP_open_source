@@ -146,7 +146,7 @@ define([
                 });
 
                 expect(topBarView.$el.find('h3')).to.exist;
-                expect(topBarView.$el.find('h3').text()).to.be.equals('Employees Settings');
+                expect(topBarView.$el.find('h3').text()).to.be.equals('Employees');
             });
         });
 

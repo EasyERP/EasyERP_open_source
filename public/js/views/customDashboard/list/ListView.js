@@ -2,7 +2,7 @@ define([
     'jQuery',
     'Underscore',
     'views/listViewBase',
-    'text!templates/customDashboard/list/ListHeader.html',
+    'text!templates/customDashboard/list/listHeader.html',
     'views/customDashboard/list/ListItemView',
     'views/customDashboard/CreateView',
     'collections/customDashboard/filterCollection',
@@ -41,7 +41,7 @@ define([
                 collection : this.collection,
                 page       : this.page,
                 itemsNumber: this.collection.namberToShow
-            });
+            }).render();
         }
     });
 

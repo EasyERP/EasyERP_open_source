@@ -2,28 +2,30 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
+    'views/Filter/dateFilter',
     'text!templates/journalEntry/TopBarTemplate.html',
     'custom',
     'constants',
     'dataService',
     'common',
     'moment'
-], function (Backbone, $, _, ContentTopBarTemplate, Custom, CONSTANTS, dataService, common, moment) {
+], function (Backbone, $, _, DateFilterView, ContentTopBarTemplate, Custom, CONSTANTS, dataService, common, moment) {
     'use strict';
     var TopBarView = Backbone.View.extend({
-        el         : '#top-bar',
-        contentType: CONSTANTS.JOURNALENTRY,
-        template   : _.template(ContentTopBarTemplate),
+        el           : '#top-bar',
+        contentType  : CONSTANTS.JOURNALENTRY,
+        contentHeader: 'Journal Entry',
+        template     : _.template(ContentTopBarTemplate),
 
         events: {
-            'click #reconcileBtn'               : 'reconcile',
-            'click #top-bar-exportToCsvBtn'     : 'exportToCsv',
-            'click #top-bar-exportToXlsxBtn'    : 'exportToXlsx',
-            'click #updateDate'                 : 'changeDateRange',
-            'click .dateRange'                  : 'toggleDateRange',
-            'click #cancelBtn'                  : 'cancel',
-            'click li.filterValues:not(#custom)': 'setDateRange',
-            'click #custom'                     : 'showDatePickers'
+            'click #reconcileBtn'           : 'reconcile',
+            'click #top-bar-exportToCsvBtn' : 'exportToCsv',
+            'click #top-bar-exportToXlsxBtn': 'exportToXlsx'
+            // 'click #updateDate'                 : 'changeDateRange',
+            // 'click .dateRange'                  : 'toggleDateRange',
+            // 'click #cancelBtn'                  : 'cancel',
+            // 'click li.filterValues:not(#custom)': 'setDateRange',
+            // 'click #custom'                     : 'showDatePickers'
         },
 
         removeAllChecked: function () {
@@ -54,13 +56,12 @@ define([
 
             this.removeAllChecked();
 
-
-            if ($target.text() !== "Custom Dates") {
+            if ($target.text() !== 'Custom Dates') {
                 $target.toggleClass('checkedValue');
             } else {
-                $target.toggleClass('checkedArrow')
+                $target.toggleClass('checkedArrow');
             }
-            //$target.toggleClass('checkedValue');
+            // $target.toggleClass('checkedValue');
 
             switch (id) {
                 case 'thisMonth':
@@ -98,13 +99,13 @@ define([
 
             this.removeAllChecked();
 
-            if ($target.text() !== "Custom Dates") {
+            if ($target.text() !== 'Custom Dates') {
                 $target.toggleClass('checkedValue');
             } else {
-                $target.toggleClass('checkedArrow')
+                $target.toggleClass('checkedArrow');
             }
 
-            //$target.toggleClass('checkedValue');
+            // $target.toggleClass('checkedValue');
             this.$el.find('.customTime').toggleClass('hidden');
             this.$el.find('.buttons').toggleClass('hidden');
         },
@@ -121,11 +122,6 @@ define([
 
             startTime.text(startDate);
             endTime.text(endDate);
-
-            /*Custom.cacheToApp('journalEntryDateRange', {
-                startDate: startDate,
-                endDate  : endDate
-            });*/
 
             this.trigger('changeDateRange');
             this.toggleDateRange();
@@ -216,24 +212,43 @@ define([
         },
 
         render: function () {
+            var self = this;
             var viewType = Custom.getCurrentVT();
-            // var dateRange = Custom.retriveFromCash('journalEntryDateRange');
             var filter = Custom.retriveFromCash('journalEntry.filter');
-            var dateRange = filter && filter.date ? filter.date.value : [];
+            var dateRange;
+            var startDate;
+            var endDate;
 
-            this.startDate = common.utcDateToLocaleDate(new Date(dateRange[0]));
-            this.endDate = common.utcDateToLocaleDate(new Date(dateRange[1]));
+            if (!this.collection) {
+                dateRange = filter && filter.date ? filter.date.value : [];
 
-            $('title').text(this.contentType);
+                startDate = new Date(dateRange[0]);
+                endDate = new Date(dateRange[1]);
+            } else {
+                startDate = this.collection.startDate;
+                endDate = this.collection.endDate;
+            }
+
+            startDate = moment(startDate).format('D MMM, YYYY');
+            endDate = moment(endDate).format('D MMM, YYYY');
+
+            $('title').text(this.contentHeader || this.contentType);
 
             this.$el.html(this.template({
                 viewType   : viewType,
-                contentType: this.contentType,
-                startDate  : this.startDate,
-                endDate    : this.endDate
+                contentType: this.contentType
             }));
 
-            this.bindDataPickers(this.startDate, this.endDate);
+            this.dateFilterView = new DateFilterView({
+                contentType: 'journalEntry',
+                el         : this.$el.find('#dateFilter')
+            });
+
+            this.dateFilterView.on('dateChecked', function () {
+                self.trigger('changeDateRange', self.dateFilterView.dateArray);
+            });
+
+            this.dateFilterView.checkElement('custom', [startDate, endDate]);
 
             return this;
         }

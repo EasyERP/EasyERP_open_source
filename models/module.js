@@ -8,6 +8,7 @@ module.exports = (function () {
         ancestors: [Number],
         users    : {},
         parrent  : Number,
+        sequence : Number,
         link     : Boolean,
         visible  : Boolean
     }, {collection: 'modules'});

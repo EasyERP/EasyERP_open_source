@@ -1,10 +1,7 @@
+'use strict';
 require('pmx').init();
 
 module.exports = function (app, mainDb) {
-    'use strict';
-
-    // var newrelic = require('newrelic');
-
     var event = require('../helpers/eventstHandler')(app, mainDb);
     var RESPONSES = require('../constants/responses');
     var CONSTANTS = require('../constants/mainConstants');
@@ -12,13 +9,16 @@ module.exports = function (app, mainDb) {
     var dbsNames = app.get('dbsNames');
     var dbsObject = mainDb.dbsObject;
     var models = require('../helpers/models.js')(dbsObject);
-    var productRouter = require('./product')(models);
+    var productRouter = require('./product')(models, event);
     var orderRouter = require('./order')(models, event);
+    var ordersRouter = require('./orders')(models, event);
+    var invoicesRouter = require('./invoices')(models, event);
     var invoiceRouter = require('./invoice')(models, event);
     var proformaRouter = require('./proforma')(models, event);
     var supplierRouter = require('./supplier')(models);
     var quotationRouter = require('./quotation')(models, event);
     var destinationRouter = require('./destination')(models);
+    var goodsInRouter = require('./goodsIn')(models, event);
     var incotermRouter = require('./incoterm')(models);
     var weeklySchedulerRouter = require('./weeklyScheduler')(models);
     var scheduledPayRouter = require('./scheduledPay')(models);
@@ -52,6 +52,10 @@ module.exports = function (app, mainDb) {
     var industryRouter = require('./industry')(models);
     var productCategoriesRouter = require('./productCategories')(models, event);
     var customersRouter = require('./customers')(models, event);
+    var goodsOutRouter = require('./goodsOut')(models, event);
+    var purchaseOrdersRouter = require('./purchaseOrders')(models, event);
+    var ratesRouter = require('./rates')(models, event);
+    var shippingMethodRouter = require('./shippingMethod')(models, event);
 
     var personsRouter = require('./person')(models, event);
     var capacityRouter = require('./capacity')(models);
@@ -82,6 +86,18 @@ module.exports = function (app, mainDb) {
     var projectsDashboardRouter = require('./projectsDashboard')(models);
     var followersRouter = require('./followers')(models);
     var accountTypesRouter = require('./accountTypes')(models);
+    var warehouseRouter = require('./warehouse')(models, event);
+    var accountsCategoriesRouter = require('./accountsCategories')(models);
+    var priceListRouter = require('./priceList')(models);
+    var integrationRouter = require('./integration')(models, event);
+    var purchaseInvoicesRouter = require('./purchaseInvoices')(models, event);
+    var stockTransactionRouter = require('./stockTransaction')(models, event);
+    var stockInventoryRouter = require('./stockInventory')(models, event);
+    var channelRouter = require('./channel')(models, event);
+    var taxSettingsRouter = require('./taxSettings')(models, event);
+    var reportsRouter = require('./reports')(models, event);
+    var imagesRouter = require('./images')(models, event);
+    var stockReturnsRouter = require('./stockReturns')(models, event);
 
     var customChartRouter = require('./customChart')(models);
     var customDashboardRouter = require('./customDashboard')(models);
@@ -91,7 +107,10 @@ module.exports = function (app, mainDb) {
     var redisStore = require('../helpers/redisClient');
 
     var tracker = require('../helpers/tracker.js');
+    var MagentoConnector = require('../helpers/magentoConnector.js');
     var geoip = require('geoip-lite');
+
+    var magento = new MagentoConnector(models);
 
     var sessionValidator = function (req, res, next) {
         var session = req.session;
@@ -120,10 +139,39 @@ module.exports = function (app, mainDb) {
                 });
             }
         });
+
         next();
     };
+    var instance = parseInt(process.env.NODE_APP_INSTANCE, 10) || 0;
+    var brokerType = instance === 0 ? 'consumer' : 'publisher';
+    var rmOptions = {
+        host    : process.env.RABBITMQ_HOST,
+        port    : process.env.RABBITMQ_PORT,
+        login   : process.env.RABBITMQ_USER,
+        password: process.env.RABBITMQ_PASSWORD
+    };
+    var syncHelper;
+    var RM;
+    var rm;
+
+    if (!process.env.NODE_APP_INSTANCE) {
+        brokerType = 'polymorph';
+    }
+
+    RM = require('../helpers/rm')(dbsNames, event, models);
+    rm = new RM({
+        brokerType: brokerType
+    });
+
+    rm.connect(rmOptions);
+    syncHelper = require('../helpers/sync')(rm, models);
+
+    console.log('\x1b[32m%s\x1b[0m', '=====================================================');
+    console.log('\x1b[32m%s\x1b[0m', '           Server start in ' + brokerType + ' mode');
+    console.log('\x1b[32m%s\x1b[0m', '=====================================================');
 
     require('../helpers/arrayExtender');
+    require('../helpers/stringExtender');
 
     app.use(sessionValidator);
     app.use(tempFileCleaner);
@@ -131,7 +179,6 @@ module.exports = function (app, mainDb) {
     app.set('logger', logger);
 
     // requestHandler = require('../requestHandler.js')(app, event, mainDb);
-
     app.get('/', function (req, res, next) {
         res.sendfile('index.html');
     });
@@ -140,6 +187,7 @@ module.exports = function (app, mainDb) {
     app.use('/products', productRouter);
     app.use('/orders', orderRouter);
     app.use('/invoices', invoiceRouter);
+    app.use('/invoice', invoicesRouter);
     app.use('/proforma', proformaRouter);
     app.use('/expensesInvoice', expensesInvoiceRouter);
     app.use('/dividendInvoice', dividendInvoiceRouter);
@@ -148,6 +196,11 @@ module.exports = function (app, mainDb) {
     app.use('/destination', destinationRouter);
     app.use('/incoterm', incotermRouter);
     app.use('/invoicingControl', invoicingControlRouter);
+    app.use('/order', ordersRouter);
+    app.use('/goodsOutNotes', goodsOutRouter);
+    app.use('/goodsInNotes', goodsInRouter);
+    app.use('/stockTransactions', stockTransactionRouter);
+    app.use('/stockInventory', stockInventoryRouter);
     app.use('/paymentTerm', paymentTermRouter);
     app.use('/deliverTo', deliverToTermRouter);
     app.use('/weeklyScheduler', weeklySchedulerRouter);
@@ -208,6 +261,23 @@ module.exports = function (app, mainDb) {
     app.use('/customChart', customChartRouter);
     app.use('/customDashboard', customDashboardRouter);
     app.use('/accountTypes', accountTypesRouter);
+    app.use('/warehouse', warehouseRouter);
+    app.use('/accountsCategories', accountsCategoriesRouter);
+    app.use('/priceList', priceListRouter);
+    app.use('/purchaseOrders', purchaseOrdersRouter);
+    app.use('/purchaseInvoices', purchaseInvoicesRouter);
+    app.use('/channels', channelRouter);
+    app.use('/taxSettings', taxSettingsRouter);
+    app.use('/rates', ratesRouter);
+    app.use('/reports', reportsRouter);
+    app.use('/shippingMethod', shippingMethodRouter);
+    app.use('/image', imagesRouter);
+    app.use('/stockReturns', stockReturnsRouter);
+
+
+    // <editor-fold desc="Integration">
+    app.use('/integration', integrationRouter);
+    // </editor-fold>
 
     /**
      *@api {get} /getDBS/ Request DBS
@@ -334,18 +404,23 @@ module.exports = function (app, mainDb) {
             if (err) {
                 return next(err);
             }
+
+            mainDb.collection('sessions').remove(function (err) {
+                if (err) {
+                    return next(err);
+                }
+            });
+
             event.emit('clearAllCashedData');
             res.status(200).send({success: 'All cash cleaned success'});
         });
     });
 
-    app.get('/nginx', function (req, res, next) {
-        var geoip = require('geoip-lite');
-        var ip = req.headers['x-real-ip'] || '127.0.0.1';
-        var geo = geoip.lookup(ip);
+    app.post('/consumer', magento.getConsumerKeyAndSecret);
+    app.get('/callback', magento.getOAuthAccessToken);
 
-        res.status(200).send(geo);
-    });
+    app.get('/sync', syncHelper.syncAll);
+    app.get('/addToSync', syncHelper.getToSync);
 
     app.post('/track', function (req, res) {
         var RegExp = /production|test_demo/;
@@ -376,6 +451,10 @@ module.exports = function (app, mainDb) {
         if (!RegExp.test(process.env.SERVER_TYPE)) {
             tracker.track(body);
         }
+    });
+
+    app.get('/stopserver', function () {
+        process.exit(1);
     });
 
     function notFound(req, res, next) {

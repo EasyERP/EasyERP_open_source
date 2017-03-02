@@ -23,7 +23,7 @@ define([
         },
 
         chooseOption: function (e) {
-            $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
+            $(e.target).parents('ul').closest('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
             $('.newSelectList').hide();
         },
 
@@ -96,13 +96,11 @@ define([
             var formString = this.template({});
             var this$el;
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'edit-dialog',
-                title        : 'Edit Job position',
-                width        : '900',
-                buttons      : [
+                autoOpen   : true,
+                dialogClass: 'edit-dialog',
+                title      : 'Edit Job position',
+                width      : '700',
+                buttons    : [
                     {
                         text : 'Create',
                         class: 'btn blue',

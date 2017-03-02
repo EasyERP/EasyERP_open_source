@@ -9,15 +9,15 @@
 }
 
 .opportunity-content {
-  .fa-comment-o,
-  .fa-paperclip {
-    color: #2c3e50;
-  }
-  .fa {
-    &:nth-child(n+2) {
-      margin-left: 10px;
-    }
-  }
+  //.fa-comment-o,
+  //.fa-paperclip {
+  //  color: #2c3e50;
+  //}
+  //.fa {
+  //  &:nth-child(n+2) {
+  //    margin-left: 10px;
+  //  }
+  //}
   .projectType {
     color: #549ecf;
   }
@@ -26,9 +26,9 @@
 .propertyBox {
   position: relative;
   display: table;
-  border: 1px solid $property-box-border-color;
+  border: 1px solid $lightgrey;
   padding: 10px 25px 10px 10px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   width: 100%;
   border-radius: 3px;
 
@@ -37,7 +37,6 @@
     display: table-cell;
     vertical-align: top;
   }
-
 
   .removeProperty {
     position: absolute;
@@ -54,7 +53,6 @@
       color: $black;
     }
   }
-
 
   .propertyImg {
     width: 40px;
@@ -80,6 +78,7 @@
     word-break: break-all;
   }
 }
+
 .separateBlock {
   text-align: center;
 }
@@ -87,11 +86,6 @@
 .propertyFormList {
   display: table !important;
   width: 100%;
-  border-left: 1px solid transparent;
-
-  &.active {
-    border-left-color: $property-link-color;
-  }
 
   label,
   .inputBox {
@@ -108,13 +102,17 @@
   .inputBox {
     input:not([type=checkbox]) {
       border: none;
-      border-bottom: 1px solid $property-box-border-color;
+      border-bottom: 1px solid $lightgrey;
       outline: none;
       width: 100%;
       padding: 6px 0;
 
+      &._socialContact {
+        padding-right: 32px;
+      }
+
       &:focus {
-        background: $drop-down-list-bg;
+        //background: $drop-down-list-bg;
         border: none ;
         border-bottom: 1px solid $property-box-border-color;
       }
@@ -144,13 +142,30 @@
 .attachWrapper,
 .selectCompany,
 .moduleList {
-  padding: 13px 20px 20px;
+  padding: 10px 20px 20px;
 
-  .tagsTitle,
-  .formTitle {
+  .tagsTitle {
     border-bottom: none !important;
     margin-bottom: 13px;
   }
+}
+
+._inputColumn {
+
+  .formTitleWrap {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+
+  }
+
+  .formTitle {
+    font-family: $semibold-font-family;
+  }
+}
+
+.formTitle {
+  word-break: break-all;
 }
 
 .tagsRow {
@@ -166,51 +181,51 @@
   line-height: 20px;
 }
 
-.attachWrapper,
-.selectCompany {
-  .input-file {
-    width: 100%;
-    margin: 0 0 20px;
-    padding: 20px;
-    height: auto;
-    color: $black;
-    font-size: 16px;
-    border-radius: 3px;
-
-    &:hover {
-      background: $add-company-btn-hover-bg;
-      -webkit-transition: all .3s;
-      transition: all .3s;
-    }
-
-    &.smallBtn {
-      display: block;
-      width: 90px;
-      margin: 15px auto 0;
-      padding: 6px 12px;
-      font-size: 13px;
-      float: none;
-    }
-
-    .inputAttach {
-      cursor: pointer !important;
-    }
-  }
-
-  .atachPlaceHolder,
-  .addCompanyBtn {
-    i {
-      margin-right: 5px;
-      font-size: 12px;
-    }
-  }
-
-  .inputAttach {
-    width: 100% !important;
-    height: 100% !important;
-    max-width: 100% !important;
-  }
-}
+//.attachWrapper,
+//.selectCompany {
+//  .input-file {
+//    width: 100%;
+//    margin: 0 0 20px;
+//    padding: 20px;
+//    height: auto;
+//    color: $black;
+//    font-size: 16px;
+//    border-radius: 3px;
+//
+//    &:hover {
+//      background: $add-company-btn-hover-bg;
+//      -webkit-transition: all .3s;
+//      transition: all .3s;
+//    }
+//
+//    &.smallBtn {
+//      display: block;
+//      width: 90px;
+//      margin: 15px auto 0;
+//      padding: 6px 12px;
+//      font-size: 13px;
+//      float: none;
+//    }
+//
+//    .inputAttach {
+//      cursor: pointer !important;
+//    }
+//  }
+//
+//  .atachPlaceHolder,
+//  .addCompanyBtn {
+//    i {
+//      margin-right: 5px;
+//      font-size: 12px;
+//    }
+//  }
+//
+//  .inputAttach {
+//    width: 100% !important;
+//    height: 100% !important;
+//    max-width: 100% !important;
+//  }
+//}
 
 .selectCompany {
   position: relative;
@@ -231,13 +246,19 @@
 
   ._companySaveButton {
     position: absolute;
-    top: 20px;
-    right: 20px;
+    top: 10px;
+    right: 15px;
+    height: 20px;
+    width: 20px;
+    text-align: center;
+    line-height: 18px;
+    border-radius: 50%;
     cursor: pointer;
-  }
+    transition: all .2s ease-in-out;
 
-  .formTitle {
-    margin-bottom: 0;
+    &:hover {
+      background-color: rgba(126, 173, 204, 0.36);
+    }
   }
 
   .propertyBox {
@@ -252,7 +273,7 @@
 
 .ui-dialog {
   .ui-dialog-content.opportunitiesModal {
-    padding: 20px 20px 40px;
+    padding: 20px;
 
     .tagsTitle {
       border-bottom: none;
@@ -277,6 +298,10 @@
 
     ul {
       max-height: 191px;
+      border-top: 1px solid #c8c8d3;
+      border-bottom: 1px solid #c8c8d3;
+      margin: 10px 0;
+      overflow-x: hidden;
       overflow-y: auto;
     }
     li {
@@ -300,23 +325,22 @@
     }
   }
 
-  .createNewCompany {
-    font-size: 13px;
-    color: $black;
-    background: $create-bg;
-    padding: 6px 12px;
-    border-radius: 3px;
-
-    &:hover {
-      text-decoration: none;
-    }
-  }
+  //.createNewCompany {
+  //  font-size: 13px;
+  //  color: $black;
+  //  background: $create-bg;
+  //  padding: 6px 12px;
+  //  border-radius: 3px;
+  //
+  //  &:hover {
+  //    text-decoration: none;
+  //  }
+  //}
 }
 
 .newCompanyContainer {
-  padding: 40px;
+  margin-top: 10px;
   text-align: center;
-  background: $create-bg;
 }
 
 .dealTitle {
@@ -343,8 +367,15 @@
 
 .moduleList,
 .attachments {
-  border-radius: 5px;
-  border: 1px solid $property-box-border-color;
+  border-radius: 3px;
+  border: 1px solid $lightgrey;
+}
+
+.attachments {
+  &._popupAttachments {
+    border: 0;
+    border-radius: 0;
+  }
 }
 
 .moduleList {
@@ -374,10 +405,17 @@
   }
 }
 
-.attachments {
-  margin-bottom: 20px;
+.attach-container{
+  &._noMarginTop {
+    .attachments {
+      margin-top: 0;
+    }
+  }
 }
 
+.attachments {
+  margin: 10px 0;
+}
 
 .largeBtn {
   width: 100%;
@@ -402,8 +440,19 @@
   position: relative;
 
   textarea {
+    height: 100px;
     padding: 10px !important;
-    border-radius: 0 3px 3px 3px;
+  }
+
+  ._titleBlueBorder {
+    margin: 0;
+
+    + textarea {
+      border-top: 0;
+      &:focus {
+        border-color: #7eadcc;
+      }
+    }
   }
 
   .attach_file {
@@ -431,6 +480,7 @@
     }
 
     textarea {
+      height: 150px;
       padding: 10px 22px 15px 10px !important;
     }
   }
@@ -445,9 +495,9 @@
   }
 
   .current-selected {
-    font-weight: bold;
-    margin-left: 5px;
     display: inline-block;
+    margin-left: 5px;
+    font-family: $semibold-font-family;
   }
 }
 
@@ -479,6 +529,13 @@
   }
 }
 
+._animateInputBox {
+
+  .amountDollar {
+    @include rem('font-size', 16px);
+  }
+}
+
 .assignName {
   padding-left: 13px;
 }
@@ -502,8 +559,20 @@
   }
 }
 
-.ui-dialog {
+._listModalColumn {
+  width: 33.333%;
+  padding: 0 10px;
+  float: left;
+}
 
+.ui-dialog, ._warehouseForm {
+  ._location._listModal{
+    ._modalSelect > input{
+      width: 90% !important;
+      display: inline-block;
+      margin-bottom: 15px;
+    }
+  }
   ._listModal {
     padding: 10px 20px;
 
@@ -513,33 +582,73 @@
     }
 
     ._modalList {
-      margin-bottom: 15px;
+      margin-bottom: 5px;
+      &._selectBlock{
+        &+._modalList{
+          clear: both;
+        }
+        ._modalLabel{
+          float: left;
+        }
+        ._modalSelect{
+          float: left;
+          input[type='checkbox'] {
+            width: auto !important;
+            margin-top: 0px;
+            margin-left: 10px;
+          }
+        }
+      }
     }
 
     ._modalLabel {
-      margin-bottom: 10px;
 
-      label {
+      > label {
+        display: inline-block;
+        margin-bottom: 5px;
         color: $sales-modal-select-text-color;
-        font-weight: bold;
+        font-family: $fontSemiBold;
       }
     }
 
     ._modalSelect {
+      &._newSelectListWrap{
+        .newSelectList, input{
+          max-width: 100% !important;
+          width: 100%;
+        }
+      }
       > a, > input {
+        font-size: 12px;
+        height: 30px;
         display: block;
         padding: 5px;
         width: 100% !important;
         max-width: 100% !important;
-        min-height: 35px;
-        line-height: 22px;
+        //min-height: 35px;
+        min-height: 30px;
+        line-height: 28px !important;
         border: 1px solid $sales-modal-select-border-color;
         border-radius: 3px;
-        cursor: pointer;
+        padding: 0 0 0 10px;
 
         &:hover {
           text-decoration: none;
         }
+      }
+
+      > a {
+        cursor: pointer;
+      }
+    }
+
+
+
+    ._inputContainer {
+      display: inline-block;
+      white-space: nowrap;
+      & + ._inputContainer {
+        margin-left: 10px;
       }
     }
   }

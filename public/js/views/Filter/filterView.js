@@ -79,11 +79,11 @@ define([
                 allResults = $searchInput.next().find('.ui-autocomplete-category');
 
                 if (allResults.length) {
-                    this.clickSearchResult(allResults
-                        .first()
-                        .find('.subUl li')
-                        .first()
-                    );
+                    this.clickSearchResult(allResults);
+                    /* .first()
+                     .find('.subUl li')
+                     .first()*/
+
                 }
 
                 if (!allResults.length && $searchInput.html()) {  // added message in case of search unsuccessful
@@ -111,7 +111,10 @@ define([
             var filterKeys;
             var groupName;
             var defaultFilterName = App.storage.find(this.contentType + '.savedFilter');
-            
+
+            if (filter && filter.hasOwnProperty('undefined')) { // lifehack untill fix
+                delete filter.undefined;
+            }
 
             filterKeys = filter ? Object.keys(filter) : [];
 
@@ -123,7 +126,7 @@ define([
                         $filterValues.append('<span class="showLast"> ...&nbsp </span>');
                     }
 
-                    if ((key !== 'forSales') && (key !== 'viewType') && (key !== 'startDate') && (key !== 'endDate') && (key !== 'workflowId') && (key !== 'date')) {
+                    if ((key !== 'forSales') && (key !== 'viewType') && (key !== 'startDate') && (key !== 'endDate') && (key !== 'workflowId') && (key !== 'date')&& (key !== 'toExpand')&& (key !== 'channelLinks')) {
                         groupName = self.constantsObject[key] ? self.constantsObject[key].displayName : 'letter';
                     } else {
                         groupName = null;
@@ -157,14 +160,15 @@ define([
             var filtersKeysForRemove;
 
             function setStatusFalse(key, callback) {
-                var valuesArray = App.filtersObject.filter[key].value || App.filtersObject.filter[key];
+                var valuesArray = App.filtersObject.filter[key] ? App.filtersObject.filter[key].value || App.filtersObject.filter[key] : [];
                 var filterCollection = self.currentCollection[key];
 
-                if (filterCollection.length) {
+                if (filterCollection && filterCollection.length) {
                     for (var i = valuesArray.length - 1; i >= 0; i--) {
-                        filterCollection
-                            .get(valuesArray[i])
-                            .set({status: false});
+                        if (filterCollection.get(valuesArray[i])) {
+                            filterCollection.get(valuesArray[i]).set({status: false});
+                        }
+
                     }
                 }
 
@@ -190,6 +194,10 @@ define([
                     self.$el.find('#searchInput').empty();
 
                     if (favouriteIconState) {
+                        self.savedFiltersView.$el
+                            .find('.checkedValue')
+                            .removeClass('checkedValue');
+
                         App.storage.remove(self.contentType + '.savedFilter');
                     }
                 });
@@ -255,13 +263,13 @@ define([
         },
 
         renderGroup: function (options, cb) {
+            var self = this;
             var displayName = options.displayName || '';
             var filterType = options.filterType || null;
             var filterView = options.filterView;
             var filterBackend = options.filterBackend || null;
             var groupStatus = options.groupStatus || null;
             var groupOptions = options.groupOptions || {};
-            var self = this;
             var intFiltersArray = ['week', 'month', 'year', 'paymentsCount'];
             var $filtersSelector = this.$el.find('#filtersContent');
 
@@ -306,6 +314,10 @@ define([
 
             this.groupsViews[filterView].on('valueSelected', function (state) {
                 if (state) {
+                    self.savedFiltersView.$el
+                        .find('.checkedValue')
+                        .removeClass('checkedValue');
+
                     App.storage.remove(self.contentType + '.savedFilter');
                 }
                 self.setDbOnce();
@@ -443,7 +455,7 @@ define([
 
             valuesArray = App.filtersObject.filter[filterKey].value;
 
-            if (this.currentCollection[filterKey].length === 0) {
+            if (!this.currentCollection[filterKey] || this.currentCollection[filterKey].length === 0) {
                 return;
             }
 

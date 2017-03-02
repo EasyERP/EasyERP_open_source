@@ -126,8 +126,6 @@ define([
             this.priceChange = _.debounce(this.priceChange, 250);
         },
 
-
-
         renderMessage: function (e) {
             var $target = $(e.target);
             var $tr = $target.closest('tr');
@@ -293,11 +291,11 @@ define([
             if (rowId === undefined || /* rowId !== 'false'*/ !hasError) {
                 if (!$trEll.length) {
                     $parrent.prepend(templ({
-                        forSales     : self.forSales,
-                        products     : products,
-                        curSymbol    : curSymbol,
-                        writeOff     : self.writeOff,
-                        quotations   : self.quotations
+                        forSales  : self.forSales,
+                        products  : products,
+                        curSymbol : curSymbol,
+                        writeOff  : self.writeOff,
+                        quotations: self.quotations
                     }));
 
                     this.removeEditableCass($parrent.find('tr.productItem').last());
@@ -306,11 +304,11 @@ define([
 
                 }
                 $($trEll[$trEll.length - 1]).after(templ({
-                    forSales     : self.forSales,
-                    products     : products,
-                    curSymbol    : curSymbol,
-                    writeOff     : self.writeOff,
-                    quotations   : self.quotations
+                    forSales  : self.forSales,
+                    products  : products,
+                    curSymbol : curSymbol,
+                    writeOff  : self.writeOff,
+                    quotations: self.quotations
                 }));
 
                 this.removeEditableCass($parrent.find('tr').last());
@@ -333,10 +331,10 @@ define([
              }));*/
         },
 
-        discountChange : function (e){
+        discountChange: function (e) {
             var $targetEl = $(e.target);
 
-            if($targetEl.val()> 100){
+            if ($targetEl.val() > 100) {
                 $targetEl.val(100);
             }
         },
@@ -464,7 +462,6 @@ define([
 
             currency._id = $('#currencyDd').attr('data-id');
 
-
             $($parrents[2]).find('input').val(salePrice);
             total = parseFloat(selectedProduct.info.salePrice);
             taxes = total * this.taxesRate;
@@ -544,7 +541,7 @@ define([
         recalculateDiscount: function (e) {
             var $target = $(e.target);
             var parentTr = $target.closest('tr');
-            var quantity = parseFloat($target.val()/100);
+            var quantity = parseFloat($target.val() / 100);
             var cost = parseFloat(helpers.spaceReplacer(this.$el.find('#totalUntaxes').text()));
             var discount = quantity * cost;
             discount = discount.toFixed(2);
@@ -553,7 +550,6 @@ define([
 
             this.calculateTotal(discount);
         },
-
 
         calculateTotal: function (discount) {
             var thisEl = this.$el;
@@ -601,7 +597,7 @@ define([
             taxes = parseFloat(helpers.spaceReplacer(taxes));
 
             total = totalUntax + taxes;
-            if (discount){
+            if (discount) {
                 total = total - discount;
             }
 
@@ -666,7 +662,7 @@ define([
                     totalAmountContainer.append(_.template(totalAmount, {
                         model           : options.model,
                         balanceVisible  : this.visible,
-                        discountVisible :this.discountVisible,
+                        discountVisible : this.discountVisible,
                         currencySplitter: helpers.currencySplitter
                     }));
                 }
@@ -680,7 +676,7 @@ define([
                     totalAmountContainer.append(_.template(totalAmount, {
                         model           : null,
                         balanceVisible  : this.visible,
-                        discountVisible :this.discountVisible,
+                        discountVisible : this.discountVisible,
                         currencySplitter: helpers.currencySplitter,
                         currencyClass   : helpers.currencyClass
                     }));

@@ -5,12 +5,13 @@ define([
     'text!templates/Products/EditTemplate.html',
     'views/Notes/AttachView',
     'views/dialogViewBase',
+    'collections/Products/filterCollection',
     'common',
     'custom',
     'dataService',
     'populate',
     'constants'
-], function (Backbone, $, _, EditTemplate, AttachView, ParentView, common, Custom, dataService, populate, CONSTANTS) {
+], function (Backbone, $, _, EditTemplate, AttachView, ParentView, SearchCollection, common, Custom, dataService, populate, CONSTANTS) {
 
     var EditView = ParentView.extend({
         el         : '#content-holder',
@@ -37,7 +38,10 @@ define([
             'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
             'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect',
             'click .details'                                                  : 'showDetailsBox',
-            'click .icon-attach'                                              : 'clickInput'
+            'click .icon-attach'                                              : 'clickInput',
+            'click #searchBtnEdit'                                            : 'searchProduct',
+            'click .itemForBundle'                                            : 'addToBundle',
+            'click .removeBundle'                                             : 'removeBundle'
         },
 
         clickInput: function () {
@@ -64,6 +68,73 @@ define([
             $(e.target).toggleClass('choosen');
         },
 
+        removeBundle: function (e) {
+            var $thisEl = this.$el;
+            var target = $(e.target).closest('.bundle');
+            var position = Object.keys(this.bundleObj).indexOf(target.data('id'));
+
+            if (position >= 0) {
+                delete this.bundleObj[target.data('id')];
+            }
+            target.remove();
+        },
+
+        addToBundle: function (e) {
+            var $thisEl = this.$el;
+            var $target = $(e.target);
+            var $container = $thisEl.find('#productsBundle');
+            var val = $target.text();
+            var id = $target.data('id');
+
+            if (Object.keys(this.bundleObj).indexOf(id) >= 0) {
+                return;
+            }
+
+            this.bundleObj[id] = '';
+
+            $container.append('<div class="bundle" data-id="' + id + '"><input value="' + val + '"><input value="0"><span class="removeBundle">X</span></div>');
+        },
+
+        searchProduct: function (e) {
+            e.preventDefault();
+
+            var $thisEl = this.$el;
+            var $target = $(e.target);
+            var $searchContatiner = $target.closest('.searchContainer');
+            var $search = $searchContatiner.find('#searchProducts');
+            var searchValue = $search.val();
+            var filterOpts = {
+                value: searchValue
+            };
+            var collectionOpts = {
+                page    : 1,
+                showMore: false,
+                reset   : true,
+                filter  : filterOpts
+            };
+
+            if (!this.searchProdCollection) {
+                this.searchProdCollection = new SearchCollection(collectionOpts);
+                this.searchProdCollection.bind('reset', _.bind(this.renderSearchProducts, this));
+            } else {
+                //this.searchProdCollection.getFirstPage(collectionOpts);
+                this.renderSearchProducts();
+            }
+        },
+
+        renderSearchProducts: function () {
+            var $thisEl = this.$el;
+            var $container = $thisEl.find('#productsForBundle');
+
+            $container.html();
+
+            _.each(this.searchProdCollection.toJSON(), function (item) {
+                $container.append('<li class="itemForBundle" data-id="' + item._id + '">' + item.name + '</li>');
+            });
+
+            this.searchProdCollection = [];
+        },
+
         saveItem: function () {
             var self = this;
 
@@ -80,9 +151,6 @@ define([
             var eventSubscription = this.$el.find('#subscription').prop('checked');
             var canBePurchased = this.$el.find('#purchased').prop('checked');
             var salePrice = this.$el.find('#salePrice').val();
-            //var barcode = $.trim(this.$el.find('#barcode').val());
-            //var isActive = this.$el.find('#active').prop('checked');
-            //var productType = this.$el.find('#productType').data('id');
             var categoryEl = this.$el.find('#productCategory');
             var category = {
                 _id : categoryEl.data('id'),
@@ -96,9 +164,7 @@ define([
                 imageSrc         : this.imageSrc,
                 name             : name,
                 info             : {
-                    //productType: productType,
                     salePrice  : salePrice || 0,
-                    //isActive   : isActive,
                     //barcode    : barcode,
                     description: description
                 },
@@ -148,7 +214,6 @@ define([
             populate.showSelect(e, prev, next, this);
             return false;
 
-
         },
 
         hideNewSelect: function () {
@@ -156,7 +221,7 @@ define([
         },
 
         chooseOption: function (e) {
-            $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
+            $(e.target).parents('ul').closest('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
         },
 
         deleteItem: function (event) {
@@ -201,20 +266,20 @@ define([
         render: function () {
             var self = this;
             var model = this.currentModel.toJSON();
+            var categoryId = model.info && model.info.category;
+            var productTypeId = model.info && model.info.productType;
             var formString = this.template({
-                model: model
+                product: model
             });
             var $thisEl;
             var notDiv;
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'edit-dialog',
-                title        : 'Edit Product',
-                width        : '900',
-                buttons      : {
+                autoOpen   : true,
+                dialogClass: 'edit-dialog',
+                title      : 'Edit Product',
+                width      : '900',
+                buttons    : {
                     save: {
                         text : 'Save',
                         class: 'btn blue',
@@ -245,7 +310,10 @@ define([
                 }).render().el
             );
 
-            this.renderAssignees(this.currentModel);
+            // populate.getProductTypeOrCategory('#productCategory', '/category', {}, 'fullName', this, true, false, null, categoryId);
+            populate.getProductTypeOrCategory('#productType', '/products/getProductsTypeForDd', {}, 'name', this, true, false, null, productTypeId);
+
+            //this.renderAssignees(this.currentModel);
 
             common.canvasDraw({model: this.model.toJSON()}, this);
 

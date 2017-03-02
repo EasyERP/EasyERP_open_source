@@ -1,58 +1,52 @@
-<div class="form-holder">
+<div class="form-holder _newForm">
     <form method="post" action="" class="form" id="invoiceForm">
-        <fieldset>
-            <div class="inner">
-                <ul class="dialog-tabs" data-class="mainTabs">
-                    <li><a class="active" href="javascript:;">Main</a></li>
-                    <li><a href="javascript:;">Assignees</a></li>
-                </ul>
-                <div class="clearfix"></div>
-                <div class="dialog-tabs-items mainTabs">
-                    <div class="dialog-tabs-item mainTabs active">
-                        <div class="half-block left">
-                            <dl class="opp-info">
-
-                                <dt><label for="projectDd">Project</label></dt>
-                                <dd class="_newSelectListWrap">
-                                    <a id="projectDd" class="current-selected" href="javascript:;">Select</a>
-                                </dd>
-
-                                <dt><label for="writeOffWay">Journal</label></dt>
-                                <dd class="_newSelectListWrap">
-                                    <a id="writeOffWay"  class="current-selected"  href="javascript:;">Select</a>
-                                </dd>
-                            </dl>
+        <h4 class="_dialogTitlePositioned">Create WriteOff</h4>
+        <ul class="dialog-tabs" data-class="mainTabs">
+            <li><a class="active" href="javascript:;">Main</a></li>
+            <li><a href="javascript:;">Assignees</a></li>
+        </ul>
+        <div class="dialog-tabs-items mainTabs">
+            <div class="dialog-tabs-item mainTabs active">
+                <div class="_formWrap">
+                    <div class="_formBlock _equal">
+                        <div class="_animateSelectBox">
+                            <span class="_selectTitle">Project</span>
+                            <div class="_newSelectListWrap">
+                                <a id="projectDd"
+                                   class="current-selected"
+                                   href="javascript:;">Select project
+                                </a>
+                            </div>
                         </div>
-                        <div class="half-block left">
-                            <dl class="opp-info">
-
-                                <dt><label for="invoice_date">WriteOff Date</label></dt>
-                                <dd>
-                                    <input class="extrainfo" type="text" name="invoiceDate" id="invoice_date" value=""
-                                           readonly="" placeholder="Invoice Date">
-                                </dd>
-                            </dl>
-                        </div>
-                        <div class="clearfix"></div>
-                        <ul class="dialog-tabs" data-class="childTabs">
-                            <li><a class="active" href="javascript:;">Product</a></li>
-                        </ul>
-                        <div class="clearfix"></div>
-                        <div class="dialog-tabs-items childTabs">
-                            <div class="dialog-tabs-item childTabs active">
-                                <div id="productItemsHolder">
-
-                                </div>
-                                <div class="clearfix"></div>
+                        <div class="_animateSelectBox">
+                            <span class="_selectTitle">Journal</span>
+                            <div class="_newSelectListWrap">
+                                <a id="writeOffWay"
+                                   class="current-selected"
+                                   href="javascript:;">Select journal
+                                </a>
                             </div>
                         </div>
                     </div>
-                    <div class="dialog-tabs-item mainTabs">
-                        <div class="assignees-container"></div>
+                    <div class="_formBlock _equal">
+                        <div class="_animateInputBox">
+                            <span class="_staticLabel">WriteOff Date</span>
+                            <input type="text"
+                                   name="invoiceDate"
+                                   class="_animate extrainfo"
+                                   id="invoice_date"
+                                   value=""
+                                   placeholder="Invoice Date"
+                                   required
+                                   readonly/>
+                        </div>
                     </div>
                 </div>
-
+                <div id="invoiceItemsHolder" class="_invoiceItemsHolder"></div>
             </div>
-        </fieldset>
+            <div class="dialog-tabs-item mainTabs">
+                <div class="assignees-container _formWrap _innedFlexDiv"></div>
+            </div>
+        </div>
     </form>
 </div>

@@ -3,65 +3,66 @@
         <fieldset>
             <div class="inner">
                 <div class="topInputHolder">
-                    <h2>Payment <%=model.name%></h2>
+                    <h2><%=model.refund? "Refund" : "Payment"%> <%=model.name%></h2>
                 </div>
                 <div class="half-block left">
                     <dl class="opp-info">
-                        <dt><label for="supplierDD" class="semiBold">Supplier</label></dt>
+                        <dt><label for="supplierDD" class="fontSemiBold">Supplier</label></dt>
                         <dd>
                             <span id="supplierDd" class=""
                                   data-id="<%=model.supplier ? model.supplier._id : null%>"><%=model.supplier ? model.supplier.name.first + ' ' +
                                 model.supplier.name.last : ''%></span>
                         </dd>
                         <dt>
-                            <label for="paidAmount" class="semiBold">Paid Amount</label>
+                            <label for="paidAmount" class="fontSemiBold"><%=model.refund? "Refunded" : "Paid Amount"%></label>
                         </dt>
                         <dd>
-                            <span id="paidAmount" class="<%=currencyClass(model.currency._id._id)%>"><%=model.paidAmount ? currencySplitter(model.paidAmount) : 0.00%></span>
+                            <span id="paidAmount" class="<%=currencyClass(model.currency._id && model.currency._id._id)%>"><%=model.paidAmount ? currencySplitter(model.paidAmount) : 0.00%></span>
                         </dd>
                         <dt>
-                            <label for="paymentMethod" class="semiBold">Bank account</label>
+                            <label for="paymentMethod" class="fontSemiBold">Bank account</label>
                         </dt>
                         <dd class="_newSelectListWrap">
                             <span id="paymentMethod"><%=model.paymentMethod ? model.paymentMethod.name : ''%></span>
                         </dd>
                         <dt>
-                            <label for="journal" class="semiBold">Journal</label>
+                            <label for="account" class="fontSemiBold">Account</label>
                         </dt>
                         <dd class="_newSelectListWrap">
-                            <span id="journal"><%=model.journal ? model.journal.name : 'Not found journal'%></span>
+                            <span id="account"><%=model.bankAccount ? model.bankAccount.name : 'Account not found'%></span>
                         </dd>
-                        <% if (model.otherIncomeJournal) {%>
+                        <% if (model.otherIncomeLossAccount) {%>
                         <dt>
-                            <label for="otherIncomeJournal" class="semiBold">Other Income\Loss Journal</label>
+                            <label for="otherIncomeLossAccount" class="fontSemiBold">Other Income\Loss account</label>
                         </dt>
                         <dd class="_newSelectListWrap">
-                            <span id="otherIncomeJournal"><%=model.otherIncomeJournal.name%></span>
+                            <span id="otherIncomeLossAccount"><%=model.otherIncomeLossAccount ? model.otherIncomeLossAccount.name : ''%></span>
                         </dd>
                         <% } %>
                     </dl>
                 </div>
                 <div class="half-block left">
                     <dl class="opp-info">
-                        <dt><label for="paymentDate" class="semiBold">Date</label></dt>
+                        <dt><label for="paymentDate" class="fontSemiBold">Date</label></dt>
                         <dd>
                             <span id="paymentDate"><%=model.date%></span>
                         </dd>
-                        <dt><label for="paymentRef" class="semiBold">Invoice</label></dt>
+                        <dt><label for="paymentRef" class="fontSemiBold">Source Document</label></dt>
                         <dd>
-                            <span id="paymentRef" data-id="<%=model.invoice._id%>"><%=model.invoice.name%></span>
+                            <span id="paymentRef"
+                                  data-id="<%=model.invoice && model.invoice._id ? model.invoice._id : model.order && model.order._id ? model.order._id : null%>"><%=model.invoice && model.invoice.name ? model.invoice.name : model.order && model.order.name ? model.order.name : ''%></span>
                         </dd>
-                        <dt><label for="currencyDd" class="semiBold">Currency</label></dt>
+                        <dt><label for="currencyDd" class="fontSemiBold">Currency</label></dt>
                         <dd>
                             <span id="currencyDd"
-                                  data-id="<%= model && model.currency ? model.currency._id : null%>"><%= model && model.currency ?
+                                  data-id="<%= model && model.currency ? model.currency._id : null%>"><%= model && model.currency && model.currency._id ?
                                 model.currency._id.name : ''%></span>
                         </dd>
                     </dl>
                 </div>
                 <div class="left _chart" id="chart"></div>
                 <div id="differenceAmountContainer" class="half-block left hidden">
-                    <dt><label class="semiBold">Difference Amount</label></dt>
+                    <dt><label class="fontSemiBold">Difference Amount</label></dt>
                     <dd><span id="differenceAmount"></span></dd>
                 </div>
             </div>

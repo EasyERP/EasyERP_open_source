@@ -49,7 +49,8 @@ define([
                 this.selectView.remove();
             }
         },
-        showEdit     : function () {
+
+        showEdit: function () {
             this.$el.find('.upload').animate({
                 height : '20px',
                 display: 'block'
@@ -73,12 +74,24 @@ define([
             var $target = $(e.target);
             var property = $target.attr('data-id').replace('_', '.');
             var value = $target.val();
+            var propArray = property.split('.');
 
             if (!value && !$target.hasClass('hideLine')) {
                 $target.addClass('hideLine');
             }
             if (value) {
                 $target.removeClass('hideLine');
+            }
+
+            if (propArray.length > 1) {
+                if (!this.modelChanged[propArray[0]]) {
+                    this.modelChanged[propArray[0]] = {};
+                }
+
+                this.modelChanged[propArray[0]][propArray[1]] = value;
+
+                return this.showButtons();
+
             }
 
             this.modelChanged[property] = value;
@@ -95,6 +108,7 @@ define([
 
         saveChanges: function (e) {
             e.preventDefault();
+
             this.saveDeal(this.modelChanged);
         },
 
@@ -164,6 +178,9 @@ define([
             var changedAttributesForEvent = ['name', 'expectedRevenue.value', 'salesPerson', 'workflow'];
             var changedListAttr = _.intersection(Object.keys(changedAttrs), changedAttributesForEvent);
             var sendEvent = !!(changedListAttr.length);
+            var amountNumber;
+
+
 
             this.formModel.save(changedAttrs, {
                 patch  : true,
@@ -267,9 +284,14 @@ define([
                 }));
             });
 
+            // todo check permissions
             dataService.getData('/employees/getForDD', {isEmployee: true}, function (employees) {
                 employees = _.map(employees.data, function (employee) {
-                    employee.name = employee.name.first + ' ' + employee.name.last;
+                    if (employee._id === App.currentUser && App.currentUser.relatedEmployee && App.currentUser.relatedEmployee._id) {
+                        employee.name = 'Me';
+                    } else {
+                        employee.name = employee.name.first + ' ' + employee.name.last;
+                    }
 
                     return employee;
                 });
@@ -309,7 +331,7 @@ define([
                 changeMonth: true,
                 changeYear : true,
                 onSelect   : function (dateText) {
-                    self.modelChanged['expectedClosing'] = new Date(dateText);
+                    self.modelChanged.expectedClosing = new Date(dateText);
                     self.showButtons();
                 }
             });

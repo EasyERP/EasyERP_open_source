@@ -1,35 +1,57 @@
 ﻿<div id="searchContainer"></div>
-<table class="list stripedList">
-    <colgroup>
-        <col width="180px">
-        <col width="180px">
-        <col width="150px">
-        <col width="180px">
-        <col width="180px">
-        <col width="120px">
-    </colgroup>
-    <thead>
-    <tr>
-        <!--<th class="centerCell"><input type="checkbox" id="checkAll"/></th>-->
-        <th class="oe_sortable" data-sort="journal.name">Journal<span class="arrow down"></span><span
-                class="arrow up"></span></th>
-        <th class="oe_sortable" data-sort="date">Accounting date<span class="arrow down"></span><span
-                class="arrow up"></span></th>
-        <th class="oe_sortable" data-sort="sourceDocument.name">Source document<span class="arrow down"></span><span
-                class="arrow up"></span></th>
-        <th class="oe_sortable" data-sort="debitAccount.name">Debit Account<span class="arrow down"></span><span
-                class="arrow up"></span></th>
-        <th class="oe_sortable" data-sort="creditAccount.name">Credit Account<span class="arrow down"></span><span
-                class="arrow up"></span></th>
-        <th class="oe_sortable" data-sort="debit">Sum<span class="arrow down"></span><span
-                class="arrow up"></span></th>
-    </tr>
-    </thead>
-    <tbody id="listTable" class="enableTableOdd"></tbody>
-    <tfoot id="listFooter">
-    <tr>
-        <td colspan="5"></td>
-        <td id="totalDebit" class="money"></td>
-    </tr>
-    </tfoot>
-</table>
+<div class="_journalEntryWrap">
+    <table class="list stripedList _rowColorGrouping">
+        <colgroup>
+            <col width="180px">
+            <col width="180px">
+            <col width="150px">
+            <col width="180px">
+            <col width="120px">
+            <col width="120px">
+        </colgroup>
+        <thead>
+        <tr>
+            <th class="oe_sortable"
+                data-sort="timestamp">Number
+                <span class="arrow down"></span>
+                <span class="arrow up"></span>
+            </th>
+            <!--<th class="oe_sortable" data-sort="journal.name">Journal<span class="arrow down"></span><span
+                    class="arrow up"></span></th>-->
+            <th class="oe_sortable"
+                data-sort="date">Accounting date
+                <span class="arrow down"></span>
+                <span class="arrow up"></span>
+            </th>
+            <th class="oe_sortable"
+                data-sort="sourceDocument.name">Source document
+                <span class="arrow down"></span>
+                <span class="arrow up"></span>
+            </th>
+            <th class="oe_sortable"
+                data-sort="account.name">Account
+                <span class="arrow down"></span>
+                <span class="arrow up"></span>
+            </th>
+            <th class="oe_sortable"
+                data-sort="debit">Debit
+                <span class="arrow down"></span>
+                <span class="arrow up"></span>
+            </th>
+            <th class="oe_sortable"
+                data-sort="credit">Credit
+                <span class="arrow down"></span>
+                <span class="arrow up"></span>
+            </th>
+        </tr>
+        </thead>
+        <tbody id="listTable"></tbody>
+        <tfoot id="listFooter">
+        <tr>
+            <td colspan="4">Total</td>
+            <td id="totalDebit" class="money"></td>
+            <td id="totalCredit" class="money"></td>
+        </tr>
+        </tfoot>
+    </table>
+</div>

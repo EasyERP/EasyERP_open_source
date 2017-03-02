@@ -1,17 +1,18 @@
 <% applicationsCollection.forEach(function(application, index){ %>
 <tr data-index="<%= index + 1 %>" data-id="<%=application._id%>"
     class="stage-<%=(application.workflow) ? application.workflow.status.toLowerCase().replace(' ','') : ''%>">
-    <td class="notForm centerCell"><input type="checkbox" value="<%=application._id%>" class="checkbox"/></td>
-    <!-- <td><%=application.creationDate%></td> -->
-    <!--<td><%=application.subject%></td>-->
+    <td class="notForm centerCell">
+        <label class="_customCHeckbox">
+            <input type="checkbox" value="<%=application._id%>" class="checkbox"/>
+            <span></span>
+        </label>
+    </td>
     <td><%=application.name.first%> <%=application.name.last%></td>
     <td><%=application.personalEmail%></td>
-    <td class="notForm"><a href="skype:<%=application.workPhones.mobile%>?call"><%=application.workPhones.mobile%></a>
+    <td class="notForm">
+      <a href="skype:<%=application.workPhones.mobile%>?call"><%=application.workPhones.mobile%></a>
     </td>
     <td><%=(application.jobPosition) ? application.jobPosition.name : ''%></td>
-    <!--<td><%=(application.department) ? application.department.name : ''%></td>-->
-    <!--<td><%=(application.hire.length) ? application.hire[application.hire.length - 1].date : ''%></td>-->
-    <!--<td><%=(application.fire.length) ? application.fire[application.fire.length - 1].date : ''%></td>-->
     <td id='<%=application._id%>' data-sequence='<%=application.sequence%>'>
         <div class="_newSelectListWrap">
             <a href="javascript:;" class="stageSelect blue"
@@ -25,6 +26,5 @@
     <td><%=(application.editedBy&&application.editedBy.date)?( application.editedBy.date + ((application.editedBy.user)
         ?(' (' + application.editedBy.user + ')') : '')):''%>
     </td>
-
 </tr>
 <% }) %>

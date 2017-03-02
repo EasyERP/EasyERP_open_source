@@ -33,6 +33,16 @@
     background-color: #b6bbbf !important;
   }
 
+  &Red,
+  &Pink,
+  &Orange,
+  &GreenDark,
+  &BlueDark,
+  &Purple,
+  &Black {
+    color: #fff;
+  }
+
   &Hover {
     .bg {
       &Red,
@@ -53,6 +63,7 @@
     }
   }
 }
+
 
 [data-color="bgRed"] {
   background-color: #eb5a46 !important;
@@ -87,6 +98,11 @@
 [data-color="bgGrey"] {
   background-color: #b6bbbf !important;
 }
+[data-color="bgWhite"] {
+  background-color: #fff !important;
+  color: #3a424c !important;
+  border: 1px solid #b6bbbf !important;
+}
 
 [data-color="bgRed"],
 [data-color="bgPink"],
@@ -99,7 +115,10 @@
 [data-color="bgPurple"],
 [data-color="bgBlack"],
 [data-color="bgGrey"] {
+  color: #fff;
+
   &:hover {
     opacity: 0.75 !important;
   }
 }
+

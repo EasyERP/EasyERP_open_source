@@ -1,6 +1,26 @@
 <% collection.forEach(function(account, index){ %>
-<tr data-id="<%=account._id%>" class="mainTr">
-    <td><%=account.name%></td>
-    <td data-id="debit" data-value="<%=account.debit%>" class="money <%= parseInt((account.debit / 100).toFixed(2), 10) < 0 ? 'redText' : '' %>"><%=currencySplitter((account.debit / 100).toFixed(2))%></td>
+<tr data-id="<%=(account._id ? account._id._id : null) + type %>" class="mainTr">
+    <td class="expand"><span class="icon-caret-right"></span></td>
+    <td colspan="2"><%=account._id ? account._id.name : ''%></td>
+    <td data-id="balance" data-value="<%=account.balance%>"
+        class="money countable <%= parseInt((account.balance / 100).toFixed(2), 10) < 0 ? 'redText' : '' %>">
+        <%=currencySplitter((account.balance / 100).toFixed(2))%>
+    </td>
 </tr>
+
+<%if (account.root){ %>
+
+<%account.root.forEach(function(account){%>
+<tr data-main="<%=(account._id.category ? account._id.category._id : null) + type%>" data-account="<%=account._id._id%>"
+    class="childTr hidden">
+    <td class="expand"><span class="icon-caret-right"></span></td>
+    <td colspan="2"><%=account._id.name%></td>
+    <td data-value="<%=account.balance%>"
+        class="money <%= parseInt((account.balance / 100).toFixed(2), 10) < 0 ? 'redText' : '' %>">
+        <%=currencySplitter((account.balance / 100).toFixed(2))%>
+    </td>
+</tr>
+<%})%>
+
+<%}%>
 <% }) %>

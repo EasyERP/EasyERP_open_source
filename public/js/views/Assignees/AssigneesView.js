@@ -13,7 +13,6 @@ define([
 ], function (Backbone, $, _, assigneesTemplate, addGroupTemplate, addUserTemplate, SelectView, common, populate, CONSTANTS) {
     'use strict';
     var AssigneesView = Backbone.View.extend({
-
         initialize: function (options) {
             this.remove();
             this.model = options.model;
@@ -56,7 +55,7 @@ define([
         },
 
         chooseOption: function (e) {
-            $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
+            $(e.target).parents('ul').closest('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
 
             this.hideNewSelect();
         },

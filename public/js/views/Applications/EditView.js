@@ -4,10 +4,12 @@
     'Underscore',
     'text!templates/Applications/EditTemplate.html',
     'views/selectView/selectView',
-    'views/Notes/NoteView',
-    'views/dialogViewBase',
+  'views/Editor/NoteView',
+  'views/Editor/AttachView',
+  'views/dialogViewBase',
     'models/TransferModel',
     'collections/transfer/editCollection',
+    'services/employees',
     'common',
     'populate',
     'custom',
@@ -22,9 +24,11 @@
              EditTemplate,
              SelectView,
              NoteView,
+             AttachView,
              ParentView,
              TransferModel,
              EditCollection,
+             employees,
              common,
              populate,
              custom,
@@ -127,12 +131,8 @@
             'mouseenter .avatar'          : 'showEdit',
             'mouseleave .avatar'          : 'hideEdit',
             'click .current-selected'     : 'showNewSelect',
-            // 'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
             'click .hireEmployee'         : 'isEmployee',
             'click .refuseEmployee'       : 'refuseEmployee',
-            // 'click td.editable'                               : 'editJob',
-            // 'click #jobPosition,#department,#manager,#jobType': 'showNotification',
-            // 'click .fa-trash'                                 : 'deleteRow',
             'keydown input.editing'       : 'keyDown',
             'change .editable '           : 'setEditable',
             'keydown .salary'             : 'validateNumbers'
@@ -252,7 +252,7 @@
                 weeklyScheduler = $thisEl.find('#weeklySchedulerDd').attr('data-id');
                 payrollStructureType = $thisEl.find('#payrollStructureTypeDd').attr('data-id') || null;
                 scheduledPay = $thisEl.find('#scheduledPayDd').attr('data-id') || null;
-                department = $thisEl.find('#departmentsDd').attr('data-id');
+                department = $thisEl.find('#departmentDd').attr('data-id');
                 jobType = $thisEl.find('#jobTypeDd').text();
                 info = $thisEl.find('#statusInfoDd').val();
                 event = 'hired';
@@ -275,10 +275,13 @@
                 payrollStructureType: payrollStructureType,
                 scheduledPay        : scheduledPay
             };
+
             model = new TransferModel(transfer);
+
             if (this.currentModel.get('transfer').length) {
                 newTr.attr('id', model.cid);
             }
+
             this.changedModels[model.cid] = transfer;
             this.editCollection.add(model);
         },
@@ -422,7 +425,7 @@
         isEmployee: function (e) {
             e.preventDefault();
 
-            // this.addNewRow();
+            this.currentModel.set('isHire', true);
             this.setTransfer();
             this.saveItem(null, true);
         },
@@ -508,15 +511,18 @@
         },
 
         saveItem: function (e, toEmployyes) {
+            var $thisEl = this.$el;
+            var self = this;
+
             var weeklyScheduler;
             var currentWorkflow;
+            var employmentType;
             var proposedSalary;
             var expectedSalary;
             var transferArray;
-            var self = this;
-            var previousDep;
             var relatedUser;
             var dateBirthSt;
+            var retriveUserName;
             var nationality;
             var homeAddress;
             var jobPosition;
@@ -524,6 +530,7 @@
             var isEmployee;
             var department;
             var workflowId;
+            var workEmail;
             var $jobTable;
             var fireArray;
             var hireArray;
@@ -534,14 +541,15 @@
             var position;
             var whoCanRW;
             var groupsId;
+            var userName;
             var usersId;
             var marital;
-            var employmentType;
             var jobType;
             var manager;
             var $jobTrs;
             var gender;
             var salary;
+            var isHire;
             var coach;
             var event;
             var quit;
@@ -550,13 +558,13 @@
             var info;
             var flag;
             var $el;
-            var $thisEl = this.$el;
             var $tr;
             var payrollStructureType;
             var scheduledPay;
             var lastTr;
 
             this.setChangedValueToModel();
+            retriveUserName = employees.retriveUserName.bind(this);
 
             $thisEl.find('.required').each(function () {
                 if (!$(this).attr('data-id')) {
@@ -576,6 +584,7 @@
             self.hideNewSelect();
 
             relatedUser = $thisEl.find('#relatedUsersDd').attr('data-id') || null;
+            workEmail = $.trim($thisEl.find('#workEmail').val());
             coach = $.trim($thisEl.find('#coachDd').attr('data-id')) || null;
             whoCanRW = $thisEl.find('[name="whoCanRW"]:checked').val();
             dateBirthSt = $.trim($thisEl.find('#dateBirth').val());
@@ -587,6 +596,8 @@
             nationality = $('#nationality').attr('data-id');
             $jobTrs = $jobTable.find('tr.transfer');
             sourceId = $thisEl.find('#sourceDd').attr('data-id');
+            userName = retriveUserName(workEmail);
+            isHire = !!this.currentModel.get('isHire');
             viewType = custom.getCurrentVT();
             transferArray = [];
             homeAddress = {};
@@ -632,7 +643,7 @@
             lastTr = $tr.last();
             manager = lastTr.find('[data-content="manager"]').attr('data-id') || lastTr.find('#projectManagerDD').attr('data-id') || null;
             jobPosition = lastTr.find('[data-content="jobPosition"]').attr('data-id') || lastTr.find('#jobPositionDd').attr('data-id') || null;
-            department = lastTr.find('[data-content="department"]').attr('data-id') || lastTr.find('#departmentsDd').last().attr('data-id') || null;
+            department = lastTr.find('[data-content="department"]').attr('data-id') || lastTr.find('#departmentDd').last().attr('data-id') || null;
             weeklyScheduler = lastTr.find('[data-content="weeklyScheduler"]').attr('data-id') || lastTr.find('#weeklySchedulerDd').last().attr('data-id') || null;
             payrollStructureType = lastTr.find('[data-content="payrollStructureTypeDd"]').attr('data-id') || lastTr.find('#payrollStructureTypeDd').last().attr('data-id') || null;
             scheduledPay = lastTr.find('[data-content="scheduledPayDd"]').attr('data-id') || lastTr.find('#scheduledPayDd').last().attr('data-id') || null;
@@ -704,7 +715,7 @@
                 },
 
                 tags         : $.trim($thisEl.find('#tags').val()).split(','),
-                workEmail    : $.trim($thisEl.find('#workEmail').val()),
+                workEmail    : workEmail,
                 personalEmail: $.trim($thisEl.find('#personalEmail').val()),
                 skype        : $.trim($thisEl.find('#skype').val()),
                 workPhones   : {
@@ -742,9 +753,10 @@
                 hire          : hireArray,
                 fire          : fireArray,
                 nextAction    : nextAction,
-                // transfer      : transferArray,
                 expectedSalary: expectedSalary,
-                proposedSalary: proposedSalary
+                proposedSalary: proposedSalary,
+                userName      : userName,
+                isHire        : isHire
             };
 
             $el = this.$el;
@@ -899,7 +911,7 @@
             var datacontent;
             var changedAttr;
 
-            if (id === 'jobPositionDd' || id === 'departmentsDd' || id === 'projectManagerDD' || id === 'jobTypeDd' || id === 'hireFireDd') {
+            if (id === 'jobPositionDd' || id === 'departmentDd' || id === 'projectManagerDD' || id === 'jobTypeDd' || id === 'hireFireDd') {
 
                 this.setEditable($element);
 
@@ -920,7 +932,7 @@
                     changedAttr[datacontent] = valueId;
                 }
 
-                if (id === 'departmentsDd') {
+                if (id === 'departmentDd') {
 
                     managersIds.forEach(function (managerObj) {
                         if (managerObj._id === valueId) {
@@ -945,7 +957,7 @@
                     }
                 }
             } else {
-                $target.parents('dd').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
+                $target.parents('ul').closest('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
             }
         },
 
@@ -959,11 +971,10 @@
             var $thisEl;
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                dialogClass  : 'edit-dialog',
-                width        : 1000,
-                title        : 'Edit Application',
-                buttons      : {
+                dialogClass: 'edit-dialog',
+                width      : 1000,
+                title      : 'Edit Application',
+                buttons    : {
                     save: {
                         text : 'Save',
                         class: 'btn blue',
@@ -984,17 +995,30 @@
             });
             $thisEl = this.$el;
 
-            notDiv = $thisEl.find('.attach-container');
-            notDiv.append(
-                new NoteView({
-                    model      : this.currentModel,
-                    contentType: self.contentType
-                }).render().el
-            );
+            notDiv = $thisEl.find('#attach-container');
+
+          this.editorView = new NoteView({
+            model      : this.currentModel,
+            contentType: 'Employees',
+            onlyNote: true
+          });
+
+          notDiv.append(
+            this.editorView.render().el
+          );
+
+          $thisEl.find('.attachments').append(
+            new AttachView({
+              model      : this.currentModel,
+              contentType: 'Employees',
+              noteView   : this.editorView,
+              forDoc: true
+            }).render().el
+          );
 
             this.renderAssignees(this.currentModel);
 
-            populate.get('#departmentsDd', CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, 'name', this);
+            populate.get('#departmentDd', CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, 'name', this);
             populate.get('#weeklySchedulerDd', CONSTANTS.URLS.WEEKLYSCHEDULER, {}, 'name', this, true);
             populate.get('#departmentManagers', CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, 'departmentManager', this);
             populate.get('#jobPositionDd', CONSTANTS.URLS.JOBPOSITIONS_FORDD, {}, 'name', this);
@@ -1006,6 +1030,7 @@
             populate.get('#scheduledPayDd', CONSTANTS.URLS.SCHEDULEDPAY_FORDD, {}, 'name', this, true);
             populate.get('#applicationsEditCountry', CONSTANTS.URLS.COUNTRIES, {}, '_id', this);
 
+            populate.getWorkflow('#workflowsDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'Applications'}, 'name', this);
             common.canvasDraw({model: this.currentModel.toJSON()}, this);
 
             $thisEl.find('#nextAction').datepicker({

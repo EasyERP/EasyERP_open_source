@@ -2,8 +2,9 @@
     <% persons.forEach(function(person, index){ %>
     <tr class="compactView" data-id="<%=person._id%>">
         <td class="checkboxRow">
-            <label>
+            <label class="_customCHeckbox">
                 <input type="checkbox" value="<%=person._id%>" class="checkbox"/>
+                <span></span>
             </label>
         </td>
         <td>

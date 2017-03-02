@@ -21,8 +21,8 @@ define([
 
         buildChart: function () {
             var $chartContainer = this.$el.find('#chartContainer');
-            var WIDTH = $chartContainer.width();
-            var HEIGH = $chartContainer.height();
+            var WIDTH = $chartContainer.width() || 400; // add for rerender chart after create Job
+            var HEIGH = $chartContainer.height() || 200;
             var BAR_WIDTH = 35;
             var data = this.data;
             var margin = {top: 30, right: 10, bottom: 30, left: 100};

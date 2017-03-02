@@ -9,10 +9,8 @@ define([
     'constants',
     'dataService',
     'helpers',
-    'custom',
-    'async',
-    'common'
-], function ($, _, listViewBase, listTemplate, ListItemView, FilterView, reportCollection, CONSTANTS, dataService, helpers, custom, async, common) {
+    'custom'
+], function ($, _, listViewBase, listTemplate, ListItemView, FilterView, reportCollection, CONSTANTS, dataService, helpers, custom) {
     'use strict';
 
     var ListView = listViewBase.extend({
@@ -42,7 +40,8 @@ define([
             this.sort = options.sort || {};
             this.defaultItemsNumber = this.collection.namberToShow || 100;
             this.page = options.collection.page;
-            dateRange = custom.retriveFromCash('cashBookDateRange');
+
+            /* dateRange = custom.retriveFromCash('cashBookDateRange'); */
 
             this.filter = options.filter || custom.retriveFromCash('cashBook.filter');
 
@@ -50,52 +49,73 @@ define([
                 this.filter = {};
             }
 
-            if (!this.filter.startDate) {
-                this.filter.startDate = {
-                    key  : 'startDate',
-                    value: new Date(dateRange.startDate)
-                };
-                this.filter.endDate = {
-                    key  : 'endDate',
-                    value: new Date(dateRange.endDate)
+            /* if (!this.filter.startDate) {
+             this.filter.startDate = {
+             key  : 'startDate',
+             value: new Date(dateRange.startDate)
+             };
+             this.filter.endDate = {
+             key  : 'endDate',
+             value: new Date(dateRange.endDate)
+             };
+             } */
+
+            dateRange = this.filter.date ? this.filter.date.value : [];
+
+            if (!this.filter.date) {
+                this.filter.date = {
+                    key  : 'date',
+                    value: [new Date(dateRange.startDate), new Date(dateRange.endDate)]
                 };
             }
 
-            this.startDate = new Date(this.filter.startDate.value);
-            this.endDate = new Date(this.filter.endDate.value);
+            /* this.startDate = new Date(this.filter.startDate.value);
+             this.endDate = new Date(this.filter.endDate.value); */
+
+            this.startDate = new Date(dateRange[0]);
+            this.endDate = new Date(dateRange[1]);
+            this.contentCollection = reportCollection;
+
+            custom.cacheToApp('cashBook.filter', this.filter);
 
             this.render();
-
-            this.contentCollection = reportCollection;
-            custom.cacheToApp('cashBook.filter', this.filter);
         },
 
-        changeDateRange: function () {
-            var stDate = $('#startDate').val();
-            var enDate = $('#endDate').val();
+        changeDateRange: function (dateArray) {
+            /* var stDate = $('#startDate').val();
+             var enDate = $('#endDate').val(); */
             var searchObject;
 
-            this.startDate = new Date(stDate);
-            this.endDate = new Date(enDate);
+            /* this.startDate = new Date(stDate);
+             this.endDate = new Date(enDate);
+
+             if (!this.filter) {
+             this.filter = {};
+             }
+
+             this.filter.startDate = {
+             key  : 'startDate',
+             value: stDate
+             };
+
+             this.filter.endDate = {
+             key  : 'endDate',
+             value: enDate
+             }; */
 
             if (!this.filter) {
                 this.filter = {};
             }
 
-            this.filter.startDate = {
-                key  : 'startDate',
-                value: stDate
+            this.filter.date = {
+                value: dateArray
             };
 
-            this.filter.endDate = {
-                key  : 'endDate',
-                value: enDate
-            };
+            this.startDate = dateArray[0];
+            this.endDate = dateArray[1];
 
             searchObject = {
-                startDate: stDate,
-                endDate  : enDate,
-                filter   : this.filter
+                filter: this.filter
             };
 
             this.collection.showMore(searchObject);

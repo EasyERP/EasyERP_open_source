@@ -6,8 +6,9 @@ define([
     'models/UsersModel',
     'common',
     'populate',
-    'Validation'
-], function (Backbone, $, _, CreateTemplate, UsersModel, common, populate, Validation) {
+    'Validation',
+    'views/selectView/selectView'
+], function (Backbone, $, _, CreateTemplate, UsersModel, common, populate, Validation, SelectView) {
 
     var UsersCreateView = Backbone.View.extend({
         el         : '#content-holder',
@@ -38,14 +39,34 @@ define([
             return false;
         },
 
-        showNewSelect: function (e, prev, next) {
-            populate.showSelect(e, prev, next, this);
+        showNewSelect: function (e) {
+            var $target = $(e.target);
+
+            e.stopPropagation();
+
+            if ($target.attr('id') === 'selectInput') {
+                return false;
+            }
+
+            if (this.selectView) {
+                this.selectView.remove();
+            }
+
+            this.selectView = new SelectView({
+                e          : e,
+                responseObj: this.responseObj
+            });
+
+            $target.append(this.selectView.render().el);
+
             return false;
         },
 
         chooseOption: function (e) {
-            $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
-            $('.newSelectList').hide();
+            var $target = $(e.target);
+
+            $target.parents('ul').closest('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
+            this.$el.find('.newSelectList').hide();
         },
 
         nextSelect: function (e) {
@@ -123,13 +144,11 @@ define([
             var formString = this.template();
             var self = this;
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                dialogClass  : 'edit-dialog',
-                width        : '600',
-                resizable    : true,
-                title        : 'Create User',
-                buttons      : {
+                autoOpen   : true,
+                dialogClass: 'edit-dialog',
+                width      : '600',
+                title      : 'Create User',
+                buttons    : {
                     save: {
                         text : 'Create',
                         class: 'btn blue',

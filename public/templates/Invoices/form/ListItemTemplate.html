@@ -4,11 +4,12 @@
 
     <tr class="compactView" data-id="<%=invoice._id%>">
         <td class="checkboxRow">
-            <label>
+            <label class="_customCHeckbox">
                 <input type="checkbox" value="<%=invoice._id%>"
                        class="checkbox <%=invoice.removable ? '' : 'notRemovable'%>" <%if (!invoice.removable) { %>
-                disabled="disabled"
-                <% } %>/>
+                        disabled="disabled"
+                        <% } %>/>
+                <span></span>
             </label>
         </td>
         <td>

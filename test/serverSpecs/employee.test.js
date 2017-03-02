@@ -7,6 +7,7 @@ require('../../config/environment/test');
 
 describe('Employee Specs', function () {
     'use strict';
+    var userId;
     var id;
 
     describe('Employee with admin', function () {
@@ -32,16 +33,19 @@ describe('Employee Specs', function () {
 
         it('should create employee', function (done) {
             var body = {
-                name: {
-                    first: 'test',
-                    last : 'test'
+                name          : {
+                    first: 'newtest',
+                    last : 'newtest'
                 },
-                
-                department : '55b92ace21e4b7c40f00000f',
-                jobPosition: '55b92acf21e4b7c40f00001d',
-                dateBirth  : '28 Dec, 1990',
-                hire       : [new Date()],
-                transfer   : [{
+                isEmployee    : true,
+                department    : '55b92ace21e4b7c40f00000f',
+                jobPosition   : '55b92acf21e4b7c40f00001d',
+                dateBirth     : '28 Dec, 1990',
+                hire          : [new Date()],
+                employmentType: 'FOP',
+                userName      : 'test',
+                workEmail     : 'roman.buchuk@thinkmobiles.com',
+                transfer      : [{
                     status     : 'hired',
                     isDeveloper: true,
                     department : '55b92ace21e4b7c40f00000f',
@@ -60,6 +64,7 @@ describe('Employee Specs', function () {
                 .expect(201)
                 .end(function (err, res) {
                     var body = res.body;
+                    var result;
 
                     if (err) {
                         return done(err);
@@ -68,13 +73,28 @@ describe('Employee Specs', function () {
                     expect(body)
                         .to.be.instanceOf(Object);
                     expect(body)
-                        .to.have.property('success');
-                    expect(body)
                         .to.have.property('result');
                     expect(body)
                         .to.have.property('id');
 
+                    result = body.result;
+
+                    expect(result)
+                        .to.be.an('object');
+                    expect(result)
+                        .to.have.property('relatedUser')
+                        .and.to.not.be.null;
+                    expect(result)
+                        .to.have.property('employmentType')
+                        .and.to.be.equal('FOP');
+                    expect(result)
+                        .to.have.property('name')
+                        .and.to.be.an('object')
+                        .and.to.have.property('first')
+                        .and.to.be.equal('newtest');
+
                     id = body.id;
+                    userId = result.relatedUser;
 
                     done();
                 });
@@ -191,14 +211,6 @@ describe('Employee Specs', function () {
                         .and.to.have.property('name')
                         .and.to.be.a('string');
                     expect(employee)
-                        .and.to.have.property('manager')
-                        .and.to.have.property('_id');
-                    expect(employee)
-                        .to.have.property('manager')
-                        .and.to.have.property('name')
-                        .and.to.have.property('first')
-                        .and.to.be.a('string');
-                    expect(employee)
                         .to.have.property('name')
                         .and.to.have.property('last')
                         .and.to.be.a('string');
@@ -260,14 +272,16 @@ describe('Employee Specs', function () {
                         .to.have.property('jobPosition')
                         .and.to.have.property('name')
                         .and.to.be.a('string');
-                    expect(employee)
-                        .and.to.have.property('manager')
-                        .and.to.have.property('_id');
-                    expect(employee)
-                        .to.have.property('manager')
-                        .and.to.have.property('name')
-                        .and.to.have.property('first')
-                        .and.to.be.a('string');
+
+                    if (employee.manager) {
+                        expect(employee.manager)
+                            .to.have.property('_id');
+                        expect(employee.manager)
+                            .to.have.property('name')
+                            .and.to.have.property('first')
+                            .and.to.be.a('string');
+                    }
+
                     expect(employee)
                         .to.have.property('name')
                         .and.to.have.property('last')
@@ -649,6 +663,12 @@ describe('Employee Specs', function () {
                 .expect(200, done);
         });
 
+        it('should delete relatedUser', function (done) {
+            aggent
+                .delete('users/' + userId)
+                .expect(200, done);
+        });
+
         it('should not delete employee', function (done) {
             aggent
                 .delete('employees/' + 'kkk')
@@ -656,50 +676,50 @@ describe('Employee Specs', function () {
         });
     });
 
-    describe('Employee with user without a license', function () {
-        before(function (done) {
-            aggent = request.agent(url);
+    /* describe('Employee with user without a license', function () {
+     before(function (done) {
+     aggent = request.agent(url);
 
-            aggent
-                .post('users/login')
-                .send({
-                    login: 'ArturMyhalko',
-                    pass : 'thinkmobiles2015',
-                    dbId : 'production'
-                })
-                .expect(200, done);
-        });
+     aggent
+     .post('users/login')
+     .send({
+     login: 'ArturMyhalko',
+     pass : 'thinkmobiles2015',
+     dbId : 'production'
+     })
+     .expect(200, done);
+     });
 
-        after(function (done) {
-            aggent
-                .get('logout')
-                .expect(302, done);
-        });
+     after(function (done) {
+     aggent
+     .get('logout')
+     .expect(302, done);
+     });
 
-        it('should fail create Employee', function (done) {
-            var body = {
-                name       : {
-                    first: 'test',
-                    last : 'test'
-                },
-                department : '55b92ace21e4b7c40f00000f',
-                jobPosition: '55b92acf21e4b7c40f00001d',
-                dateBirth  : '28 Dec, 1990',
-                hire       : [{
-                    department : '55b92ace21e4b7c40f00000f',
-                    jobPosition: '55b92acf21e4b7c40f00001d',
-                    manager    : '56938d2cd87c9004552b639e',
-                    jobType    : 'Full-time',
-                    info       : 'Hired',
-                    date       : new Date()
-                }]
-            };
+     it('should fail create Employee', function (done) {
+     var body = {
+     name       : {
+     first: 'test',
+     last : 'test'
+     },
+     department : '55b92ace21e4b7c40f00000f',
+     jobPosition: '55b92acf21e4b7c40f00001d',
+     dateBirth  : '28 Dec, 1990',
+     hire       : [{
+     department : '55b92ace21e4b7c40f00000f',
+     jobPosition: '55b92acf21e4b7c40f00001d',
+     manager    : '56938d2cd87c9004552b639e',
+     jobType    : 'Full-time',
+     info       : 'Hired',
+     date       : new Date()
+     }]
+     };
 
-            aggent
-                .post('employees')
-                .send(body)
-                .expect(403, done);
-        });
-    });
+     aggent
+     .post('employees')
+     .send(body)
+     .expect(403, done);
+     });
+     });*/
 
 });

@@ -71,6 +71,9 @@ define([
             var thisEl = this.$el;
             var name = thisEl.find('#paymentMethodName').val();
             var account = thisEl.find('#account').val();
+            var address = thisEl.find('#address').val();
+            var swiftCode = thisEl.find('#swiftCode').val();
+            var owner = thisEl.find('#owner').val();
             var chartAccount = thisEl.find('#chartAccount').attr('data-id');
             var currency = $.trim(thisEl.find('#currency').text());
             var bank = thisEl.find('#bankName').val();
@@ -80,14 +83,17 @@ define([
                 name        : name,
                 account     : account,
                 chartAccount: chartAccount,
-                bank        : bank
+                bank        : bank,
+                address     : address,
+                swiftCode   : swiftCode,
+                owner       : owner
             };
 
             this.currentModel.save(data, {
                 wait   : true,
                 success: function (res, model) {
                     self.hideDialog();
-                    $('#paymentMethodsTable').append(_.template(tableEL, {elem: model}));
+                    $('#paymentMethodsTable').prepend(_.template(tableEL, {elem: model}));
                     self.collection.add(res);
                 },
 
@@ -108,13 +114,11 @@ define([
             });
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'edit-dialog',
-                title        : 'Create Bank Account',
-                width        : '550px',
-                buttons      : [
+                autoOpen   : true,
+                dialogClass: 'edit-dialog',
+                title      : 'Create Bank Account',
+                width      : '800px',
+                buttons    : [
                     {
                         text : 'Save',
                         class: 'btn blue',

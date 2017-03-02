@@ -33,10 +33,15 @@ define([
         if (!Backbone.History.started) {
             Backbone.history.start({silent: true});
         }
+
         if (success) {
             url = (App.requestedURL === null) ? Backbone.history.fragment : App.requestedURL;
             if ((url === '') || url === 'login' || regExp.test(url)) {
                 url = 'easyErp';
+            }
+
+            if (!App.currentDb) {
+                App.currentDb = App.storage.find('currentDb');
             }
 
             Backbone.history.fragment = '';
@@ -130,17 +135,24 @@ define([
         if (App.currentViewType === null) {
             if (option) {
                 switch (option.contentType) {
+                    case CONTENT_TYPES.PRICELISTS:
+                    case CONTENT_TYPES.PRODUCTTYPE:
+                    case CONTENT_TYPES.PRODUCTS:
+                    case CONTENT_TYPES.PRODUCTS_SETTINGS:
                     case CONTENT_TYPES.IMPORT:
                     case CONTENT_TYPES.DASHBOARD:
                     case CONTENT_TYPES.TASKS:
                     case CONTENT_TYPES.PROFILES:
                     case CONTENT_TYPES.DEPARTMENTS:
+                    case CONTENT_TYPES.INVOICE:
                     case CONTENT_TYPES.USERS:
                     case CONTENT_TYPES.JOBPOSITIONS:
                     case CONTENT_TYPES.DEGREES:
                     case CONTENT_TYPES.WRITEOFF:
+                    case CONTENT_TYPES.STOCKCORRECTIONS:
                     case CONTENT_TYPES.SOURCEOFAPPLICANTS:
                     case CONTENT_TYPES.LEADS:
+                    case CONTENT_TYPES.GOODSOUTNOTES:
                     case CONTENT_TYPES.BIRTHDAYS:
                     case CONTENT_TYPES.INVENTORYREPORT:
                     case CONTENT_TYPES.LEADSWORKFLOW:
@@ -157,6 +169,7 @@ define([
                     case CONTENT_TYPES.PAYROLLEXPENSES:
                     case CONTENT_TYPES.MONTHHOURS:
                     case CONTENT_TYPES.BONUSTYPE:
+                    case CONTENT_TYPES.STOCKTRANSACTIONS:
                     case CONTENT_TYPES.HOLIDAY:
                     case CONTENT_TYPES.VACATION:
                     case CONTENT_TYPES.CAPACITY:
@@ -165,12 +178,13 @@ define([
                     case CONTENT_TYPES.INVOICEAGING:
                     case CONTENT_TYPES.CHARTOFACCOUNT:
                     case CONTENT_TYPES.JOURNAL:
-                    case CONTENT_TYPES.JOURNALENTRY:
+                    case CONTENT_TYPES.STOCKINVENTORY:
                     case CONTENT_TYPES.TRIALBALANCE:
                     case CONTENT_TYPES.SALARYREPORT:
                     case CONTENT_TYPES.PROFITANDLOSS:
                     case CONTENT_TYPES.BALANCESHEET:
                     case CONTENT_TYPES.CASHFLOW:
+                    case CONTENT_TYPES.ORDER:
                     case CONTENT_TYPES.CLOSEMONTH:
                     case CONTENT_TYPES.SALESPROFORMA:
                     case CONTENT_TYPES.EXPENSESINVOICE:
@@ -186,6 +200,9 @@ define([
                     case CONTENT_TYPES.CUSTOMDASHBOARD:
                     case CONTENT_TYPES.PROJECTSDASHBOARD:
                     case CONTENT_TYPES.MANUALENTRY:
+                    case CONTENT_TYPES.PURCHASEORDERS:
+                    case CONTENT_TYPES.PURCHASEINVOICES:
+                    case CONTENT_TYPES.STOCKRETURNS:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:
@@ -206,6 +223,10 @@ define([
         } else {
             if (option && !App.ownContentType) {
                 switch (option.contentType) {
+                    case CONTENT_TYPES.PRICELISTS:
+                    case CONTENT_TYPES.PRODUCTTYPE:
+                    case CONTENT_TYPES.PRODUCTS:
+                    case CONTENT_TYPES.PRODUCTS_SETTINGS:
                     case CONTENT_TYPES.IMPORT:
                     case CONTENT_TYPES.DASHBOARD:
                     case CONTENT_TYPES.TASKS:
@@ -214,25 +235,31 @@ define([
                     case CONTENT_TYPES.DEPARTMENTS:
                     case CONTENT_TYPES.USERS:
                     case CONTENT_TYPES.JOBPOSITIONS:
+                    case CONTENT_TYPES.STOCKINVENTORY:
                     case CONTENT_TYPES.DEGREES:
                     case CONTENT_TYPES.SOURCEOFAPPLICANTS:
                     case CONTENT_TYPES.LEADS:
+                    case CONTENT_TYPES.STOCKTRANSACTIONS:
                     case CONTENT_TYPES.WRITEOFF:
                     case CONTENT_TYPES.BIRTHDAYS:
                     case CONTENT_TYPES.LEADSWORKFLOW:
                     case CONTENT_TYPES.MYPROFILE:
                     case CONTENT_TYPES.QUOTATIONS:
-                    case CONTENT_TYPES.ORDERS:
+                    case CONTENT_TYPES.ORDER:
                     case CONTENT_TYPES.INVOICES:
+                    case CONTENT_TYPES.INVOICE:
                     case CONTENT_TYPES.SUPPLIERPAYMENTS:
                     case CONTENT_TYPES.CUSTOMERPAYMENTS:
+                    case CONTENT_TYPES.GOODSOUTNOTES:
                     case CONTENT_TYPES.SALESQUOTATIONS:
                     case CONTENT_TYPES.SALESORDERS:
                     case CONTENT_TYPES.SALESINVOICES:
+                    case CONTENT_TYPES.ORDERS:
                     case CONTENT_TYPES.WTRACK:
                     case CONTENT_TYPES.PAYROLLEXPENSES:
                     case CONTENT_TYPES.MONTHHOURS:
                     case CONTENT_TYPES.BONUSTYPE:
+                    case CONTENT_TYPES.STOCKCORRECTIONS:
                     case CONTENT_TYPES.HOLIDAY:
                     case CONTENT_TYPES.VACATION:
                     case CONTENT_TYPES.CAPACITY:
@@ -262,6 +289,9 @@ define([
                     case CONTENT_TYPES.CUSTOMDASHBOARD:
                     case CONTENT_TYPES.PROJECTSDASHBOARD:
                     case CONTENT_TYPES.MANUALENTRY:
+                    case CONTENT_TYPES.PURCHASEORDERS:
+                    case CONTENT_TYPES.PURCHASEINVOICES:
+                    case CONTENT_TYPES.STOCKRETURNS:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.DEALTASKS:
@@ -286,22 +316,6 @@ define([
         } else {
             viewType = App.currentViewType;
         }
-
-        // for default filter && defaultViewType
-        /*if (option && option.contentType && App.filtersObject.savedFilters[option.contentType]) {
-         savedFilter = App.filtersObject.savedFilters[option.contentType];
-
-         for (j = savedFilter.length - 1; j >= 0; j--) {
-         if (savedFilter[j]) {
-         if (savedFilter[j].byDefault === option.contentType) {
-
-         if (savedFilter[j].viewType) {
-         viewType = savedFilter[j].viewType;
-         }
-         }
-         }
-         }
-         }*/
 
         return viewType;
     };
@@ -443,7 +457,7 @@ define([
 
         filter = (filter) ? JSON.parse(decodeURIComponent(filter)) : null;
 
-        dataService.getData('/filter/' + contentType, filter, function (response) {
+        dataService.getData('/filter/' + contentType, {filter: filter}, function (response) {
             if (response && !response.error) {
                 if (!App.filtersObject) {
                     App.filtersObject = {};
@@ -548,6 +562,7 @@ define([
     };
 
     App.storage = new Store();
+    App.eventsChannel = _.extend({}, Backbone.Events);
 
     return {
         runApplication          : runApplication,

@@ -3,12 +3,10 @@
     <div class="containerContent">
         <div class="_cashFlowTableWrap">
             <table class="list preventHover">
-                <colgroup>
-                    <col width="50%">
-                </colgroup>
                 <thead>
                 <tr>
-                    <th class="_profitTitle">Cash flows from operating activities</th>
+                    <th class="_profitTitle"></th>
+                    <th colspan="2" class="_profitTitle">Cash flows from operating activities</th>
                     <th class="_profitTitle"></th>
                 </tr>
 
@@ -22,19 +20,17 @@
 
                 <tfoot>
                 <tr>
-                    <td colspan="2" class="money" id="operatingFooter"></td>
+                    <td colspan="4" class="money" id="operatingFooter"></td>
                 </tr>
                 </tfoot>
             </table>
         </div>
         <div class="_cashFlowTableWrap">
             <table class="list preventHover">
-                <colgroup span="2">
-                    <col span="2" width="50%">
-                </colgroup>
                 <thead>
                 <tr>
-                    <th class="_profitTitle">Cash flows from investing activities</th>
+                    <th class="_profitTitle"></th>
+                    <th colspan="2" class="_profitTitle">Cash flows from investing activities</th>
                     <th class="_profitTitle"></th>
                 </tr>
                 <!--<tr id="captionInvesting">-->
@@ -45,19 +41,17 @@
                 <tbody id="listTableInvesting" class="enableTableOdd"></tbody>
                 <tfoot>
                 <tr>
-                    <td colspan="2" class="money" id="investingFooter"></td>
+                    <td colspan="4" class="money" id="investingFooter"></td>
                 </tr>
                 </tfoot>
             </table>
         </div>
         <div class="_cashFlowTableWrap">
             <table class="list preventHover">
-                <colgroup span="2">
-                    <col span="2" width="50%">
-                </colgroup>
                 <thead>
                 <tr>
-                    <th class="_profitTitle">Cash flows from financing activities</th>
+                    <th class="_profitTitle"></th>
+                    <th colspan="2" class="_profitTitle">Cash flows from financing activities</th>
                     <th class="_profitTitle"></th>
                 </tr>
                 <!--<tr id="captionFinancing">-->
@@ -68,16 +62,26 @@
                 <tbody id="listTableFinancing" class="enableTableOdd"></tbody>
                 <tfoot>
                 <tr>
-                    <td colspan="2" class="money" id="financingFooter"></td>
+                    <td colspan="4" class="money" id="financingFooter"></td>
                 </tr>
                 </tfoot>
             </table>
         </div>
         <div class="_totalCashFlow">
-            <table class="list">
+            <table class="list preventHover">
+                <thead>
                 <tr>
-                    <td id="totalCashFlow"></td>
+                    <th class="_profitTitle"></th>
+                    <th colspan="2" class="_profitTitle">Net Cash Flow</th>
+                    <th class="_profitTitle"></th>
                 </tr>
+                </thead>
+                <tbody></tbody>
+                <tfoot>
+                <tr>
+                    <td colspan="4" class="money" id="totalCashFlow"></td>
+                </tr>
+                </tfoot>
             </table>
         </div>
     </div>

@@ -14,7 +14,12 @@
         </colgroup>
         <thead>
         <tr>
-            <th class="centerCell"><input type="checkbox" id="checkAll"/></th>
+            <th class="centerCell">
+                <label class="_customCHeckbox">
+                    <input type="checkbox" id="checkAll"/>
+                    <span></span>
+                </label>
+            </th>
             <th class="oe_sortable" data-sort="paymentDate">Payment Date<span class="arrow down"></span><span
                     class="arrow up"></span></th>
             <th class="oe_sortable" data-sort="dueDate">Due Date<span class="arrow down"></span><span
@@ -39,7 +44,7 @@
         <tbody id="listTable" class="enableTableOdd"></tbody>
         <tfoot id="listTotal">
         <tr>
-            <td colspan="4"></td>
+            <td colspan="4">Total</td>
             <td class="money"><span id="balance"></span></td>
             <td class="money"><span id="paid"></span></td>
             <td class="money"><span id="total"></span></td>

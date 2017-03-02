@@ -1,7 +1,8 @@
 define([
     'Underscore',
-    'jQuery'
-], function (_, $) {
+    'jQuery',
+    'tracker'
+], function (_, $, tracker) {
     'use strict';
 
     return {
@@ -24,6 +25,7 @@ define([
         },
 
         subscribeTopBarEvents: function (topBarView, contentView) {
+            topBarView.unbind();
             topBarView.bind('createEvent', contentView.createItem, contentView);
             topBarView.bind('editEvent', contentView.editItem, contentView);
             topBarView.bind('deleteEvent', contentView.deleteItems, contentView);
@@ -41,10 +43,43 @@ define([
             topBarView.bind('moveToEdit', contentView.moveToEdit, contentView);
             topBarView.bind('saveAllEvent', contentView.saveDashboard, contentView);
             topBarView.bind('removeAllEvent', contentView.removeAllCharts, contentView);
+            topBarView.bind('importFromMagento', contentView.importFromMagento, contentView);
+            topBarView.bind('exportToMagento', contentView.exportToMagento, contentView);
+            topBarView.bind('configureChannel', contentView.configureChannel, contentView);
+            topBarView.bind('publish', contentView.publish, contentView);
+            topBarView.bind('unpublish', contentView.unpublish, contentView);
+            topBarView.bind('unlink', contentView.unlink, contentView);
+            topBarView.bind('goBack', contentView.goBack, contentView);
         },
 
-        subscribeCustomChartEvents: function(chartView, gridView){
-            chartView.bind('actionWithChart', gridView.markEngagedCells, gridView)
+        subscribeCustomChartEvents: function (chartView, gridView) {
+            chartView.bind('actionWithChart', gridView.markEngagedCells, gridView);
+            chartView.bind('changeDateRange', chartView.changeDateRange, chartView);
+
+        },
+
+        subscribeWindow: function () {
+            $(window).on('beforeunload', function (e) {
+                var currentUser = App.currentUser || {};
+
+                tracker.track({
+                    date   : new Date(),
+                    name   : 'sessionEnd',
+                    message: 'sessionEnd',
+                    email  : currentUser.email,
+                    login  : currentUser.login
+                });
+                tracker.track({
+                    date     : new Date(),
+                    eventType: 'userFlow',
+                    name     : 'close',
+                    message  : 'close',
+                    email    : currentUser.email,
+                    login    : currentUser.login
+                });
+
+                App.Tracker.send.call(App.Tracker);
+            });
         }
     };
 });

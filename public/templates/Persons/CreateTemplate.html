@@ -1,24 +1,15 @@
-<div class="form-holder">
+<div class="form-holder _newForm">
     <form method="post" action="" id="createPersonsForm" class="form">
-        <fieldset>
-            <div class="inner">
-                <ul class="dialog-tabs">
-                    <li>
-                        <a class="active" href="javascript:;">Main</a>
-                    </li>
-                    <li>
-                        <a href="javascript:;">Sales & Purchases</a>
-                    </li>
-                    <!--  <li><a href="javascript:;">Assignees</a></li>-->
-                </ul>
-                <div class="clearfix"></div>
-                <div class="dialog-tabs-items">
-                    <div class="dialog-tabs-item active">
-                        <div class="formTitle">
-                            <h3 class="left">Personal Info</h3>
-
-                            <div class="clearfix"></div>
-                        </div>
+        <h4 class="_dialogTitlePositioned">Add New Person</h4>
+        <ul class="dialog-tabs">
+            <li><a class="active" href="javascript:;">Main</a></li>
+            <li><a href="javascript:;">Address</a></li>
+            <li><a href="javascript:;">Sales & Purchases</a></li>
+        </ul>
+        <div class="dialog-tabs-items">
+            <div class="dialog-tabs-item active">
+                <div class="_formWrap">
+                    <div class="_avatarBlock">
                         <div class="avatar">
                             <div class="upload">Edit
                                 <input type="file"
@@ -29,231 +20,237 @@
                             <canvas id="avatar"
                                     width="140"
                                     height="140">
-
                             </canvas>
                         </div>
-                        <div class="avatarInfoContainer">
-                            <div class="half-block left">
-                                <dl class="person-info">
-                                    <dt>
-                                        <label for="firstName">First Name</label>
-                                    </dt>
-                                    <dd>
-                                        <div class="_inputIconWrap">
-                                            <input type="text"
-                                                   name="firstName"
-                                                   id="firstName"
-                                                   placeholder="First Name"
-                                                   autofocus
-                                                   required
-                                                   maxlength="32"/>
-                                            <label></label>
-                                        </div>
-                                    </dd>
-                                    <dt>
-                                        <label for="lastName">Last Name</label>
-                                    </dt>
-                                    <dd>
-                                        <div class="_inputIconWrap">
-                                            <input type="text"
-                                                   name="lastName"
-                                                   id="lastName"
-                                                   placeholder="Last Name"
-                                                   required
-                                                   maxlength="32"/>
-                                            <label></label>
-                                        </div>
-                                    </dd>
-                                    <dt>
-                                        <label for="jobPositionInput">Job Position</label>
-                                    </dt>
-                                    <dd>
-                                        <div class="_inputIconWrap">
-                                            <input type="text"
-                                                   id="jobPositionInput"
-                                                   placeholder="e.g. Sales Manager"
-                                                   maxlength="32"/>
-                                            <label></label>
-                                        </div>
-                                    </dd>
-                                    <dt>
-                                        <label for="dateBirth">Date Of Birthday</label>
-                                    </dt>
-                                    <dd>
-                                        <div class="_inputIconWrap">
-                                            <input id="dateBirth"
-                                                   class="dateBirth"
-                                                   placeholder="Date of Birthday"
-                                                   type="text"
-                                                   readonly/>
-                                            <label></label>
-                                        </div>
-                                    </dd>
-                                    <dt>
-                                        <label for="emailInput">Email</label>
-                                    </dt>
-                                    <dd>
-                                        <div class="_inputIconWrap">
-                                            <input type="text"
-                                                   id="emailInput"
-                                                   placeholder="e.g. email@site.com"
-                                                   maxlength="48"/>
-                                            <label></label>
-                                        </div>
-                                    </dd>
-                                    <dt>
-                                        <label for="skype">Skype</label>
-                                    </dt>
-                                    <dd>
-                                        <div class="_inputIconWrap">
-                                            <input type="text"
-                                                   id="skype"
-                                                   placeholder="Skype"
-                                                   maxlength="32"/>
-                                            <label></label>
-                                        </div>
-                                    </dd>
-                                    <dt>
-                                        <label for="LI">LinkedIn</label>
-                                    </dt>
-                                    <dd>
-                                        <div class="_inputIconWrap">
-                                            <input type="text"
-                                                   id="LI"
-                                                   placeholder="LinkedIn"
-                                                   maxlength="256"/>
-                                            <label></label>
-                                        </div>
-                                    </dd>
-                                    <dt>
-                                        <label for="FB">Facebook</label>
-                                    </dt>
-                                    <dd>
-                                        <div class="_inputIconWrap">
-                                            <input type="text"
-                                                   id="FB"
-                                                   placeholder="Facebook"
-                                                   maxlength="256"/>
-                                            <label></label>
-                                        </div>
-                                    </dd>
-                                    <dt>
-                                        <label for="companiesDd">Company</label>
-                                    </dt>
-                                    <dd class="_newSelectListWrap">
-                                        <a id="companiesDd" class="current-selected" href="javascript:;">Select</a>
-                                    </dd>
-                                </dl>
-                            </div>
-                            <div class="half-block left">
-                                <dl class="person-info">
-                                    <dt>
-                                        <label for="addressInput">Street</label>
-                                    </dt>
-                                    <dd>
-                                        <div class="_inputIconWrap">
-                                            <input type="text"
-                                                   id="addressInput"
-                                                   placeholder="Street"
-                                                   maxlength="60"/>
-                                            <label></label>
-                                        </div>
-                                    </dd>
-                                    <dt>
-                                        <label for="cityInput">City</label>
-                                    </dt>
-                                    <dd>
-                                        <div class="_inputIconWrap">
-                                            <input type="text"
-                                                   id="cityInput"
-                                                   placeholder="City"
-                                                   maxlength="60"/>
-                                            <label></label>
-                                        </div>
-                                    </dd>
-                                    <dt>
-                                        <label for="countryInputCreate">Country</label>
-                                    </dt>
-                                    <dd>
-                                        <a class="address current-selected" name="country" data-id="address_country"
-                                           id="countryInputCreate">Select</a>
-                                    </dd>
-                                    <dt>
-                                        <label for="stateInput">State</label>
-                                    </dt>
-                                    <dd>
-                                        <div class="_inputIconWrap">
-                                            <input type="text"
-                                                   id="stateInput"
-                                                   placeholder="State"
-                                                   maxlength="32"/>
-                                            <label></label>
-                                        </div>
-                                    </dd>
-                                    <dt>
-                                        <label for="zipInput">Zip code</label>
-                                    </dt>
-                                    <dd>
-                                        <div class="_inputIconWrap">
-                                            <input type="text"
-                                                   id="zipInput"
-                                                   placeholder="Zip code"
-                                                   maxlength="32"/>
-                                            <label></label>
-                                        </div>
-                                    </dd>
-                                    <dt>
-                                        <label for="phoneInput">Phone Number</label>
-                                    </dt>
-                                    <dd>
-                                        <div class="_inputIconWrap">
-                                            <input type="text"
-                                                   id="phoneInput"
-                                                   placeholder="Phone number"
-                                                   maxlength="20"/>
-                                            <label></label>
-                                        </div>
-                                    </dd>
-                                    <dt>
-                                        <label for="mobileInput">Mobile Number</label>
-                                    </dt>
-                                    <dd>
-                                        <div class="_inputIconWrap">
-                                            <input type="text"
-                                                   id="mobileInput"
-                                                   placeholder="Mobile number"
-                                                   maxlength="20"/>
-                                            <label></label>
-                                        </div>
-                                    </dd>
-                                </dl>
+                    </div>
+                    <div class="_formBlock">
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   name="firstName"
+                                   class="_animate"
+                                   id="firstName"
+                                   autofocus
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">First Name</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   name="lastName"
+                                   class="_animate"
+                                   id="lastName"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">Last Name</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   name="lastName"
+                                   class="_animate"
+                                   id="jobPositionInput"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">Job Position</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <span class="_staticLabel">Date Of Birthday</span>
+                            <input type="text"
+                                   class="dateBirth _animate"
+                                   id="dateBirth"
+                                   maxlength="32"
+                                   placeholder="Date of Birth"
+                                   required
+                                   readonly/>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="emailInput"
+                                   required
+                                   maxlength="48"/>
+                            <label class="_animate">Email</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="skype"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">Skype</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="LI"
+                                   required
+                                   maxlength="256"/>
+                            <label class="_animate">LinkedIn</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="FB"
+                                   required
+                                   maxlength="256"/>
+                            <label class="_animate">Facebook</label>
+                        </div>
+                    </div>
+                    <div class="_formBlock">
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="phoneInput"
+                                   maxlength="20"
+                                   required/>
+                            <label class="_animate">Phone Number</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="mobileInput"
+                                   maxlength="20"
+                                   required/>
+                            <label class="_animate">Mobile Number</label>
+                        </div>
+                        <div class="_animateSelectBox">
+                            <span class="_selectTitle">Company</span>
+                            <div class="_newSelectListWrap">
+                                <a id="companiesDd"
+                                   class="current-selected"
+                                   href="javascript:;">Select company</a>
                             </div>
                         </div>
-                        <div class="clearfix">
+                    </div>
+                </div>
+                <div class="clearfix">
+                    <div class="cropImages form" style="display:none;">
+                        <div class="image_input" style="float: left;margin-right: 20px;"></div>
+                        <img class="image_output"/>
+                    </div>
+                </div>
+            </div>
+            <div class="dialog-tabs-item">
+                <div class="_formWrap">
+                    <div class="_formBlock">
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="addressInput"
+                                   maxlength="60"
+                                   required/>
+                            <label class="_animate">Street</label>
                         </div>
-                        <div class="clearfix">
-                            <div class="cropImages form" style="display:none;">
-                                <div class="formTitle">
-                                    <h3 class="left">Crop Images</h3>
-                                    <div class="clearfix"></div>
-                                </div>
-                                <div class="image_input" style="float: left;margin-right: 20px;"></div>
-                                <img class="image_output"/>
-                                <div class="clearfix"></div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="cityInput"
+                                   maxlength="60"
+                                   required/>
+                            <label class="_animate">City</label>
+                        </div>
+                        <div class="_animateSelectBox">
+                            <span class="_selectTitle">Country</span>
+                            <div class="_newSelectListWrap">
+                                <a href="javascript:;"
+                                   name="country"
+                                   class="current-selected"
+                                   id="countryInputCreate"
+                                   data-id="">Select country</a>
+                            </div>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="stateInput"
+                                   maxlength="32"
+                                   required/>
+                            <label class="_animate">State</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="zipInput"
+                                   maxlength="32"
+                                   required/>
+                            <label class="_animate">Zip code</label>
+                        </div>
+                    </div>
+                    <div class="_formBlock">
+                        <div class="right circleRadioForPersons">
+                            <div class="_circleRadioRadianceWrap">
+                                <label for="defaultShipAdress">
+                                    Same as billing address
+                                </label>
+                                <input  id="defaultShipAdress" type="radio" name="shippingAddress" class="_circleRadioRadiance shippingRadio"   value="0" checked/>
+                                <label for="defaultShipAdress" class="_circleRadioRadianceLabel"></label>
+                            </div>
+                            <div class="_circleRadioRadianceWrap">
+                                <label for="anotherShipAdress">
+                                    Another shipping address
+                                </label>
+                                <input  id="anotherShipAdress"  type="radio" name="shippingAddress" class="_circleRadioRadiance shippingRadio"  value="1"/>
+                                <label for="anotherShipAdress" class="_circleRadioRadianceLabel"></label>
                             </div>
                         </div>
                         <div class="clearfix"></div>
+                        <div class="_formBlock hidden" id="shippingAddress">
+                            <div class="_animateInputBox">
+                                <input type="text"
+                                       class="_animate"
+                                       id="nameInputShipping"
+                                       maxlength="60"
+                                       required/>
+                                <label class="_animate">Full Name</label>
+                            </div>
+                            <div class="_animateInputBox">
+                                <input type="text"
+                                       class="_animate"
+                                       id="addressInputShipping"
+                                       maxlength="60"
+                                       required/>
+                                <label class="_animate">Street</label>
+                            </div>
+                            <div class="_animateInputBox">
+                                <input type="text"
+                                       class="_animate"
+                                       id="cityInputShipping"
+                                       maxlength="60"
+                                       required/>
+                                <label class="_animate">City</label>
+                            </div>
+                            <div class="_animateSelectBox">
+                                <span class="_selectTitle">Country</span>
+                                <div class="_newSelectListWrap">
+                                    <a href="javascript:;"
+                                       name="country"
+                                       class="current-selected"
+                                       id="countryInputCreateShipping"
+                                       data-id="">Select country</a>
+                                </div>
+                            </div>
+                            <div class="_animateInputBox">
+                                <input type="text"
+                                       class="_animate"
+                                       id="stateInputShipping"
+                                       maxlength="32"
+                                       required/>
+                                <label class="_animate">State</label>
+                            </div>
+                            <div class="_animateInputBox">
+                                <input type="text"
+                                       class="_animate"
+                                       id="zipInputShipping"
+                                       maxlength="32"
+                                       required/>
+                                <label class="_animate">Zip code</label>
+                            </div>
+                        </div>
                     </div>
-                    <div class="dialog-tabs-item">
-                        <div id="salesPurchases-container"></div>
-                    </div>
-                    <!-- <div class="dialog-tabs-item">
-                         <div class="assignees-container"></div>
-                     </div>-->
                 </div>
-                <div class="clearfix"></div>
             </div>
-        </fieldset>
+            <div class="dialog-tabs-item">
+                <div id="salesPurchases-container"></div>
+            </div>
+        </div>
     </form>
-    <div class="clearfix"></div>
 </div>

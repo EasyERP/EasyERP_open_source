@@ -8,7 +8,7 @@ define([
     var topBarView = BaseView.extend({
         el           : '#top-bar',
         contentType  : CONSTANTS.MONTHHOURS,
-        contentHeader: 'MonthHours',
+        contentHeader: 'Cost Center',
         viewType     : null,
         template     : _.template(ContentTopBarTemplate)
     });

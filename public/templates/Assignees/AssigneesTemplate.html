@@ -1,54 +1,57 @@
-<div class="addUserAndGroup">
-    <a href="javascript:;" class="addUser">Manage User</a>
-    <span>|</span>
-    <a href="javascript:;" class="addGroup">Manage Group</a>
-</div>
-<div class="clearfix"></div>
+<div class="_formWrap" _enlargedItemMargin>
+    <div class="_formBlock _equal">
+        <div class="addUserAndGroup">
+            <a href="javascript:;" class="addUser">Manage User</a>
+            <span>|</span>
+            <a href="javascript:;" class="addGroup">Manage Group</a>
+        </div>
 
-<div class="half-block left">
-    <div class="canReadAndWrite">
-        <div class="_circleRadioRadianceWrap">
-            <label for="everyOneCr">Everyone</label>
-            <input id="everyOneCr"
-                   class="_circleRadioRadiance"
-                   type="radio"
-                   name="whoCanRW"
-                   value="everyOne" <%= (whoCanRW === 'everyOne') ? ' checked': '' %> />
-            <label for="everyOneCr" class="_circleRadioRadianceLabel"></label>
+        <div class="canReadAndWrite">
+            <div class="_circleRadioRadianceWrap">
+                <label for="everyOneCr">Everyone</label>
+                <input id="everyOneCr"
+                       class="_circleRadioRadiance"
+                       type="radio"
+                       name="whoCanRW"
+                       value="everyOne" <%= (whoCanRW === 'everyOne') ? ' checked': '' %> />
+                <label for="everyOneCr" class="_circleRadioRadianceLabel"></label>
+            </div>
+            <div class="_circleRadioRadianceWrap">
+                <label for="ownerCr">Owner</label>
+                <input id="ownerCr"
+                       class="_circleRadioRadiance"
+                       type="radio"
+                       name="whoCanRW"
+                       value="owner" <%= (whoCanRW === 'owner') ? ' checked' : '' %> />
+                <label for="ownerCr" class="_circleRadioRadianceLabel"></label>
+            </div>
+            <div class="_circleRadioRadianceWrap">
+                <label for="groupCr">Owner, Users and Users in Groups</label>
+                <input id="groupCr"
+                       class="_circleRadioRadiance"
+                       type="radio"
+                       name="whoCanRW"
+                       value="group" <%= (whoCanRW === 'group') ? ' checked' : '' %> />
+                <label for="groupCr" class="_circleRadioRadianceLabel"></label>
+            </div>
         </div>
-        <div class="_circleRadioRadianceWrap">
-            <label for="ownerCr">Owner</label>
-            <input id="ownerCr"
-                   class="_circleRadioRadiance"
-                   type="radio"
-                   name="whoCanRW"
-                   value="owner" <%= (whoCanRW === 'owner') ? ' checked' : '' %> />
-            <label for="ownerCr" class="_circleRadioRadianceLabel"></label>
+    </div>
+    <div class="_formBlock _equal">
+        <div class="_animateSelectBox">
+            <span class="_selectTitle">Owner</span>
+            <div class="_newSelectListWrap">
+                <a id="allUsersSelect"
+                   class="current-selected"
+                   href="javascript:;"
+                   data-id="<%=owner._id%>"><%=owner && owner.login ?owner.login : "Select"%></a>
+            </div>
         </div>
-        <div class="_circleRadioRadianceWrap">
-            <label for="groupCr">Owner, Users and Users in Groups</label>
-            <input id="groupCr"
-                   class="_circleRadioRadiance"
-                   type="radio"
-                   name="whoCanRW"
-                   value="group" <%= (whoCanRW === 'group') ? ' checked' : '' %> />
-            <label for="groupCr" class="_circleRadioRadianceLabel"></label>
+
+        <div class="_groupsAndUserWrap">
+            <div class="_groupsAndUserBlock">
+                <table class="groupsAndUser"></table>
+                <div class="_groupsAndUserTitle">Groups and Users</div>
+            </div>
         </div>
     </div>
 </div>
-<div class="half-block left">
-    <dl class="assignees-info">
-        <dt><label for="allUsersSelect">Owner</label></dt>
-        <dd class="_newSelectListWrap">
-            <a href="javascript:;" class="current-selected" id="allUsersSelect" data-id="<%=owner._id%>"><%=owner && owner.login ?owner.login : "Select"%></a>
-        </dd>
-    </dl>
-</div>
-
-<table class="groupsAndUser">
-    <tr>
-        <th>Groups and Users</th>
-        <th></th>
-    </tr>
-</table>
-<div class="clearfix"></div>

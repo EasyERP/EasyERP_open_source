@@ -1,7 +1,8 @@
 <% products.forEach(function(product){ %>
 <tr class="productItem" data-id="<%=product.product ? product.product._id : 'err'%>">
     <td data-name="productName">
-        <a class="productsDd" href="javascript:;"><%=product.product ? product.product.name.first + ' ' + product.product.name.last : '- - -' %></a>
+        <a class="productsDd" href="javascript:;"><%=product.product ? product.product.name.first + ' ' +
+            product.product.name.last : '- - -' %></a>
     </td>
     <% if (forSales) {%>
     <td data-name="jobs" class="jobs">
@@ -16,8 +17,17 @@
     <% } %>
     <%var currencyClassVal;%>
     <%currencyClassVal = currencyClass(products.currency._id)%>
-    <td data-name="price" class="<%=currencyClassVal%>"><span><%=product.unitPrice ? currencySplitter(product.unitPrice.toString()): ''%></span></td>
-    <td class="taxes <%=currencyClassVal%>"><span><%=product.taxes ? currencySplitter(product.taxes.toString()): ''%></span></td>
-    <td class="amount <%=currencyClassVal%>"><span><%=product.subTotal ? currencySplitter(product.subTotal.toString()): ''%></span></td>
+    <td data-name="price" class="<%=currencyClassVal%>"><span><%=product.unitPrice ? currencySplitter(product.unitPrice.toString()): ''%></span>
+    </td>
+    <%var taxes = (product.taxes && product.taxes.length && product.taxes[0]) || null;%>
+    <td class="taxes <%=currencyClassVal%>">
+        <% product.taxes.forEach(function (tax) {%>
+
+        <span><%=(product.currency && product.currency._id ? product.currency._id.symbol : '') %></span><span
+            class="sum"><%= tax ?  currencySplitter(tax.tax.toString()) : ''%></span>
+        <%});%>
+    </td>
+    <td class="amount <%=currencyClassVal%>"><span><%=product.subTotal ? currencySplitter(product.subTotal.toString()): ''%></span>
+    </td>
 </tr>
 <% }); %>

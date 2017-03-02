@@ -1,4 +1,4 @@
-<div class="selectCompany moduleList">
+<div class="selectCompany">
     <div>
         <div class="formTitle">
             <h3>Contacts</h3>
@@ -11,11 +11,17 @@
                     <img alt="" src="<%=property.imageSrc || 'https://static.hsappstatic.net/salesImages/static-1.38/avatars/default-avatar.gif'%>"/>
                 </div>
                 <div class="propertyBody">
-                    <a  class="propertyFullName" href="<%='/#easyErp/Persons/tform/'+ property._id%>"><%=property.fullName%></a>
+                    <a  class="propertyFullName"
+                        href="<%='/#easyErp/Persons/tform/'+ property._id%>">
+                        <%=property.fullName%>
+                    </a>
                     <a href="javascript:;"><%=property.email%></a>
                 </div>
 
-                <a href="javascript:;" class="removeProperty" title="Remove Contact" id="removeProperty">
+                <a href="javascript:;"
+                   class="removeProperty"
+                   title="Remove Contact"
+                   id="removeProperty">
                     <span class="icon-close3" aria-hidden="true"></span>
                 </a>
             </div>
@@ -23,14 +29,12 @@
                 <a class="btn" title="View All Properties"
                    id="showMoreButton">View All Properties</a>
             </div>-->
-
         </div>
         <%})%>
         <div class="align-center">
-            <a class="_companySaveButton icon-plus" title="Add Contact" id="addProperty"></a>
+            <a class="_circleIconBtn icon-plus"
+               title="Add Contact"
+               id="addProperty"></a>
         </div>
-
-
     </div>
 </div>
-

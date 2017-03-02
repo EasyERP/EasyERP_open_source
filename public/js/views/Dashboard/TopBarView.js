@@ -2,33 +2,19 @@ define([
     'jQuery',
     'Underscore',
     'views/topBarViewBase',
-    'text!templates/Dashboard/TopBarTemplate.html',
-    'custom',
-    'common'
-], function ($, _, BaseView, TopBarTemplate, Custom, Common) {
+    'text!templates/Dashboard/TopBarTemplate.html'
+], function ($, _, BaseView, TopBarTemplate) {
     var TopBarView = BaseView.extend({
-        el         : '#top-bar',
-        contentType: 'Dashboard',
-        actionType : null, // Content, Edit, Create
-        template   : _.template(TopBarTemplate),
+        el           : '#top-bar',
+        contentType  : 'Dashboard',
+        contentHeader: 'Reports',
+        actionType   : null, // Content, Edit, Create
+        template     : _.template(TopBarTemplate),
 
         getIdFromHash: function (hash) {
             var hashItems = hash.split('/');
             return hashItems[hashItems.length - 1];
         }
-
-       /* initialize: function (options) {
-            this.actionType = options.actionType;
-            this.render();
-        },
-
-        render: function () {
-            $('title').text(this.contentType);
-            this.$el.html(this.template({contentType: this.contentType}));
-            Common.displayControlBtnsByActionType(this.actionType);
-
-            return this;
-        }*/
     });
 
     return TopBarView;

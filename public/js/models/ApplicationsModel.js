@@ -21,6 +21,8 @@
                         message: msg
                     });
                 }
+
+                model.unset('isHire', {silent: true});
             });
         },
 
@@ -45,7 +47,7 @@
 
                 if (response.notes) {
                     _.map(response.notes, function (note) {
-                        note.date = moment(note.date).format('DD MMM, YYYY, H:mm:ss');
+                        note.date = moment(note.date)//.format('DD MMM, YYYY, H:mm:ss');
                         return note;
                     });
                 }
@@ -72,7 +74,7 @@
             Validation.checkNameField(errors, true, attrs.employmentType, 'Personal Information / Employment type');
             Validation.checkNameField(errors, true, attrs.name.first, 'First name');
             Validation.checkNameField(errors, true, attrs.name.last, 'Last name');
-            Validation.checkEmailField(errors, false, attrs.personalEmail, 'Email');
+            Validation.checkEmailField(errors, true, attrs.personalEmail, 'Email');
             Validation.checkDateField(errors, true, attrs.dateBirth, 'Date of Birth');
             if (attrs.department) {
                 Validation.checkGroupsNameField(errors, true, attrs.department._id || attrs.department, 'Department');
@@ -80,6 +82,7 @@
             if (attrs.isEmployee) {
                 Validation.checkGroupsNameField(errors, true, attrs.jobType, 'Job type');
                 Validation.checkGroupsNameField(errors, true, attrs.manager, 'Manager');
+                Validation.checkEmailField(errors, true, attrs.workEmail, 'Work Email');
                 Validation.checkJobPositionField(errors, true, attrs.jobPosition, 'Job position');
                 Validation.checkGroupsNameField(errors, true, attrs.department, 'Department');
             }

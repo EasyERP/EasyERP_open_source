@@ -32,6 +32,11 @@ module.exports = function (models) {
             startDate = moment(startDate);
             endDate = new Date(filter.endDate);
             endDate = moment(endDate);
+        } else if (filter.date && filter.date.value) {
+            startDate = new Date(filter.date.value[0]);
+            startDate = moment(startDate);
+            endDate = new Date(filter.date.value[1]);
+            endDate = moment(endDate);
         } else {
             startDate = moment().subtract(CONSTANTS.DASH_VAC_WEEK_BEFORE, 'weeks');
             endDate = moment().add(CONSTANTS.DASH_VAC_WEEK_AFTER, 'weeks');
@@ -42,13 +47,17 @@ module.exports = function (models) {
 
         delete filter.startDate;
         delete filter.endDate;
+        delete filter.date;
 
         key = startByWeek + '_' + endByWeek + '_' + JSON.stringify(filter);
 
         redisStore.readFromStorage('dashboardVacation', key, function (err, result) {
             if (needRefresh || !result) {
-                filter.startDate = startDate;
-                filter.endDate = endDate;
+                /* filter.startDate = startDate;
+                 filter.endDate = endDate; */
+                filter.date = {
+                    value: [startDate, endDate]
+                };
 
                 return next();
             }

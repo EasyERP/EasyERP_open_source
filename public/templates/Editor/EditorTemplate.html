@@ -1,13 +1,13 @@
 <div class="noteWrapper">
     <ul class="chart-tabs">
         <li><a class="active" id="noteTab" href="javascript:;">New Note</a></li>
-        <li><a href="javascript:;" id="taskTab" class="">Create task</a></li>
+        <li><a href="javascript:;" id="taskTab" class="">Create Task</a></li>
     </ul>
     <div class="dialog-tabs-items">
         <div class="editorTab dialog-tabs-item active" id="note">
             <div class="addNote createHolder">
                 <div class="area_holder">
-                    <textarea id="noteArea" placeholder="Add a Note..." maxlength="500"></textarea>
+                    <textarea id="noteArea" placeholder="Add a Note...Max 500 symbols." maxlength="500"></textarea>
                     <a href="javascript:;" class="attach_file">
                         <span class="icon-attach"></span>
                     </a>
@@ -42,7 +42,7 @@
                         <label>Assigned To</label>
                         <a  href="javascript:;"  class="current-selected" data-id="<%= assignedTo ? assignedTo._id : '' %>" id="assignedToDd"><%= assignedTo ? assignedTo.fullName : 'Select' %></a>
                     </div>
-                    <div id="categoryHolder" class="left"></div>
+                    <div id="categoryHolder"></div>
                     <div class="inputDateActonBlock">
                         <input type="text" id="timepickerOne" name="timepicker-one" class="timepicker" readonly/>
                         <input type="text" class="date _taskDueDate" id="taskDueDate"
@@ -51,7 +51,7 @@
                     </div>
                 </div>
                 <div class="area_holder">
-                    <textarea id="taskArea" class="taskArea personsTaskArea" placeholder="Description..." maxlength="500"></textarea>
+                    <textarea id="taskArea" class="taskArea personsTaskArea" placeholder="Description...Max 500 symbols." maxlength="500"></textarea>
                     <a href="javascript:;" class="attach_file">
                         <span class="icon-attach"></span>
                     </a>
@@ -64,7 +64,7 @@
         </div>
     </div>
 
-    <div id="timeline">
+    <div id="timeline" class="_timeline">
     </div>
 
 </div>

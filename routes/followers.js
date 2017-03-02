@@ -13,7 +13,7 @@ module.exports = function (models) {
     router.use(authStackMiddleware);
     
     // router.get('/', handler.getForView);
-    router.post('/', accessStackMiddleware, handler.create);
+    router.post('/', /*accessStackMiddleware,*/ handler.create);
     router.delete('/:id', accessStackMiddleware, handler.remove);
     router.delete('/', accessStackMiddleware, handler.remove);
 

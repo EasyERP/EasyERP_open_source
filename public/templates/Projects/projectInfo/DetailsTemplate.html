@@ -4,7 +4,7 @@
             <col span="1" width="3%">
             <col span="1">
             <col span="1">
-            <col span="1">
+            <col span="1" width="12%">
             <col span="1">
             <col span="1">
             <col span="1">
@@ -18,10 +18,6 @@
 
         <thead>
         <tr>
-            <th colspan="15"
-                class="forCaption">
-                Team & Resources
-            </th>
             <th class="forCaption"
                 colspan="5">
                 <a href="javascript:;"
@@ -29,6 +25,10 @@
                    id="createJob" class="btnAdd">
                     Add Job
                 </a>
+            </th>
+            <th colspan="15"
+                class="forCaption">
+                Team & Resources
             </th>
         </tr>
         <tr>
@@ -40,7 +40,7 @@
             <th>Start Date</th>
             <th>End Date</th>
             <th>Type</th>
-            <th>Quot/Order</th>
+            <th>Order</th>
             <th>Invoice</th>
             <th>Employees</th>
             <th>Hours</th>
@@ -56,33 +56,29 @@
 
         <% jobs.forEach(function(element,i){ %>
             <% var adr = (element.totalRevenue/(100 * (element.totalWorked - element.totalQAWorked - element.totalDesignWorked))).toFixed(2)%>
-            <tr data-id="<%=element._id%>" id="jobsItem">
+            <tr data-id="<%=element._id%>" id="jobsItem" class="_jobsItem">
 
                 <td class="remove"><a
-                        class="icon-trash hidden <%=((element.quotation && element.quotation._id) || (element.invoice && element.invoice._id)) ? 'notRemovable' : ''%>"
+                        class="icon-trash  <%=((element.quotation && element.quotation._id) || (element.invoice && element.invoice._id)) ? 'notRemovable' : ''%>"
                         id="<%=element._id%>"></a></td>
                 <td class="expand">+</td>
-                <td class="report"><a class="centerCell icon-university"></a></td>
+                <td class="report"><a class="centerCell icon-edit-list2" title="Journal Entries"></a></td>
                 <td class="editableJobs" id="jobsName"><%=element.name%></td>
-                <td class="selects _newSelectListWrap"><a data-id="<%=element.workflow._id%>" id="workflow" class="current-selected"><%=element.workflow.name%></a>
+                <td class="selects _newSelectListWrap"><a data-id="<%=element.workflow ? element.workflow._id : null%>" id="workflow" class="current-selected"><%=element.workflow ? element.workflow.name : ''%></a>
                 </td>
                 <td><%= element.tCardMinDate ? element.tCardMinDate : '' %></td>
                 <td><%= element.tCardMaxDate ? element.tCardMaxDate : '' %></td>
                 <td class="selects"><a data-id="<%=element.type%>" id="type"><%=element.type%></a>
-                    <!--<ul class="newSelectList" style="display: none;">-->
-                    <!--<li>Ordered</li>-->
-                    <!--<li>Quoted</li>-->
-                    <!--<li>Invoiced</li>-->
-                    <!--<li>Not Quoted</li>-->
-                    <!--</ul>-->
                 </td>
-                <td><a data-id="<%=element.quotation ? element.quotation._id : null%>" class="quotation"><%=element.quotation
-                    ? element.quotation.name: ''%></a></td>
+                <td><a data-id="<%=element.order ? element.order._id : null%>" class="order"><%=element.order
+                    ? element.order.name: ''%></a></td>
+                <!--<td><a data-id="<%=element.quotation ? element.quotation._id : null%>" class="quotation"><%=element.quotation
+                    ? element.quotation.name: ''%></a></td>-->
                 <td><a data-id="<%=element.invoice ? element.invoice._id : null%>" class="invoice"><%=element.invoice ?
                     element.invoice.name : ''%></a>
                 </td>
                 <td><%= element.revenue ? element.revenue.length : 0 %></td>
-                <td><%= currencySplitter(element.totalWorked.toFixed()) || 0%></td>
+                <td><%= element.totalWorked ? currencySplitter(element.totalWorked.toFixed()) : 0%></td>
                 <td><%= isFinite(adr) ? adr : 0%></td>
                 <td class="dollar"> <%= currencySplitter((element.cost/100).toFixed()) || 0%></td>
                 <td class="dollar"> <%= currencySplitter((element.totalRevenue/100).toFixed()) || 0%></td>
@@ -106,11 +102,15 @@
             <td>&nbsp</td>
             <td>&nbsp</td>
             <td>&nbsp</td>
-            <td id="totalHours" data-value="<%=firstJob ? firstJob.workedTotal: 0%>"><%= firstJob ? currencySplitter(firstJob.workedTotal.toFixed()): 0%></td>
+            <td id="totalHours" data-value="<%=firstJob && firstJob.workedTotal ? firstJob.workedTotal: 0%>"><%= firstJob && firstJob.workedTotal ? currencySplitter(firstJob.workedTotal.toFixed()): 0%>
+            </td>
             <td>&nbsp</td>
-            <td id="totalCost" class="dollar" data-value="<%=firstJob ? firstJob.costTotal : 0%>"><%= firstJob ? currencySplitter((firstJob.costTotal/100).toFixed()): 0%></td>
-            <td id="totalRevenue" class="dollar" data-value="<%=firstJob ? firstJob.revenueTotal : 0%>"><%= firstJob ? currencySplitter((firstJob.revenueTotal/100).toFixed()): 0%></td>
-            <td id="totalProfit" class="dollar" data-value="<%=firstJob ? firstJob.profitTotal : 0%>"><%= firstJob ? currencySplitter((firstJob.profitTotal/100).toFixed()): 0%></td>
+            <td id="totalCost" class="dollar" data-value="<%=firstJob ? firstJob.costTotal : 0%>"><%= firstJob ?currencySplitter((firstJob.costTotal/100).toFixed()): 0%>
+            </td>
+            <td id="totalRevenue" class="dollar" data-value="<%=firstJob ? firstJob.revenueTotal : 0%>"><%= firstJob ?currencySplitter((firstJob.revenueTotal/100).toFixed()): 0%>
+            </td>
+            <td id="totalProfit" class="dollar" data-value="<%=firstJob ? firstJob.profitTotal : 0%>"><%= firstJob ?currencySplitter((firstJob.profitTotal/100).toFixed()): 0%>
+            </td>
         </tr>
 
         </tfoot>
@@ -142,14 +142,14 @@
             </thead>
             <tbody id="project">
             <tr>
-                <%  var revenueTotal = firstJob ? firstJob.revenueTotal/100 : 0;
-                    var profitTotal = firstJob ? firstJob.profitTotal/100: 0;
-                    var costTotal = firstJob ? firstJob.costTotal/100: 0;
-                    var murkUp = profitTotal/costTotal;
-                    var margin = profitTotal/revenueTotal;
+                <% var revenueTotal = firstJob ? firstJob.revenueTotal/100 : 0;
+                var profitTotal = firstJob ? firstJob.profitTotal/100: 0;
+                var costTotal = firstJob ? firstJob.costTotal/100: 0;
+                var murkUp = profitTotal/costTotal;
+                var margin = profitTotal/revenueTotal;
 
-                    murkUp = isFinite(murkUp) ? murkUp * 100 : 0;
-                    margin = isFinite(margin) ? margin * 100 : 0;
+                murkUp = isFinite(murkUp) ? murkUp * 100 : 0;
+                margin = isFinite(margin) ? margin * 100 : 0;
                 %>
                 <td class="dollar"><%= currencySplitter(revenueTotal.toFixed())%></td>
                 <td class="dollar"><%= currencySplitter(profitTotal.toFixed())%></td>

@@ -1,18 +1,29 @@
 <% paymentCollection.forEach(function(payment, index) {%>
 <tr data-id="<%=payment._id%>">
-    <td class="notForm centerCell"><input type="checkbox" value="<%=payment._id%>" class="checkbox<%=payment.removable ? '' : ' notRemovable'%>"/></td>
-    <td><%=(payment && payment.assigned && payment.assigned.name) ? payment.assigned.name.first + ' ' + payment.assigned.name.last : ''%></td>
+    <td class="notForm centerCell">
+        <label class="_customCHeckbox">
+            <input type="checkbox" value="<%=payment._id%>"
+                   class="checkbox<%=payment.removable ? '' : ' notRemovable'%>"/>
+            <span></span>
+        </label>
+    </td>
+    <td><%=(payment && payment.assigned && payment.assigned.name) ? payment.assigned.name.first + ' ' +
+        payment.assigned.name.last : ''%>
+    </td>
     <td><%=(payment.supplier && payment.supplier.name) ? payment.supplier.name.first + ' ' + payment.supplier.name.last
         : '' %>
     </td>
-    <td><%=payment.invoice ? payment.invoice.name : ''%></td>
+    <td><%=payment.invoice && payment.invoice._id ? payment.invoice.name : payment.order ? payment.order.name : ''%>
+    </td>
     <td><%=(payment.paymentMethod) ? payment.paymentMethod.name : ''%></td>
 
-    <td class="totalPaidAmount <%=currencyClass(payment.currency._id)%>
-    <%= payment.paidAmount != payment.invoiced ? 'red' :''%>"><%=currencySplitter(payment.paidAmount)%>
+    <td class="totalPaidAmount"<%= payment.paidAmount != payment.invoiced ? 'red' :''%>"><span><%=payment.currency.symbol%></span><%=currencySplitter(payment.paidAmount)%>
+    </td>
+    <td class="totalPaidAmount"><span><%=payment.currency.symbol%></span><%=currencySplitter(payment.bankExpenses && payment.bankExpenses.account ? payment.bankExpenses.amount.toFixed(2) : '0.00')%>
     </td>
     <td class="date" data-content="date">
         <%=payment.date%>
     </td>
+    <td><%=payment.refund ? "Refund" : "Payment"%></td>
 </tr>
 <%})%>

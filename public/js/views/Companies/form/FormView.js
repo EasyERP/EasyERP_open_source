@@ -8,6 +8,7 @@ define([
     'views/Editor/AttachView',
     'views/Persons/formPropertyArray/formPropertyView',
     'views/Opportunities/formProperty/formPropertyView',
+    'views/CustomersSuppliers/salesPurchases',
     'common',
     'constants',
     'dataService',
@@ -21,6 +22,7 @@ define([
              AttachView,
              PersonFormProperty,
              OpportunityFormProperty,
+             SalesPurchasesView,
              common,
              CONSTANTS,
              dataService,
@@ -66,6 +68,7 @@ define([
             'mouseleave .avatar'                               : 'hideEdit',
             'click #tabList a'                                 : 'switchTab',
             'keyup .editable'                                  : 'setChangeValueToModel',
+            'change .checkbox'                                 : 'setChangeValueToModel',
             'click #cancelBtn'                                 : 'cancelChanges',
             'click #saveBtn'                                   : 'saveChanges',
             'click .current-selected:not(.jobs)'               : 'showNewSelect',
@@ -84,14 +87,28 @@ define([
             var $target = $(e.target);
             var property = $target.attr('data-id').replace('_', '.');
             var value = $target.val();
+            var checked = $target.prop('checked');
+            var newProperty;
 
             $target.closest('.propertyFormList').addClass('active');
 
             if (property === 'social.LI') {
                 value = value.replace('linkedin', '[]');
+
+                /*newProperty = property.slice(-2, property.length);
+
+                if (!this.modelChanged.social) {
+                    this.modelChanged.social = {};
+                }
+
+                this.modelChanged.social[newProperty] = value;*/
+            } else if (property === 'salesPurchases.isSupplier' || property === 'salesPurchases.isCustomer') {
+                this.modelChanged[property] = checked;
+
+            } else {
+                this.modelChanged[property] = value;
             }
 
-            this.modelChanged[property] = value;
             this.showButtons();
         },
 
@@ -144,10 +161,13 @@ define([
             var text = $target.text();
             var id = $target.attr('id');
 
-            holder.text($target.text());
+            holder.text(text);
 
-            this.modelChanged[type] = id;
-            // this.$el.find('#assignedToDd').text(text).attr('data-id', id);
+            if (type === 'salesPurchases.language') {
+                this.modelChanged[type] = $.trim(text);
+            } else {
+                this.modelChanged[type] = id;
+            }
             this.showButtons();
         },
 
@@ -188,26 +208,23 @@ define([
             });
         },
 
-        /*deleteItems: function () {
-         var mid = 39;
-
-         this.formModel.destroy({
-         headers: {
-         mid: mid
-         },
-         success: function () {
-         Backbone.history.navigate('#easyErp/Opportunities/kanban', {trigger: true});
-         }
-         });
-
-         },*/
-
         renderAbout: function (cancel) {
             var self = this;
             var $thisEl = this.$el;
+            var salesPurchasesEl;
 
             if (cancel) {
                 $thisEl.find('.aboutHolder').html(_.template(aboutTemplate, this.formModel.toJSON()));
+
+                salesPurchasesEl = $thisEl.find('#salesPurchases-container');
+
+                salesPurchasesEl.append(
+                    new SalesPurchasesView({
+                        parrent  : self,
+                        tForm    : true,
+                        editState: true
+                    }).render().el
+                );
             }
 
             common.canvasDraw({model: this.formModel.toJSON()}, this);
@@ -217,6 +234,7 @@ define([
             var formModel = this.formModel.toJSON();
             var self = this;
             var $thisEl = this.$el;
+            var salesPurchasesEl;
 
             $thisEl.html(_.template(companyFormTemplate, formModel));
 
@@ -232,6 +250,7 @@ define([
 
             dataService.getData('/countries/getForDD', {}, function (countries) {
                 self.responseObj['#country'] = countries.data;
+                self.responseObj['#shippingCountry'] = countries.data;
             });
 
             this.formProperty = new PersonFormProperty({
@@ -261,6 +280,16 @@ define([
                 this.editorView.render().el
             );
             common.canvasDraw({model: this.formModel.toJSON()}, this);
+
+            salesPurchasesEl = $thisEl.find('#salesPurchases-container');
+
+            salesPurchasesEl.append(
+                new SalesPurchasesView({
+                    parrent  : self,
+                    tForm    : true,
+                    editState: true
+                }).render().el
+            );
 
             $thisEl.find('.attachments').append(
                 new AttachView({

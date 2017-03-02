@@ -1,4 +1,5 @@
-﻿﻿define([
+﻿﻿
+define([
         "text!templates/Products/thumbnails/ThumbnailsItemTemplate.html",
         'views/Products/EditView',
         'views/Products/CreateView',
@@ -28,7 +29,6 @@
                 this.collection = options.collection;
                 _.bind(this.collection.showMore, this.collection);
                 _.bind(this.collection.showMoreAlphabet, this.collection);
-                this.allAlphabeticArray = common.buildAllAphabeticArray();
                 this.filter = options.filter;
                 this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
@@ -39,7 +39,7 @@
                 this.asyncLoadImgs(this.collection);
             },
 
-            events        : {
+            events: {
                 "click #showMore"           : "showMore",
                 /*"click .thumbnailwithavatar": "gotoForm",*/
                 "click .thumbnailwithavatar": "gotoEditForm",
@@ -69,7 +69,7 @@
                 }, this);
             },
 
-            asyncLoadImgs    : function (collection) {
+            asyncLoadImgs: function (collection) {
                 var ids = _.map(collection.toJSON(), function (item) {
                     return item._id;
                 });
@@ -212,7 +212,7 @@
                         },
                         error  : function () {
                             App.render({
-                                type: 'error',
+                                type   : 'error',
                                 message: "Please refresh browser"
                             });
                         }
@@ -220,13 +220,13 @@
                 }
             },
 
-            showMore        : function (event) {
+            showMore: function (event) {
                 event.preventDefault();
                 this.collection.showMore({filter: this.filter, newCollection: this.newCollection});
             },
 
             //modified for filter Vasya
-            showMoreContent : function (newModels) {
+            showMoreContent: function (newModels) {
                 var holder = this.$el;
                 var content = holder.find("#thumbnailContent");
                 var showMore = holder.find('#showMoreDiv');

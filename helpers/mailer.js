@@ -2,8 +2,12 @@ module.exports = function () {
     var _ = require('../public/js/libs/underscore-min.map.1.6.0.js');
     var nodemailer = require('nodemailer');
     var smtpTransportObject = require('../config/mailer').noReplay;
+    var registerNewUserSaaS = require('../config/mailer').registerNewUserSaaS;
+    var registerNewUser = require('../config/mailer').registerNewUser;
     var pathMod = require('path');
     var moment = require('../public/js/libs/moment/moment');
+
+    var baseOptions = {salesPerson: registerNewUser};
 
     var fs = require('fs');
 
@@ -14,7 +18,7 @@ module.exports = function () {
             if (err) {
                 console.log(err);
                 if (cb && (typeof cb === 'function')) {
-                    cb(err, null);
+                    cb(err);
                 }
             } else {
                 console.log('Message sent: ' + response.message);
@@ -32,11 +36,11 @@ module.exports = function () {
         var templateOptions;
         var mailOptions;
 
-        templateOptions = {
+        templateOptions = _.extend(baseOptions, {
             password: pass,
             email   : email,
             url     : process.env.HOST + '#login?password=' + pass + '&dbId=' + dbId + '&email=' + email
-        };
+        });
 
         mailOptions = {
             from                : 'easyerp <no-replay@easyerp.com>',
@@ -50,12 +54,12 @@ module.exports = function () {
     };
 
     this.changePassword = function (options) {
-        var templateOptions = {
+        var templateOptions = _.extend(baseOptions, {
             name    : options.firstname + ' ' + options.lastname,
             email   : options.email,
             password: options.password,
             url     : 'http://localhost:8823'
-        };
+        });
         var mailOptions = {
             from                : 'Test',
             to                  : options.email,
@@ -68,24 +72,34 @@ module.exports = function () {
     };
 
     this.sendInvoice = function (mailOptions, cb) {
+        mailOptions = _.extend(baseOptions, mailOptions);
         mailOptions.generateTextFromHTML = true;
-        mailOptions.from =  mailOptions.from || 'easyerp <no-replay@easyerp.com>';
-        mailOptions.html = _.template(fs.readFileSync(pathMod.join(__dirname, '../public/templates/mailer/sendInvoice.html'), encoding = 'utf8'), {});
+        mailOptions.from = mailOptions.from || 'easyerp <no-replay@easyerp.com>';
+        mailOptions.html = _.template(fs.readFileSync(pathMod.join(__dirname, '../public/templates/mailer/sendInvoice.html'), encoding = 'utf8'), mailOptions);
+
+        deliver(mailOptions, cb);
+    };
+
+    this.sendGoodsNote = function (mailOptions, cb) {
+
+        mailOptions.generateTextFromHTML = true;
+        mailOptions.from = mailOptions.from || 'easyerp <no-replay@easyerp.com>';
+        mailOptions.html = _.template(fs.readFileSync(pathMod.join(__dirname, '../public/templates/mailer/sendGoodsNote.html'), encoding = 'utf8'), {});
 
         deliver(mailOptions, cb);
     };
 
     this.sendAssignedToLead = function (mailOptions, cb) {
 
-        var templateOptions = {
+        var templateOptions = _.extend(baseOptions, {
             isOpportunity         : mailOptions.isOpportunity,
             employee              : mailOptions.employee.first + ' ' + mailOptions.employee.last,
             opportunityName       : mailOptions.opportunityName,
             opportunityDescription: mailOptions.opportunityDescription
-        };
+        });
 
         mailOptions.generateTextFromHTML = true;
-        mailOptions.from =  mailOptions.from || 'ThinkMobiles <no-replay@easyerp.com>';
+        mailOptions.from = mailOptions.from || 'ThinkMobiles <no-replay@easyerp.com>';
         mailOptions.subject = 'Lead is assigned'; // + name Leads
 
         mailOptions.html = _.template(fs.readFileSync('public/templates/mailer/sendAssignedToLead.html', encoding = 'utf8'), templateOptions);
@@ -94,7 +108,7 @@ module.exports = function () {
     };
 
     this.sendHistory = function (mailOptions, cb) {
-        var templateOptions = {
+        var templateOptions = _.extend(baseOptions, {
             employee   : mailOptions.employee,
             to         : mailOptions.email,
             history    : mailOptions.history,
@@ -104,10 +118,10 @@ module.exports = function () {
             note       : mailOptions.note,
             edit       : mailOptions.edit,
             files      : mailOptions.files
-        };
+        });
 
         mailOptions.generateTextFromHTML = true;
-        mailOptions.from =  mailOptions.from || 'ThinkMobiles <no-replay@easyerp.com>';
+        mailOptions.from = mailOptions.from || 'ThinkMobiles <no-replay@easyerp.com>';
         mailOptions.subject = 'Changed ' + mailOptions.contentName;
 
         mailOptions.html = _.template(fs.readFileSync('public/templates/mailer/historyTemplate.html', encoding = 'utf8'), templateOptions);
@@ -116,15 +130,15 @@ module.exports = function () {
     };
 
     this.sendEmailFromTask = function (mailOptions, cb) {
-        var templateOptions = {
+        var templateOptions = _.extend(baseOptions, {
             employee   : mailOptions.employee,
             to         : mailOptions.email,
             date       : moment(new Date(mailOptions.date)).format('dddd, MMMM Do YYYY, h:mm:ss a'),
             description: mailOptions.description
-        };
+        });
 
         mailOptions.generateTextFromHTML = true;
-        mailOptions.from =  mailOptions.from || 'ThinkMobiles <no-replay@easyerp.com>';
+        mailOptions.from = mailOptions.from || 'ThinkMobiles <no-replay@easyerp.com>';
         mailOptions.subject = 'New Task';
 
         mailOptions.html = _.template(fs.readFileSync('public/templates/mailer/taskTemplate.html', encoding = 'utf8'), templateOptions);
@@ -134,14 +148,14 @@ module.exports = function () {
 
     this.sendAddedFollower = function (mailOptions, cb) {
 
-        var templateOptions = {
+        var templateOptions = _.extend(baseOptions, {
             employee      : mailOptions.employee.first + ' ' + mailOptions.employee.last,
             contentName   : mailOptions.contentName,
             collectionName: mailOptions.collectionName
-        };
+        });
 
         mailOptions.generateTextFromHTML = true;
-        mailOptions.from =  mailOptions.from || 'ThinkMobiles <no-replay@easyerp.com>';
+        mailOptions.from = mailOptions.from || 'ThinkMobiles <no-replay@easyerp.com>';
         mailOptions.subject = 'You was set as a follower'; // + name Leads
 
         mailOptions.html = _.template(fs.readFileSync('public/templates/mailer/addedFollower.html', encoding = 'utf8'), templateOptions);
@@ -149,13 +163,16 @@ module.exports = function () {
         deliver(mailOptions, cb);
     };
 
-    this.registeredNewUser = function (options) {
-        var templateOptions = {
-            name   : options.firstName + ' ' + options.lastName,
-            email  : options.email,
-            country: options.countryInput,
-            city   : options.city
-        };
+    this.registeredNewUser = function (options, cb) {
+        var templateOptions = _.extend(baseOptions, {
+            name    : options.firstName + ' ' + options.lastName,
+            login   : options.login,
+            password: options.password,
+            email   : options.email,
+            country : options.countryInput,
+            city    : options.city,
+            host    : options.host
+        });
         var mailOptions = {
             from                : 'easyerp <no-replay@easyerp.com>',
             to                  : 'sales@easyerp.com',
@@ -172,8 +189,23 @@ module.exports = function () {
             html                : _.template(fs.readFileSync('public/templates/mailer/newUser.html', encoding = 'utf8'), templateOptions)
         };
 
-        deliver(mailOptionsUser);
-        deliver(mailOptions);
+        deliver(mailOptionsUser, cb);
+        // deliver(mailOptions);
+    };
+
+    this.sendMailFromHelp = function (mailOptions, cb) {
+        var templateOptions = _.extend(baseOptions, {
+            name   : mailOptions.name,
+            email  : mailOptions.email,
+            message: mailOptions.message
+        });
+
+        mailOptions.generateTextFromHTML = true;
+        mailOptions.subject = 'EasyErp Hepl Message';
+
+        mailOptions.html = _.template(fs.readFileSync('public/templates/mailer/sendFromHelp.html', encoding = 'utf8'), templateOptions);
+
+        deliver(mailOptions, cb);
     };
 
 };

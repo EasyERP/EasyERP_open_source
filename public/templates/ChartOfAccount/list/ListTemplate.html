@@ -1,31 +1,19 @@
 <% collection.forEach(function(chart, index){ %>
 <%if (!chart.subAccount) {%>
 <tr data-id="<%=chart._id%>" data-index="0">
-    <td class="notForm"><input type="checkbox" value="<%=chart._id%>" class="checkbox listCB"/></td>
+    <td class="notForm">
+        <label class="_customCHeckbox">
+            <input type="checkbox" value="<%=chart._id%>" class="checkbox listCB"/>
+            <span></span>
+        </label>
+    </td>
     <td data-type="input" class="editable" data-content="code"><%=chart.code%></td>
     <td data-type="input" class="editable" data-content="account"><%=chart.account%></td>
-    <td data-content="type" ><a class="current-selected" id="accountTypeDd" data-id="<%=chart.type._id%>"><%=chart.type.name%></a></td>
+    <td><%=chart.payMethod && chart.payMethod.currency ? chart.payMethod.currency : '---'%></td>
+<!--
+    <td data-type="input" data-content="budgeted"><input data-type="checkbox" type="checkbox" class="checkBudget" id="budgeted" <%=chart.budgeted ? 'checked' : ''%>></td>
+-->
+    <td data-content="category" ><a class="current-selected" id="accountsCategory" data-id="<%=chart.category ? chart.category._id : null%>"><%=chart.category ? chart.category.fullName : 'Select'%></a></td>
 </tr>
 <%}%>
-<!--<%if (chart.children){%>
-<% chart.children.forEach(function(el, index){ %>
-<tr class="child" data-id="<%=el._id%>">
-    <td class="notForm"><input type="checkbox" value="<%=el._id%>" class="checkbox listCB"/></td>
-    <td data-type="input" class="editable" data-content="code"><%=el.code%></td>
-    <td data-type="input" class="editable" data-content="account"><%=el.account%></td>
-    <td data-content="type" ><a class="current-selected" id="accountTypeDd" data-id="<%=el.type._id%>"><%=el.type.name%></a></td>
-</tr>
-<%if (el.children){%>
-<% el.children.forEach(function(el, index){ %>
-<tr class="child sub" data-id="<%=el._id%>">
-    <td class="notForm"><input type="checkbox" value="<%=el._id%>" class="checkbox listCB"/></td>
-    <td data-type="input" class="editable" data-content="code"><%=el.code%></td>
-    <td data-type="input" class="editable" data-content="account"><%=el.account%></td>
-    <td data-content="type" ><a class="current-selected" id="accountTypeDd" data-id="<%=el.type._id%>"><%=el.type.name%></a></td>
-</tr>
-<% }) %>
-<%}%>
-<% }) %>
-
-<%}%>-->
 <% }) %>

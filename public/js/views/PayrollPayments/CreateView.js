@@ -49,7 +49,6 @@ define([
             }
         },
 
-
         savedNewModel: function () {
             this.removeDialog();
 
@@ -162,7 +161,7 @@ define([
             var journal = this.$el.find('#journal').attr('data-id') || null;
             var date = helpers.setTimeToDate(new Date(this.$el.find('#dateOfPayment').val()));
 
-            this.editCollection.forEach(function(el){
+            this.editCollection.forEach(function (el) {
                 el.set('date', date);
                 el.set('currency', currency);
                 el.set('paymentMethod', paymentMethod);
@@ -480,13 +479,11 @@ define([
             formString = this.template(options);
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'edit-dialog',
-                title        : 'Create Payment',
-                width        : '900px',
-                buttons      : [{
+                autoOpen   : true,
+                dialogClass: 'edit-dialog',
+                title      : 'Create Payment',
+                width      : '900px',
+                buttons    : [{
                     id   : 'payButton',
                     class: 'btn blue',
                     text : 'Pay',

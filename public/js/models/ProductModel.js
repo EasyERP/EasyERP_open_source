@@ -25,7 +25,7 @@ define([
             });
         },
 
-        parse : function (response) {
+        parse: function (response) {
             if (!response.data) {
                 if (response.attachments) {
                     _.map(response.attachments, function (attachment) {
@@ -40,8 +40,23 @@ define([
         validate: function (attrs) {
             var errors = [];
 
-            Validation.checkNameField(errors, true, attrs.name, 'Product Name');
+            Validation.checkGroupsNameField(errors, true, attrs.name, 'Product Name');
+            Validation.checkForOnlyNumber(errors, attrs.inventory.minStockLevel, 'Min stock Level');
+            Validation.checkForOnlyNumber(errors, attrs.inventory.weight, 'Weight');
             Validation.checkPriceField(errors, false, attrs.info.salePrice, 'Price');
+            Validation.checkPresent(errors, true, attrs.info.categories, 'Product Categories');
+
+            Validation.checkForPositiveValue(errors, attrs.inventory.minStockLevel, 'Min stock Level');
+            Validation.checkForPositiveValue(errors, attrs.inventory.weight, 'Weight');
+
+            if (attrs.prices && attrs.prices.length) {
+                _.each(attrs.prices, function (priceArr) {
+                    _.each(priceArr.prices, function (priceItem) {
+                        Validation.checkNumberField(errors, false, priceItem.count, 'Count');
+                        Validation.checkPriceField(errors, false, priceItem.price, 'Price');
+                    });
+                });
+            }
 
             if (errors.length > 0) {
                 return errors;

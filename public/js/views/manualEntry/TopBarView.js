@@ -2,30 +2,32 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
+    'views/Filter/dateFilter',
     'text!templates/manualEntry/TopBarTemplate.html',
     'custom',
     'constants',
     'dataService',
     'common',
     'moment'
-], function (Backbone, $, _, ContentTopBarTemplate, Custom, CONSTANTS, dataService, common, moment) {
+], function (Backbone, $, _, DateFilterView, ContentTopBarTemplate, Custom, CONSTANTS, dataService, common, moment) {
     'use strict';
     var TopBarView = Backbone.View.extend({
-        el         : '#top-bar',
-        contentType: CONSTANTS.MANUALENTRY,
-        template   : _.template(ContentTopBarTemplate),
+        el           : '#top-bar',
+        contentType  : CONSTANTS.MANUALENTRY,
+        contentHeader: 'Manual Entry',
+        template     : _.template(ContentTopBarTemplate),
 
         events: {
             'click #reconcileBtn'               : 'reconcile',
             'click #top-bar-exportToCsvBtn'     : 'exportToCsv',
             'click #top-bar-exportToXlsxBtn'    : 'exportToXlsx',
-            'click #updateDate'                 : 'changeDateRange',
+            /*'click #updateDate'                 : 'changeDateRange',
             'click .dateRange'                  : 'toggleDateRange',
-            'click #top-bar-deleteBtn'          : 'onDeleteEvent',
-            'click #cancelBtn'                  : 'cancel',
+            */'click #top-bar-deleteBtn'          : 'onDeleteEvent',
+            /*'click #cancelBtn'                  : 'cancel',
             'click li.filterValues:not(#custom)': 'setDateRange',
             'click #custom'                     : 'showDatePickers',
-            'click #top-bar-createBtn'          : 'onCreateEvent'
+            */'click #top-bar-createBtn'          : 'onCreateEvent'
         },
 
         onCreateEvent: function (event) {
@@ -223,24 +225,46 @@ define([
         },
 
         render: function () {
+            var self = this;
             var viewType = Custom.getCurrentVT();
-            // var dateRange = Custom.retriveFromCash('journalEntryDateRange');
             var filter = Custom.retriveFromCash('manualEntry.filter');
-            var dateRange = filter && filter.date ? filter.date.value : [];
+            var dateRange;
+            var startDate;
+            var endDate;
 
-            this.startDate = common.utcDateToLocaleDate(new Date(dateRange[0]));
-            this.endDate = common.utcDateToLocaleDate(new Date(dateRange[1]));
+            if (!this.collection) {
+                dateRange = filter && filter.date ? filter.date.value : [];
 
-            $('title').text(this.contentType);
+                startDate = new Date(dateRange[0]);
+                endDate = new Date(dateRange[1]);
+            } else {
+                startDate = this.collection.startDate;
+                endDate = this.collection.endDate;
+            }
+
+            startDate = moment(startDate).format('D MMM, YYYY');
+            endDate = moment(endDate).format('D MMM, YYYY');
+
+            /*this.startDate = common.utcDateToLocaleDate(new Date(dateRange[0]));
+            this.endDate = common.utcDateToLocaleDate(new Date(dateRange[1]));*/
+
+            $('title').text(this.contentHeader || this.contentType);
 
             this.$el.html(this.template({
                 viewType   : viewType,
-                contentType: this.contentType,
-                startDate  : this.startDate,
-                endDate    : this.endDate
+                contentType: this.contentType
             }));
 
-            this.bindDataPickers(this.startDate, this.endDate);
+            this.dateFilterView = new DateFilterView({
+                contentType: 'manualEntry',
+                el         : this.$el.find('#dateFilter')
+            });
+
+            this.dateFilterView.on('dateChecked', function () {
+                self.trigger('changeDateRange', self.dateFilterView.dateArray);
+            });
+
+            this.dateFilterView.checkElement('custom', [startDate, endDate]);
 
             return this;
         }

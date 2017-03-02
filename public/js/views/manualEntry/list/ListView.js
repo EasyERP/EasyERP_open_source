@@ -56,10 +56,11 @@ define([
         EmployeesModel   : EmployeesModel,
 
         events: {
-            'click .newSelectList li:not(.miniStylePagination)': 'viewSourceDocument',
-            'click .current-selected'                          : 'showNewSelect'
+            // 'click .newSelectList li:not(.miniStylePagination)': 'viewSourceDocument',
+            'click .source': 'viewSourceDocument'
         },
 
+        
         initialize: function (options) {
             var dateRange;
 
@@ -71,7 +72,8 @@ define([
             this.sort = options.sort;
             this.page = options.collection.currentPage;
             this.contentCollection = contentCollection;
-            this.totalValue = options.collection.totalValue;
+            this.totalDebit = options.collection.totalDebit;
+            this.totalCredit = options.collection.totalCredit;
 
             this.filter = options.filter || custom.retriveFromCash('manualEntry.filter');
 
@@ -105,10 +107,55 @@ define([
             ];
         },
 
+        checked: function (e) {
+            var self = this;
+            var $thisEl = this.$el;
+            var $topBar = $('#top-bar');
+            var checked = $(e.target).prop('checked');
+            var $checkBoxes = $thisEl.find('.checkbox:checked:not(#checkAll,notRemovable)');
+            var notRemovable = $thisEl.find('.notRemovable');
+            var $checkAll = $thisEl.find('#checkAll');
+            var $currentChecked = e ? $(e.target) : $thisEl.find('#checkAll');
+            var isCheckedAll = $currentChecked.attr('id') === 'checkAll';
+            var checkAllBool;
+            var $deleteButton = $topBar.find('#top-bar-deleteBtn');
+            var $createButton = $topBar.find('#top-bar-createBtn');
+            var $copyButton = $topBar.find('#top-bar-copyBtn');
+            var tr = $(e.target).closest('tr');
+            var timestamp = tr.attr('data-time');
+
+            if (e) {
+                e.stopPropagation();
+            }
+
+            $checkBoxes.each(function () {
+
+                self.$el.find('[data-time="' + timestamp + '"]').each(function () {
+                    $(this).find('.checkbox').prop('checked', checked);
+                });
+            });
+
+            $checkBoxes = $thisEl.find('.checkbox:checked:not(#checkAll,notRemovable)');
+
+            checkAllBool = (($checkBoxes.length + notRemovable.length) === this.collection.length);
+
+            $checkAll.prop('checked', checkAllBool);
+
+            if ((!isCheckedAll && $checkBoxes.length) || (isCheckedAll && !checkAllBool)) {
+                $deleteButton.show();
+                $copyButton.show();
+                $createButton.hide();
+            } else if (isCheckedAll || !$checkBoxes.length) {
+                $deleteButton.hide();
+                $copyButton.hide();
+                $createButton.show();
+            }
+        },
+
         viewSourceDocument: function (e) {
             var $target = $(e.target);
             var id = $target.attr('id');
-            var closestSpan = $target.closest('.current-selected');
+            var closestSpan = $target.closest('.source').find('.current-selected');
             var dataId = closestSpan.attr('data-id');
             var dataName = closestSpan.attr('data-name');
             var dataEmployee = closestSpan.attr('data-employee');
@@ -148,7 +195,6 @@ define([
                         _id     : dataId,
                         proforma: true
                     };
-                    
 
                     model.urlRoot = '/journalEntries/invoices';
 
@@ -212,28 +258,24 @@ define([
             }
         },
 
-        changeDateRange: function () {
+        changeDateRange: function (dateArray) {
             var itemsNumber = $('#itemsNumber').text();
-            var stDate = $('#startDate').val();
-            var enDate = $('#endDate').val();
             var searchObject;
-
-            this.startDate = new Date(stDate);
-            this.endDate = new Date(enDate);
 
             if (!this.filter) {
                 this.filter = {};
             }
 
             this.filter.date = {
-                value: [this.startDate, this.endDate]
+                value: dateArray
             };
 
+            this.startDate = dateArray[0];
+            this.endDate = dateArray[1];
+
             searchObject = {
-                page     : 1,
-                startDate: stDate,
-                endDate  : enDate,
-                filter   : this.filter
+                page  : 1,
+                filter: this.filter
             };
 
             this.collection.getFirstPage(searchObject);
@@ -261,6 +303,61 @@ define([
                 filter   : filter,
                 startDate: this.startDate,
                 endDate  : this.endDate
+            });
+        },
+
+        deleteItems: function () {
+            var self = this;
+            var $thisEl = this.$el;
+            var $table = $thisEl.find('#listTable');
+            var collection = this.collection;
+            var url = collection.url;
+            var $checkedInputs;
+            var ids = [];
+            var dataTimes = [];
+            var answer;
+            var edited = this.edited || $thisEl.find('tr.false, #false');
+
+            if (!edited.length) { // ToDo refactor
+                this.changed = false;
+            }
+
+            if (this.changed) {
+                return this.cancelChanges();
+            }
+
+            answer = confirm('Really DELETE items ?!');
+
+            if (answer === false) {
+                return false;
+            }
+
+            $checkedInputs = $table.find('input:checked');
+
+            $.each($checkedInputs, function () {
+                var $el = $(this);
+                var dataTime;
+
+                ids.push($el.val());
+
+                dataTime = $el.closest('tr').attr('data-time');
+
+                $table.find('[data-time="' + dataTime + '"]').each(function () {
+                    ids.push($(this).closest('tr').attr('data-id'));
+                });
+            });
+
+            ids = _.compact(ids);
+
+            dataService.deleteData(url, {contentType: this.contentType, ids: ids}, function (err, response) {
+                if (err) {
+                    return App.render({
+                        type   : 'error',
+                        message: 'Can\'t remove items'
+                    });
+                }
+
+                self.getPage();
             });
         },
 
@@ -300,7 +397,8 @@ define([
 
             $currentEl.prepend(itemView.render());
 
-            this.$el.find('#totalDebit').text(helpers.currencySplitter((this.totalValue / 100).toFixed(2)));
+            this.$el.find('#totalDebit').text(helpers.currencySplitter((this.totalDebit / 100).toFixed(2)));
+            this.$el.find('#totalCredit').text(helpers.currencySplitter((this.totalCredit / 100).toFixed(2)));
 
             App.filtersObject.filter = this.filter;
         }

@@ -7,9 +7,10 @@ define([
     'common'
 ], function (_, $, BaseView, ContentTopBarTemplate, Custom, Common) {
     var TopBarView = BaseView.extend({
-        el         : '#top-bar',
-        contentType: 'tCard', // todo change on COSTANT
-        template   : _.template(ContentTopBarTemplate),
+        el           : '#top-bar',
+        contentType  : 'tCard', // todo change on COSTANT
+        contentHeader: 'Time Card',
+        template     : _.template(ContentTopBarTemplate),
 
         events: {
             'click #top-bar-copyBtn': 'copyRow'
@@ -28,7 +29,7 @@ define([
 
         render: function () {
             var viewType = Custom.getCurrentVT();
-            $('title').text(this.contentType);
+            $('title').text(this.contentHeader);
 
             this.$el.html(this.template({viewType: viewType, contentType: this.contentType}));
 

@@ -2,8 +2,10 @@ define([
     'Backbone',
     'Underscore',
     'jQuery',
-    'text!templates/menu/LeftMenuTemplate.html'
-], function (Backbone, _, $, LeftMenuTemplate) {
+    'text!templates/menu/LeftMenuTemplate.html',
+    'services/applyScrollBar',
+    'views/documentationHelper/index'
+], function (Backbone, _, $, LeftMenuTemplate, scrollBar, HelperView) {
     'use strict';
     var LeftMenuView = Backbone.View.extend({
         el            : '#submenuHolder',
@@ -22,17 +24,28 @@ define([
             this.currentRoot = options.currentRoot;
             this.currentModule = options.currentModule;
 
+            this.helperView = new HelperView({currentModule: this.currentModule});
+
+            this.$wrapperHolder = this.$el.parents('#wrapper');
+
             this.render();
         },
 
         events: {
-            'click .root': 'openRoot',
+            'click .root'                          : 'openRoot',
             'click .root>a,.root ul li:first-child': 'preventOpen',
-
+            // 'click a.subItem'                      : 'onItemClick'
         },
 
         preventOpen: function (e) {
             e.preventDefault();
+
+            // this.$wrapperHolder.removeClass('collapsed');
+            // this.$el.removeClass('preventActions');
+        },
+
+        onItemClick: function (e) {
+            this.$wrapperHolder.removeClass('collapsed');
         },
 
         openRoot: function (e) {
@@ -69,6 +82,8 @@ define([
 
             $rootElement.find('li').eq(childIndex + 1).addClass('selected');
             $rootElement.addClass('active opened');
+
+            this.helperView.getData();
         },
 
         render: function () {
@@ -79,6 +94,8 @@ define([
                 currentRoot  : this.currentRoot,
                 currentModule: this.currentModule
             }));
+
+            scrollBar.applyTo($el, {axis: 'y'});
 
             return this;
         }

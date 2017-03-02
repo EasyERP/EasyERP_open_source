@@ -1,100 +1,107 @@
-<div class="selectCompany moduleList">
-    <div>
-        <div class="formTitle">
-            <h3>Company</h3>
-        </div>
-        <%if (property) {%>
-        <div class="propertyContainer">
-
-            <div class="propertyBox">
-                <div class="propertyImg">
-                    <img alt=""
-                         src="<%=property.imageSrc || 'https://static.hsappstatic.net/salesImages/static-1.38/avatars/default-company-avatar.gif'%>"/>
-                </div>
-                <div class="propertyBody">
-                    <span class="propertyFullName"><%=property.fullName%></span>
-                    <a href="javascript:;"><%=property.website%></a>
-                </div>
-
-                <a href="javascript:;" class="removeProperty" title="Remove Company" id="removeProperty">
-                    <span class="icon-close3" aria-hidden="true"></span>
-                </a>
-            </div>
-            <div class="person-info">
-                <div class="propertyFormList">
-                    <label>Name</label>
-                    <div class="inputBox">
-                        <input  data-id="name_first" value="<%=property.fullName%>"/>
-                    </div>
-                </div>
-
-                <div class="propertyFormList">
-                    <label>Street:</label>
-                    <div class="inputBox">
-                        <input class="editable" data-id="address_street" value="<%=property.address.street%>"/>
-                    </div>
-                </div>
-
-                <div class="propertyFormList">
-                    <label>City:</label>
-                    <div class="inputBox">
-                        <input class="editable" data-id="address_city" value="<%=property.address.city%>"/>
-                    </div>
-                </div>
-
-                <div class="propertyFormList">
-                    <label>State:</label>
-                    <div class="inputBox">
-                        <input class="editable" data-id="address_state" value="<%=property.address.state%>"/>
-                    </div>
-                </div>
-
-                <div class="propertyFormList">
-                    <label>Zip:</label>
-                    <div class="inputBox">
-                        <input class="editable" data-id="address_zip" value="<%=property.address.zip%>"/>
-                    </div>
-                </div>
-
-                <div class="propertyFormList">
-                    <label>Country:</label>
-                    <div class="inputBox">
-                        <input class="editable" data-id="address_country" value="<%=property.address.country%>"/>
-                    </div>
-                </div>
-
-                <div class="propertyFormList">
-                    <label>Phone:</label>
-                    <div class="inputBox">
-                        <input class="editable" data-id="phones_phone" value="<%=property.phones.phone%>"/>
-                    </div>
-                </div>
-
-                <div class="propertyFormList">
-                    <label>Email:</label>
-                    <div class="inputBox">
-                        <input class="editable" data-id="phones_phone" value="<%=property.email%>"/>
-                    </div>
-                </div>
-            </div>
-
-            <div class="propertySubmit">
-                <a class="btn" title="View All Properties" href="<%='/#easyErp/Companies/tform/'+ property._id%> "
-                   id="showMoreButton">View All Properties</a>
-            </div>
-            <div class="btnBlock propertyEditBtn">
-
-                <a href="javascript:;" id="saveBtn" class="btn blue btnSave">Save</a>
-
-                <a href="javascript:;" id="cancelBtn" class="btn  ">Cancel</a>
-            </div>
-
-        </div>
-        <%} else { %>
-        <a class="_companySaveButton icon-plus" title="Add Company" id="addProperty" aria-hidden="true"></a>
-        <%}%>
-
-
+<div class="selectCompany">
+    <div class="formTitle">
+        <h3>Company</h3>
     </div>
+    <%if (property) {%>
+    <div class="propertyContainer">
+
+        <div class="propertyBox">
+            <div class="propertyImg">
+                <img alt=""
+                     src="<%=property.imageSrc || 'https://static.hsappstatic.net/salesImages/static-1.38/avatars/default-company-avatar.gif'%>"/>
+            </div>
+            <div class="propertyBody">
+                <span class="propertyFullName"><%=property.fullName%></span>
+                <a href="javascript:;"><%=property.website%></a>
+            </div>
+
+            <a href="javascript:;" class="removeProperty" title="Remove Company" id="removeProperty">
+                <span class="icon-close3" aria-hidden="true"></span>
+            </a>
+        </div>
+        <div class="person-info">
+            <div class="_animateInputBox">
+                <input data-id="name_first"
+                       class="_animate"
+                       value="<%=property.fullName%>"
+                       required/>
+                <label class="_animate">Name</label>
+            </div>
+
+            <div class="_animateInputBox">
+                <input class="_animate editable"
+                       data-id="address_street"
+                       value="<%=property.address.street%>"
+                       required/>
+                <label class="_animate">Street:</label>
+            </div>
+
+            <div class="_animateInputBox">
+                <input class="_animate editable"
+                       data-id="address_city"
+                       value="<%=property.address.city%>"
+                       required/>
+                <label class="_animate">City:</label>
+            </div>
+
+            <div class="_animateInputBox">
+                <input class="_animate editable"
+                       data-id="address_state"
+                       value="<%=property.address.state%>"
+                       required/>
+                <label class="_animate">State:</label>
+            </div>
+
+            <div class="_animateInputBox">
+                <input class="_animate editable"
+                       data-id="address_zip"
+                       value="<%=property.address.zip%>"
+                       required/>
+                <label class="_animate">Zip:</label>
+            </div>
+
+            <div class="_animateInputBox">
+                <input class="_animate editable"
+                       data-id="address_country"
+                       value="<%=property.address.country%>"
+                       required/>
+                <label class="_animate">Country:</label>
+            </div>
+
+            <div class="_animateInputBox">
+                <input class="_animate editable"
+                       data-id="phones_phone"
+                       value="<%=property.phones.phone%>"
+                       required/>
+                <label class="_animate">Phone:</label>
+            </div>
+
+            <div class="_animateInputBox">
+                <input class="_animate editable"
+                       data-id="phones_phone"
+                       value="<%=property.email%>"
+                       required/>
+                <label class="_animate">Email:</label>
+            </div>
+        </div>
+
+        <div class="propertySubmit">
+            <a class="btn blue slim"
+               title="View All Properties"
+               href="<%='/#easyErp/Companies/tform/'+ property._id%> "
+               id="showMoreButton">View All Properties</a>
+        </div>
+        <div class="btnBlock propertyEditBtn">
+            <a href="javascript:;"
+               id="saveBtn"
+               class="btn blue btnSave">Save</a>
+            <a href="javascript:;"
+               id="cancelBtn"
+               class="btn">Cancel</a>
+        </div>
+    </div>
+    <%} else { %>
+    <a class="_circleIconBtn icon-plus" title="Add Company" id="addProperty" aria-hidden="true"></a>
+    <%}%>
 </div>
 

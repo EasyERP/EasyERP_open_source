@@ -23,7 +23,6 @@
             utcDateString = utcDateString ? moment(utcDateString).format("DD MMM, YYYY") : null;
         }
 
-
         return utcDateString;
     };
 
@@ -56,10 +55,10 @@
         var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 
         return result ? {
-            r: parseInt(result[1], 16),
-            g: parseInt(result[2], 16),
-            b: parseInt(result[3], 16)
-        } : null;
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
     };
 
     var deleteEvent = function (e, that) {
@@ -76,7 +75,7 @@
         var canvas = options.canvas || context.$('#avatar')[0];
         var model = options.model || {
                 model: {
-                    imageSrc: "data:image/jpg;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC"
+                    imageSrc: 'data:image/jpg;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC'
                 }
             };
         var img = new Image();
@@ -88,7 +87,10 @@
         };
 
         img.src = model.imageSrc;
-        context.imageSrc = model.imageSrc;
+
+        if (!options.fromGallery) {
+            context.imageSrc = model.imageSrc;
+        }
     };
 
     var canvasDraw = function (options, _context) {
@@ -102,10 +104,10 @@
             e.preventDefault();
 
             var file = inputFile[0].files[0];//fix type file
-            var filesExt = ['jpg', 'gif', 'png', 'jpe', 'jfif', 'jpeg', 'bmp', 'JPEG', 'JPG', 'GIF', 'PNG', 'BMP'];//fix type file
+            var filesExt = ['jpg', 'gif', 'png', 'jpe', 'jfif', 'jpeg', 'bmp', 'JPEG', 'JPG', 'GIF', 'PNG', 'BMP']; //fix type file
             var parts = $(inputFile).val().split('.');//fix type file
 
-            if (filesExt.join().search(parts[parts.length - 1]) !== -1) {//fix type file
+            if (filesExt.join().search(parts[parts.length - 1]) !== -1) { //fix type file
                 var fr = new FileReader();
 
                 fr.onload = function () {
@@ -145,17 +147,16 @@
                         //maxSize: [140, 140]
                     });
 
-                    $(".cropImages").dialog({
-                        dialogClass  : "crop-images-dialog",
-                        closeOnEscape: false,
-                        autoOpen     : true,
-                        resizable    : true,
-                        title        : "Crop Images",
-                        width        : "900px",
-                        buttons      : {
+                    $('.cropImages').dialog({
+                        dialogClass: 'crop-images-dialog',
+                        autoOpen   : true,
+                        resizable  : true,
+                        title      : 'Crop Images',
+                        width      : '900px',
+                        buttons    : {
                             save  : {
-                                text : "Crop",
-                                class: "btn",
+                                text : 'Crop',
+                                class: 'btn',
 
                                 click: function () {
                                     var imageSrcCrop = $('.image_output').attr('src');
@@ -178,10 +179,10 @@
 
                             },
                             cancel: {
-                                text : "Cancel",
-                                class: "btn",
+                                text : 'Cancel',
+                                class: 'btn',
                                 click: function () {
-                                    $(this).dialog("close");
+                                    $(this).dialog('close');
                                 }
                             }
                         }
@@ -198,7 +199,7 @@
             } else {
                 App.render({
                     type   : 'error',
-                    message: "Invalid file type!"
+                    message: 'Invalid file type!'
                 });
             }
         });
@@ -257,11 +258,13 @@
             throw new Error('Failed to save security token to LocalStorage. It is not supported by browser.');
         }
     };
+
     var deleteFromLocalStorage = function (key) {
         if (window.localStorage) {
             window.localStorage.removeItem(key);
         }
     };
+
     var saveToLocalStorage = function (key, value) {
         if (window.localStorage) {
             window.localStorage.setItem(key, value);
@@ -473,18 +476,17 @@
 
     var getLeadsForChart = function (type, filter, callback) {
         dataService.getData('/leads/getLeadsForChart', {
-            type    : type,
-            startDay: filter.startDay,
-            endDay  : filter.endDay
+            type  : type,
+            filter: filter
         }, function (response) {
             callback(response.data);
         });
     };
-    var getOpportunitiesForChart = function (type, dataRange, dataItem, callback) {
+    var getOpportunitiesForChart = function (type, filter, dataItem, callback) {
         dataService.getData('/opportunities/OpportunitiesForChart', {
-            type     : type,
-            dataRange: dataRange,
-            dataItem : dataItem
+            type    : type,
+            filter  : filter,
+            dataItem: dataItem
         }, function (response) {
             callback(response.data);
         });
@@ -523,56 +525,99 @@
             callback(response);
         });
     };
-    var getOpportunitiesConversionForChart = function (dataRange, dataItem, callback) {
+    var getOpportunitiesConversionForChart = function (filter, callback) {
         dataService.getData('/opportunities/OpportunitiesConversionForChart', {
-            dataRange: dataRange
+            filter: filter
         }, function (response) {
             callback(response.data);
         });
     };
-    var getSalesByCountry = function (filter, callback) {
-        var startDay = filter.startDay;
-        var endDay = filter.endDay;
-
+    var getSalesByCountry = function (filter, forSales, callback) {
         filter.forSales = {
             key  : 'forSales',
             type : 'boolean',
             value: ['true']
         };
 
-        delete filter.startDay;
-        delete filter.endDay;
-
-        dataService.getData('/invoices/getSalesByCountry', {
-            startDay: startDay,
-            endDay  : endDay,
-            filter  : filter
+        dataService.getData('/invoice/getSalesByCountry', {
+            filter  : filter,
+            forSales: forSales
         }, function (response) {
             callback(response.data);
         });
     };
-    var getinvoiceByWeek = function (filter, callback) {
-        dataService.getData('/invoices/invoiceByWeek', filter, function (response) {
+    var getinvoiceByWeek = function (filter, forSales, callback) {
+        dataService.getData('/invoice/invoiceByWeek', {filter: filter, forSales: forSales}, function (response) {
             callback(response);
         });
     };
-    var getRevenueBySales = function (filter, callback) {
-        dataService.getData('/invoices/revenueBySales', filter,
+    var getRevenueBySales = function (filter, forSales, callback) {
+        dataService.getData('/invoice/revenueBySales', {filter: filter, forSales: forSales},
             function (response) {
                 callback(response);
             });
     };
-    var getRevenueByCountry = function (filter, callback) {
-        dataService.getData('/invoices/revenueByCountry', filter,
+    var getRevenueByCountry = function (filter, forSales, callback) {
+        dataService.getData('/invoice/revenueByCountry', {filter: filter, forSales: forSales},
             function (response) {
                 callback(response);
             });
     };
-    var getRevenueByCustomer = function (filter, callback) {
-        dataService.getData('/invoices/revenueByCustomer', filter,
+    var getRevenueByCustomer = function (filter, forSales, callback) {
+        dataService.getData('/invoice/revenueByCustomer', {filter: filter, forSales: forSales},
             function (response) {
                 callback(response);
             });
+    };
+    var getRevenueForSingle = function (filter, forSales, callback) {
+        dataService.getData('/invoice/getRevenueForSingle', {filter: filter, forSales: forSales},
+            function (response) {
+                callback(response);
+            });
+    };
+    var getOrders = function (filter, forSales, callback) {
+        dataService.getData('/order/', {
+            filter     : filter,
+            forSales   : forSales,
+            viewType   : 'list',
+            count      : 5,
+            sort       : {orderDate: -1},
+            contentType: forSales ? 'order' : 'purchaseOrders'
+        }, function (response) {
+            callback(response);
+        });
+    };
+    var getOrdersByWorkflows = function (filter, forSales, callback) {
+        dataService.getData('/order/getByWorkflows', {
+            filter  : filter,
+            forSales: forSales
+        }, function (response) {
+            callback(response);
+        });
+    };
+    var getInvoices = function (filter, forSales, callback) {
+        dataService.getData('/invoice/', {
+            filter     : filter,
+            forSales   : forSales,
+            viewType   : 'list',
+            count      : 5,
+            sort       : {invoiceDate: -1},
+            contentType: forSales ? 'invoice' : 'purchaseInvoices'
+        }, function (response) {
+            callback(response);
+        });
+    };
+    var getInvoiceByWorkflows = function (filter, forSales, callback) {
+        dataService.getData('/invoice/getInvoiceByWorkflows', {
+            filter     : filter,
+            forSales   : forSales,
+            viewType   : 'list',
+            count      : 5,
+            sort       : {invoiceDate: -1},
+            contentType: forSales ? 'invoice' : 'purchaseInvoices'
+        }, function (response) {
+            callback(response);
+        });
     };
     var getSalary = function (filter, callback) {
         dataService.getData('/employees/getSalaryForChart', {
@@ -592,23 +637,21 @@
     };
     var totalInvoiceBySales = function (filter, callback) {
         dataService.getData('revenue/totalInvoiceBySales', {
-            startDate: filter.startDay,
-            endDate  : filter.endDay
+            filter: filter
         }, function (response) {
             callback(response.data);
         });
 
     };
     var getOpportunitiesAgingChart = function (callback) {
-        dataService.getData("/opportunities/OpportunitiesAgingChart", {}, function (response) {
+        dataService.getData('/opportunities/OpportunitiesAgingChart', {}, function (response) {
             callback(response.data);
         });
     };
     var getLeads = function (filter, callback) {
         dataService.getData('/leads', {
-            startDay: filter.startDay,
-            endDay  : filter.endDay,
-            stage   : filter.stage
+            filter: filter,
+            stage : filter.stage
         }, function (response) {
             callback(response);
         });
@@ -1202,13 +1245,22 @@
         });
     }
 
-    var buildAllAphabeticArray = function () {
-        var associateArray = ["All", "0-9"];
-        for (var i = 65; i <= 90; i++) {
+    var buildAllAphabeticArray = function (contentType) {
+        var associateArray = ['All'];
+        var notNumbers = ['Persons', 'Employees'];
+        var i;
+
+        if (contentType && notNumbers.indexOf(contentType) < 0) {
+            associateArray.push('0-9');
+        } else if (!contentType) {
+            associateArray.push('0-9');
+        }
+
+        for (i = 65; i <= 90; i++) {
             associateArray.push(String.fromCharCode(i).toUpperCase());
         }
         return associateArray;
-    }
+    };
 
     var getImages = function (ids, url, callback) {
         dataService.getData(url, {ids: ids}, function (response) {
@@ -1302,6 +1354,12 @@
         getinvoiceByWeek                  : getinvoiceByWeek,
         getRevenueBySales                 : getRevenueBySales,
         getRevenueByCustomer              : getRevenueByCustomer,
-        getRevenueByCountry               : getRevenueByCountry
+        getRevenueByCountry               : getRevenueByCountry,
+        getRevenueForSingle               : getRevenueForSingle,
+        getOrders                         : getOrders,
+        getInvoices                       : getInvoices,
+        getInvoiceByWorkflows             : getInvoiceByWorkflows,
+        getOrdersByWorkflows              : getOrdersByWorkflows,
+        canvasDrawing                     : canvasDrawing
     }
 });

@@ -51,14 +51,17 @@ define([
             this.startTime = options.startTime;
             this.collection = options.collection;
             jsonCollection = this.collection.toJSON();
-            this.grossFit = jsonCollection[0] ? jsonCollection[0].grossFit : [];
+            this.income = jsonCollection[0] ? jsonCollection[0].income : [];
             this.expenses = jsonCollection[0] ? jsonCollection[0].expenses : [];
             this.dividends = jsonCollection[0] ? jsonCollection[0].dividends : 0;
+            this.cogs = jsonCollection[0] ? jsonCollection[0].cogs : 0;
+            this.taxes = jsonCollection[0] ? jsonCollection[0].taxes : 0;
+
             _.bind(this.collection.showMore, this.collection);
+
             this.sort = options.sort || {};
             this.defaultItemsNumber = this.collection.namberToShow || 100;
             this.page = options.collection.page;
-            dateRange = custom.retriveFromCash('profitAndLossDateRange');
 
             this.filter = options.filter || custom.retriveFromCash('profitAndLoss.filter');
 
@@ -66,25 +69,22 @@ define([
                 this.filter = {};
             }
 
-            if (!this.filter.startDate) {
-                this.filter.startDate = {
-                    key  : 'startDate',
-                    value: new Date(dateRange.startDate)
-                };
-                this.filter.endDate = {
-                    key  : 'endDate',
-                    value: new Date(dateRange.endDate)
+            dateRange = this.filter.date ? this.filter.date.value : [];
+
+            if (!this.filter.date) {
+                this.filter.date = {
+                    key  : 'date',
+                    value: [new Date(dateRange.startDate), new Date(dateRange.endDate)]
                 };
             }
 
-            this.startDate = new Date(this.filter.startDate.value);
-            this.endDate = new Date(this.filter.endDate.value);
-
-            this.render();
-
+            this.startDate = new Date(dateRange[0]);
+            this.endDate = new Date(dateRange[1]);
             this.contentCollection = reportCollection;
+
             custom.cacheToApp('profitAndLoss.filter', this.filter);
 
+            this.render();
             this.responseObj['#source'] = [
                 {
                     _id : 'source',
@@ -222,14 +222,11 @@ define([
         asyncRenderInfo: function (asyncKeys) {
             var self = this;
             var body = this.$el;
-            var stDate = this.filter.startDate.value;
-            var endDate = this.filter.endDate.value;
 
             async.each(asyncKeys, function (asyncId) {
                 dataService.getData('journalEntries/getAsyncDataForGL', {
-                    startDate: stDate,
-                    endDate  : endDate,
-                    _id      : asyncId
+                    filter: self.filter,
+                    _id   : asyncId
                 }, function (result) {
                     var journalEntries = result.journalEntries;
                     var mainTr = body.find('[data-id="' + asyncId + '"]');
@@ -242,32 +239,22 @@ define([
 
         },
 
-        changeDateRange: function () {
-            var stDate = $('#startDate').val();
-            var enDate = $('#endDate').val();
+        changeDateRange: function (dateArray) {
             var searchObject;
-
-            this.startDate = new Date(stDate);
-            this.endDate = new Date(enDate);
 
             if (!this.filter) {
                 this.filter = {};
             }
 
-            this.filter.startDate = {
-                key  : 'startDate',
-                value: stDate
+            this.filter.date = {
+                value: dateArray
             };
 
-            this.filter.endDate = {
-                key  : 'endDate',
-                value: enDate
-            };
+            this.startDate = dateArray[0];
+            this.endDate = dateArray[1];
 
             searchObject = {
-                startDate: stDate,
-                endDate  : enDate,
-                filter   : this.filter
+                filter: this.filter
             };
 
             this.collection.showMore(searchObject);
@@ -283,14 +270,19 @@ define([
             var itemView;
             var asyncKeys = [];
 
-            this.$el.find('#listTableGrossFit').html('');
+            this.$el.find('#listTableIncome').html('');
+            this.$el.find('#listTableCogs').html('');
             this.$el.find('#listTableExpenses').html('');
+            this.$el.find('#listTableTaxes').html('');
+            this.$el.find('#listTableDividends').html('');
 
             collection = newModels.toJSON();
 
-            this.grossFit = collection[0].grossFit;
+            this.income = collection[0].income;
             this.expenses = collection[0].expenses;
             this.dividends = collection[0].dividends;
+            this.taxes = collection[0].taxes;
+            this.cogs = collection[0].cogs;
 
             itemView = new ListItemView({
                 collection      : collection,
@@ -303,7 +295,19 @@ define([
                 asyncKeys.push(el._id);
             });
 
-            this.grossFit.forEach(function (el) {
+            this.income.forEach(function (el) {
+                asyncKeys.push(el._id);
+            });
+
+            this.dividends.forEach(function (el) {
+                asyncKeys.push(el._id);
+            });
+
+            this.taxes.forEach(function (el) {
+                asyncKeys.push(el._id);
+            });
+
+            this.cogs.forEach(function (el) {
                 asyncKeys.push(el._id);
             });
 
@@ -329,7 +333,6 @@ define([
         },
 
         render: function () {
-            var self = this;
             var $currentEl = this.$el;
             var collection;
             var itemView;
@@ -344,12 +347,28 @@ define([
                 asyncKeys.push(el._id);
             });
 
-            this.grossFit.forEach(function (el) {
+            this.income.forEach(function (el) {
                 asyncKeys.push(el._id);
             });
 
+            this.dividends.forEach(function (el) {
+                asyncKeys.push(el._id);
+            });
+
+            this.taxes.forEach(function (el) {
+                asyncKeys.push(el._id);
+            });
+
+            this.cogs.forEach(function (el) {
+                asyncKeys.push(el._id);
+            });
+
+            this.$el.find('#listTableIncome').html('');
+            this.$el.find('#listTableCogs').html('');
             this.$el.find('#listTableExpenses').html('');
-            this.$el.find('#listTableGrossFit').html('');
+            this.$el.find('#listTableTaxes').html('');
+            this.$el.find('#listTableDividends').html('');
+
 
             itemView = new ListItemView({
                 collection      : collection,

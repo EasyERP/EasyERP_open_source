@@ -18,6 +18,34 @@ table {
       }
     }
   }
+  td.editable {
+    cursor: pointer;
+
+    &.errorContent {
+      border-bottom: 1px solid red;
+
+      &:before {
+        content: '* Please, choose';
+        color: red;
+        position: relative;
+      }
+    }
+  }
+
+  .errorContent{
+    input {
+      border: 1px solid red;
+    }
+    &:after {
+      display: none;
+    }
+  }
+
+  .hasDatepicker {
+    font-size: 13px;
+    color: #3e88b9;
+    cursor: pointer;
+  }
 }
 
 tr.redBorder {
@@ -39,6 +67,7 @@ tr.redBorder {
 
     td {
       border-color: red !important;
+      background-color: red !important;
     }
   }
 }
@@ -49,9 +78,20 @@ tr.greyBorder {
 
 td.checkboxRow {
   width: 40px;
-  padding: 15px;
+  padding: 10px;
   vertical-align: middle;
   text-align: center;
+
+  label._customCHeckbox {
+    position: relative;
+
+    .checkbox {
+      left: -7px;
+      margin-top: 3px;
+      z-index: 1;
+      cursor: pointer;
+    }
+  }
 }
 
 td.editable {
@@ -69,7 +109,8 @@ td.editable {
   }
 }
 
-.list:not(.stripedList):not(._dialogTable) {
+.list:not(.stripedList):not(._dialogTable),
+._balanceSheetTable{
   tbody tr {
     &.mainTr,
     &.childTr,
@@ -96,11 +137,10 @@ td.editable {
 }
 
 .list:not(.stripedList):not(._dialogTable) {
-  font-family: $fontRegular; //@fontRegular;
+  font-family: $fontRegular;
   width: 100%;
 
   td, th {
-    height: 23px;
     padding: 0 6px;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -141,14 +181,16 @@ td.editable {
     }
 
     tr {
+      &:first-child {
+        border-top:none;
+      }
       &:last-child {
         border-bottom: 1px solid #d7d7d7; //@thin-border @list-border-color;
       }
     }
   }
 
-  tbody,
-  thead {
+  tbody {
     tr {
       border-top: 1px solid #d7d7d7; //@thin-border @list-border-color;
     }
@@ -156,6 +198,7 @@ td.editable {
 
   tfoot {
     td {
+      height: 45px;
       text-align: right;
     }
   }
@@ -173,16 +216,6 @@ td.editable {
       cursor: pointer;
       display: inline-block;
       vertical-align: top;
-    }
-  }
-
-  .enableTableOdd {
-    tr {
-      &:not(.innerRow) {
-        &:hover {
-          background-color: #ededed; //@defaultBgColorOdd-color;
-        }
-      }
     }
   }
 
@@ -257,23 +290,43 @@ td.editable {
   }
 }
 
+._projectTableVisible {
+  overflow: initial;
+}
+
 ._timeCardTableWrap {
-  min-width: 1550px;
+  position: relative;
+  min-height: calc(100% - 42px);
+  padding: 10px 0;
+  padding-top: 5px;
+  overflow: auto;
+
+  > .stripedList {
+    min-width: 1550px;
+    //position: absolute;
+  }
 }
 
 ._quotationTableWrap,
 ._ordersTableWrap {
-  min-width: 1000px;
+  > .stripedList {
+    min-width: 1000px;
+  }
 }
 
 ._invoiceTableWrap,
 ._proformaTableWrap {
-  min-width: 1150px;
+  > .stripedList {
+    min-width: 1150px;
+  }
 }
 
 ._paymentsTableWrap,
 ._membersTableWrap {
-  min-width: 800px;
+
+  > .stripedList {
+    min-width: 800px;
+  }
 }
 
 ._weeklySheduler,
@@ -290,6 +343,7 @@ td.editable {
   ._dialogTable {
     table-layout: fixed;
     width: 100%;
+    margin-bottom: 20px;
 
     th {
       font-family: $semibold-font-family;
@@ -323,6 +377,14 @@ td.editable {
   }
 }
 
+#pmsTable {
+  tfoot {
+    tr {
+      border-top: 1px solid #d7d7d7;
+    }
+  }
+}
+
 ._earningsType {
   .form {
     textarea {
@@ -337,4 +399,145 @@ td.editable {
       }
     }
   }
+
+  ._listModal {
+    padding-bottom: 0;
+  }
+}
+
+._tablePayoutWrap,
+._salaryReportTableWrap {
+  min-height: calc(100% - 16px);
+  overflow: auto;
+}
+
+._tableBonusTypeWrap {
+  min-height: calc(100% - 30px);
+}
+
+._tableWrap {
+  overflow: auto;
+  padding-bottom: 100px;
+}
+
+._balanceSheetTableWrap {
+  + ._balanceSheetTableWrap,
+  + ._totalBalanceTableWrap {
+    padding-top: 20px;
+  }
+}
+
+._balanceSheetTableWrap {
+  padding: 0 20px;
+  margin: 0 20px;
+  background-color: #fff;
+
+  ._balanceSheetTable {
+    table-layout: fixed;
+
+    thead {
+      tr {
+        border-top: 0;
+        th {
+          text-align: left;
+
+          &:first-child {
+            width: 20px;
+          }
+        }
+      }
+    }
+
+    tbody {
+      tr {
+        td {
+          height: 23px;
+        }
+
+        &.mainTr {
+          td {
+            &:first-child {
+              text-align: left;
+            }
+          }
+        }
+
+        &.childTr {
+          td {
+            &:first-child {
+              text-align: right;
+            }
+          }
+        }
+
+        &.subTr {
+          border-top: 0;
+
+          td {
+            &:nth-child(n+2) {
+              padding-left: 20px;
+            }
+          }
+        }
+      }
+    }
+
+    thead,
+    tbody,
+    tfoot {
+      tr {
+        td, th {
+          padding: 5px 0;
+          color: #666674;
+
+          &:last-child {
+            text-align: right;
+          }
+        }
+      }
+    }
+
+    tfoot {
+      tr {
+        td {
+          text-align: left;
+        }
+      }
+    }
+  }
+
+  td.source {
+    cursor: default;
+  }
+}
+
+._taxList {
+
+  > li {
+    line-height: 20px;
+    padding: 0 10px;
+  }
+}
+
+._formTable {
+  table-layout: fixed;
+
+  th._titleCell {
+    padding-top: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #c8c8d3;
+    color: #3d7fab;
+    font-family: $semibold-font-family;
+  }
+
+  ._locationZoneWrap .newSelectList {
+    right: 0;
+    left: auto;
+  }
+}
+
+._productOptionsTitle {
+  margin-bottom: 15px;
+  color: #323a43;
+  font-family: $semibold-font-family;
 }

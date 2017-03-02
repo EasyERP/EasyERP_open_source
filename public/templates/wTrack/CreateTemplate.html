@@ -1,15 +1,15 @@
 <tr class="false enableEdit" data-id="<%=cid%>">
-    <td class="notForm"><input type="checkbox" class="checkbox listCB" value="<%=cid%>"/></td>
-    <td>New</td>
+    <td class="notForm">
+        <label class="_customCHeckbox">
+            <input type="checkbox" class="checkbox listCB" value="<%=cid%>"/>
+            <span></span>
+        </label>
+    </td>
     <td class="editable centerCell textUnderlineHover" data-content="type">OR</td>
     <td data-content="jobs" class="<%= projectModel ? 'editable' : ''%> errorContent"></td>
-   <!-- <td data-content="assigned"><%= projectModel && projectModel.salesmanager ? projectModel.salesmanager.name.first + ' ' +
-        projectModel.salesmanager.name.last : ''%>
-    </td>-->
     <td class="<%= projectModel ? '' : 'editable errorContent'%>" data-content="project"
         data-id="<%= projectModel ? projectModel._id : '' %>"><%= projectModel ? projectModel.name : '' %>
     </td>
-    <!--<td data-content="workflow"><%= projectModel ? projectModel.workflow.name : ''%></td>-->
     <td data-content="customer"><%= projectModel && projectModel.customer ? projectModel.customer.fullName : ''%>
     </td>
     <td class="editable errorContent" data-content="employee"></td>
@@ -25,9 +25,4 @@
     <td data-type="input" class="editable autoCalc" data-content="5">8</td>
     <td data-type="input" class="editable autoCalc" data-content="6"></td>
     <td data-type="input" class="editable autoCalc" data-content="7"></td>
-    <!--<td><span class="unDone">Unpaid</span></td>
-    <td data-content="revenue" class="money">0.00</td>
-    <td data-content="cost"></td>
-    <td data-content="profit" class="money">0.00</td>
-    <td data-content="amount" class="money">0</td>-->
 </tr>

@@ -20,7 +20,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="vocationFilter _filterDropDownWrap">
+                    <div id="LeadsBySaleDateFilter" class="vocationFilter _filterDropDownWrap"></div>
+                    <!--<div class="vocationFilter _filterDropDownWrap">
                         <ul class="dateFilterLeadsBySale ">
                             <li class="dateRangeLeadsBySale">
                                 <span class="icon-calendar"></span>
@@ -29,22 +30,42 @@
                             </li>
                             <li>
                                 <ul class="frameDetail _filterDropDownBody hidden">
-                                    <li id="thisMonthLeadsBySale" class="filterValues checked checkedValue" data-type="leadsSale">
+                                    <li id="thisMonthLeadsBySale"
+                                        class="filterValues checked checkedValue"
+                                        data-type="leadsSale"
+                                        data-name="thisMonth">
                                         This Month
                                     </li>
-                                    <li id="thisYearLeadsBySale" class="filterValues checked" data-type="leadsSale">This Financial
-                                        Year
+                                    <li id="thisYearLeadsBySale"
+                                        class="filterValues checked"
+                                        data-type="leadsSale"
+                                        data-name="thisYear">
+                                        This Financial Year
                                     </li>
                                     <li class="listLine"></li>
-                                    <li id="lastMonthLeadsBySale" class="filterValues checked" data-type="leadsSale">Last Month</li>
-                                    <li id="lastQuarterLeadsBySale" class="filterValues checked" data-type="leadsSale">Last
-                                        Quarter
+                                    <li id="lastMonthLeadsBySale"
+                                        class="filterValues checked"
+                                        data-type="leadsSale"
+                                        data-name="lastMonth">
+                                        Last Month
                                     </li>
-                                    <li id="lastYearLeadsBySale" class="filterValues checked" data-type="leadsSale">Last Financial
-                                        Year
+                                    <li id="lastQuarterLeadsBySale"
+                                        class="filterValues checked"
+                                        data-type="leadsSale"
+                                        data-name="lastQuarter">
+                                        Last Quarter
+                                    </li>
+                                    <li id="lastYearLeadsBySale"
+                                        class="filterValues checked"
+                                        data-type="leadsSale"
+                                        data-name="lastYear">
+                                        Last Financial Year
                                     </li>
                                     <li class="listLine"></li>
-                                    <li id="customLeadsBySale" class="_filterArrow filterValues checked" data-type="leadsSale">
+                                    <li id="customLeadsBySale"
+                                        class="_filterArrow filterValues checked"
+                                        data-type="leadsSale"
+                                        data-name="custom">
                                         Custom Dates
                                     </li>
                                     <li class="customTimeLeadsBySale customTime hidden">
@@ -68,7 +89,7 @@
                                 </ul>
                             </li>
                         </ul>
-                    </div>
+                    </div>-->
                 </div>
                 <svg class="chart salesChart"></svg>
            </div>
@@ -76,7 +97,8 @@
         <div class="col m-6">
             <div class="dashboard-card">
                 <h3 class="card-title">Leads</h3>
-                <div class="vocationFilter _filterDropDownWrap">
+                <div id="LeadsDateFilter" class="vocationFilter _filterDropDownWrap"></div>
+                <!--<div class="vocationFilter _filterDropDownWrap">
                     <ul class="dateFilterLeads">
                         <li class="dateRangeLeads">
                             <span class="icon-calendar"></span>
@@ -124,8 +146,8 @@
                             </ul>
                         </li>
                     </ul>
-                </div>
-                <div data-type="leadsChart" class="choseDateItem">
+                </div>-->
+                <div data-type="Leads" class="choseDateItem">
                     <div class="item active" data-item="createdBy">Created By</div>
                     <div class="item" data-item="assignedTo">Assigned To</div>
                 </div>
@@ -163,7 +185,8 @@
             <div class="dashboard-card">
                 <h3 class="card-title">Leads by names</h3>
                 <div class="leadsTop align-left">
-                    <div class="vocationFilter _filterDropDownWrap">
+                    <div id="LeadsByNameDateFilter" class="vocationFilter _filterDropDownWrap"></div>
+                    <!--<div class="vocationFilter _filterDropDownWrap">
                         <ul class="dateFilterLeadsByName">
                             <li class="dateRangeLeadsByName">
                                 <span class="icon-calendar"></span>
@@ -213,8 +236,8 @@
                                 </ul>
                             </li>
                         </ul>
-                    </div>
-                    <div data-type="leadsByName" class="choseDateItem">
+                    </div>-->
+                    <div data-type="LeadsByName" class="choseDateItem">
                         <div class="item active" data-item="leadsBySales">Assigned To</div>
                         <div class="item" data-item="qualifiedBy">Qualified By</div>
                         <div class="item" data-item="qualifiedFrom">Qualified From</div>
@@ -227,7 +250,8 @@
             <div class="dashboard-card">
                 <h3 class="card-title">Sales by country</h3>
                 <div class="filterWrap salesTab">
-                    <div class="vocationFilter _filterDropDownWrap small">
+                    <div id="SalesByCountryDateFilter" class="vocationFilter _filterDropDownWrap"></div>
+                    <!--<div class="vocationFilter _filterDropDownWrap small">
                         <ul class="dateFilter">
                             <li class="dateRange">
                                 <span class="icon-calendar"></span>
@@ -265,7 +289,7 @@
                                 </ul>
                             </li>
                         </ul>
-                    </div>
+                    </div>-->
                 </div>
                 <div class="dashboardGraphicsWrap">
                     <div class="halfWidth">

@@ -11,8 +11,9 @@ define([
     'dataService',
     'moment',
     'common',
-    'constants'
-], function (Backbone, $, _, generateTemplate, wTrackPerEmployeeTemplate, wTrackPerEmployee, selectView, JobsCollection, populate, dataService, moment, common, CONSTANTS) {
+    'constants',
+    'services/productCategories'
+], function (Backbone, $, _, generateTemplate, wTrackPerEmployeeTemplate, wTrackPerEmployee, selectView, JobsCollection, populate, dataService, moment, common, CONSTANTS, productCategoriesService) {
     'use strict';
     var CreateView = Backbone.View.extend({
         template                 : _.template(generateTemplate),
@@ -20,18 +21,21 @@ define([
         responseObj              : {},
 
         events: {
-            'click .newSelectList li:not(.miniStylePagination)'        : 'chooseOption',
-            'click .current-selected'                                  : 'showNewSelect',
-            'click #addNewEmployeeRow'                                 : 'addNewEmployeeRow',
-            'click a.generateType'                                     : 'generateType',
-            'click td.editable'                                        : 'editRow',
-            'change .editable '                                        : 'setEditable',
-            'mouseover tbody tr:not("#addNewItem")'                    : 'showRemove',
-            'mouseleave tbody tr:not("#addNewItem")'                   : 'hideRemove',
-            'click .remove'                                            : 'deleteRow',
-            'keydown input:not(#jobName, #selectInput, #jobDescription)'                : 'onKeyDownInput',
-            'keyup input:not(#jobName, #jobDescription, #selectInput, .hasDatepicker)'  : 'onKeyUpInput',
-            'click div:not(input.endDateInput) input:not(#selectInput)': 'hideSelects'
+            'click .newSelectList li:not(.miniStylePagination)'                       : 'chooseOption',
+            'click .current-selected'                                                 : 'showNewSelect',
+            'click #addNewEmployeeRow'                                                : 'addNewEmployeeRow',
+            'click a.generateType'                                                    : 'generateType',
+            'click td.editable'                                                       : 'editRow',
+            'change .editable '                                                       : 'setEditable',
+            'mouseover tbody tr:not("#addNewItem")'                                   : 'showRemove',
+            'mouseleave tbody tr:not("#addNewItem")'                                  : 'hideRemove',
+            'click .remove'                                                           : 'deleteRow',
+            'keydown input:not(#jobName, #selectInput, #jobDescription)'              : 'onKeyDownInput',
+            'keyup input:not(#jobName, #jobDescription, #selectInput, .hasDatepicker)': 'onKeyUpInput',
+            'click div:not(input.endDateInput) input:not(#selectInput)'               : 'hideSelects',
+            'click #showBtn'                                                          : productCategoriesService.showCategories,
+            'change .productCategory'                                                 : productCategoriesService.changeCategory,
+            'click .deleteTag '                                                       : productCategoriesService.deleteCategory
         },
 
         hideSelects: function (e) {
@@ -497,6 +501,37 @@ define([
                 var jobDescription = self.jobs ? self.jobs.description : self.$el.find('#jobDescription').val();
                 var _id = window.location.hash.split('form/')[1];
                 var nameRegExp = /^[a-zA-Z0-9\s][a-zA-Z0-9-,\s\.\/\s]+$/;
+                var warehouse = self.$el.find('#warehouse').attr('data-id');
+                var productType = self.$el.find('#productType').attr('data-id');
+                var categoryIds = [];
+                var categoryElements = self.$el.find('.checkedProductCategory');
+
+                if (categoryElements && categoryElements.length) {
+                    categoryElements.each(function (key, item) {
+                        categoryIds.push($(item).data('id'));
+                    });
+                }
+
+                if (!categoryIds.length) {
+                    return App.render({
+                        type   : 'error',
+                        message: 'Please, choose Product Categories!'
+                    });
+                }
+
+                if (!self.jobs && !productType) {
+                    return App.render({
+                        type   : 'error',
+                        message: 'Please, choose Product Type!'
+                    });
+                }
+
+                if (!warehouse) {
+                    return App.render({
+                        type   : 'error',
+                        message: 'Please, choose warehouse!'
+                    });
+                }
 
                 self.setChangedValueToModel();// add for setChanges by Hours
 
@@ -522,6 +557,9 @@ define([
                             xhr.setRequestHeader('jobid', jobId);
                             xhr.setRequestHeader('jobdesc', jobDescription);
                             xhr.setRequestHeader('jobname', jobName);
+                            xhr.setRequestHeader('warehouse', warehouse);
+                            xhr.setRequestHeader('productType', productType);
+                            xhr.setRequestHeader('categoryIds', JSON.stringify(categoryIds));
                         },
 
                         success: function () {
@@ -540,7 +578,10 @@ define([
                                 return self.quotationDialog.generatedWtracks();
                             }
 
-                            App.projectInfo = App.projectInfo || {};
+                            Backbone.history.fragment = '';
+                            Backbone.history.navigate(window.location.hash, {trigger: true});
+
+                            /*App.projectInfo = App.projectInfo || {};
                             App.projectInfo.currentTab = 'timesheet';
 
                             tabs = $('.chart-tabs');
@@ -551,7 +592,7 @@ define([
 
                             dialogHolder = $('.dialog-tabs-items');
                             dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
-                            dialogHolder.find('#' + App.projectInfo.currentTab).closest('.dialog-tabs-item').addClass('active');
+                            dialogHolder.find('#' + App.projectInfo.currentTab).closest('.dialog-tabs-item').addClass('active');*/
 
                         },
 
@@ -603,7 +644,7 @@ define([
 
         chooseOption: function (e) {
             var target = $(e.target);
-            var targetElement = target.parents('td');
+            var targetElement = target.parent('ul').closest('td') && target.parent('ul').closest('td').length ? target.parent('ul').closest('td') : target.parent('ul') && target.parent('ul').closest('a.current-selected').closest('div').length ? target.parent('ul').closest('a.current-selected').closest('div') : target.parent('ul');
             var tr = target.parents('tr');
             var modelId = tr.attr('data-id');
             var id = target.attr('id');
@@ -624,6 +665,7 @@ define([
             var department;
 
             targetElement.attr('data-id', id);
+            targetElement.find('a.current-selected').attr('data-id', id);
             selectorContainer = targetElement.find('a.current-selected');
 
             if (elementType === '#employee') {
@@ -728,6 +770,11 @@ define([
             dataService.getData(CONSTANTS.URLS.DEPARTMENTS_FORDD, {devDepartments: true}, function (response) {
                 self.responseObj['#department'] = response.data;
             });
+
+            populate.get('#productType', '/products/getProductsTypeForDd', {}, 'name', self, true);
+            populate.get('#warehouse', '/warehouse/getForDD', {}, 'name', self, true);
+
+            productCategoriesService.renderProductCategories.call(self);
 
             this.$listTable = $('#rawTable tbody');
 

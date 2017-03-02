@@ -1,16 +1,26 @@
 module.exports = {
-    HR_DEPARTMENT_ID       : '55b79342b370f8642a0013b5',
-    BUSINESS_DEPARTMENT_ID : '55b79342b370f8642a0013b4',
-    MARKETING_DEPARTMENT_ID: '55b79342b370f8642a0013b3',
-    DEVELOPMENT            : '56cebdf6541812c07197358f',
+    HR_DEPARTMENT_ID            : '55b79342b370f8642a0013b5',
+    BUSINESS_DEPARTMENT_ID      : '55b79342b370f8642a0013b4',
+    MARKETING_DEPARTMENT_ID     : '55b79342b370f8642a0013b3',
+    DEVELOPMENT                 : '56cebdf6541812c07197358f',
+    DEFAULT_UNLINKED_WORKFLOW_ID: '55647b932e4aa3804a765ec9',
+    DEFAULT_PRODUCT_TYPE_ID     : '58453a4afc8d676a511283d0',
+    DEFAULT_PRODUCT_CATEGORY_ID : '564591f9624e48551dfe3b23',
+    IN_PROGRESS_WORKFLOW_ID     : '57f4bcfe48c62c5c68690dbc',
 
     PAYONEER    : '555cc981532aebbc4a8baf36',
     UKR_SIB_BANK: '555cc981532aebbc4a8baf37',
     PRIMARY     : '555cc981532aebbc4a8baf38',
 
+    TAX_ACCOUNT: '565eb53a6aa50532e5df0bdd',
+
+    USR: '565eb53a6aa50532e5df0bdb',
+
     WTRACK_DB_NAME: 'weTrack',
 
     PRODUCRSERVICE: '5540d528dacb551c24000003',
+
+    SALES_RETURNS: '589c9cdde660d67d0f216ef4',
 
     EXPENSESCAREGORY: '56459202624e48551dfe3b24',
 
@@ -21,7 +31,8 @@ module.exports = {
     JOBSINPROGRESS   : '56337c705d49d8d6537832eb',
     PROJECTCLOSED    : '528ce82df3f67bc40b000025',
 
-    CURRENCY_USD: '565eab29aeb95fa9c0f9df2d',
+    // CURRENCY_USD: '565eab29aeb95fa9c0f9df2d',
+    CURRENCY_USD: 'USD',
     OVERHEAD    : '56cc734b541812c071973572',
 
     OVERTIME_PAYABLE: '56cc7383541812c071973574',
@@ -91,6 +102,7 @@ module.exports = {
     CURRENT_LIABILITIES: '565eb53a6aa50532e5df0bdb',
 
     ACCOUNT_PAYABLE: '565eb53a6aa50532e5df0bdc',
+    INVENTORY      : '5788b4be52adaf4c49e4b51c',
 
     EQUITY: [
         '565eb53a6aa50532e5df0bf3' // retained Earnings
@@ -174,6 +186,7 @@ module.exports = {
     PROJECTSMANAGER : '570e9a75785753b3f1d9c86f',
     QADEPARTMENT    : '55b92ace21e4b7c40f000011',
     DESDEPARTMENT   : '55bb1f14cb76ca630b000006',
+    BANNED_PROFIE   : 1387275504000,
     COUNT_PER_PAGE  : 100,
 
     BANED_PROFILE: '1387275504000',
@@ -186,5 +199,155 @@ module.exports = {
         '1438768659000'
     ],
 
-    SESSION_TTL: 120000
+    STOCK_RECEIVED_NOT_INVOICED: '58073e4e49519eac0c535a08',
+
+    SESSION_TTL  : 120000,
+    STOCKSTATUSES: {
+        NOTREQUIRED: 'NOR',
+        NOITEMS    : 'NOT',
+        NOTALLITEMS: 'NOA',
+        ALLITEMS   : 'ALL'
+    },
+
+    INTEGRATION: {
+        MAGENTO                   : 'magento',
+        SHOPIFY                   : 'shopify',
+        ETSY                      : 'etsy',
+        V1                        : 'v1',
+        V2                        : 'v2',
+        ETSY_API_KEY              : 'fm6u199x6xo9mchmtaqtsc92',
+        ETSY_SHARED_SECRET        : '31km0x4eaq',
+        ETSY_BASE_URL             : 'https://openapi.etsy.com/v2',
+        ETSY_IMPORT_STATUS_PRODUCT: '/active',
+        //REMOTE_ADDRESS            : 'http://testdemo.easyerp.com/channels/auth_callback'
+        REMOTE_ADDRESS            : 'http://erp0.test.thinkmobiles.com/channels/auth_callback'
+    },
+
+    REDIS: {
+        CHANGED_PRODUCTS: 'changedProducts'
+    },
+
+    LOOKUP_FOR_EMPLOYEE_ARRAY: [
+        {
+            $lookup: {
+                from        : 'Department',
+                localField  : 'department',
+                foreignField: '_id',
+                as          : 'department'
+            }
+        }, {
+            $lookup: {
+                from        : 'JobPosition',
+                localField  : 'jobPosition',
+                foreignField: '_id',
+                as          : 'jobPosition'
+            }
+        }, {
+            $lookup: {
+                from        : 'Employees',
+                localField  : 'manager',
+                foreignField: '_id',
+                as          : 'manager'
+            }
+        }, {
+            $lookup: {
+                from        : 'Users',
+                localField  : 'createdBy.user',
+                foreignField: '_id',
+                as          : 'createdBy.user'
+            }
+        }, {
+            $lookup: {
+                from        : 'Users',
+                localField  : 'editedBy.user',
+                foreignField: '_id',
+                as          : 'editedBy.user'
+            }
+        }, {
+            $lookup: {
+                from        : 'transfers',
+                localField  : '_id',
+                foreignField: 'employee',
+                as          : 'transfers'
+            }
+        }, {
+            $project: {
+                isEmployee      : 1,
+                name            : 1,
+                workAddress     : 1,
+                workEmail       : 1,
+                personalEmail   : 1,
+                workPhones      : 1,
+                skype           : 1,
+                department      : {$arrayElemAt: ['$department', 0]},
+                jobPosition     : {$arrayElemAt: ['$jobPosition', 0]},
+                manager         : {$arrayElemAt: ['$manager', 0]},
+                nationality     : 1,
+                identNo         : 1,
+                passportNo      : 1,
+                bankAccountNo   : 1,
+                homeAddress     : 1,
+                dateBirth       : 1,
+                age             : 1,
+                daysForBirth    : 1,
+                source          : 1,
+                otherInfo       : 1,
+                expectedSalary  : 1,
+                proposedSalary  : 1,
+                'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]},
+                'createdBy.date': 1,
+                'editedBy.user' : {$arrayElemAt: ['$editedBy.user', 0]},
+                'editedBy.date' : 1,
+                marital         : 1,
+                gender          : 1,
+                jobType         : 1,
+                social          : 1,
+                transfers       : {
+                    $filter: {
+                        input: '$transfers',
+                        as   : 'item',
+                        cond : {$eq: ['$$item.status', 'hired']}
+                    }
+                }
+            }
+        }, {
+            $project: {
+                isEmployee      : 1,
+                name            : 1,
+                workAddress     : 1,
+                workEmail       : 1,
+                personalEmail   : 1,
+                workPhones      : 1,
+                skype           : 1,
+                department      : 1,
+                jobPosition     : 1,
+                'manager.name'  : {$concat: ['$manager.name.first', ' ', '$manager.name.last']},
+                'manager._id'   : '$manager._id',
+                nationality     : 1,
+                identNo         : 1,
+                passportNo      : 1,
+                bankAccountNo   : 1,
+                homeAddress     : 1,
+                dateBirth       : 1,
+                age             : 1,
+                daysForBirth    : 1,
+                source          : 1,
+                otherInfo       : 1,
+                expectedSalary  : 1,
+                proposedSalary  : 1,
+                'createdBy.user': '$createdBy.user.login',
+                'createdBy.date': 1,
+                'editedBy.user' : '$editedBy.user.login',
+                'editedBy.date' : 1,
+                marital         : 1,
+                gender          : 1,
+                jobType         : 1,
+                social          : 1,
+                transfers       : 1
+            }
+        }
+
+    ],
+
+    DEFAULT_IMAGE_URL: '/customImages/default.png'
 };

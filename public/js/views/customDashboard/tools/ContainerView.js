@@ -2,9 +2,11 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
+    'views/Filter/dateFilter',
     'text!templates/customDashboard/tools/ContainerTemplate.html',
-    'views/customDashboard/tools/ChartView'
-], function (Backbone, $, _, template, ChartView) {
+    'views/customDashboard/tools/ChartView',
+    'moment'
+], function (Backbone, $, _, DateFilterView, template, ChartView, moment) {
     'use strict';
 
     var View = Backbone.View.extend({
@@ -17,7 +19,8 @@ define([
             dragstop            : 'setPosition',
             dragstart           : 'writeCoordinates',
             resizestart         : 'writeDimensions',
-            'click .removeChart': 'removeView'
+            'click .removeChart': 'removeView',
+            'click #viewAll'    : 'renderSaveMsg'
         },
 
         initialize: function (options) {
@@ -38,12 +41,54 @@ define([
             this.yPoints = options.yPoints;
             this.numberOfRows = options.numberOfRows;
             this.numberOfColumns = options.numberOfColumns;
-            this.startDate = options.startDate;
-            this.endDate = options.endDate;
+            this.startDate = new Date(options.startDate);
+            this.endDate = new Date(options.endDate);
+            this.collection = options.collection;
+            this.eventChannel = options.eventChannel;
+
+            this.listenTo(this.eventChannel, 'changeDate', this.changeDate);
+
+        },
+
+        renderSaveMsg: function (e) {
+            if (!$('#chartPlace').hasClass('disabled')) {
+                e.stopPropagation();
+                e.preventDefault();
+                return App.render({type: 'error', message: 'Please, save changes first.'});
+            }
         },
 
         markCells: function () {
             this.engagedCells = this.cellsModel.attributes.engagedCells;
+        },
+
+        changeDateRange: function (dateArray) {
+            var id = 'chart_' + this.options.counter;
+            var restore = this.options.restoreOptions;
+            var dataset = this.options.dataset;
+            var type = this.options.type;
+
+            if (restore) {
+                dataset = restore.dataset;
+                type = restore.type;
+                id = restore.nameId + restore._id;
+                name = restore.name;
+            }
+
+            if (!this.filter) {
+                this.filter = {};
+            }
+
+            this.filter.date = {
+                value: dateArray
+            };
+
+            this.startDate = dateArray[0];
+            this.endDate = dateArray[1];
+
+            this.renderChart('#' + id, type, dataset);
+
+            $('#saveBtn').show();
         },
 
         setPosition: function (e, ui) {
@@ -54,7 +99,9 @@ define([
             var closestY = this.yPoints[0];
             var i;
 
-            e.stopPropagation();
+            if (e) {
+                e.stopPropagation();
+            }
 
             for (i = this.xPoints.length; i--;) {
 
@@ -75,12 +122,12 @@ define([
                 closestX = this.xToReturn;
             }
 
-            $(ui.helper[0]).animate({
+            $element.animate({
                 top : closestY + 'px',
                 left: closestX + 'px'
             }, 100);
 
-            $(ui.helper[0]).attr({
+            $element.attr({
                 'data-y': closestY,
                 'data-x': closestX
             });
@@ -93,7 +140,7 @@ define([
             var currentHeight = ui.size.height;
             var kWidth = Math.round(currentWidth / (this.cellWidth + this.offsetPercent));
             var kHeight = Math.round(currentHeight / (this.cellHeight + this.offset));
-            var $element = $(ui.element[0]);
+            var $element = $(ui.helper[0]);
             var type = $element.attr('data-type');
             var dataset = $element.attr('data-dataset');
             var dataWidthToReturn = $element.attr('data-width');
@@ -105,7 +152,10 @@ define([
             var newHeight;
             var newWidth;
 
-            e.stopPropagation();
+            if (e) {
+                e.stopPropagation();
+            }
+
             newWidth = kWidth * this.cellWidth + (kWidth - 1) * this.offsetPercent;
             newHeight = kHeight * this.cellHeight + (kHeight - 1) * this.offset;
 
@@ -146,7 +196,11 @@ define([
         },
 
         removeView: function (e) {
-            $(e.target).closest('.panel').remove();
+            var panel = $(e.target).closest('.panel');
+
+            this.collection.remove(panel.attr('id').substr(5));
+
+            panel.remove();
 
             this.trigger('actionWithChart');
         },
@@ -247,8 +301,8 @@ define([
                 type = restore.type;
                 id = restore.nameId + restore._id;
                 name = restore.name;
-                this.startDate = restore.startDate;
-                this.endDate = restore.endDate;
+                this.startDate = moment(new Date(restore.startDate)).startOf('day');
+                this.endDate = moment(new Date(restore.endDate)).endOf('day');
             } else {
                 xEnterPoint = this.xPoints[enterPoints.x];
                 yEnterPoint = this.yPoints[enterPoints.y];
@@ -289,6 +343,17 @@ define([
                 });
             }
 
+            this.dateFilterView = new DateFilterView({
+                contentType: 'customDashboardCharts',
+                el         : this.$el.find('#dateFilter')
+            });
+
+            this.dateFilterView.on('dateChecked', function () {
+                self.trigger('changeDateRange', self.dateFilterView.dateArray);
+            });
+
+            this.dateFilterView.checkElement('custom', [this.startDate, this.endDate]);
+
             setTimeout(function () {
                 self.renderChart('#' + id, type, dataset);
                 self.trigger('actionWithChart');
@@ -297,10 +362,15 @@ define([
             return this;
         },
 
+        changeDate: function (dates) {
+            this.dateFilterView.checkElement('custom', dates);
+            this.dateFilterView.trigger('changeDateRange', dates);
+        },
+
         renderChart: function (id, type, dataset, startDate, endDate) {
             var startDay = startDate || this.startDate;
             var endDay = endDate || this.endDate;
-            
+
             this.$el.find('svg').remove();
 
             return new ChartView({
@@ -308,7 +378,12 @@ define([
                 type      : type,
                 dataSelect: dataset,
                 startDate : startDay,
-                endDate   : endDay
+                endDate   : endDay,
+                cellsModel: this.cellsModel,
+                limitCells: this.limitCells,
+                selfEl    : this.$el,
+                xPoints   : this.xPoints,
+                yPoints   : this.yPoints
             });
         }
     });

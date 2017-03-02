@@ -48,14 +48,12 @@ define([
             var formString = this.template();
             var self = this;
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : "addItem-dialog",
-                title        : "Add Product Item",
-                width        : "900px",
-                position     : {within: $("#wrapper")},
-                buttons      : [
+                autoOpen   : true,
+                dialogClass: "addItem-dialog",
+                title      : "Add Product Item",
+                width      : "900px",
+                position   : {within: $("#wrapper")},
+                buttons    : [
                     {
                         id   : "create-person-dialog",
                         text : "Create",

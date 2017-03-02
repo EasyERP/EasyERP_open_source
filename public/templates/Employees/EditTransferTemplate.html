@@ -1,9 +1,11 @@
 <tr class="transfer" id="<%=transfer._id%>" data-id="" data-content="<%=transfer.status%>">
+    <% if (!isForProfile) { %>
     <td class="remove">
-        <%if(transfer.status!=='hired' && transfer.status!=='fired'){%>
-        <a class="icon-trash"></a>
+        <%if(transfer.status !=='hired' && transfer.status !== 'fired'){%>
+        <a class="icon-trash _actionCircleBtn"></a>
         <%}%>
     </td>
+    <% }; %>
     <td data-content="status"><%= transfer.status %></td>
     <td class="date editable" data-content="date"><%= transfer.date %></td>
     <td class="_newSelectListWrap">
@@ -58,9 +60,12 @@
         </a>
     </td>
     <%if (transfer.salary || transfer.salary === 0) {%>
-    <td class="dollar editable" data-content="salary" data-id="salary"><%=currencySplitter(transfer.salary.toString())%></td>
+    <td class="dollar editable" data-content="salary" data-id="salary">
+        <%=currencySplitter(transfer.salary.toString())%>
+    </td>
     <% } %>
     <td class="statusInfo editable" data-content="info"
-        data-id="<%=transfer.info ? transfer.info : ''%> "><%=transfer.info && transfer.info.length > 1 ? transfer.info : ""%>
+        data-id="<%=transfer.info ? transfer.info : ''%> "><%=transfer.info && transfer.info.length > 1 ? transfer.info
+        : ""%>
     </td>
 </tr>

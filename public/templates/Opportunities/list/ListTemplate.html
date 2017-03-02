@@ -1,7 +1,12 @@
 <% opportunitiesCollection.forEach(function(opportunity, index){ %>
 <tr data-index="<%= index %>" data-id="<%=opportunity._id%>"
     class="stage-<%=(opportunity.workflow) ? opportunity.workflow.status.toLowerCase() : ''%>">
-    <td class="notForm centerCell"><input type="checkbox" value="<%=opportunity._id%>" class="checkbox"/></td>
+    <td class="notForm centerCell">
+        <label class="_customCHeckbox">
+            <input type="checkbox" value="<%=opportunity._id%>" class="checkbox"/>
+            <span></span>
+        </label>
+    </td>
     <!--<td><%=opportunity.creationDate%></td>-->
     <td><span class="blue"><%=opportunity.name%></span></td>
     <td class="dollar"><%=opportunity.expectedRevenue && opportunity.expectedRevenue.value ? currencySplitter(opportunity.expectedRevenue.value.toString()) : '0'%></td>
@@ -15,8 +20,7 @@
         </div>
     </td>
 
-    <td><%=(opportunity.salesPerson && opportunity.salesPerson.name) ? opportunity.salesPerson.name.first + ' ' +
-        opportunity.salesPerson.name.last : ''%>
+    <td><%=(opportunity.salesPerson && opportunity.salesPerson.name) ? opportunity.salesPerson.name : ''%>
     </td>
     <td><%=(opportunity.editedBy&&opportunity.editedBy.date)?( opportunity.editedBy.date + ((opportunity.editedBy.user)
         ?(' (' + opportunity.editedBy.user + ')') : '')):''%>

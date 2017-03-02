@@ -8,7 +8,7 @@ define([
     'models/InvoiceModel',
     'common',
     'populate',
-    'views/Products/InvoiceOrder/ProductItems',
+    'views/Products/orderRows/ProductItems',
     'views/Assignees/AssigneesView',
     'views/Payment/list/ListHeaderInvoice',
     'dataService',
@@ -35,7 +35,7 @@ define([
 
         chooseOption: function (e) {
             var $target = $(e.target);
-            var holder = $target.parents('dd').find('.current-selected');
+            var holder = $target.parents('ul').closest('.current-selected');
             var symbol;
             var currency;
 
@@ -59,93 +59,120 @@ define([
             var self = this;
             var mid = 97;
             var $currentEl = this.$el;
-            var errors = $currentEl.find('.errorContent');
             var selectedProducts = $currentEl.find('.productItem');
             var products = [];
             var selectedLength = selectedProducts.length;
             var targetEl;
-            var productId;
             var quantity;
             var price;
-            var taxes;
             var whoCanRW;
             var data;
             var model;
-            var amount;
-            var groupsId;
-            var usersId;
             var description;
             var i;
-            var supplier = $currentEl.find('#supplier').data('id');
+            var supplier = $currentEl.find('#supplier').attr('data-id');
             var invoiceDate = $currentEl.find('#invoice_date').val();
             var dueDate = $currentEl.find('#due_date').val();
+            var account;
+            var usersId = [];
+            var groupsId = [];
+            var total = helpers.spaceReplacer($currentEl.find('#totalAmount').text());
+            var discount = parseFloat($currentEl.find('#discount').val()) || 0;
+            var unTaxed = helpers.spaceReplacer($currentEl.find('#totalUntaxes').text());
+            var balance = helpers.spaceReplacer($currentEl.find('#balance').text());
+            var taxes = helpers.spaceReplacer($currentEl.find('#taxes').text());
+            var name = $.trim($('#supplier_invoice_num').val());
+            var subTotal;
+            var taxCode;
+            var payments;
+            var currency;
 
-            var total = 100 * parseFloat(helpers.spaceReplacer($currentEl.find('#totalAmount').text()));
-            var unTaxed = 100 * parseFloat(helpers.spaceReplacer($currentEl.find('#totalUntaxes').text()));
-            var balance = 100 * parseFloat(helpers.spaceReplacer($currentEl.find('#balance').text()));
+            total = parseFloat(total);
+            balance = parseFloat(balance);
+            unTaxed = parseFloat(unTaxed);
+            taxes = parseFloat(taxes);
 
-            var payments = {
-                total  : total,
-                unTaxed: unTaxed,
-                balance: balance
+            payments = {
+                total   : total * 100,
+                taxes   : taxes * 100,
+                unTaxed : unTaxed * 100,
+                balance : balance * 100,
+                discount: discount
             };
 
-            var currency = {
+            currency = {
                 _id : $currentEl.find('#currencyDd').attr('data-id'),
                 name: $.trim($currentEl.find('#currencyDd').text())
             };
 
-            if (errors.length) {
-                return false;
+            if (!name) {
+                return App.render({
+                    type   : 'error',
+                    message: 'Invoice Number can\'t be empty'
+                });
             }
 
             if (selectedLength) {
                 for (i = selectedLength - 1; i >= 0; i--) {
                     targetEl = $(selectedProducts[i]);
-                    productId = targetEl.data('id');
-                    if (productId) {
-                        quantity = parseFloat(helpers.spaceReplacer(targetEl.find('[data-name="quantity"] input').val()));
-                        price = 100 * parseFloat(helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val()));
-                        description = targetEl.find('[data-name="productDescr"] input').val();
-                        taxes = targetEl.find('.taxes .sum').text();
-                        amount = 100 * helpers.spaceReplacer(targetEl.find('.subtotal .sum').text());
 
-                        if (!quantity || !price) {
-                            return App.render({
-                                type   : 'error',
-                                message: 'Fields "price" and "quantity" can\'t be empty or 0'
-                            });
-                        }
+                    quantity = targetEl.find('[data-name="quantity"] input').val() || targetEl.find('[data-name="quantity"] span').text();
+                    price = helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val()) * 100;
 
-                        products.push({
-                            product    : productId,
-                            description: description,
-                            unitPrice  : price,
-                            quantity   : quantity,
-                            taxes      : taxes,
-                            subTotal   : amount
+                    if (isNaN(price) || price <= 0) {
+                        return App.render({
+                            type   : 'error',
+                            message: 'Please, enter Unit Price!'
                         });
                     }
+                    taxes = helpers.spaceReplacer(targetEl.find('.taxes .sum').text());
+                    description = targetEl.find('.productDescr').val();
+                    subTotal = helpers.spaceReplacer(targetEl.find('.subtotal .sum').text());
+                    subTotal = parseFloat(subTotal) * 100;
+                    account = targetEl.find('.current-selected.accountDd').attr('data-id');
+                    taxCode = targetEl.find('.current-selected.taxCode').attr('data-id') || null;
+
+                    if (!price) {
+                        return App.render({
+                            type   : 'error',
+                            message: 'Unit price can\'t be empty'
+                        });
+                    }
+
+                    if (!quantity) {
+                        return App.render({
+                            type   : 'error',
+                            message: 'Quantity can\'t be empty'
+                        });
+                    }
+
+                    if (!account) {
+                        return App.render({
+                            type   : 'error',
+                            message: 'Account can\'t be empty'
+                        });
+                    }
+
+                    products.push({
+                        unitPrice    : price,
+                        quantity     : quantity,
+                        description  : description,
+                        subTotal     : subTotal,
+                        debitAccount : account,
+                        creditAccount: CONSTANTS.ACCOUNT_PAYABLE,
+                        taxes        : [{
+                            taxCode: taxCode || null,
+                            tax    : taxes * 100
+                        }]
+                    });
                 }
             }
-
-            usersId = [];
-            groupsId = [];
-            $('.groupsAndUser tr').each(function () {
-                if ($(this).data('type') === 'targetUsers') {
-                    usersId.push($(this).data('id'));
-                }
-                if ($(this).data('type') === 'targetGroups') {
-                    groupsId.push($(this).data('id'));
-                }
-
-            });
 
             whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
             data = {
                 forSales             : false,
                 supplier             : supplier,
-                supplierInvoiceNumber: $.trim($('#supplier_invoice_num').val()),
+                supplierInvoiceNumber: name,
                 invoiceDate          : invoiceDate,
                 dueDate              : dueDate,
                 journal              : null,
@@ -158,7 +185,7 @@ define([
                     group: groupsId
                 },
 
-                whoCanRW: whoCanRW,
+                whoCanRW: whoCanRW || 'everyOne',
                 workflow: this.defaultWorkflow
             };
 
@@ -187,7 +214,7 @@ define([
             } else {
                 App.render({
                     type   : 'error',
-                    message: 'Please fill all fields.'
+                    message: 'Please, select Supplier.'
                 });
             }
 
@@ -199,7 +226,13 @@ define([
             productItemContainer = this.$el.find('#invoiceItemsHolder');
 
             productItemContainer.append(
-                new ProductItemView({canBeSold: false}).render().el
+                new ProductItemView({
+                    canBeSold      : false,
+                    expense        : true,
+                    responseObj    : this.responseObj,
+                    balanceVisible : true,
+                    discountVisible: true
+                }).render().el
             );
 
         },
@@ -207,15 +240,12 @@ define([
         render: function () {
             var formString = this.template();
             var self = this;
-            var invoiceItemContainer;
             var paymentContainer;
-            var notDiv;
             var today = new Date();
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
+                closeOnEscape: true,
                 autoOpen     : true,
-                resizable    : true,
                 dialogClass  : 'edit-dialog',
                 title        : 'Create Invoice',
                 width        : '900px',
@@ -238,21 +268,16 @@ define([
             this.renderAssignees(this.model);
             this.createProductView();
 
-            /*  invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
-             invoiceItemContainer.append(
-             new InvoiceItemView({balanceVisible: true, canBeSold: this.forSales}).render().el
-             );*/
-
             paymentContainer = this.$el.find('#payments-container');
             paymentContainer.append(
                 new ListHeaderInvoice().render().el
             );
 
             populate.get('#currencyDd', '/currency/getForDd', {}, 'name', this, true);
+            populate.get('#taxCode', '/taxSettings/getForDd', {}, 'name', this, true, true);
+            populate.get('#accountDd', '/chartOfAccount/getForDd', {}, 'name', this, true, true);
 
             populate.get2name('#supplier', '/supplier', {}, this, false, true);
-            populate.get('#payment_terms', '/paymentTerm', {}, 'name', this, true, true);
-            populate.get2name('#salesPerson', CONSTANTS.EMPLOYEES_RELATEDUSER, {}, this, true, true);
             populate.fetchWorkflow({wId: 'Purchase Invoice'}, function (response) {
                 if (!response.error) {
                     self.defaultWorkflow = response._id;

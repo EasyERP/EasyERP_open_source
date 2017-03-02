@@ -10,7 +10,7 @@ module.exports = (function () {
         debitAccount : {type: ObjectId, ref: 'chartOfAccount', default: null},
         creditAccount: {type: ObjectId, ref: 'chartOfAccount', default: null},
         currency     : {
-            _id : {type: ObjectId, ref: 'currency', default: null},
+            _id : {type: String, ref: 'currency', default: null},
             rate: {type: Number, default: 1}
         }
     }, {collection: 'cashTransfer'});

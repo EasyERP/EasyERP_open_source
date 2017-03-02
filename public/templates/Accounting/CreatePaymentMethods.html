@@ -1,21 +1,27 @@
 <div class="form-holder _dialogWrap">
     <div class="_dialogMainTitle">Bank Account</div>
-    <div class="_dialogBlock">
+    <div class="_dialogBlock half-block left">
         <div class="_dialogRow">Name</div>
         <div class="_dialogRow"><input id="paymentMethodName" value=""></div>
 
-        <!--<div class="_dialogRow">Name</div>
-            <div id="owner" class="_dialogRow" data-id="<%=model.owner%>"><%=model.owner%></div>-->
 
-        <div class="_dialogRow">Currency</div>
-        <div class="_dialogRow account-wrapper"><a href="javascript:;" class="current-selected _newSelectListWrap"
-                                                   id="currency" data-id=""></a></div>
-        <div class="_dialogRow">Bank</div>
-        <div class="_dialogRow"><input id="bankName" value=""></div>
-        <div class="_dialogRow">Account</div>
+        <div class="_dialogRow">IBAN</div>
         <div class="_dialogRow"><input id="account" value=""></div>
         <div class="_dialogRow">Chart of Account</div>
         <div class="_dialogRow account-wrapper"><a href="javascript:;" class="current-selected _newSelectListWrap"
                                                    id="chartAccount" data-id="">Select</a></div>
+        <div class="_dialogRow">Currency</div>
+        <div class="_dialogRow account-wrapper"><a href="javascript:;" class="current-selected _newSelectListWrap"
+                                                   id="currency" data-id=""></a></div>
+    </div>
+    <div class="_dialogBlock half-block right">
+        <div class="_dialogRow">Short Bank Name</div>
+        <div class="_dialogRow"><input id="bankName" value=""></div>
+        <div class="_dialogRow">Bank Address</div>
+        <div class="_dialogRow"><input id="address" value=""></div>
+        <div class="_dialogRow">Owner</div>
+        <div class="_dialogRow"><input id="owner" value=""></div>
+        <div class="_dialogRow">SWIFT Code</div>
+        <div class="_dialogRow"><input id="swiftCode" value=""></div>
     </div>
 </div>

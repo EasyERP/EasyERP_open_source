@@ -82,8 +82,13 @@ define([
                 var curFilter = _.findWhere(this.savedFilters, {_id: targetId});
                 var filterName = curFilter.name;
                 var checkBoxState = $target.prop('checked');
+                var oldFilterName = App.storage.find(this.contentType + '.savedFilter');
 
                 var currentUser;
+
+                if (oldFilterName === filterName) {
+                    return false;
+                }
 
                 if ($target.hasClass('defFilterCheckBox')) {
                     currentUser = new UserModel(App.currentUser);
@@ -155,7 +160,7 @@ define([
             },
 
             getSavedFilters: function (object) {
-                var savedFiltersObject
+                var savedFiltersObject;
                 var savedFilters;
 
                 object.filtersObject = object.filtersObject || {};
@@ -171,7 +176,6 @@ define([
                 }
 
                 savedFilters = savedFiltersObject[0].filter;
-
 
                 return savedFilters;
             },

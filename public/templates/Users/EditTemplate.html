@@ -1,42 +1,64 @@
-<div class="form-holder">
-
-    <form method="post" action="" id="createUserForm" class="form">
-        <div class="avatar left">
-            <div class="upload">
-                Edit
-                <input type="file" value="Edit" id="inputImg" accept="image/*">
+<div class="form-holder _newForm">
+    <form method="post" action="" id="createUserForm">
+        <div class="_formWrap">
+            <div class="_avatarBlock">
+                <div class="avatar left">
+                    <div class="upload">
+                        Edit
+                        <input type="file" value="Edit" id="inputImg" accept="image/*">
+                    </div>
+                    <canvas id="avatar" width="140" height="140"></canvas>
+                </div>
             </div>
-            <canvas id="avatar" width="140" height="140"></canvas>
-        </div>
-
-        <div style="margin-left:160px;">
-            <div class="left full-width">
-                <dl class="person-info">
-                    <dt><label for="login">User Name</label></dt>
-                    <dd><input type="text" name="login" id="login" value="<%=login %>" required maxlength="24"/></dd>
-                    <dt><label for="email">Email </label></dt>
-                    <dd><input type="text" name="email" id="email" value="<%= email %>" required maxlength="48"/></dd>
-                    <dt><label for="profilesDd">Profile</label></dt>
-                    <dd class="_newSelectListWrap">
-                        <a id="profilesDd" data-id="<%=(profile) ? profile._id : ''%>" class="current-selected"
-                           href="javascript:;"><%=(profile)?profile.profileName:'Select'%></a>
-                </dl>
+            <div class="_formBlock">
+                <div class="_animateInputBox">
+                    <input type="text"
+                           name="login"
+                           class="_animate"
+                           id="login"
+                           autofocus
+                           required
+                           value="<%=login %>"
+                           maxlength="24"/>
+                    <label class="_animate">User Name</label>
+                </div>
+                <div class="_animateInputBox">
+                    <input type="text"
+                           name="email"
+                           class="_animate"
+                           id="email"
+                           required
+                           value="<%= email %>"
+                           maxlength="48"/>
+                    <label class="_animate">Email</label>
+                </div>
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Profile</span>
+                    <div class="_newSelectListWrap">
+                        <a href="javascript:;"
+                           class="current-selected"
+                           id="profilesDd"
+                           data-id="<%=(profile) ? profile._id : ''%>"><%=(profile)?profile.profileName:'Select country'%></a>
+                    </div>
+                </div>
+                <div class="_animateInputBox">
+                    <span class="_staticLabel">Timezone</span>
+                    <span class="_staticInfo"><%= timezone %></span>
+                </div>
+                <% if (isForProfile) {%>
+                    <span>Password</span>
+                    <button id="changePassword" class="changePassword">
+                        <span>Change Password</span>
+                    </button>
+                <%};%>
             </div>
-        </div>
-        <div class="clearfix">
         </div>
         <div class="cropImages form" style="display:none;">
             <div class="formTitle">
                 <h3 class="left">Crop Images</h3>
-
-                <div class="clearfix"></div>
             </div>
-            <br/>
-
             <div class="image_input" style="float: left;margin-right: 20px;"></div>
             <img class="image_output"/>
-
-            <div class="clearfix"></div>
         </div>
     </form>
 </div>

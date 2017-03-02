@@ -134,7 +134,7 @@ define([
         chooseOption: function (e) {
             var $target = $(e.target);
 
-            $target.parents('dd').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
+            $target.parents('ul').closest('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
         },
 
         render: function () {
@@ -148,11 +148,10 @@ define([
             var filter;
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                dialogClass  : 'edit-dialog task-edit-dialog',
-                width        : 600,
-                title        : 'Create Task',
-                buttons      : {
+                dialogClass: 'edit-dialog task-edit-dialog',
+                width      : 500,
+                title      : 'Create Task',
+                buttons    : {
                     save: {
                         text : 'Create',
                         class: 'btn blue',

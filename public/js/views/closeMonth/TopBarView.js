@@ -7,10 +7,11 @@ define([
     'common'
 ], function (Backbone, $, _, ContentTopBarTemplate, Custom, Common) {
     var TopBarView = Backbone.View.extend({
-        el         : '#top-bar',
-        contentType: 'closeMonth',
-        actionType : null, // Content, Edit, Create
-        template   : _.template(ContentTopBarTemplate),
+        el           : '#top-bar',
+        contentType  : 'closeMonth',
+        contentHeader: 'Close Month',
+        actionType   : null, // Content, Edit, Create
+        template     : _.template(ContentTopBarTemplate),
 
         events: {
             'click #top-bar-generate': 'closeMonth',
@@ -71,7 +72,7 @@ define([
         render: function () {
             var viewType = Custom.getCurrentVT();
 
-            $('title').text(this.contentType);
+            $('title').text(this.contentHeader || this.contentType);
 
             this.$el.html(this.template({viewType: viewType, contentType: this.contentType}));
             Common.displayControlBtnsByActionType(this.actionType, viewType);

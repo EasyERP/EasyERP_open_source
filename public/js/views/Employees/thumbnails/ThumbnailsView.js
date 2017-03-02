@@ -31,7 +31,7 @@
             this.CreateView = CreateView;
 
             _.bind(this.collection.showMoreAlphabet, this.collection);
-            this.allAlphabeticArray = common.buildAllAphabeticArray();
+            this.allAlphabeticArray = common.buildAllAphabeticArray(this.contentType);
 
             this.asyncLoadImgs(this.collection);
             this.stages = [];

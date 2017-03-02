@@ -8,6 +8,7 @@ var Filters = function (models) {
     var async = require('async');
     var CONSTANTS = require('../constants/mainConstants.js');
     var moment = require('../public/js/libs/moment/moment');
+    var FILTER_CONSTANTS = require('../public/js/constants/filters');
 
     this.getProjectsDashboardFilters = function (req, res, next) {
         var lastDB = req.session.lastDb;
@@ -559,6 +560,8 @@ var Filters = function (models) {
             }
 
             result = result.length ? result[0] : {};
+            result.filterInfo = FILTER_CONSTANTS.DealTasks;
+
 
             res.status(200).send(result);
         });
@@ -571,14 +574,23 @@ var Filters = function (models) {
         var aggregation;
         var pipeLine;
         var query = {type: 'Person'};
+        var notNullQuery = {$and: [{$ne: ['$$element.name', null]}, {$ne: ['$$element.name', '']}]};
 
         pipeLine = [{
             $match: query
         }, {
+            $lookup: {
+                from        : 'integrations',
+                localField  : 'channel',
+                foreignField: '_id',
+                as          : 'channel'
+            }
+        }, {
             $project: {
                 _id    : '$_id',
                 name   : {$concat: ['$name.first', ' ', '$name.last']},
-                address: '$address'
+                address: '$address',
+                channel: {$arrayElemAt: ['$channel', 0]}
             }
         }, {
             $group: {
@@ -589,9 +601,10 @@ var Filters = function (models) {
                         _id : '$_id',
                         name: {
                             $cond: {
-                                if  : {
+                                if: {
                                     $eq: ['$name', ' ']
                                 },
+
                                 then: 'None',
                                 else: '$name'
                             }
@@ -599,26 +612,62 @@ var Filters = function (models) {
                     }
                 },
 
+                channel: {
+                    $addToSet: {
+                        _id : '$channel._id',
+                        name: '$channel.channelName'
+                    }
+                },
+
                 country: {
                     $addToSet: {
-                        _id : {
+                        _id: {
                             $cond: {
-                                if  : {
+                                if: {
                                     $eq: ['$address.country', '']
                                 },
+
                                 then: 'None',
                                 else: {$ifNull: ['$address.country', 'None']}
                             }
                         },
+
                         name: {
                             $cond: {
-                                if  : {
+                                if: {
                                     $eq: ['$address.country', '']
                                 },
+
                                 then: 'None',
                                 else: {$ifNull: ['$address.country', 'None']}
                             }
                         }
+                    }
+                }
+            }
+        }, {
+            $project: {
+                country: {
+                    $filter: {
+                        input: '$country',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+
+                channel: {
+                    $filter: {
+                        input: '$channel',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+
+                name: {
+                    $filter: {
+                        input: '$name',
+                        as   : 'element',
+                        cond : notNullQuery
                     }
                 }
             }
@@ -646,6 +695,8 @@ var Filters = function (models) {
                         _id : 'isCustomer'
                     }];
 
+                result.filterInfo = FILTER_CONSTANTS.Persons;
+
                 res.status(200).send(result);
             }
         );
@@ -663,10 +714,18 @@ var Filters = function (models) {
         pipeLine = [{
             $match: query
         }, {
+            $lookup: {
+                from        : 'integrations',
+                localField  : 'channel',
+                foreignField: '_id',
+                as          : 'channel'
+            }
+        }, {
             $project: {
                 _id    : '$_id',
                 name   : {$concat: ['$name.first', ' ', '$name.last']},
-                address: '$address'
+                address: '$address',
+                channel: {$arrayElemAt: ['$channel', 0]}
             }
         }, {
             $group: {
@@ -677,13 +736,21 @@ var Filters = function (models) {
                         _id : '$_id',
                         name: {
                             $cond: {
-                                if  : {
+                                if: {
                                     $eq: ['$name', ' ']
                                 },
+
                                 then: 'None',
                                 else: '$name'
                             }
                         }
+                    }
+                },
+
+                channel: {
+                    $addToSet: {
+                        _id : '$channel._id',
+                        name: '$channel.channelName'
                     }
                 },
 
@@ -703,7 +770,16 @@ var Filters = function (models) {
                         cond : notNullQuery
                     }
                 },
-                name   : {
+
+                channel: {
+                    $filter: {
+                        input: '$channel',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+
+                name: {
                     $filter: {
                         input: '$name',
                         as   : 'element',
@@ -734,6 +810,8 @@ var Filters = function (models) {
                     name: 'Customer',
                     _id : 'isCustomer'
                 }];
+
+            result.filterInfo = FILTER_CONSTANTS.Companies;
 
             res.status(200).send(result);
         });
@@ -1096,14 +1174,15 @@ var Filters = function (models) {
 
     this.getInvoiceFilters = function (req, res, next) {
         var lastDB = req.session.lastDb;
-        var wTrackInvoiceSchema = mongoose.Schemas.wTrackInvoice;
-        var wTrackInvoice = models.get(lastDB, 'wTrackInvoice', wTrackInvoiceSchema);
+        var purchaseInvoicesSchema = mongoose.Schemas.purchaseInvoices;
+        var Model = models.get(lastDB, 'purchaseInvoices', purchaseInvoicesSchema);
         var pipeLine;
         var aggregation;
 
         pipeLine = [{
             $match: {
-                forSales: false
+                forSales: false,
+                _type   : 'purchaseInvoices'
             }
         }, {
             $lookup: {
@@ -1133,20 +1212,6 @@ var Filters = function (models) {
                         name: '$workflow.name'
                     }
                 },
-                /* 'project'    : {
-                 $addToSet: {
-                 _id : '$project._id',
-                 name: '$project.projectName'
-                 }
-                 },
-                 salesPerson: {
-                 $addToSet: {
-                 _id : '$salesPerson._id',
-                 name: {
-                 $concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']
-                 }
-                 }
-                 },*/
                 supplier: {
                     $addToSet: {
                         _id : '$supplier._id',
@@ -1158,7 +1223,7 @@ var Filters = function (models) {
             }
         }];
 
-        aggregation = wTrackInvoice.aggregate(pipeLine);
+        aggregation = Model.aggregate(pipeLine);
 
         aggregation.options = {
             allowDiskUse: true
@@ -1170,6 +1235,7 @@ var Filters = function (models) {
             }
 
             result = result.length ? result[0] : {};
+            //result.filterInfo = FILTER_CONSTANTS.purchaseInvoices;
 
             res.status(200).send(result);
         });
@@ -1327,15 +1393,17 @@ var Filters = function (models) {
             }
 
             result = result.length ? result[0] : {};
+            //result.filterInfo = FILTER_CONSTANTS.purchaseInvoices;
+
 
             res.status(200).send(result);
         });
     };
 
-    this.getSalesProformaFilters = function (req, res, next) {
+    this.getSalesInvoicesFilters = function (req, res, next) {
         var lastDB = req.session.lastDb;
-        var ProformaSchema = mongoose.Schemas.Proforma;
-        var Proforma = models.get(lastDB, 'Proforma', ProformaSchema);
+        var InvoiceSchema = mongoose.Schemas.Invoices;
+        var Proforma = models.get(lastDB, 'Invoices', InvoiceSchema);
         var pipeLine;
         var aggregation;
         var notNullQuery = {$and: [{$ne: ['$$element.name', null]}, {$ne: ['$$element.name', '']}]};
@@ -1343,7 +1411,7 @@ var Filters = function (models) {
         pipeLine = [{
             $match: {
                 forSales: true,
-                _type   : 'Proforma'
+                _type   : 'Invoices'
             }
         }, {
             $lookup: {
@@ -1493,6 +1561,7 @@ var Filters = function (models) {
             }
 
             result = result.length ? result[0] : {};
+            result.filterInfo = FILTER_CONSTANTS.salesInvoices;
 
             res.status(200).send(result);
         });
@@ -1625,6 +1694,149 @@ var Filters = function (models) {
 
             result = result.length ? result[0] : {};
 
+            result.refund = [
+                {
+                    name: 'Payment',
+                    _id : 'true'
+                }, {
+                    name: 'Refund',
+                    _id : 'false'
+                }];
+
+            result.filterInfo = FILTER_CONSTANTS.customerPayments;
+
+            res.status(200).send(result);
+        });
+    };
+
+    this.getPurchasePaymentsFilters = function (req, res, next) {
+        var lastDB = req.session.lastDb;
+        var PaymentsSchema = mongoose.Schemas.purchasePayments;
+        var Payments = models.get(lastDB, 'purchasePayments', PaymentsSchema);
+        var query = {forSale: false};
+        var pipeLine;
+        var aggregation;
+
+        pipeLine = [{
+            $match: query
+        }, {
+            $lookup: {
+                from        : 'Invoice',
+                localField  : 'invoice',
+                foreignField: '_id',
+                as          : 'invoice'
+            }
+        }, {
+            $lookup: {
+                from        : 'Order',
+                localField  : 'order',
+                foreignField: '_id',
+                as          : 'order'
+            }
+        }, {
+            $lookup: {
+                from        : 'Customers',
+                localField  : 'supplier',
+                foreignField: '_id',
+                as          : 'supplier'
+            }
+        }, {
+            $lookup: {
+                from        : 'PaymentMethod',
+                localField  : 'paymentMethod',
+                foreignField: '_id',
+                as          : 'paymentMethod'
+            }
+        }, {
+            $project: {
+                supplier     : {$arrayElemAt: ['$supplier', 0]},
+                invoice      : {$arrayElemAt: ['$invoice', 0]},
+                order        : {$arrayElemAt: ['$order', 0]},
+                paymentMethod: {$arrayElemAt: ['$paymentMethod', 0]},
+                name         : 1
+            }
+        }, {
+            $project: {
+                salesPerson  : {$ifNull: ['$invoice.salesPerson', '$order.salesPerson']},
+                paymentMethod: 1,
+                supplier     : 1,
+                name         : 1
+            }
+        }, {
+            $lookup: {
+                from        : 'Employees',
+                localField  : 'salesPerson',
+                foreignField: '_id',
+                as          : 'salesPerson'
+            }
+        }, {
+            $project: {
+                paymentMethod: 1,
+                supplier     : 1,
+                name         : 1,
+                salesPerson  : {$arrayElemAt: ['$salesPerson', 0]}
+            }
+        }, {
+            $group: {
+                _id     : null,
+                assigned: {
+                    $addToSet: {
+                        _id : '$salesPerson._id',
+                        name: {
+                            $concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']
+                        }
+                    }
+                },
+
+                supplier: {
+                    $addToSet: {
+                        _id : '$supplier._id',
+                        name: {
+                            $concat: ['$supplier.name.first', ' ', '$supplier.name.last']
+                        }
+                    }
+                },
+
+                name: {
+                    $addToSet: {
+                        _id : '$_id',
+                        name: '$name'
+                    }
+                },
+
+                paymentMethod: {
+                    $addToSet: {
+                        _id : '$paymentMethod._id',
+                        name: '$paymentMethod.name'
+                    }
+                }
+            }
+        }];
+
+        aggregation = Payments.aggregate(pipeLine);
+
+        aggregation.options = {
+            allowDiskUse: true
+        };
+
+        aggregation.exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            result = result.length ? result[0] : {};
+
+            result.refund = [
+                {
+                    name: 'true',
+                    _id : 'true'
+                }, {
+                    name: 'false',
+                    _id : 'false'
+                }];
+
+            //result.filterInfo = FILTER_CONSTANTS.purchasePayments;
+
             res.status(200).send(result);
         });
     };
@@ -1731,6 +1943,7 @@ var Filters = function (models) {
             }
 
             result = result.length ? result[0] : {};
+            //result.filterInfo = FILTER_CONSTANTS.supplierPayments;
 
             res.status(200).send(result);
         });
@@ -1777,6 +1990,13 @@ var Filters = function (models) {
             }
 
             result = result.length ? result[0] : {};
+
+            result.hasJob = [
+                {
+                    name: 'True',
+                    _id : 'True'
+                }
+            ];
 
             result.canBePurchased = [
                 {
@@ -2041,6 +2261,305 @@ var Filters = function (models) {
         });
     };
 
+    this.getOrderFilters = function (req, res, next) {
+        var lastDB = req.session.lastDb;
+        var OrderSchema = mongoose.Schemas.Order;
+        var Order = models.get(lastDB, 'Order', OrderSchema);
+        var pipeLine;
+        var aggregation;
+        var notNullQuery = {$and: [{$ne: ['$$element.name', null]}, {$ne: ['$$element.name', '']}]};
+
+        var salesManagerMatch = {
+            $and: [
+                {$eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALESMANAGER)]},
+                {
+                    $or: [{
+                        $and: [{
+                            $eq: ['$$projectMember.startDate', null]
+                        }, {
+                            $eq: ['$$projectMember.endDate', null]
+                        }]
+                    }, {
+                        $and: [{
+                            $lte: ['$$projectMember.startDate', '$orderDate']
+                        }, {
+                            $eq: ['$$projectMember.endDate', null]
+                        }]
+                    }, {
+                        $and: [{
+                            $eq: ['$$projectMember.startDate', null]
+                        }, {
+                            $gte: ['$$projectMember.endDate', '$orderDate']
+                        }]
+                    }, {
+                        $and: [{
+                            $lte: ['$$projectMember.startDate', '$orderDate']
+                        }, {
+                            $gte: ['$$projectMember.endDate', '$orderDate']
+                        }]
+                    }]
+                }]
+        };
+
+        pipeLine = [{
+            $lookup: {
+                from        : 'Employees',
+                localField  : 'salesPerson',
+                foreignField: '_id',
+                as          : 'salesPerson'
+            }
+        }, {
+            $lookup: {
+                from        : 'Customers',
+                localField  : 'supplier',
+                foreignField: '_id',
+                as          : 'supplier'
+            }
+        }, {
+            $lookup: {
+                from        : 'workflows',
+                localField  : 'workflow',
+                foreignField: '_id',
+                as          : 'workflow'
+            }
+        }, {
+            $lookup: {
+                from        : 'projectMembers',
+                localField  : 'project',
+                foreignField: 'projectId',
+                as          : 'projectMembers'
+            }
+        }, {
+            $lookup: {
+                from        : 'integrations',
+                localField  : 'channel',
+                foreignField: '_id',
+                as          : 'channel'
+            }
+        }, {
+            $project: {
+                workflow     : {$arrayElemAt: ['$workflow', 0]},
+                supplier     : {$arrayElemAt: ['$supplier', 0]},
+                channel      : {$arrayElemAt: ['$channel', 0]},
+                salesManagers: {
+                    $filter: {
+                        input: '$projectMembers',
+                        as   : 'projectMember',
+                        cond : salesManagerMatch
+                    }
+                },
+
+                salesPerson: {$arrayElemAt: ['$salesPerson', 0]},
+                status     : 1,
+                name       : 1
+            }
+        }, {
+            $project: {
+                salesManager: {$arrayElemAt: ['$salesManagers', 0]},
+                workflow    : 1,
+                channel     : 1,
+                supplier    : 1,
+                salesPerson : 1,
+                status      : 1,
+                name        : 1
+            }
+        }, {
+            $lookup: {
+                from        : 'Employees',
+                localField  : 'salesManager.employeeId',
+                foreignField: '_id',
+                as          : 'salesManager'
+            }
+        }, {
+            $project: {
+                salesPerson: {$ifNull: ['$salesPerson', {$arrayElemAt: ['$salesManager', 0]}]},
+                workflow   : 1,
+                channel    : 1,
+                supplier   : 1,
+                status     : 1,
+                name       : 1
+            }
+        }, {
+            $group: {
+                _id     : null,
+
+                name: {
+                    $addToSet: {
+                        _id : '$_id',
+                        name: '$name'
+                    }
+                },
+
+                supplier: {
+                    $addToSet: {
+                        _id : '$supplier._id',
+                        name: {
+                            $concat: ['$supplier.name.first', ' ', '$supplier.name.last']
+                        }
+                    }
+                },
+
+                salesPerson: {
+                    $addToSet: {
+                        _id : '$salesPerson._id',
+                        name: {
+                            $concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']
+                        }
+                    }
+                },
+
+                workflow: {
+                    $addToSet: {
+                        _id : '$workflow._id',
+                        name: {$ifNull: ['$workflow.name', '']}
+                    }
+                },
+
+                allocationStatus: {
+                    $addToSet: {
+                        _id : '$status.allocateStatus',
+                        name: {
+                            $cond: {
+                                if  : {$eq: ['$status.allocateStatus', 'ALL']}, then: {$literal: 'Allocated all'},
+                                else: {
+                                    $cond: {
+                                        if  : {$eq: ['$status.allocateStatus', 'NOA']},
+                                        then: {$literal: 'Partially allocated'}, else: {$literal: 'Not allocated'}
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                },
+
+                fulfilledStatus: {
+                    $addToSet: {
+                        _id : '$status.fulfillStatus',
+                        name: {
+                            $cond: {
+                                if  : {$eq: ['$status.fulfillStatus', 'ALL']}, then: {$literal: 'Fulfilled all'},
+                                else: {
+                                    $cond: {
+                                        if  : {$eq: ['$status.fulfillStatus', 'NOA']},
+                                        then: {$literal: 'Partially fulfilled'}, else: {$literal: 'Not fulfilled'}
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+
+                shippingStatus: {
+                    $addToSet: {
+                        _id : '$status.shippingStatus',
+                        name: {
+                            $cond: {
+                                if  : {$eq: ['$status.shippingStatus', 'ALL']}, then: {$literal: 'Shipped all'},
+                                else: {
+                                    $cond: {
+                                        if  : {$eq: ['$status.shippingStatus', 'NOA']},
+                                        then: {$literal: 'Partially shipped'}, else: {$literal: 'Not shipped'}
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+
+                channel: {
+                    $addToSet: {
+                        _id : '$channel._id',
+                        name: '$channel.channelName'
+                    }
+                }
+            }
+        }, {
+            $project: {
+                salesPerson: {
+                    $filter: {
+                        input: '$salesPerson',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+
+                allocationStatus: {
+                    $filter: {
+                        input: '$allocationStatus',
+                        as   : 'element',
+                        cond : {$and: [{$ne: ['$$element._id', null]}, {$ne: ['$$element._id', '']}, {$ne: ['$$element._id', 'NOR']}]}
+                    }
+                },
+
+                fulfilledStatus: {
+                    $filter: {
+                        input: '$fulfilledStatus',
+                        as   : 'element',
+                        cond : {$and: [{$ne: ['$$element._id', null]}, {$ne: ['$$element._id', '']}, {$ne: ['$$element._id', 'NOR']}]}
+                    }
+                },
+
+                shippingStatus: {
+                    $filter: {
+                        input: '$shippingStatus',
+                        as   : 'element',
+                        cond : {$and: [{$ne: ['$$element._id', null]}, {$ne: ['$$element._id', '']}, {$ne: ['$$element._id', 'NOR']}]}
+                    }
+                },
+
+                supplier: {
+                    $filter: {
+                        input: '$supplier',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+
+                workflow: {
+                    $filter: {
+                        input: '$workflow',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+
+                channel: {
+                    $filter: {
+                        input: '$channel',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                },
+
+                name: {
+                    $filter: {
+                        input: '$name',
+                        as   : 'element',
+                        cond : notNullQuery
+                    }
+                }
+            }
+        }];
+
+        aggregation = Order.aggregate(pipeLine);
+
+        aggregation.options = {
+            allowDiskUse: true
+        };
+
+        aggregation.exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            result = result.length ? result[0] : {};
+            result.filterInfo = FILTER_CONSTANTS.order;
+
+            res.status(200).send(result);
+        });
+    };
+
     this.getSalesOrdersFilters = function (req, res, next) {
         var lastDB = req.session.lastDb;
         var QuotationSchema = mongoose.Schemas.Quotation;
@@ -2202,13 +2721,13 @@ var Filters = function (models) {
 
     this.getOrdersFilters = function (req, res, next) {
         var lastDB = req.session.lastDb;
-        var QuotationSchema = mongoose.Schemas.Quotation;
-        var Quotation = models.get(lastDB, 'Quotation', QuotationSchema);
+        var purchaseOrdersSchema = mongoose.Schemas.purchaseOrders;
+        var Model = models.get(lastDB, 'purchaseOrders', purchaseOrdersSchema);
         var pipeLine;
         var aggregation;
         var query = {
             forSales: false,
-            isOrder : true
+            _type   : 'purchaseOrders'
         };
         var notNullQuery = {$and: [{$ne: ['$$element.name', null]}, {$ne: ['$$element.name', '']}]};
 
@@ -2223,7 +2742,7 @@ var Filters = function (models) {
             }
         }, {
             $lookup: {
-                from        : 'Customer',
+                from        : 'Customers',
                 localField  : 'supplier',
                 foreignField: '_id',
                 as          : 'supplier'
@@ -2237,26 +2756,12 @@ var Filters = function (models) {
             $group: {
                 _id: null,
 
-                projectName: {
-                    $addToSet: {
-                        _id : '$project._id',
-                        name: '$project.projectName'
-                    }
-                },
-
                 supplier: {
                     $addToSet: {
                         _id : '$supplier._id',
                         name: {
                             $concat: ['$supplier.name.first', ' ', '$supplier.name.last']
                         }
-                    }
-                },
-
-                projectmanager: {
-                    $addToSet: {
-                        _id : '$project.projectmanager._id',
-                        name: '$project.projectmanager.name'
                     }
                 },
 
@@ -2300,7 +2805,7 @@ var Filters = function (models) {
             }
         }];
 
-        aggregation = Quotation.aggregate(pipeLine);
+        aggregation = Model.aggregate(pipeLine);
 
         aggregation.options = {
             allowDiskUse: true
@@ -2467,6 +2972,7 @@ var Filters = function (models) {
             }
 
             result = result.length ? result[0] : {};
+            result.filterInfo = FILTER_CONSTANTS.Leads;
 
             res.status(200).send(result);
         });
@@ -2510,7 +3016,8 @@ var Filters = function (models) {
             $project: {
                 customer   : {$arrayElemAt: ['$customer', 0]},
                 workflow   : {$arrayElemAt: ['$workflow', 0]},
-                salesPerson: {$arrayElemAt: ['$salesPerson', 0]}
+                salesPerson: {$arrayElemAt: ['$salesPerson', 0]},
+                name       : 1
             }
         }, {
             $group: {
@@ -2535,31 +3042,42 @@ var Filters = function (models) {
                         _id : '$salesPerson._id',
                         name: {$concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']}
                     }
+                },
+
+                name: {
+                    $addToSet: {
+                        _id : '$_id',
+                        name: '$name'
+                    }
                 }
             }
         }, {
             $project: {
-                customer   : {
+                customer: {
                     $filter: {
                         input: '$customer',
                         as   : 'element',
                         cond : notNullQuery
                     }
                 },
-                workflow   : {
+
+                workflow: {
                     $filter: {
                         input: '$workflow',
                         as   : 'element',
                         cond : notNullQuery
                     }
                 },
+
                 salesPerson: {
                     $filter: {
                         input: '$salesPerson',
                         as   : 'element',
                         cond : notNullQuery
                     }
-                }
+                },
+
+                name: 1
             }
         }];
 
@@ -2575,6 +3093,7 @@ var Filters = function (models) {
             }
 
             result = result.length ? result[0] : {};
+            result.filterInfo = FILTER_CONSTANTS.Opportunities;
 
             res.status(200).send(result);
         });
@@ -2993,7 +3512,8 @@ var Filters = function (models) {
         var Project = models.get(lastDB, 'Project', ProjectSchema);
         var pipeLine;
         var aggregation;
-        var reqQuery = req.query;
+        var reqQuery = req.query || {};
+        var filter = reqQuery.filter;
         var query;
         var startFilter;
         var startDate;
@@ -3029,18 +3549,11 @@ var Filters = function (models) {
             };
         }
 
-        if (reqQuery) {
-            startFilter = reqQuery.filter;
-
-            if (startFilter) {
-                startDate = startFilter.startDate;
-                endDate = startFilter.startDate;
-            } else if (reqQuery.startDate && reqQuery.endDate) {
-                _startDate = moment(new Date(reqQuery.startDate));
-                _endDate = moment(new Date(reqQuery.endDate));
-                startDate = _startDate.isoWeekYear() * 100 + _startDate.isoWeek();
-                endDate = _endDate.isoWeekYear() * 100 + _endDate.isoWeek();
-            }
+        if (filter && filter.date && filter.date.value && filter.date.value.length) {
+            _startDate = moment(new Date(filter.date.value[0]));
+            _endDate = moment(new Date(filter.date.value[1]));
+            startDate = _startDate.isoWeekYear() * 100 + _startDate.isoWeek();
+            endDate = _endDate.isoWeekYear() * 100 + _endDate.isoWeek();
         }
 
         if (!startDate || !endDate) {
@@ -3587,14 +4100,14 @@ var Filters = function (models) {
                     order: {
                         $cond: {
                             if: {
-                                $eq: ['$type', 'Not Quoted']
+                                $eq: ['$type', 'Not Ordered']
                             },
 
                             then: -1,
                             else: {
                                 $cond: {
                                     if: {
-                                        $eq: ['$type', 'Quoted']
+                                        $eq: ['$type', 'Ordered']
                                     },
 
                                     then: 0,
@@ -3640,7 +4153,7 @@ var Filters = function (models) {
                             'invoice._type': 'wTrackInvoice'
                         },
                         {quotation: {$exists: true}},
-                        {type: 'Not Quoted'}
+                        {type: 'Not Ordered'}
                     ]
                 }
             }, {
@@ -3703,321 +4216,12 @@ var Filters = function (models) {
         });
     };
 
-    /*  this.getJournalEntryFilters = function (req, res, next) {
-     var lastDB = req.session.lastDb;
-     var journalEntrySchema = mongoose.Schemas.journalEntry;
-     var JournalEntry = models.get(lastDB, 'journalEntry', journalEntrySchema);
-
-     var getForInvoices = function (pCb) {
-     JournalEntry.aggregate([{
-     $match: {
-     // 'sourceDocument.model: 'wTrack',
-     debit: {$gt: 0}
-     }
-     }, {
-     $lookup: {
-     from        : 'jobs',
-     localField  : 'sourceDocument._id',
-     foreignField: '_id',
-     as          : 'sourceDocument._id'
-     }
-     }, {
-     $lookup: {
-     from        : 'journals',
-     localField  : 'journal',
-     foreignField: '_id',
-     as          : 'journal'
-     }
-     }, {
-     $project: {
-     journal             : {$arrayElemAt: ['$journal', 0]},
-     'sourceDocument._id': {$arrayElemAt: ['$sourceDocument._id', 0]}
-     }
-     }, {
-     $lookup: {
-     from        : 'jobs',
-     localField  : 'sourceDocument._id.jobs',
-     foreignField: '_id',
-     as          : 'sourceDocument._id.jobs'
-     }
-     }, {
-     $lookup: {
-     from        : 'chartOfAccount',
-     localField  : 'journal.debitAccount',
-     foreignField: '_id',
-     as          : 'journal.debitAccount'
-     }
-     }, {
-     $lookup: {
-     from        : 'chartOfAccount',
-     localField  : 'journal.creditAccount',
-     foreignField: '_id',
-     as          : 'journal.creditAccount'
-     }
-     }, {
-     $lookup: {
-     from        : 'Employees',
-     localField  : 'sourceDocument._id.employee',
-     foreignField: '_id',
-     as          : 'sourceDocument._id.employee'
-     }
-     }, {
-     $project: {
-     'journal.debitAccount'  : {$arrayElemAt: ['$journal.debitAccount', 0]},
-     'journal.creditAccount' : {$arrayElemAt: ['$journal.creditAccount', 0]},
-     'journal.name'          : 1,
-     'sourceDocument._id'    : 1,
-     'sourceDocument.jobs'   : {$arrayElemAt: ['$sourceDocument._id.jobs', 0]},
-     'sourceDocument.subject': {$arrayElemAt: ['$sourceDocument._id.employee', 0]},
-     'sourceDocument.name'   : '$sourceDocument._id.jobs.name'
-     }
-     }, {
-     $group: {
-     _id: null,
-
-     journalName: {
-     $addToSet: {
-     _id : '$journal.name',
-     name: '$journal.name'
-     }
-     },
-
-     sourceDocument: {
-     $addToSet: {
-     _id : '$sourceDocument.subject._id',
-     name: {
-     $concat: ['$sourceDocument.subject.name.first', ' ', '$sourceDocument.subject.name.last']
-     }
-     }
-     },
-
-     creditAccount: {
-     $addToSet: {
-     _id : '$journal.creditAccount._id',
-     name: '$journal.creditAccount.name'
-     }
-     }
-     }
-     }], function (err, result) {
-     if (err) {
-     return callback(err);
-     }
-
-     if (result && result.length) {
-     result = result[0];
-     pCb(null, result);
-     } else {
-     pCb(null, {});
-     }
-
-     });
-     };
-
-     var getForEmployees = function (pCb) {
-     JournalEntry.aggregate([{
-     $match: {
-     'sourceDocument.model': 'Invoice',
-     debit                 : {$gt: 0}
-     }
-     }, {
-     $lookup: {
-     from        : 'Invoice',
-     localField  : 'sourceDocument._id',
-     foreignField: '_id',
-     as          : 'sourceDocument._id'
-     }
-     }, {
-     $lookup: {
-     from        : 'journals',
-     localField  : 'journal',
-     foreignField: '_id',
-     as          : 'journal'
-     }
-     }, {
-     $project: {
-     journal             : {$arrayElemAt: ['$journal', 0]},
-     'sourceDocument._id': {$arrayElemAt: ['$sourceDocument._id', 0]}
-     }
-     }, {
-     $lookup: {
-     from        : 'chartOfAccount',
-     localField  : 'journal.debitAccount',
-     foreignField: '_id',
-     as          : 'journal.debitAccount'
-     }
-     }, {
-     $lookup: {
-     from        : 'chartOfAccount',
-     localField  : 'journal.creditAccount',
-     foreignField: '_id',
-     as          : 'journal.creditAccount'
-     }
-     }, {
-     $lookup: {
-     from        : 'Customers',
-     localField  : 'sourceDocument._id.supplier',
-     foreignField: '_id',
-     as          : 'sourceDocument.subject'
-     }
-     }, {
-     $project: {
-     'journal.debitAccount'  : {$arrayElemAt: ['$journal.debitAccount', 0]},
-     'journal.creditAccount' : {$arrayElemAt: ['$journal.creditAccount', 0]},
-     'journal.name'          : 1,
-     'sourceDocument._id'    : 1,
-     'sourceDocument.name'   : '$sourceDocument._id.name',
-     'sourceDocument.subject': {$arrayElemAt: ['$sourceDocument.subject', 0]}
-     }
-     }, {
-     $group: {
-     _id: null,
-
-     journalName: {
-     $addToSet: {
-     _id : '$journal.name',
-     name: '$journal.name'
-     }
-     },
-
-     sourceDocument: {
-     $addToSet: {
-     _id : '$sourceDocument.subject._id',
-     name: {
-     $concat: ['$sourceDocument.subject.name.first', ' ', '$sourceDocument.subject.name.last']
-     }
-     }
-     },
-
-     creditAccount: {
-     $addToSet: {
-     _id : '$journal.creditAccount._id',
-     name: '$journal.creditAccount.name'
-     }
-     }
-     }
-     }], function (err, result) {
-     if (err) {
-     return callback(err);
-     }
-
-     if (result && result.length) {
-     result = result[0];
-     pCb(null, result);
-     } else {
-     pCb(null, {});
-     }
-
-     });
-     };
-
-     var getByEmployees = function (pCb) {
-     JournalEntry.aggregate([{
-     $match: {
-     'sourceDocument.model': 'Employees',
-     debit                 : {$gt: 0}
-     }
-     }, {
-     $lookup: {
-     from        : 'Employees',
-     localField  : 'sourceDocument._id',
-     foreignField: '_id',
-     as          : 'sourceDocument._id'
-     }
-     }, {
-     $lookup: {
-     from        : 'journals',
-     localField  : 'journal',
-     foreignField: '_id',
-     as          : 'journal'
-     }
-     }, {
-     $project: {
-     journal             : {$arrayElemAt: ['$journal', 0]},
-     'sourceDocument._id': {$arrayElemAt: ['$sourceDocument._id', 0]}
-     }
-     }, {
-     $lookup: {
-     from        : 'chartOfAccount',
-     localField  : 'journal.debitAccount',
-     foreignField: '_id',
-     as          : 'journal.debitAccount'
-     }
-     }, {
-     $lookup: {
-     from        : 'chartOfAccount',
-     localField  : 'journal.creditAccount',
-     foreignField: '_id',
-     as          : 'journal.creditAccount'
-     }
-     }, {
-     $project: {
-     'journal.debitAccount' : {$arrayElemAt: ['$journal.debitAccount', 0]},
-     'journal.creditAccount': {$arrayElemAt: ['$journal.creditAccount', 0]},
-     'journal.name'         : 1,
-     'sourceDocument._id'   : 1,
-     'sourceDocument.name'  : '$sourceDocument._id.name'
-     }
-     }, {
-     $group: {
-     _id: null,
-
-     journalName: {
-     $addToSet: {
-     _id : '$journal.name',
-     name: '$journal.name'
-     }
-     },
-
-     sourceDocument: {
-     $addToSet: {
-     _id : '$sourceDocument._id._id',
-     name: {
-     $concat: ['$sourceDocument.name.first', ' ', '$sourceDocument.name.last']
-     }
-     }
-     },
-
-     creditAccount: {
-     $addToSet: {
-     _id : '$journal.creditAccount._id',
-     name: '$journal.creditAccount.name'
-     }
-     }
-     }
-     }], function (err, result) {
-     if (err) {
-     return callback(err);
-     }
-
-     if (result && result.length) {
-     result = result[0];
-     pCb(null, result);
-     } else {
-     pCb(null, {});
-     }
-
-     });
-     };
-
-     var parallelTasks = [getForInvoices, getForEmployees, getByEmployees];
-
-     async.parallel(parallelTasks, function (err, result) {
-     var empInvoice = result[0];
-     var empResult = result[2];
-
-     res.status(200).send({
-     journalName   : _.union(empInvoice.journalName, empResult.journalName),
-     sourceDocument: _.union(empInvoice.sourceDocument, empResult.sourceDocument),
-     creditAccount : _.union(empInvoice.creditAccount, empResult.creditAccount)
-     });
-     });
-     };*/
-
     this.getJournalEntryFilters = function (req, res, next) {
         var lastDB = req.session.lastDb;
         var journalEntrySchema = mongoose.Schemas.journalEntry;
         var JournalEntry = models.get(lastDB, 'journalEntry', journalEntrySchema);
         var aggregation;
+        var newArray = [];
         var pipeLine = [{
             $lookup: {
                 from        : 'journals',
@@ -4026,30 +4230,20 @@ var Filters = function (models) {
                 as          : 'journal'
             }
         }, {
-            $project: {
-                journal: {$arrayElemAt: ['$journal', 0]},
-                name   : '$sourceDocument.name'
-            }
-        }, {
             $lookup: {
                 from        : 'chartOfAccount',
-                localField  : 'journal.debitAccount',
+                localField  : 'account',
                 foreignField: '_id',
-                as          : 'debitAccount'
-            }
-        }, {
-            $lookup: {
-                from        : 'chartOfAccount',
-                localField  : 'journal.creditAccount',
-                foreignField: '_id',
-                as          : 'creditAccount'
+                as          : 'account'
             }
         }, {
             $project: {
-                journal      : 1,
-                creditAccount: {$arrayElemAt: ['$creditAccount', 0]},
-                debitAccount : {$arrayElemAt: ['$debitAccount', 0]},
-                name         : 1
+                journal: {$arrayElemAt: ['$journal', 0]},
+                account: {$arrayElemAt: ['$account', 0]},
+                name   : '$sourceDocument.name',
+                debit  : '$debit',
+                credit : '$credit',
+                timestamp: 1
             }
         }, {
             $group: {
@@ -4069,17 +4263,31 @@ var Filters = function (models) {
                     }
                 },
 
-                creditAccount: {
+                account: {
                     $addToSet: {
-                        _id : '$creditAccount._id',
-                        name: '$creditAccount.name'
+                        _id : '$account._id',
+                        name: '$account.name'
                     }
                 },
 
-                debitAccount: {
+                debit: {
                     $addToSet: {
-                        _id : '$debitAccount._id',
-                        name: '$debitAccount.name'
+                        _id : '$debit',
+                        name: {$divide: ['$debit', 100]}
+                    }
+                },
+
+                credit: {
+                    $addToSet: {
+                        _id : '$credit',
+                        name: {$divide: ['$credit', 100]}
+                    }
+                },
+
+                timestamp: {
+                    $addToSet: {
+                        _id: '$timestamp',
+                        name: {$concat: ['JE_', '$timestamp']}
                     }
                 }
             }
@@ -4098,6 +4306,10 @@ var Filters = function (models) {
 
             result = result.length ? result[0] : {};
 
+            newArray = result.debit.concat(result.credit);
+
+            result.sum = newArray;
+
             res.status(200).send(result);
         });
     };
@@ -4108,7 +4320,7 @@ var Filters = function (models) {
         var JournalEntry = models.get(lastDB, 'journalEntry', journalEntrySchema);
 
         var query = {
-            'sourceDocument.model': 'wTrack',
+            'sourceDocument.model': 'product',
             debit                 : {$gt: 0}
         };
 
@@ -4116,8 +4328,19 @@ var Filters = function (models) {
             $match: query
         }, {
             $lookup: {
-                from        : 'jobs',
+                from        : 'Products',
                 localField  : 'sourceDocument._id',
+                foreignField: '_id',
+                as          : 'product'
+            }
+        }, {
+            $project: {
+                product: {$arrayElemAt: ['$product', 0]}
+            }
+        }, {
+            $lookup: {
+                from        : 'jobs',
+                localField  : 'product.job',
                 foreignField: '_id',
                 as          : 'job'
             }
@@ -4125,7 +4348,6 @@ var Filters = function (models) {
             $project: {
                 job: {$arrayElemAt: ['$job', 0]}
             }
-
         }, {
             $lookup: {
                 from        : 'projectMembers',
@@ -4221,6 +4443,420 @@ var Filters = function (models) {
             res.status(200).send(result);
         });
     };
+
+    this.getGoodsOutNotesFilters = function (req, res, next) {
+        var lastDB = req.session.lastDb;
+        var GoodsOutSchema = mongoose.Schemas.GoodsOutNote;
+        var GoodsOutNote = models.get(lastDB, 'GoodsOutNote', GoodsOutSchema);
+        var aggregation;
+
+        var query = {
+            _type: 'GoodsOutNote'
+        };
+
+        var pipeLine = [{
+            $match: query
+        }, {
+            $lookup: {
+                from        : 'warehouse',
+                localField  : 'warehouse',
+                foreignField: '_id',
+                as          : 'warehouse'
+            }
+        }, {
+            $lookup: {
+                from        : 'Order',
+                localField  : 'order',
+                foreignField: '_id',
+                as          : 'order'
+            }
+        }, {
+            $project: {
+                warehouse: {$arrayElemAt: ['$warehouse', 0]},
+                order    : {$arrayElemAt: ['$order', 0]},
+                status   : 1,
+                name     : 1
+            }
+        }, {
+            $lookup: {
+                from        : 'Customers',
+                localField  : 'order.supplier',
+                foreignField: '_id',
+                as          : 'customer'
+            }
+        }, {
+            $lookup: {
+                from        : 'workflows',
+                localField  : 'order.workflow',
+                foreignField: '_id',
+                as          : 'workflow'
+            }
+        }, {
+            $project: {
+                order           : 1,
+                status          : 1,
+                name            : 1,
+                'warehouse.name': '$warehouse.name',
+                'warehouse._id' : '$warehouse._id',
+                workflow        : {$arrayElemAt: ['$workflow', 0]},
+                customer        : {$arrayElemAt: ['$customer', 0]}
+            }
+        }, {
+            $group: {
+                _id : null,
+                name: {
+                    $addToSet: {
+                        _id : '$_id',
+                        name: '$name'
+                    }
+                },
+
+                warehouse: {
+                    $addToSet: {
+                        _id : '$warehouse._id',
+                        name: '$warehouse.name'
+                    }
+                },
+
+                workflow: {
+                    $addToSet: {
+                        _id : '$workflow._id',
+                        name: '$workflow.name'
+                    }
+                },
+
+                customer: {
+                    $addToSet: {
+                        _id : '$customer._id',
+                        name: {
+                            $concat: ['$customer.name.first', ' ', '$customer.name.last']
+                        }
+                    }
+                }
+            }
+        }];
+
+        aggregation = GoodsOutNote.aggregate(pipeLine);
+
+        aggregation.options = {
+            allowDiskUse: true
+        };
+
+        aggregation.exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            result = result.length ? result[0] : {};
+
+            result.status = [{
+                name: 'Printed',
+                _id : 'printed'
+            }, {
+                name: 'Picked',
+                _id : 'picked'
+            }, {
+                name: 'Packed',
+                _id : 'packed'
+            }, {
+                name: 'Shipped',
+                _id : 'shipped'
+            }];
+
+            res.status(200).send(result);
+        });
+    };
+
+    this.getStockTransactionsFilters = function (req, res, next) {
+        var lastDB = req.session.lastDb;
+        var StockTransActionSchema = mongoose.Schemas.stockTransactions;
+        var StockTransaction = models.get(lastDB, 'stockTransactions', StockTransActionSchema);
+        var aggregation;
+
+        var query = {
+            _type: 'stockTransactions'
+        };
+
+        var pipeLine = [{
+            $match: query
+        }, {
+            $lookup: {
+                from        : 'warehouse',
+                localField  : 'warehouse',
+                foreignField: '_id',
+                as          : 'warehouse'
+            }
+        }, {
+            $lookup: {
+                from        : 'warehouse',
+                localField  : 'warehouseTo',
+                foreignField: '_id',
+                as          : 'warehouseTo'
+            }
+        }, {
+            $project: {
+                warehouse  : {$arrayElemAt: ['$warehouse', 0]},
+                warehouseTo: {$arrayElemAt: ['$warehouseTo', 0]},
+                status     : 1
+            }
+        }, {
+            $project: {
+                order             : 1,
+                status            : 1,
+                'warehouse.name'  : '$warehouse.name',
+                'warehouse._id'   : '$warehouse._id',
+                'warehouseTo.name': '$warehouseTo.name',
+                'warehouseTo._id' : '$warehouseTo._id'
+            }
+        }, {
+            $group: {
+                _id        : null,
+                warehouse  : {
+                    $addToSet: {
+                        _id : '$warehouse._id',
+                        name: '$warehouse.name'
+                    }
+                },
+                warehouseTo: {
+                    $addToSet: {
+                        _id : '$warehouseTo._id',
+                        name: '$warehouseTo.name'
+                    }
+                }
+            }
+        }];
+
+        aggregation = StockTransaction.aggregate(pipeLine);
+
+        aggregation.options = {
+            allowDiskUse: true
+        };
+
+        aggregation.exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            result = result.length ? result[0] : {};
+
+            result.status = [{
+                name: 'Printed',
+                _id : 'printed'
+            }, {
+                name: 'Packed',
+                _id : 'packed'
+            }, {
+                name: 'Shipped',
+                _id : 'shipped'
+            }, {
+                name: 'Received',
+                _id : 'received'
+            }];
+
+            res.status(200).send(result);
+        });
+    };
+
+    this.getProductsAvailabilityFilters = function (req, res, next) {
+        var lastDB = req.session.lastDb;
+        var AvailabilitySchema = mongoose.Schemas.productsAvailability;
+        var Availability = models.get(lastDB, 'productsAvailability', AvailabilitySchema);
+        var aggregation;
+
+        var pipeLine = [{
+            $match: {isJob: false}
+        }, {
+            $lookup: {
+                from        : 'warehouse',
+                localField  : 'warehouse',
+                foreignField: '_id',
+                as          : 'warehouse'
+            }
+        }, {
+            $lookup: {
+                from        : 'locations',
+                localField  : 'location',
+                foreignField: '_id',
+                as          : 'location'
+            }
+        }, {
+            $lookup: {
+                from        : 'Products',
+                localField  : 'product',
+                foreignField: '_id',
+                as          : 'product'
+            }
+        }, {
+            $lookup: {
+                from        : 'GoodsNote',
+                localField  : 'goodsInNote',
+                foreignField: '_id',
+                as          : 'goodsInNote'
+            }
+        }, {
+            $project: {
+                warehouse  : {$arrayElemAt: ['$warehouse', 0]},
+                location   : {$arrayElemAt: ['$location', 0]},
+                product    : {$arrayElemAt: ['$product', 0]},
+                goodsInNote: {$arrayElemAt: ['$goodsInNote', 0]},
+                status     : 1
+            }
+        }, {
+            $lookup: {
+                from        : 'Order',
+                localField  : 'goodsInNote.order',
+                foreignField: '_id',
+                as          : 'order'
+            }
+        }, {
+            $project: {
+                order           : {$arrayElemAt: ['$order', 0]},
+                product         : 1,
+                'location.name' : '$location.name',
+                'location._id'  : '$location._id',
+                'warehouse.name': '$warehouse.name',
+                'warehouse._id' : '$warehouse._id'
+            }
+        }, {
+            $project: {
+                'order.name': '$order.name',
+                'order._id' : '$order._id',
+                product     : 1,
+                location    : 1,
+                warehouse   : 1
+            }
+        }, {
+            $group: {
+                _id      : null,
+                warehouse: {
+                    $addToSet: {
+                        _id : '$warehouse._id',
+                        name: '$warehouse.name'
+                    }
+                },
+                location : {
+                    $addToSet: {
+                        _id : '$location._id',
+                        name: '$location.name'
+                    }
+                },
+                product  : {
+                    $addToSet: {
+                        _id : '$product.name',
+                        name: '$product.name'
+                    }
+                },
+                order    : {
+                    $addToSet: {
+                        _id : '$order._id',
+                        name: '$order.name'
+                    }
+                },
+
+                SKU: {
+                    $addToSet: {
+                        _id : '$product._id',
+                        name: '$product.info.SKU'
+                    }
+                }
+            }
+        }];
+
+        aggregation = Availability.aggregate(pipeLine);
+
+        aggregation.options = {
+            allowDiskUse: true
+        };
+
+        aggregation.exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            result = result.length ? result[0] : {};
+
+            res.status(200).send(result);
+        });
+    };
+
+    this.getChartOfAccountFilters = function (req, res, next) {
+        var lastDB = req.session.lastDb;
+        var chartOfAccountSchema = mongoose.Schemas.chartOfAccount;
+        var Model = models.get(lastDB, 'chartOfAccount', chartOfAccountSchema);
+        var aggregation;
+
+        var pipeLine = [{
+            $lookup: {
+                from        : 'accountsCategories',
+                localField  : 'category',
+                foreignField: '_id',
+                as          : 'category'
+            }
+        }, {
+            $lookup: {
+                from        : 'PaymentMethod',
+                localField  : '_id',
+                foreignField: 'chartAccount',
+                as          : 'payMethod'
+            }
+        }, {
+            $project: {
+                category : {$arrayElemAt: ['$category', 0]},
+                code     : 1,
+                account  : 1,
+                payMethod: {$arrayElemAt: ['$payMethod', 0]}
+            }
+        }, {
+            $group: {
+                _id     : null,
+                category: {
+                    $addToSet: {
+                        _id : '$category._id',
+                        name: '$category.fullName'
+                    }
+                },
+
+                account: {
+                    $addToSet: {
+                        _id : '$account',
+                        name: '$account'
+                    }
+                },
+
+                code: {
+                    $addToSet: {
+                        _id : '$code',
+                        name: '$code'
+                    }
+                },
+
+                currency: {
+                    $addToSet: {
+                        _id : {$ifNull: ['$payMethod.currency', 'None']},
+                        name: {$ifNull: ['$payMethod.currency', 'None']}
+                    }
+                }
+            }
+        }];
+
+        aggregation = Model.aggregate(pipeLine);
+
+        aggregation.options = {
+            allowDiskUse: true
+        };
+
+        aggregation.exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            result = result.length ? result[0] : {};
+
+            res.status(200).send(result);
+        });
+
+    };
+
 };
 
 module.exports = Filters;

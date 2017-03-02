@@ -8,9 +8,14 @@
 
 
 <tr data-id="<%=invoice._id%>">
-    <td class="notForm centerCell"><input type="checkbox" value="<%=invoice._id%>" class="checkbox <%=invoice.removable ? '' : 'notRemovable'%>"  <%if (!invoice.removable) { %>
-        disabled='disabled'
-        <% } %>/>
+    <td class="notForm centerCell">
+        <label class="_customCHeckbox">
+            <input type="checkbox" value="<%=invoice._id%>" class="checkbox <%=invoice.removable ? '' : 'notRemovable'%>"  <%if (!invoice.removable) { %>
+            disabled='disabled'
+            <% } %>/>
+            <span></span>
+        </label>
+    </td>>
 <td><%=(invoice.supplier && invoice.supplier.name) ? invoice.supplier.name.first + ' ' + invoice.supplier.name.last:
     ''%>
 </td>

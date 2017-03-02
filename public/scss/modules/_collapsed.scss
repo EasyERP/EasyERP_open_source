@@ -17,10 +17,10 @@
 
       .dropdownButton {
         .loginList {
-          width: 150px;
-          margin-left: 1px;
           top: 15%;
           left: 100%;
+          width: 150px;
+          margin-left: 1px;
 
           li {
             &:first-child {
@@ -71,12 +71,12 @@
 
       ul {
         display: none;
-        width: 160px;
-        margin-left: 1px;
-        padding: 0;
         position: absolute;
         top: 0;
         left: 100%;
+        padding: 0;
+        width: 160px;
+        border-left: 1px solid #fff;
 
         li {
           height: 40px;
@@ -84,7 +84,7 @@
           &:first-child {
             display: block;
             margin-top: 0!important;
-            background-color: #2C3542;//@submenu-hover;
+            background-color: #2C3542;
           }
 
           .subItem {
@@ -108,8 +108,8 @@
 
           li {
             &:first-child {
+              width: calc(100% + 1px);
               margin-left: -1px;
-              padding-right: 1px;
             }
           }
         }
@@ -144,14 +144,14 @@
       }
     }
 
-  .content_wrapper {
-    width: calc(100% - 40px);
-  }
+  //.content_wrapper {
+  //  width: calc(100% - 40px);
+  //}
 
   .topbarLogo {
     width: auto;
-    padding-left: 0;
     padding-right: 0;
+    padding-left: 0;
 
     .mainLogo {
       display: none;
@@ -168,5 +168,10 @@
         width: calc(100% - 40px);
       }
     }
+  }
+
+  .mCustomScrollBox,
+  .mCSB_container {
+    overflow: visible;
   }
 }

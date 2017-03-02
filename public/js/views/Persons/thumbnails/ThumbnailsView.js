@@ -14,7 +14,7 @@
 ], function (Backbone, $, _, common, BaseView, EditView, CreateView, AphabeticTemplate, ThumbnailsItemTemplate, dataService, FilterView, CONSTANTS) {
     'use strict';
 
-    var PersonsThumbnalView = BaseView.extend({
+    var PersonsThumbnailView = BaseView.extend({
         el             : '#content-holder',
         countPerPage   : 0,
         template       : _.template(ThumbnailsItemTemplate),
@@ -23,7 +23,7 @@
         viewType       : 'thumbnails', // needs in view.prototype.changeLocationHash
         exportToXlsxUrl: '/Customers/exportToXlsx/?type=Persons',
         exportToCsvUrl : '/Customers/exportToCsv/?type=Persons',
-        letterKey      : 'name.first',
+        letterKey      : 'name.last',
         type           : 'Person',
 
         initialize: function (options) {
@@ -34,7 +34,7 @@
             this.CreateView = CreateView;
 
             _.bind(this.collection.showMoreAlphabet, this.collection);
-            this.allAlphabeticArray = common.buildAllAphabeticArray();
+            this.allAlphabeticArray = common.buildAllAphabeticArray(this.contentType);
 
             this.asyncLoadImgs(this.collection);
             this.stages = [];
@@ -104,6 +104,38 @@
             this.asyncLoadImgs(newModels);
         },
 
+        importFromMagento: function () {
+            var url = '/integration/customers';
+            var self = this;
+
+            dataService.getData(url, {}, function (err, result) {
+                if (err) {
+                    return self.errorNotification(err);
+                }
+
+                self.render();
+            });
+        },
+
+        exportToMagento: function () {
+            var url = '/integration/customers';
+            var self = this;
+            var data;
+            var ids = _.pluck(self.collection.toJSON(), '_id');
+
+
+            data = {
+                customers: ids
+            };
+
+            dataService.postData(url, data, function (err, result) {
+                if (err) {
+                    return self.errorNotification(err);
+                }
+                alert(result.success);
+            });
+        },
+
         exportToCsv: function () {
             var tempExportToCsvUrl = '';
 
@@ -129,5 +161,5 @@
         }
     });
 
-    return PersonsThumbnalView;
+    return PersonsThumbnailView;
 });

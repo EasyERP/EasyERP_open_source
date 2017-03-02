@@ -1,45 +1,29 @@
 ﻿define([
     'Backbone',
-    'models/ScheduledPayModel'
-], function (Backbone, ScheduledPayModel) {
-    var ScheduledPayCollection = Backbone.Collection.extend({
-        model       : ScheduledPayModel,
-        url         : '/scheduledPay/',
-        page        : null,
-        namberToShow: null,
-        viewType    : null,
-        contentType : null,
+    'collections/parent',
+    'models/ScheduledPayModel',
+    'constants'
+], function (Backbone, Parent, Model, CONSTANTS) {
+    'use strict';
 
-        initialize: function (options) {
-            var that = this;
+    var Collection = Parent.extend({
+        model: Model,
+        url  : CONSTANTS.URLS.SCHEDULEDPAY,
 
-            this.startTime = new Date();
-            this.namberToShow = options.count;
-            this.viewType = options.viewType;
-            this.contentType = options.contentType;
-            this.page = options.page || 1;
-
-            this.filter = options.filter;
+        initialize: function () {
 
             this.fetch({
-                data   : options,
                 reset  : true,
-                success: function (newCollection) {
-                    that.page++;
+                success: function () {
                 },
-                error  : function (models, xhr) {
+
+                error: function (models, xhr) {
                     if (xhr.status === 401) {
                         Backbone.history.navigate('#login', {trigger: true});
                     }
-                    if (xhr.status === 403) {
-                        App.render({
-                            type   : 'error',
-                            message: 'No access'
-                        });
-                    }
                 }
             });
-        },
+        }
     });
-    return ScheduledPayCollection;
+    return Collection;
 });

@@ -1,9 +1,68 @@
+<%
+delimiter = '';
+delimiter2 = '';
+%>
 <% productCollection.forEach(function(product, index){ %>
 <tr data-id="<%=product._id%>">
-    <td class="notForm centerCell"><input type="checkbox" value="<%=product._id%>" class="checkbox"/></td>
-    <td><%=startNumber + index + 1%></td>
-    <td><%=product.name.substr(0,15)%></td>
-    <td><%=product.info.productType%></td>
-    <td><%=product.info.salePrice%></td>
+    <td class="notForm">
+        <label class="_customCHeckbox">
+            <input type="checkbox" value="<%=product._id%>" class="checkbox"/>
+            <span></span>
+        </label>
+    </td>
+    <td><img class="iconEmployee" src="<%= product.imageSrc %>"></td>
+    <td><%=product.name%></td>
+    <td><%=product.info.SKU%></td>
+    <% if(!toExpand) { %>
+    <td>
+        <span><%=product.variantsCount ? product.variantsCount.count : 'this product has no variants'%></span>
+    </td>
+    <% } else { %>
+    <td class="variant">
+        <% if (product.variants && product.variants.length) { %>
+        <% _.each(product.variants, function(variant){ %>
+        <span id="<%=variant._id%>" title="<%= variant.value %>">
+                    <%= delimiter + ((variant.value) ? variant.value : 'deleted') %>
+                    <% delimiter = '|'; %>
+                </span>
+        <%})%>
+        <% delimiter = ''; %>
+        <% } else { %>
+        this product has no variants
+        <% } %>
+    </td>
+    <% } %>
+    <td><%=product.ProductTypesName%></td>
+    <td>
+        <% if (product.ProductCategories && product.ProductCategories.length) { %>
+        <% _.each(product.ProductCategories, function (ProductCategory) { %>
+        <span title="<%= ProductCategory._id %>">
+                    <%= delimiter2 + ((ProductCategory.name) ? ProductCategory.name : 'None') %>
+                    <% delimiter2 = '|'; %>
+                </span>
+        <%})%>
+        <% delimiter2 = ''; %>
+        <% } else { %>
+        this product has not categories
+        <% } %>
+    </td>
+    <!--<td><%=product.onHand%></td>
+    <td><%=product.allocated%></td>
+    <td><%=product.inStock%></td>-->
+    <% if(toExpand) {%>
+    <td>
+        <ul>
+            <% if(product.channelLinks && product.channelLinks.length){
+            product.channelLinks.forEach(function(channelLink){ %>
+
+            <li>
+                <div class="channelImg <%= channelLink.type || ''%>" data-content="channelImage"
+                     title="<%= channelLink.name || ''%>"></div>
+            </li>
+
+            <% }); }%>
+        </ul>
+    </td>
+    <% }%>
 </tr>
 <% }) %>

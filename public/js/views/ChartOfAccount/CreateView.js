@@ -29,7 +29,7 @@ define([
 
         subAccount: function () {
             var self = this;
-            var type = this.$el.find('#accountTypeDd').attr('data-id');
+            var type = this.$el.find('#accountsCategory').attr('data-id');
 
             dataService.getData('ChartOfAccount/getForDd', {type: type}, function (response) {
                 self.$el.find('.subAccount').toggleClass('hidden');
@@ -67,7 +67,7 @@ define([
             var id = $target.attr('id');
             var text = $target.text();
             var $ul = $target.closest('ul');
-            var $element = $ul.closest('dd').find('a');
+            var $element = $ul.closest('._newSelectListWrap').find('a');
 
             if (id === 'createAccountType') {
                 return new CreateAccountTypeView({responseObj: this.responseObj});
@@ -90,9 +90,10 @@ define([
             var data = {};
 
             data.account = $.trim(thisEl.find('#nameInput').val());
-            data.type = thisEl.find('#accountTypeDd').attr('data-id');
+            data.category = thisEl.find('#accountsCategory').attr('data-id');
             data.subAccount = thisEl.find('#chartsDd').attr('data-id') || null;
             data.code = $.trim(thisEl.find('#code').val());
+            data.budgeted = thisEl.find('#budgeted').prop('checked');
 
             if (!data.account.length) {
                 return App.render({
@@ -108,10 +109,10 @@ define([
                 });
             }
 
-            if (!data.type) {
+            if (!data.category) {
                 return App.render({
                     type   : 'error',
-                    message: 'Please, choose Account Type first.'
+                    message: 'Please, choose Account Category first.'
                 });
             }
 
@@ -159,12 +160,11 @@ define([
             this.hideSaveCancelBtns();
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'create-dialog',
-                title        : 'Create Chart of Account',
-                buttons      : [
+                autoOpen   : true,
+                width      : '500',
+                dialogClass: 'create-dialog',
+                title      : 'Create Chart of Account',
+                buttons    : [
                     {
                         id   : 'createBtn',
                         class: 'btn blue',
@@ -180,7 +180,7 @@ define([
 
             });
 
-            populate.get('#accountTypeDd', '/accountTypes/getForDD', {}, 'name', this, true, true);
+            populate.get('#accountsCategory', '/accountsCategories/getAll', {}, 'name', this, true, true);
 
             this.delegateEvents(this.events);
 

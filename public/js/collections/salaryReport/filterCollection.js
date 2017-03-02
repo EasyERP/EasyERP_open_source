@@ -1,11 +1,12 @@
 define([
     'Backbone',
     'models/EmployeeDashboardItem',
+    'helpers/getDateHelper',
     'custom'
-], function (Backbone, EmpModel, Custom) {
+], function (Backbone, EmpModel, DateHelper, Custom) {
     'use strict';
 
-    var salaryCollection = Backbone.Collection.extend({
+    var salaryReportCollection = Backbone.Collection.extend({
 
         model       : EmpModel,
         url         : '/salaryReport/',
@@ -16,39 +17,33 @@ define([
 
         initialize: function (options) {
             var dateRange;
-            var startDate = new Date();
-            var endDate = new Date();
-
-            options = options || {};
+            var _opts;
 
             this.startTime = new Date();
+
             this.filter = options.filter || Custom.retriveFromCash('salaryReport.filter');
 
-            startDate.setMonth(0);
-            startDate.setDate(1);
-            endDate.setMonth(11);
-            endDate.setDate(31);
-            dateRange = Custom.retriveFromCash('salaryReportDateRange') || {};
-            this.startDate = dateRange.startDate;
-            this.endDate = dateRange.endDate;
+            dateRange = this.filter && this.filter.date ? this.filter.date.value : null;
 
-            this.startDate = dateRange.startDate || startDate;
-            this.endDate = dateRange.endDate || endDate;
+            dateRange = dateRange || DateHelper.getDate('thisYear');
 
-            options.startDate = this.startDate;
-            options.endDate = this.endDate;
-            options.filter = this.filter;
+            this.startDate = new Date(dateRange[0]);
+            this.endDate = new Date(dateRange[1]);
 
-            Custom.cacheToApp('salaryReportDateRange', {
-                startDate: this.startDate,
-                endDate  : this.endDate
-            });
+            options.filter = this.filter || {};
+
+            options.filter.date = {
+                value: [this.startDate, this.endDate]
+            };
+
+            Custom.cacheToApp('salaryReport.filter', options.filter);
+
+            _opts = options || {};
 
             this.fetch({
-                data   : options,
+                data   : _opts,
                 reset  : true,
                 success: function () {
-
                 },
 
                 error: function (err, xhr) {
@@ -63,14 +58,15 @@ define([
 
             this.comparator = function (modelA, modelB) {
                 var self = this;
-                var nameA = getSortName(modelA);
-                var nameB = getSortName(modelB);
+                var nameA;
+                var nameB;
 
                 function getSortName(model) {
-                    var sortAttr = self.sortKey ? model.get(self.sortKey) : model.get('name');
-
-                    return sortAttr;
+                    return self.sortKey ? model.get(self.sortKey) : model.get('name');
                 }
+
+                nameA = getSortName(modelA);
+                nameB = getSortName(modelB);
 
                 if (nameA && nameB) {
                     if (nameA > nameB) {
@@ -108,6 +104,5 @@ define([
             });
         }
     });
-
-    return salaryCollection;
+    return salaryReportCollection;
 });

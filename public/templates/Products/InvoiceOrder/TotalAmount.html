@@ -49,17 +49,17 @@
     <%if (discountVisible) {%>
     <tr class="discount">
         <%if (model && model.paymentInfo && model.paymentInfo.discount) {%>
-        <%discount = model.paymentInfo.discount%>
+        <%discount = model.paymentInfo.discount / 100%>
         <%} else {%>
         <%discount = "0.00"%>
         <%}%>
         <%if (model && model.paymentInfo && model.paymentInfo.unTaxed && model.paymentInfo.discount) {%>
-        <%unTaxed = ('-'+((model.paymentInfo.unTaxed/100)*discount).toFixed(2))%>
+        <%unTaxed = ('-'+((model.paymentInfo.unTaxed/100) - discount).toFixed(2))%>
         <%} else {%>
         <%unTaxed = "0.00"%>
         <%}%>
         <td class="discount-wrap">
-            <label>Discount (%)</label>
+            <label>Discount</label>
         </td>
         <td>
             <input class="percentage _inputBordered forNum discountPercentage" maxlength="5" id="discount" value="<%=discount%>" <%= model && (model.approved || (model.workflow && model.workflow.status === 'Done') ) ? 'readonly' : ''%> \>

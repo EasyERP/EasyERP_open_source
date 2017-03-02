@@ -27,6 +27,8 @@
             var errors = [];
 
             Validation.checkGroupsNameField(errors, true, attrs.name, 'Subject');
+            Validation.checkGroupsNameField(errors, true, attrs.source, 'Source');
+
             // Validation.checkGroupsNameField(errors, false, attrs.company.name, 'Company'); // commented in hotFix By Liliya
             Validation.checkPhoneField(errors, false, attrs['phones.phone'] || attrs.phones.phone, 'Phone');
             Validation.checkPhoneField(errors, false, attrs['phones.mobile'] || attrs.phones.mobile, 'Mobile');
@@ -37,6 +39,17 @@
             Validation.checkStreetField(errors, false, attrs['address.street'] || attrs.address.street, 'Street');
             Validation.checkEmailField(errors, false, attrs.email, 'Email');
             Validation.checkNotesField(errors, false, attrs.internalNotes, 'Notes');
+            Validation.checkFacebookSocial(errors, false, attrs.social.FB, 'Facebook');
+            Validation.checkLinkedinSocial(errors, false, attrs.social.LI, 'LinkedIn');
+
+           /* if (!attrs.tempCompanyField) {
+                errors.push('Check company please. ');
+            }
+
+            if (!attrs.customer) {
+                errors.push('Check person please. ');
+            }*/
+
             if (errors.length > 0) {
                 return errors;
             }
@@ -64,7 +77,8 @@
 
                 if (response.notes) {
                     _.map(response.notes, function (note) {
-                        note.date = moment(note.date).format('DD MMM, YYYY, H:mm:ss');
+                        note.date = moment(new Date(note.date));
+                        // note.date = moment(new Date(note.date)).format('DD MMM, YYYY, H:mm:ss');
 
                         if (note.history && (note.history.changedField === 'Close Date' || note.history.changedField === 'Creation Date')) {
                             note.history.changedValue = note.history.changedValue ? moment(new Date(note.history.changedValue)).format('DD MMM, YYYY') : '';

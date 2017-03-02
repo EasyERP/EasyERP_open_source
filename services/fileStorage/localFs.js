@@ -5,6 +5,7 @@ var mongoose = require('mongoose');
 
 var LocalFs = function () {
     var defaultFileDir = process.env.FOLDER_NAME || 'uploads';
+    var defaultImageDir = process.env.IMAGE_FOLDER || 'customImages';
 
     this.getFileUrl = function (folderName, fileName, callback) {
         var folder = folderName || defaultFileDir;
@@ -70,7 +71,20 @@ var LocalFs = function () {
         });
     }
 
+    function convertFromBase64(Base64String) {
+        return new Buffer(Base64String.replace(/^data:image\/\w+;base64,/, ""), 'base64');
+    }
+
     function writeFile(filePath, item, callback) {
+        var data;
+
+        if (Object.keys(item).indexOf('path') === -1) {
+
+            data = convertFromBase64(item);
+
+            return fs.writeFile(filePath, data, callback);
+        }
+
         async.waterfall([function (waterfallCb) {
             fs.readFile(item.path, waterfallCb);
         }, function (data, waterfallCb) {
@@ -82,6 +96,51 @@ var LocalFs = function () {
         }], callback);
 
     }
+
+    this.postImage = function (folderName, imageData, options, callback) {
+        var targetPath = path.join(defaultImageDir, folderName);
+        var imagePath = path.join(targetPath, imageData.name);
+
+        if (typeof options === 'function') {
+            callback = options;
+            options = {};
+        }
+
+        makeDir(targetPath, function (err) {
+            if (err) {
+                return callback(err);
+            }
+
+            writeFile(imagePath, imageData.data, function (err) {
+                if (err) {
+                    return callback(err);
+                }
+
+                callback(null, imagePath);
+            });
+        });
+    };
+
+    this.removeFile = function (filePath, callback) {
+        var error;
+
+        if (!callback && typeof filePath === 'function') {
+            callback = filePath;
+
+            error = new Error('File path required');
+            error.status = 400;
+
+            return callback(error);
+        }
+
+        fs.access(filePath, function (err) {
+            if (err) {
+                return callback();
+            }
+
+            fs.unlink(filePath, callback);
+        });
+    };
 
     this.postFile = function (folderName, fileData, options, callback) {
         var targetPath;
@@ -183,6 +242,46 @@ var LocalFs = function () {
 
             callback(null, _files);
         });
+    };
+
+    this.readImage = function (imagePath, callback) {
+        var fullImagePath = path.join(appRoot, imagePath);
+
+        fs.readFile(fullImagePath, 'base64', function (err, base64Data) {
+            if (err) {
+                return callback(err);
+            }
+
+            callback(null, base64Data);
+        });
+    };
+
+    function deleteFolderRecursive(path) {
+        var files = [];
+
+        if (fs.existsSync(path)) {
+            files = fs.readdirSync(path);
+            files.forEach(function (file, index) {
+                var curPath = path + '/' + file;
+
+                if (fs.lstatSync(curPath).isDirectory()) { // recurse
+                    deleteFolderRecursive(curPath);
+                } else { // delete file
+                    fs.unlinkSync(curPath);
+                }
+            });
+
+            fs.rmdirSync(path);
+        }
+    }
+
+    this.removeDir = function (dirName, dir) {
+        var dirPath;
+
+        defaultImageDir = dir || defaultImageDir;
+        dirPath = path.join(appRoot, defaultImageDir, dirName);
+
+        deleteFolderRecursive(dirPath);
     };
 };
 

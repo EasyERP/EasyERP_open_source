@@ -37,7 +37,7 @@ define([
 
         chooseOption: function (e) {
             var $target = $(e.target);
-            var holder = $target.parents('._modalSelect').find('.current-selected');
+            var holder = $target.parents('._newSelectListWrap').find('.current-selected');
 
             holder.text($target.text()).attr('data-id', $target.attr('id'));
         },
@@ -140,11 +140,10 @@ define([
             var model = new OpportunityModel();
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                dialogClass  : 'edit-dialog',
-                width        : '450px',
-                title        : 'Create Opportunity',
-                buttons      : {
+                dialogClass: 'edit-dialog',
+                width      : '500px',
+                title      : 'Create Opportunity',
+                buttons    : {
                     save: {
                         text : 'Create',
                         class: 'btn blue',

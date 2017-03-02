@@ -2,7 +2,10 @@
 <tr data-index="<%= index %>" data-id="<%=jobPosition._id%>"
     class="stage-<%=(jobPosition.workflow) ? jobPosition.workflow.status.toLowerCase().replace(' ','') : ''%>">
     <td class="notForm centerCell">
-        <input type="checkbox" value="<%=jobPosition._id%>" class="checkbox"/>
+        <label class="_customCHeckbox">
+            <input type="checkbox" value="<%=jobPosition._id%>" class="checkbox"/>
+            <span></span>
+        </label>
     </td>
     <td><%=jobPosition.name%></td>
     <td><%= (jobPosition.department) ? jobPosition.department.name : ''%></td>

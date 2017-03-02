@@ -1,193 +1,389 @@
-<div class="form-holder p">
-    <form method="post" action="" id="createEmployeeForm" class="form">
-        <fieldset>
-            <div class="inner">
-                <ul class="dialog-tabs" data-class="mainTabs">
-                    <li><a class="active" href="javascript:;">Main</a></li>
-                    <li><a href="javascript:;">Assignees</a></li>
-                </ul>
-                <div class="clearfix"></div>
-                <div class="dialog-tabs-items mainTabs">
-                    <div class="dialog-tabs-item mainTabs active">
+<div class="form-holder _newForm productForm">
+    <div class="_btnsBlockFixed">
+        <a href="javascript:;"
+           class="btn blue slim"
+           title="Save"
+           id="saveBtn">Save
+        </a>
+    </div>
+    <form method="post"
+          id="createEmployeeForm"
+          class="_mainProductsForm form">
+        <ul class="dialog-tabs" data-class="mainTabs">
+            <li><a class="active" href="javascript:;">Product Info</a></li>
+            <li id="picturesTab"><a href="javascript:;">Images</a></li>
+            <li><a href="javascript:;">Stock/Inventory</a></li>
+            <li><a href="javascript:;">Prices</a></li>
+            <li><a href="javascript:;">Sales Channel</a></li>
+            <% if (!product.isVariant) { %>
+            <li><a href="javascript:;">Create Variants</a></li>
+            <% } else { %>
+            <li><a href="javascript:;">Edit Variants</a></li>
+            <% } %>
+            <% if (product.isBundle) { %>
+            <li><a href="javascript:;">Bundle</a></li>
+            <% } %>
+        </ul>
+        <div class="dialog-tabs-items mainTabs">
+            <div class="dialog-tabs-item mainTabs active">
+                <div class="_formWrap _enlargedItemMargin">
+                    <div class="_avatarBlock">
                         <div class="avatar">
                             <div class="upload">Edit<input type="file" value="Edit" id="inputImg"></div>
                             <canvas id="avatar" width="140" height="140">
                                 <input type="file" value="Edit" id="File1">
                             </canvas>
                         </div>
-                        <div class="avatarInfoContainer">
-                            <div class="half-block left">
-                                <div class="product-info">
-                                    <div class="inputField">
-                                        <label for="product">
-                                            <input type="text" id="product" required maxlength="32"
-                                                   value="<%=model.name%>"/>
-                                            <span>Product Name</span>
-                                        </label>
-                                    </div>
-                                    <div>
-                                        <label for="sold">
-                                            <input type="checkbox" id="sold" class="checkbox left" <% if(model.canBeSold) {
-                                            %> checked <% } %>/>
-                                            <span>Can be Sold</span>
-                                        </label>
-                                    </div>
-                                    <div>
-                                        <label for="expensed">
-                                            <input type="checkbox" id="expensed" class="checkbox left" <%
-                                            if(model.canBeExpensed) { %> checked <% } %>/>
-                                            <span>Can be Expensed</span></label>
-                                    </div>
-                                    <div>
-                                        <label for="purchased">
-                                            <input type="checkbox" id="purchased" class="checkbox left" <%
-                                            if(model.canBePurchased) { %> checked <% } %>/>
-                                            <span>Can be Purchased</span>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="clearfix"></div>
-                        <ul class="dialog-tabs" data-class="childTabs">
-                            <li><a class="active" href="javascript:;">Information</a></li>
-                            <!--<li><a href="javascript:;">Accounting</a></li>-->
-                            <li><a href="javascript:;">Notes</a></li>
-                        </ul>
-                        <div class="dialog-tabs-items childTabs">
-                            <div class="dialog-tabs-item childTabs active">
-                                <div class="clearfix"></div>
-                                <div class="half-block left">
-                                    <dl class="product-info">
-                                        <dt class="productCategory"><label for="productCategory">Product Category</label></dt>
-                                        <dd class="productCategory _newSelectListWrap"><a id="productCategory" class="current-selected" href="javascript:;" data-id="<%model.accounting.category._id%>"><%=model.accounting.category.name%></a></dd>
-                                        <!--
-                                        <dt><label for="productType">Product Type</label></dt>
-                                        <dd><a id="productType"
-                                               data-id="<%=(model.info.productType)?model.info.productType._id:''%>"
-                                               class="current-selected" href="javascript:;"><%=(model.info.productType)?(model.info.productType.name):"Select"%></a>
-                                        </dd>
-                                        -->
-
-                                    </dl>
-                                </div>
-                                <div class="half-block left">
-                                    <div class="inputField">
-                                        <label for="salePrice">
-                                            <input type="text" id="salePrice" class="extra-info" maxlength="10"
-                                                   value="<%=model.info.salePrice%>"/>
-                                            <span>Sale Price</span>
-                                        </label>
-                                    </div>
-                                    <!--
-                                    <dt><label for="active">Active</label></dt>
-                                    <dd><input type="checkbox" id="active" class="checkbox left" <%
-                                        if(model.info.isActive) { %> checked <% } %>/>
-                                    </dd>
-                                    <dt><label for="barcode">Barcode</label></dt>
-                                    <dd><input type="text" id="barcode" class="extra-info" maxlength="20"
-                                               value="<%=model.info.barcode%>"/></dd>
-                                    <dt></dt>
-                                    <dd>
-                                        <div id="bcTarget"></div>
-                                    </dd>
-                                    -->
-                                </div>
-                                <div class="clearfix"></div>
-                                <!--<div class="full-width left">
-                                    <div class="inner">
-                                        <div class="textarea-wrapper">
-                                        <textarea type="text" class="full-width productDescriptionCreate"
-                                                  name="description" id="description" maxlength="500"><%=model.info.description%></textarea>
-                                        </div>
-                                    </div>
-                                </div>-->
-                            </div>
-                            <!--
-                            <div class="dialog-tabs-item childTabs">
-
-                                <div class="clearfix"></div>
-                                <div class="full-width left">
-                                    <dl class="product-info">
-                                        <!--
-                                        <dt><label for="productCategory">Product Category</label></dt>
-                                        <dd><a id="productCategory" class="current-selected" href="javascript:;" data-id="<%model.accounting.category._id%>"><%=model.accounting.category.name%></a>
-                                        </dd>
-                                        -->
-                                        <!--
-                                        <dt><label for="assetType">Asset Type</label></dt>
-                                        <dd><a id="assetType" class="current-selected" href="javascript:;">Select</a>
-                                        </dd>
-                                        <dt><label for="deferredRevenueType">Deferred Revenue Type</label></dt>
-                                        <dd><a id="deferredRevenueType" class="current-selected" href="javascript:;">Select</a>
-                                        </dd>
-                                    </dl>
-                                </div>
-                                <div class="clearfix"></div>
-                                <div class="bottomLine">
-                                    <div class="half-block left">
-                                        <dt><label for="incomeAccount">Income Account</label></dt>
-                                        <dd><a id="incomeAccount" class="current-selected"
-                                               href="javascript:;">Select</a></dd>
-                                        <dt><label for="customerTaxes">Customer Taxes</label></dt>
-                                        <dd><a id="customerTaxes" class="current-selected"
-                                               href="javascript:;">Select</a></dd>
-                                    </div>
-                                    <div class="half-block left">
-                                        <dt><label for="expenseAccount">Expense Account</label></dt>
-                                        <dd><a id="expenseAccount" class="current-selected"
-                                               href="javascript:;">Select</a></dd>
-                                        <dt><label for="supplierTaxes">Supplier Taxes</label></dt>
-                                        <dd><a id="supplierTaxes" class="current-selected"
-                                               href="javascript:;">Select</a></dd>
-                                    </div>
-                                </div>
-                            </div>
-                            -->
-                            <div class="dialog-tabs-item childTabs">
-                                <!--<div class="clearfix"></div>-->
-                                <div class="full-width left">
-                                    <div class="inner">
-                                        <div class="textarea-wrapper inputField">
-                                                <label for="description">
-                                                    <textarea type="text" class="full-width productDescriptionCreate"
-                                                              name="description" id="description" maxlength="500"><%=model.info.description%></textarea>
-                                                    <span>Add note...</span>
-                                                </label>
-                                        </div>
-                                        <a href="javascript:;" class="attach_file">
-                                            <span class="icon-attach"></span>
-                                        </a>
-                                        <div class="attach-container">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="clearfix"></div>
-                        <div class="clearfix">
-                            <div class="cropImages form" style="display:none;">
-                                <div class="formTitle">
-                                    <h3 class="left">Crop Images</h3>
-
-                                    <div class="clearfix"></div>
-                                </div>
-                                <br/>
-
-                                <div class="image_input" style="float: left;margin-right: 20px;"></div>
-                                <img class="image_output"/>
-
-                                <div class="clearfix"></div>
-                            </div>
-                        </div>
-                        <div class="clearfix"></div>
                     </div>
-                    <div class="dialog-tabs-item mainTabs">
-                        <div class="assignees-container"></div>
+                    <div class="_formBlock _equal">
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="productName"
+                                   value="<%= product.name || ''%>"
+                                   autofocus
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">Product Name</label>
+                        </div>
+                        <div class="_formRow">
+                            <label class="_animatedCheckbox">
+                                <input id="sold"
+                                       type="checkbox"<% if (product.canBeSold) {%>
+                                checked
+                                <%}%> >
+                                <span></span>
+                            </label>
+                            <label>Can be Sold</label>
+                        </div>
+                        <div class="_formRow">
+                            <label class="_animatedCheckbox">
+                                <input id="expensed"
+                                       type="checkbox"<% if (product.canBeExpensed) {%>
+                                checked
+                                <%}%> >
+                                <span></span>
+                            </label>
+                            <label>Can be Expensed</label>
+                        </div>
+                        <div class="_formRow">
+                            <label class="_animatedCheckbox">
+                                <input id="purchased"
+                                       type="checkbox" <% if (product.canBePurchased) {%>
+                                checked
+                                <%}%> >
+                                <span></span>
+                            </label>
+                            <label>Can be Purchased</label>
+                        </div>
+                        <div class="_animateSelectBox">
+                            <span class="_selectTitle">Product type</span>
+                            <div class="_newSelectListWrap">
+                                <a id="productType"
+                                   class="current-selected">Select product type</a>
+                            </div>
+                        </div>
+                        <span class="_variantsLabel">Product Categories:</span>
+                        <div id="variantsCategoriesBlock" class="_variantsBlock">
+                            <div class="_checkCategoriesWrap">
+                                <ul id="checkedProductCategories" class="_checkCategories"></ul>
+                                <span id="showBtn" class="_arrow"></span>
+                            </div>
+                            <ul id="productCategories" class="_categoriesList"></ul>
+                        </div>
+                        <div class="cropImages form" style="display:none;">
+                            <div class="formTitle">
+                                <h3 class="left">Crop Images</h3>
+                            </div>
+                            <div class="image_input" style="float: left;margin-right: 20px;"></div>
+                            <img class="image_output"/>
+                        </div>
+                    </div>
+                    <div class="_formBlock _equal">
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="SKU"
+                                   value="<%= (product.info && product.info.SKU) ? product.info.SKU : ''%>"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">Model / SKU</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="UPC"
+                                   value="<%= (product.info && product.info.UPC) ? product.info.UPC : ''%>"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">UPC</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="ISBN"
+                                   value="<%= (product.info && product.info.ISBN) ? product.info.ISBN : ''%>"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">ISBN</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="EAN"
+                                   value="<%= (product.info && product.info.EAN) ? product.info.EAN : ''%>"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">EAN</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="weight"
+                                   value="<%= (product.inventory && product.inventory.weight) ? product.inventory.weight : 0%>"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">Weight in kilograms
+                                <!--
+                                                                <div class="_smallText">(You can set start date only 1 time and this value cannot be changed)</div>
+                                -->
+                            </label>
+                        </div>
+                        <div class="_animateTextareaBox">
+                            <textarea id="description"
+                                      class="_animate"
+                                      placeholder="Description. Max 500 symbols."
+                                      maxlength="500"
+                                      required><%= (product.info && product.info.description) ? product.info.description : ''%></textarea>
+                            <label for="description" class="_animate">Description</label>
+                        </div>
                     </div>
                 </div>
-                <div class="clearfix"></div>
+                <div id="variantsTable" class="_variantsTableWrap clearfix"></div>
             </div>
-        </fieldset>
+            <div class="dialog-tabs-item mainTabs">
+                <div class="_sliderWrap">
+                    <div id="sliderBlock" class="_productSlider"></div>
+                </div>
+            </div>
+            <div class="dialog-tabs-item mainTabs">
+                <div class="_formWrap _enlargedItemMargin">
+                    <div class="_formBlock _equal">
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="mainMinStockLevel"
+                                   value="<%= (product.inventory && product.inventory.minStockLevel) ? product.inventory.minStockLevel : ''%>"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">Minimum stock level</label>
+                        </div>
+                        <% if(availabilities.length){ %>
+                        <table class="stripedList">
+                            <colgroup>
+                                <col width="20%">
+                                <col width="15%">
+                                <col width="15%">
+                                <col width="15%">
+                                <col width="15%">
+                                <col width="20%">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th>Warehouse</th>
+                                <th>In Stock</th>
+                                <th>Fulfilled</th>
+                                <th>On hand</th>
+                                <th>Warehouse incoming</th>
+                                <th>Bin location</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <% availabilities.forEach(function (availability){ %>
+                            <tr>
+                                <td>
+                                    <span><%= availability.warehouse || ''%></span>
+                                </td>
+                                <td>
+                                    <span><%= availability.onHand || 0%></span>
+                                </td>
+                                <td>
+                                    <span><%= availability.allocated || 0%></span>
+                                </td>
+                                <td>
+                                    <span><%= availability.available || 0%></span>
+                                </td>
+                                <td>
+                                    <span><%= availability.incoming || 0%></span>
+                                </td>
+                                <td>
+                                    <span><%= availability.location || ''%></span>
+                                </td>
+                            </tr>
+                            <%})%>
+                            </tbody>
+                        </table>
+                        <% } else { %>
+                        <h5>This product isn't in stock and doesn't have any purchase orders</h5>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+            <div class="dialog-tabs-item mainTabs">
+                <div class="_formWrap">
+                    <div class="_formBlock">
+                        <div class=" left">
+                            <ul class="dialog-tabs" data-class="subTabs">
+                                <% var priceArray = [] %>
+                                <% _.each(allPriceLists, function(priceList) { %>
+                                <li>
+                                    <a href="javascript:;">
+                                        <% priceArray.push(priceList._id) %>
+                                        <%= priceList.priceListCode %> <%=priceList.cost ? '(costs)' : ''%>
+                                    </a>
+                                </li>
+                                <% }) %>
+                            </ul>
+                            <div class="dialog-tabs-items subTabs">
+                                <% thisPriceArray = [] %>
+
+                                <% _.each(product.pL, function(item) { %>
+                                <% if (item.priceLists && item.priceLists._id) { %>
+                                <% thisPriceArray.push(item.priceLists._id) %>
+                                <% } %>
+                                <% }) %>
+
+                                <% _.each(priceArray, function(id) { %>
+                                <% var index = thisPriceArray.indexOf(id) %>
+                                <% if (index >= 0) { %>
+                                <div data-id="<%= thisPriceArray[index] %>"
+                                     class="dialog-tabs-item subTabs priceList">
+                                    <div class="_priceBlockWrap">
+                                        <p>Breaks and Prices:</p>
+                                        <% var i = 1 %>
+                                        <% _.each(product.pL[index].prices, function (item){ %>
+                                        <dl class="priceBlock">
+                                            <div>
+                                                <dt>Count <%= i %></dt>
+                                                <dd>
+                                                    <input type="text"
+                                                           value="<%= i === 1 && !item.count ? 1 : item.count %>"
+                                                           placeholder="count<%= i %>"
+                                                           class="forNum productCount">
+                                                </dd>
+                                            </div>
+                                            <div>
+                                                <dt>Price <%= i %></dt>
+                                                <dd>
+                                                    <input type="text"
+                                                           value="<%= item.price || 0 %>"
+                                                           placeholder="price<%= i++ %>"
+                                                           class="forNum productPrice">
+                                                </dd>
+                                            </div>
+                                        </dl>
+                                        <% }) %>
+                                    </div>
+                                </div>
+                                <% } else { %>
+                                <div data-id="<%= id %>"
+                                     class="dialog-tabs-item subTabs priceList">
+                                    <div style="display: inline-block">
+                                        <p>Breaks and Prices:</p>
+                                        <% _.each([1,2,3,4,5], function (item){ %>
+                                        <dl class="priceBlock">
+                                            <div>
+                                                <dt>Count <%= item %></dt>
+                                                <dd>
+                                                    <input type="text"
+                                                           value="0"
+                                                           placeholder="count<%= item %>"
+                                                           class="forNum productCount">
+                                                </dd>
+                                            </div>
+                                            <div>
+                                                <dt>Price <%= item %></dt>
+                                                <dd>
+                                                    <input type="text"
+                                                           value="0"
+                                                           placeholder="price<%= item %>"
+                                                           class="forNum productPrice">
+                                                </dd>
+                                            </div>
+                                        </dl>
+                                        <% }) %>
+                                    </div>
+                                </div>
+                                <% } %>
+                                <% }); %>
+                                <div class="half-block right"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="dialog-tabs-item mainTabs">
+                <div id="publishTable"></div>
+            </div>
+            <% if (!product.isVariant) { %>
+            <div class="dialog-tabs-item mainTabs">
+                <div class="_createVariantsContainer">
+                    <div class="_variantTable">
+                        <div id="createdVariants"></div>
+                    </div>
+                    <div class="_variantOptions">
+                        <label>Product Options</label>
+                        <div id="creatingVariants" class="_creatingVariants"></div>
+                    </div>
+                </div>
+            </div>
+            <% } else { %>
+            <div class="dialog-tabs-item mainTabs">
+                <ul class="dialog-tabs" data-class="createVariantsTabs">
+                    <li><a class="active" href="javascript:;">Create Variants</a></li>
+                    <li><a href="javascript:;">Create SKUs</a></li>
+                    <li><a href="javascript:;">Add options</a></li>
+                </ul>
+                <div class="dialog-tabs-items createVariantsTabs">
+                    <div class="dialog-tabs-item createVariantsTabs active">
+                        <div class="_editingVariantsContainer">
+                            <div id="editedVariants"></div>
+                            <div id="editingVariants" class="_editingVariants"></div>
+                        </div>
+                    </div>
+                    <div class="dialog-tabs-item createVariantsTabs tabSKU"></div>
+                    <div class="dialog-tabs-item createVariantsTabs tabAddOptions">
+                        <p>Options is not found!</p>
+                    </div>
+                </div>
+            </div>
+            <% } %>
+            <% if (product.isBundle) {%>
+            <div class="dialog-tabs-item mainTabs">
+                <div class="half-block left">
+                    <div class="searchContainer">
+                        <span>Name | SKU</span>
+                        <input type="text" id="searchProducts"/>
+                        <button id="searchBtnEdit">Search</button>
+                        <ul id='productsForBundle'></ul>
+                    </div>
+                </div>
+                <div class="half-block right">
+                    <span>Is this product</span>
+                    <ul id='productsBundle' class="_productsBundle">
+                        <% _.each(product.bundles, function (item) { %>
+                        <div class="bundle" data-id="<%= item._id %>">
+                            <input value="<%= item.name || item._id %>">
+                            <input class="quantity"
+                                   value="<%= item.quantity %>">
+                            <span class="removeBundle icon-close3"></span>
+                        </div>
+                        <% }) %>
+                    </ul>
+                </div>
+            </div>
+            <% } %>
+        </div>
     </form>
 </div>
+

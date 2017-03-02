@@ -23,12 +23,10 @@ define([
 
         setAllTotalVals: function () {
             var self = this;
-            var ths = this.$el.find('th');
+            var tds = this.$el.find('.countable');
 
-            ths.each(function () {
-                if ($(this).hasClass('countable')) {
-                    self.calcTotal($(this).attr('data-id'));
-                }
+            tds.each(function () {
+                self.calcTotal($(this).attr('data-id'));
             });
         },
 
@@ -81,16 +79,19 @@ define([
 
         render: function () {
             this.$el.find('#listTableOperating').append(_.template(listTemplate, {
+                type            : 'operating',
                 collection      : this.operating,
                 currencySplitter: helpers.currencySplitter
             }));
 
             this.$el.find('#listTableInvesting').append(_.template(listTemplate, {
+                type            : 'investing',
                 collection      : this.investing,
                 currencySplitter: helpers.currencySplitter
             }));
 
             this.$el.find('#listTableFinancing').append(_.template(listTemplate, {
+                type            : 'financing',
                 collection      : this.financing,
                 currencySplitter: helpers.currencySplitter
             }));

@@ -5,13 +5,18 @@ define([
     'text!templates/trialBalance/list/ListHeader.html',
     'views/trialBalance/list/ListItemView',
     'collections/trialBalance/filterCollection',
+    'views/journalEntry/ViewSource',
+    'models/InvoiceModel',
+    'models/jobsModel',
+    'models/EmployeesModel',
+    'models/PaymentModel',
     'constants',
     'dataService',
     'helpers',
     'custom',
     'async',
     'common'
-], function ($, _, listViewBase, listTemplate, ListItemView, reportCollection, CONSTANTS, dataService, helpers, custom, async, common) {
+], function ($, _, listViewBase, listTemplate, ListItemView, reportCollection, View, InvoiceModel, JobsModel, EmployeesModel, PaymentModel, CONSTANTS, dataService, helpers, custom, async, common) {
     'use strict';
 
     var ListView = listViewBase.extend({
@@ -25,10 +30,17 @@ define([
         contentType       : CONSTANTS.TRIALBALANCE, // needs in view.prototype.changeLocationHash
         viewType          : 'list', // needs in view.prototype.changeLocationHash
         yearElement       : null,
+        JobsModel         : JobsModel,
+        InvoiceModel      : InvoiceModel,
+        PaymentModel      : PaymentModel,
+        EmployeesModel    : EmployeesModel,
+        responseObj       : {},
 
         events: {
-            'click .mainTr' : 'showHidden',
-            'click .childTr': 'showHiddenSub'
+            'click .mainTr'                                    : 'showHidden',
+            'click .childTr'                                   : 'showHiddenSub',
+            'click .newSelectList li:not(.miniStylePagination)': 'viewSourceDocument',
+            'click .current-selected'                          : 'showNewSelect'
         },
 
         initialize: function (options) {
@@ -41,32 +53,36 @@ define([
             this.defaultItemsNumber = this.collection.namberToShow || 100;
             this.page = options.collection.page;
 
-            dateRange = custom.retriveFromCash('trialBalanceDateRange');
-
             this.filter = options.filter || custom.retriveFromCash('trialBalance.filter');
 
             if (!this.filter) {
                 this.filter = {};
             }
 
-            if (!this.filter.startDate) {
-                this.filter.startDate = {
-                    key  : 'startDate',
-                    value: new Date(dateRange.startDate)
-                };
-                this.filter.endDate = {
-                    key  : 'endDate',
-                    value: new Date(dateRange.endDate)
+            dateRange = this.filter.date ? this.filter.date.value : [];
+
+            if (!this.filter.date) {
+                this.filter.date = {
+                    value: [new Date(dateRange.startDate), new Date(dateRange.endDate)]
                 };
             }
 
-            this.startDate = new Date(this.filter.startDate.value);
-            this.endDate = new Date(this.filter.endDate.value);
+            options.filter = this.filter;
+
+            this.startDate = new Date(dateRange[0]);
+            this.endDate = new Date(dateRange[1]);
 
             this.render();
 
             this.contentCollection = reportCollection;
             custom.cacheToApp('trialBalance.filter', this.filter);
+
+            this.responseObj['#source'] = [
+                {
+                    _id : 'source',
+                    name: 'View Source Document'
+                }
+            ];
         },
 
         showHidden: function (e) {
@@ -103,10 +119,15 @@ define([
             var span = $tr.find('.expand').find('span');
             var sign = $.trim(span.attr('class'));
 
-            if (sign === 'icon-caret-right') {
+            if (!hide && sign === 'icon-caret-right') {
                 span.removeClass('icon-caret-right');
                 span.addClass('icon-caret-down');
             } else {
+                span.removeClass('icon-caret-down');
+                span.addClass('icon-caret-right');
+            }
+
+            if (hide) {
                 span.removeClass('icon-caret-down');
                 span.addClass('icon-caret-right');
             }
@@ -119,22 +140,127 @@ define([
 
         },
 
+        viewSourceDocument: function (e) {
+            var $target = $(e.target);
+            var id = $target.attr('id');
+            var closestSpan = $target.closest('.current-selected');
+            var dataId = closestSpan.attr('data-id');
+            var dataName = closestSpan.attr('data-name');
+            var dataEmployee = closestSpan.attr('data-employee');
+            var model;
+            var data;
+
+            App.startPreload();
+
+            if (this.selectView) {
+                this.selectView.remove();
+            }
+
+            switch (dataName) {
+                case 'wTrack':
+                    model = new this.JobsModel();
+                    data = {
+                        employee: dataEmployee,
+                        _id     : dataId
+                    };
+
+                    model.urlRoot = '/journalEntries/jobs';
+                    break;
+                case 'expensesInvoice':
+                case 'dividendInvoice':
+                case 'Invoice':
+                    model = new this.InvoiceModel();
+                    data = {
+                        _id: dataId
+                    };
+
+                    model.urlRoot = '/journalEntries/invoices';
+
+                    break;
+                case 'Proforma':
+                    model = new this.InvoiceModel();
+                    data = {
+                        _id     : dataId,
+                        proforma: true
+                    };
+
+                    model.urlRoot = '/journalEntries/invoices';
+
+                    break;
+                case 'jobs':
+                    model = new this.JobsModel();
+                    data = {
+                        _id: dataId
+                    };
+
+                    model.urlRoot = '/journalEntries/jobs';
+
+                    break;
+                case 'Payment':
+                    model = new this.PaymentModel();
+                    data = {
+                        _id: dataId
+                    };
+
+                    model.urlRoot = '/journalEntries/payments';
+
+                    break;
+                case 'Employees':
+                    model = new this.EmployeesModel();
+                    data = {
+                        _id: dataId
+                    };
+
+                    model.urlRoot = '/journalEntries/employees';
+
+                    break;
+
+                // skip default;
+            }
+
+            if (model) {
+                model.fetch({
+                    data   : data,
+                    success: function (model) {
+                        new View({model: model, type: dataName, employee: dataEmployee});
+
+                        App.stopPreload();
+                    },
+
+                    error: function () {
+                        App.stopPreload();
+
+                        App.render({
+                            type   : 'error',
+                            message: 'Please refresh browser'
+                        });
+                    }
+                });
+            } else {
+                App.stopPreload();
+
+                App.render({
+                    type   : 'notify',
+                    message: 'No Source Document is required'
+                });
+            }
+
+        },
+
         asyncRenderInfo: function (asyncKeys) {
+            var self = this;
             var body = this.$el.find('#listTable');
-            var stDate = this.filter.startDate.value;
-            var endDate = this.filter.endDate.value;
 
             async.each(asyncKeys, function (asyncId) {
                 dataService.getData('journalEntries/getAsyncDataForGL', {
-                    startDate  : stDate,
-                    endDate    : endDate,
+                    filter     : self.filter,
                     contentType: 'trialBalance',
                     _id        : asyncId
                 }, function (result) {
-                    var journalEntries = result.journalEntries;
+                    var journalEntries = result.journalEntries || [];
                     var mainTr = body.find("[data-account='" + asyncId + "']");
                     journalEntries.forEach(function (entry) {
-                        mainTr.after("<tr data-main='" + asyncId + "' class='subTr hidden'><td></td><td class='leftBorderNone'>" + common.utcDateToLocaleFullDateTime(entry._id) + "</td><td class='money'>" + helpers.currencySplitter((entry.debit / 100).toFixed(2)) + "</td><td class='money'>" + helpers.currencySplitter((entry.credit / 100).toFixed(2)) + "</td><td class='money'>" + helpers.currencySplitter(((entry.debit - entry.credit) / 100).toFixed(2)) + "</td></tr>");
+                        mainTr.after("<tr data-main='" + asyncId + "' class='subTr hidden'><td></td><td class='leftBorderNone source'><span id='source' class='current-selected icon-caret-down' data-id='" + entry.sourceDocument._id + "' data-name='" + entry.sourceDocument.model + "' data-employee='" + entry.sourceDocument.employee + "'>" + entry.sourceDocument.name + '</span></td><td>' + common.utcDateToLocaleFullDateTime(entry._id) + "</td><td class='money'>" + helpers.currencySplitter((entry.debit / 100).toFixed(2)) + "</td><td class='money'>" + helpers.currencySplitter((entry.credit / 100).toFixed(2)) + "</td><td class='money'>" + helpers.currencySplitter(((entry.debit - entry.credit) / 100).toFixed(2)) + "</td></tr>");
                     });
                 });
 
@@ -142,40 +268,27 @@ define([
 
         },
 
-        changeDateRange: function () {
-            var stDate = $('#startDate').val();
-            var enDate = $('#endDate').val();
+        changeDateRange: function (dateArray) {
             var searchObject;
-
-            this.startDate = new Date(stDate);
-            this.endDate = new Date(enDate);
 
             if (!this.filter) {
                 this.filter = {};
             }
 
-            this.filter.startDate = {
-                key  : 'startDate',
-                value: stDate
-            };
-
-            this.filter.endDate = {
-                key  : 'endDate',
-                value: enDate
+            this.filter.date = {
+                value: dateArray
             };
 
             searchObject = {
-                startDate: stDate,
-                endDate  : enDate,
-                filter   : this.filter
+                page  : 1,
+                filter: this.filter
             };
 
             this.collection.showMore(searchObject);
 
             App.filtersObject.filter = this.filter;
 
-            custom.cacheToApp('trialBalance.filter', this.filter);
-            custom.cacheToApp('trialBalanceDateRange', {startDate: this.startDate, endDate: this.endDate});
+            custom.cacheToApp('inventoryReport.filter', this.filter);
         },
 
         showMoreContent: function (newModels) {
@@ -214,11 +327,9 @@ define([
 
             context.changeLocationHash(1, itemsNumber, filter);
             context.collection.showMore({
-                count    : itemsNumber,
-                page     : 1,
-                filter   : filter,
-                startDate: this.startDate,
-                endDate  : this.endDate
+                count : itemsNumber,
+                page  : 1,
+                filter: filter
             });
         },
 

@@ -2,10 +2,10 @@ define([
     'Backbone',
     'collections/parent',
     'models/journalEntry',
+    'helpers/getDateHelper',
     'custom',
-    'moment',
     'constants'
-], function (Backbone, Parent, JournalEntryModel, custom, moment, CONSTANTS) {
+], function (Backbone, Parent, JournalEntryModel, DateHelper, custom, CONSTANTS) {
     'use strict';
     var manualEntryCollection = Parent.extend({
         model   : JournalEntryModel,
@@ -14,26 +14,22 @@ define([
 
         initialize: function (options) {
             var dateRange;
-            var page;
-            var startDate = moment(new Date());
-            var endDate = moment(new Date());
+            var _opts;
 
             this.namberToShow = options.count;
             this.viewType = options.viewType;
             this.contentType = options.contentType;
             this.count = options.count;
             this.page = options.page || 1;
+
             this.filter = options.filter || custom.retriveFromCash('manualEntry.filter');
 
-            startDate.month(startDate.month() - 1);
-            startDate.date(1);
-            endDate.month(startDate.month());
-            endDate.endOf('month');
+            dateRange = this.filter && this.filter.date ? this.filter.date.value : null;
 
-            dateRange = this.filter && this.filter.date ? this.filter.date.value : [];
+            dateRange = dateRange || DateHelper.getDate('thisMonth');
 
-            this.startDate = dateRange[0] || new Date(startDate);
-            this.endDate = dateRange[1] || new Date(endDate);
+            this.startDate = new Date(dateRange[0]);
+            this.endDate = new Date(dateRange[1]);
 
             options.filter = this.filter || {};
 
@@ -54,17 +50,16 @@ define([
                 }
             }
 
-            options = options || {};
-            options.error = options.error || _errHandler;
-            page = options.page;
+            _opts = options || {};
+            _opts.error = _opts.error || _errHandler;
 
             this.startTime = new Date();
 
-            if (page) {
-                return this.getPage(page, options);
+            if (this.page) {
+                return this.getPage(this.page, _opts);
             }
 
-            this.getFirstPage(options);
+            this.getFirstPage(_opts);
         }
     });
 

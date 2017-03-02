@@ -6,9 +6,10 @@ define([
     'use strict';
 
     var TopBarView = BaseView.extend({
-        el         : '#top-bar',
-        contentType: 'cashTransfer',
-        template   : _.template(ContentTopBarTemplate)
+        el           : '#top-bar',
+        contentType  : 'cashTransfer',
+        contentHeader: 'Cash Transfer',
+        template     : _.template(ContentTopBarTemplate)
     });
 
     return TopBarView;

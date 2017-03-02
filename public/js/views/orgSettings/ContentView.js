@@ -31,6 +31,10 @@ define([
                 }
 
                 self.render();
+
+                setTimeout(function () {
+                    common.canvasDraw({model: self.model.toJSON()}, self);
+                }, 100);
             });
         },
 
@@ -126,6 +130,7 @@ define([
             var self = this;
             var thisEl = this.$el;
             var name = thisEl.find('#name').val();
+            var contactName = thisEl.find('#contactName').val();
             var currency = thisEl.find('#currency').attr('data-id');
             var industry = thisEl.find('#industry').attr('data-id');
             var contact = thisEl.find('#contact').attr('data-id');
@@ -140,9 +145,9 @@ define([
             var country = thisEl.find('#country').attr('data-id');
 
             var data = {
-                currency : currency || null,
-                industry : industry,
-                address  : {
+                currency   : currency || null,
+                industry   : industry,
+                address    : {
                     zip    : zip,
                     fax    : fax,
                     state  : state,
@@ -150,12 +155,13 @@ define([
                     street : street,
                     country: country
                 },
-                website  : website,
-                startDate: startDate,
-                contact  : contact || null,
-                phone    : phone,
-                name     : name,
-                imageSrc : self.imageSrc
+                website    : website,
+                startDate  : startDate,
+                contact    : contact || null,
+                phone      : phone,
+                name       : name,
+                imageSrc   : self.imageSrc,
+                contactName: contactName
             };
 
             this.model.save(data, {
@@ -221,15 +227,15 @@ define([
             dataService.getData('/countries/getForDD', {}, function (countries) {
                 self.responseObj['#country'] = countries.data;
             });
-            common.canvasDraw({model: model}, this);
             this.renderStartDateSetting();
+            return this;
         },
 
         renderStartDateSetting: function () {
 
             if (!this.model.get('startDate')) {
                 this.$el.find('#startDate').datepicker({
-                    dateFormat : "d M, yy",
+                    dateFormat : 'd M, yy',
                     changeMonth: true,
                     changeYear : true,
                     minDate    : null,
@@ -238,7 +244,7 @@ define([
             } else {
                 this.$el.find('#startDate').datepicker('disable', true);
             }
-        },
+        }
 
     });
 

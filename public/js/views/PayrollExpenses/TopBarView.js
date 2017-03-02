@@ -9,9 +9,10 @@ define([
     'use strict';
 
     var TopBarView = BaseView.extend({
-        el         : '#top-bar',
-        contentType: CONSTANTS.PAYROLLEXPENSES,
-        template   : _.template(ContentTopBarTemplate),
+        el           : '#top-bar',
+        contentType  : CONSTANTS.PAYROLLEXPENSES,
+        contentHeader: 'Payroll Expenses',
+        template     : _.template(ContentTopBarTemplate),
 
         events: {
             'click a.changeContentView'   : 'changeContentViewType',

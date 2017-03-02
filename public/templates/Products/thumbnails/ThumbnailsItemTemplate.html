@@ -1,13 +1,23 @@
+<% var delimiter = '' %>
 <% collection.forEach(function(product){ %>
 <div class="thumbnailElement thumbnail product" id="<%=product._id%>">
     <div class="inner">
         <div class="avatar">
-            <img src=""/>
+            <img src="<%=product.imageSrc%>"/>
         </div>
     </div>
     <div class="info">
         <h4 class="productHeading"><%= product.name %></h4>
-        <div class="productDesription"><label>Price: </label><%=(product.info.salePrice)?(product.info.salePrice.toFixed(2)):"0.00"%></div>
+        <div class="productDesription">
+            <% if (product.variants && product.variants.length && Object.keys(product.variants[0]).length) { %>
+            <label>Features:</label>
+            <% _.each(product.variants ,function(variant){ %>
+            <span title="<%= variant.optionId ? variant.optionId.name : 'unknown' %>"><%= delimiter + ((variant.value) ? variant.value : 'deleted') %><% delimiter = '|' %></span>
+            <%})%>
+            <% delimiter = '' %>
+            <% } %>
+        </div>
+        SKU: <%= product.info.SKU %>
     </div>
 </div>
 <% }) %>

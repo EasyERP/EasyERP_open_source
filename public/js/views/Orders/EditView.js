@@ -410,6 +410,7 @@ define([
                 buttons = [
                     {
                         text : 'Close',
+                        class: 'btn',
                         click: function () {
                             self.hideDialog();
                         }
@@ -418,13 +419,11 @@ define([
             }
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'edit-dialog',
-                title        : 'Edit Order',
-                width        : '900px',
-                buttons      : buttons
+                autoOpen   : true,
+                dialogClass: 'edit-dialog',
+                title      : 'Edit Order',
+                width      : '900px',
+                buttons    : buttons
             });
 
             this.renderAssignees(this.currentModel);

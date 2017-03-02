@@ -142,7 +142,7 @@
             };
             var expectedClosing = $.trim(this.$el.find('#expectedClosing').val());
             var priority = this.$el.find('#priorityDd').text();
-        /*    var internalNotes = $.trim(this.$el.find('#internalNotes').val());*/
+            /*    var internalNotes = $.trim(this.$el.find('#internalNotes').val());*/
             var address = {};
             var first = $.trim(this.$el.find('#first').val());
             var last = $.trim(this.$el.find('#last').val());
@@ -175,7 +175,7 @@
                 address[el.attr('name')] = el.val();
             });
             var objectTags = this.currentModel.get('tags');
-            var tags = objectTags.map(function (elem){
+            var tags = objectTags.map(function (elem) {
                 return elem._id;
             });
 
@@ -196,7 +196,7 @@
                 nextAction     : nextAction,
                 expectedClosing: expectedClosing,
                 priority       : priority,
-              /*  internalNotes  : internalNotes,*/
+                /*  internalNotes  : internalNotes,*/
                 address        : address,
                 contactName    : contactName,
                 func           : func,
@@ -419,7 +419,7 @@
             }
         },
 
-        renderTags : function (){
+        renderTags: function () {
             var notDiv = this.$el.find('.tags-container');
             notDiv.empty();
 
@@ -448,10 +448,9 @@
             var notDiv;
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                dialogClass  : 'edit-dialog',
-                width        : 900,
-                buttons      : {
+                dialogClass: 'edit-dialog',
+                width      : 900,
+                buttons    : {
                     save: {
                         text : 'Save',
                         class: 'btn blue',
@@ -482,8 +481,6 @@
                     contentType: 'Opportunities'
                 }).render().el
             );
-
-
 
             this.renderAssignees(this.currentModel);
 

@@ -115,7 +115,9 @@
 
                 if (response.notes) {
                     _.map(response.notes, function (note) {
-                        note.date = moment(note.date).format('DD MMM, YYYY, H:mm:ss');
+                        note.date = moment(new Date(note.date));
+
+                        // note.date = moment(note.date).format('DD MMM, YYYY, H:mm:ss');
 
                         if (note.history && (note.history.changedField === 'Creation Date' || note.history.changedField === 'Close Date')){
                             note.history.changedValue = note.history.changedValue ? moment(new Date(note.history.changedValue)).format('DD MMM, YYYY') : '';
@@ -155,11 +157,26 @@
 
         validate: function (attrs) {
             var errors = [];
+            var amountNumber;
+
             Validation.checkGroupsNameField(errors, true, attrs.name, 'Subject');
             Validation.checkCountryCityStateField(errors, false, attrs.address.country, 'Country');
             Validation.checkCountryCityStateField(errors, false, attrs.address.state, 'State');
             Validation.checkCountryCityStateField(errors, false, attrs.address.city, 'City');
             Validation.checkMoneyField(errors, false, attrs.expectedRevenue.value, 'Expected revenue');
+
+            if (attrs['expectedRevenue.value']) {
+                amountNumber = parseInt(attrs['expectedRevenue.value'], 10);
+
+                if (!amountNumber) {
+                    errors.push(new Error('Check valid amount number please'));
+                }
+
+                if (amountNumber < 0) {
+                    errors.push(new Error('Amount can not be less 0'));
+                }
+            }
+
             if (errors.length > 0) {
                 return errors;
             }

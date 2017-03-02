@@ -1,521 +1,501 @@
-<div class="form-holder">
+<div class="form-holder _newForm _employeeEdit">
     <form method="post" action="" id="editEmployeeForm" class="form editEmployeeForm">
-        <fieldset>
-            <div class="inner">
-
-                <ul class="dialog-tabs">
-                    <li>
-                        <a class="active"
-                           href="javascript:;">
-                            Main
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="javascript:;"
-                           class="">
-                            Personal Information
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="javascript:;" id="jobTab"
-                           class="">
-                            Job
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="javascript:;">Assignees</a>
-                    </li>
-
-                    <li class="right withEndContract _newSelectListWrap">
-                        <span class="arrow"></span>
-                        <span class="endContractReasonList">End Contract</span>
-                        <ul class="newSelectList">
-                            <li class="endContract">End Contract</li>
-                            <li class="endContract">Fired</li>
-                            <li class="endContract">Personal Issues</li>
-                            <li class="endContract">Other</li>
-                        </ul>
-                    </li>
-
+        <h4 class="_dialogTitlePositioned">Edit Employee</h4>
+        <ul class="dialog-tabs">
+            <li><a class="active" href="javascript:;">Main</a></li>
+            <li><a href="javascript:;">Personal Information</a></li>
+            <li><a href="javascript:;" id="jobTab">Job</a></li>
+            <li><a href="javascript:;" id="noteTab">Notes</a></li>
+            <%if (!isForProfile) {%>
+            <li><a href="javascript:;">Assignees</a></li>
+            <li class="right withEndContract _newSelectListWrap">
+                <span class="arrow"></span>
+                <span class="endContractReasonList">End Contract</span>
+                <ul class="newSelectList">
+                    <li class="endContract">End Contract</li>
+                    <li class="endContract">Fired</li>
+                    <li class="endContract">Personal Issues</li>
+                    <li class="endContract">Other</li>
                 </ul>
-
-                <div class="clearfix"></div>
-
-                <div class="dialog-tabs-items">
-
-                    <div class="dialog-tabs-item active">
-                        <div class="left">
-                            <div class="avatar">
-                                <div class="upload">Edit
-                                    <input type="file" value="Edit" id="inputImg">
-                                </div>
-                                <canvas id="avatar"
-                                        width="140"
-                                        height="140">
-                                </canvas>
+            </li>
+            <%};%>
+        </ul>
+        <div class="dialog-tabs-items">
+            <div class="dialog-tabs-item active">
+                <div class="_formWrap">
+                    <div class="_avatarBlock">
+                        <div class="avatar">
+                            <div class="upload">Edit
+                                <input type="file" value="Edit" id="inputImg">
                             </div>
-                            <div class="social">
-                                <% if (model.social.FB){%><a class="facebook" href="<%=model.social.FB%>"></a><%}%>
-                                <% if (model.social.LI){%><a class="linkedin" href="<%=model.social.LI%>"></a><%}%>
-                                <% if (model.skype){%><a class="skype" href="skype:<%=model.skype%>?call"></a><%}%>
+                            <canvas id="avatar"
+                                    width="140"
+                                    height="140">
+                            </canvas>
+                        </div>
+                        <div class="social">
+                            <% if (model.social.FB){%><a class="facebook" href="<%=model.social.FB%>"></a><%}%>
+                            <% if (model.social.LI){%><a class="linkedin" href="<%=model.social.LI%>"></a><%}%>
+                            <% if (model.skype){%><a class="skype" href="skype:<%=model.skype%>?call"></a><%}%>
+                        </div>
+                    </div>
+                    <div class="_formBlock">
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="first"
+                                   autofocus
+                                   required
+                                   value="<%=model.name.first%>"
+                                   maxlength="32"/>
+                            <label class="_animate">First Name</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="last"
+                                   value="<%=model.name.last%>"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">Last Name</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <span class="_staticLabel">Date of Birthday</span>
+                            <input type="text"
+                                   name="dateBirth"
+                                   class="_animate"
+                                   id="dateBirth"
+                                   value="<%=model.dateBirth%>"
+                                   required
+                                   readonly/>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="mobile"
+                                   value="<%=model.workPhones.mobile%>"
+                                   required
+                                   maxlength="20"/>
+                            <label class="_animate">Personal Mobile</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="personalEmail"
+                                   value="<%=model.personalEmail%>"
+                                   required
+                                   maxlength="48"/>
+                            <label class="_animate">Personal Email</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="skype"
+                                   value="<%=model.skype%>"
+                                   required
+                                   maxlength="64"/>
+                            <label class="_animate">Skype</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="LI"
+                                   value="<%=model.social.LI%>"
+                                   required
+                                   maxlength="256"/>
+                            <label class="_animate">LinkedIn</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="FB"
+                                   value="<%=model.social.FB%>"
+                                   required
+                                   maxlength="256"/>
+                            <label class="_animate">Facebook</label>
+                        </div>
+                    </div>
+                    <div class="_formBlock">
+                        <div class="_animateInputBox">
+                            <span class="_staticLabel">Job Position</span>
+                            <span class="_staticInfo"
+                                  id="jobPosition"
+                                  data-id="<%=model.jobPosition ? model.jobPosition._id: ''%>">
+                                <%=model.jobPosition.name%>
+                            </span>
+                        </div>
+                        <div class="_animateInputBox">
+                            <span class="_staticLabel">Department</span>
+                            <span class="_staticInfo"
+                                  id="department"
+                                  data-id="<%=model.department ? model.department._id: ''%>">
+                                <%=model.department.name%>
+                            </span>
+                        </div>
+                        <div class="_animateInputBox">
+                            <span class="_staticLabel">Manager</span>
+                            <span class="_staticInfo"
+                                  id="manager"
+                                  data-id="<%=model.manager ? model.manager._id: null%>">
+                                <%=model.manager ? model.manager.fullName : ""%>
+                            </span>
+                        </div>
+                        <div class="_animateInputBox">
+                            <span class="_staticLabel">Job Type</span>
+                            <span class="_staticInfo"
+                                  id="jobType"
+                                  data-id="<%=model.jobType ? model.jobType: ''%>">
+                                <%=model.jobType ? model.jobType : ""%>
+                            </span>
+                        </div>
+                        <% if (!isForProfile) { %>
+                        <div class="_animateSelectBox">
+                            <span class="_selectTitle">Source</span>
+                            <div class="_newSelectListWrap">
+                                <a id="sourceDd"
+                                   class="current-selected"
+                                   data-id="<%=model.source?model.source:''%>"
+                                   href="javascript:;"><%=model.source?(model.source):'Select source'%>
+                                </a>
                             </div>
                         </div>
+                        <%}%>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="workEmail"
+                                   value="<%=model.workEmail%>"
+                                   maxlength="48"
+                                   required/>
+                            <label class="_animate">Work Email</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   name="phone"
+                                   class="_animate"
+                                   id="phone"
+                                   value="<%=model.workPhones.phone%>"
+                                   maxlength="32"
+                                   required/>
+                            <label class="_animate">Work Phone</label>
+                        </div>
+                    </div>
+                    <dl class="edit-employee-info">
 
-                        <div class="avatarInfoContainer employee">
-                            <div class="half-block left">
-                                <dl class="edit-employee-info">
-                                    <dt>
-                                        <label for="first">First Name</label>
-                                    </dt>
-                                    <dd><input type="text"
-                                               class="blueback"
-                                               id="first"
-                                               value="<%=model.name.first%>"
-                                               required maxlength="32"/>
-                                    </dd>
-                                    <dt>
-                                        <label for="last">Last Name</label>
-                                    </dt>
-                                    <dd><input type="text"
-                                               class="blueback"
-                                               id="last"
-                                               value="<%=model.name.last%>"
-                                               required maxlength="32"/>
-                                    </dd>
-                                    <!--                <dt><label for="tags">Tags</label></dt><dd><input type="text" id="tags" value="<%=model.tags%>" maxlength="32"/></dd>-->
-                                    <dt>
-                                        <label for="dateBirth">Date of Birth</label>
-                                    </dt>
-                                    <dd><input type="text"
-                                               name="dateBirth"
-                                               id="dateBirth"
-                                               value="<%=model.dateBirth%>"
-                                               required readonly/>
-                                    </dd>
-                                    <dt>
-                                        <label for="mobile">Personal Mobile</label>
-                                    </dt>
-                                    <dd>
-                                        <input type="text"
-                                               name="mobile"
-                                               id="mobile"
-                                               value="<%=model.workPhones.mobile%>"
-                                               maxlength="20"/>
-                                    </dd>
-                                    <dt>
-                                        <label for="personalEmail">Personal Email</label>
-                                    </dt>
-                                    <dd><input type="text"
-                                               id="personalEmail"
-                                               value="<%=model.personalEmail%>"
-                                               maxlength="48"/>
-                                    </dd>
-                                    <dt>
-                                        <label for="skype">Skype</label>
-                                    </dt>
-                                    <dd><input type="text"
-                                               id="skype"
-                                               value="<%=model.skype%>"
-                                               maxlength="32"/>
-                                    </dd>
-                                    <dt>
-                                        <label for="LI">LinkedIn</label>
-                                    </dt>
-                                    <dd><input type="text"
-                                               id="LI"
-                                               value="<%=model.social.LI%>"
-                                               placeholder="LinkedIn"
-                                               maxlength="256"/>
-                                    </dd>
-                                    <dt>
-                                        <label for="FB">Facebook</label>
-                                    </dt>
-                                    <dd><input type="text"
-                                               id="FB"
-                                               value="<%=model.social.FB%>"
-                                               placeholder="Facebook"
-                                               maxlength="256"/>
-                                    </dd>
-                                    <dt>
-                                        <label for="relatedUsersDd">Related User</label>
-                                    </dt>
-                                    <dd class="_newSelectListWrap">
-                                        <a id="relatedUsersDd"
-                                           data-id="<%=model.relatedUser?model.relatedUser._id:''%>"
-                                           class="current-selected"
-                                           href="javascript:;"><%=model.relatedUser?(model.relatedUser.login):'Select'%>
-                                        </a>
-                                    </dd>
+                        <% if (isForProfile) { %>
+                        <div class="_animateInputBox">
+                            <span class="_staticLabel">Timezone</span>
+                            <span class="_staticInfo"><%= timezone %></span>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="workEmail"
+                                   value="<%- login %>"
+                                   data-content="user"
+                                   data-type="input"
+                                   required/>
+                            <label class="_animate">Username</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <span class="_staticLabel">Password</span>
+                            <button id="changePassword" class="changePassword btn blue">
+                                <span>Change Password</span>
+                            </button>
+                        </div>
+                        <%}%>
+                    </dl>
 
-
-                                </dl>
+                    <div class="cropImages form" style="display:none;">
+                        <div class="formTitle">
+                            <h3 class="left">Crop Images</h3>
+                        </div>
+                        <div class="image_input" style="float: left;margin-right: 20px;"></div>
+                        <img class="image_output"/>
+                    </div>
+                </div>
+            </div>
+            <div class="dialog-tabs-item">
+                <div class="_formWrap">
+                    <h4 class="_titleBlueBorder">Citizenship &amp; Other Info</h4>
+                    <div class="_formBlock _equal">
+                        <div class="_animateSelectBox">
+                            <span class="_selectTitle">Nationality</span>
+                            <div class="_newSelectListWrap">
+                                <a id="nationality"
+                                   data-id="<%=model.nationality?model.nationality:''%>"
+                                   class="current-selected"
+                                   href="javascript:;"><%=model.nationality?(model.nationality):'Select'%></a>
                             </div>
-
-                            <div class="half-block left">
-                                <dl class="edit-employee-info">
-                                    <dt>
-                                        <label>Job Position</label>
-                                    </dt>
-                                    <dd>
-                                        <span id="jobPosition"
-                                              data-id="<%=model.jobPosition ? model.jobPosition._id: ''%>"><%=model.jobPosition.name%></span>
-                                    </dd>
-                                    <dt>
-                                        <label>Department</label>
-                                    </dt>
-                                    <dd>
-                                        <span id="department"
-                                              data-id="<%=model.department ? model.department._id: ''%>"><%=model.department.name%></span>
-                                    </dd>
-                                    <dt>
-                                        <label>Manager</label>
-                                    </dt>
-                                    <dd>
-                                        <span id="manager" data-id="<%=model.manager ? model.manager._id: null%>"><%=model.manager ? model.manager.fullName : ""%></span>
-                                    </dd>
-                                    <dt>
-                                        <label>Job Type</label>
-                                    </dt>
-                                    <dd>
-                                        <span id="jobType" data-id="<%=model.jobType ? model.jobType: ''%>"><%=model.jobType ? model.jobType : ""%></span>
-                                    </dd>
-
-                                    <dt>
-                                        <label for="sourceDd">Source </label>
-                                    </dt>
-                                    <dd class="_newSelectListWrap">
-                                        <a id="sourceDd"
-                                           data-id="<%=model.source?model.source:''%>"
-                                           class="current-selected"
-                                           href="javascript:;"><%=model.source?(model.source):'Select'%>
-                                        </a>
-                                    </dd>
-
-                                    <dt>
-                                        <label for="workEmail">Work Email</label>
-                                    </dt>
-                                    <dd>
-                                        <input type="text" id="workEmail" value="<%=model.workEmail%>"
-                                               maxlength="48"/>
-                                    </dd>
-                                    <dt>
-                                        <label for="phone">Work Phone</label>
-                                    </dt>
-                                    <dd>
-                                        <input type="text"
-                                               name="phone"
-                                               id="phone"
-                                               value="<%=model.workPhones.phone%>"
-                                               maxlength="32"/>
-                                    </dd>
-                                </dl>
-                            </div>
-
-                            <div class="clearfix"></div>
-
-                            <div class="clearfix"></div>
-
-                            <div class="cropImages form" style="display:none;">
-                                <div class="formTitle">
-                                    <h3 class="left">Crop Images</h3>
-
-                                    <div class="clearfix"></div>
-                                </div>
-                                <br/>
-
-                                <div class="image_input" style="float: left;margin-right: 20px;"></div>
-                                <img class="image_output"/>
-
-                                <div class="clearfix"></div>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   name="identNo"
+                                   class="_animate"
+                                   id="identNo"
+                                   value="<%=model.identNo%>"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">Identification №</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   name="passportNo"
+                                   class="_animate"
+                                   id="passportNo"
+                                   value="<%=model.passportNo%>"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">Passport №</label>
+                        </div>
+                    </div>
+                    <div class="_formBlock _equal">
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   name="bankAccountNo"
+                                   class="_animate"
+                                   id="bankAccountNo"
+                                   value="<%=model.bankAccountNo?model.bankAccountNo:''%>"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">Bank Account №</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   name="otherId"
+                                   class="_animate"
+                                   id="otherId"
+                                   value="<%=model.otherId%>"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">Other Id</label>
+                        </div>
+                    </div>
+                    <h4 class="_titleBlueBorder">Contact Information</h4>
+                    <div class="_formBlock _equal">
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   name="street"
+                                   class="_animate homeAddress"
+                                   id="employeeEditStreet"
+                                   value="<%=model.homeAddress.street%>"
+                                   required
+                                   maxlength="60"/>
+                            <label class="_animate">Street</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   name="city"
+                                   class="_animate homeAddress"
+                                   id="employeeEditCity"
+                                   value="<%=model.homeAddress.city%>"
+                                   required
+                                   maxlength="60"/>
+                            <label class="_animate">City</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   name="state"
+                                   class="_animate homeAddress"
+                                   id="employeeEditState"
+                                   value="<%=model.homeAddress.state%>"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">State</label>
+                        </div>
+                    </div>
+                    <div class="_formBlock _equal">
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   name="zip"
+                                   class="_animate homeAddress"
+                                   id="employeeEditZip"
+                                   value="<%=model.homeAddress.zip%>"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">Zip Code</label>
+                        </div>
+                        <div class="_animateSelectBox">
+                            <span class="_selectTitle">Country</span>
+                            <div class="_newSelectListWrap">
+                                <a href="javascript:;"
+                                   name="country"
+                                   data-id="<%=model.homeAddress.country%>"
+                                   class="current-selected"
+                                   id="employeeEditCountry"><%=model.homeAddress.country || 'Select'%></a>
                             </div>
                         </div>
                     </div>
-                    <div class="dialog-tabs-item">
-
-                        <div>
-                            <div class="formTitle left">
-                                <h3 class="left">Citizenship &amp; Other Info</h3>
-
-                                <div class="clearfix"></div>
+                    <h4 class="_titleBlueBorder">Status</h4>
+                    <div class="_formBlock _equal">
+                        <div class="_animateSelectBox">
+                            <span class="_selectTitle">Gender</span>
+                            <div class="_newSelectListWrap">
+                                <a href="javascript:;"
+                                   class="current-selected"
+                                   id="genderDd"
+                                   data-id="<%=model.gender?model.gender:''%>">
+                                    <%=model.gender?(model.gender):'Select'%>
+                                </a>
                             </div>
-                            <div class="half-block left">
-                                <dl class="edit-employee-info">
-                                    <dt><label for="nationality">Nationality</label></dt>
-                                    <dd class="_newSelectListWrap">
-                                        <a id="nationality" data-id="<%=model.nationality?model.nationality:''%>"
-                                           class="current-selected" href="javascript:;"><%=model.nationality?(model.nationality):'Select'%></a>
-                                    </dd>
-                                    <dt>
-                                        <label for="identNo">Identification №</label>
-                                    </dt>
-                                    <dd><input type="text"
-                                               name="identNo"
-                                               id="identNo"
-                                               value="<%=model.identNo%>"
-                                               maxlength="32"/>
-                                    </dd>
-                                    <dt>
-                                        <label for="passportNo">Passport №</label>
-                                    </dt>
-                                    <dd><input type="text"
-                                               name="passportNo"
-                                               id="passportNo"
-                                               value="<%=model.passportNo%>"
-                                               maxlength="32"/>
-                                    </dd>
-                                </dl>
-
+                        </div>
+                        <div class="_animateSelectBox">
+                            <span class="_selectTitle">Employment type</span>
+                            <% if (isForProfile) {%>
+                            <span class="_staticInfo"><%- model.employmentType ? (model.employmentType) : '' %></span>
+                            <%} else {%>
+                            <div class="_newSelectListWrap">
+                                <a href="javascript:;"
+                                   class="current-selected"
+                                   id="employmentTypeDd"
+                                   data-id="<%=model.employmentType ? model.employmentType:''%>">
+                                    <%=model.employmentType ? (model.employmentType):'Select'%>
+                                </a>
                             </div>
-                            <div class="half-block left">
-                                <dl class="edit-employee-info">
-                                    <dt><label for="bankAccountNo">Bank Account №</label></dt>
-                                    <dd>
-                                        <input type="text"
-                                               id="bankAccountNo"
-                                               name="bankAccountNo"
-                                               value="<%=model.bankAccountNo?model.bankAccountNo:''%>">
-                                    </dd>
-                                    <dt><label for="otherId">Other Id</label></dt>
-                                    <dd><input type="text"
-                                               name="otherId"
-                                               id="otherId"
-                                               value="<%=model.otherId%>"
-                                               maxlength="32"/>
-                                    </dd>
-                                </dl>
-                            </div>
-                            <div class="clearfix">
-                            </div>
-                            <div class="formTitle left">
-                                <h3 class="left">Contact Information</h3>
-
-                                <div class="clearfix"></div>
-                            </div>
-                            <div class="half-block left">
-                                <dl class="edit-employee-info">
-                                    <dt>
-                                        <label for="employeeEditStreet">Street</label>
-                                    </dt>
-                                    <dd>
-                                        <input type="text"
-                                               class="homeAddress"
-                                               name="street"
-                                               id="employeeEditStreet"
-                                               value="<%=model.homeAddress.street%>"
-                                               maxlength="32"/></dd>
-                                    <dt>
-                                        <label for="employeeEditCity">City</label>
-                                    </dt>
-                                    <dd>
-                                        <input type="text"
-                                               class="homeAddress"
-                                               name="city"
-                                               id="employeeEditCity"
-                                               value="<%=model.homeAddress.city%>"
-                                               maxlength="32"/>
-                                    </dd>
-                                    <dt>
-                                        <label for="employeeEditState">State</label>
-                                    </dt>
-                                    <dd><input type="text"
-                                               class="homeAddress"
-                                               name="state"
-                                               id="employeeEditState"
-                                               value="<%=model.homeAddress.state%>"
-                                               maxlength="32"/>
-                                    </dd>
-                                </dl>
-
-                            </div>
-                            <div class="half-block left">
-                                <dl class="edit-employee-info">
-                                    <dt>
-                                        <label for="employeeEditZip">Zip</label>
-                                    </dt>
-                                    <dd>
-                                        <input type="text"
-                                               class="homeAddress"
-                                               name="zip"
-                                               id="employeeEditZip"
-                                               value="<%=model.homeAddress.zip%>"
-                                               maxlength="32"/>
-                                    </dd>
-                                    <dt>
-                                        <label for="employeeEditCountry">Country</label>
-                                    </dt>
-                                    <dd><a class="homeAddress current-selected" name="country"
-                                           data-id="<%=model.homeAddress.country%>"
-                                           id="employeeEditCountry"><%=model.homeAddress.country || 'Select'%></a></dd>
-                                </dl>
-                            </div>
-                            <div class="clearfix">
-                            </div>
-                            <div class="formTitle">
-                                <h3 class="left">Status</h3>
-
-                                <div class="clearfix"></div>
-                            </div>
-                            <div class="half-block left withPaddingLeft">
-                                <dl class="edit-employee-info">
-                                    <dt>
-                                        <label for="genderDd">Gender</label>
-                                    <dd class="_newSelectListWrap">
-                                        <a id="genderDd"
-                                           data-id="<%=model.gender?model.gender:''%>"
-                                           class="current-selected"
-                                           href="javascript:;">
-                                            <%=model.gender?(model.gender):'Select'%>
-                                        </a>
-                                    </dd>
-                                    </dt>
-                                </dl>
-
-                            </div>
-                            <div class="half-block left withPaddingLeft">
-
-                                <dl class="edit-employee-info">
-                                    <dt>
-                                        <label for="maritalDd">Marital status</label>
-                                    </dt>
-                                    <dd class="_newSelectListWrap">
-                                        <a id="maritalDd"
-                                           data-id="<%=model.marital?model.marital:''%>"
-                                           class="current-selected"
-                                           href="javascript:;">
-                                            <%=model.marital?(model.marital):'Select'%>
-                                        </a>
-                                    </dd>
-                                </dl>
-                            </div>
-                            <div class="half-block left withPaddingLeft">
-
-                                <dl class="edit-employee-info">
-                                    <dt>
-                                        <label for="employmentTypeDd">Employment type</label>
-                                    </dt>
-                                    <dd class="_newSelectListWrap">
-                                        <a id="employmentTypeDd"
-                                           data-id="<%=model.employmentType ? model.employmentType:''%>"
-                                           class="current-selected"
-                                           href="javascript:;">
-                                            <%=model.employmentType ? (model.employmentType):'Select'%>
-                                        </a>
-                                    </dd>
-                                </dl>
-                            </div>
-                            <div class="clearfix"></div>
-                            <div class="formTitle">
-                                <h3 class="left">Resume</h3>
-
-                                <div class="clearfix"></div>
-                            </div>
-                            <div class="attach-container">
+                            <%};%>
+                        </div>
+                    </div>
+                    <div class="_formBlock _equal">
+                        <div class="_animateSelectBox">
+                            <span class="_selectTitle">Marital status</span>
+                            <div class="_newSelectListWrap">
+                                <a href="javascript:;"
+                                   class="current-selected"
+                                   id="maritalDd"
+                                   data-id="<%=model.marital?model.marital:''%>">
+                                    <%=model.marital?(model.marital):'Select'%>
+                                </a>
                             </div>
                         </div>
                     </div>
-                    <div class="clearfix"></div>
-                    <div class="dialog-tabs-item" id="job">
-                        <div class="clearfix"></div>
-                        <div class="<!--tableResponsive-->">
-                            <table class="list hireFireTable" id="hireFireTable">
-                                <thead>
-                                <tr>
-                                    <th>X</th>
-                                    <th>Status</th>
-                                    <th>Date</th>
-                                    <th>Job position</th>
-                                    <th>Department</th>
-                                    <th>Manager</th>
-                                    <th>Job Type</th>
-                                    <th>Schedule</th>
-                                    <th>Contract</th>
-                                    <th>Scheduled Pay</th>
-                                    <%if (model.transfer[0].salary || model.transfer[0].salary === 0) {%>
-                                    <th>Salary</th>
-                                    <% } %>
-                                    <th>Status info</th>
-                                </tr>
-                                </thead>
-                                <tbody id="transfersTable">
+                </div>
+            </div>
+            <div class="dialog-tabs-item" id="job">
+                <div class="_formWrap">
+                    <div class="_formBlock">
+                        <table class="stripedList _employeeJobTable" id="hireFireTable">
+                            <colgroup>
+                                <% if (!isForProfile) { %>
+                                <col width="36px">
+                                <% }; %>
+                                <col width="9%">
+                                <col width="8%">
+                                <col width="12%">
+                                <col width="12%">
+                                <col width="10%">
+                                <col width="9%">
+                                <col width="10%">
+                                <col width="10%">
+                                <col width="13%">
+                                <col width="8%">
+                                <col width="88px">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <% if (!isForProfile) { %>
+                                <th></th>
+                                <% }; %>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Job position</th>
+                                <th>Department</th>
+                                <th>Manager</th>
+                                <th>Job Type</th>
+                                <th>Schedule</th>
+                                <th>Contract</th>
+                                <th>Scheduled Pay</th>
+                                <%if (model.transfer[0].salary || model.transfer[0].salary === 0) {%>
+                                <th>Salary</th>
+                                <% } %>
+                                <th>Status info</th>
+                            </tr>
+                            </thead>
+                            <tbody id="transfersTable">
 
-                                <%var i;%>
-                                <%for(i=0;i<=model.transfer.length-2;i++){
-                                var transfer = model.transfer[i];
+                            <% var n = isForProfile ? model.transfer.length-1: model.transfer.length-2;
+                            var transfer;
+                            var i;
 
-                                if (transfer.status === 'transfer') {
-                                continue;
-                                }
+                            for(i=0; i<=n; i++){
+                            transfer = model.transfer[i];
 
-                                %>
-                                <tr class="transfer" id="<%=transfer._id%>" data-id="" data-content=<%=
-                                    transfer.status %>>
-                                    <td class="remove">
-                                    </td>
-                                    <td data-content="status"><%= transfer.status %></td>
-                                    <td class="date" data-content="date"><%= transfer.date %></td>
-                                    <td class="" data-content="jobPosition"
-                                        data-id="<%= transfer.jobPosition ?  transfer.jobPosition._id : null%>">
-                                        <span><%=transfer.jobPosition ? transfer.jobPosition.name : ''%></span>
-                                    </td>
-                                    <td class="" data-content="department"
-                                        data-id="<%=transfer.department ? transfer.department._id : null%>">
-                                        <span><%=transfer.department ? transfer.department.name : "" %></span>
-                                    </td>
-                                    <td class="" data-content="manager"
-                                        data-id="<%= transfer.manager ?  transfer.manager._id : null%>">
+                            if (transfer.status === 'transfer') {
+                            continue;
+                            }
+
+                            %>
+                            <tr class="transfer" id="<%=transfer._id%>" data-id="" data-content="<%=transfer.status%>">
+                                <% if (!isForProfile) { %>
+                                <td class="remove">
+                                </td>
+                                <%};%>
+                                <td data-content="status"><%= transfer.status %></td>
+                                <td class="date" data-content="date"><%= transfer.date %></td>
+                                <td class="" data-content="jobPosition"
+                                    data-id="<%= transfer.jobPosition ?  transfer.jobPosition._id : null%>">
+                                    <span><%=transfer.jobPosition ? transfer.jobPosition.name : ''%></span>
+                                </td>
+                                <td class="" data-content="department"
+                                    data-id="<%=transfer.department ? transfer.department._id : null%>">
+                                    <span><%=transfer.department ? transfer.department.name : "" %></span>
+                                </td>
+                                <td class="" data-content="manager"
+                                    data-id="<%= transfer.manager ?  transfer.manager._id : null%>">
                                         <span><%=transfer.manager ? transfer.manager.name.first + ' ' +
                                         transfer.manager.name.last : "Select"%></span>
-                                    </td>
-                                    <td class="" data-content="jobType"
-                                        data-id="<%= transfer.jobType ? transfer.jobType :''%>">
-                                        <span><%=transfer.jobType ? transfer.jobType : ""%></span>
-                                    </td>
-                                    <td data-content="weeklyScheduler"
-                                        data-id="<%= transfer.weeklyScheduler ? transfer.weeklyScheduler._id :'null'%>">
-                                        <span><%=transfer.weeklyScheduler ? transfer.weeklyScheduler.name : ""%></span>
-                                    </td>
-                                    <td data-content="payrollStructureType"
-                                        data-id="<%= transfer.payrollStructureType ? transfer.payrollStructureType._id :'null'%>">
-                                        <span><%=transfer.payrollStructureType ? transfer.payrollStructureType.name : ""%></span>
-                                    </td>
-                                    <td data-content="scheduledPay"
-                                        data-id="<%= transfer.scheduledPay ? transfer.scheduledPay._id :'null'%>">
-                                        <span><%=transfer.scheduledPay ? transfer.scheduledPay.name : ""%></span>
-                                    </td>
-                                    <%if (transfer.salary || transfer.salary === 0) {%>
-                                    <td class="dollar" data-content="salary" data-id="salary">
-                                        <%=currencySplitter(transfer.salary.toString())%>
-                                    </td>
-                                    <% } %>
-                                    <td class="statusInfo" data-content="info"
-                                        data-id="<%=transfer.info ? transfer.info : ''%> "><%=transfer.info &&
-                                        transfer.info.length > 1 ? transfer.info : ""%>
-                                    </td>
-                                </tr>
+                                </td>
+                                <td class="" data-content="jobType"
+                                    data-id="<%= transfer.jobType ? transfer.jobType :''%>">
+                                    <span><%=transfer.jobType ? transfer.jobType : ""%></span>
+                                </td>
+                                <td data-content="weeklyScheduler"
+                                    data-id="<%= transfer.weeklyScheduler ? transfer.weeklyScheduler._id :'null'%>">
+                                    <span><%=transfer.weeklyScheduler ? transfer.weeklyScheduler.name : ""%></span>
+                                </td>
+                                <td data-content="payrollStructureType"
+                                    data-id="<%= transfer.payrollStructureType ? transfer.payrollStructureType._id :'null'%>">
+                                    <span><%=transfer.payrollStructureType ? transfer.payrollStructureType.name : ""%></span>
+                                </td>
+                                <td data-content="scheduledPay"
+                                    data-id="<%= transfer.scheduledPay ? transfer.scheduledPay._id :'null'%>">
+                                    <span><%=transfer.scheduledPay ? transfer.scheduledPay.name : ""%></span>
+                                </td>
+                                <%if (transfer.salary || transfer.salary === 0) {%>
+                                <td class="dollar" data-content="salary" data-id="salary">
+                                    <%=currencySplitter(transfer.salary.toString())%>
+                                </td>
+                                <% } %>
+                                <td class="statusInfo" data-content="info"
+                                    data-id="<%=transfer.info ? transfer.info : ''%> "><%=transfer.info &&
+                                    transfer.info.length > 1 ? transfer.info : ""%>
+                                </td>
+                            </tr>
 
-                                <% }; %>
+                            <% }; %>
 
-                                </tbody>
-                            </table>
-                        </div>
+                            </tbody>
+                        </table>
+                        <% if (!isForProfile) { %>
                         <div class="ui-dialog-buttonset">
                             <% if (model.transfer.length && model.transfer[0].hasOwnProperty('salary')) {%>
                             <a href="javascript:;" id="update" class="btn"><span>Add</span></a>
                             <%}%>
                         </div>
+                        <% }; %>
                     </div>
-                    <div class="clearfix"></div>
-                    <div class="dialog-tabs-item">
-                        <div class="assignees-container"></div>
-                    </div>
-
-                    <div class="clearfix"></div>
-
                 </div>
             </div>
-        </fieldset>
+            <div class="dialog-tabs-item" id="note">
+                <div class="_formWrap">
+                    <div class="_formBlock">
+                        <div id="attach-container" class="_formNotes"></div>
+                        <div class="attachments _popupAttachments"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="dialog-tabs-item">
+                <div class="assignees-container _formWrap _innedFlexDiv"></div>
+            </div>
+        </div>
     </form>
 </div>

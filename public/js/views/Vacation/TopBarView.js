@@ -9,9 +9,10 @@ define([
     'use strict';
 
     var TopBarView = BaseView.extend({
-        el         : '#top-bar',
-        contentType: CONSTANTS.VACATION,
-        template   : _.template(ContentTopBarTemplate),
+        el           : '#top-bar',
+        contentType  : CONSTANTS.VACATION,
+        contentHeader: 'Vacations',
+        template     : _.template(ContentTopBarTemplate),
 
         initialize: function (options) {
             if (options.collection) {

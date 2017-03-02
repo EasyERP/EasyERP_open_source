@@ -2,10 +2,11 @@ define([
     'Backbone',
     'collections/parent',
     'models/invReportModel',
+    'helpers/getDateHelper',
     'custom',
     'moment',
     'constants'
-], function (Backbone, Parent, invRepModel, custom, moment, CONSTANTS) {
+], function (Backbone, Parent, invRepModel, DateHelper, custom, moment, CONSTANTS) {
     var invReportCollection = Parent.extend({
 
         model   : invRepModel,
@@ -13,38 +14,23 @@ define([
         pageSize: CONSTANTS.DEFAULT_THUMBNAILS_PER_PAGE,
 
         initialize: function (options) {
-            var page;
-            var startDate = moment(new Date());
-            var endDate = moment(new Date());
-            var dateRange; // = custom.retriveFromCash('inventoryReportDateRange') || {};
+            var dateRange;
+            var _opts;
 
             this.filter = options.filter || custom.retriveFromCash('inventoryReport.filter');
 
-            startDate.month(startDate.month() - 1);
-            startDate.date(1);
-            endDate.month(startDate.month());
-            endDate.endOf('month');
+            dateRange = this.filter && this.filter.date ? this.filter.date.value : null;
 
-            dateRange = this.filter && this.filter.date ? this.filter.date.value : [];
+            dateRange = dateRange || DateHelper.getDate('thisMonth');
 
-            /*this.startDate = dateRange.startDate || new Date(startDate);
-            this.endDate = dateRange.endDate || new Date(endDate);*/
+            this.startDate = new Date(dateRange[0]);
+            this.endDate = new Date(dateRange[1]);
 
-            this.startDate = dateRange[0] || new Date(startDate);
-            this.endDate = dateRange[1] || new Date(endDate);
-
-            // options.startDate = this.startDate;
-            // options.endDate = this.endDate;
             options.filter = this.filter || {};
 
             options.filter.date = {
                 value: [this.startDate, this.endDate]
             };
-
-            /*custom.cacheToApp('inventoryReportDateRange', {
-                startDate: this.startDate,
-                endDate  : this.endDate
-            });*/
 
             custom.cacheToApp('inventoryReport.filter', options.filter);
 
@@ -54,58 +40,18 @@ define([
                 }
             }
 
-            options = options || {};
-            options.error = options.error || _errHandler;
-            page = options.page;
+            this.page = options.page;
+
+            _opts = options || {};
+            _opts.error = _opts.error || _errHandler;
 
             this.startTime = new Date();
 
-            if (page) {
-                return this.getPage(page, options);
+            if (this.page) {
+                return this.getPage(this.page, _opts);
             }
 
-            this.getFirstPage(options);
-        },
-
-        showMore: function (options) {
-            var that = this;
-            var filterObject = options || {};
-            // var dateRange = custom.retriveFromCash('inventoryReportDateRange') || {};
-            var filter = options.filter || custom.retriveFromCash('inventoryReport.filter');
-            var dateRange = filter && filter.date ? filter.date.value : [];
-            var startDate = moment(new Date());
-            var endDate = moment(new Date());
-
-            startDate.month(startDate.month() - 1);
-            startDate.date(1);
-            endDate.month(startDate.month());
-            endDate.endOf('month');
-
-            /*filterObject.startDate = dateRange.startDate || new Date(startDate);
-            filterObject.endDate = dateRange.endDate || new Date(endDate);*/
-
-            filterObject.startDate = dateRange[0] || new Date(startDate);
-            filterObject.endDate = dateRange[1] || new Date(endDate);
-
-            filterObject.page = (options && options.page) ? options.page : this.page;
-            filterObject.count = (options && options.count) ? options.count : this.namberToShow;
-            filterObject.viewType = (options && options.viewType) ? options.viewType : this.viewType;
-            filterObject.contentType = (options && options.contentType) ? options.contentType : this.contentType;
-
-            this.fetch({
-                data   : filterObject,
-                waite  : true,
-                success: function (models) {
-                    that.page += 1;
-                    that.trigger('showmore', models);
-                },
-                error  : function () {
-                    App.render({
-                        type   : 'error',
-                        message: "Some Error."
-                    });
-                }
-            });
+            this.getFirstPage(_opts);
         }
     });
 

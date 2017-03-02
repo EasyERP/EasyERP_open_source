@@ -148,8 +148,8 @@ define([
             $('#modulesAccessTable tr input').prop('disabled', false);
         },
 
-        viewProfileDetails: function (e) {
-            var $target = $(e.target);
+        viewProfileDetails: function (e, el) {
+            var $target = e ? $(e.target) : el;
             var $currentLi;
             var id;
             var pr;
@@ -160,7 +160,9 @@ define([
             var c2;
             var c3;
 
-            e.preventDefault();
+            if (e) {
+                e.preventDefault();
+            }
 
             $('#top-bar-editBtn').show();
             $('#top-bar-deleteBtn').show();
@@ -175,7 +177,7 @@ define([
 
             $('#modulesAccessTable').hide();
 
-            $currentLi = $target.closest('li');
+            $currentLi = el || $target.closest('li');
             $currentLi.parent().find('.active').removeClass('active');
             $currentLi.addClass('active');
 
@@ -192,7 +194,7 @@ define([
             b3 = true;
 
             for (var i = 0; i < pr.length; i++) {
-                if (!pr[i].module.parrent) {
+                if (pr[i].module && !pr[i].module.parrent) {
 
                     c1 = '';
                     c2 = '';
@@ -216,7 +218,7 @@ define([
 
                     $('#modulesAccessTable').find('tbody').append('<tr class="parent" data-i="' + i + '"><td class="mname">' + pr[i].module.mname + '</td><td><input type="checkbox" class="read" ' + c1 + ' disabled/></td><td><input type="checkbox" class="write" ' + c2 + ' disabled/></td><td><input type="checkbox" class="delete" ' + c3 + ' disabled/></td></tr>');
                     for (var j = 0; j < pr.length; j++) {
-                        if (pr[i].module._id === pr[j].module.parrent) {
+                        if (pr[j].module && pr[i].module && pr[i].module._id === pr[j].module.parrent) {
                             c1 = '';
                             c2 = '';
                             c3 = '';
@@ -335,7 +337,7 @@ define([
                         Backbone.history.fragment = '';
                         Backbone.history.navigate('#easyErp/Profiles', {trigger: true});
                     },
-                    
+
                     error: function (model, xhr) {
                         self.errorNotification(xhr);
                     }
@@ -345,12 +347,18 @@ define([
         },
 
         render: function () {
-            this.$el.html(_.template(ProfileListTemplate,
-                {
-                    profilesCollection: this.profilesCollection.toJSON(),
-                    contentType       : this.contentType
-                }));
+            var $firstLi;
+            this.$el.html(_.template(ProfileListTemplate, {
+                profilesCollection: this.profilesCollection.toJSON(),
+                contentType       : this.contentType
+            }));
+
             this.$el.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
+
+            $firstLi = this.$el.find('#profilesList').find('li').first();
+
+            this.viewProfileDetails(null, $firstLi);
+
             return this;
         }
     });

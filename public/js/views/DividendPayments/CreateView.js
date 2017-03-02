@@ -235,12 +235,10 @@ define([
             });
 
             this.$el = $(htmBody).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'edit-dialog',
-                title        : 'Create Payment',
-                buttons      : [
+                autoOpen   : true,
+                dialogClass: 'edit-dialog',
+                title      : 'Create Payment',
+                buttons    : [
                     {
                         id   : 'create-payment-dialog',
                         class: 'btn blue',

@@ -66,6 +66,7 @@ input[type="radio"]._circleRadioRadiance {
 ._circleRadioRadianceLabel {
   float: left;
   margin-right: 15px;
+  cursor: pointer;
 }
 
 ._circleRadioRadianceWrap {
@@ -81,13 +82,41 @@ input[type="radio"]._circleRadioRadiance {
 }
 
 .canReadAndWrite {
-  padding-left: 20px;
 
   ._circleRadioRadianceWrap {
 
     ._circleRadioRadianceLabel {
       float: left;
-      top: 6px;
+      //top: 5px;
     }
   }
+}
+
+.profile-create {
+  ._circleRadioRadianceWrap {
+    padding: 5px 0 5px 10px;
+  }
+  ._newSelectListWrap {
+    line-height: 26px;
+  }
+}
+
+._configureEmailPolicy {
+  ._circleRadioRadianceWrap {
+    position: relative;
+    padding: 10px 0 10px 35px;
+
+    ._circleRadioRadianceLabel {
+      position: absolute;
+      top: 15px;
+      left: 10px;
+    }
+  }
+}
+
+.circleRadioForPersons {
+  ._circleRadioRadianceWrap:first-child {
+    padding-top: 0;
+  }
+  margin-bottom: 10px;
 }

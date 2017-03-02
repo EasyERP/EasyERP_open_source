@@ -28,7 +28,7 @@ define([
                 if (response.createdBy) {
                     response.createdBy.date = moment(response.createdBy.date).format('DD MMM, YYYY, H:mm:ss');
                 }
-                if (response.editedBy) {
+                if (response.editedBy && response.editedBy.length !== 24) {
                     response.editedBy.date = moment(response.editedBy.date).format('DD MMM, YYYY, H:mm:ss');
                 }
                 if (response.dateBirth) {
@@ -41,15 +41,17 @@ define([
 
                 if (response.notes) {
                     _.map(response.notes, function (note) {
-                        note.date = moment(note.date).format('DD MMM, YYYY, H:mm:ss');
+                        note.date = moment(new Date(note.date));
 
-                        if (note.history && (note.history.changedField === 'Date of Birth' || note.history.changedField === 'Creation Date')){
+                        // note.date = moment(note.date).format('DD MMM, YYYY, H:mm:ss');
+
+                        if (note.history && (note.history.changedField === 'Date of Birth' || note.history.changedField === 'Creation Date')) {
                             note.history.changedValue = note.history.changedValue ? moment(new Date(note.history.changedValue)).format('DD MMM, YYYY') : '';
                             note.history.newValue = note.history.newValue ? moment(new Date(note.history.newValue)).format('DD MMM, YYYY') : '';
                             note.history.prevValue = note.history.prevValue ? moment(new Date(note.history.prevValue)).format('DD MMM, YYYY') : '';
                         }
 
-                        if (note.history && note.history.changedField === 'LinkedIn'){
+                        if (note.history && note.history.changedField === 'LinkedIn') {
                             note.history.changedValue = note.history.changedValue ? note.history.changedValue.replace('[]', 'linkedin') : '';
                             note.history.newValue = note.history.newValue ? note.history.newValue.replace('[]', 'linkedin') : '';
                             note.history.prevValue = note.history.prevValue ? note.history.prevValue.replace('[]', 'linkedin') : '';
@@ -58,16 +60,16 @@ define([
                         return note;
                     });
 
-                    response.notes.forEach(function(note, index) {
-                        if (!note.name && note.history && (note.history.changedField === 'Creation Date')){
+                    response.notes.forEach(function (note, index) {
+                        if (!note.name && note.history && (note.history.changedField === 'Creation Date')) {
                             response.notes.splice(index, 1);
                             response.notes.unshift(note);
                             return;
                         }
                     });
 
-                    response.notes.forEach(function(note, index) {
-                        if (note.task && (note.task.workflow.status !== 'Done') && (note.task.workflow.status !== 'Cancelled')){
+                    response.notes.forEach(function (note, index) {
+                        if (note.task && (note.task.workflow.status !== 'Done') && (note.task.workflow.status !== 'Cancelled')) {
                             response.notes.splice(index, 1);
                             response.notes.push(note);
                             return;
@@ -81,6 +83,7 @@ define([
                         return attachment;
                     });
                 }
+
                 return response;
             }
         },
@@ -98,9 +101,18 @@ define([
             Validation.checkZipField(errors, false, attrs['address.zip'] || attrs.address.zip, 'Zip');
             Validation.checkStreetField(errors, false, attrs['address.street'] || attrs.address.street, 'Street');
 
+            Validation.checkCountryCityStateField(errors, false, attrs['shippingAddress.country'] || attrs.address.country, 'Shipping Country');
+            Validation.checkCountryCityStateField(errors, false, attrs['shippingAddress.state'] || attrs.address.state, 'Shipping State');
+            Validation.checkCountryCityStateField(errors, false, attrs['shippingAddress.city'] || attrs.address.city, 'Shipping City');
+            Validation.checkZipField(errors, false, attrs['shippingAddress.zip'] || attrs.address.zip, 'Shipping Zip');
+            Validation.checkStreetField(errors, false, attrs['shippingAddress.street'] || attrs.address.street, 'Shipping Street');
+
             Validation.checkNameField(errors, false, attrs.jobPosition, 'Job position');
             Validation.checkSkypeField(errors, false, attrs.skype, 'Skype');
             Validation.checkEmailField(errors, false, attrs.email, 'Email');
+            Validation.checkFacebookSocial(errors, false, attrs.social.FB, 'Facebook');
+            Validation.checkLinkedinSocial(errors, false, attrs.social.LI, 'LinkedIn');
+
 
             if (errors.length > 0) {
                 return errors;
@@ -118,6 +130,15 @@ define([
 
             email  : '',
             address: {
+                street1: '',
+                street2: '',
+                city   : '',
+                zip    : '',
+                country: '',
+                state  : ''
+            },
+
+            shippingAddress: {
                 street1: '',
                 street2: '',
                 city   : '',

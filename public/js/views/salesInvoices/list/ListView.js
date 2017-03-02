@@ -66,8 +66,6 @@ define([
             listViewBase.prototype.initialize.call(this, options);
         },
 
-        events: {
-        },
 
         saveItem: function () {
             var model;
@@ -150,6 +148,50 @@ define([
                 });
 
                 self.$el.find('#' + col).text(helpers.currencySplitter(sum.toFixed(2)));
+            });
+        },
+
+        importFromMagento: function () {
+            var url = '/integration/invoices';
+            var self = this;
+
+            dataService.getData(url, {}, function (err, result) {
+                if (err) {
+                    return self.errorNotification(err);
+                }
+
+                self.render();
+            });
+        },
+
+        exportToMagento: function () {
+            var url = '/integration/invoices';
+            var data = {};
+            var self = this;
+            var $thisEl = this.$el;
+            var $table = $thisEl.find('#listTable');
+            var temportaryArr = [];
+            var invoices = [];
+            var $checkedInputs;
+            var $el;
+
+            $checkedInputs = $table.find('input:checked');
+
+            $.each($checkedInputs, function () {
+                $el = $(this);
+
+                invoices.push($el.val());
+            });
+
+            data = {
+                entity: invoices
+            };
+
+            dataService.postData(url, data, function (err, result) {
+                if (err) {
+                    return self.errorNotification(err);
+                }
+                alert(result.success);
             });
         },
 

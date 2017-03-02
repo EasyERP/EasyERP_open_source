@@ -1,14 +1,165 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
+    <meta charset='utf-8'>
+    <style>
+        a:visited {
+            color: blue;
+        }
+
+        a.button:visited {
+            color: #ffffff;
+        }
+    </style>
 </head>
-<body>
-Dear <b><%=employee%></b>,
-<br>
-<br>
-You was assigned to task "<b><%=description%></b>". Due date - till <b><%=date%></b>
-<br>
-<br>
+<body leftmargin='0'
+      marginheight='0'
+      marginwidth='0'
+      offset='0'
+      topmargin='0'
+      style="width: 100% !important;
+             margin: 0;
+             padding: 0;
+             -webkit-text-size-adjust: none;">
+<center>
+    <table border='0'
+           cellpadding='0'
+           cellspacing='0'
+           id='background_table'
+           bgcolor='#ffffff'
+           style="border: 1px solid #999;
+                  margin-top: 20px;">
+        <tr>
+            <td align='center'
+                style="border-collapse: collapse;
+                font-family: sans-serif, arial;">
+                <table width="600"
+                       cellpadding='0'
+                       cellspacing='0'
+                       border='0'
+                       bgcolor='#F4F5F7'
+                       style="border-collapse: collapse;">
+                    <tr>
+                        <td width="300"
+                            align="left"
+                            valign="top"
+                            style="border: 0;
+                                   padding: 10px 0 0 20px;
+                                   background: #7eadcc;
+                                   border-collapse: collapse;">
+                            <img width="50"
+                                 src="http://easyerp.com/wp-content/uploads/2015/04/mailERP.png"
+                                 style="border: 0;
+                                        height: auto;
+                                        line-height: 100%;
+                                        outline: none;
+                                        text-decoration: none;"/>
+                        </td>
+                        <td width="300"
+                            align="right"
+                            valign="top"
+                            style="padding: 10px 20px 0 0;
+                            background: #7eadcc;">
+                            <img src="http://easyerp.com/wp-content/uploads/2015/04/logo.png"
+                                 style="border: 0;
+                                        height: auto;
+                                        line-height: 100%;
+                                        outline: none;
+                                        text-decoration: none;
+                                        border-collapse: collapse;"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="border-collapse: collapse;">
+                            <table cellpadding="0"
+                                   cellspacing="0"
+                                   border="0"
+                                   style="margin: 0 auto;
+                                          border-collapse: collapse;
+                                          color: #555555">
+                                <tr>
+                                    <td valign='bottom'
+                                        width='630'
+                                        style="padding: 30px 20px 0 20px;
+                                               font-size: 18px;">Dear <b><%=employee%></b>,
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign='bottom'
+                                        width='630'
+                                        style="padding: 30px 20px 0 20px;
+                                               font-size: 18px;">You was assigned to task "<b><%=description%></b>". Due date - till <b><%=date%></b>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign='top'
+                                        style="padding: 30px 20px 0 20px;
+                                               font-size: 18px;">Thanks You
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 30px 20px 0 20px;
+                                               font-size: 14px;
+                                               border-collapse: collapse;">Best regards,</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 5px 20px 20px 20px;
+                                               font-size: 14px;
+                                               border-collapse: collapse;"><%= salesPerson.name %>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="font-size: 10pt;
+                                               color: rgb(153, 153, 153);
+                                               border-collapse: collapse;
+                                               padding: 5px 20px 0;"><%= salesPerson.job %>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="color: #4083af;
+                                               border-collapse: collapse;
+                                               padding: 5px 20px 0;">ThinkMobiles Inc.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="font-size: 10pt;
+                                               color: rgb(153, 153, 153);
+                                               border-collapse: collapse;
+                                               padding: 5px 20px 0;">Mobile development for IOS, Android, WP
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="font-size: 10pt;
+                                               color: #4083af;
+                                               border-collapse: collapse;
+                                               padding: 5px 20px 0;"><%= salesPerson.phone %>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="http://www.thinkmobiles.com"
+                                           target="_blank"
+                                           style="font-size: 10pt;
+                                                  color: #4083af;
+                                                  border-collapse: collapse;
+                                                  padding: 5px 20px 0;">thinkmobiles.com</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="font-size: 10pt;
+                                               color: #4083af;
+                                               border-collapse: collapse;
+                                               padding: 5px 20px 20px;">skype: <%= salesPerson.skype %>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</center>
+
 </body>
 </html>

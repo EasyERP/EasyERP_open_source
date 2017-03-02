@@ -9,6 +9,8 @@ module.exports = (function () {
         for (i = 0; i < this.length; i++) {
             if (this[i] && typeof this[i] === 'object' && this[i].hasOwnProperty('_id')) {
                 _arrayOfID.push(this[i]._id);
+            } else if (this[i] && typeof this[i] === 'object') {
+                _arrayOfID.push(this[i]);
             } else {
                 if (typeof this[i] === 'string' && this[i].length === 24) {
                     _arrayOfID.push(objectId(this[i]));
@@ -20,6 +22,21 @@ module.exports = (function () {
             }
         }
         return _arrayOfID;
+    };
+
+    Array.prototype.toStringObjectIds = function () {
+        var ObjectId = mongoose.Types.ObjectId;
+        var arr = this.map(function (_objectId) {
+            if (_objectId instanceof ObjectId) {
+                return _objectId.toString();
+            } else if (typeof _objectId === 'string') {
+                return _objectId;
+            } else {
+                throw new Error({message: 'Incorrect value for ObjectId'});
+            }
+        });
+
+        return arr;
     };
 
     Array.prototype.toNumber = function () {

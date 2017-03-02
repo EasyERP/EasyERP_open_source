@@ -6,12 +6,14 @@ define([
     'views/customDashboard/tools/ContainerView',
     'constants',
     'collections/customDashboard/customChartCollection',
-    'models/customChartModel',
+    'models/CustomChartModel',
     'models/gridForCustomDashboardModel',
     'views/customDashboard/customDashboard/CreateView',
     'views/topBarViewBase',
-    'helpers/eventsBinder'
-], function (Backbone, $, _, mainTemplate, ChartView, CONSTANTS, CustomChartCollection, Model, CellsModel, CreateView, TopBarBase, eventsBinder) {
+    'helpers/eventsBinder',
+    'views/Filter/dateFilter',
+    'moment'
+], function (Backbone, $, _, mainTemplate, ChartView, CONSTANTS, CustomChartCollection, Model, CellsModel, CreateView, TopBarBase, eventsBinder, DateFilterView, moment) {
     'use strict';
 
     var View = TopBarBase.extend({
@@ -22,16 +24,41 @@ define([
         template: _.template(mainTemplate),
 
         events: {
-            'click .editChart': 'onEdit'
+            'click .editChart'   : 'onEdit',
+            'click #changeCharts': 'changeCharts',
+            'click #saveBtn'     : 'saveDashboard'
         },
 
         initialize: function (options) {
+            var regexp = /purchase/i;
+            var eventChannel = {};
+            var self = this;
+            var charts = [];
+
+            this.content = options.contentType;
             this.dashboardModel = options.model;
             this.numberOfColumns = this.dashboardModel.attributes[0].columns;
             this.description = this.dashboardModel.attributes[0].description;
             this.numberOfRows = this.dashboardModel.attributes[0].rows;
             this.charts = this.dashboardModel.attributes[0].charts;
-            this.collection = new CustomChartCollection();
+
+            if (this.content === 'purchaseDashboard') {
+                this.charts.forEach(function (el) {
+                    if (regexp.test(el.dataset)) {
+                        charts.push(el);
+                    }
+                });
+            } else {
+                this.charts.forEach(function (el) {
+                    if (!regexp.test(el.dataset)) {
+                        charts.push(el);
+                    }
+                });
+            }
+
+            this.charts = charts;
+
+            this.collection = new CustomChartCollection(charts);
             this.CreateView = CreateView;
             this.cellsModel = new CellsModel();
             this.model = new Model();
@@ -41,7 +68,26 @@ define([
             this.limitCells = [];
             this.xPoints = [];
             this.yPoints = [];
+
+            this.startDate = moment(new Date()).startOf('month');
+            this.endDate = moment(new Date());
+
+            this.eventChannel = options.eventsChannel;
+            _.extend(eventChannel, Backbone.Events);
+
+            self.eventChannel = eventChannel;
+
+            $(window).resize(function () {
+                self.render();
+            });
+
             this.render();
+        },
+
+        changeCharts: function () {
+            this.eventChannel.trigger('changeDate', this.dateFilterView.dateArray);
+
+            $('#saveBtn').show();
         },
 
         onEdit: function (e) {
@@ -73,7 +119,8 @@ define([
                 yPoints        : this.yPoints,
                 cellsModel     : this.cellsModel,
                 chartCounter   : this.chartCounter,
-                ParentView     : this
+                ParentView     : this,
+                eventChannel   : this.eventChannel
             });
         },
 
@@ -125,6 +172,7 @@ define([
             var name = $nameHolder.val();
             var $chart = $thisEl.find('.panel');
             var self = this;
+            var model;
 
             $('#top-bar-createBtn').addClass('hidden');
             $('#top-bar-saveAllBtn').addClass('hidden');
@@ -135,11 +183,12 @@ define([
             $descriptionHolder.hide();
             $('#description').html(description).show();
             $('#name').html(name).show();
-            
+
             $chart.each(function () {
                 var $this = $(this);
+                var options = {};
                 var firstIndex = $this.attr('data-index').split(',')[0];
-                var model = new Model({
+                var body = {
                     dataHeight          : parseInt($this.attr('data-height'), 10),
                     dataWidth           : parseInt($this.attr('data-width'), 10),
                     indexY              : parseInt(firstIndex[1], 10),
@@ -148,30 +197,45 @@ define([
                     name                : $this.find('.panel-heading').find('.chartName').text(),
                     type                : $this.attr('data-type'),
                     dataset             : $this.attr('data-dataset'),
-                    startDate           : $this.find('#startDate').text(),
-                    endDate             : $this.find('#endDate').text(),
+                    startDate           : $this.find('.startDateValue').text(),
+                    endDate             : $this.find('.endDateValue').text(),
                     dashboard           : self.dashboardModel.attributes[0]._id,
                     dashboardName       : name,
                     dashboardDescription: description
-                });
+                };
 
-                self.collection.add(model);
+                if ($(this).attr('id').substr(5).length >= 24) {
+                    body._id = $(this).attr('id').substr(5);
+                }
+
+                if (body._id) {
+                    model = self.collection.get(body._id);
+
+                    model.set(body);
+                } else {
+                    model = new Model();
+                    model.set(body);
+                }
+
+                options = {
+                    success: function (model) {
+                        $('#saveBtn').hide();
+                        self.collection.set(model, {remove: false});
+                    }
+                };
+
+                if (body._id) {
+                    options.patch = true;
+                }
+
+                model.save(model.changed, options);
             });
 
-            if (!this.collection.models.length) {
-
-                this.collection.add({
-                    dashboard           : self.dashboardModel.attributes[0]._id,
-                    dashboardName       : name,
-                    dashboardDescription: description
-                });
-            }
-
-            this.collection.save();
             $thisEl.find('.removeChart').hide();
             $thisEl.find('.editChart').hide();
             $chart.draggable('destroy');
             $chart.resizable('destroy');
+
         },
 
         moveToEdit: function () {
@@ -185,8 +249,8 @@ define([
             $('#top-bar-removeAllBtn').removeClass('hidden');
             $('#top-bar-moveToEditBtn').addClass('hidden');
             $thisEl.find('#chartPlace').removeClass('disabled');
-            this.collection.remove(this.dashboardModel.attributes[0]._id);
-            this.collection.models = [];
+            /* this.collection.remove(this.dashboardModel.attributes[0]._id);
+             this.collection.models = [];*/
             $thisEl.find('.removeChart').show();
             $thisEl.find('.editChart').show();
             $('#dashboardName').show();
@@ -221,6 +285,10 @@ define([
             var x;
             var i;
             var j;
+
+            this.limitCells = [];
+            this.xPoints = [];
+            this.yPoints = [];
 
             this.$el.html(this.template({}));
 
@@ -278,6 +346,17 @@ define([
 
             this.restoreCharts();
 
+            this.dateFilterView = new DateFilterView({
+                contentType: 'customDashboardCharts',
+                el         : this.$el.find('#dateFilterMain')
+            });
+
+            this.dateFilterView.on('dateChecked', function () {
+                self.trigger('changeDateRange', self.dateFilterView.dateArray);
+            });
+
+            this.dateFilterView.checkElement('custom', [this.startDate, this.endDate]);
+
             return this;
         },
 
@@ -297,7 +376,9 @@ define([
                     limitCells     : this.limitCells,
                     xPoints        : this.xPoints,
                     yPoints        : this.yPoints,
-                    cellsModel     : this.cellsModel
+                    cellsModel     : this.cellsModel,
+                    collection     : this.collection,
+                    eventChannel   : this.eventChannel
                 });
 
                 this.$el.find('#chartPlace').append(this.subview.render().$el);
@@ -306,6 +387,7 @@ define([
 
             this.$el.find('.removeChart').hide();
             this.$el.find('.editChart').hide();
+
             this.markEngagedCells();
         }
     });

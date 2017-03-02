@@ -43,7 +43,7 @@
                 }
                 if (response.notes) {
                     _.map(response.notes, function (note) {
-                        note.date = moment(note.date).format('DD MMM, YYYY, H:mm:ss');
+                        note.date = moment(note.date)// .format('DD MMM, YYYY, H:mm:ss');
                         return note;
                     });
                 }
@@ -79,15 +79,16 @@
 
         validate: function (attrs) {
             var errors = [];
+            var required = !attrs.isForProfile;
 
             Validation.checkDateField(errors, true, attrs.dateBirth, 'Date of Birth');
-            Validation.checkNameField(errors, true, attrs.employmentType, 'Personal Information / Employment type');
+            Validation.checkNameField(errors, required, attrs.employmentType, 'Personal Information / Employment type');
             Validation.checkNameField(errors, true, attrs.name.first, 'First name');
             Validation.checkNameField(errors, true, attrs.name.last, 'Last name');
             Validation.checkPhoneField(errors, false, attrs.workPhones.phone, 'Phone');
             Validation.checkPhoneField(errors, false, attrs.workPhones.mobile, 'Mobile');
-            Validation.checkEmailField(errors, false, attrs.workEmail, 'Work Email');
-            Validation.checkEmailField(errors, true, attrs.personalEmail, 'Personal Email');
+            Validation.checkEmailField(errors, true, attrs.workEmail, 'Work Email');
+            Validation.checkEmailField(errors, false, attrs.personalEmail, 'Personal Email');
             Validation.checkCountryCityStateField(errors, false, attrs.workAddress.country, 'Country');
             Validation.checkCountryCityStateField(errors, false, attrs.workAddress.state, 'State');
             Validation.checkCountryCityStateField(errors, false, attrs.workAddress.city, 'City');
@@ -97,7 +98,7 @@
             Validation.checkCountryCityStateField(errors, false, attrs.homeAddress.state, 'State');
             Validation.checkZipField(errors, false, attrs.homeAddress.zip, 'Zip');
             Validation.checkStreetField(errors, false, attrs.homeAddress.street, 'Street');
-            Validation.checkJobPositionField(errors, true, attrs.jobPosition, 'Job Position');
+            Validation.checkJobPositionField(errors, required, attrs.jobPosition, 'Job Position');
 
             if (errors.length > 0) {
                 return errors;

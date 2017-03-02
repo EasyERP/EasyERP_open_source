@@ -1,27 +1,41 @@
-<div class="form-holder">
-    <form method="post" action="" id="createJournalForm" class="form">
-        <dl class="journal-info">
-            <div class="half-block left">
-                <dt><label for="nameInput">Journal Name</label></dt>
-                <dd>
-                    <input id="nameInput" type="text" maxlength="25">
-                </dd>
-                <dt><label>Transaction</label></dt>
-                <dd class="_newSelectListWrap">
-                    <a id="typeDd" class="current-selected" href="javascript:;">Select</a>
-                </dd>
+<div class="form-holder _newForm">
+    <form method="post" action="" id="createJournalForm">
+        <h4 class="_dialogMainTitle">New jornal</h4>
+        <div class="_formWrap">
+            <div class="_formBlock">
+                <div class="_animateInputBox">
+                    <input type="text"
+                           class="_animate"
+                           id="nameInput"
+                           required
+                           maxlength="25"/>
+                    <label class="_animate">Journal Name</label>
+                </div>
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Transaction</span>
+                    <div class="_newSelectListWrap">
+                        <a id="typeDd"
+                           class="current-selected"
+                           href="javascript:;">Select transaction</a>
+                    </div>
+                </div>
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Debit Account</span>
+                    <div class="_newSelectListWrap">
+                        <a id="debitDd"
+                           class="current-selected"
+                           href="javascript:;">Select debit account</a>
+                    </div>
+                </div>
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Credit Account</span>
+                    <div class="_newSelectListWrap">
+                        <a id="creditDd"
+                           class="current-selected"
+                           href="javascript:;">Select credit account</a>
+                    </div>
+                </div>
             </div>
-
-            <div class="half-block right">
-                <dt><label>Debit Account</label></dt>
-                <dd class="_newSelectListWrap">
-                    <a id="debitDd" class="current-selected" href="javascript:;">Select</a>
-                </dd>
-                <dt><label>Credit Account</label></dt>
-                <dd class="_newSelectListWrap">
-                    <a id="creditDd" class="current-selected" href="javascript:;">Select</a>
-                </dd>
-            </div>
-        </dl>
+        </div>
     </form>
 </div>

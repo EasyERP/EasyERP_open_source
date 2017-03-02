@@ -2,18 +2,21 @@
     <% leads.forEach(function(lead, index){ %>
     <tr class="compactView" data-id="<%=lead._id%>">
         <td class="checkboxRow">
-            <label>
-                <input type="checkbox" value="<%=lead._id%>" class="checkbox"/>
+            <label class="_customCHeckbox">
+                <input type="checkbox"
+                       value="<%=lead._id%>"
+                       class="checkbox"/>
+                <span></span>
             </label>
         </td>
         <td>
             <div class="compactRowWrap">
                 <div class="compactRow">
                     <div class="name" data-key="name"><%= lead.name%></div>
-                    <div data-key="workflow" class="stage <%= (lead.workflow && lead.workflow.name === 'Cancelled') ? 'cancelled' : ''%>">        <span ><%=(lead.workflow) ? lead.workflow.name : 'Undefinded'%></span></div>
+                    <div data-key="workflow" class="stage <%= (lead.workflow && lead.workflow.name === 'Cancelled') ? 'cancelled' : ''%>"><span ><%=(lead.workflow) ? lead.workflow.name : 'Undefinded'%></span></div>
                 </div>
                 <div class="compactRow">
-                    <div data-key="salesPerson" class="assignedTo"><%=lead.salesPerson && lead.salesPerson.name ? lead.salesPerson.name.first + ' ' + lead.salesPerson.name.last: ''%></div>
+                    <div data-key="salesPerson" class="assignedTo"><%=lead.salesPerson && lead.salesPerson.name ? lead.salesPerson.name: ''%></div>
                     <div data-key="source" class="source"><%= lead.source %></div>
                 </div>
             </div>

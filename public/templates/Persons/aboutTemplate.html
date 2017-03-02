@@ -1,6 +1,4 @@
-<div class="formTitle">
-    <h3>About <%=name.first%></h3>
-</div>
+<h3 class="formTitle">About <%=name.first%></h3>
 <div class="person-info">
     <div class="avatar">
         <div class="upload">Edit
@@ -11,98 +9,80 @@
                 height="140">
         </canvas>
     </div>
-    <div class="propertyFormList">
-
-        <label>First Name</label>
-        <div class="inputBox">
-            <input class="editable" data-id="name_first" value="<%=name.first%>"/>
-        </div>
+    <div class="_animateInputBox">
+        <input class="_animate editable"
+               data-id="name_first"
+               value="<%=name.first%>"
+               required/>
+        <label class="_animate">First Name</label>
     </div>
-    <div class="propertyFormList">
-        <label>Last Name</label>
-        <div class="inputBox">
-            <input class="editable" data-id="name_last" value="<%=name.last%>"/>
-        </div>
+    <div class="_animateInputBox">
+        <input class="_animate editable"
+               data-id="name_last"
+               value="<%=name.last%>"
+               required/>
+        <label class="_animate">Last Name</label>
     </div>
-    <div class="propertyFormList">
-        <label>Job Position</label>
-        <div class="inputBox">
-            <input class="editable" data-id="jobPosition" value="<%=jobPosition%>"/>
-        </div>
+    <div class="_animateInputBox">
+        <input class="_animate editable"
+               data-id="jobPosition"
+               value="<%=jobPosition%>"
+               required/>
+        <label class="_animate">Job Position</label>
     </div>
-    <div class="propertyFormList">
-        <label>Email</label>
-        <div class="inputBox">
-            <input class="editable" data-id="email" value="<%=email%>"/>
-        </div>
+    <div class="_animateInputBox">
+        <input class="_animate editable"
+               data-id="email"
+               value="<%=email%>"
+               required/>
+        <label class="_animate">Email</label>
     </div>
-    <div class="propertyFormList">
-        <label>Skype</label>
-        <div class="inputBox">
-            <input class="editable" data-id="skype" value="<%=skype%>"/>
-        </div>
+    <div class="_animateInputBox">
+        <input class="_animate editable _socialContact"
+               data-id="skype"
+               value="<%=skype%>"
+               required/>
+        <label class="_animate">Skype</label>
     </div>
-    <div class="propertyFormList">
-        <label>LinkedIn</label>
-        <div class="inputBox">
-            <input class="editable" data-id="social_LI" value="<%=social.LI%>"/>
-        </div>
+    <div class="_animateInputBox">
+        <input class="_animate editable _socialContact"
+               data-id="social_LI"
+               value="<%=social.LI%>"
+               required/>
+        <label class="_animate">LinkedIn</label>
     </div>
-    <div class="propertyFormList">
-        <label>Facebook</label>
-        <div class="inputBox">
-            <input class="editable" data-id="social_FB" value="<%=social.FB%>"/>
-        </div>
+    <div class="_animateInputBox">
+        <input class="_animate editable _socialContact"
+               data-id="social_FB"
+               value="<%=social.FB%>"
+               required/>
+        <label class="_animate">Facebook</label>
     </div>
-    <div class="propertyFormList">
-        <label>Phone</label>
-        <div class="inputBox">
-            <input class="editable" data-id="phones_phone" value="<%=phones.phone%>"/>
-        </div>
+    <div class="_animateInputBox">
+        <input class="_animate editable"
+               data-id="phones_phone"
+               value="<%=phones.phone%>"
+               required/>
+        <label class="_animate">Phone</label>
     </div>
-    <div class="propertyFormList">
-        <label>Mobile</label>
-        <div class="inputBox">
-            <input class="editable" data-id="phones_mobile" value="<%=phones.mobile%>"/>
-        </div>
+    <div class="_animateInputBox">
+        <input class="_animate editable"
+               data-id="phones_mobile"
+               value="<%=phones.mobile%>"
+               required/>
+        <label class="_animate">Mobile</label>
     </div>
-    <div class="propertyFormList">
-        <label>Street</label>
-        <div class="inputBox">
-            <input class="editable" data-id="address_street" value="<%=address.street%>"/>
-        </div>
-    </div>
-    <div class="propertyFormList">
-        <label>City</label>
-        <div class="inputBox">
-            <input class="editable" data-id="address_city" value="<%=address.city%>"/>
-        </div>
-    </div>
-    <div class="propertyFormList">
-        <label>State</label>
-        <div class="inputBox">
-            <input class="editable" data-id="address_state" value="<%=address.state%>"/>
-        </div>
-    </div>
-    <div class="propertyFormList">
-        <label>Zip</label>
-        <div class="inputBox">
-            <input class="editable" data-id="address_zip" value="<%=address.zip%>"/>
-        </div>
-    </div>
-
-    <div class="propertyFormList">
-        <label>Country</label>
-        <div class="inputBox _newSelectListWrap">
-            <a class="current-selected" href="javascript:;" id="country" data-id="address_country"
-               data-value="<%=address.country%>"><%=address.country || 'Select'%></a>
-        </div>
-    </div>
-    <div class="propertyFormList">
-        <label>Date of Birth</label>
-        <div class="inputBox">
-            <input class="extrainfo" type="text" name="Date of Birth" id="dateBirth" value="<%=dateBirth%>"
-                   readonly="">
+    <div class="_animateInputBox">
+        <span class="_staticLabel">Date of Birth</span>
+        <div  class="inputBox">
+            <input class="_animate extrainfo"
+                   type="text"
+                   name="Date of Birth"
+                   placeholder="Date of Birth"
+                   id="dateBirth"
+                   value="<%=dateBirth%>"
+                   readonly=""
+                   required>
         </div>
     </div>
     <div class="social">
@@ -111,6 +91,95 @@
         <% if (skype){%><a class="skype" href="skype:<%=skype%>?call"></a><%}%>
         <div class="clearfix"></div>
     </div>
+
+    <div class="separateBlock">Billing Address</div>
+
+    <div class="_animateInputBox">
+        <input class="_animate editable"
+               data-id="address_street"
+               value="<%=address.street%>"
+               required/>
+        <label class="_animate">Street</label>
+    </div>
+    <div class="_animateInputBox">
+        <input class="_animate editable"
+               data-id="address_city"
+               value="<%=address.city%>"
+               required/>
+        <label class="_animate">City</label>
+    </div>
+    <div class="_animateInputBox">
+        <input class="_animate editable"
+               data-id="address_state"
+               value="<%=address.state%>"
+               required/>
+        <label class="_animate">State</label>
+    </div>
+    <div class="_animateInputBox">
+        <input class="_animate editable"
+               data-id="address_zip"
+               value="<%=address.zip%>"
+               required/>
+        <label class="_animate">Zip</label>
+    </div>
+    <div class="_animateSelectBox">
+        <span class="_selectTitle">Country</span>
+        <div  class="inputBox _newSelectListWrap">
+            <a class="current-selected"
+               href="javascript:;"
+               data-id="address_country"
+               id="country"
+               data-value="<%=address.country%>"><%=address.country || 'Select'%></a>
+        </div>
+    </div>
+
+    <div class="separateBlock">Shipping Address</div>
+
+    <div class="_animateInputBox">
+        <input class="_animate editable"
+               data-id="shippingAddress_name"
+               value="<%=shippingAddress.name%>"
+               required/>
+        <label class="_animate">Full Name</label>
+    </div>
+    <div class="_animateInputBox">
+        <input class="_animate editable"
+               data-id="shippingAddress_street"
+               value="<%=shippingAddress.street%>"
+               required/>
+        <label class="_animate">Street</label>
+    </div>
+    <div class="_animateInputBox">
+        <input class="_animate editable"
+               data-id="shippingAddress_city"
+               value="<%=shippingAddress.city%>" required/>
+        <label class="_animate">City</label>
+    </div>
+    <div class="_animateInputBox">
+        <input class="_animate editable"
+               data-id="shippingAddress_state"
+               value="<%=shippingAddress.state%>" required/>
+        <label class="_animate">State</label>
+    </div>
+    <div class="_animateInputBox">
+        <input class="_animate editable"
+               data-id="shippingAddress_zip"
+               value="<%=shippingAddress.zip%>" required/>
+        <label class="_animate">Zip</label>
+    </div>
+    <div class="_animateSelectBox">
+        <label class="_selectTitle">Country</label>
+        <div  class="inputBox _newSelectListWrap">
+            <a class="current-selected"
+               href="javascript:;"
+               id="shippingCountry"
+               data-id="shippingAddress_country"
+               data-value="<%=shippingAddress.country%>">
+                <%=shippingAddress.country || 'Select'%>
+            </a>
+        </div>
+    </div>
+    <div id="salesPurchases-container"></div>
 </div>
 <div class="cropImages form" style="display:none;">
     <div class="formTitle">

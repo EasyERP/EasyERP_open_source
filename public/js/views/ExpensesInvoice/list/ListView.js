@@ -5,7 +5,7 @@ define([
     'text!templates/ExpensesInvoice/list/ListHeader.html',
     'views/ExpensesInvoice/CreateView',
     'views/ExpensesInvoice/EditView',
-    'models/InvoiceModel',
+    'models/InvoicesModel',
     'views/ExpensesInvoice/list/ListItemView',
     'collections/salesInvoices/filterCollection',
     'helpers'
@@ -45,35 +45,6 @@ define([
             listViewBase.prototype.initialize.call(this, options);
         },
 
-        saveItem: function () {
-            var model;
-            var id;
-            var self = this;
-            var keys = Object.keys(this.changedModels);
-            var i;
-
-            for (i = keys.length - 1; i >= 0; i--) {
-                id = keys[i];
-                model = this.collection.get(id);
-
-                model.save({
-                    validated: self.changedModels[id].validated
-                }, {
-                    headers: {
-                        mid: 55
-                    },
-
-                    patch   : true,
-                    validate: false,
-                    success : function () {
-                        $('#top-bar-saveBtn').hide();
-                    }
-                });
-            }
-
-            this.changedModels = {};
-        },
-
         render: function () {
             var self;
             var itemView;
@@ -96,12 +67,7 @@ define([
 
             $currentEl.append(itemView.render());
 
-            // self.renderPagination($currentEl, self);
-            // self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [false]}});
-
             this.recalcTotal();
-
-            // $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + 'ms</div>');
         },
 
         recalcTotal: function () {
@@ -123,15 +89,20 @@ define([
             var id = $(e.target).closest('tr').data('id');
             var model = new InvoiceModel({validate: false});
 
+            if ($(e.target).closest('tfoot').length) {
+                return;
+            }
+
             e.preventDefault();
 
-            model.urlRoot = '/Invoices';
+            model.urlRoot = '/invoice';
             model.fetch({
                 data: {
                     id       : id,
                     viewType : 'form',
                     currentDb: App.currentDb,
-                    forSales : 'false'
+                    forSales : 'false',
+                    contentType: 'expensesInvoice'
                 },
 
                 success: function (response) {

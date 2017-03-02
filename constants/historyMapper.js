@@ -4,25 +4,27 @@ module.exports = {
 
         map: {
             isOpportunitie: {
-                name : 'isOpportunitie',
+                name : 'Is Opportunitie',
                 isRef: false
             },
-            'createdBy.date' : {
+
+            'createdBy.date': {
                 name : 'Creation Date',
                 isRef: false
             },
 
             'expectedRevenue.value': {
-                name : 'expectedRevenue',
+                name : 'Amount',
                 isRef: false
             },
-            'expectedClosing': {
+
+            expectedClosing: {
                 name : 'Close Date',
                 isRef: false
             },
 
             salesPerson: {
-                name      : 'salesPerson',
+                name      : 'Person',
                 isRef     : true,
                 collection: 'Employees',
                 project   : {$concat: ['$tmp.name.first', ' ', '$tmp.name.last']}
@@ -42,38 +44,42 @@ module.exports = {
 
         map: {
             isOpportunitie: {
-                name : 'isOpportunitie',
+                name : 'Is Opportunitie',
                 isRef: false
             },
 
             'expectedRevenue.value': {
-                name : 'expectedRevenue',
+                name : 'Amount',
                 isRef: false
             },
-            'expectedClosing': {
+
+            expectedClosing: {
                 name : 'Close Date',
                 isRef: false
             },
+
             salesPerson: {
                 name      : 'Assigned To',
                 isRef     : true,
                 collection: 'Employees',
                 project   : {$concat: ['$tmp.name.first', ' ', '$tmp.name.last']}
             },
+
             workflow: {
                 name      : 'workflow',
                 isRef     : true,
                 collection: 'workflows',
                 project   : '$tmp.name'
             },
-            'createdBy.date' : {
+
+            'createdBy.date': {
                 name : 'Creation Date',
                 isRef: false
             }
         }
     },
 
-    INVOICE : {
+    INVOICE: {
         collectionName: 'Invoice',
 
         map: {
@@ -82,56 +88,64 @@ module.exports = {
                 isRef: false
             },
 
-
             workflow: {
                 name      : 'Status',
                 isRef     : true,
                 collection: 'workflows',
                 project   : '$tmp.name'
             },
+
             dueDate: {
                 name : 'Due Date',
                 isRef: false
             },
+
             invoiceDate: {
                 name : 'Invoice Date',
                 isRef: false
             },
-            'createdBy.date' : {
+
+            'createdBy.date': {
                 name : 'Creation Date',
                 isRef: false
             }
         }
     },
-    QUOTATION : {
-        collectionName: 'QUOTATION',
+
+    ORDER: {
+        collectionName: 'ORDER',
 
         map: {
-            isOrder: {
-                name : 'Ordered',
+            'status.fulfillStatus': {
+                name : 'Fulfilled',
                 isRef: false
             },
+
             orderDate: {
                 name : 'Order Date',
                 isRef: false
             },
+
             expectedDate: {
-                name : 'Expected Date',
+                name : 'Payment Due Date',
                 isRef: false
             },
+
             workflow: {
                 name      : 'Status',
                 isRef     : true,
                 collection: 'workflows',
                 project   : '$tmp.name'
             },
-            'createdBy.date' : {
+            
+            'createdBy.date': {
                 name : 'Creation Date',
                 isRef: false
             }
         }
     },
-    PERSON : {
+
+    PERSON: {
         collectionName: 'Persons',
 
         map: {
@@ -139,58 +153,55 @@ module.exports = {
                 name : 'Skype',
                 isRef: false
             },
-            'createdBy.date' : {
+
+            'createdBy.date': {
                 name : 'Creation Date',
                 isRef: false
             },
+
             email: {
                 name : 'Email',
                 isRef: false
             },
+
             'social.LI': {
                 name : 'LinkedIn',
                 isRef: false
             },
+
             'social.FB': {
-                name : 'FaceBook',
+                name : 'Facebook',
                 isRef: false
             },
+
             'dateBirth': {
                 name : 'Date of Birth',
                 isRef: false
             },
+
             'name.first': {
                 name : 'First Name',
                 isRef: false
             },
+
             'name.last': {
                 name : 'Last Name',
                 isRef: false
             },
+
             'jobPosition': {
                 name : 'Job Position',
                 isRef: false
             },
+
             'address.country': {
                 name : 'Country',
                 isRef: false
             }
-            /*salesPerson: {
-                name      : 'Assigned To',
-                isRef     : true,
-                collection: 'Employees',
-                project   : {$concat: ['$tmp.name.first', ' ', '$tmp.name.last']}
-            },
-
-            workflow: {
-                name      : 'workflow',
-                isRef     : true,
-                collection: 'workflows',
-                project   : '$tmp.name'
-            }*/
         }
     },
-    COMPANY : {
+
+    COMPANY: {
         collectionName: 'Companies',
 
         map: {
@@ -198,59 +209,70 @@ module.exports = {
                 name : 'Email',
                 isRef: false
             },
+
             'social.LI': {
                 name : 'LinkedIn',
                 isRef: false
             },
-            'website': {
+
+            website: {
                 name : 'Website',
                 isRef: false
             },
+
             'social.FB': {
-                name : 'FaceBook',
+                name : 'Facebook',
                 isRef: false
             },
+
             'name.first': {
                 name : 'Name',
                 isRef: false
             },
+
             'address.country': {
                 name : 'Country',
                 isRef: false
             },
+
             'salesPurchases.salesPerson': {
                 name      : 'Assigned To',
                 isRef     : true,
                 collection: 'Employees',
                 project   : {$concat: ['$tmp.name.first', ' ', '$tmp.name.last']}
             },
-            'createdBy.date' : {
+
+            'createdBy.date': {
                 name : 'Creation Date',
                 isRef: false
             }
         }
     },
-    DEALTASK : {
+
+    DEALTASK: {
         collectionName: 'DealTasks',
 
         map: {
-            'description': {
+            description: {
                 name : 'Description',
                 isRef: false
             },
+
             assignedTo: {
                 name      : 'Assigned To',
                 isRef     : true,
                 collection: 'Employees',
                 project   : {$concat: ['$tmp.name.first', ' ', '$tmp.name.last']}
             },
-            'workflow': {
+
+            workflow: {
                 name      : 'Stage',
                 isRef     : true,
                 collection: 'workflows',
                 project   : '$tmp.name'
             },
-            'createdBy.date' : {
+
+            'createdBy.date': {
                 name : 'Creation Date',
                 isRef: false
             }

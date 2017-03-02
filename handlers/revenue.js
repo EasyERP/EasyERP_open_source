@@ -3,6 +3,8 @@ var _ = require('lodash');
 var mongoose = require('mongoose');
 var objectId = mongoose.Types.ObjectId;
 var CONSTANTS = require('../constants/mainConstants');
+var FilterMapper = require('../helpers/filterMapper');
+var filterMapper = new FilterMapper();
 
 var moment = require('../public/js/libs/moment/moment');
 
@@ -21,6 +23,7 @@ var wTrack = function (models) {
     var invoiceSchema = mongoose.Schemas.wTrackInvoice;
     var journalEntry = mongoose.Schemas.journalEntry;
     var tempJournalEntry = mongoose.Schemas.tempJournalEntry;
+    var newInvoiceSchema = mongoose.Schemas.Invoices;
 
     var constForView = [
         'iOS',
@@ -1454,7 +1457,7 @@ var wTrack = function (models) {
 
             //iterate over grouped result of projects with bonus by Employee
             for (var i = groupedEmployees.length;
-                 i--;) {
+                i--;) {
                 totalByBonus = 0;
 
                 groupedEmployee = groupedEmployees[i];
@@ -1466,24 +1469,24 @@ var wTrack = function (models) {
                 };
                 //iterate over grouped result of wTrack by date and projects
                 for (var j = groupedWtracks.length;
-                     j--;) {
+                    j--;) {
                     dateStr = groupedWtracks[j]._id;
                     /*employee[dateStr] = [];*/
                     bonusObject = {
                         total: 0
                     };
                     for (var m = groupedEmployee.root.length;
-                         m--;) {
+                        m--;) {
                         /*bonusObject = {
                          total: 0
                          };*/
                         totalByBonus = 0;
 
                         for (var k = groupedWtracks[j].root.length;
-                             k--;) {
+                            k--;) {
 
                             for (var l = groupedEmployee.root[m].projects.length;
-                                 l--;) {
+                                l--;) {
                                 if (groupedWtracks[j].root[k]._id.toString() === groupedEmployee.root[m].projects[l]._id.toString()) {
                                     if (groupedEmployee.root[m].bonus) {
                                         totalByBonus += (groupedEmployee.root[m].bonus.value * groupedWtracks[j].root[k].revenue / 100) / 100;
@@ -1782,7 +1785,7 @@ var wTrack = function (models) {
 
             //iterate over grouped result of projects with bonus by Employee
             for (var i = groupedEmployees.length;
-                 i--;) {
+                i--;) {
                 totalByBonus = 0;
 
                 groupedEmployee = groupedEmployees[i];
@@ -1794,24 +1797,24 @@ var wTrack = function (models) {
                 };
                 //iterate over grouped result of wTrack by date and projects
                 for (var j = groupedWtracks.length;
-                     j--;) {
+                    j--;) {
                     dateStr = groupedWtracks[j]._id;
                     /*employee[dateStr] = [];*/
                     bonusObject = {
                         total: 0
                     };
                     for (var m = groupedEmployee.root.length;
-                         m--;) {
+                        m--;) {
                         /*bonusObject = {
                          total: 0
                          };*/
                         totalByBonus = 0;
 
                         for (var k = groupedWtracks[j].root.length;
-                             k--;) {
+                            k--;) {
 
                             for (var l = groupedEmployee.root[m].projects.length;
-                                 l--;) {
+                                l--;) {
                                 if (groupedWtracks[j].root[k]._id.toString() === groupedEmployee.root[m].projects[l]._id.toString()) {
                                     if (groupedEmployee.root[m].bonus) {
                                         totalByBonus += (groupedEmployee.root[m].bonus.value * groupedWtracks[j].root[k].revenue / 100) / 100;
@@ -2610,54 +2613,65 @@ var wTrack = function (models) {
 
     this.totalInvoiceBySales = function (req, res, next) {
         var query = req.query;
-        var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', invoiceSchema);
+        var filter = query.filter;
+        var contentType = 'Invoices';
+        var Invoice = models.get(req.session.lastDb, contentType, newInvoiceSchema);
+        var dateQuery = filterMapper.mapFilter(filter, {contentType: contentType, keysArray: ['date']});
 
         var matchObject = {
-            _type   : 'wTrackInvoice',
+            _type   : 'Invoices',
             forSales: true
         };
-        var startDate;
-        var endDate;
 
-        if (query.startDate && query.endDate) {
-            startDate = new Date(moment(new Date(query.startDate)).startOf('day'));
-            endDate = new Date(moment(new Date(query.endDate)).endOf('day'));
-            matchObject.invoiceDate = {$lte: endDate, $gte: startDate};
-        }
+        Invoice.aggregate([
+            {
+                $match: {
+                    $and: [matchObject, dateQuery]
+                }
+            },
+            {
+                $project: {
+                    salesPerson: 1,
+                    paymentInfo: 1
+                }
+            },
+            {
+                $lookup: {
+                    from        : 'Employees',
+                    localField  : 'salesPerson',
+                    foreignField: '_id',
+                    as          : 'salesPerson'
+                }
+            },
+            {
+                $project: {
+                    salesPerson: {$arrayElemAt: ['$salesPerson', 0]},
+                    paymentInfo: 1
+                }
+            },
+            {
+                $group: {
+                    _id    : '$salesPerson._id',
+                    payment: {
+                        $sum: '$paymentInfo.total'
+                    },
 
-        Invoice.aggregate([{
-            $match: matchObject
-        }, {
-            $project: {
-                salesPerson: 1,
-                paymentInfo: 1
-            }
-        }, {
-            $lookup: {
-                from        : 'Employees',
-                localField  : 'salesPerson',
-                foreignField: '_id',
-                as          : 'salesPerson'
-            }
-        }, {
-            $project: {
-                salesPerson: {$arrayElemAt: ["$salesPerson", 0]},
-                paymentInfo: 1
-            }
-        }, {
-            $group: {
-                _id    : '$salesPerson',
-                payment: {
-                    $sum: '$paymentInfo.total'
+                    name: {
+                        $first: {$concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']}
+                    }
+                }
+            },
+            {
+                $project: {
+                    _id : 1,
+                    name: {
+                        $ifNull: ['$name', 'Not Assigned']
+                    },
+
+                    payment: 1
                 }
             }
-        }, {
-            $project: {
-                _id    : '$_id._id',
-                name   : {$concat: ['$_id.name.first', ' ', '$_id.name.last']},
-                payment: 1
-            }
-        }], function (err, response) {
+        ], function (err, response) {
             if (err) {
                 return next(err);
             }
@@ -2667,12 +2681,15 @@ var wTrack = function (models) {
     };
 
     this.synthetic = function (req, res, next) {
+        var wTrackInvoiceCT = 'wTrackInvoice';
+        var paymentCT = 'Payment';
         var query = req.query;
-        var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', invoiceSchema);
-        var Payment = models.get(req.session.lastDb, 'Payment', paymentSchema);
-        var Wetrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-        var startDate = query.startDate;
-        var endDate = query.endDate;
+        var Invoice = models.get(req.session.lastDb, wTrackInvoiceCT, invoiceSchema);
+        var Payment = models.get(req.session.lastDb, paymentCT, paymentSchema);
+        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var filter = query.filter || {};
+        var startDate = filter.date && filter.date.value && filter.date.value[0] || null;
+        var endDate = filter.date && filter.date.value && filter.date.value[1] || null;
         var momentStartDate;
         var startYear;
         var startMonth;
@@ -2686,8 +2703,7 @@ var wTrack = function (models) {
         var endDateByWeeek;
         var endDateByMonth;
         var matchObject = {
-            _type: 'wTrackInvoice'
-            // forSales: true  // One Invoice was without forSales ObjectId("5630c3caa0eb6af71d684bad")
+            _type: wTrackInvoiceCT
         };
         var salesManagers = objectId(CONSTANTS.SALESMANAGER);
         var salesManagersMatch = {
@@ -2799,11 +2815,8 @@ var wTrack = function (models) {
         };
 
         if (startDate && endDate) {
-            startDate = new Date(startDate);
-            endDate = new Date(endDate);
-
-            momentStartDate = moment(startDate);
-            momentEndDate = moment(endDate);
+            momentStartDate = moment(new Date(startDate));
+            momentEndDate = moment(new Date(endDate));
 
             startYear = momentStartDate.year();
             startMonth = momentStartDate.month();
@@ -2817,10 +2830,6 @@ var wTrack = function (models) {
             startDateByMonth = startYear * 100 + startMonth;
             endDateByWeeek = endYear * 100 + endWeek;
             endDateByMonth = endYear * 100 + endMonth;
-
-            matchObject.invoiceDate = {$gte: startDate, $lte: endDate};
-            matchObjectPayment.date = {$gte: startDate, $lte: endDate};
-
             if (groupedKey === 'week') {
                 wTrackMatchObject.dateByWeek = {$gte: startDateByWeeek, $lte: endDateByWeeek};
             } else {
@@ -2843,406 +2852,424 @@ var wTrack = function (models) {
         }
 
         function invoiceGrouper(parallelCb) {
-            Invoice.aggregate([{
-                $match: matchObject
-            }, {
-                $project: projectionObject
-            }, {
-                $lookup: {
-                    from        : 'projectMembers',
-                    localField  : 'project',
-                    foreignField: 'projectId',
-                    as          : 'salesPersons'
-                }
-            }, {
-                $lookup: {
-                    from        : 'Customers',
-                    localField  : 'supplier',
-                    foreignField: '_id',
-                    as          : 'supplier'
-                }
-            }, {
-                $project: {
-                    salesPersons: {
-                        $filter: {
-                            input: '$salesPersons',
-                            as   : 'salesPerson',
-                            cond : salesManagersMatch
-                        }
-                    },
-                    paymentInfo : 1,
-                    year        : 1,
-                    month       : 1,
-                    week        : 1,
-                    dateByWeek  : 1,
-                    dateByMonth : 1,
-                    supplier    : {$arrayElemAt: ['$supplier', 0]}
-                }
-            }, /*{
-             $project: {
-             salesPersons: 1,
-             size        : {$size: '$salesPersons'},
-             paymentInfo : 1,
-             year        : 1,
-             month       : 1,
-             week        : 1,
-             dateByWeek  : 1,
-             dateByMonth : 1,
-             supplier    : 1
-             }
-             }, {
-             $match: {
-             size: 0
-             }
-             },*/ {
-                $unwind: {
-                    path                      : '$salesPersons',
-                    preserveNullAndEmptyArrays: true
-                }
-            }, {
-                $lookup: {
-                    from        : 'Employees',
-                    localField  : 'salesPersons.employeeId',
-                    foreignField: '_id',
-                    as          : 'salesPerson'
-                }
-            }, {
-                $project: {
-                    paymentInfo: 1,
-                    year       : 1,
-                    month      : 1,
-                    week       : 1,
-                    dateByWeek : 1,
-                    dateByMonth: 1,
-                    supplier   : 1,
-                    salesPerson: {$arrayElemAt: ['$salesPerson', 0]}
-                }
-            }, {
-                $project: {
-                    paymentInfo: 1,
-                    year       : 1,
-                    month      : 1,
-                    week       : 1,
-                    dateByWeek : 1,
-                    dateByMonth: 1,
-                    supplier   : {
-                        _id : '$supplier._id',
-                        name: '$supplier.name'
-                    },
-                    salesPerson: {
-                        _id : '$salesPerson._id',
-                        name: '$salesPerson.name'
+            Invoice.aggregate([
+                {
+                    $match: filterMapper.mapFilter(filter, {contentType: wTrackInvoiceCT})
+                },
+                {
+                    $match: matchObject
+                },
+                {
+                    $project: projectionObject
+                },
+                {
+                    $lookup: {
+                        from        : 'projectMembers',
+                        localField  : 'project',
+                        foreignField: 'projectId',
+                        as          : 'salesPersons'
                     }
-                }
-            }, {
-                $group: {
-                    _id           : null,
-                    salesArray    : {
-                        $addToSet: {
+                },
+                {
+                    $lookup: {
+                        from        : 'Customers',
+                        localField  : 'supplier',
+                        foreignField: '_id',
+                        as          : 'supplier'
+                    }
+                },
+                {
+                    $project: {
+                        salesPersons: {
+                            $filter: {
+                                input: '$salesPersons',
+                                as   : 'salesPerson',
+                                cond : salesManagersMatch
+                            }
+                        },
+                        paymentInfo : 1,
+                        year        : 1,
+                        month       : 1,
+                        week        : 1,
+                        dateByWeek  : 1,
+                        dateByMonth : 1,
+                        supplier    : {$arrayElemAt: ['$supplier', 0]}
+                    }
+                },
+                {
+                    $unwind: {
+                        path                      : '$salesPersons',
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                {
+                    $lookup: {
+                        from        : 'Employees',
+                        localField  : 'salesPersons.employeeId',
+                        foreignField: '_id',
+                        as          : 'salesPerson'
+                    }
+                },
+                {
+                    $project: {
+                        paymentInfo: 1,
+                        year       : 1,
+                        month      : 1,
+                        week       : 1,
+                        dateByWeek : 1,
+                        dateByMonth: 1,
+                        supplier   : 1,
+                        salesPerson: {$arrayElemAt: ['$salesPerson', 0]}
+                    }
+                },
+                {
+                    $project: {
+                        paymentInfo: 1,
+                        year       : 1,
+                        month      : 1,
+                        week       : 1,
+                        dateByWeek : 1,
+                        dateByMonth: 1,
+                        supplier   : {
+                            _id : '$supplier._id',
+                            name: '$supplier.name'
+                        },
+                        salesPerson: {
                             _id : '$salesPerson._id',
                             name: '$salesPerson.name'
                         }
-                    },
-                    suppliersArray: {
-                        $addToSet: {
+                    }
+                },
+                {
+                    $group: {
+                        _id           : null,
+                        salesArray    : {
+                            $addToSet: {
+                                _id : '$salesPerson._id',
+                                name: '$salesPerson.name'
+                            }
+                        },
+                        suppliersArray: {
+                            $addToSet: {
+                                _id : '$supplier._id',
+                                name: '$supplier.name'
+                            }
+                        },
+                        root          : {$push: '$$ROOT'}
+                    }
+                },
+                {
+                    $unwind: '$root'
+                },
+                {
+                    $project: {
+                        _id           : 0,
+                        salesArray    : 1,
+                        suppliersArray: 1,
+                        salesPerson   : '$root.salesPerson',
+                        paymentInfo   : '$root.paymentInfo',
+                        year          : '$root.year',
+                        month         : '$root.month',
+                        week          : '$root.week',
+                        dateByWeek    : '$root.dateByWeek',
+                        dateByMonth   : '$root.dateByMonth',
+                        supplier      : '$root.supplier'
+                    }
+                },
+                {
+                    $group: groupObject
+                },
+                {
+                    $unwind: '$root'
+                },
+                {
+                    $group: {
+                        _id            : {
+                            _id : '$root.salesPerson._id',
+                            name: '$root.salesPerson.name',
+                            date: '$_id'
+                        },
+                        invoicedBySales: {$sum: '$root.paymentInfo.total'},
+                        salesArray     : {$first: '$root.salesArray'},
+                        suppliersArray : {$first: '$root.suppliersArray'},
+                        root           : {$push: '$$ROOT'}
+                    }
+                },
+                {
+                    $unwind: '$root'
+                },
+                {
+                    $project: {
+                        _id            : 0,
+                        salesPerson    : '$_id._id',
+                        invoicedBySales: 1,
+                        salesArray     : 1,
+                        suppliersArray : 1,
+                        date           : '$_id.date',
+                        invoiced       : '$root.invoiced',
+                        year           : '$root.root.year',
+                        month          : '$root.root.month',
+                        week           : '$root.root.week',
+                        supplier       : '$root.root.supplier',
+                        paymentInfo    : '$root.root.paymentInfo'
+                    }
+                },
+                {
+                    $group: {
+                        _id               : {
                             _id : '$supplier._id',
-                            name: '$supplier.name'
-                        }
-                    },
-                    root          : {$push: '$$ROOT'}
-                }
-            }, {
-                $unwind: '$root'
-            }, {
-                $project: {
-                    _id           : 0,
-                    salesArray    : 1,
-                    suppliersArray: 1,
-                    salesPerson   : '$root.salesPerson',
-                    paymentInfo   : '$root.paymentInfo',
-                    year          : '$root.year',
-                    month         : '$root.month',
-                    week          : '$root.week',
-                    dateByWeek    : '$root.dateByWeek',
-                    dateByMonth   : '$root.dateByMonth',
-                    supplier      : '$root.supplier'
-                }
-            }, {
-                $group: groupObject
-            }, {
-                $unwind: '$root'
-            }, {
-                $group: {
-                    _id            : {
-                        _id : '$root.salesPerson._id',
-                        name: '$root.salesPerson.name',
-                        date: '$_id'
-                    },
-                    invoicedBySales: {$sum: '$root.paymentInfo.total'},
-                    salesArray     : {$first: '$root.salesArray'},
-                    suppliersArray : {$first: '$root.suppliersArray'},
-                    root           : {$push: '$$ROOT'}
-                }
-            }, {
-                $unwind: '$root'
-            }, {
-                $project: {
-                    _id            : 0,
-                    salesPerson    : '$_id._id',
-                    invoicedBySales: 1,
-                    salesArray     : 1,
-                    suppliersArray : 1,
-                    date           : '$_id.date',
-                    invoiced       : '$root.invoiced',
-                    year           : '$root.root.year',
-                    month          : '$root.root.month',
-                    week           : '$root.root.week',
-                    supplier       : '$root.root.supplier',
-                    paymentInfo    : '$root.root.paymentInfo'
-                }
-            }, {
-                $group: {
-                    _id               : {
-                        _id : '$supplier._id',
-                        name: '$supplier.name',
-                        date: '$date'
-                    },
-                    invoicedBySupplier: {$sum: '$paymentInfo.total'},
-                    salesArray        : {$first: '$salesArray'},
-                    suppliersArray    : {$first: '$suppliersArray'},
-                    root              : {$push: '$$ROOT'}
-                }
-            }, {
-                $unwind: '$root'
-            }, {
-                $project: {
-                    _id               : 0,
-                    supplier          : '$_id._id',
-                    salesPerson       : '$root.salesPerson',
-                    invoicedBySales   : '$root.invoicedBySales',
-                    invoicedBySupplier: 1,
-                    salesArray        : 1,
-                    suppliersArray    : 1,
-                    date              : '$_id.date',
-                    invoiced          : '$root.invoiced',
-                    year              : '$root.year',
-                    month             : '$root.month',
-                    week              : '$root.week'
-                }
-            }, {
-                $group: {
-                    _id           : {
-                        date    : '$date',
-                        invoiced: '$invoiced'
-                    },
-                    sales         : {
-                        $addToSet: {
-                            salesPerson    : '$$ROOT.salesPerson',
-                            invoicedBySales: '$$ROOT.invoicedBySales'
-                        }
-                    },
-                    salesArray    : {$first: '$salesArray'},
-                    suppliersArray: {$first: '$suppliersArray'},
-                    suppliers     : {
-                        $addToSet: {
-                            supplier          : '$$ROOT.supplier',
-                            invoicedBySupplier: '$$ROOT.invoicedBySupplier'
+                            name: '$supplier.name',
+                            date: '$date'
+                        },
+                        invoicedBySupplier: {$sum: '$paymentInfo.total'},
+                        salesArray        : {$first: '$salesArray'},
+                        suppliersArray    : {$first: '$suppliersArray'},
+                        root              : {$push: '$$ROOT'}
+                    }
+                },
+                {
+                    $unwind: '$root'
+                },
+                {
+                    $project: {
+                        _id               : 0,
+                        supplier          : '$_id._id',
+                        salesPerson       : '$root.salesPerson',
+                        invoicedBySales   : '$root.invoicedBySales',
+                        invoicedBySupplier: 1,
+                        salesArray        : 1,
+                        suppliersArray    : 1,
+                        date              : '$_id.date',
+                        invoiced          : '$root.invoiced',
+                        year              : '$root.year',
+                        month             : '$root.month',
+                        week              : '$root.week'
+                    }
+                },
+                {
+                    $group: {
+                        _id           : {
+                            date    : '$date',
+                            invoiced: '$invoiced'
+                        },
+                        sales         : {
+                            $addToSet: {
+                                salesPerson    : '$$ROOT.salesPerson',
+                                invoicedBySales: '$$ROOT.invoicedBySales'
+                            }
+                        },
+                        salesArray    : {$first: '$salesArray'},
+                        suppliersArray: {$first: '$suppliersArray'},
+                        suppliers     : {
+                            $addToSet: {
+                                supplier          : '$$ROOT.supplier',
+                                invoicedBySupplier: '$$ROOT.invoicedBySupplier'
+                            }
                         }
                     }
+                },
+                {
+                    $project: {
+                        date          : '$_id.date',
+                        invoiced      : '$_id.invoiced',
+                        salesArray    : 1,
+                        suppliersArray: 1,
+                        sales         : 1,
+                        suppliers     : 1,
+                        _id           : 0
+                    }
                 }
-            }, {
-                $project: {
-                    date          : '$_id.date',
-                    invoiced      : '$_id.invoiced',
-                    salesArray    : 1,
-                    suppliersArray: 1,
-                    sales         : 1,
-                    suppliers     : 1,
-                    _id           : 0
-                }
-            }]).allowDiskUse(true).exec(parallelCb);
+            ]).allowDiskUse(true).exec(parallelCb);
         }
 
         function paymentGrouper(parallelCb) {
-            Payment.aggregate([{
-                $match: matchObjectPayment
-            }, {
-                $lookup: {
-                    from        : 'Invoice',
-                    localField  : 'invoice',
-                    foreignField: '_id',
-                    as          : 'invoice'
-                }
-            }, {
-                $project: projectionPaymentObject
-            }, {
-                $project: {
-                    dateByWeek : 1,
-                    dateByMonth: 1,
-                    date       : 1,
-                    year       : 1,
-                    month      : 1,
-                    week       : 1,
-                    paidAmount : 1,
-                    project    : '$invoice.project',
-                    invoiceDate: '$invoice.invoiceDate'
-                }
-            }, {
-                $lookup: {
-                    from        : 'projectMembers',
-                    localField  : 'project',
-                    foreignField: 'projectId',
-                    as          : 'salesPersons'
-                }
-            }, {
-                $project: {
-                    dateByWeek  : 1,
-                    dateByMonth : 1,
-                    date        : 1,
-                    year        : 1,
-                    month       : 1,
-                    week        : 1,
-                    paidAmount  : 1,
-                    salesPersons: {
-                        $filter: {
-                            input: '$salesPersons',
-                            as   : 'salesPerson',
-                            cond : salesManagersMatch
+            Payment.aggregate([
+                {
+                    $match: filterMapper.mapFilter(filter, {contentType: paymentCT})
+                },
+                {
+                    $match: matchObjectPayment
+                },
+                {
+                    $lookup: {
+                        from        : 'Invoice',
+                        localField  : 'invoice',
+                        foreignField: '_id',
+                        as          : 'invoice'
+                    }
+                },
+                {
+                    $project: projectionPaymentObject
+                },
+                {
+                    $project: {
+                        dateByWeek : 1,
+                        dateByMonth: 1,
+                        date       : 1,
+                        year       : 1,
+                        month      : 1,
+                        week       : 1,
+                        paidAmount : 1,
+                        project    : '$invoice.project',
+                        invoiceDate: '$invoice.invoiceDate'
+                    }
+                },
+                {
+                    $lookup: {
+                        from        : 'projectMembers',
+                        localField  : 'project',
+                        foreignField: 'projectId',
+                        as          : 'salesPersons'
+                    }
+                },
+                {
+                    $project: {
+                        dateByWeek  : 1,
+                        dateByMonth : 1,
+                        date        : 1,
+                        year        : 1,
+                        month       : 1,
+                        week        : 1,
+                        paidAmount  : 1,
+                        salesPersons: {
+                            $filter: {
+                                input: '$salesPersons',
+                                as   : 'salesPerson',
+                                cond : salesManagersMatch
+                            }
                         }
                     }
-                }
-            }, /*{
-             $project: {
-             size        : {$size: '$salesPersons'},
-             dateByWeek  : 1,
-             dateByMonth : 1,
-             date        : 1,
-             year        : 1,
-             month       : 1,
-             week        : 1,
-             paidAmount  : 1,
-             salesPersons: 1
-             }
-             }, {
-             $match: {
-             size: 0
-             }
-             },*/ {
-                $unwind: {
-                    path                      : '$salesPersons',
-                    preserveNullAndEmptyArrays: true
-                }
-            }, {
-                $lookup: {
-                    from        : 'Employees',
-                    localField  : 'salesPersons.employeeId',
-                    foreignField: '_id',
-                    as          : 'salesPerson'
-                }
-            }, {
-                $project: {
-                    dateByWeek  : 1,
-                    dateByMonth : 1,
-                    date        : 1,
-                    year        : 1,
-                    month       : 1,
-                    week        : 1,
-                    paidAmount  : 1,
-                    salesPersons: 1,
-                    salesPerson : {$arrayElemAt: ['$salesPerson', 0]}
-                }
-            }, {
-                $project: {
-                    dateByWeek  : 1,
-                    dateByMonth : 1,
-                    date        : 1,
-                    year        : 1,
-                    month       : 1,
-                    week        : 1,
-                    paidAmount  : 1,
-                    salesPersons: 1,
-                    salesPerson : {
-                        _id : '$salesPerson._id',
-                        name: '$salesPerson.name'
+                },
+                {
+                    $unwind: {
+                        path                      : '$salesPersons',
+                        preserveNullAndEmptyArrays: true
                     }
-                }
-            }, {
-                $group: {
-                    _id       : null,
-                    salesArray: {
-                        $addToSet: {
+                },
+                {
+                    $lookup: {
+                        from        : 'Employees',
+                        localField  : 'salesPersons.employeeId',
+                        foreignField: '_id',
+                        as          : 'salesPerson'
+                    }
+                },
+                {
+                    $project: {
+                        dateByWeek  : 1,
+                        dateByMonth : 1,
+                        date        : 1,
+                        year        : 1,
+                        month       : 1,
+                        week        : 1,
+                        paidAmount  : 1,
+                        salesPersons: 1,
+                        salesPerson : {$arrayElemAt: ['$salesPerson', 0]}
+                    }
+                },
+                {
+                    $project: {
+                        dateByWeek  : 1,
+                        dateByMonth : 1,
+                        date        : 1,
+                        year        : 1,
+                        month       : 1,
+                        week        : 1,
+                        paidAmount  : 1,
+                        salesPersons: 1,
+                        salesPerson : {
                             _id : '$salesPerson._id',
                             name: '$salesPerson.name'
                         }
-                    },
-                    root      : {$push: '$$ROOT'}
+                    }
+                },
+                {
+                    $group: {
+                        _id       : null,
+                        salesArray: {
+                            $addToSet: {
+                                _id : '$salesPerson._id',
+                                name: '$salesPerson.name'
+                            }
+                        },
+                        root      : {$push: '$$ROOT'}
+                    }
+                },
+                {
+                    $unwind: '$root'
+                },
+                {
+                    $project: {
+                        _id        : 0,
+                        salesArray : 1,
+                        salesPerson: '$root.salesPerson',
+                        paidAmount : '$root.paidAmount',
+                        year       : '$root.year',
+                        month      : '$root.month',
+                        week       : '$root.week',
+                        dateByWeek : '$root.dateByWeek',
+                        dateByMonth: '$root.dateByMonth'
+                    }
+                },
+                {
+                    $group: groupPaymentObject
+                },
+                {
+                    $unwind: '$root'
+                },
+                {
+                    $group: {
+                        _id        : {
+                            _id : '$root.salesPerson._id',
+                            name: '$root.salesPerson.name',
+                            date: '$_id'
+                        },
+                        paidBySales: {$sum: '$root.paidAmount'},
+                        salesArray : {$first: '$root.salesArray'},
+                        root       : {$push: '$$ROOT'}
+                    }
+                },
+                {
+                    $unwind: '$root'
+                },
+                {
+                    $project: {
+                        _id        : 0,
+                        salesPerson: '$_id._id',
+                        paidBySales: 1,
+                        salesArray : 1,
+                        date       : '$_id.date',
+                        paid       : '$root.paid',
+                        year       : '$root.root.year',
+                        month      : '$root.root.month',
+                        week       : '$root.root.week'
+                    }
+                },
+                {
+                    $group: {
+                        _id        : {
+                            date: '$date',
+                            paid: '$paid'
+                        },
+                        paidBySales: {
+                            $addToSet: {
+                                salesPerson: '$$ROOT.salesPerson',
+                                paidBySales: '$$ROOT.paidBySales'
+                            }
+                        },
+                        salesArray : {$first: '$salesArray'}
+                    }
+                },
+                {
+                    $project: {
+                        date       : '$_id.date',
+                        paid       : '$_id.paid',
+                        salesArray : 1,
+                        paidBySales: 1,
+                        _id        : 0
+                    }
                 }
-            }, {
-                $unwind: '$root'
-            }, {
-                $project: {
-                    _id        : 0,
-                    salesArray : 1,
-                    salesPerson: '$root.salesPerson',
-                    paidAmount : '$root.paidAmount',
-                    year       : '$root.year',
-                    month      : '$root.month',
-                    week       : '$root.week',
-                    dateByWeek : '$root.dateByWeek',
-                    dateByMonth: '$root.dateByMonth'
-                }
-            }, {
-                $group: groupPaymentObject
-            }, {
-                $unwind: '$root'
-            }, {
-                $group: {
-                    _id        : {
-                        _id : '$root.salesPerson._id',
-                        name: '$root.salesPerson.name',
-                        date: '$_id'
-                    },
-                    paidBySales: {$sum: '$root.paidAmount'},
-                    salesArray : {$first: '$root.salesArray'},
-                    root       : {$push: '$$ROOT'}
-                }
-            }, {
-                $unwind: '$root'
-            }, {
-                $project: {
-                    _id        : 0,
-                    salesPerson: '$_id._id',
-                    paidBySales: 1,
-                    salesArray : 1,
-                    date       : '$_id.date',
-                    paid       : '$root.paid',
-                    year       : '$root.root.year',
-                    month      : '$root.root.month',
-                    week       : '$root.root.week'
-                }
-            }, {
-                $group: {
-                    _id        : {
-                        date: '$date',
-                        paid: '$paid'
-                    },
-                    paidBySales: {
-                        $addToSet: {
-                            salesPerson: '$$ROOT.salesPerson',
-                            paidBySales: '$$ROOT.paidBySales'
-                        }
-                    },
-                    salesArray : {$first: '$salesArray'}
-                }
-            }, {
-                $project: {
-                    date       : '$_id.date',
-                    paid       : '$_id.paid',
-                    salesArray : 1,
-                    paidBySales: 1,
-                    _id        : 0
-                }
-            }]).allowDiskUse(true).exec(parallelCb);
+            ]).allowDiskUse(true).exec(parallelCb);
 
         };
 
@@ -3275,7 +3302,7 @@ var wTrack = function (models) {
                 }]
             };
 
-            Wetrack.aggregate([{
+            WTrack.aggregate([{
                 $match: wTrackMatchObject
             }, {
                 $lookup: {
@@ -3484,7 +3511,6 @@ var wTrack = function (models) {
             // response.invoiced = _.sortBy(response.invoiced, 'date');
 
             res.status(200).send({payments: response.invoiced, sales: sales, suppliers: suppliers});
-            //res.status(200).send(response);
         });
     };
 

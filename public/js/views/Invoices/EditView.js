@@ -302,6 +302,7 @@ define([
             var jobDescription;
 
             var salesPersonId = $thisEl.find('#salesPerson').attr('data-id') || null;
+            var paymentMethod = $thisEl.find('#paymentMethod').attr('data-id') || null;
             var paymentTermId = $thisEl.find('#payment_terms').attr('data-id') || null;
             var journalId = $thisEl.find('#journal').attr('data-id') || null;
 
@@ -372,10 +373,10 @@ define([
                 journal       : journalId,
                 products      : products,
 
-                salesPerson : salesPersonId,
-                paymentTerms: paymentTermId,
-
-                groups: {
+                salesPerson  : salesPersonId,
+                paymentTerms : paymentTermId,
+                paymentMethod: paymentMethod,
+                groups       : {
                     owner: this.$el.find('#allUsersSelect').attr('data-id') || null,
                     users: usersId,
                     group: groupsId
@@ -546,6 +547,7 @@ define([
                 buttons = [
                     {
                         text : this.isPaid ? 'Close' : 'Cancel',
+                        class: 'btn',
                         click: function () {
                             self.hideDialog();
                         }
@@ -565,24 +567,22 @@ define([
                         click: function () {
                             self.hideDialog();
                         }
-                    },
-                    {
-                        text : 'Delete',
-                        class: 'btn',
-                        click: self.deleteItem
-                    }
+                    }/*,
+                     {
+                     text : 'Delete',
+                     class: 'btn',
+                     click: self.deleteItem
+                     }*/
                 ];
             }
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'edit-invoice-dialog',
-                title        : 'Edit Invoice',
-                width        : self.isWtrack ? '1200' : '900',
-                position     : {my: 'center bottom', at: 'center', of: window},
-                buttons      : buttons
+                autoOpen   : true,
+                dialogClass: 'edit-invoice-dialog',
+                title      : 'Edit Invoice',
+                width      : self.isWtrack ? '1200' : '900',
+                position   : {my: 'center bottom', at: 'center', of: window},
+                buttons    : buttons
 
             });
 
@@ -594,7 +594,7 @@ define([
             );
 
             populate.get2name('#supplier', '/supplier', {}, this, false);
-            populate.get2name('#salesPerson', CONSTANTS.EMPLOYEES_RELATEDUSER, {}, this, true, true);
+            populate.get2name('#salesPerson', CONSTANTS.URLS.EMPLOYEES_RELATEDUSER, {}, this, true, true);
             populate.get('#currencyDd', '/currency/getForDd', {}, 'name', this, true);
 
             if (!model.paymentMethod && model.project && model.project.paymentMethod) {

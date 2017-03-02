@@ -99,7 +99,7 @@ var Module = function (models) {
         var id = req.params.id;
         var data = req.body;
 
-        PayrollComponentType.findByIdAndUpdate(id, data, function (err, result) {
+        PayrollComponentType.findByIdAndUpdate(id, data, {new: true}, function (err, result) {
             if (err) {
                 return next(err);
             }

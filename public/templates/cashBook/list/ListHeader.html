@@ -1,52 +1,32 @@
 <div id="searchContainer"></div>
 <%var length = accounts.length; %>
 <div class="containerContent">
-    <table class="list stripedList">
-        <colgroup>
-            <col width="42px">
-            <col width="120px">
-            <col width="100px">
-            <col width="100px">
-            <col width="180px">
-            <col width="100px">
-            <col width="140px">
-            <col width="100px">
-            <col width="180px">
-            <col width="100px">
-            <col width="100px">
-            <col width="100px">
-            <col width="140px">
-            <col width="100px">
-        </colgroup>
-        <thead>
-
-        <tr id="captionAssets">
-            <th class="centerCell">#</th>
-            <th>Date</th>
-            <th>Document</th>
-            <th>Name</th>
-
-            <% for (var i = 0; i < length; i++) { %>
-            <%var acc = accounts[i]; %>
-            <th data-id="<%= acc._id %>"><%= acc.name %></th>
-            <th>Balance</th>
-            <% }%>
-
-        </tr>
-        </thead>
-        <tfoot>
-
-        </tfoot>
-        <tbody id="listTable" class="enableTableOdd">
-        <tr>
-            <td colspan="4">Opening Balance</td>
-            <% for (var i = 0; i < length; i++) { %>
-            <%var acc = accounts[i]; %>
-            <td></td>
-            <td data-id="<%= acc._id %>" data-level="1" class="money"></td>
-            <% }%>
-
-        </tr>
-        </tbody>
-    </table>
+    <div class="_cashBookWrap">
+        <table class="list stripedList noFixed">
+            <thead>
+            <tr id="captionAssets">
+                <th>Date</th>
+                <th>Document</th>
+                <th>Name</th>
+                <% for (var i = 0; i < length; i++) { %>
+                <%var acc = accounts[i]; %>
+                <th data-id="<%= acc._id %>"><%= acc.name %></th>
+                <th>Balance</th>
+                <% }%>
+            </tr>
+            </thead>
+            <tbody id="listTable" class="enableTableOdd">
+            <tr>
+                <td colspan="3">Opening Balance</td>
+                <% for (var i = 0; i < length; i++) { %>
+                <%var acc = accounts[i]; %>
+                <td></td>
+                <td data-id="<%= acc._id %>" data-level="1" class="money"></td>
+                <% }%>
+            </tr>
+            </tbody>
+            <tfoot>
+            </tfoot>
+        </table>
+    </div>
 </div>

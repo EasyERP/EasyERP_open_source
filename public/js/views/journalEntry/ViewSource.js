@@ -125,10 +125,19 @@ define([
             var self = this;
             var temp = this[this.type];
             var width = '700px';
-            var template = temp({
+            var model = this.model;
+            var template;
+
+            if (model.toJSON()[0]) {
+                model = model.get('0');
+            } else {
+                model = model.toJSON();
+            }
+
+            template = temp({
                 currencySplitter: helpers.currencySplitter,
                 currencyClass   : helpers.currencyClass,
-                model           : this.model.toJSON(),
+                model           : model,
                 type            : this.type,
                 employee        : this.employee
             });
@@ -138,13 +147,11 @@ define([
             }
 
             this.$el = $(template).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                width        : width,
-                resizable    : true,
-                dialogClass  : 'dialog',
-                title        : 'SourceDocument',
-                buttons      : [
+                autoOpen   : true,
+                width      : width,
+                dialogClass: 'dialog',
+                title      : 'SourceDocument',
+                buttons    : [
                     {
                         text : 'Close',
                         class: 'btn',

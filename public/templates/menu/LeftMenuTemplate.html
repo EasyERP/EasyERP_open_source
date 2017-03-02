@@ -6,7 +6,7 @@
         <a href="#easyErp/<%=parent.subModules[0].href%>"><%=parent.mname%></a>
         <ul>
             <li>
-                <a href="#easyErp/<%=parent.subModules[0].href%>" class="sub_item"><%=parent.mname%></a>
+                <a href="#easyErp/<%=parent.subModules[0].href%>" class="sub_item subItem "><%=parent.mname%></a>
             </li>
             <% _.forEach(parent.subModules, function(child, index){%>
             <li class="<%=(child.href===currentModule)?'selected':''%>">

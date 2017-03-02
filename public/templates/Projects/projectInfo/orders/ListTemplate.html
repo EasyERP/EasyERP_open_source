@@ -1,26 +1,41 @@
 <% orderCollection.forEach(function(order, index){ %>
+<% var currency =(order.currency && order.currency._id ? order.currency._id.symbol : '')%>
+
 <tr data-id="<%=order._id%>"
-<%if (order.workflow && order.workflow.name === 'Cancelled') { %>
-class="canceledListItem"
-<%} else if (order.workflow && order.workflow.name !== 'Not Invoiced'){ %>
+<%if (order.workflow && order.workflow.status === 'Done') { %>
 class="notEditable"
 <% } %>>
-<td class="notForm centerCell"><input type="checkbox" value="<%=order._id%>" class="checkbox <%if (order.workflow && order.workflow.name !== 'Not Invoiced') { %>
-                notRemovable
-                <% } %>"/></td>
-<td><%=order.name ? order.name : '------'%></td>
-<td><%=(order.supplier) ? order.supplier.name.first + ' ' + order.supplier.name.last : '------'%></td>
-<td><%=(order.salesPerson) ? order.salesPerson.name.first + ' ' + order.salesPerson.name.last : '------'%></td>
-<td class="total <%=currencyClass(order.currency._id)%>"><%=(order.paymentInfo) ? currencySplitter(order.paymentInfo.total) : '0'%></td>
-<!--<td class="type"><%=order.type%></td>-->
-<td id='<%=order._id%>' class="centerCell workflow">
-    <%if(order.workflow.name !== 'Done'){%>
-    <a href="javascript:;" class=""><%=order.workflow ? order.workflow.name: 'Undefinded'%></a>
-    <% } else {%>
-    <span class="done"><%=order.workflow.name%></span>
-    <%}%>
+<td class="notForm centerCell">
+    <label class="_customCHeckbox">
+        <input type="checkbox" value="<%=order._id%>"
+        <% if (!order.removable) { %>
+        class="checkbox notRemovable" disabled='disabled'
+        <% } else {%>
+        class="checkbox"
+        <% } %>
+        />
+        <span></span>
+    </label>
 </td>
+<td><%=order.name%></td>
+<%var allocateStatus = order.status ? order.status.allocateStatus : 'NOT' %>
+<%var fulfillStatus = order.status ? order.status.fulfillStatus : 'NOT' %>
+<%var shippingStatus = order.status ? order.status.shippingStatus : 'NOT' %></td>
+<td><%=(order.supplier && order.supplier.name) ? order.supplier.name.first + ' ' + order.supplier.name.last : ''%></td>
+<td class="centerCell _statusOrders"><span title="Allocated"
+                                           class="_allocationed <%=allocateStatus === 'NOA' ? 'icon-checked yellow' : allocateStatus === 'ALL' ? 'icon-checked green' : '_notDid'%>"></span>
+</td>
+<td class="centerCell _statusOrders"><span title="Fulfilled"
+                                           class="icon-box <%=fulfillStatus === 'NOA' ? 'yellow' : fulfillStatus === 'ALL' ? 'green' : 'red'%> _fullfilled"></span>
+</td>
+<td class="centerCell _statusOrders"><span  title="Shipped"
+                                            class="icon-cargo <%=shippingStatus === 'NOA' ? 'yellow' : shippingStatus === 'ALL' ? 'green' : 'red'%> _shipped"></span>
+</td>
+<td><a href="javascript:;"><%=order.workflow ? order.workflow.name: 'Undefinded'%></a></td>
+<td class="unTaxed"><%=currency %><%=(order.paymentInfo) ? currencySplitter(order.paymentInfo.unTaxed) : '0.00'%></td>
+<td class="total"><%=currency %><%=(order.paymentInfo) ? currencySplitter(order.paymentInfo.total) : '0.00'%></td>
 <td><%=order.orderDate%></td>
 </tr>
 <% }) %>
+
 

@@ -3,39 +3,39 @@
         <div class="inner">
             <ul class="dialog-tabs _btnsBlockFixed" data-class="mainTabs">
                 <li class="right">
-                    <button id="editButton" class="btn" title="Edit">
+                    <button id="editButton" class="btn slim" title="Edit">
                         <span class="icon-pencil2"></span>
                     </button>
-                    <button id="exportToPdf" class="btn " title="Download in PDF format">
+                    <button id="exportToPdf" class="btn slim " title="Download in PDF format">
                         <span class="icon-pdf"></span>
                     </button>
-                    <button class="btn attach_file" id="attachment_file" title="Attach">
+                    <button class="btn slim attach_file" id="attachment_file" title="Attach">
                         <span class="icon-attach"></span>
                     </button>
                     <%if(model.workflow && model.workflow.status !== 'Cancelled'){%>
                     <%if(model.workflow.status === 'New'){%>
                     <%if(model.approved){%>
                     <%if(!model.emailed){%>
-                    <button class="btn sendEmail">
+                    <button class="btn slim sendEmail">
                         <span>Send email</span>
                     </button>
                     <%} else {%>
-                    <button class="btn sendEmail">
+                    <button class="btn slim sendEmail">
                         <span>Resend email</span>
                     </button>
                     <%}%>
-                    <button class="btn newPayment">
+                    <button class="btn slim newPayment">
                         <span>Create Payment</span>
                     </button>
                     <%} else {%>
                     <%if(isFinancial){%>
-                    <button class="btn sendEmail">
+                    <button class="btn slim sendEmail">
                         <span>Send email</span>
                     </button>
-                    <button class="btn newPayment">
+                    <button class="btn slim newPayment">
                         <span>Create Payment</span>
                     </button>
-                    <button class="btn approve">
+                    <button class="btn slim approve">
                         <span>Approve</span>
                     </button>
                     <%} else {%>
@@ -44,25 +44,25 @@
                     <%}%>
                     <%} else if(model.workflow.status === 'Done'){%>
                     <% if(paidAndNotApproved) {%>
-                    <button class="btn approve">
+                    <button class="btn slim approve">
                         <span>Approve</span>
                     </button>
                     <%}%>
                     <%} else {%>
                     <%if(model.approved){%>
-                    <button class="btn newPayment">
+                    <button class="btn slim newPayment">
                         <span>Create Payment</span>
                     </button>
                     <%} else {%>
                     <%if(isFinancial){%>
-                    <button class="btn sendEmail">
+                    <button class="btn slim sendEmail">
                         <span>Send email</span>
                     </button>
 
-                    <button class="btn newPayment">
+                    <button class="btn slim newPayment">
                         <span>Pay</span>
                     </button>
-                    <button class="btn approve">
+                    <button class="btn slim approve">
                         <span>Approve</span>
                     </button>
                     <%} else {%>
@@ -71,16 +71,21 @@
                     <%}%>
                     <%}%>
                     <%} else {%>
-                    <button class="btn borderRed setDraft">
+                    <button class="btn slim borderRed setDraft">
                         <span>Set Draft</span>
                     </button>
                     <%}%>
                 </li>
             </ul>
             <div class="clearfix"></div>
-            <div id="historyDiv" class="_pureTemplate"></div>
-            <div id="templateDiv"></div>
-            <div id="attachments" class="invoiceAttachments"></div>
+            <div class="_templateInvoiceWrp">
+                <div id="templateDiv" class="_templateDiv"></div>
+                <div class="addingInfoWrp">
+                    <div id="historyDiv" class="_pureTemplate"></div>
+                    <div id="attachments" class="invoiceAttachments"></div>
+                </div>
+            </div>
+
             <div id="payments-container" class="paymentsContainer"></div>
             <div class="clearfix"></div>
         </div>

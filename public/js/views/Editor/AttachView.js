@@ -9,6 +9,7 @@ define([
     var AttachView = Backbone.View.extend({
 
         initialize: function (options) {
+            this.noteView = options.noteView;
             this.contentType = options.contentType;
             this.isCreate = options.isCreate;
             this.elementId = options.elementId;
@@ -20,12 +21,15 @@ define([
             'click .deleteAttach': 'deleteAttach'
         },
 
-        template: _.template(AttachTemplate),
+        template   : _.template(AttachTemplate),
         docTemplate: _.template(AttachDocTemplate),
 
         addAttach: function (event) {
             var $thisEl = this.$el;
             var s;
+
+            event.stopPropagation();
+            event.preventDefault();
 
             if (this.isCreate) {
                 s = $thisEl.find('.inputAttach:last').val().split('\\')[$thisEl.find('.inputAttach:last').val().split('\\').length - 1];
@@ -76,7 +80,7 @@ define([
                 });
                 if ($thisEl.find('li .inputAttach').length === 0) {
                     Backbone.history.fragment = '';
-                    Backbone.history.navigate(window.location.hash, {trigger: true});
+                    Backbone.history.navigate(self.url || window.location.hash, {trigger: true});
 
                     return;
                 }
@@ -94,18 +98,23 @@ define([
                 }
             }
 
+            if (this.noteView) {
+                this.noteView.saveNote(null);
+                this.noteView.saveTask(true);
+            }
+
             addFrmAttach.submit(function (e) {
                 var bar = $thisEl.find('.bar');
                 var status = $thisEl.find('.status');
                 var contentType = self.contentType ? self.contentType.toLowerCase() : '';
                 var formURL;
 
-                $('.input-file-button').off('click');
+                $('.input-file').off('click');
 
                 if (self.import) {
-                    formURL = 'http://' + window.location.host + '/importFile';
+                    formURL = '/importFile';
                 } else {
-                    formURL = 'http://' + window.location.host + '/' + contentType + '/uploadFiles/';
+                    formURL = '/' + contentType + '/uploadFiles/';
                 }
 
                 e.preventDefault();
@@ -137,7 +146,7 @@ define([
                     success: function () {
 
                         Backbone.history.fragment = '';
-                        Backbone.history.navigate(window.location.hash, {trigger: true});
+                        Backbone.history.navigate(self.url || window.location.hash, {trigger: true});
 
                     },
 
@@ -191,16 +200,11 @@ define([
                             },
                             patch  : true, // Send only changed attr(add Roma)
                             success: function () {
-                                var othersAttaches;
-
                                 self.$el.find('.attachFile_' + id).remove();
-                                othersAttaches = self.$el.find('.attachContainer li').length;
 
-                                if (!othersAttaches){
-                                    self.$el.find('.input-file').removeClass('smallBtn');
+                                if (self.contentType === 'order' && newAttachments && newAttachments.length === 0) {
+                                    self.$el.find('.formTitle').remove();
                                 }
-
-
                             }
                         });
                 }
@@ -210,19 +214,17 @@ define([
         render: function () {
             var attachments = this.model.get('attachments');
             var optionObj = {
-                attachments: attachments,
+                attachments: attachments || [],
                 elementId  : this.elementId || 'addAttachments',
                 moment     : moment
             };
 
-            if (this.forDoc){
+            if (this.forDoc) {
                 this.$el.html(this.docTemplate(optionObj));
             } else {
                 this.$el.html(this.template(optionObj));
 
             }
-
-
 
             return this;
         }

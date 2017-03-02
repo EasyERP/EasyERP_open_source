@@ -1,7 +1,7 @@
 ﻿<ul class="newSelectList" data-page="<%=currentPage%>">
     <% collection.forEach(function(item){ %>
     <li id="<%= item._id %>" data-level="<%= item.level%>" data-fullname="<%= item.fullName%>"
-        data-status="<%= item.status?item.status.replace(' ','').toLowerCase():''%>"><%= item.name %>
+        data-status="<%= item.status?item.status.replace(' ','').toLowerCase():''%>"><%=(item.info && item.info.SKU ? item.info.SKU + ' ' : '') + item.name %>
     </li>
     <% }) %>
     <% if (dataLength>elementVisible){%>

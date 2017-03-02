@@ -29,7 +29,6 @@ define([
             this.collection = options.collection;
             _.bind(this.collection.showMore, this.collection);
             _.bind(this.collection.showMoreAlphabet, this.collection);
-            this.allAlphabeticArray = common.buildAllAphabeticArray();
             this.filter = options.filter ? options.filter : {};
             this.defaultItemsNumber = this.collection.namberToShow || 100;
             this.newCollection = options.newCollection;

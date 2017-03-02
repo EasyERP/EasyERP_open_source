@@ -18,7 +18,7 @@
   >li {
     width: 380px;
     min-height: 130px;
-    border: 1px solid #7f7f80;
+    border: 2px solid #7eadcc;
     padding: 5px;
     margin-right: 5px;
     margin-bottom: 5px;
@@ -40,10 +40,7 @@
     }
 
     .avatar_img {
-      display: inline-block;
-      width: 100%;
-      vertical-align: middle;
-      font: 16px/1 $base-font-family;
+      float: left;
 
       img {
         width: 100%;
@@ -74,7 +71,8 @@
     margin-bottom: 10px;
     line-height: 25px;
     font-size: 18px;
-    font-weight: bold;
+    font-family: $bold-font-family;
+    color: #6496b7;
   }
 
   .birthday_day {

@@ -8,8 +8,10 @@ define([
     'collections/invoiceCharts/invoiceCharts',
     'helpers',
     'moment',
+    'custom',
     'constants'
-], function (Backbone, $, _, d3, mainTemplate, tableBodyTemplate, InvoiceCharts, helpers, moment, CONSTANTS) {
+], function (Backbone, $, _, d3, mainTemplate, tableBodyTemplate, InvoiceCharts,
+             helpers, moment, custom, CONSTANTS) {
     'use strict';
     var View = Backbone.View.extend({
         el: '#content-holder',
@@ -27,13 +29,17 @@ define([
         },
 
         initialize: function (options) {
-            var startWeek;
             var self = this;
+
+            var startWeek;
+            var filter;
             var year;
             var week;
 
             this.startTime = options.startTime;
             this.collection = options.collection || [];
+
+            filter = this.filter = options.filter || custom.retriveFromCash('invoiceCharts.filter');
 
             year = moment().isoWeekYear();
             week = moment().isoWeek();
@@ -54,16 +60,22 @@ define([
             this.render();
         },
 
-        changeDateRange: function () {
-            this.startDate = this.$startDate.val();
-            this.endDate = this.$endDate.val();
+        changeDateRange: function (dateArray) {
+            var filter = this.filter || custom.retriveFromCash('invoiceCharts.filter') || {};
+
+            filter.date = {
+                value: dateArray
+            };
 
             this.collection = new InvoiceCharts({
-                byWeek   : this.byWeek,
-                startDate: this.startDate,
-                endDate  : this.endDate
+                byWeek: this.byWeek,
+                filter: filter
             });
+
             this.collection.on('reset', this.renderContent, this);
+            this.filter = filter;
+
+            custom.cacheToApp('invoiceCharts.filter', this.filter);
         },
 
         byWeekRender: function (e) {
@@ -75,9 +87,8 @@ define([
 
             this.byWeek = true;
             this.collection = new InvoiceCharts({
-                byWeek   : true,
-                startDate: this.startDate,
-                endDate  : this.endDate
+                byWeek: true,
+                filter: this.filter
             });
             this.collection.on('reset', this.renderContent, this);
         },
@@ -91,8 +102,7 @@ define([
 
             this.byWeek = false;
             this.collection = new InvoiceCharts({
-                startDate: this.startDate,
-                endDate  : this.endDate
+                filter: this.filter
             });
             this.collection.on('reset', this.renderContent, this);
         },
@@ -127,7 +137,7 @@ define([
             topChart
                 .append('g')
                 .attr({
-                    'width': width,
+                    'width' : width,
                     'height': height
                 });
 
@@ -158,42 +168,41 @@ define([
                 })
                 .interpolate('linear');
 
-           /* topChart
-                .selectAll('rect')
-                .data(data)
-                .enter()
-                .append('svg:rect')
-                .attr('x', function (datum, index) {
-                    return (x(datum.date));
-                })
-                .attr('y', function (datum) {
-                    return y(datum.invoiced);
-                })
-                .attr('height', function (datum) {
-                    return height - y(datum.invoiced);
-                })
-                .attr('width', x.rangeBand())
-                .attr('fill', '#01579B') // lighBlue
-                .attr('opacity', 0.3)
-                .on('mouseover', function (d) {
+            /* topChart
+             .selectAll('rect')
+             .data(data)
+             .enter()
+             .append('svg:rect')
+             .attr('x', function (datum, index) {
+             return (x(datum.date));
+             })
+             .attr('y', function (datum) {
+             return y(datum.invoiced);
+             })
+             .attr('height', function (datum) {
+             return height - y(datum.invoiced);
+             })
+             .attr('width', x.rangeBand())
+             .attr('fill', '#01579B') // lighBlue
+             .attr('opacity', 0.3)
+             .on('mouseover', function (d) {
 
-                });*/
-
+             });*/
 
             path = topChart.append('path')
                 .datum(data)
                 .attr({
-                    'd': line,
-                    'stroke': '#D96459',
+                    'd'           : line,
+                    'stroke'      : '#D96459',
                     'stroke-width': 2,
-                    'fill': 'none',
-                    'opacity': 1
+                    'fill'        : 'none',
+                    'opacity'     : 1
                 });
 
             totalLength = path.node().getTotalLength();
 
             path
-                .attr('stroke-dasharray', totalLength + ' '+ totalLength)
+                .attr('stroke-dasharray', totalLength + ' ' + totalLength)
                 .attr('stroke-dashoffset', totalLength)
                 .transition()
                 .duration(2000)
@@ -245,7 +254,7 @@ define([
                         .style('top', (y(d.paid) - 40) + 'px')
                         .style('display', 'block')
                         .select('span')
-                        .text((d.paid/1000).toFixed(3));
+                        .text((d.paid / 1000).toFixed(3));
 
                     tooltip.select('.arrow')
                         .transition()
@@ -271,28 +280,28 @@ define([
                 .enter()
                 .append('svg:rect')
                 .attr({
-                    'x': function (datum) {
-                        return (x(datum.date) + x.rangeBand()/2 - 5);
+                    'x'      : function (datum) {
+                        return (x(datum.date) + x.rangeBand() / 2 - 5);
                     },
-                    'y': function (datum) {
+                    'y'      : function (datum) {
                         return y(datum.invoiced) - 5;
                     },
-                    'width': 10,
-                    'height': 10,
-                    'fill': '#D96459', //red squares
+                    'width'  : 10,
+                    'height' : 10,
+                    'fill'   : '#D96459', //red squares
                     'opacity': 1
                 })
-                .on('mouseover', function(d){
+                .on('mouseover', function (d) {
 
                     tooltip.transition()
                         .duration(300)
                         .style('border-color', '#D96459')
-                        .style('width',  (x.rangeBand()*2) + 'px')
-                        .style('left', (x(d.date) - x.rangeBand()/2) + 'px')
+                        .style('width', (x.rangeBand() * 2) + 'px')
+                        .style('left', (x(d.date) - x.rangeBand() / 2) + 'px')
                         .style('top', (y(d.invoiced) - 40) + 'px')
                         .style('display', 'block')
                         .select('span')
-                        .text((d.invoiced/1000).toFixed(3));
+                        .text((d.invoiced / 1000).toFixed(3));
 
                     tooltip.select('.arrow')
                         .transition()
@@ -348,21 +357,21 @@ define([
 
             topChart.append('svg:g')
                 .attr({
-                    'class': 'x axis',
+                    'class'    : 'x axis',
                     'transform': 'translate(0,' + (height + 10) + ')'
                 })
                 .call(xAxis)
                 .selectAll('text')
                 .attr({
                     'transform': 'rotate(-60)',
-                    'dx': '-.2em',
-                    'dy': '.15em'
+                    'dx'       : '-.2em',
+                    'dy'       : '.15em'
                 })
                 .style('text-anchor', 'end');
 
             topChart.append('svg:g')
                 .attr({
-                    'class': 'y axis',
+                    'class'    : 'y axis',
                     'transform': 'translate(' + (margin.left) + ', 5 )'
                 })
                 .call(yAxis)
@@ -411,15 +420,16 @@ define([
         render: function () {
             var self = this;
             var $currentEl = this.$el;
+            var filter = this.filter || custom.retriveFromCash('invoiceCharts.filter');
+            var url = '#easyErp/invoiceCharts';
+
+            App.filtersObject.filter = filter || {};
 
             $currentEl.html(self.template());
 
             this.byWeek = false;
 
             this.renderContent();
-
-            this.$startDate = $('#startDate');
-            this.$endDate = $('#endDate');
 
             return this;
         }

@@ -476,8 +476,8 @@ define([
             var symbol;
             var currency;
 
-            if ($target.closest('a').attr('id') === 'currencyDd'){
-                currency =  _.findWhere(this.responseObj['#currencyDd'], {_id : $target.attr('id')});
+            if ($target.closest('a').attr('id') === 'currencyDd') {
+                currency = _.findWhere(this.responseObj['#currencyDd'], {_id: $target.attr('id')});
                 symbol = currency ? currency.currency : '$';
                 $target.closest('dd').find('.current-selected').attr('data-symbol', symbol);
                 this.$el.find('.currencySymbol').text(symbol);
@@ -582,7 +582,6 @@ define([
 
             /*
              this.$el = $(formString).dialog({
-             closeOnEscape: false,
              autoOpen     : true,
              resizable    : true,
              dialogClass  : 'edit-invoice-dialog',
@@ -643,17 +642,17 @@ define([
             invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
 
             /*if (!model.approved) {
-                productItemContainer = this.$el.find('#productItemsHolder');
-                productItemContainer.append(
-                    new ProductItemView({
-                        editable : true,
-                        canBeSold: true,
-                        service  : service,
-                        editable
-                        forSales : self.forSales
-                    }).render({model: model}).el
-                );
-            }*/
+             productItemContainer = this.$el.find('#productItemsHolder');
+             productItemContainer.append(
+             new ProductItemView({
+             editable : true,
+             canBeSold: true,
+             service  : service,
+             editable
+             forSales : self.forSales
+             }).render({model: model}).el
+             );
+             }*/
 
             invoiceItemContainer.append(
                 new InvoiceItemView({

@@ -1,6 +1,6 @@
 <h3>Tasks</h3>
 <div id="createBtnHolder" class="tasksView btnsBlock">
-    <a href="#home/action-<%=contentType%>/Create" class="btn blue slim plus" title="Create" id="top-bar-createBtn">New</a>
+    <a href="#home/action-<%=contentType%>/Create" class="btn blue slim icon-plus" title="Create" id="top-bar-createBtn">New</a>
     <a href="#home/action-<%=contentType%>/Edit" class="btn blue slim" title="Edit" id="top-bar-editBtn"></a>
     <a href="#home/action-<%=contentType%>/Remove" class="btn blue slim" id="top-bar-deleteBtn" title="Remove">Delete</a>
     <%if(viewType === 'kanban') {%><a id="kanban-settings-Btn" class="btn blue slim" title="Kanban Settings">Settings</a><%}%>
@@ -8,14 +8,14 @@
 
 <div id="template-switcher" class="template-switcher right">
     <ul class="btn-list">
-        <li><a href="javascript:;"
+        <li title="Kanban view"><a href="javascript:;"
                class="changeContentView icon-kanban <%= (viewType == 'kanban') ? 'selected' : ''%>"
                data-view-type="kanban" id="kanbanBtn"></a></li>
-        <li><a href="javascript:;"
+        <li title="List view"><a href="javascript:;"
                class="changeContentView icon-list5 <%= (viewType == 'list') ? 'selected' : ''%>"
                data-view-type="list" id="listBtn"></a></li>
-        <li><a href="javascript:;"
-               class="changeContentView icon-menu <%= (viewType == 'datelist') ? 'selected' : ''%>"
+        <li title="Detail view"><a href="javascript:;"
+               class="changeContentView icon-rect2 <%= (viewType == 'datelist') ? 'selected' : ''%>"
                data-view-type="datelist" id="dateListBtn"></a></li>
     </ul>
 </div>

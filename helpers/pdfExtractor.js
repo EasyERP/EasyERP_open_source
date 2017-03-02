@@ -26,7 +26,7 @@ function post(req, res, next) {
             return next(err);
         }
 
-        res.send(200, {name: name});
+        res.send(200, {name: name, path : file ? file.filename : ''});
     });
 };
 

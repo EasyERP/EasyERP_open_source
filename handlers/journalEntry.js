@@ -6,559 +6,116 @@ var CurrencySchema = mongoose.Schemas.Currency;
 var wTrackSchema = mongoose.Schemas.wTrack;
 var employeeSchema = mongoose.Schemas.Employee;
 var jobsSchema = mongoose.Schemas.jobs;
-var invoiceSchema = mongoose.Schemas.wTrackInvoice;
+var invoiceSchema = mongoose.Schemas.Invoices;
 var holidaysSchema = mongoose.Schemas.Holiday;
 var vacationSchema = mongoose.Schemas.Vacation;
 var PaymentMethodSchema = mongoose.Schemas.PaymentMethod;
 var cashTransferSchema = mongoose.Schemas.cashTransfer;
-var PaymentSchema = mongoose.Schemas.Payment;
+var orgSettingsSchema = mongoose.Schemas.orgSettingsSchema;
+var InvoicePaymentSchema = mongoose.Schemas.InvoicePayment;
+var ProductSchema = mongoose.Schemas.Products;
 var objectId = mongoose.Types.ObjectId;
 
-var oxr = require('open-exchange-rates');
+var LIABILITIES = objectId('584e47953d2d06b40d2e9dc0');
+var EQUITY = objectId('5810c75b2b225158086d7f7f');
+var INVENTORY = objectId('5810c75b2b225158086d7f87');
+var CURRENT_ASSETS = objectId('5810c75b2b225158086d7f80');
+var BANK_CASH = objectId('57ed155af9afdd682a304f8a');
+var FIXED_ASSETS = objectId('57ed155af9afdd682a304f8b');
+var DIVIDEND_INVOICE = objectId('572347d78ba4fd1330062726');
+
+// var oxr = require('open-exchange-rates');
 var _ = require('underscore');
 var async = require('async');
 var moment = require('../public/js/libs/moment/moment');
 var pageHelper = require('../helpers/pageHelper');
 var FilterMapper = require('../helpers/filterMapper');
+var filterMapper = new FilterMapper();
+var ratesRetriever = require('../helpers/ratesRetriever')();
+
+var journalEntryCT = 'journalEntry';
 
 var Module = function (models, event) {
     'use strict';
     // ToDo set it to process.env
 
+    var JournalEntryService = require('../services/journalEntry')(models);
+    var JournalService = require('../services/journal')(models);
+    var GoodsInNotesService = require('../services/goodsInNotes')(models);
+    var ratesService = require('../services/rates')(models);
+    var currencyRatesHelper = require('../helpers/currencyRates')(models);
+    var OrganizationService = require('../services/organizationSetting')(models);
+    var currencyService = require('../services/currency')(models);
+
     var CONSTANTS = require('../constants/mainConstants.js');
     var matchObject = {};
     var notDevArray = CONSTANTS.NOT_DEV_ARRAY;
-
-    var lookupWTrackArray = [
-        {
-            $match: {
-                'sourceDocument.model': 'wTrack',
-                debit                 : {$gt: 0}
-            }
-        }, {
-            $lookup: {
-                from        : 'chartOfAccount',
-                localField  : 'account',
-                foreignField: '_id',
-                as          : 'account'
-            }
-        }, {
-            $lookup: {
-                from        : 'journals',
-                localField  : 'journal',
-                foreignField: '_id',
-                as          : 'journal'
-            }
-        }, {
-            $project: {
-                debit         : 1,
-                journal       : {$arrayElemAt: ['$journal', 0]},
-                account       : {$arrayElemAt: ['$account', 0]},
-                sourceDocument: 1,
-                date          : 1
-            }
-        }, {
-            $lookup: {
-                from        : 'chartOfAccount',
-                localField  : 'journal.debitAccount',
-                foreignField: '_id',
-                as          : 'journal.debitAccount'
-            }
-        }, {
-            $lookup: {
-                from        : 'jobs',
-                localField  : 'sourceDocument._id',
-                foreignField: '_id',
-                as          : 'sourceDocument._id'
-            }
-        }, {
-            $lookup: {
-                from        : 'chartOfAccount',
-                localField  : 'journal.creditAccount',
-                foreignField: '_id',
-                as          : 'journal.creditAccount'
-            }
-        }, {
-            $lookup: {
-                from        : 'Employees',
-                localField  : 'sourceDocument.employee',
-                foreignField: '_id',
-                as          : 'sourceDocument.employee'
-            }
-        }, {
-            $project: {
-                debit                   : {$divide: ['$debit', 100]},
-                'journal.debitAccount'  : {$arrayElemAt: ['$journal.debitAccount', 0]},
-                'journal.creditAccount' : {$arrayElemAt: ['$journal.creditAccount', 0]},
-                'journal.name'          : 1,
-                date                    : 1,
-                'sourceDocument._id'    : 1,
-                'sourceDocument.subject': {$arrayElemAt: ['$sourceDocument.employee', 0]},
-                'sourceDocument.name'   : '$sourceDocument._id.name'
-            }
-        }, {
-            $project: {
-                debit                        : 1,
-                'journal.debitAccount'       : 1,
-                'journal.creditAccount'      : 1,
-                'journal.name'               : 1,
-                date                         : 1,
-                'sourceDocument._id'         : 1,
-                'sourceDocument.subject.name': {$concat: ['$sourceDocument.subject.name.first', ' ', '$sourceDocument.subject.name.last']},
-                'sourceDocument.subject._id' : 1,
-                'sourceDocument.name'        : 1
-            }
-        }
-    ];
-
-    var lookupEmployeesArray = [{
-        $match: {
-            'sourceDocument.model': 'Employees',
-            debit                 : {$gt: 0}
-        }
-    }, {
-        $lookup: {
-            from        : 'chartOfAccount',
-            localField  : 'account',
-            foreignField: '_id',
-            as          : 'account'
-        }
-    }, {
-        $lookup: {
-            from        : 'Employees',
-            localField  : 'sourceDocument._id',
-            foreignField: '_id',
-            as          : 'sourceDocument._id'
-        }
-    }, {
-        $lookup: {
-            from        : 'journals',
-            localField  : 'journal',
-            foreignField: '_id',
-            as          : 'journal'
-        }
-    }, {
-        $project: {
-            debit               : 1,
-            journal             : {$arrayElemAt: ['$journal', 0]},
-            account             : {$arrayElemAt: ['$account', 0]},
-            'sourceDocument._id': {$arrayElemAt: ['$sourceDocument._id', 0]},
-            date                : 1
-        }
-    }, {
-        $lookup: {
-            from        : 'chartOfAccount',
-            localField  : 'journal.debitAccount',
-            foreignField: '_id',
-            as          : 'journal.debitAccount'
-        }
-    }, {
-        $lookup: {
-            from        : 'chartOfAccount',
-            localField  : 'journal.creditAccount',
-            foreignField: '_id',
-            as          : 'journal.creditAccount'
-        }
-    }, {
-        $lookup: {
-            from        : 'Department',
-            localField  : 'sourceDocument._id.department',
-            foreignField: '_id',
-            as          : 'sourceDocument._id.department'
-        }
-    }, {
-        $project: {
-            debit                          : 1,
-            'journal.debitAccount'         : {$arrayElemAt: ['$journal.debitAccount', 0]},
-            'journal.creditAccount'        : {$arrayElemAt: ['$journal.creditAccount', 0]},
-            'sourceDocument._id.department': {$arrayElemAt: ['$sourceDocument._id.department', 0]},
-            'journal.name'                 : 1,
-            date                           : 1,
-            'sourceDocument.subject'       : '$sourceDocument._id'
-        }
-    }, {
-        $project: {
-            debit                        : {$divide: ['$debit', 100]},
-            'journal.debitAccount'       : 1,
-            'journal.creditAccount'      : 1,
-            'sourceDocument._id'         : 1,
-            'journal.name'               : 1,
-            date                         : 1,
-            'sourceDocument.subject.name': {$concat: ['$sourceDocument.subject.name.first', ' ', '$sourceDocument.subject.name.last']},
-            'sourceDocument.name'        : '$sourceDocument._id.department.name',
-            'sourceDocument.subject._id' : 1
-        }
-    }];
-
-    var lookupInvoiceArray = [{
-        $match: {
-            'sourceDocument.model': {$in: ['Invoice', 'proforma', 'dividendInvoice']},
-            debit                 : {$gt: 0}
-        }
-    }, {
-        $lookup: {
-            from        : 'chartOfAccount',
-            localField  : 'account',
-            foreignField: '_id',
-            as          : 'account'
-        }
-    }, {
-        $lookup: {
-            from        : 'Invoice',
-            localField  : 'sourceDocument._id',
-            foreignField: '_id',
-            as          : 'sourceDocument._id'
-        }
-    }, {
-        $lookup: {
-            from        : 'journals',
-            localField  : 'journal',
-            foreignField: '_id',
-            as          : 'journal'
-        }
-    }, {
-        $project: {
-            debit                 : 1,
-            currency              : 1,
-            journal               : {$arrayElemAt: ['$journal', 0]},
-            account               : {$arrayElemAt: ['$account', 0]},
-            'sourceDocument._id'  : {$arrayElemAt: ['$sourceDocument._id', 0]},
-            'sourceDocument.model': 1,
-            date                  : 1
-        }
-    }, {
-        $lookup: {
-            from        : 'chartOfAccount',
-            localField  : 'journal.debitAccount',
-            foreignField: '_id',
-            as          : 'journal.debitAccount'
-        }
-    }, {
-        $lookup: {
-            from        : 'chartOfAccount',
-            localField  : 'journal.creditAccount',
-            foreignField: '_id',
-            as          : 'journal.creditAccount'
-        }
-    }, {
-        $lookup: {
-            from        : 'Customers',
-            localField  : 'sourceDocument._id.supplier',
-            foreignField: '_id',
-            as          : 'sourceDocument.subject'
-        }
-    }, {
-        $project: {
-            debit                   : {$divide: ['$debit', 100]},
-            'journal.debitAccount'  : {$arrayElemAt: ['$journal.debitAccount', 0]},
-            'journal.creditAccount' : {$arrayElemAt: ['$journal.creditAccount', 0]},
-            'journal.name'          : 1,
-            date                    : 1,
-            'sourceDocument._id'    : 1,
-            'sourceDocument.name'   : '$sourceDocument._id.name',
-            'sourceDocument.subject': {$arrayElemAt: ['$sourceDocument.subject', 0]}
-        }
-    }, {
-        $project: {
-            debit                        : 1,
-            'journal.debitAccount'       : 1,
-            'journal.creditAccount'      : 1,
-            'journal.name'               : 1,
-            date                         : 1,
-            'sourceDocument._id'         : 1,
-            'sourceDocument.name'        : 1,
-            'sourceDocument.subject._id' : 1,
-            'sourceDocument.subject.name': {$concat: ['$sourceDocument.subject.name.first', ' ', '$sourceDocument.subject.name.last']}
-        }
-    }];
-
-    var lookupJobsArray = [
-        {
-            $match: {
-                'sourceDocument.model': 'jobs',
-                debit                 : {$gt: 0}
-            }
-        }, {
-            $lookup: {
-                from        : 'chartOfAccount',
-                localField  : 'account',
-                foreignField: '_id',
-                as          : 'account'
-            }
-        }, {
-            $lookup: {
-                from        : 'jobs',
-                localField  : 'sourceDocument._id',
-                foreignField: '_id',
-                as          : 'sourceDocument._id'
-            }
-        }, {
-            $lookup: {
-                from        : 'journals',
-                localField  : 'journal',
-                foreignField: '_id',
-                as          : 'journal'
-            }
-        }, {
-            $project: {
-                debit                 : 1,
-                currency              : 1,
-                journal               : {$arrayElemAt: ['$journal', 0]},
-                account               : {$arrayElemAt: ['$account', 0]},
-                'sourceDocument._id'  : {$arrayElemAt: ['$sourceDocument._id', 0]},
-                'sourceDocument.model': 1,
-                date                  : 1
-            }
-        }, {
-            $lookup: {
-                from        : 'chartOfAccount',
-                localField  : 'journal.debitAccount',
-                foreignField: '_id',
-                as          : 'journal.debitAccount'
-            }
-        }, {
-            $lookup: {
-                from        : 'chartOfAccount',
-                localField  : 'journal.creditAccount',
-                foreignField: '_id',
-                as          : 'journal.creditAccount'
-            }
-        }, {
-            $project: {
-                debit                   : {$divide: ['$debit', 100]},
-                currency                : 1,
-                'journal.debitAccount'  : {$arrayElemAt: ['$journal.debitAccount', 0]},
-                'journal.creditAccount' : {$arrayElemAt: ['$journal.creditAccount', 0]},
-                'journal.name'          : 1,
-                date                    : 1,
-                'sourceDocument.model'  : 1,
-                'sourceDocument.subject': '$sourceDocument._id',
-                'sourceDocument._id'    : 1,
-                account                 : 1
-            }
-        }, {
-            $project: {
-                debit                          : 1,
-                currency                       : 1,
-                'journal.debitAccount'         : 1,
-                'journal.creditAccount'        : 1,
-                'sourceDocument._id.department': 1,
-                'journal.name'                 : 1,
-                date                           : 1,
-                'sourceDocument.model'         : 1,
-                'sourceDocument.subject._id'   : 1,
-                'sourceDocument.subject.name'  : {$concat: ['$sourceDocument.subject.name.first', ' ', '$sourceDocument.subject.name.last']},
-                'sourceDocument.name'          : '$sourceDocument._id.name',
-                account                        : 1
-            }
-        }
-    ];
-
-    var lookupPaymentsArray = [
-        {
-            $match: {
-                'sourceDocument.model': 'Payment',
-                debit                 : {$gt: 0}
-            }
-        }, {
-            $lookup: {
-                from        : 'chartOfAccount',
-                localField  : 'account',
-                foreignField: '_id',
-                as          : 'account'
-            }
-        }, {
-            $lookup: {
-                from        : 'Payment',
-                localField  : 'sourceDocument._id',
-                foreignField: '_id',
-                as          : 'sourceDocument._id'
-            }
-        }, {
-            $lookup: {
-                from        : 'journals',
-                localField  : 'journal',
-                foreignField: '_id',
-                as          : 'journal'
-            }
-        }, {
-            $project: {
-                debit                 : 1,
-                currency              : 1,
-                journal               : {$arrayElemAt: ['$journal', 0]},
-                account               : {$arrayElemAt: ['$account', 0]},
-                'sourceDocument._id'  : {$arrayElemAt: ['$sourceDocument._id', 0]},
-                'sourceDocument.model': 1,
-                date                  : 1
-            }
-        }, {
-            $lookup: {
-                from        : 'chartOfAccount',
-                localField  : 'journal.debitAccount',
-                foreignField: '_id',
-                as          : 'journal.debitAccount'
-            }
-        }, {
-            $lookup: {
-                from        : 'chartOfAccount',
-                localField  : 'journal.creditAccount',
-                foreignField: '_id',
-                as          : 'journal.creditAccount'
-            }
-        }, {
-            $lookup: {
-                from        : 'Customers',
-                localField  : 'sourceDocument._id.supplier',
-                foreignField: '_id',
-                as          : 'sourceDocument.subject'
-            }
-        }, {
-            $project: {
-                debit                   : {$divide: ['$debit', 100]},
-                'journal.debitAccount'  : {$arrayElemAt: ['$journal.debitAccount', 0]},
-                'journal.creditAccount' : {$arrayElemAt: ['$journal.creditAccount', 0]},
-                'journal.name'          : 1,
-                date                    : 1,
-                'sourceDocument._id'    : 1,
-                'sourceDocument.name'   : '$sourceDocument._id.name',
-                'sourceDocument.subject': {$arrayElemAt: ['$sourceDocument.subject', 0]}
-            }
-        }, {
-            $project: {
-                debit                        : 1,
-                'journal.debitAccount'       : 1,
-                'journal.creditAccount'      : 1,
-                'journal.name'               : 1,
-                date                         : 1,
-                'sourceDocument._id'         : 1,
-                'sourceDocument.name'        : 1,
-                'sourceDocument.subject._id' : 1,
-                'sourceDocument.subject.name': {$concat: ['$sourceDocument.subject.name.first', ' ', '$sourceDocument.subject.name.last']}
-            }
-        }
-    ];
 
     var exporter = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').journalEntry;
 
     matchObject[CONSTANTS.PRODUCT_SALES] = 'credit';
     matchObject[CONSTANTS.COGS] = 'debit';
-    oxr.set({app_id: process.env.OXR_APP_ID});
 
-    function createReconciled(body, dbIndex, cb, uId) {
-        var Journal = models.get(dbIndex, 'journal', journalSchema);
-        var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
-        var journalId = body.journal;
-        var now = moment().endOf('month');
-        var date = body.date ? moment(body.date) : now;
-        var currency;
-        var amount = body.amount;
-
+    function createReconciled(body, opt) {
+        var journalFinder;
+        var journalEntrySave;
         var waterfallTasks;
+        var currency = body.currency;
+        var amount = body.amount;
+        var date = body.date;
+        var cb;
+        var ratesFinder;
+        var fx = {};
 
-        function journalFinder(waterfallCb) {
-            var err;
-
-            if (!journalId) {
-                err = new Error('Journal id is required field');
-                err.status = 400;
-
-                return waterfallCb(err);
-            }
-
-            Journal.findById(journalId, waterfallCb);
+        if (typeof opt.cb === 'function') {
+            cb = opt.cb;
+        } else {
+            cb = function () {
+                return false;
+            };
         }
 
-        function journalEntrySave(journal, waterfallCb) {
-            var err;
-            var debitObject;
-            var creditObject;
-            var parallelTasks = {
-                debitSaver : function (parallelCb) {
-                    var journalEntry;
+        ratesFinder = function (callback) {
+            ratesService.getById({dbName: opt.dbName, id: date}, callback);
+        };
 
-                    debitObject.debit = amount;
-                    debitObject.account = journal.debitAccount;
+        journalFinder = function (ratesObject, callback) {
+            var optionsObject = {};
 
-                    debitObject.editedBy = {
-                        user: uId,
-                        date: new Date(date)
-                    };
+            fx.base = ratesObject && ratesObject.base ? ratesObject.base : 'USD';
+            fx.rates = ratesObject && ratesObject.rates ? ratesObject.rates : {};
 
-                    debitObject.createdBy = {
-                        user: uId,
-                        date: new Date(date)
-                    };
+            optionsObject.journal = body.journal;
+            optionsObject.dbName = opt.dbName;
 
-                    if (debitObject.currency && debitObject.currency.rate) {
-                        debitObject.debit *= debitObject.currency.rate;
-                    }
+            JournalService.journalFinder(optionsObject, callback);
+        };
 
-                    if (amount && moment(debitObject.date).isBefore(now)) {
-                        journalEntry = new Model(debitObject);
-                        journalEntry.save(parallelCb);
-                    } else {
-                        parallelCb();
-                    }
+        journalEntrySave = function (journal, callback) {
+            var optionsObject = _.extend({}, body);
 
-                },
-                creditSaver: function (parallelCb) {
-                    var journalEntry;
+            optionsObject.journal = journal || {debitAccount: body.debitAccount, creditAccount: body.creditAccount};
+            optionsObject.currency = currency;
+            optionsObject.amount = amount;
+            optionsObject.date = date;
+            optionsObject.uId = opt.uId;
+            optionsObject.dbName = opt.dbName;
 
-                    creditObject.credit = amount;
-                    creditObject.account = journal.creditAccount;
-
-                    creditObject.editedBy = {
-                        user: uId,
-                        date: new Date(date)
-                    };
-
-                    creditObject.createdBy = {
-                        user: uId,
-                        date: new Date(date)
-                    };
-
-                    if (creditObject.currency && creditObject.currency.rate) {
-                        creditObject.credit *= creditObject.currency.rate;
-                    }
-
-                    if (amount && moment(creditObject.date).isBefore(now)) {
-                        journalEntry = new Model(creditObject);
-                        journalEntry.save(parallelCb);
-                    } else {
-                        parallelCb();
-                    }
-                }
-            };
-
-            if (!journal || !journal._id) {
-                err = new Error('Invalid Journal');
-                err.status = 400;
-
-                return waterfallCb(err);
+            if (currency.length === 3) {
+                optionsObject.currency = {
+                    _id: currency
+                };
             }
 
-            currency = {
-                name: 'USD',
-                rate: 1
-            };
+            if (optionsObject.currency && optionsObject.currency._id) {
+                optionsObject.currency.rate = ratesRetriever.getRate(fx.rates, fx.base, optionsObject.currency._id);
+            }
 
-            body.currency = currency;
-            body.journal = journal._id;
+            JournalEntryService.journalEntrySaver(optionsObject, callback);
+        };
 
-            debitObject = _.extend({}, body);
-            creditObject = _.extend({}, body);
-
-            async.parallel(parallelTasks, function (err, result) {
-                if (err) {
-                    return waterfallCb(err);
-                }
-
-                waterfallCb(null, result);
-            });
-        }
-
-        waterfallTasks = [journalFinder, journalEntrySave];
+        waterfallTasks = [ratesFinder, journalFinder, journalEntrySave];
 
         async.waterfall(waterfallTasks, function (err, response) {
             if (err) {
@@ -571,610 +128,270 @@ var Module = function (models, event) {
         });
     }
 
-    this.createReconciled = function (body, dbIndex, cb, uId) {
-        createReconciled(body, dbIndex, cb, uId);
+    this.createReconciled = function (body, opt) {
+        createReconciled(body, opt);
     };
 
-    /*function caseFilter(filter) {
-     var condition;
-     var resArray = [];
-     var filtrElement = {};
-     var filterNameKeys = Object.keys(filter);
-     var filterName;
-     var i;
+    function createMultiRows(body, opt) {
+        var journalFinder;
+        var getRates;
+        var createMultiRows;
+        var currencyId = body.currency && body.currency._id ? body.currency._id : body.currency;
+        var date = moment(new Date(body.date));
+        var cb;
+        var rates;
+        var waterfallTasks;
+        var fx = {};
+        var currency;
 
-     for (i = filterNameKeys.length - 1; i >= 0; i--) {
-     filterName = filterNameKeys[i];
-     condition = filter[filterName].value;
+        date = date.format('YYYY-MM-DD');
 
-     switch (filterName) {
-     case 'journalName':
-     filtrElement['journal.name'] = {$in: condition};
-     resArray.push(filtrElement);
-     break;
-     case 'sourceDocument':
-     filtrElement['sourceDocument.subject._id'] = {$in: condition.objectID()};
-     resArray.push(filtrElement);
-     break;
-     case 'creditAccount':
-     filtrElement['journal.creditAccount._id'] = {$in: condition.objectID()};
-     resArray.push(filtrElement);
-     break;
-     case 'salesManager':
-     filtrElement['salesmanager._id'] = {$in: condition.objectID()};
-     resArray.push(filtrElement);
-     break;
-     case 'project':
-     filtrElement['project._id'] = {$in: condition.objectID()};
-     resArray.push(filtrElement);
-     break;
-     case 'type':
-     filtrElement['project.projecttype'] = {$in: condition};
-     resArray.push(filtrElement);
-     break;
-     // skip default;
-     }
-     }
+        if (typeof opt.cb === 'function') {
+            cb = opt.cb;
+        } else {
+            cb = function () {
+                return false;
+            };
+        }
 
-     return resArray;
-     }*/
+        getRates = function (waterfallCb) {
+            ratesService.getById({id: date, dbName: opt.dbName}, function (err, result) {
+                fx.rates = result && result.rates ? result.rates : {};
+                fx.base = result && result.base ? result.base : 'USD';
+                waterfallCb();
+            });
+        };
 
-    /*function caseFilterForTotalCount(filter) {
-     var condition;
-     var resArray = [];
-     var filtrElement = {};
-     var key;
-     var filterNameKeys = Object.keys(filter);
-     var filterName;
-     var i;
+        journalFinder = function (callback) {
+            var optionsObject = {};
 
-     for (i = filterNameKeys.length - 1; i >= 0; i--) {
-     filterName = filterNameKeys[i];
-     condition = filter[filterName].value;
-     key = filter[filterName].key;
+            optionsObject.journal = body.journal;
+            optionsObject.dbName = opt.dbName;
 
-     switch (filterName) {
-     case 'journalName':
-     filtrElement['journal.name'] = {$in: condition};
-     resArray.push(filtrElement);
-     break;
-     case 'sourceDocument':
-     filtrElement['sourceDocument.subject'] = {$in: condition.objectID()};
-     resArray.push(filtrElement);
-     break;
-     case 'creditAccount':
-     filtrElement['journal.creditAccount'] = {$in: condition.objectID()};
-     resArray.push(filtrElement);
-     break;
-     }
-     }
+            if (!body.journal) {
+                optionsObject.debitAccount = body.debitAccount;
+                optionsObject.creditAccount = body.creditAccount;
+                JournalService.journalFinderByAccounts(optionsObject, callback);
+            } else {
+                JournalService.journalFinder(optionsObject, callback);
+            }
 
-     return resArray;
-     }*/
+        };
 
-    /*  function totalCollectionLength(req, mainCallback) {
-     var dbIndex = req.session.lastDb;
-     var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
+        createMultiRows = function (journal, callback) {
+            var optionsObject = _.extend({}, body);
 
-     var data = req.query;
-     var findInvoice;
-     var findSalary;
-     var findByEmployee;
-     var filter = data.filter || {};
-     var filterObj = {};
-     // var startDate = data.startDate || filter.startDate.value;
-     // var endDate = data.endDate || filter.endDate.value;
-     var findJobsFinished;
-     var findPayments;
-     var findSalaryPayments;
-     var findCashTransfer;
-     var matchObject = {};
-     // var filterArray;
-     var parallelTasks;
-     var filterMapper = new FilterMapper();
+            currency = {
+                _id : currencyId,
+                rate: ratesRetriever.getRate(fx.rates, fx.base, currencyId)
+            };
 
-     // startDate = moment(new Date(startDate)).startOf('day');
-     // endDate = moment(new Date(endDate)).endOf('day');
+            optionsObject.journal = journal;
+            optionsObject.currency = currency;
+            optionsObject.date = body.date;
+            optionsObject.uId = opt.uId;
+            optionsObject.dbName = opt.dbName;
+            optionsObject.notDivideRate = opt.notDivideRate;
 
-     /!*matchObject = {
-     date: {
-     $gte: new Date(startDate),
-     $lte: new Date(endDate)
-     }
-     };*!/
+            JournalEntryService.createMultiRows(optionsObject, callback);
+        };
 
-     /!*if (filter) {
-     filterArray = caseFilter(filter);
+        waterfallTasks = [getRates, journalFinder, createMultiRows];
 
-     if (filterArray.length) {
-     filterObj.$and = filterArray;
-     }
-     }*!/
+        async.waterfall(waterfallTasks, function (err, response) {
+            if (err) {
+                return cb(err);
+            }
 
-     filterObj = filterMapper.mapFilter(filter, 'journalEntry');
+            if (cb) {
+                cb(null, response);
+            }
+        });
+    }
 
-     if (filterObj.date) {
-     matchObject.date = filterObj.date;
+    this.createMultiRows = function (body, opt) {
+        createMultiRows(body, opt);
+    };
 
-     delete filterObj.date;
-     }
+    this.createManual = function (req, res, next) {
+        var dbIndex = req.session.lastDb;
+        var uId = req.session.uId;
+        var Journal = models.get(dbIndex, 'journal', journalSchema);
+        var Model = models.get(dbIndex, 'manualEntry', manualEntrySchema);
+        var Currency = models.get(dbIndex, 'currency', CurrencySchema);
+        var body = req.body;
+        var now = moment();
+        var date = body.date ? moment(new Date(body.date)) : now;
+        var currency = body.currency;
+        var rates;
+        var waterfallTasks;
+        var journalId = body.journal;
+        var accountArray = body.accountsItems;
+        var timeStamp = new Date();
+        var timeStampDate = new Date(date);
+        var fx = {};
 
-     findInvoice = function (cb) {
-     Model
-     .aggregate([{
-     $match: matchObject
-     }, {
-     $match: {
-     'sourceDocument.model': {$in: ['Invoice', 'Proforma', 'dividendInvoice']},
-     debit                 : {$gt: 0}
-     }
-     }, {
-     $lookup: {
-     from        : 'chartOfAccount',
-     localField  : 'account',
-     foreignField: '_id',
-     as          : 'account'
-     }
-     }, {
-     $lookup: {
-     from        : 'Invoice',
-     localField  : 'sourceDocument._id',
-     foreignField: '_id',
-     as          : 'sourceDocument._id'
-     }
-     }, {
-     $lookup: {
-     from        : 'journals',
-     localField  : 'journal',
-     foreignField: '_id',
-     as          : 'journal'
-     }
-     }, {
-     $project: {
-     debit               : 1,
-     currency            : 1,
-     journal             : {$arrayElemAt: ['$journal', 0]},
-     'sourceDocument._id': {$arrayElemAt: ['$sourceDocument._id', 0]}
-     }
-     }, {
-     $project: {
-     debit                   : 1,
-     'journal.name'          : 1,
-     'journal.creditAccount' : 1,
-     'sourceDocument._id'    : 1,
-     'sourceDocument.subject': '$sourceDocument._id.supplier'
-     }
-     }, {
-     $match: filterObj
-     }, {
-     $project: {
-     _id  : 1,
-     debit: 1
-     }
-     }], function (err, result) {
-     if (err) {
-     return console.log(err);
-     }
+        timeStamp = timeStamp.valueOf() + timeStampDate.valueOf();
 
-     cb(null, result);
-     });
-     };
+        delete body.accountsItems;
 
-     findCashTransfer = function (cb) {
-     Model
-     .aggregate([{
-     $match: matchObject
-     }, {
-     $match: {
-     'sourceDocument.model': 'cashTransfer',
-     debit                 : {$gt: 0}
-     }
-     }, {
-     $lookup: {
-     from        : 'chartOfAccount',
-     localField  : 'account',
-     foreignField: '_id',
-     as          : 'account'
-     }
-     }, {
-     $lookup: {
-     from        : 'cashTransfer',
-     localField  : 'sourceDocument._id',
-     foreignField: '_id',
-     as          : 'sourceDocument._id'
-     }
-     }, {
-     $lookup: {
-     from        : 'journals',
-     localField  : 'journal',
-     foreignField: '_id',
-     as          : 'journal'
-     }
-     }, {
-     $project: {
-     debit                 : 1,
-     currency              : 1,
-     journal               : {$arrayElemAt: ['$journal', 0]},
-     account               : {$arrayElemAt: ['$account', 0]},
-     'sourceDocument._id'  : {$arrayElemAt: ['$sourceDocument._id', 0]},
-     'sourceDocument.model': 1,
-     date                  : 1
-     }
-     }, {
-     $project: {
-     debit                   : 1,
-     'journal.name'          : 1,
-     'journal.creditAccount' : 1,
-     'sourceDocument._id'    : 1,
-     'sourceDocument.subject': '$sourceDocument.model'
-     }
-     }, {
-     $match: filterObj
-     }, {
-     $project: {
-     _id  : 1,
-     debit: 1
-     }
-     }], function (err, result) {
-     if (err) {
-     return cb(err);
-     }
+        body.date = new Date(body.date);
 
-     cb(null, result);
-     });
-     };
+        date = date.format('YYYY-MM-DD');
 
-     findSalary = function (cb) {
-     var aggregate;
-     var query = [{
-     $match: matchObject
-     }, {
-     $match: {
-     'sourceDocument.model': 'wTrack',
-     debit                 : {$gt: 0}
-     }
-     }, {
-     $lookup: {
-     from        : 'journals',
-     localField  : 'journal',
-     foreignField: '_id',
-     as          : 'journal'
-     }
-     }, {
-     $project: {
-     debit         : 1,
-     journal       : {$arrayElemAt: ['$journal', 0]},
-     sourceDocument: 1
-     }
-     }, {
-     $project: {
-     debit                   : 1,
-     'journal.creditAccount' : 1,
-     'journal.name'          : 1,
-     'sourceDocument.subject': '$sourceDocument.employee'
-     }
-     }];
+        function journalFinder(waterfallCb) {
+            var err;
 
-     if (filterObj.$and && filterObj.$and.length) {
-     query.push({$match: filterObj});
-     }
+            if (!journalId) {
+                err = new Error('Journal id is required field');
+                err.status = 400;
 
-     aggregate = Model.aggregate(query);
+                return waterfallCb(err);
+            }
 
-     aggregate.options = {allowDiskUse: true};
+            Journal.findById(journalId, waterfallCb);
 
-     aggregate.exec(function (err, result) {
-     if (err) {
-     return console.log(err);
-     }
+        }
 
-     cb(null, result);
-     });
-     };
+        function journalEntrySave(journal, waterfallCb) {
+            var err;
+            var object;
 
-     findByEmployee = function (cb) {
-     var aggregate;
-     var query = [{
-     $match: matchObject
-     }, {
-     $match: {
-     'sourceDocument.model': 'Employees',
-     debit                 : {$gt: 0}
-     }
-     }, {
-     $lookup: {
-     from        : 'Employees',
-     localField  : 'sourceDocument._id',
-     foreignField: '_id',
-     as          : 'sourceDocument._id'
-     }
-     }, {
-     $lookup: {
-     from        : 'journals',
-     localField  : 'journal',
-     foreignField: '_id',
-     as          : 'journal'
-     }
-     }, {
-     $project: {
-     debit               : 1,
-     journal             : {$arrayElemAt: ['$journal', 0]},
-     'sourceDocument._id': {$arrayElemAt: ['$sourceDocument._id', 0]}
-     }
-     }, {
-     $lookup: {
-     from        : 'chartOfAccount',
-     localField  : 'journal.debitAccount',
-     foreignField: '_id',
-     as          : 'journal.debitAccount'
-     }
-     }, {
-     $project: {
-     debit                   : 1,
-     'journal.creditAccount' : 1,
-     'journal.name'          : 1,
-     'sourceDocument.subject': '$sourceDocument._id._id'
-     }
-     }, {
-     $project: {
-     debit                   : 1,
-     'journal.creditAccount' : 1,
-     'journal.name'          : 1,
-     'sourceDocument.subject': 1
-     }
-     }];
+            if (!journal || !journal._id) {
+                err = new Error('Invalid Journal');
+                err.status = 400;
 
-     if (filterObj.$and && filterObj.$and.length) {
-     query.push({$match: filterObj});
-     }
+                return waterfallCb(err);
+            }
 
-     aggregate = Model.aggregate(query);
+            currency = {
+                _id : currency._id,
+                rate: ratesRetriever.getRate(fx.rates, fx.base, currency.name)
+            };
 
-     aggregate.options = {allowDiskUse: true};
+            body.currency = currency;
+            body.journal = journal._id;
+            body.timestamp = timeStamp;
 
-     aggregate.exec(function (err, result) {
-     if (err) {
-     return console.log(err);
-     }
+            object = _.extend({}, body);
 
-     cb(null, result);
-     });
-     };
+            async.each(accountArray, function (el, cb) {
+                var journalEntry;
 
-     findJobsFinished = function (cb) {
-     var aggregate;
-     var query = [{
-     $match: matchObject
-     }, {
-     $match: {
-     'sourceDocument.model': 'jobs',
-     debit                 : {$gt: 0}
-     }
-     }, {
-     $lookup: {
-     from        : 'jobs',
-     localField  : 'sourceDocument._id',
-     foreignField: '_id',
-     as          : 'sourceDocument._id'
-     }
-     }, {
-     $lookup: {
-     from        : 'journals',
-     localField  : 'journal',
-     foreignField: '_id',
-     as          : 'journal'
-     }
-     }, {
-     $project: {
-     debit               : 1,
-     journal             : {$arrayElemAt: ['$journal', 0]},
-     'sourceDocument._id': {$arrayElemAt: ['$sourceDocument._id', 0]}
-     }
-     }, {
-     $lookup: {
-     from        : 'chartOfAccount',
-     localField  : 'journal.creditAccount',
-     foreignField: '_id',
-     as          : 'journal.creditAccount'
-     }
-     }, {
-     $project: {
-     debit                   : 1,
-     'journal.creditAccount' : {$arrayElemAt: ['$journal.creditAccount', 0]},
-     'journal.name'          : 1,
-     'sourceDocument.subject': '$sourceDocument._id._id'
-     }
-     }];
+                object.debit = el.debit;
+                object.credit = el.credit;
+                object.account = el.account;
 
-     if (filterObj.$and && filterObj.$and.length) {
-     query.push({$match: filterObj});
-     }
+                object.editedBy = {
+                    user: uId,
+                    date: new Date(date)
+                };
 
-     aggregate = Model.aggregate(query);
+                object.createdBy = {
+                    user: uId,
+                    date: new Date(date)
+                };
 
-     aggregate.options = {allowDiskUse: true};
+                object.debitFC = el.debitFC;
+                object.creditFC = el.creditFC;
 
-     aggregate.exec(function (err, result) {
-     if (err) {
-     return cb(err);
-     }
+                if (object.debitFC === object.debit) {
+                    object.debitFC = 0;
+                }
 
-     cb(null, result);
-     });
-     };
+                if (object.creditFC === object.credit) {
+                    object.creditFC = 0;
+                }
 
-     findPayments = function (cb) {
-     var aggregate;
-     var query = [{
-     $match: matchObject
-     }, {
-     $match: {
-     'sourceDocument.model': 'Payment',
-     debit                 : {$gt: 0}
-     }
-     }, {
-     $lookup: {
-     from        : 'Payment',
-     localField  : 'sourceDocument._id',
-     foreignField: '_id',
-     as          : 'sourceDocument._id'
-     }
-     }, {
-     $lookup: {
-     from        : 'journals',
-     localField  : 'journal',
-     foreignField: '_id',
-     as          : 'journal'
-     }
-     }, {
-     $project: {
-     debit               : 1,
-     journal             : {$arrayElemAt: ['$journal', 0]},
-     'sourceDocument._id': {$arrayElemAt: ['$sourceDocument._id', 0]}
-     }
-     }, {
-     $lookup: {
-     from        : 'chartOfAccount',
-     localField  : 'journal.creditAccount',
-     foreignField: '_id',
-     as          : 'journal.creditAccount'
-     }
-     }, {
-     $project: {
-     debit                   : 1,
-     'journal.creditAccount' : {$arrayElemAt: ['$journal.creditAccount', 0]},
-     'journal.name'          : 1,
-     'sourceDocument.subject': '$sourceDocument._id._id'
-     }
-     }];
+                if (el.debit || el.credit && moment(object.date).isBefore(now)) {
+                    journalEntry = new Model(object);
+                    journalEntry.save(cb);
+                } else {
+                    cb();
+                }
+            }, function (err) {
+                if (err) {
+                    return waterfallCb(err);
+                }
 
-     if (filterObj.$and && filterObj.$and.length) {
-     query.push({$match: filterObj});
-     }
+                waterfallCb(null, {success: true});
+            });
+        }
 
-     aggregate = Model.aggregate(query);
+        function getRates(waterfallCb) {
+            ratesService.getById({id: date, dbName: dbIndex}, function (err, result) {
+                if (err) {
+                    return waterfallCb(err);
+                }
 
-     aggregate.options = {allowDiskUse: true};
+                fx.rates = result && result.rates ? result.rates : {};
+                fx.base = result && result.base ? result.base : {};
+                waterfallCb();
+            });
+        }
 
-     aggregate.exec(function (err, result) {
-     if (err) {
-     return cb(err);
-     }
+        waterfallTasks = [getRates, journalFinder, journalEntrySave];
 
-     cb(null, result);
-     });
-     };
+        async.waterfall(waterfallTasks, function (err, response) {
+            if (err) {
+                return next(err);
+            }
 
-     findSalaryPayments = function (cb) {
-     var aggregate;
-     var query = [{
-     $match: matchObject
-     }, {
-     $match: {
-     'sourceDocument.model': 'salaryPayment',
-     debit                 : {$gt: 0}
-     }
-     }, {
-     $lookup: {
-     from        : 'Employees',
-     localField  : 'sourceDocument._id',
-     foreignField: '_id',
-     as          : 'sourceDocument._id'
-     }
-     }, {
-     $lookup: {
-     from        : 'journals',
-     localField  : 'journal',
-     foreignField: '_id',
-     as          : 'journal'
-     }
-     }, {
-     $project: {
-     debit               : 1,
-     journal             : {$arrayElemAt: ['$journal', 0]},
-     'sourceDocument._id': {$arrayElemAt: ['$sourceDocument._id', 0]}
-     }
-     }, {
-     $lookup: {
-     from        : 'chartOfAccount',
-     localField  : 'journal.creditAccount',
-     foreignField: '_id',
-     as          : 'journal.creditAccount'
-     }
-     }, {
-     $project: {
-     debit                   : 1,
-     'journal.creditAccount' : {$arrayElemAt: ['$journal.creditAccount', 0]},
-     'journal.name'          : 1,
-     'sourceDocument.subject': '$sourceDocument._id._id'
-     }
-     }];
-
-     if (filterObj.$and && filterObj.$and.length) {
-     query.push({$match: filterObj});
-     }
-
-     aggregate = Model.aggregate(query);
-
-     aggregate.options = {allowDiskUse: true};
-
-     aggregate.exec(function (err, result) {
-     if (err) {
-     return cb(err);
-     }
-
-     cb(null, result);
-     });
-     };
-
-     parallelTasks = [findInvoice, findSalary, findByEmployee, findJobsFinished, findPayments, findSalaryPayments, findCashTransfer];
-
-     async.parallel(parallelTasks, function (err, result) {
-     var invoices = result[0];
-     var salary = result[1];
-     var jobsFinished = result[3];
-     var salaryEmployee = result[2];
-     var paymentsResult = result[4];
-     var salaryPaymentsResult = result[5];
-     var cashTransfer = result[6];
-     var totalValue = 0;
-     var models = _.union(invoices, salary, jobsFinished, salaryEmployee, paymentsResult, salaryPaymentsResult, cashTransfer);
-
-     if (err) {
-     return mainCallback(err);
-     }
-
-     models.forEach(function (model) {
-     totalValue += model.debit;
-     });
-
-     mainCallback(null, {total: models.length, totalValue: totalValue});
-     });
-     }*/
+            res.status(200).send(response);
+        });
+    };
 
     function totalCollectionLength(req, mainCallback) {
         var dbIndex = req.session.lastDb;
-        var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
+        var Model = models.get(dbIndex, journalEntryCT, journalEntrySchema);
         var data = req.query;
         var filter = data.filter || {};
-        var filterObj;
-        var matchObject = {};
-        var filterMapper = new FilterMapper();
+        var aggregate;
+        var matchFilter;
+        var matchWithoutState;
 
-        filterObj = filterMapper.mapFilter(filter, 'journalEntry');
+        if (filter.hasOwnProperty('sum')) {
+            filter.debit = {
+                key  : 'debit',
+                value: filter.sum.value,
+                type : 'integer'
+            };
 
-        if (filterObj.date) {
-            matchObject.date = filterObj.date;
+            filter.credit = {
+                key  : 'credit',
+                value: filter.sum.value,
+                type : 'integer'
+            };
 
-            delete filterObj.date;
+            delete filter.sum;
         }
 
-        Model.aggregate([{
-            $match: {
-                debit: {$gt: 0}
+        matchFilter = filterMapper.mapFilter(filter, {
+            contentType: journalEntryCT,
+            keysArray  : ['date']
+        });
+        matchWithoutState = filterMapper.mapFilter(filter, {
+            contentType : journalEntryCT,
+            keysArray   : ['date'],
+            withoutState: true
+        });
+
+        if (matchWithoutState.debit && matchWithoutState.credit) {
+            matchWithoutState.$or = [{debit: matchWithoutState.debit}, {credit: matchWithoutState.credit}];
+
+            delete matchWithoutState.debit;
+            delete matchWithoutState.credit;
+
+            if (matchWithoutState.timestamp) {
+                matchWithoutState.timestamp = matchWithoutState.timestamp;
+
+                delete matchWithoutState.$or;
             }
-        }, {
-            $match: matchObject
+
+        }
+
+        aggregate = Model.aggregate([{
+            $match: matchFilter
         }, {
             $lookup: {
                 from        : 'chartOfAccount',
@@ -1195,82 +412,108 @@ var Module = function (models, event) {
                 account       : {$arrayElemAt: ['$account', 0]},
                 sourceDocument: 1,
                 debit         : 1,
+                credit        : 1,
                 date          : 1,
+                timestamp     : 1,
                 _type         : 1
-            }
-        }, {
-            $lookup: {
-                from        : 'chartOfAccount',
-                localField  : 'journal.debitAccount',
-                foreignField: '_id',
-                as          : 'debitAccount'
-            }
-        }, {
-            $lookup: {
-                from        : 'chartOfAccount',
-                localField  : 'journal.creditAccount',
-                foreignField: '_id',
-                as          : 'creditAccount'
             }
         }, {
             $project: {
-                debitAccount  : {$arrayElemAt: ['$debitAccount', 0]},
-                creditAccount : {$arrayElemAt: ['$creditAccount', 0]},
+                'account._id' : 1,
+                'account.name': 1,
                 'journal.name': '$journal.name',
                 'journal._id' : '$journal._id',
                 sourceDocument: 1,
-                currency      : 1,
                 debit         : 1,
+                credit        : 1,
+                currency      : 1,
                 date          : 1,
+                timestamp     : 1,
                 _type         : 1
             }
         }, {
-            $match: filterObj
-        }], function (err, result) {
-            var totalValue = 0;
+            $match: matchWithoutState
+        }]);
+
+        aggregate.options = {allowDiskUse: true};
+
+        aggregate.exec(function (err, result) {
+            var totalDebit = 0;
+            var totalCredit = 0;
 
             if (err) {
                 return mainCallback(err);
             }
 
             result.forEach(function (model) {
-                totalValue += model.debit;
+                totalDebit += model.debit;
+                totalCredit += model.credit;
             });
 
-            mainCallback(null, {total: result.length, totalValue: totalValue});
+            mainCallback(null, {total: result.length, totalDebit: totalDebit, totalCredit: totalCredit});
         });
     }
 
-    this.exportToXlsx = function (req, res, next) {
-        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
-        var filter = req.query.filter ? JSON.parse(req.query.filter) : JSON.stringify({});
-        var filterObj = {};
-        var type = req.query.type;
-        var options;
-        /*var startDate = filter.startDate.value;
-         var endDate = filter.endDate.value;*/
-        var matchObject = {};
-        var filterMapper = new FilterMapper();
-
-        /*startDate = moment(new Date(startDate)).startOf('day');
-         endDate = moment(new Date(endDate)).endOf('day');*/
-
-        /*matchObject = {
-         date: {
-         $gte: new Date(startDate),
-         $lte: new Date(endDate)
-         }
-         };*/
-
-        if (filter && typeof filter === 'object') {
-            filterObj = filterMapper.mapFilter(filter, 'journalEntry'); // caseFilter(filter);
-
-            if (filterObj.date) {
-                matchObject.date = filterObj.date;
-
-                delete filterObj.date;
-            }
+    var lookupArray = [{
+        $lookup: {
+            from        : 'chartOfAccount',
+            localField  : 'account',
+            foreignField: '_id',
+            as          : 'account'
         }
+    }, {
+        $lookup: {
+            from        : 'journals',
+            localField  : 'journal',
+            foreignField: '_id',
+            as          : 'journal'
+        }
+    }, {
+        $lookup: {
+            from        : 'currency',
+            localField  : 'currency._id',
+            foreignField: '_id',
+            as          : 'currency._id'
+        }
+    }, {
+        $project: {
+            journal        : {$arrayElemAt: ['$journal', 0]},
+            account        : {$arrayElemAt: ['$account', 0]},
+            'currency._id' : {$arrayElemAt: ['$currency._id', 0]},
+            sourceDocument : 1,
+            'currency.name': 1,
+            debit          : {$divide: ['$debit', 100]},
+            credit         : {$divide: ['$credit', 100]},
+            debitFC        : 1,
+            creditFC       : 1,
+            date           : 1,
+            timestamp      : 1,
+            createdBy      : 1,
+            _type          : 1
+        }
+    }, {
+        $project: {
+            'account._id' : 1,
+            'account.name': 1,
+            'journal.name': '$journal.name',
+            'journal._id' : '$journal._id',
+            sourceDocument: 1,
+            currency      : 1,
+            debit         : 1,
+            credit        : 1,
+            debitFC       : 1,
+            creditFC      : 1,
+            date          : 1,
+            timestamp     : 1,
+            createdBy     : 1,
+            _type         : 1
+        }
+    }];
+
+    this.exportToXlsx = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, journalEntryCT, journalEntrySchema);
+        var filter = req.query.filter ? JSON.parse(req.query.filter) : JSON.stringify({});
+        var options;
 
         options = {
             res         : res,
@@ -1278,20 +521,31 @@ var Module = function (models, event) {
             Model       : Model,
             map         : exportMap,
             returnResult: true,
-            fileName    : 'journalEntry'
+            fileName    : journalEntryCT
         };
 
-        function lookupForWTrack(cb) {
-            var query = [{$match: type ? {type: type} : {}}];
+        function lookupFunc(cb) {
+            var query = [];
             var i;
 
-            query.push({$match: matchObject});
+            query.push({
+                $match: filterMapper.mapFilter(filter, {
+                    contentType: journalEntryCT,
+                    keysArray  : ['date']
+                })
+            });
 
-            for (i = 0; i < lookupWTrackArray.length; i++) {
-                query.push(lookupWTrackArray[i]);
+            for (i = 0; i < lookupArray.length; i++) {
+                query.push(lookupArray[i]);
             }
 
-            query.push({$match: filterObj});
+            query.push({
+                $match: filterMapper.mapFilter(filter, {
+                    contentType : journalEntryCT,
+                    keysArray   : ['date'],
+                    withoutState: true
+                })
+            });
 
             options.query = query;
             options.cb = cb;
@@ -1299,85 +553,8 @@ var Module = function (models, event) {
             exporter.exportToXlsx(options);
         }
 
-        function lookupForEmployees(cb) {
-            var query = [{$match: type ? {type: type} : {}}];
-            var i;
-
-            query.push({$match: matchObject});
-
-            for (i = 0; i < lookupEmployeesArray.length; i++) {
-                query.push(lookupEmployeesArray[i]);
-            }
-
-            query.push({$match: filterObj});
-
-            options.query = query;
-            options.cb = cb;
-
-            exporter.exportToXlsx(options);
-        }
-
-        function lookupForInvoice(cb) {
-            var query = [{$match: type ? {type: type} : {}}];
-            var i;
-
-            query.push({$match: matchObject});
-
-            for (i = 0; i < lookupInvoiceArray.length; i++) {
-                query.push(lookupInvoiceArray[i]);
-            }
-
-            query.push({$match: filterObj});
-
-            options.query = query;
-            options.cb = cb;
-
-            exporter.exportToXlsx(options);
-        }
-
-        function lookupForJobs(cb) {
-            var query = [{$match: type ? {type: type} : {}}];
-            var i;
-
-            query.push({$match: matchObject});
-
-            for (i = 0; i < lookupJobsArray.length; i++) {
-                query.push(lookupJobsArray[i]);
-            }
-
-            query.push({$match: filterObj});
-
-            options.query = query;
-            options.cb = cb;
-
-            exporter.exportToXlsx(options);
-        }
-
-        function lookupForPayments(cb) {
-            var query = [{$match: type ? {type: type} : {}}];
-            var i;
-
-            query.push({$match: matchObject});
-
-            for (i = 0; i < lookupPaymentsArray.length; i++) {
-                query.push(lookupPaymentsArray[i]);
-            }
-
-            query.push({$match: filterObj});
-
-            options.query = query;
-            options.cb = cb;
-
-            exporter.exportToXlsx(options);
-        }
-
-        async.parallel([lookupForWTrack, lookupForEmployees, lookupForInvoice, lookupForJobs, lookupForPayments], function (err, result) {
-            var wTrackResult = result[0];
-            var employeesResult = result[1];
-            var invoiceResult = result[2];
-            var jobsResult = result[3];
-            var paymentsResult = result[4];
-            var resultArray = _.union(wTrackResult, employeesResult, invoiceResult, jobsResult, paymentsResult);
+        async.parallel([lookupFunc], function (err, result) {
+            var resultArray = result[0];
 
             exporter.exportToXlsx({
                 res        : res,
@@ -1385,43 +562,15 @@ var Module = function (models, event) {
                 Model      : Model,
                 resultArray: resultArray,
                 map        : exportMap,
-                fileName   : 'journalEntry'
+                fileName   : journalEntryCT
             });
         });
-
     };
 
     this.exportToCsv = function (req, res, next) {
-        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var Model = models.get(req.session.lastDb, journalEntryCT, journalEntrySchema);
         var filter = req.query.filter ? JSON.parse(req.query.filter) : JSON.stringify({});
-        var filterObj = {};
-        var type = req.query.type;
         var options;
-        var query = [];
-        /*var startDate = filter.startDate.value;
-         var endDate = filter.endDate.value;*/
-        var matchObject = {};
-        var filterMapper = new FilterMapper();
-
-        /*startDate = moment(new Date(startDate)).startOf('day');
-         endDate = moment(new Date(endDate)).endOf('day');
-
-         matchObject = {
-         date: {
-         $gte: new Date(startDate),
-         $lte: new Date(endDate)
-         }
-         };*/
-
-        if (filter && typeof filter === 'object') {
-            filterObj = filterMapper.mapFilter(filter, 'journalEntry'); // caseFilter(filter);
-
-            if (filterObj.date) {
-                matchObject.date = filterObj.date;
-
-                delete filterObj.date;
-            }
-        }
 
         options = {
             res         : res,
@@ -1429,106 +578,40 @@ var Module = function (models, event) {
             Model       : Model,
             map         : exportMap,
             returnResult: true,
-            fileName    : 'journalEntry'
+            fileName    : journalEntryCT
         };
 
-        function lookupForWTrack(cb) {
-            var query = [{$match: type ? {type: type} : {}}];
+        function lookupFunc(cb) {
+            var query = [];
             var i;
 
-            query.push({$match: matchObject});
+            query.push({
+                $match: filterMapper.mapFilter(filter, {
+                    contentType: journalEntryCT,
+                    keysArray  : ['date']
+                })
+            });
 
-            for (i = 0; i < lookupWTrackArray.length; i++) {
-                query.push(lookupWTrackArray[i]);
+            for (i = 0; i < lookupArray.length; i++) {
+                query.push(lookupArray[i]);
             }
 
-            query.push({$match: filterObj});
+            query.push({
+                $match: filterMapper.mapFilter(filter, {
+                    contentType : journalEntryCT,
+                    keysArray   : ['date'],
+                    withoutState: true
+                })
+            });
 
             options.query = query;
             options.cb = cb;
 
-            exporter.exportToCsv(options);
+            exporter.exportToXlsx(options);
         }
 
-        function lookupForEmployees(cb) {
-            var query = [{$match: type ? {type: type} : {}}];
-            var i;
-
-            query.push({$match: matchObject});
-
-            for (i = 0; i < lookupEmployeesArray.length; i++) {
-                query.push(lookupEmployeesArray[i]);
-            }
-
-            query.push({$match: filterObj});
-
-            options.query = query;
-            options.cb = cb;
-
-            exporter.exportToCsv(options);
-        }
-
-        function lookupForInvoice(cb) {
-            var query = [{$match: type ? {type: type} : {}}];
-            var i;
-
-            query.push({$match: matchObject});
-
-            for (i = 0; i < lookupInvoiceArray.length; i++) {
-                query.push(lookupInvoiceArray[i]);
-            }
-
-            query.push({$match: filterObj});
-
-            options.query = query;
-            options.cb = cb;
-
-            exporter.exportToCsv(options);
-        }
-
-        function lookupForJobs(cb) {
-            var query = [{$match: type ? {type: type} : {}}];
-            var i;
-
-            query.push({$match: matchObject});
-
-            for (i = 0; i < lookupJobsArray.length; i++) {
-                query.push(lookupJobsArray[i]);
-            }
-
-            query.push({$match: filterObj});
-
-            options.query = query;
-            options.cb = cb;
-
-            exporter.exportToCsv(options);
-        }
-
-        function lookupForPayments(cb) {
-            var query = [{$match: type ? {type: type} : {}}];
-            var i;
-
-            query.push({$match: matchObject});
-
-            for (i = 0; i < lookupPaymentsArray.length; i++) {
-                query.push(lookupPaymentsArray[i]);
-            }
-
-            query.push({$match: filterObj});
-
-            options.query = query;
-            options.cb = cb;
-
-            exporter.exportToCsv(options);
-        }
-
-        async.parallel([lookupForWTrack, lookupForEmployees, lookupForInvoice, lookupForJobs, lookupForPayments], function (err, result) {
-            var wTrackResult = result[0];
-            var employeesResult = result[1];
-            var invoiceResult = result[2];
-            var jobsResult = result[3];
-            var paymentsResult = result[4];
-            var resultArray = _.union(wTrackResult, employeesResult, invoiceResult, jobsResult, paymentsResult);
+        async.parallel([lookupFunc], function (err, result) {
+            var resultArray = result[0];
 
             exporter.exportToCsv({
                 res        : res,
@@ -1536,7 +619,7 @@ var Module = function (models, event) {
                 Model      : Model,
                 resultArray: resultArray,
                 map        : exportMap,
-                fileName   : 'journalEntry'
+                fileName   : journalEntryCT
             });
         });
     };
@@ -1559,7 +642,7 @@ var Module = function (models, event) {
             lessDate = newDae.isBefore(newReconcileDate) ? true : false;
 
             if (lessDate) {
-                db.collection('settings').findOneAndUpdate({name: 'reconcileDate'}, {$set: {date: new Date(newDae)}}, function (err) {
+                db.collection('settings').update({name: 'reconcileDate'}, {$set: {date: new Date(newDae)}}, {upsert: true}, function (err) {
                     if (err) {
                         return console.log(err);
                     }
@@ -1574,7 +657,7 @@ var Module = function (models, event) {
     };
 
     this.removeBySourceDocument = function (req, sourceId) {
-        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var Model = models.get(req.session.lastDb, journalEntryCT, journalEntrySchema);
 
         Model.find({'sourceDocument._id': sourceId}, function (err, result) {
             var ids = [];
@@ -1596,120 +679,13 @@ var Module = function (models, event) {
         });
     };
 
-    function checkAndCreateForJob(options) {
-        var req = options.req;
-        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
-        var Job = models.get(req.session.lastDb, 'jobs', jobsSchema);
-        var jobId = options.jobId;
-        var jobName = options.jobName;
-        var workflow = options.workflow;
-        var remove = false;
-        var bodyFinishedJob = {
-            currency      : CONSTANTS.CURRENCY_USD,
-            journal       : CONSTANTS.FINISHED_JOB_JOURNAL,
-            sourceDocument: {
-                model: 'jobs',
-                _id  : jobId,
-                name : jobName
-            },
-
-            amount: 0
-        };
-
-        var bodyClosedJob = {
-            currency      : CONSTANTS.CURRENCY_USD,
-            journal       : CONSTANTS.CLOSED_JOB,
-            sourceDocument: {
-                model: 'jobs',
-                _id  : jobId,
-                name : jobName
-            },
-
-            amount: 0
-        };
-
-        var date;
-
-        var jobFinshedCb = function () {
-            return false;
-        };
-
-        Job.findById(jobId, {workflow: 1, invoice: 1}).populate('invoice').exec(function (err, result) {
-            if (err) {
-                return console.log(err);
-            }
-
-            if (result) {
-                if (result.workflow.toString() !== CONSTANTS.JOB_FINISHED) {
-                    remove = true;
-                }
-
-                if (remove) {
-                    Model.remove({
-                        journal             : {$in: [CONSTANTS.FINISHED_JOB_JOURNAL, CONSTANTS.CLOSED_JOB, CONSTANTS.SALARY_PAYABLE, CONSTANTS.OVERTIME_PAYABLE, CONSTANTS.OVERHEAD]},
-                        'sourceDocument._id': jobId
-                    }, function (err) {
-                        if (err) {
-                            return console.log(err);
-                        }
-                    });
-                } else {
-
-                    date = result && result.invoice ? moment(result.invoice.date).subtract(1, 'seconds') : null;
-
-                    if (date) {
-                        bodyFinishedJob.date = new Date(date);
-                        bodyClosedJob.date = new Date(moment(date).subtract(1, 'seconds'));
-
-                        Model.aggregate([{
-                            $match: {
-                                'sourceDocument._id'  : jobId,
-                                'sourceDocument.model': 'wTrack',
-                                debit                 : {$gt: 0}
-                            }
-                        }, {
-                            $group: {
-                                _id   : null,
-                                amount: {$sum: '$debit'}
-                            }
-                        }], function (err, result) {
-                            if (err) {
-                                return console.log(err);
-                            }
-
-                            bodyFinishedJob.amount = result && result[0] ? result[0].amount : 0;
-                            bodyClosedJob.amount = result && result[0] ? result[0].amount : 0;
-
-                            if (bodyFinishedJob.amount > 0) {
-                                createReconciled(bodyFinishedJob, req.session.lastDb, jobFinshedCb, req.session.uId);
-                            }
-
-                            if (bodyClosedJob.amount > 0) {
-                                createReconciled(bodyClosedJob, req.session.lastDb, jobFinshedCb, req.session.uId);
-                            }
-
-                        });
-
-                    }
-
-                }
-
-            }
-        });
-
-    }
-
-    this.checkAndCreateForJob = function (options) {
-        checkAndCreateForJob(options);
-    };
-
     this.createIdleByMonth = function (options) {
         var req = options.req;
         var callback = options.callback;
         var month = options.month;
         var year = options.year;
         var Holidays = models.get(req.session.lastDb, 'Holiday', holidaysSchema);
-        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var Model = models.get(req.session.lastDb, journalEntryCT, journalEntrySchema);
         var Employee = models.get(req.session.lastDb, 'Employees', employeeSchema);
         var Vacation = models.get(req.session.lastDb, 'Vacation', vacationSchema);
         var startDate = moment(new Date()).year(year).month(month - 1).startOf('month');
@@ -2080,13 +1056,21 @@ var Module = function (models, event) {
                     vacationBody.amount = vacationCost;
 
                     if (vacationBody.amount > 0) {
-                        createReconciled(vacationBody, req.session.lastDb, cb, req.session.uId);
+                        createReconciled(vacationBody, {
+                            dbName: req.session.lastDb,
+                            uId   : req.session.uId,
+                            cb    : cb
+                        });
                     } else {
                         cb();
                     }
 
                     if (salaryIdleBody.amount > 0) {
-                        createReconciled(salaryIdleBody, req.session.lastDb, cb, req.session.uId);
+                        createReconciled(salaryIdleBody, {
+                            dbName: req.session.lastDb,
+                            uId   : req.session.uId,
+                            cb    : cb
+                        });
                     } else {
                         cb();
                     }
@@ -2113,8 +1097,481 @@ var Module = function (models, event) {
         });
     };
 
+    function closeDay(req, res, next, options, cb) {
+        var dbName = req.session.lastDb;
+        var uId = req.session.uId;
+        var Model = models.get(dbName, 'journalEntry', journalEntrySchema);
+        var Invoice = models.get(dbName, 'wTrackInvoice', invoiceSchema);
+        var date = options && options.date || new Date();
+        var accounts = options.accounts || [];
+        var localDate = moment(new Date(date)).endOf('day');
+        var jeDate = moment(localDate).subtract(3, 'hours');
+        var waterlallTasks;
+        var rates;
+        var previousRates;
+        var base;
+
+        var UNREALIZED_LOSS = '565eb53a6aa50532e5df0b16';
+        var UNREALIZED_GAIN = '565eb53a6aa50532e5df0b15';
+
+        var getPreviousRate = function (wfCb) {
+            ratesService.getPrevious({
+                id    : moment(localDate).format('YYYY-MM-DD'),
+                dbName: dbName
+            }, wfCb);
+        };
+
+        var recalculateInvoices = function (prevRates, wfCb) {
+            previousRates = prevRates.rates;
+
+            base = prevRates.base || 'USD';
+
+            Invoice.aggregate([{
+                $match: {
+                    invoiceDate: {$lte: new Date(localDate)},
+                    approved   : true
+                }
+            }, {
+                $match: {
+                    $and: [{
+                        'currency.rate': {$exists: true}
+                    }]
+                }
+            }, {
+                $lookup: {
+                    from        : 'Payment',
+                    localField  : '_id',
+                    foreignField: 'invoice',
+                    as          : 'payments'
+                }
+            }, {
+                $project: {
+                    'currency._id' : 1,
+                    'currency.rate': 1,
+                    paymentInfo    : 1,
+                    name           : 1,
+                    forSales       : 1,
+                    invoiceDate    : 1,
+                    payments       : {
+                        $filter: {
+                            input: '$payments',
+                            as   : 'payment',
+                            cond : {$lte: ['$$payment.date', new Date(localDate)]}
+                        }
+                    }
+                }
+            }, {
+                $match: {
+                    'currency._id': {$ne: base}
+                }
+            }, {
+                $unwind: {
+                    path                      : '$payments',
+                    preserveNullAndEmptyArrays: true
+                }
+            }, {
+                $project: {
+                    currency             : 1,
+                    paymentInfo          : 1,
+                    invoiceDate          : 1,
+                    name                 : 1,
+                    forSales             : 1,
+                    'payments.paidAmount': 1,
+                    'payments.currency'  : 1,
+                    paid                 : {$divide: ['$payments.paidAmount', '$payments.currency.rate']}
+                }
+            }, {
+                $group: {
+                    _id        : '$_id',
+                    currency   : {$first: '$currency'},
+                    paymentInfo: {$first: '$paymentInfo'},
+                    invoiceDate: {$first: '$invoiceDate'},
+                    name       : {$first: '$name'},
+                    forSales   : {$first: '$forSales'},
+                    paid       : {$sum: '$paid'}
+                }
+            }], function (err, result) {
+                if (err) {
+                    return wfCb(err);
+                }
+
+                function forEachInvoice(result, wfCb) {
+                    async.each(result, function (el, cb) {
+                        var correctionBody;
+                        var balance = el.paymentInfo.total - el.paid;
+                        var newRate = ratesRetriever.getRate(rates, base, el.currency._id);
+                        var prevRate = ratesRetriever.getRate(previousRates, base, el.currency._id);
+                        var prevVal = balance / prevRate;
+                        var nextVal = balance / newRate;
+                        var account = el.forSales ? CONSTANTS.ACCOUNT_RECEIVABLE : CONSTANTS.ACCOUNT_PAYABLE;
+                        var invoiceDateKey;
+                        var localDateKey;
+                        var invoiceDate = moment(new Date(el.invoiceDate));
+
+                        invoiceDateKey = (invoiceDate.year() * 100 + invoiceDate.month()) * 100 + invoiceDate.date();
+                        localDateKey = (localDate.year() * 100 + localDate.month()) * 100 + localDate.date();
+
+                        if (invoiceDateKey === localDateKey) {
+                            return cb();
+                        }
+
+                        correctionBody = {
+                            journal       : null,
+                            currency      : CONSTANTS.CURRENCY_USD,
+                            date          : new Date(jeDate),
+                            sourceDocument: {
+                                model: 'closeDay',
+                                name : el.name,
+                                _id  : el._id
+                            },
+
+                            uId          : uId,
+                            dbName       : dbName,
+                            amount       : Math.abs(prevVal - nextVal),
+                            accountsItems: []
+                        };
+
+                        if (el.forSales) {
+                            if (prevVal > nextVal) {
+                                // unrealized loss
+
+                                correctionBody.accountsItems.push({
+                                    debit  : correctionBody.amount,
+                                    credit : 0,
+                                    account: UNREALIZED_LOSS
+                                }, {
+                                    debit  : 0,
+                                    credit : correctionBody.amount,
+                                    account: account
+                                });
+                            } else if (prevVal < nextVal) {
+                                // unrealized gain
+
+                                correctionBody.accountsItems.push({
+                                    debit  : correctionBody.amount,
+                                    credit : 0,
+                                    account: account
+                                }, {
+                                    debit  : 0,
+                                    credit : correctionBody.amount,
+                                    account: UNREALIZED_GAIN
+                                });
+                            }
+                        } else {
+                            if (prevVal > nextVal) {
+                                // unrealized gain
+
+                                correctionBody.accountsItems.push({
+                                    credit : correctionBody.amount,
+                                    debit  : 0,
+                                    account: UNREALIZED_GAIN
+                                }, {
+                                    credit : 0,
+                                    debit  : correctionBody.amount,
+                                    account: account
+                                });
+                            } else if (prevVal < nextVal) {
+                                // unrealized loss
+
+                                correctionBody.accountsItems.push({
+                                    credit : correctionBody.amount,
+                                    debit  : 0,
+                                    account: account
+                                }, {
+                                    credit : 0,
+                                    debit  : correctionBody.amount,
+                                    account: UNREALIZED_LOSS
+                                });
+                            }
+                        }
+
+                        if (correctionBody.accountsItems.length) {
+                            Model.remove({
+                                'sourceDocument._id'  : correctionBody.sourceDocument._id,
+                                'sourceDocument.name' : correctionBody.sourceDocument.name,
+                                'sourceDocument.model': correctionBody.sourceDocument.model,
+                                date                  : {
+                                    $in: [correctionBody.date]
+                                }
+                            }, function (err) {
+                                if (err) {
+                                    return cb(err);
+                                }
+
+                                JournalEntryService.createMultiRows(correctionBody, cb);
+
+                            });
+                        } else {
+                            cb(null, result);
+                        }
+                    }, function (err, result) {
+                        if (err) {
+                            return wfCb(err);
+                        }
+
+                        wfCb(null, result);
+                    });
+                }
+
+                ratesService.getById({
+                    id    : moment(localDate).format('YYYY-MM-DD'),
+                    dbName: dbName
+                }, function (err, ratesObject) {
+                    if (err) {
+                        return wfCb(err);
+                    }
+
+                    rates = ratesObject && ratesObject.rates || {};
+
+                    forEachInvoice(result, wfCb);
+
+                });
+
+            });
+        };
+
+        var createForBalances = function (result, cb) {
+            var localStart = moment(new Date(localDate)).startOf('day');
+            var localEnd = moment(new Date(localDate)).endOf('day');
+
+            if (!accounts.length) {
+                return cb();
+            }
+
+            Model.aggregate([{
+                $match: {
+                    account: {$in: accounts},
+                    date   : {$lte: new Date(localEnd)}
+                }
+            }, {
+                $project: {
+                    account : 1,
+                    debit   : 1,
+                    credit  : 1,
+                    debitFC : 1,
+                    creditFC: 1
+                }
+            }, {
+                $group: {
+                    _id     : '$account',
+                    debit   : {$sum: '$debit'},
+                    credit  : {$sum: '$credit'},
+                    debitFC : {$sum: '$debitFC'},
+                    creditFC: {$sum: '$creditFC'}
+                }
+            }, {
+                $lookup: {
+                    from        : 'journalentries',
+                    localField  : '_id',
+                    foreignField: 'account',
+                    as          : 'entries'
+                }
+            }, {
+                $lookup: {
+                    from        : 'PaymentMethod',
+                    localField  : '_id',
+                    foreignField: 'chartAccount',
+                    as          : 'bankAccount'
+                }
+            }, {
+                $project: {
+                    _id        : 1,
+                    debit      : 1,
+                    credit     : 1,
+                    debitFC    : 1,
+                    creditFC   : 1,
+                    bankAccount: {$arrayElemAt: ['$bankAccount', 0]},
+                    entries    : {
+                        $filter: {
+                            input: '$entries',
+                            as   : 'entry',
+                            cond : {
+                                $and: [{
+                                    $gt: ['$$entry.credit', 0]
+                                }, {
+                                    $gte: ['$$entry.date', new Date(localStart)]
+                                }, {
+                                    $lte: ['$$entry.date', new Date(localEnd)]
+                                }]
+                            }
+                        }
+                    },
+
+                    entriesToAdd: {
+                        $filter: {
+                            input: '$entries',
+                            as   : 'entry',
+                            cond : {
+                                $and: [{
+                                    $gte: ['$$entry.date', new Date(localStart)]
+                                }, {
+                                    $lte: ['$$entry.date', new Date(localEnd)]
+                                }]
+                            }
+                        }
+                    }
+                }
+            }, {
+                $group: {
+                    _id         : '$account',
+                    debit       : {$sum: '$debit'},
+                    credit      : {$sum: '$credit'},
+                    debitFC     : {$sum: '$debitFC'},
+                    creditFC    : {$sum: '$creditFC'},
+                    bankAccount : {$first: '$bankAccount'},
+                    entriesToAdd: {$first: '$entriesToAdd'},
+                    entries     : {$first: '$entries'}
+                }
+            }], function (err, accountsBalances) {
+                if (err) {
+                    return cb(err);
+                }
+
+                if (!rates) {
+                    return cb();
+                }
+
+                async.each(accountsBalances, function (element, callback) {
+                    var debit = element.debit;
+                    var credit = element.credit;
+                    var debitFC = element.debitFC;
+                    var creditFC = element.creditFC;
+                    var balance;
+                    var balanceFC;
+                    var newRate;
+                    var balanceRated;
+                    var balanceDiff;
+                    var correctionBody;
+                    var account = element.bankAccount.chartAccount;
+                    var currencyId = element.bankAccount.currency;
+
+                    if (!element.entries || !element.entries.length && element.entriesToAdd.length) {
+                        element.entriesToAdd.forEach(function (el) {
+                            debit -= el && el.debit || 0;
+                            credit -= el && el.credit || 0;
+                            debitFC -= el && el.debitFC || 0;
+                            creditFC -= el && el.creditFC || 0;
+                        });
+                    }
+
+                    balance = debit - credit;
+                    balanceFC = debitFC - creditFC || balance;
+
+                    // newRate = rates[element.bankAccount.currency] ? rates[element.bankAccount.currency][base] : balanceFC / balance;
+                    newRate = ratesRetriever.getRate(rates, base, element.bankAccount.currency);
+                    balanceRated = balanceFC / newRate;
+                    balanceDiff = balance - balanceRated;
+
+                    correctionBody = {
+                        currency: {
+                            _id : currencyId,
+                            rate: newRate
+                        },
+
+                        date          : new Date(jeDate),
+                        sourceDocument: {
+                            model: 'closeDay',
+                            name : element.bankAccount.name,
+                            _id  : element._id
+                        },
+
+                        uId          : uId,
+                        dbName       : dbName,
+                        amount       : Math.abs(balanceDiff),
+                        accountsItems: []
+
+                    };
+
+                    if (balanceDiff > 0) {
+                        // unrealized loss
+
+                        correctionBody.accountsItems.push({
+                            debit  : correctionBody.amount,
+                            credit : 0,
+                            account: UNREALIZED_LOSS
+                        }, {
+                            debit   : 0,
+                            credit  : correctionBody.amount,
+                            creditFC: correctionBody.amount,
+                            account : account
+                        });
+                    } else if (balanceDiff < 0) {
+                        // unrealized gain
+
+                        correctionBody.accountsItems.push({
+                            debit  : correctionBody.amount,
+                            debitFC: correctionBody.amount,
+                            credit : 0,
+                            account: account
+                        }, {
+                            debit  : 0,
+                            credit : correctionBody.amount,
+                            account: UNREALIZED_GAIN
+                        });
+                    }
+
+                    if (correctionBody.accountsItems.length) {
+                        Model.remove({
+                            'sourceDocument._id'  : correctionBody.sourceDocument._id,
+                            'sourceDocument.name' : correctionBody.sourceDocument.name,
+                            'sourceDocument.model': correctionBody.sourceDocument.model,
+                            date                  : {
+                                $in: [correctionBody.date]
+                            }
+                        }, function (err) {
+                            if (err) {
+                                return callback(err);
+                            }
+
+                            JournalEntryService.createMultiRows(correctionBody, callback);
+
+                        });
+                    } else {
+                        callback(null, result);
+                    }
+
+                }, function (err) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    cb();
+                });
+            });
+        };
+
+        if (!accounts.length) {
+            if (cb) {
+                return cb(null, result);
+            }
+
+            res.status(200).send({success: true});
+        }
+
+        waterlallTasks = [getPreviousRate, recalculateInvoices, createForBalances];
+
+        async.waterfall(waterlallTasks, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            if (cb) {
+                return cb(null, result);
+            }
+
+            res.status(200).send({success: true});
+        });
+    }
+
+    this.closeDay = function (req, res, next) {
+        closeDay(req, res, next);
+    };
+
     function closeMonth(req, res, next, dateObject, cb) {
-        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var dbName = req.session.lastDb;
+        var uId = req.session.uId;
+        var Model = models.get(dbName, 'journalEntry', journalEntrySchema);
+        var Invoice = models.get(dbName, 'wTrackInvoice', invoiceSchema);
         var query = dateObject || req.body;
         var month = parseInt(query.month, 10);
         var year = parseInt(query.year, 10);
@@ -2124,19 +1581,29 @@ var Module = function (models, event) {
         var waterlallTasks;
         var productSales;
         var COGS;
+        var rates;
+
+        var REALIZED_GAIN = '565eb53a6aa50532e5df0be1';
+        var REALIZED_LOSS = '565eb53a6aa50532e5df0be1';
+
+        var UNREALIZED_GAIN = '565eb53a6aa50532e5df0b15';
+        var UNREALIZED_LOSS = '565eb53a6aa50532e5df0b16';
+
+        localDate = new Date(localDate);
+        startDate = new Date(startDate);
 
         var parallelCreate = function (wfCb) {
             var parallelTasks;
 
-            var createIncomeSummary = function (cb) {
+            var realizedGain = function (cb) {
                 Model.aggregate([{
                     $match: {
                         date: {
-                            $gte: new Date(startDate),
-                            $lte: new Date(localDate)
+                            $gte: startDate,
+                            $lte: localDate
                         },
 
-                        account: objectId(CONSTANTS.PRODUCT_SALES)
+                        account: objectId(REALIZED_GAIN) // realized Gain
                     }
                 }, {
                     $group: {
@@ -2158,11 +1625,9 @@ var Module = function (models, event) {
                     credit = result[0] ? result[0].credit : 0;
                     balance = Math.abs(debit - credit);
 
-                    productSales = balance;
-
                     body = {
                         currency      : CONSTANTS.CURRENCY_USD,
-                        journal       : CONSTANTS.CREDIT_IS,
+                        journal       : null,
                         date          : new Date(jeDate),
                         sourceDocument: {
                             model: 'closeMonth',
@@ -2170,10 +1635,335 @@ var Module = function (models, event) {
                             _id  : null
                         },
 
-                        amount: balance
+                        uId          : uId,
+                        dbName       : dbName,
+                        amount       : balance,
+                        accountsItems: []
+
                     };
 
-                    createReconciled(body, req.session.lastDb, cb, req.session.uId);
+                    body.accountsItems.push({
+                        debit  : body.amount,
+                        credit : 0,
+                        account: REALIZED_GAIN
+                    }, {
+                        debit  : 0,
+                        credit : body.amount,
+                        account: CONSTANTS.INCOME_SUMMARY_ACCOUNT
+                    });
+
+                    JournalEntryService.createMultiRows(body, cb);
+
+                });
+            };
+
+            var unrealizedGain = function (cb) {
+                Model.aggregate([{
+                    $match: {
+                        date: {
+                            $gte: startDate,
+                            $lte: localDate
+                        },
+
+                        account: objectId(UNREALIZED_GAIN) // unrealized Gain
+                    }
+                }, {
+                    $group: {
+                        _id   : null,
+                        debit : {$sum: '$debit'},
+                        credit: {$sum: '$credit'}
+                    }
+                }], function (err, result) {
+                    var debit;
+                    var credit;
+                    var balance;
+                    var body;
+
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    debit = result[0] ? result[0].debit : 0;
+                    credit = result[0] ? result[0].credit : 0;
+                    balance = Math.abs(debit - credit);
+
+                    body = {
+                        currency      : CONSTANTS.CURRENCY_USD,
+                        journal       : null,
+                        date          : new Date(jeDate),
+                        sourceDocument: {
+                            model: 'closeMonth',
+                            name : 'Close Month',
+                            _id  : null
+                        },
+
+                        uId          : uId,
+                        dbName       : dbName,
+                        amount       : balance,
+                        accountsItems: []
+
+                    };
+
+                    body.accountsItems.push({
+                        debit  : body.amount,
+                        credit : 0,
+                        account: UNREALIZED_GAIN
+                    }, {
+                        debit  : 0,
+                        credit : body.amount,
+                        account: CONSTANTS.INCOME_SUMMARY_ACCOUNT
+                    });
+
+                    JournalEntryService.createMultiRows(body, cb);
+                });
+            };
+
+            var realizedLoss = function (cb) {
+                Model.aggregate([{
+                    $match: {
+                        date: {
+                            $gte: startDate,
+                            $lte: localDate
+                        },
+
+                        account: objectId(REALIZED_LOSS) // realized Loss
+                    }
+                }, {
+                    $group: {
+                        _id   : null,
+                        debit : {$sum: '$debit'},
+                        credit: {$sum: '$credit'}
+                    }
+                }], function (err, result) {
+                    var debit;
+                    var credit;
+                    var balance;
+                    var body;
+
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    debit = result[0] ? result[0].debit : 0;
+                    credit = result[0] ? result[0].credit : 0;
+                    balance = Math.abs(debit - credit);
+
+                    body = {
+                        currency      : CONSTANTS.CURRENCY_USD,
+                        journal       : null,
+                        date          : new Date(jeDate),
+                        sourceDocument: {
+                            model: 'closeMonth',
+                            name : 'Close Month',
+                            _id  : null
+                        },
+
+                        uId          : uId,
+                        dbName       : dbName,
+                        amount       : balance,
+                        accountsItems: []
+
+                    };
+
+                    body.accountsItems.push({
+                        debit  : body.amount,
+                        credit : 0,
+                        account: REALIZED_LOSS
+                    }, {
+                        debit  : 0,
+                        credit : body.amount,
+                        account: CONSTANTS.INCOME_SUMMARY_ACCOUNT
+                    });
+
+                    JournalEntryService.createMultiRows(body, cb);
+                });
+            };
+
+            var unrealizedLoss = function (cb) {
+                Model.aggregate([{
+                    $match: {
+                        date: {
+                            $gte: startDate,
+                            $lte: localDate
+                        },
+
+                        account: objectId(UNREALIZED_LOSS) // unrealized Loss
+                    }
+                }, {
+                    $group: {
+                        _id   : null,
+                        debit : {$sum: '$debit'},
+                        credit: {$sum: '$credit'}
+                    }
+                }], function (err, result) {
+                    var debit;
+                    var credit;
+                    var balance;
+                    var body;
+
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    debit = result[0] ? result[0].debit : 0;
+                    credit = result[0] ? result[0].credit : 0;
+                    balance = Math.abs(debit - credit);
+
+                    body = {
+                        currency      : CONSTANTS.CURRENCY_USD,
+                        journal       : null,
+                        date          : new Date(jeDate),
+                        sourceDocument: {
+                            model: 'closeMonth',
+                            name : 'Close Month',
+                            _id  : null
+                        },
+
+                        uId          : uId,
+                        dbName       : dbName,
+                        amount       : balance,
+                        accountsItems: []
+
+                    };
+
+                    body.accountsItems.push({
+                        debit  : body.amount,
+                        credit : 0,
+                        account: UNREALIZED_LOSS
+                    }, {
+                        debit  : 0,
+                        credit : body.amount,
+                        account: CONSTANTS.INCOME_SUMMARY_ACCOUNT
+                    });
+
+                    JournalEntryService.createMultiRows(body, cb);
+                });
+            };
+
+            var createIncomeSummary = function (cb) {
+                var waterfallArray;
+                var closeSalesReturns = function (wfCb) {
+                    Model.aggregate([{
+                        $match: {
+                            date: {
+                                $gte: startDate,
+                                $lte: localDate
+                            },
+
+                            account: objectId(CONSTANTS.SALES_RETURNS)
+                        }
+                    }, {
+                        $group: {
+                            _id   : null,
+                            debit : {$sum: '$debit'},
+                            credit: {$sum: '$credit'}
+                        }
+                    }], function (err, result) {
+                        var debit;
+                        var credit;
+                        var balance;
+                        var body;
+
+                        if (err) {
+                            return wfCb(err);
+                        }
+
+                        debit = result[0] ? result[0].debit : 0;
+                        credit = result[0] ? result[0].credit : 0;
+                        balance = Math.abs(debit - credit);
+
+                        body = {
+                            currency      : CONSTANTS.CURRENCY_USD,
+                            journal       : null,
+                            date          : new Date(jeDate),
+                            sourceDocument: {
+                                model: 'closeMonth',
+                                name : 'Close Month',
+                                _id  : null
+                            },
+
+                            uId          : uId,
+                            dbName       : dbName,
+                            amount       : balance,
+                            accountsItems: []
+
+                        };
+
+                        body.accountsItems.push({
+                            debit  : balance,
+                            credit : 0,
+                            account: CONSTANTS.PRODUCT_SALES
+                        }, {
+                            debit  : 0,
+                            credit : balance,
+                            account: CONSTANTS.SALES_RETURNS
+                        });
+
+                        JournalEntryService.createMultiRows(body, wfCb);
+                    });
+                };
+
+                var closeIncomeSummary = function (result, wfCb) {
+                    Model.aggregate([{
+                        $match: {
+                            date: {
+                                $gte: startDate,
+                                $lte: localDate
+                            },
+
+                            account: objectId(CONSTANTS.PRODUCT_SALES)
+                        }
+                    }, {
+                        $group: {
+                            _id   : null,
+                            debit : {$sum: '$debit'},
+                            credit: {$sum: '$credit'}
+                        }
+                    }], function (err, result) {
+                        var debit;
+                        var credit;
+                        var balance;
+                        var body;
+
+                        if (err) {
+                            return wfCb(err);
+                        }
+
+                        debit = result[0] ? result[0].debit : 0;
+                        credit = result[0] ? result[0].credit : 0;
+                        balance = Math.abs(debit - credit);
+
+                        productSales = balance;
+
+                        body = {
+                            currency      : CONSTANTS.CURRENCY_USD,
+                            journal       : CONSTANTS.CREDIT_IS,
+                            date          : new Date(jeDate),
+                            sourceDocument: {
+                                model: 'closeMonth',
+                                name : 'Close Month',
+                                _id  : null
+                            },
+
+                            amount: balance
+                        };
+
+                        createReconciled(body, {
+                            dbName: req.session.lastDb,
+                            uId   : req.session.uId,
+                            cb    : wfCb
+                        });
+                    });
+                };
+
+                waterfallArray = [closeSalesReturns, closeIncomeSummary];
+
+                async.waterfall(waterfallArray, function (err, result) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    cb();
                 });
             };
 
@@ -2181,8 +1971,8 @@ var Module = function (models, event) {
                 Model.aggregate([{
                     $match: {
                         date: {
-                            $gte: new Date(startDate),
-                            $lte: new Date(localDate)
+                            $gte: startDate,
+                            $lte: localDate
                         },
 
                         account: objectId(CONSTANTS.COGS)
@@ -2222,16 +2012,20 @@ var Module = function (models, event) {
                         amount: balance
                     };
 
-                    createReconciled(body, req.session.lastDb, cb, req.session.uId);
+                    createReconciled(body, {
+                        dbName: req.session.lastDb,
+                        uId   : req.session.uId,
+                        cb    : cb
+                    });
                 });
             };
 
-            var cretaeCloseVacation = function (cb) {
+            var createCloseVacation = function (cb) {
                 Model.aggregate([{
                     $match: {
                         date: {
-                            $gte: new Date(startDate),
-                            $lte: new Date(localDate)
+                            $gte: startDate,
+                            $lte: localDate
                         },
 
                         account: objectId(CONSTANTS.VACATION_EXPENSES)
@@ -2269,14 +2063,18 @@ var Module = function (models, event) {
                         amount: balance
                     };
 
-                    createReconciled(body, req.session.lastDb, cb, req.session.uId);
+                    createReconciled(body, {
+                        dbName: req.session.lastDb,
+                        uId   : req.session.uId,
+                        cb    : cb
+                    });
                 });
             };
 
             var createCloseIdle = function (cb) {
                 Model.aggregate([{
                     $match: {
-                        date                  : {$gte: new Date(startDate), $lte: new Date(localDate)},
+                        date                  : {$gte: startDate, $lte: localDate},
                         'sourceDocument.model': 'Employees',
                         journal               : objectId(CONSTANTS.IDLE_PAYABLE),
                         credit                : {$gt: 0}
@@ -2314,7 +2112,11 @@ var Module = function (models, event) {
                         amount: balance
                     };
 
-                    createReconciled(body, req.session.lastDb, cb, req.session.uId);
+                    createReconciled(body, {
+                        dbName: req.session.lastDb,
+                        uId   : req.session.uId,
+                        cb    : cb
+                    });
                 });
             };
 
@@ -2322,8 +2124,8 @@ var Module = function (models, event) {
                 Model.aggregate([{
                     $match: {
                         date: {
-                            $gte: new Date(startDate),
-                            $lte: new Date(localDate)
+                            $gte: startDate,
+                            $lte: localDate
                         },
 
                         account: objectId(CONSTANTS.ADMIN_SALARY_EXPENSES)
@@ -2361,11 +2163,198 @@ var Module = function (models, event) {
                         amount: balance
                     };
 
-                    createReconciled(body, req.session.lastDb, cb, req.session.uId);
+                    createReconciled(body, {
+                        dbName: req.session.lastDb,
+                        uId   : req.session.uId,
+                        cb    : cb
+                    });
                 });
             };
 
-            parallelTasks = [createIncomeSummary, createCloseCOGS, cretaeCloseVacation, createCloseIdle, createCloseAdminSalary];
+            var createCloseTaxes = function (cb) {
+                OrganizationService.getDefaultTaxes({dbName: dbName, both: true}, function (err, taxes) {
+                    var salesTax;
+                    var purchaseTax;
+                    var payableTax;
+                    var carriedTax;
+                    var getSalesTax;
+                    var getPurchaseTax;
+                    var getCarried;
+
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    salesTax = taxes.salesTax;
+                    purchaseTax = taxes.purchaseTax;
+                    payableTax = taxes.payableTax;
+                    carriedTax = taxes.carriedTax;
+
+                    getSalesTax = function (callback) {
+                        Model.aggregate([{
+                            $match: {
+                                account: salesTax,
+                                date   : {
+                                    $gte: startDate,
+                                    $lte: localDate
+                                }
+                            }
+                        }, {
+                            $group: {
+                                _id   : null,
+                                debit : {$sum: '$debit'},
+                                credit: {$sum: '$credit'}
+                            }
+                        }], function (err, result) {
+                            var sum;
+
+                            if (err) {
+                                return callback(err);
+                            }
+
+                            sum = result && result.length ? result[0].debit || result[0].credit : 0;
+
+                            callback(null, sum);
+                        });
+                    };
+
+                    getPurchaseTax = function (callback) {
+                        Model.aggregate([{
+                            $match: {
+                                account: salesTax,
+                                date   : {
+                                    $gte: startDate,
+                                    $lte: localDate
+                                }
+                            }
+                        }, {
+                            $group: {
+                                _id   : null,
+                                debit : {$sum: '$debit'},
+                                credit: {$sum: '$credit'}
+                            }
+                        }], function (err, result) {
+                            var sum;
+
+                            if (err) {
+                                return callback(err);
+                            }
+
+                            sum = result && result.length ? result[0].debit || result[0].credit : 0;
+
+                            callback(null, sum);
+                        });
+                    };
+
+                    getCarried = function (callback) {
+                        Model.aggregate([{
+                            $match: {
+                                account: carriedTax,
+                                date   : {
+                                    $gte: startDate,
+                                    $lte: localDate
+                                }
+                            }
+                        }, {
+                            $group: {
+                                _id   : null,
+                                debit : {$sum: '$debit'},
+                                credit: {$sum: '$credit'}
+                            }
+                        }], function (err, result) {
+                            var sum;
+
+                            if (err) {
+                                return callback(err);
+                            }
+
+                            sum = result && result.length ? result[0].debit || result[0].credit : 0;
+
+                            callback(null, sum);
+                        });
+                    };
+
+                    async.parallel([getSalesTax, getPurchaseTax, getCarried], function (err, result) {
+                        var sales;
+                        var purchase;
+                        var carried;
+                        var body;
+
+                        if (err) {
+                            return cb(err);
+                        }
+
+                        sales = result[0];
+                        purchase = result[1];
+                        carried = result[2];
+
+                        body = {
+                            currency      : CONSTANTS.CURRENCY_USD,
+                            journal       : null,
+                            date          : new Date(jeDate),
+                            sourceDocument: {
+                                model: 'closeMonth',
+                                name : 'Close Month',
+                                _id  : null
+                            },
+
+                            uId          : uId,
+                            dbName       : dbName,
+                            accountsItems: [],
+                            amount       : Math.abs(sales)
+                        };
+
+                        if (sales - purchase > 0) {
+                            body.accountsItems.push({
+                                debit  : sales,
+                                credit : 0,
+                                account: salesTax
+                            }, {
+                                debit  : 0,
+                                credit : purchase,
+                                account: purchaseTax
+                            });
+
+                            if (salesTax - purchase <= carried) {
+                                body.accountsItems.push({
+                                    debit  : 0,
+                                    credit : salesTax - purchase,
+                                    account: carriedTax
+                                });
+                            } else {
+                                body.accountsItems.push({
+                                    debit  : 0,
+                                    credit : salesTax - purchase - carried,
+                                    account: payableTax
+                                }, {
+                                    debit  : 0,
+                                    credit : carried,
+                                    account: carriedTax
+                                });
+                            }
+                        } else if (sales - purchase > 0) {
+                            body.accountsItems.push({
+                                debit  : sales,
+                                credit : 0,
+                                account: salesTax
+                            }, {
+                                debit  : 0,
+                                credit : purchase,
+                                account: purchaseTax
+                            }, {
+                                debit  : Math.abs(salesTax - purchase),
+                                credit : 0,
+                                account: carriedTax
+                            });
+                        }
+
+                        JournalEntryService.createMultiRows(body, cb);
+                    });
+
+                });
+            };
+
+            parallelTasks = [realizedGain, unrealizedGain, createIncomeSummary, createCloseCOGS, realizedLoss, unrealizedLoss, createCloseVacation, createCloseIdle, createCloseAdminSalary, createCloseTaxes];
             async.parallel(parallelTasks, function (err, result) {
                 if (err) {
                     return wfCb(err);
@@ -2374,8 +2363,8 @@ var Module = function (models, event) {
                 Model.aggregate([{
                     $match: {
                         date: {
-                            $gte: new Date(startDate),
-                            $lte: new Date(localDate)
+                            $gte: startDate,
+                            $lte: localDate
                         },
 
                         account: objectId(CONSTANTS.TOTAL_EXPENSES)
@@ -2418,7 +2407,11 @@ var Module = function (models, event) {
                         wfCb(null, result);
                     };
 
-                    createReconciled(body, req.session.lastDb, cb, req.session.uId);
+                    createReconciled(body, {
+                        dbName: req.session.lastDb,
+                        uId   : req.session.uId,
+                        cb    : cb
+                    });
 
                 });
             });
@@ -2428,8 +2421,8 @@ var Module = function (models, event) {
             Model.aggregate([{
                 $match: {
                     date: {
-                        $gte: new Date(startDate),
-                        $lte: new Date(localDate)
+                        $gte: startDate,
+                        $lte: localDate
                     },
 
                     account: objectId(CONSTANTS.INCOME_SUMMARY_ACCOUNT)
@@ -2452,11 +2445,9 @@ var Module = function (models, event) {
 
                 debit = result[0] ? result[0].debit : 0;
                 credit = result[0] ? result[0].credit : 0;
-                balance = Math.abs(debit - credit);
+                // balance = Math.abs(debit - credit);
 
-                if (productSales - COGS < 0) {
-                    balance = balance * (-1);
-                }
+                balance = Math.abs(productSales - COGS);
 
                 body = {
                     currency      : CONSTANTS.CURRENCY_USD,
@@ -2471,7 +2462,15 @@ var Module = function (models, event) {
                     amount: balance
                 };
 
-                createReconciled(body, req.session.lastDb, wfCb, req.session.uId);
+                if (productSales - COGS < 0) {
+                    body.reverse = true;
+                }
+
+                createReconciled(body, {
+                    dbName: req.session.lastDb,
+                    uId   : req.session.uId,
+                    cb    : wfCb
+                });
             });
         };
 
@@ -2494,8 +2493,114 @@ var Module = function (models, event) {
         closeMonth(req, res, next);
     };
 
+    function recloseDay(req, res, next, options, mainCb) {
+        var Model = models.get(req.session.lastDb, journalEntryCT, journalEntrySchema);
+        var PaymentMethod = models.get(req.session.lastDb, 'PaymentMethod', PaymentMethodSchema);
+        var body = options || req.body;
+        var startDate = body.startDate ? moment(new Date(body.startDate)) : moment().subtract(1, 'month');
+        var endDate = body.endDate ? moment(new Date(body.endDate)) : moment();
+        var check = new Date(endDate) - new Date(startDate);
+        var datesArray = [];
+        var date;
+        var dateEnd;
+        var localDate;
+        var i;
+        var q;
+
+        do {
+            datesArray.push(moment(new Date(startDate)).format('YYYY-MM-DD'));
+
+            startDate = moment(new Date(startDate)).add(1, 'day').format('YYYY-MM-DD');
+
+            check = new Date(endDate) - new Date(startDate);
+        } while (check >= 0);
+
+        OrganizationService.getBaseCurrency({dbName: req.session.lastDb}, function (err, base) {
+            if (err && mainCb) {
+                return mainCb(err);
+            }
+
+            if (err && next) {
+                return next(err);
+            }
+
+            PaymentMethod.aggregate([{
+                $match: {
+                    currency: {$ne: base}
+                }
+            }, {
+                $group: {
+                    _id     : null,
+                    accounts: {$addToSet: '$chartAccount'}
+                }
+            }], function (err, result) {
+                var accounts;
+
+                if (err && mainCb) {
+                    return mainCb(err);
+                }
+
+                if (err && next) {
+                    return next(err);
+                }
+
+                accounts = result && result.length ? result[0].accounts : [];
+
+                if (!accounts.length) {
+                    if (mainCb) {
+                        return mainCb(null, {success: true});
+                    }
+
+                    res.status(200).send({success: true});
+                }
+
+                q = async.queue(function (date, callback) {
+                    dateEnd = moment(new Date(date)).endOf('day');
+                    localDate = moment(dateEnd).subtract(3, 'hours');
+
+                    closeDay(req, res, callback, {
+                        date    : date,
+                        accounts: accounts
+                    }, callback);
+                });
+
+                q.drain = function () {
+                    if (mainCb) {
+                        return mainCb(null, {success: true});
+                    }
+
+                    res.status(200).send({success: true});
+                };
+
+                for (i = 0; i < datesArray.length; i++) {
+                    date = datesArray[i];
+
+                    q.push(date, function (err) {
+                        if (err && mainCb) {
+                            return mainCb(err);
+                        }
+
+                        if (err && next) {
+                            return next(err);
+                        }
+                    });
+                }
+            });
+        })
+
+        /*   if (mainCb) {
+         return mainCb(null, {success: true});
+         }
+
+         res.status(200).send({success: true});*/
+    }
+
+    this.recloseDay = function (req, res, next) {
+        recloseDay(req, res, next);
+    };
+
     this.recloseMonth = function (req, res, next) {
-        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var Model = models.get(req.session.lastDb, journalEntryCT, journalEntrySchema);
         var body = req.body;
 
         async.each(body, function (date, cb) {
@@ -2503,8 +2608,9 @@ var Module = function (models, event) {
             var startDate = moment(date).startOf('month');
 
             Model.remove({
-                journal: {$in: CONSTANTS.CLOSE_MONTH_JOURNALS},
-                date   : {$gte: new Date(startDate), $lte: new Date(endDate)}
+                'sourceDocument.model': 'closeMonth',
+                // journal: {$in: CONSTANTS.CLOSE_MONTH_JOURNALS},
+                date                  : {$gte: new Date(startDate), $lte: new Date(endDate)}
             }, function () {
                 var month = moment(date).month() + 1;
                 var year = moment(date).year();
@@ -2539,14 +2645,17 @@ var Module = function (models, event) {
 
     function reconcile(req, res, next, cb) {
         var dbName = req.session.lastDb;
-        var Model = models.get(dbName, 'journalEntry', journalEntrySchema);
+        var Model = models.get(dbName, journalEntryCT, journalEntrySchema);
         var WTrack = models.get(dbName, 'wTrack', wTrackSchema);
-        var Invoice = models.get(dbName, 'wTrackInvoice', invoiceSchema);
-        var Payment = models.get(dbName, 'Payment', PaymentSchema);
+        var Invoice = models.get(dbName, 'Invoices', invoiceSchema);
+        var Payment = models.get(dbName, 'InvoicePayment', InvoicePaymentSchema);
         var Job = models.get(dbName, 'jobs', jobsSchema);
         var body = req.body;
-        var month = parseInt(body.month, 10);
-        var year = parseInt(body.year, 10);
+        var dateNow = moment();
+        var month = 8;
+        var year = 2014;
+        /* var month = body.month ? parseInt(body.month, 10) : dateNow.get('month') + 1;
+         var year = body.year ? parseInt(body.year, 10) : dateNow.get('year');*/
         var date = body.date ? moment(new Date(body.date)) : moment().year(year).month(month - 1).endOf('month');
         var jobIds = body.jobs;
         var reconcileSalaryEntries;
@@ -2557,18 +2666,20 @@ var Module = function (models, event) {
         var paymentsArray = [];
         var parallelFunction;
         var reconcileJobs;
-        var removeEntries;
-        var createForJob;
         var mainWaterfallTasks;
         var getJobsToCreateExpenses;
         var waterfallTasks;
+        var recloseDaysFunc;
         var match = {};
+        var dontReclose = false;
 
         if (jobIds && !Array.isArray(jobIds)) {
             jobIds = [jobIds];
             match = {
                 jobs: {$in: jobIds}
             };
+
+            dontReclose = true;
         }
 
         getJobsToCreateExpenses = function (mainCb) {
@@ -2577,6 +2688,10 @@ var Module = function (models, event) {
             }, {
                 $group: {
                     _id: '$jobs'
+                }
+            }, {
+                $project: {
+                    _id: 1
                 }
             }], function (err, result) {
                 if (err) {
@@ -2595,7 +2710,25 @@ var Module = function (models, event) {
 
         parallelFunction = function (mainCb) {
             reconcileInvoiceEntries = function (mainCallback) {
-                Invoice.find({reconcile: true, approved: true, _type: 'wTrackInvoice'}, function (err, result) {
+                Invoice.aggregate([{
+                    $match: {
+                        // reconcile: true,
+                        approved: true,
+                        _type   : {$in: ['purchaseInvoices', 'Invoices']}
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'Payment',
+                        localField  : '_id',
+                        foreignField: 'invoice',
+                        as          : 'payments'
+                    }
+                }, {
+                    $project: {
+                        _id     : 1,
+                        payments: 1
+                    }
+                }], function (err, result) {
                     var parallelRemove;
                     var parallelCreate;
                     var parallelCreateForPayments;
@@ -2606,7 +2739,9 @@ var Module = function (models, event) {
 
                     result.forEach(function (el) {
                         resultArray.push(el._id);
-                        paymentsArray = paymentsArray.concat(el.payments);
+                        el.payments.forEach(function (pym) {
+                            paymentsArray.push(pym._id);
+                        });
                     });
 
                     parallelRemove = function (cb) {
@@ -2617,48 +2752,38 @@ var Module = function (models, event) {
                                 return cb(err);
                             }
 
-                            cb(null, resultArray);
+                            Model.remove({
+                                'sourceDocument.model': 'closeDay',
+                                date                  : {$gte: new Date(date)}
+                            }, function (err) {
+                                if (err) {
+                                    return cb(err);
+                                }
+
+                                cb(null, resultArray);
+                            });
                         });
                     };
 
-                    function findProformaPayments(resultArray, cb) {
+                    function findPrepayments(resultArray, cb) {
                         Invoice.aggregate([{
                             $match: {
                                 _id: {$in: resultArray}
                             }
                         }, {
                             $project: {
-                                payments: 1,
-                                _id     : 0
+                                sourceDocument: 1
                             }
-                        }, {
-                            $unwind: '$payments'
                         }, {
                             $lookup: {
                                 from        : 'Payment',
-                                localField  : 'payments',
-                                foreignField: '_id',
+                                localField  : 'sourceDocument',
+                                foreignField: 'order',
                                 as          : 'payment'
                             }
                         }, {
                             $project: {
-                                payment: {$arrayElemAt: ['$payment', 0]}
-                            }
-                        }, {
-                            $lookup: {
-                                from        : 'Invoice',
-                                localField  : 'payment.invoice',
-                                foreignField: '_id',
-                                as          : 'invoice'
-                            }
-                        }, {
-                            $project: {
-                                payment: 1,
-                                invoice: {$arrayElemAt: ['$invoice', 0]}
-                            }
-                        }, {
-                            $match: {
-                                'invoice._type': 'Proforma'
+                                payment: 1
                             }
                         }], function (err, result) {
                             if (err) {
@@ -2671,10 +2796,36 @@ var Module = function (models, event) {
 
                     parallelCreate = function (result, cb) {
                         async.each(resultArray, function (element, asyncCb) {
-                            Invoice.findById(element, function (err, invoice) {
+                            Invoice.aggregate([{
+                                $match: {
+                                    _id: element
+                                }
+                            }, {
+                                $lookup: {
+                                    from        : 'journals',
+                                    localField  : 'journal',
+                                    foreignField: '_id',
+                                    as          : 'journal'
+                                }
+                            }, {
+                                $project: {
+                                    journal       : {$arrayElemAt: ['$journal', 0]},
+                                    forSales      : 1,
+                                    name          : 1,
+                                    paymentInfo   : 1,
+                                    currency      : 1,
+                                    invoiceDate   : 1,
+                                    sourceDocument: 1
+                                }
+                            }, {
+                                $lookup: {
+                                    from        : 'Payment',
+                                    localField  : 'sourceDocument',
+                                    foreignField: 'order',
+                                    as          : 'prepayments'
+                                }
+                            }], function (err, invoice) {
                                 var cb = asyncCb;
-                                var proformaPayments = [];
-                                var proforma;
                                 var paidAmount = 0;
                                 var beforeInvoiceBody = {};
                                 var journalEntryBody = {};
@@ -2683,149 +2834,302 @@ var Module = function (models, event) {
                                     return asyncCb(err);
                                 }
 
-                                proforma = _.find(result, function (el) {
-                                    var payments = invoice.payments || [];
-                                    payments.forEach(function (payment) {
-                                        if (el.payment && el.payment._id && (payment.toString() === el.payment._id.toString())) {
-                                            proformaPayments.push(el);
-                                        }
-                                    });
+                                invoice = invoice && invoice.length ? invoice[0] : {};
+
+                                invoice.prepayments.forEach(function (payment) {
+                                    paidAmount += payment.paidAmount / payment.currency.rate;
                                 });
 
-                                if (proformaPayments.length) {
-                                    proformaPayments.forEach(function (el) {
-                                        var paymentInfo = el.payment;
-                                        var paid = paymentInfo.paidAmount;
-                                        var paidInUSD = paid / paymentInfo.currency.rate;
-
-                                        paidAmount += paidInUSD;
-                                    });
-
-                                    if (paidAmount) {
-                                        cb = _.after(2, asyncCb);
-
-                                        beforeInvoiceBody.date = invoice.invoiceDate;
-                                        beforeInvoiceBody.journal = CONSTANTS.BEFORE_INVOICE;
-                                        beforeInvoiceBody.currency = invoice.currency ? invoice.currency._id : 'USD';
-                                        beforeInvoiceBody.amount = invoice.paymentInfo ? paidAmount : 0;
-                                        beforeInvoiceBody.sourceDocument = {};
-                                        beforeInvoiceBody.sourceDocument._id = invoice._id;
-                                        beforeInvoiceBody.sourceDocument.model = 'Proforma';
-                                        beforeInvoiceBody.sourceDocument.name = invoice.name;
-
-                                        if (beforeInvoiceBody.amount > 0) {
-                                            createReconciled(beforeInvoiceBody, req.session.lastDb, cb, req.session.uId);
-                                        } else {
-                                            cb();
-                                        }
-
-                                    }
-                                }
-
                                 journalEntryBody.date = invoice.invoiceDate;
-                                journalEntryBody.journal = invoice.journal || CONSTANTS.INVOICE_JOURNAL;
+                                journalEntryBody.journal = invoice.journal ? invoice.journal._id : CONSTANTS.INVOICE_JOURNAL;
                                 journalEntryBody.currency = invoice.currency ? invoice.currency._id : 'USD';
-                                journalEntryBody.amount = invoice.paymentInfo ? invoice.paymentInfo.total : 0;
+                                journalEntryBody.amount = invoice.paymentInfo ? invoice.paymentInfo.total/* / invoice.currency.rate*/ : 0;
                                 journalEntryBody.sourceDocument = {};
                                 journalEntryBody.sourceDocument._id = invoice._id;
                                 journalEntryBody.sourceDocument.model = 'Invoice';
                                 journalEntryBody.sourceDocument.name = invoice.name;
+                                journalEntryBody.uId = req.session.uId;
+                                journalEntryBody.dbName = dbName;
 
-                                if (journalEntryBody.amount > 0) {
-                                    createReconciled(journalEntryBody, req.session.lastDb, cb, req.session.uId);
+                                journalEntryBody.accountsItems = [];
+
+                                if (invoice.forSales) {
+                                    journalEntryBody.accountsItems.push({
+                                        debit  : journalEntryBody.amount,
+                                        credit : 0,
+                                        account: invoice.journal ? invoice.journal.debitAccount : CONSTANTS.ACCOUNT_RECEIVABLE
+                                    }, {
+                                        debit  : 0,
+                                        credit : invoice.paymentInfo.unTaxed,
+                                        account: invoice.journal ? invoice.journal.creditAccount : CONSTANTS.PRODUCT_SALES
+                                    });
                                 } else {
-                                    cb();
+                                    journalEntryBody.accountsItems.push({
+                                        debit  : invoice.paymentInfo.unTaxed,
+                                        credit : 0,
+                                        account: invoice.journal ? invoice.journal.debitAccount : CONSTANTS.INVENTORY
+                                    }, {
+                                        debit  : 0,
+                                        credit : journalEntryBody.amount,
+                                        account: invoice.journal ? invoice.journal.creditAccount : CONSTANTS.ACCOUNT_PAYABLE
+                                    });
                                 }
 
+                                if (invoice.paymentInfo.taxes) {
+                                    if (invoice.forSales) {
+                                        journalEntryBody.accountsItems.push({
+                                            debit  : 0,
+                                            credit : invoice.paymentInfo.taxes,
+                                            account: CONSTANTS.TAX_ACCOUNT
+                                        });
+                                    } else {
+                                        journalEntryBody.accountsItems.push({
+                                            debit  : invoice.paymentInfo.taxes,
+                                            credit : 0,
+                                            account: CONSTANTS.TAX_ACCOUNT
+                                        });
+                                    }
+
+                                }
+
+                                if (paidAmount) {
+                                    cb = _.after(2, cb);
+
+                                    beforeInvoiceBody.date = invoice.invoiceDate;
+                                    beforeInvoiceBody.journal = null; // CONSTANTS.BEFORE_INVOICE;
+                                    beforeInvoiceBody.currency = {};
+                                    beforeInvoiceBody.currency._id = invoice.currency ? invoice.currency._id : 'USD';
+                                    beforeInvoiceBody.currency.rate = invoice.currency ? invoice.currency.rate : 1;
+                                    beforeInvoiceBody.amount = paidAmount;
+                                    beforeInvoiceBody.sourceDocument = {};
+                                    beforeInvoiceBody.sourceDocument._id = invoice._id;
+                                    beforeInvoiceBody.sourceDocument.model = 'Invoice';
+                                    beforeInvoiceBody.sourceDocument.name = invoice.name;
+                                    beforeInvoiceBody.uId = req.session.uId;
+                                    beforeInvoiceBody.dbName = dbName;
+                                    beforeInvoiceBody.notDivideRate = true;
+
+                                    beforeInvoiceBody.accountsItems = [{
+                                        debit  : beforeInvoiceBody.amount,
+                                        credit : 0,
+                                        account: CONSTANTS.USR
+                                    }, {
+                                        debit  : 0,
+                                        credit : beforeInvoiceBody.amount,
+                                        account: CONSTANTS.ACCOUNT_RECEIVABLE
+                                    }];
+
+                                    JournalEntryService.createMultiRows(beforeInvoiceBody, cb);
+                                }
+
+                                JournalEntryService.createMultiRows(journalEntryBody, cb);
+
                             });
-                        }, function () {
+                        }, function (err) {
+                            if (err) {
+                                return cb(err);
+                            }
+
                             cb(null, result);
                         });
 
                     };
 
                     parallelCreateForPayments = function (result, cb) {
-                        async.each(paymentsArray, function (element, asyncCb) {
-                            Payment.findById(element).populate('invoice').populate('currency._id').exec(function (err, model) {
-                                var cb = asyncCb;
-                                var bodyOtherIncome;
-                                var invoiceRate;
-                                var PaymRate;
-                                var journal;
-                                var date;
+                        Payment.find({order: {$ne: null}}, {_id: 1}, function (err, result) {
+                            var ids;
 
+                            if (err) {
+                                return cb(err);
+                            }
+
+                            ids = _.pluck(result, '_id');
+
+                            paymentsArray = paymentsArray.concat(ids);
+
+                            async.each(paymentsArray, function (element, asyncCb) {
+                                Payment.findById(element).populate('invoice').populate('order').exec(function (err, model) {
+                                    var invoiceRate;
+                                    var PaymRate;
+                                    var journal;
+                                    var date;
+                                    var accountsItems = [];
+                                    var source;
+                                    var debitAccount;
+                                    var creditAccount;
+                                    var invoiceType;
+                                    var isForSale;
+                                    var gainAccount;
+                                    var lossAccount;
+                                    var amountByInvoice;
+                                    var differenceAmount;
+                                    var prevRates = {};
+                                    var fx = {};
+
+                                    if (err) {
+                                        return asyncCb(err);
+                                    }
+
+                                    ratesService.getPreviousAndCurrent({
+                                        id    : moment(model.date).format('YYYY-MM-DD'),
+                                        dbName: dbName
+                                    }, function (err, ratesObject) {
+                                        if (err) {
+                                            return asyncCb(err);
+                                        }
+
+                                        prevRates.rates = ratesObject && ratesObject.previous ? ratesObject.previous : {};
+                                        prevRates.base = ratesObject && ratesObject.base ? ratesObject.base : 'USD';
+                                        fx.rates = ratesObject && ratesObject.current ? ratesObject.current : {};
+                                        fx.base = ratesObject && ratesObject.base ? ratesObject.base : 'USD';
+
+                                        if (model) {
+
+                                            source = model.invoice && model.invoice._id ? model.invoice : model.order && model.order._id ? model.order : {};
+                                            invoiceType = model.invoice && model.invoice._type ? model.invoice : model.order && model.order._type ? model.order : null;
+                                            isForSale = model.forSale;
+
+                                            if (isForSale) {
+                                                if (invoiceType === 'Order') {
+                                                    debitAccount = model.bankAccount;
+                                                    creditAccount = CONSTANTS.USR;
+                                                } else {
+                                                    debitAccount = model.bankAccount;
+                                                    creditAccount = CONSTANTS.ACCOUNT_RECEIVABLE;
+                                                }
+
+                                            } else {
+                                                creditAccount = model.bankAccount;
+                                                debitAccount = CONSTANTS.ACCOUNT_PAYABLE;
+                                            }
+
+                                            date = moment(new Date(model.date));
+
+                                            date = date.format('YYYY-MM-DD');
+                                            journal = model.journal || CONSTANTS.PAYMENT_JOURNAL;
+
+                                            if (model._type === 'prepayment') {
+                                                journal = CONSTANTS.PROFORMA_JOURNAL;
+                                            }
+
+                                            source.currency = source.currency || {_id: fx.base};
+
+                                            invoiceRate = ratesRetriever.getRate(prevRates.rates, fx.base, source.currency._id);
+
+                                            amountByInvoice = model.paidAmount / invoiceRate;
+                                            differenceAmount = model.paidAmount / ratesRetriever.getRate(fx.rates, fx.base, model.currency._id || fx.base);
+
+                                            body = {
+                                                currency      : model.currency._id,
+                                                journal       : journal,
+                                                date          : new Date(date),
+                                                sourceDocument: {
+                                                    model: 'Payment',
+                                                    _id  : model._id,
+                                                    name : model.name
+                                                },
+
+                                                accountsItems: accountsItems,
+                                                amount       : PaymRate
+                                            };
+
+                                            if (model.paymentMethod.currency !== prevRates.base) {
+                                                gainAccount = '565eb53a6aa50532e5df0b15'; // unrealized
+                                                lossAccount = '565eb53a6aa50532e5df0b16'; // unrealized
+                                            } else {
+                                                gainAccount = '565eb53a6aa50532e5df0be1'; // foreign ex gain
+                                                lossAccount = '565eb53a6aa50532e5df0be3'; // foreign ex loss
+                                            }
+
+                                            if (isFinite(amountByInvoice) && Math.abs(amountByInvoice - differenceAmount) !== 0) {
+
+                                                if (isForSale) {
+                                                    if (differenceAmount > amountByInvoice) {
+                                                        body.accountsItems.push({
+                                                            debit  : 0,
+                                                            credit : Math.abs(amountByInvoice - differenceAmount),
+                                                            account: gainAccount
+                                                        });
+
+                                                    } else if (differenceAmount < amountByInvoice) {
+
+                                                        body.accountsItems.push({
+                                                            credit : 0,
+                                                            debit  : Math.abs(amountByInvoice - differenceAmount),
+                                                            account: lossAccount
+                                                        });
+
+                                                    }
+                                                } else {
+                                                    if (differenceAmount > amountByInvoice) {
+                                                        body.accountsItems.push({
+                                                            credit : 0,
+                                                            debit  : Math.abs(amountByInvoice - differenceAmount),
+                                                            account: gainAccount
+                                                        });
+
+                                                    } else if (differenceAmount < amountByInvoice) {
+
+                                                        body.accountsItems.push({
+                                                            debit  : 0,
+                                                            credit : Math.abs(amountByInvoice - differenceAmount),
+                                                            account: lossAccount
+                                                        });
+
+                                                    }
+                                                }
+
+                                            }
+
+                                            if (isForSale) {
+                                                body.accountsItems.push({
+                                                    debit   : 0,
+                                                    credit  : amountByInvoice,
+                                                    creditFC: model.paidAmount,
+                                                    account : creditAccount
+                                                }, {
+                                                    credit : 0,
+                                                    debit  : differenceAmount - model.bankExpenses.amount,
+                                                    debitFC: model.paidAmount,
+                                                    account: debitAccount
+                                                });
+                                            } else {
+                                                body.accountsItems.push({
+                                                    debit   : 0,
+                                                    credit  : differenceAmount - model.bankExpenses.amount,
+                                                    creditFC: model.paidAmount,
+                                                    account : creditAccount
+                                                }, {
+                                                    credit : 0,
+                                                    debit  : amountByInvoice,
+                                                    // debitFC: differenceAmount,
+                                                    account: debitAccount
+                                                });
+                                            }
+
+                                            createMultiRows(body, {
+                                                dbName       : req.session.lastDb,
+                                                uId          : req.session.uId,
+                                                cb           : asyncCb,
+                                                notDivideRate: true
+                                            });
+                                        } else {
+                                            asyncCb();
+                                        }
+                                    });
+                                });
+                            }, function (err) {
                                 if (err) {
-                                    return asyncCb(err);
+                                    return cb(err);
                                 }
-                                if (model) {
-                                    date = moment(new Date(model.date));
 
-                                    date = date.format('YYYY-MM-DD');
-                                    journal = model.journal || CONSTANTS.PAYMENT_JOURNAL;
-
-                                    if (model.invoice._type === 'Proforma') {
-                                        journal = CONSTANTS.PROFORMA_JOURNAL;
-                                    }
-
-                                    invoiceRate = model.paidAmount / model.invoice.currency.rate;
-                                    PaymRate = model.paidAmount / model.currency.rate;
-
-                                    body = {
-                                        currency      : model.currency._id._id,
-                                        journal       : journal,
-                                        date          : new Date(date),
-                                        sourceDocument: {
-                                            model: 'Payment',
-                                            _id  : model._id,
-                                            name : model.name
-                                        },
-
-                                        amount: invoiceRate
-                                    };
-
-                                    bodyOtherIncome = {
-                                        currency      : model.currency._id._id,
-                                        date          : new Date(date),
-                                        sourceDocument: {
-                                            model: 'Payment',
-                                            _id  : model._id,
-                                            name : model.name
-                                        },
-
-                                        amount: Math.abs(PaymRate - invoiceRate)
-                                    };
-
-                                    /* if (PaymRate > invoiceRate) {
-                                     bodyOtherIncome.journal = '57907bc6b4b1bb7e016dd684';
-                                     } else if (PaymRate < invoiceRate) {
-                                     bodyOtherIncome.journal = '57975ceeb5a36a841895f4fe';
-                                     }*/
-
-                                    if (model.otherIncomeJournal) {
-                                        bodyOtherIncome.journal = model.otherIncomeJournal;
-                                    }
-
-                                    if (bodyOtherIncome.journal) {
-                                        asyncCb = _.after(2, cb);
-
-                                        createReconciled(bodyOtherIncome, req.session.lastDb, asyncCb, req.session.uId);
-                                        createReconciled(body, req.session.lastDb, asyncCb, req.session.uId);
-
-                                    } else {
-                                        createReconciled(body, 'production', cb, req.session.uId);
-                                    }
-
-                                } else {
-                                    cb();
-                                }
+                                cb();
                             });
-                        }, function () {
-                            cb();
-                        });
 
+                        });
                     };
 
-                    waterfallTasks = [parallelRemove, findProformaPayments, parallelCreate, parallelCreateForPayments];
+                    waterfallTasks = [parallelRemove, findPrepayments, parallelCreate, parallelCreateForPayments];
 
                     async.waterfall(waterfallTasks, function (err) {
                         if (err) {
@@ -2838,11 +3142,14 @@ var Module = function (models, event) {
                             }
 
                             // res.status(200).send({success: true});
-                            event.emit('sendMessage', {
-                                view   : 'journalEntry',
-                                message: 'Invoices and Proformas were reconciled',
-                                dbName : dbName
-                            });
+                            if (event) {
+                                event.emit('sendMessage', {
+                                    view   : journalEntryCT,
+                                    message: 'Invoices and Proformas were reconciled',
+                                    dbName : dbName
+                                });
+                            }
+
                             mainCallback();
                         });
                     });
@@ -2850,157 +3157,175 @@ var Module = function (models, event) {
             };
 
             reconcileSalaryEntries = function (mainCallback) {
-                WTrack.aggregate([{
-                    $match: {
-                        jobs: {$in: jobIds}
-                    }
-                }, {
-                    $project: {
-                        employee   : 1,
-                        _type      : 1,
-                        dateByMonth: {$add: [{$multiply: ['$year', 100]}, '$month']},
-                        jobs       : 1,
-                        worked     : 1
-                    }
-                }, {
-                    $group: {
-                        _id: {
-                            employee   : '$employee',
-                            _type      : '$_type',
-                            dateByMonth: '$dateByMonth',
-                            jobs       : '$jobs'
-                        },
+                var skip = 0;
+                var limit = 0;
+                var count = Math.ceil(jobIds.length / 10);
+                var i;
+                var countsArray = [];
+                var aggregate;
+                var resultArray = [];
 
-                        hours: {$sum: '$worked'}
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'MonthHours',
-                        localField  : '_id.dateByMonth',
-                        foreignField: 'dateByMonth',
-                        as          : 'dateByMonth'
-                    }
-                }, {
-                    $project: {
-                        dateByMonth: {$arrayElemAt: ['$dateByMonth', 0]},
-                        hours      : 1
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'Vacation',
-                        localField  : '_id.dateByMonth',
-                        foreignField: 'dateByMonth',
-                        as          : 'vacations'
-                    }
-                }, {
-                    $project: {
-                        overheadRate: '$dateByMonth.overheadRate',
-                        hoursInMonth: '$dateByMonth.hours',
-                        dateByMonth : '$dateByMonth.dateByMonth',
-                        hours       : 1
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'Employees',
-                        localField  : '_id.employee',
-                        foreignField: '_id',
-                        as          : 'employee'
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'Holiday',
-                        localField  : 'dateByMonth',
-                        foreignField: 'dateByMonth',
-                        as          : 'holidays'
-                    }
-                }, {
-                    $project: {
-                        employee    : {$arrayElemAt: ['$employee', 0]},
-                        overheadRate: 1,
-                        hoursInMonth: 1,
-                        dateByMonth : 1,
-                        holidays    : 1,
-                        hours       : 1
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'transfers',
-                        localField  : 'employee._id',
-                        foreignField: 'employee',
-                        as          : 'employee.transfer'
-                    }
-                }, {
-                    $project: {
-                        transfer    : '$employee.transfer',
-                        employee    : '$employee._id',
-                        employeeName: {$concat: ['$employee.name.first', ' ', '$employee.name.last']},
-                        dateByMonth : 1,
-                        hoursInMonth: 1,
-                        overheadRate: 1,
-                        holidays    : 1,
-                        hours       : 1
-                    }
-                }, {
-                    $unwind: '$transfer'
-                }, {
-                    $lookup: {
-                        from        : 'weeklySchedulers',
-                        localField  : 'transfer.weeklyScheduler',
-                        foreignField: '_id',
-                        as          : 'transfer.weeklyScheduler'
-                    }
-                }, {
-                    $project: {
-                        'transfer.weeklyScheduler': {$arrayElemAt: ['$transfer.weeklyScheduler', 0]},
-                        'transfer.date'           : 1,
-                        'transfer.salary'         : 1,
-                        'transfer.status'         : 1,
-                        employee                  : 1,
-                        employeeName              : 1,
-                        dateByMonth               : 1,
-                        hoursInMonth              : 1,
-                        overheadRate              : 1,
-                        holidays                  : 1,
-                        hours                     : 1
-                    }
-                }, {
-                    $group: {
-                        _id: {
-                            employee   : '$_id.employee',
-                            _type      : '$_id._type',
-                            dateByMonth: '$_id.dateByMonth',
-                            jobs       : '$_id.jobs'
-                        },
+                async.each(jobIds, function (id, cb) {
+                    aggregate = WTrack.aggregate([{
+                        $match: {
+                            jobs: id
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'Products',
+                            localField  : 'jobs',
+                            foreignField: 'job',
+                            as          : 'product'
+                        }
+                    }, {
+                        $project: {
+                            product    : {$arrayElemAt: ['$product', 0]},
+                            employee   : 1,
+                            _type      : 1,
+                            dateByMonth: {$add: [{$multiply: ['$year', 100]}, '$month']},
+                            worked     : 1
+                        }
+                    }, {
+                        $group: {
+                            _id: {
+                                employee   : '$employee',
+                                _type      : '$_type',
+                                dateByMonth: '$dateByMonth',
+                                product    : '$product'
+                            },
 
-                        transfer    : {$addToSet: '$transfer'},
-                        employee    : {$addToSet: '$employee'},
-                        employeeName: {$addToSet: '$employeeName'},
-                        dateByMonth : {$addToSet: '$dateByMonth'},
-                        hoursInMonth: {$addToSet: '$hoursInMonth'},
-                        overheadRate: {$addToSet: '$overheadRate'},
-                        holidays    : {$addToSet: '$holidays'},
-                        hours       : {$addToSet: '$hours'}
-                    }
-                }, {
-                    $project: {
-                        transfer    : 1,
-                        employee    : {$arrayElemAt: ['$employee', 0]},
-                        employeeName: {$arrayElemAt: ['$employeeName', 0]},
-                        dateByMonth : {$arrayElemAt: ['$dateByMonth', 0]},
-                        hoursInMonth: {$arrayElemAt: ['$hoursInMonth', 0]},
-                        overheadRate: {$arrayElemAt: ['$overheadRate', 0]},
-                        holidays    : {$arrayElemAt: ['$holidays', 0]},
-                        hours       : {$arrayElemAt: ['$hours', 0]}
-                    }
-                }], function (err, result) {
+                            hours: {$sum: '$worked'}
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'MonthHours',
+                            localField  : '_id.dateByMonth',
+                            foreignField: 'dateByMonth',
+                            as          : 'dateByMonth'
+                        }
+                    }, {
+                        $project: {
+                            dateByMonth: {$arrayElemAt: ['$dateByMonth', 0]},
+                            hours      : 1
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'Vacation',
+                            localField  : '_id.dateByMonth',
+                            foreignField: 'dateByMonth',
+                            as          : 'vacations'
+                        }
+                    }, {
+                        $project: {
+                            overheadRate: '$dateByMonth.overheadRate',
+                            hoursInMonth: '$dateByMonth.hours',
+                            dateByMonth : '$dateByMonth.dateByMonth',
+                            hours       : 1
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'Employees',
+                            localField  : '_id.employee',
+                            foreignField: '_id',
+                            as          : 'employee'
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'Holiday',
+                            localField  : 'dateByMonth',
+                            foreignField: 'dateByMonth',
+                            as          : 'holidays'
+                        }
+                    }, {
+                        $project: {
+                            employee    : {$arrayElemAt: ['$employee', 0]},
+                            overheadRate: 1,
+                            hoursInMonth: 1,
+                            dateByMonth : 1,
+                            holidays    : 1,
+                            hours       : 1
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'transfers',
+                            localField  : 'employee._id',
+                            foreignField: 'employee',
+                            as          : 'employee.transfer'
+                        }
+                    }, {
+                        $project: {
+                            transfer    : '$employee.transfer',
+                            employee    : '$employee._id',
+                            employeeName: {$concat: ['$employee.name.first', ' ', '$employee.name.last']},
+                            dateByMonth : 1,
+                            hoursInMonth: 1,
+                            overheadRate: 1,
+                            holidays    : 1,
+                            hours       : 1
+                        }
+                    }, {
+                        $unwind: '$transfer'
+                    }, {
+                        $lookup: {
+                            from        : 'weeklySchedulers',
+                            localField  : 'transfer.weeklyScheduler',
+                            foreignField: '_id',
+                            as          : 'transfer.weeklyScheduler'
+                        }
+                    }, {
+                        $project: {
+                            'transfer.weeklyScheduler': {$arrayElemAt: ['$transfer.weeklyScheduler', 0]},
+                            'transfer.date'           : 1,
+                            'transfer.salary'         : 1,
+                            'transfer.status'         : 1,
+                            employee                  : 1,
+                            employeeName              : 1,
+                            dateByMonth               : 1,
+                            hoursInMonth              : 1,
+                            overheadRate              : 1,
+                            holidays                  : 1,
+                            hours                     : 1
+                        }
+                    }, {
+                        $group: {
+                            _id: {
+                                employee   : '$_id.employee',
+                                _type      : '$_id._type',
+                                dateByMonth: '$_id.dateByMonth',
+                                product    : '$_id.product'
+                            },
+
+                            transfer    : {$addToSet: '$transfer'},
+                            employee    : {$first: '$employee'},
+                            employeeName: {$first: '$employeeName'},
+                            dateByMonth : {$first: '$dateByMonth'},
+                            hoursInMonth: {$first: '$hoursInMonth'},
+                            overheadRate: {$first: '$overheadRate'},
+                            holidays    : {$first: '$holidays'},
+                            hours       : {$first: '$hours'}
+                        }
+                    }]);
+
+                    aggregate.options = {allowDiskUse: true};
+                    aggregate.exec(function (err, result) {
+                        if (err) {
+                            return cb(err);
+                        }
+
+                        resultArray = resultArray.concat(result);
+
+                        cb();
+                    });
+
+                }, function (err) {
                     if (err) {
                         return mainCallback(err);
                     }
 
-                    async.each(result, function (item, cb) {
+                    async.each(resultArray, function (item, cb) {
                         var employee = item.employee;
                         var hours = item.hours;
-                        var jobId = item._id.jobs;
+                        var product = item._id.product ? item._id.product._id : null;
                         var _type = item._id._type;
                         var overheadRate = item.overheadRate;
                         var dateByMonth = item.dateByMonth || item._id.dateByMonth;
@@ -3018,44 +3343,56 @@ var Module = function (models, event) {
                         var checkDate;
                         var startDate = moment().year(year).month(month - 1).startOf('month');
                         var entryDate = moment(endDate);
+                        var dateNow = moment();
+                        var bodySalary;
+                        var bodyOvertime;
+                        var bodyOverhead;
+                        var i;
+                        var transferObj;
 
-                        var bodySalary = {
+                        if (entryDate > dateNow) {
+                            entryDate = dateNow;
+                        }
+
+                        if (!product) {
+                            return cb();
+                        }
+
+                        bodySalary = {
                             currency      : CONSTANTS.CURRENCY_USD,
                             journal       : CONSTANTS.SALARY_PAYABLE,
                             date          : entryDate.set(timeToSet),
                             sourceDocument: {
-                                model   : 'wTrack',
-                                _id     : jobId,
+                                model   : 'product',
+                                _id     : product,
                                 employee: employee,
                                 name    : item.employeeName
                             }
                         };
 
-                        var bodyOvertime = {
+                        bodyOvertime = {
                             currency      : CONSTANTS.CURRENCY_USD,
                             journal       : CONSTANTS.OVERTIME_PAYABLE,
                             date          : entryDate.set(timeToSet),
                             sourceDocument: {
-                                model   : 'wTrack',
-                                _id     : jobId,
+                                model   : 'product',
+                                _id     : product,
                                 employee: employee,
                                 name    : item.employeeName
                             }
                         };
 
-                        var bodyOverhead = {
+                        bodyOverhead = {
                             currency      : CONSTANTS.CURRENCY_USD,
                             journal       : CONSTANTS.OVERHEAD,
                             date          : entryDate.set(timeToSet),
                             sourceDocument: {
-                                model   : 'wTrack',
-                                _id     : jobId,
+                                model   : 'product',
+                                _id     : product,
                                 employee: employee,
                                 name    : item.employeeName
                             }
                         };
-                        var i;
-                        var transferObj;
 
                         if (!dateByMonth) {
                             console.log('notDateBymonth');
@@ -3067,23 +3404,6 @@ var Module = function (models, event) {
                         if ((parseInt(year, 10) * 100 + parseInt(month, 10)) === (moment(transfer[0].date).year() * 100 + moment(transfer[0].date).month() + 1)) {
                             startDate = moment(transfer[0].date);
                         }
-                        /* for (i = transferLength - 1; i >= 0; i--) {
-                         transferObj = transfer[i];
-
-                         if ((moment(moment(startDate).add(12, 'hours')).isAfter(moment(transferObj.date))) || (moment(moment(startDate)).isSame(moment(transferObj.date)))) {
-                         if (transferObj.status === 'fired') {
-                         if (transfer[i - 1] && moment(startDate).isAfter(transfer[i - 1].date)) {
-                         salaryForDate = transferObj.salary;
-                         weeklyScheduler = transferObj.weeklyScheduler;
-                         break;
-                         }
-                         } else if (transferObj.status !== 'transfer') {
-                         salaryForDate = transferObj.salary;
-                         weeklyScheduler = transferObj.weeklyScheduler;
-                         break;
-                         }
-                         }
-                         }*/
 
                         transfer = _.sortBy(transfer, 'date');
 
@@ -3139,23 +3459,41 @@ var Module = function (models, event) {
                         costForHour = isFinite(salaryForDate / hoursInMonth) ? salaryForDate / hoursInMonth : 0;
 
                         Model.remove({
-                            'sourceDocument._id'     : jobId,
-                            date                     : {$gt: new Date(startDate), $lt: new Date(endDate)},
-                            'sourceDocument.employee': objectId(employee)
-                        }, function () {
+                            'sourceDocument._id'     : product,
+                            date                     : {$gte: new Date(startDate), $lte: new Date(endDate)},
+                            'sourceDocument.employee': employee
+                        }, function (err, removed) {
 
-                            var methodCb = function () {
-                            };
+                            var methodCb = _.after(2, function (err, result) {
+                                if (err) {
+                                    return cb(err);
+                                }
+
+                                cb(null, result);
+                            });
 
                             if (_type === 'overtime') {
                                 bodyOvertime.amount = hours * costForHour * 100;
                                 bodyOverhead.amount = hours * overheadRate * 100;
 
                                 if (bodyOverhead.amount > 0) {
-                                    createReconciled(bodyOverhead, req.session.lastDb, methodCb, req.session.uId);
+                                    createReconciled(bodyOverhead, {
+                                        dbName: req.session.lastDb,
+                                        uId   : req.session.uId,
+                                        cb    : methodCb
+                                    });
+                                } else {
+                                    methodCb();
                                 }
+
                                 if (bodyOvertime.amount > 0) {
-                                    createReconciled(bodyOvertime, req.session.lastDb, methodCb, req.session.uId);
+                                    createReconciled(bodyOvertime, {
+                                        dbName: req.session.lastDb,
+                                        uId   : req.session.uId,
+                                        cb    : methodCb
+                                    });
+                                } else {
+                                    methodCb();
                                 }
 
                             } else if (_type === 'ordinary') {
@@ -3163,18 +3501,32 @@ var Module = function (models, event) {
                                 bodyOverhead.amount = hours * overheadRate * 100;
 
                                 if (bodySalary.amount > 0) {
-                                    createReconciled(bodySalary, req.session.lastDb, methodCb, req.session.uId);
+                                    createReconciled(bodySalary, {
+                                        dbName: req.session.lastDb,
+                                        uId   : req.session.uId,
+                                        cb    : methodCb
+                                    });
+                                } else {
+                                    methodCb();
                                 }
 
                                 if (bodyOverhead.amount > 0) {
-                                    createReconciled(bodyOverhead, req.session.lastDb, methodCb, req.session.uId);
+                                    createReconciled(bodyOverhead, {
+                                        dbName: req.session.lastDb,
+                                        uId   : req.session.uId,
+                                        cb    : methodCb
+                                    });
+                                } else {
+                                    methodCb();
                                 }
                             }
 
                         });
+                    }, function (err) {
+                        if (err) {
+                            return mainCallback(err);
+                        }
 
-                        cb();
-                    }, function () {
                         mainCallback();
                     });
 
@@ -3193,219 +3545,198 @@ var Module = function (models, event) {
 
         reconcileJobs = function (result, mainCb) {
 
-            removeEntries = function (cb) {
-                Model.remove({
-                    journal             : {$in: [CONSTANTS.FINISHED_JOB_JOURNAL, CONSTANTS.CLOSED_JOB]},
-                    'sourceDocument._id': {$in: jobIds}
-                }, function (err, result) {
-                    if (err) {
-                        return cb(err);
+            Job.aggregate([{
+                $match: {
+                    _id: {$in: jobIds}
+                }
+            }, {
+                $lookup: {
+                    from        : 'Products',
+                    localField  : '_id',
+                    foreignField: 'job',
+                    as          : 'product'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Order',
+                    localField  : 'order',
+                    foreignField: '_id',
+                    as          : 'order'
+                }
+            }, {
+                $project: {
+                    order  : {$arrayElemAt: ['$order', 0]},
+                    product: {$arrayElemAt: ['$product', 0]}
+                }
+            }, {
+                $lookup: {
+                    from        : 'GoodsNote',
+                    localField  : 'order._id',
+                    foreignField: 'order',
+                    as          : 'goodsNote'
+                }
+            }, {
+                $project: {
+                    goodsNote: {$arrayElemAt: ['$goodsNote', 0]},
+                    product  : '$product._id'
+                }
+            }, {
+                $project: {
+                    goodsNote: 1,
+                    product  : 1,
+                    orderRows: {
+                        $filter: {
+                            input: '$goodsNote.orderRows',
+                            as   : 'item',
+                            cond : {$eq: ['$$item.product', '$product']}
+                        }
+                    }
+                }
+            }, {
+                $project: {
+                    goodsNote: 1,
+                    product  : 1,
+                    orderRows: {$arrayElemAt: ['$orderRows', 0]}
+                }
+            }, {
+                $lookup: {
+                    from        : 'orderRows',
+                    localField  : 'orderRows.orderRowId',
+                    foreignField: '_id',
+                    as          : 'orderRow'
+                }
+            }, {
+                $project: {
+                    goodsNote: 1,
+                    product  : 1,
+                    orderRow : {$arrayElemAt: ['$orderRow', 0]}
+                }
+            }], function (err, result) {
+                if (err) {
+                    return cb(err);
+                }
+
+                async.each(result, function (model, asyncCb) {
+                    var date;
+                    var startMonthDate;
+                    var endMonthDate;
+                    var product = model.product;
+                    var goodsNote = model.goodsNote;
+                    var orderRow = model.orderRow;
+                    /* var creditAccount = orderRow ? orderRow.creditAccount : CONSTANTS.INVENTORY;
+                     var debitAccount = orderRow ? orderRow.debitAccount : CONSTANTS.COGS;*/
+
+                    var creditAccount = CONSTANTS.WORK_IN_PROCESS; // CONSTANTS.INVENTORY;
+                    var debitAccount = CONSTANTS.COGS;
+
+                    if (!goodsNote) {
+                        return asyncCb();
                     }
 
-                    cb(null, result);
-                });
-            };
-
-            createForJob = function (result, cb) {
-
-                Job.find({_id: {$in: jobIds}}, {
-                    name   : 1,
-                    invoice: 1
-                }).populate('invoice').lean().exec(function (err, result) {
-                    if (err) {
-                        return cb(err);
+                    if (!goodsNote.status || !goodsNote.status.shippedOn) {
+                        return asyncCb();
                     }
 
-                    async.each(result, function (model, asyncCb) {
-                        var date;
-                        var jobId = model._id;
-                        var callback = _.after(3, asyncCb);
-                        var startMonthDate;
-                        var endMonthDate;
-                        var checkWriteOff = false;
+                    date = moment(new Date(goodsNote.status.shippedOn));
 
-                        if (!model.invoice) {
-                            return asyncCb();
+                    Model.aggregate([{
+                        $match: {
+                            'sourceDocument._id'  : product,
+                            'sourceDocument.model': 'product'
+                        }
+                    }, {
+                        $group: {
+                            _id   : null,
+                            debit : {$sum: '$debit'},
+                            credit: {$sum: '$credit'}
+                        }
+                    }], function (err, result) {
+                        var bodyClosedJob;
+
+                        if (err) {
+                            return asyncCb(err);
                         }
 
-                        if (model.invoice._type === 'writeOff') {
-                            callback = _.after(4, asyncCb);
-                            checkWriteOff = true;
-                        }
+                        bodyClosedJob = {
+                            currency      : CONSTANTS.CURRENCY_USD,
+                            journal       : null,
+                            sourceDocument: {
+                                model: 'goodsOutNote',
+                                _id  : goodsNote._id,
+                                name : goodsNote.name
+                            },
 
-                        date = moment(new Date(model.invoice.invoiceDate)).subtract(1, 'seconds');
+                            amount       : 0,
+                            creditAccount: creditAccount,
+                            debitAccount : debitAccount
+                        };
 
-                        Model.aggregate([{
-                            $match: {
-                                'sourceDocument._id'  : jobId,
-                                'sourceDocument.model': 'wTrack',
-                                debit                 : {$gt: 0}
-                            }
+                        bodyClosedJob.amount = result && result[0] ? result[0].debit || result[0].credit : 0;
+
+                        bodyClosedJob.accountsItems = [{
+                            debit  : bodyClosedJob.amount,
+                            credit : 0,
+                            account: debitAccount
                         }, {
-                            $group: {
-                                _id   : null,
-                                amount: {$sum: '$debit'}
-                            }
-                        }], function (err, result) {
-                            var bodyFinishedJob;
-                            var bodyClosedJob;
-                            var bodyWriteOff;
+                            debit  : 0,
+                            credit : bodyClosedJob.amount,
+                            account: creditAccount
+                        }];
 
+                        bodyClosedJob.date = new Date(date);
+
+                        startMonthDate = moment(bodyClosedJob.date).startOf('month');
+                        endMonthDate = moment(bodyClosedJob.date).endOf('month');
+
+                        Model.update({
+                            'sourceDocument._id'  : product,
+                            'sourceDocument.model': 'product',
+                            date                  : {
+                                $gte: new Date(startMonthDate),
+                                $lte: new Date(endMonthDate)
+                            }
+                        }, {$set: {date: new Date(bodyClosedJob.date)}}, {multi: true}, function (err, result) {
                             if (err) {
-                                return console.log(err);
-                            }
-
-                            bodyFinishedJob = {
-                                currency      : CONSTANTS.CURRENCY_USD,
-                                journal       : CONSTANTS.FINISHED_JOB_JOURNAL,
-                                sourceDocument: {
-                                    model: 'jobs'
-                                },
-
-                                amount: 0
-                            };
-
-                            bodyClosedJob = {
-                                currency      : CONSTANTS.CURRENCY_USD,
-                                journal       : CONSTANTS.CLOSED_JOB,
-                                sourceDocument: {
-                                    model: 'jobs'
-                                },
-
-                                amount: 0
-                            };
-
-                            bodyWriteOff = {
-                                currency      : CONSTANTS.CURRENCY_USD,
-                                journal       : CONSTANTS.WRITE_OFF,
-                                sourceDocument: {
-                                    model: 'writeOff'
-                                },
-
-                                amount: 0
-                            };
-                            bodyFinishedJob.amount = result && result[0] ? result[0].amount : 0;
-                            bodyClosedJob.amount = result && result[0] ? result[0].amount : 0;
-                            bodyWriteOff.amount = result && result[0] ? result[0].amount : 0;
-                            bodyFinishedJob.date = new Date(date);
-                            bodyClosedJob.date = new Date(moment(date).subtract(1, 'seconds'));
-                            bodyWriteOff.date = new Date(moment(date).subtract(1, 'seconds'));
-                            bodyFinishedJob.sourceDocument._id = jobId;
-                            bodyFinishedJob.sourceDocument.name = model.name;
-                            bodyClosedJob.sourceDocument._id = jobId;
-                            bodyClosedJob.sourceDocument.name = model.name;
-                            bodyWriteOff.sourceDocument._id = model.invoice._id;
-                            bodyWriteOff.sourceDocument.name = model.invoice.name;
-
-                            startMonthDate = moment(bodyClosedJob.date).startOf('month');
-                            endMonthDate = moment(bodyClosedJob.date).endOf('month');
-
-                            Model.update({
-                                'sourceDocument._id'  : jobId,
-                                'sourceDocument.model': 'wTrack',
-                                date                  : {$gte: new Date(startMonthDate), $lte: new Date(endMonthDate)}
-                            }, {$set: {date: new Date(bodyClosedJob.date)}}, {multi: true}, function (err, result) {
-                                if (err) {
-                                    return callback(err);
-                                }
-
-                                callback();
-                            });
-
-                            if (bodyFinishedJob.amount > 0) {
-                                createReconciled(bodyFinishedJob, req.session.lastDb, callback, req.session.uId);
-                            } else {
-                                callback();
+                                return asyncCb(err);
                             }
 
                             if (bodyClosedJob.amount > 0) {
-                                createReconciled(bodyClosedJob, req.session.lastDb, callback, req.session.uId);
-                            } else {
-                                callback();
-                            }
-
-                            if (checkWriteOff && bodyWriteOff.amount > 0) {
-                                Model.remove({
-                                    journal             : {$in: [CONSTANTS.WRITE_OFF, CONSTANTS.WRITE_OFF_RD]},
-                                    'sourceDocument._id': model.invoice._id
-                                }, function (err, result) {
+                                Model.remove({'sourceDocument._id': goodsNote._id}, function (err, result) {
                                     if (err) {
-                                        return callback(err);
+                                        return asyncCb(err);
                                     }
 
-                                    Invoice.findById(model.invoice._id, {
-                                        products   : 1,
-                                        paymentInfo: 1
-                                    }, function (err, result) {
-                                        var products;
-                                        var paymentInfo;
-                                        var newProducts = [];
-                                        var newTotal = 0;
-
-                                        if (err) {
-                                            return callback(err);
-                                        }
-
-                                        result = result.toJSON();
-
-                                        products = result.products;
-                                        paymentInfo = result.paymentInfo;
-
-                                        products.forEach(function (prod) {
-                                            if (prod.jobs.toString() === jobId.toString()) {
-
-                                                prod.unitPrice = bodyFinishedJob.amount;
-                                                prod.subTotal = bodyFinishedJob.amount;
-
-                                                newProducts.push(prod);
-
-                                            } else {
-                                                newProducts.push(prod);
-                                            }
-
-                                            newTotal += parseInt(prod.unitPrice, 10);
-                                        });
-
-                                        paymentInfo.unTaxed = newTotal;
-                                        paymentInfo.total = newTotal;
-
-                                        Invoice.findByIdAndUpdate(model.invoice._id, {
-                                            $set: {
-                                                products   : newProducts,
-                                                paymentInfo: paymentInfo
-                                            }
-                                        }, function (err, resu) {
-                                            if (err) {
-                                                return callback(err);
-                                            }
-
-                                            createReconciled(bodyWriteOff, req.session.lastDb, callback, req.session.uId);
-
-                                        });
-
+                                    createMultiRows(bodyClosedJob, {
+                                        dbName: req.session.lastDb,
+                                        uId   : req.session.uId,
+                                        cb    : asyncCb
                                     });
                                 });
 
+                            } else {
+                                asyncCb();
                             }
-                            ;
-
                         });
-                    }, function () {
-                        cb();
+
                     });
+                }, function (err) {
+                    if (err) {
+                        return mainCb(err);
+                    }
+                    mainCb();
                 });
-            };
-
-            async.waterfall([removeEntries, createForJob], function (err, result) {
-                if (err) {
-                    return mainCb(err);
-                }
-
-                mainCb(null, result);
             });
         };
 
-        mainWaterfallTasks = [getJobsToCreateExpenses, parallelFunction, reconcileJobs];
+        recloseDaysFunc = function (mainCb) {
+            if (!dontReclose) {
+                recloseDay(req, res, next, {startDate: date}, mainCb);
+            } else {
+                mainCb();
+            }
+        };
+
+        mainWaterfallTasks = [getJobsToCreateExpenses, parallelFunction, reconcileJobs, recloseDaysFunc];
         async.waterfall(mainWaterfallTasks, function (err) {
             var db;
             var setObj;
@@ -3414,16 +3745,19 @@ var Module = function (models, event) {
                 return next(err);
             }
             db = models.connection(req.session.lastDb);
-            setObj = {date: date};
+            setObj = {date: new Date()};
 
             console.log('Success');
-            event.emit('sendMessage', {
-                view   : 'journalEntry',
-                message: 'Please, refresh browser, data was changed.',
-                dbName : dbName
-            });
 
-            if (cb) {
+            if (event) {
+                event.emit('sendMessage', {
+                    view   : journalEntryCT,
+                    message: 'Please, refresh browser, data was changed.',
+                    dbName : dbName
+                });
+            }
+
+            if (cb && event) {
                 event.emit('sendMessage', {
                     view   : 'Projects',
                     message: 'Please, refresh browser, costs were calculated.',
@@ -3436,7 +3770,7 @@ var Module = function (models, event) {
 
             });
 
-            db.collection('settings').findOneAndUpdate({name: 'reconcileDate'}, {$set: setObj}, function (err, result) {
+            db.collection('settings').update({name: 'reconcileDate'}, {$set: setObj}, {upsert: true}, function (err, result) {
                 if (err) {
                     return next(err);
                 }
@@ -3456,7 +3790,7 @@ var Module = function (models, event) {
                 return next(err);
             }
 
-            if (result && result.length) {
+            if (result) {
                 res.status(200).send({date: result.date});
             } else {
                 res.status(200).send({date: new Date('14 Jul 2014')});
@@ -3473,145 +3807,97 @@ var Module = function (models, event) {
         var body = req.body;
         var now = moment();
         var date = body.date ? moment(new Date(body.date)) : now;
-        var currency;
-        var debit = body.debit;
-        var credit = body.credit;
+        var currency = body.currency;
         var rates;
         var waterfallTasks;
         var journalId = body.journal;
+        var accountArray = body.accountsItems;
+        var timeStamp = new Date();
+        var timeStampDate = new Date(date);
+        var fx = {};
+
+        timeStamp = timeStamp.valueOf() + timeStampDate.valueOf();
+
+        delete body.accountsItems;
 
         body.date = new Date(body.date);
 
         date = date.format('YYYY-MM-DD');
 
-        function currencyNameFinder(waterfallCb) {
-
-            Currency.findById(body.currency, function (err, result) {
-                if (err) {
-                    waterfallCb(err);
-                }
-
-                waterfallCb(null, result.name);
-            });
-        }
-
-        function journalFinder(currencyName, waterfallCb) {
-            var err;
-
-            if (!journalId) {
-                err = new Error('Journal id is required field');
-                err.status = 400;
-
-                return waterfallCb(err);
-            }
-
-            currency = {
-                name: currencyName
-            };
-
+        function journalFinder(waterfallCb) {
             Journal.findById(journalId, waterfallCb);
 
         }
 
         function journalEntrySave(journal, waterfallCb) {
-            var err;
-            var debitObject;
-            var creditObject;
-            var parallelTasks = {
-                debitSaver : function (parallelCb) {
-                    var journalEntry;
-
-                    debitObject.debit = debit;
-                    debitObject.credit = 0;
-                    debitObject.account = journal.debitAccount;
-
-                    debitObject.editedBy = {
-                        user: uId,
-                        date: new Date(date)
-                    };
-
-                    debitObject.createdBy = {
-                        user: uId,
-                        date: new Date(date)
-                    };
-
-                    if (debitObject.currency && debitObject.currency.rate) {
-                        debitObject.debit *= debitObject.currency.rate;
-                    }
-
-                    if (debit && moment(debitObject.date).isBefore(now)) {
-                        journalEntry = new Model(debitObject);
-                        journalEntry.save(parallelCb);
-                    } else {
-                        parallelCb();
-                    }
-
-                },
-                creditSaver: function (parallelCb) {
-                    var journalEntry;
-
-                    creditObject.credit = credit;
-                    creditObject.debit = 0;
-                    creditObject.account = journal.creditAccount;
-
-                    creditObject.editedBy = {
-                        user: uId,
-                        date: new Date(date)
-                    };
-
-                    creditObject.createdBy = {
-                        user: uId,
-                        date: new Date(date)
-                    };
-
-                    if (creditObject.currency && creditObject.currency.rate) {
-                        creditObject.credit *= creditObject.currency.rate;
-                    }
-
-                    if (debit && moment(creditObject.date).isBefore(now)) {
-                        journalEntry = new Model(creditObject);
-                        journalEntry.save(parallelCb);
-                    } else {
-                        parallelCb();
-                    }
-                }
-            };
-
-            if (!journal || !journal._id) {
-                err = new Error('Invalid Journal');
-                err.status = 400;
-
-                return waterfallCb(err);
-            }
+            var object;
 
             currency = {
-                name: currency.name,
-                rate: rates[currency.name]
+                name: currency._id,
+                rate: ratesRetriever.getRate(fx.rates, fx.base, currency.name)
             };
 
             body.currency = currency;
-            body.journal = journal._id;
+            body.journal = journal ? journal._id : null;
+            body.timestamp = timeStamp;
 
-            debitObject = _.extend({}, body);
-            creditObject = _.extend({}, body);
+            object = _.extend({}, body);
 
-            async.parallel(parallelTasks, function (err, result) {
+            async.each(accountArray, function (el, cb) {
+                var journalEntry;
+
+                object.debit = el.debit;
+                object.credit = el.credit;
+                object.account = el.account;
+
+                object.editedBy = {
+                    user: uId,
+                    date: new Date(date)
+                };
+
+                object.createdBy = {
+                    user: uId,
+                    date: new Date(date)
+                };
+
+                object.debitFC = el.debitFC;
+                object.creditFC = el.creditFC;
+
+                if (object.debitFC === object.debit) {
+                    object.debitFC = 0;
+                }
+
+                if (object.creditFC === object.credit) {
+                    object.creditFC = 0;
+                }
+
+                if (el.debit || el.credit && moment(object.date).isBefore(now)) {
+                    journalEntry = new Model(object);
+                    journalEntry.save(cb);
+                } else {
+                    cb();
+                }
+            }, function (err) {
                 if (err) {
                     return waterfallCb(err);
                 }
 
-                waterfallCb(null, result);
+                waterfallCb(null, {success: true});
             });
         }
 
         function getRates(waterfallCb) {
-            oxr.historical(date, function () {
-                rates = oxr.rates;
+            ratesService.getById({id: date, dbName: dbIndex}, function (err, result) {
+                if (err) {
+                    return waterfallCb(err);
+                }
+                fx.rates = result && result.rates ? result.rates : {};
+                fx.base = result && result.base ? result.base : {};
                 waterfallCb();
             });
         }
 
-        waterfallTasks = [getRates, currencyNameFinder, journalFinder, journalEntrySave];
+        waterfallTasks = [getRates, journalFinder, journalEntrySave];
 
         async.waterfall(waterfallTasks, function (err, response) {
             if (err) {
@@ -3622,154 +3908,8 @@ var Module = function (models, event) {
         });
     };
 
-    this.create = function (body, dbIndex, cb, uId) {
-        var Journal = models.get(dbIndex, 'journal', journalSchema);
-        var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
-        var Currency = models.get(dbIndex, 'currency', CurrencySchema);
-        var journalId = body.journal;
-        var now = moment();
-        var date = body.date ? moment(body.date) : now;
-        var currency;
-        var amount = body.amount;
-        var rates;
-
-        var waterfallTasks;
-
-        date = date.format('YYYY-MM-DD');
-
-        function currencyNameFinder(waterfallCb) {
-
-            Currency.findById(body.currency, function (err, result) {
-                if (err) {
-                    waterfallCb(err);
-                }
-
-                waterfallCb(null, result.name);
-            });
-        }
-
-        function journalFinder(currencyName, waterfallCb) {
-            var err;
-
-            if (!journalId) {
-                err = new Error('Journal id is required field');
-                err.status = 400;
-
-                return waterfallCb(err);
-            }
-
-            currency = {
-                name: currencyName
-            };
-
-            Journal.findById(journalId, waterfallCb);
-
-        }
-
-        function journalEntrySave(journal, waterfallCb) {
-            var err;
-            var debitObject;
-            var creditObject;
-            var parallelTasks = {
-                debitSaver : function (parallelCb) {
-                    var journalEntry;
-
-                    debitObject.debit = amount;
-                    debitObject.account = journal.debitAccount;
-
-                    debitObject.editedBy = {
-                        user: uId,
-                        date: new Date(date)
-                    };
-
-                    debitObject.createdBy = {
-                        user: uId,
-                        date: new Date(date)
-                    };
-
-                    if (debitObject.currency && debitObject.currency.rate) {
-                        debitObject.debit *= debitObject.currency.rate;
-                    }
-
-                    if (amount && moment(debitObject.date).isBefore(now)) {
-                        journalEntry = new Model(debitObject);
-                        journalEntry.save(parallelCb);
-                    } else {
-                        parallelCb();
-                    }
-
-                },
-                creditSaver: function (parallelCb) {
-                    var journalEntry;
-
-                    creditObject.credit = amount;
-                    creditObject.account = journal.creditAccount;
-
-                    creditObject.editedBy = {
-                        user: uId,
-                        date: new Date(date)
-                    };
-
-                    creditObject.createdBy = {
-                        user: uId,
-                        date: new Date(date)
-                    };
-
-                    if (creditObject.currency && creditObject.currency.rate) {
-                        creditObject.credit *= creditObject.currency.rate;
-                    }
-
-                    if (amount && moment(creditObject.date).isBefore(now)) {
-                        journalEntry = new Model(creditObject);
-                        journalEntry.save(parallelCb);
-                    } else {
-                        parallelCb();
-                    }
-                }
-            };
-
-            if (!journal || !journal._id) {
-                err = new Error('Invalid Journal');
-                err.status = 400;
-
-                return waterfallCb(err);
-            }
-
-            currency = {
-                name: 'USD',
-                rate: 1
-            };
-
-            body.currency = currency;
-            body.journal = journal._id;
-
-            debitObject = _.extend({}, body);
-            creditObject = _.extend({}, body);
-
-            async.parallel(parallelTasks, function (err, result) {
-                if (err) {
-                    return waterfallCb(err);
-                }
-
-                waterfallCb(null, result);
-            });
-        }
-
-        waterfallTasks = [currencyNameFinder, journalFinder, journalEntrySave];
-
-        async.waterfall(waterfallTasks, function (err, response) {
-            if (err) {
-                return cb(err);
-            }
-
-            if (cb) {
-                cb(null, response);
-            }
-        });
-    };
-
     this.getAsyncCloseMonth = function (req, res, next) {
-        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var Model = models.get(req.session.lastDb, journalEntryCT, journalEntrySchema);
         var query = req.query;
         var date = query._id;
         var startDate = moment(new Date(date)).startOf('month');
@@ -3837,30 +3977,44 @@ var Module = function (models, event) {
     }
 
     this.getAsyncDataForGL = function (req, res, next) {
-        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
-        var query = req.query;
+        var Model = models.get(req.session.lastDb, journalEntryCT, journalEntrySchema);
+        var query = req.query || {};
         var account = query._id;
-        var startDate = query.startDate;
-        var endDate = query.endDate;
+        var category = query.category;
+        var filter = query.filter;
+        /*var startDate = query.startDate;
+         var endDate = query.endDate;*/
         var contentType = query.contentType;
+        var match;
+        var secondMatch = {};
 
-        startDate = moment(new Date(startDate)).startOf('day');
-        endDate = moment(new Date(endDate)).endOf('day');
+        /*startDate = moment(new Date(startDate)).startOf('day');
+         endDate = moment(new Date(endDate)).endOf('day');*/
 
-        var match = {
-            date: {
-                $gte: new Date(startDate),
-                $lte: new Date(endDate)
-            },
+        var match = filterMapper.mapFilter(filter, {
+            contentType: journalEntryCT,
+            keysArray  : ['date']
+        });
 
-            account: objectId(account)
-        };
+        if (!category) {
+            if (!account || account.length < 24) {
+                return res.status(400).send();
+            }
+        }
+
+        if (account) {
+            match.account = objectId(account);
+        } else if (category) {
+            secondMatch = {
+                'accountLookuped.category': objectId(category)
+            };
+        }
 
         if (!contentType) {
             match = matchEditor(account, match);
         }
 
-        if (!account) {
+        if (!account && !category) {
             return res.status(200).send({journalEntries: []});
         }
 
@@ -3883,12 +4037,31 @@ var Module = function (models, event) {
                 account       : 1
             }
         }, {
+            $lookup: {
+                from        : 'chartOfAccount',
+                localField  : 'account',
+                foreignField: '_id',
+                as          : 'accountLookuped'
+            }
+        }, {
+            $project: {
+                sourceDocument : 1,
+                date           : 1,
+                debit          : 1,
+                credit         : 1,
+                account        : 1,
+                accountLookuped: {$arrayElemAt: ['$accountLookuped', 0]}
+            }
+        }, {
+            $match: secondMatch
+        }, {
             $project: {
                 _id           : '$date',
                 sourceDocument: 1,
                 debit         : 1,
                 credit        : 1,
-                account       : 1
+                account       : 1,
+                category      : '$accountLookuped.category'
             }
         }, {
             $sort: {
@@ -3906,11 +4079,11 @@ var Module = function (models, event) {
 
     this.getSourceForDd = function (req, res, next) {
         var dbName = req.session.lastDb;
-        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var Model = models.get(req.session.lastDb, journalEntryCT, journalEntrySchema);
         var Employees = models.get(dbName, 'Employees', employeeSchema);
         var Invoice = models.get(dbName, 'wTrackInvoice', invoiceSchema);
         var Job = models.get(dbName, 'jobs', jobsSchema);
-        var Payment = models.get(dbName, 'Payment', PaymentSchema);
+        var Payment = models.get(dbName, 'InvoicePayment', InvoicePaymentSchema);
         var parallelTasks;
 
         function getEmployees(pCB) {
@@ -3989,102 +4162,98 @@ var Module = function (models, event) {
     };
 
     this.getAsyncData = function (req, res, next) {
-        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var Model = models.get(req.session.lastDb, journalEntryCT, journalEntrySchema);
         var query = req.query;
         var sourceDocument = query._id;
         var date = query.date;
+        var product;
+        var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
 
-        Model
-            .aggregate([{
-                $match: {
-                    'sourceDocument.model': 'wTrack',
-                    'sourceDocument._id'  : objectId(sourceDocument),
-                    date                  : new Date(date),
-                    debit                 : {$gt: 0}
-                }
-            }, {
-                $lookup: {
-                    from        : 'journals',
-                    localField  : 'journal',
-                    foreignField: '_id',
-                    as          : 'journal'
-                }
-            }, {
-                $project: {
-                    date          : 1,
-                    debit         : 1,
-                    sourceDocument: 1,
-                    journal       : {$arrayElemAt: ['$journal', 0]}
-                }
-            }, {
-                $project: {
-                    date          : 1,
-                    debit         : 1,
-                    sourceDocument: 1,
-                    journal       : 1,
-                    journalName   : '$journal.name'
-                }
-            }, {
-                $lookup: {
-                    from        : 'chartOfAccount',
-                    localField  : 'journal.debitAccount',
-                    foreignField: '_id',
-                    as          : 'journal.debitAccount'
-                }
-            }, {
-                $lookup: {
-                    from        : 'chartOfAccount',
-                    localField  : 'journal.creditAccount',
-                    foreignField: '_id',
-                    as          : 'journal.creditAccount'
-                }
-            }, {
-                $lookup: {
-                    from        : 'Employees',
-                    localField  : 'sourceDocument.employee',
-                    foreignField: '_id',
-                    as          : 'employee'
-                }
-            }, {
-                $project: {
-                    date                   : 1,
-                    debit                  : 1,
-                    'journal.creditAccount': {$arrayElemAt: ['$journal.creditAccount', 0]},
-                    'journal.debitAccount' : {$arrayElemAt: ['$journal.debitAccount', 0]},
-                    employee               : {$arrayElemAt: ['$employee', 0]},
-                    journalName            : 1
-                }
-            }, {
-                $project: {
-                    date                   : 1,
-                    debit                  : 1,
-                    'journal.creditAccount': '$journal.creditAccount.name',
-                    'journal.debitAccount' : '$journal.debitAccount.name',
-                    journalName            : 1,
-                    employee               : {$concat: ['$employee.name.first', ' ', '$employee.name.last']}
-                }
-            }, {
-                $sort: {
-                    date    : 1,
-                    employee: 1,
-                    journal : 1
-                }
-            }], function (err, result) {
-                if (err) {
-                    return next(err);
-                }
+        Product.findOne({job: sourceDocument}, {_id: 1}, function (err, result) {
+            if (err) {
+                return next(err);
+            }
 
-                res.status(200).send({journalEntries: result});
-            });
+            product = result ? result._id : null;
+
+            Model
+                .aggregate([{
+                    $match: {
+                        'sourceDocument._id': objectId(product),
+                        date                : new Date(date)
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'chartOfAccount',
+                        localField  : 'account',
+                        foreignField: '_id',
+                        as          : 'account'
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'journals',
+                        localField  : 'journal',
+                        foreignField: '_id',
+                        as          : 'journal'
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'currency',
+                        localField  : 'currency._id',
+                        foreignField: '_id',
+                        as          : 'currency._id'
+                    }
+                }, {
+                    $project: {
+                        journal        : {$arrayElemAt: ['$journal', 0]},
+                        account        : {$arrayElemAt: ['$account', 0]},
+                        'currency._id' : {$arrayElemAt: ['$currency._id', 0]},
+                        sourceDocument : 1,
+                        'currency.name': 1,
+                        debit          : 1,
+                        credit         : 1,
+                        debitFC        : 1,
+                        creditFC       : 1,
+                        date           : 1,
+                        timestamp      : 1,
+                        createdBy      : 1,
+                        _type          : 1
+                    }
+                }, {
+                    $project: {
+                        'account._id' : 1,
+                        'account.name': 1,
+                        'journal.name': '$journal.name',
+                        'journal._id' : '$journal._id',
+                        sourceDocument: 1,
+                        currency      : 1,
+                        debit         : 1,
+                        credit        : 1,
+                        debitFC       : 1,
+                        creditFC      : 1,
+                        date          : 1,
+                        timestamp     : 1,
+                        createdBy     : 1,
+                        _type         : 1
+                    }
+                }], function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    res.status(200).send({journalEntries: result});
+                });
+        });
     };
 
     this.getCloseMonth = function (req, res, next) {
-        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var Model = models.get(req.session.lastDb, journalEntryCT, journalEntrySchema);
         var closeMonth = CONSTANTS.CLOSE_MONTH_JOURNALS;
 
         Model.aggregate([{
             $match: {
-                journal: {$in: closeMonth.objectID()}
+                'sourceDocument.model': 'closeMonth'
+                // journal: {$in: closeMonth.objectID()}
             }
         }, {
             $group: {
@@ -4104,495 +4273,418 @@ var Module = function (models, event) {
     };
 
     this.getBalanceSheet = function (req, res, next) {
-        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var Model = models.get(req.session.lastDb, journalEntryCT, journalEntrySchema);
         var getAssets;
         var getLiabilities;
         var getEquities;
-        var query = req.query;
-        var startDate = query.startDate;
-        var endDate = query.endDate;
+        var query = req.query || {};
+        var filter = query.filter;
+        var dateObject = filterMapper.mapFilter(filter, {
+            contentType: journalEntryCT,
+            keysArray  : ['date']
+        });
+        var startDate = filter.date && filter.date.value && filter.date.value.length && filter.date.value[0];
+        var endDate = filter.date && filter.date.value && filter.date.value.length && filter.date.value[1];
         var liabilities = CONSTANTS.LIABILITIES;
         var equity = CONSTANTS.EQUITY.objectID();
         var currentAssets = [CONSTANTS.ACCOUNT_RECEIVABLE, CONSTANTS.WORK_IN_PROCESS, CONSTANTS.FINISHED_GOODS];
-        var allAssets = _.union(CONSTANTS.BANK_AND_CASH, currentAssets);
-        var replaceToAssets = false;
-        var resultLiabilities;
+        var CategorySchema = mongoose.Schemas.accountsCategory;
+        var AccountsCategory = models.get(req.session.lastDb, 'accountsCategory', CategorySchema);
+        var ASSETS = '584aa1e84881bdc437c60828';
+
+        var aggregate;
+        var dateCondition;
+
+        startDate = new Date(moment(new Date(startDate)).startOf('day'));
+        endDate = new Date(moment(new Date(endDate)).endOf('day'));
+
+        dateCondition = [/*{
+         $gte: ['$$item.date', new Date(startDate)]
+         }, */{
+            $lte: ['$$item.date', new Date(endDate)]
+        }];
 
         liabilities.push(CONSTANTS.ACCOUNT_PAYABLE);
         liabilities = liabilities.objectID();
 
-        startDate = moment(new Date(startDate)).startOf('day');
-        endDate = moment(new Date(endDate)).endOf('day');
-
         getAssets = function (cb) {
-            Model.aggregate([{
+            aggregate = [{
                 $match: {
-                    date: {
-                        $gte: new Date(startDate),
-                        $lte: new Date(endDate)
-                    },
-
-                    account: {$in: allAssets.objectID()}
+                    _id: objectId(ASSETS)
+                }
+            }, {
+                $project: {
+                    _id  : 1,
+                    name : 1,
+                    child: {$concatArrays: ['$child', ['$_id']]}
+                }
+            }, {
+                $unwind: {
+                    path                      : '$child',
+                    preserveNullAndEmptyArrays: true
                 }
             }, {
                 $lookup: {
                     from        : 'chartOfAccount',
-                    localField  : 'account',
-                    foreignField: '_id',
+                    localField  : 'child',
+                    foreignField: 'category',
                     as          : 'account'
                 }
             }, {
-                $project: {
-                    credit : 1,
-                    debit  : 1,
-                    account: {$arrayElemAt: ['$account', 0]}
+                $lookup: {
+                    from        : 'accountsCategories',
+                    localField  : 'child',
+                    foreignField: '_id',
+                    as          : 'category'
                 }
+            }, {
+                $project: {
+                    category  : {$arrayElemAt: ['$category', 0]},
+                    account   : 1,
+                    _id       : '$name',
+                    categoryId: '$_id'
+                }
+            }, {
+                $unwind: {
+                    path                      : '$account',
+                    preserveNullAndEmptyArrays: true
+                }
+            }, {
+                $sort: {'category.nestingLevel': 1, 'account.name': 1}
             }, {
                 $lookup: {
-                    from        : 'accountTypes',
-                    localField  : 'account.type',
-                    foreignField: '_id',
-                    as          : 'account.type'
+                    from        : 'journalentries',
+                    localField  : 'account._id',
+                    foreignField: 'account',
+                    as          : 'entries'
                 }
             }, {
                 $project: {
-                    credit        : 1,
-                    debit         : 1,
-                    'account._id' : 1,
-                    'account.name': 1,
-                    'account.type': {$arrayElemAt: ['$account.type', 0]}
+                    category  : 1,
+                    account   : 1,
+                    _id       : 1,
+                    categoryId: 1,
+                    entries   : {
+                        $filter: {
+                            input: '$entries',
+                            as   : 'item',
+                            cond : {
+                                $and: dateCondition
+                            }
+                        }
+                    }
+                }
+            }, {
+                $unwind: {
+                    path                      : '$entries',
+                    preserveNullAndEmptyArrays: true
                 }
             }, {
                 $group: {
-                    _id   : '$account._id',
-                    name  : {$first: '$account.name'},
-                    type  : {$first: '$account.type.name'},
-                    credit: {$sum: '$credit'},
-                    debit : {$sum: '$debit'}
+                    _id       : '$category',
+                    debit     : {$sum: '$entries.debit'},
+                    credit    : {$sum: '$entries.credit'},
+                    categoryId: {$first: '$categoryId'},
+                    account   : {$first: '$account'},
+                    acc       : {$first: '$_id'}
+                }
+            }, {
+                $project: {
+                    'category._id'         : '$_id._id',
+                    'category.name'        : '$_id.name',
+                    'category.nestingLevel': '$_id.nestingLevel',
+                    'category.sequence'    : '$_id.sequence',
+                    'category.parent'      : '$_id.parent',
+                    'category.debit'       : '$debit',
+                    'category.credit'      : '$credit',
+                    account                : 1,
+                    debit                  : 1,
+                    credit                 : 1,
+                    categoryId             : 1,
+                    acc                    : 1,
+                    group                  : {$concat: ['assets']},
+                    entries                : 1
                 }
             }, {
                 $sort: {
-                    name: 1
+                    'category.nestingLevel': 1
                 }
             }, {
                 $group: {
-                    _id   : '$type',
-                    debit : {$sum: '$debit'},
-                    credit: {$sum: '$credit'},
-                    root  : {$push: '$$ROOT'}
+                    _id         : '$acc',
+                    debit       : {$sum: '$debit'},
+                    credit      : {$sum: '$credit'},
+                    categoryId  : {$first: '$categoryId'},
+                    root        : {$push: '$category'},
+                    nestingLevel: {$max: '$category.nestingLevel'},
+                    group       : {$first: '$group'}
                 }
-            }], function (err, result) {
+            }, {
+                $sort: {group: 1}
+            }];
+
+            AccountsCategory.aggregate(aggregate, function (err, resultArr) {
                 if (err) {
                     return cb(err);
                 }
 
-                cb(null, result);
+                return cb(null, resultArr);
             });
         };
 
         getLiabilities = function (cb) {
-            var parallelTasks;
-
-            var getAccountPayable = function (pcb) {
-                Model.aggregate([{
-                    $match: {
-                        date: {
-                            $gte: new Date(startDate),
-                            $lte: new Date(endDate)
-                        },
-
-                        account: objectId(CONSTANTS.ACCOUNT_PAYABLE)
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'chartOfAccount',
-                        localField  : 'account',
-                        foreignField: '_id',
-                        as          : 'account'
-                    }
-                }, {
-                    $project: {
-                        credit : 1,
-                        debit  : 1,
-                        account: {$arrayElemAt: ['$account', 0]}
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'accountTypes',
-                        localField  : 'account.type',
-                        foreignField: '_id',
-                        as          : 'account.type'
-                    }
-                }, {
-                    $project: {
-                        credit        : 1,
-                        debit         : 1,
-                        'account._id' : 1,
-                        'account.name': 1,
-                        'account.type': {$arrayElemAt: ['$account.type', 0]}
-                    }
-                }, {
-                    $group: {
-                        _id   : '$account._id',
-                        name  : {$first: '$account.name'},
-                        type  : {$first: '$account.type.name'},
-                        credit: {$sum: '$credit'},
-                        debit : {$sum: '$debit'}
-                    }
-                }, {
-                    $project: {
-                        _id   : 1,
-                        credit: 1,
-                        debit : 1,
-                        name  : 1,
-                        type  : 1,
-                        group : {$concat: ['liabilities']}
-                    }
-                }, {
-                    $sort: {
-                        name: 1
-                    }
-                }, {
-                    $group: {
-                        _id   : '$type',
-                        debit : {$sum: '$debit'},
-                        credit: {$sum: '$credit'},
-                        root  : {$push: '$$ROOT'}
-                    }
-                }], function (err, result) {
-                    if (err) {
-                        return pcb(err);
-                    }
-
-                    pcb(null, result);
-                });
-            };
-
-            var getUnearnedRevenue = function (pcb) {
-                Model.aggregate([{
-                    $match: {
-                        date: {
-                            $gte: new Date(startDate),
-                            $lte: new Date(endDate)
-                        },
-
-                        account: objectId(CONSTANTS.CURRENT_LIABILITIES)
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'chartOfAccount',
-                        localField  : 'account',
-                        foreignField: '_id',
-                        as          : 'account'
-                    }
-                }, {
-                    $project: {
-                        credit : 1,
-                        debit  : 1,
-                        account: {$arrayElemAt: ['$account', 0]}
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'accountTypes',
-                        localField  : 'account.type',
-                        foreignField: '_id',
-                        as          : 'account.type'
-                    }
-                }, {
-                    $project: {
-                        credit        : 1,
-                        debit         : 1,
-                        'account._id' : 1,
-                        'account.name': 1,
-                        'account.type': {$arrayElemAt: ['$account.type', 0]}
-                    }
-                }, {
-                    $group: {
-                        _id   : '$account._id',
-                        name  : {$first: '$account.name'},
-                        type  : {$first: '$account.type.name'},
-                        credit: {$sum: '$credit'},
-                        debit : {$sum: '$debit'}
-                    }
-                }, {
-                    $project: {
-                        _id   : 1,
-                        credit: 1,
-                        debit : 1,
-                        name  : 1,
-                        type  : 1,
-                        group : {$concat: ['liabilities']}
-                    }
-                }, {
-                    $sort: {
-                        name: 1
-                    }
-                }, {
-                    $group: {
-                        _id   : '$type',
-                        debit : {$sum: '$debit'},
-                        credit: {$sum: '$credit'},
-                        root  : {$push: '$$ROOT'},
-                        group : {$first: '$group'}
-                    }
-                }], function (err, result) {
-                    var sum;
-
-                    if (err) {
-                        return pcb(err);
-                    }
-
-                    sum = result && result.length ? result[0].debit - result[0].credit : 0;
-
-                    if (sum > 0) {
-                        replaceToAssets = true;
-                        result[0].group = '';
-                    }
-
-                    pcb(null, result);
-                });
-            };
-
-            var getOther = function (pcb) {
-                Model.aggregate([{
-                    $match: {
-                        date: {
-                            $gte: new Date(startDate),
-                            $lte: new Date(endDate)
-                        },
-
-                        account: {$in: liabilities}
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'chartOfAccount',
-                        localField  : 'account',
-                        foreignField: '_id',
-                        as          : 'account'
-                    }
-                }, {
-                    $project: {
-                        debit  : 1,
-                        credit : 1,
-                        account: {$arrayElemAt: ['$account', 0]}
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'accountTypes',
-                        localField  : 'account.type',
-                        foreignField: '_id',
-                        as          : 'account.type'
-                    }
-                }, {
-                    $project: {
-                        credit        : 1,
-                        debit         : 1,
-                        'account._id' : 1,
-                        'account.name': 1,
-                        'account.type': {$arrayElemAt: ['$account.type', 0]}
-                    }
-                }, {
-                    $group: {
-                        _id   : '$account._id',
-                        name  : {$first: '$account.name'},
-                        type  : {$first: '$account.type.name'},
-                        credit: {$sum: '$credit'},
-                        debit : {$sum: '$debit'}
-                    }
-                }, {
-                    $project: {
-                        _id   : 1,
-                        credit: 1,
-                        debit : 1,
-                        name  : 1,
-                        type  : 1,
-                        group : {$concat: ['liabilities']}
-                    }
-                }, {
-                    $sort: {
-                        name: 1
-                    }
-                }, {
-                    $group: {
-                        _id   : '$type',
-                        debit : {$sum: '$debit'},
-                        credit: {$sum: '$credit'},
-                        root  : {$push: '$$ROOT'},
-                        group : {$first: '$group'}
-                    }
-                }], function (err, result) {
-                    if (err) {
-                        return pcb(err);
-                    }
-
-                    pcb(null, result);
-                });
-            };
-
-            parallelTasks = [/* getAccountPayable, */getUnearnedRevenue, getOther];
-
-            async.parallel(parallelTasks, function (err, result) {
-                var newResult;
-                var resultArray = [];
-
-                if (err) {
-                    return cb(err);
-                }
-
-                newResult = result[1];
-
-                if (!replaceToAssets) {
-                    newResult = _.union(newResult, result[0]);
-                } else {
-                    resultLiabilities = result[0];
-                }
-
-                var resultObj = {};
-                resultObj.debit = 0;
-                resultObj.credit = 0;
-                resultObj.root = [];
-
-                newResult.forEach(function (el) {
-                    resultObj._id = el._id;
-                    resultObj.debit += el.debit;
-                    resultObj.credit += el.credit;
-                    resultObj.root = _.union(resultObj.root, el.root);
-                });
-
-                cb(null, [resultObj]);
-            });
-        };
-
-        getEquities = function (cb) {
-            Model.aggregate([{
+            aggregate = [{
                 $match: {
-                    date: {
-                        $gte: new Date(startDate),
-                        $lte: new Date(endDate)
-                    },
-
-                    account: {$in: equity}
+                    _id: LIABILITIES
+                }
+            }, {
+                $project: {
+                    _id  : 1,
+                    name : 1,
+                    child: {$concatArrays: ['$child', ['$_id']]}
+                }
+            }, {
+                $unwind: {
+                    path                      : '$child',
+                    preserveNullAndEmptyArrays: true
                 }
             }, {
                 $lookup: {
                     from        : 'chartOfAccount',
-                    localField  : 'account',
-                    foreignField: '_id',
+                    localField  : 'child',
+                    foreignField: 'category',
                     as          : 'account'
                 }
             }, {
+                $lookup: {
+                    from        : 'accountsCategories',
+                    localField  : 'child',
+                    foreignField: '_id',
+                    as          : 'category'
+                }
+            }, {
                 $project: {
-                    date   : 1,
-                    debit  : 1,
-                    credit : 1,
-                    account: {$arrayElemAt: ['$account', 0]}
+                    category  : {$arrayElemAt: ['$category', 0]},
+                    account   : 1,
+                    _id       : '$name',
+                    categoryId: '$_id'
+                }
+            }, {
+                $unwind: {
+                    path                      : '$account',
+                    preserveNullAndEmptyArrays: true
                 }
             }, {
                 $lookup: {
-                    from        : 'accountTypes',
-                    localField  : 'account.type',
-                    foreignField: '_id',
-                    as          : 'account.type'
+                    from        : 'journalentries',
+                    localField  : 'account._id',
+                    foreignField: 'account',
+                    as          : 'entries'
                 }
             }, {
                 $project: {
-                    credit        : 1,
-                    debit         : 1,
-                    'account._id' : 1,
-                    'account.name': 1,
-                    'account.type': {$arrayElemAt: ['$account.type', 0]}
+                    category  : 1,
+                    account   : 1,
+                    _id       : 1,
+                    categoryId: 1,
+                    entries   : {
+                        $filter: {
+                            input: '$entries',
+                            as   : 'item',
+                            cond : {
+                                $and: dateCondition
+                            }
+                        }
+                    }
+                }
+            }, {
+                $unwind: {
+                    path                      : '$entries',
+                    preserveNullAndEmptyArrays: true
                 }
             }, {
                 $group: {
-                    _id   : '$account._id',
-                    name  : {$first: '$account.name'},
-                    type  : {$first: '$account.type.name'},
-                    credit: {$sum: '$credit'},
-                    debit : {$sum: '$debit'}
+                    _id       : '$category',
+                    debit     : {$sum: '$entries.debit'},
+                    credit    : {$sum: '$entries.credit'},
+                    categoryId: {$first: '$categoryId'},
+                    account   : {$first: '$account'},
+                    acc       : {$first: '$_id'}
                 }
             }, {
-                $sort: {
-                    name: 1
+                $project: {
+                    'category._id'         : '$_id._id',
+                    'category.name'        : '$_id.name',
+                    'category.nestingLevel': '$_id.nestingLevel',
+                    'category.parent'      : '$_id.parent',
+                    'category.debit'       : '$debit',
+                    'category.credit'      : '$credit',
+                    account                : 1,
+                    debit                  : 1,
+                    credit                 : 1,
+                    categoryId             : 1,
+                    acc                    : 1,
+                    group                  : {$concat: ['liabilities']},
+                    entries                : 1
                 }
             }, {
                 $group: {
-                    _id   : '$type',
-                    debit : {$sum: '$debit'},
-                    credit: {$sum: '$credit'},
-                    root  : {$push: '$$ROOT'}
+                    _id         : '$acc',
+                    debit       : {$sum: '$debit'},
+                    credit      : {$sum: '$credit'},
+                    categoryId  : {$first: '$categoryId'},
+                    root        : {$push: '$category'},
+                    nestingLevel: {$max: '$category.nestingLevel'},
+                    group       : {$first: '$group'}
                 }
-            }], function (err, result) {
-                var debit;
-                var credit;
-                var balance;
-                var name;
-                var id;
+            }, {
+                $sort: {group: 1}
+            }];
 
+            AccountsCategory.aggregate(aggregate, function (err, resultArr) {
                 if (err) {
                     return cb(err);
                 }
 
-                if (result[0]) {
-                    result[0].root.forEach(function (el) {
-                        var debit;
-                        var credit;
-                        var balance;
-                        var name;
-                        var id;
+                return cb(null, resultArr);
+            });
+        };
 
-                        debit = el.debit || 0;
-                        credit = el.credit || 0;
-
-                        balance = debit - credit;
-                        name = el.name;
-                        id = el._id;
-
-                        if (balance < 0) {
-                            debit = debit * (-1);
-                            credit = credit * (-1);
-                        } else {
-                            debit = 0;
-                            credit = balance;
+        getEquities = function (cb) {
+            aggregate = [{
+                $match: {
+                    _id: EQUITY
+                }
+            }, {
+                $project: {
+                    _id  : 1,
+                    name : 1,
+                    child: {$concatArrays: ['$child', ['$_id']]}
+                }
+            }, {
+                $unwind: {
+                    path                      : '$child',
+                    preserveNullAndEmptyArrays: true
+                }
+            }, {
+                $lookup: {
+                    from        : 'chartOfAccount',
+                    localField  : 'child',
+                    foreignField: 'category',
+                    as          : 'account'
+                }
+            }, {
+                $lookup: {
+                    from        : 'accountsCategories',
+                    localField  : 'child',
+                    foreignField: '_id',
+                    as          : 'category'
+                }
+            }, {
+                $project: {
+                    category  : {$arrayElemAt: ['$category', 0]},
+                    account   : 1,
+                    _id       : '$name',
+                    categoryId: '$_id'
+                }
+            }, {
+                $unwind: {
+                    path                      : '$account',
+                    preserveNullAndEmptyArrays: true
+                }
+            }, {
+                $lookup: {
+                    from        : 'journalentries',
+                    localField  : 'account._id',
+                    foreignField: 'account',
+                    as          : 'entries'
+                }
+            }, {
+                $project: {
+                    category  : 1,
+                    account   : 1,
+                    _id       : 1,
+                    categoryId: 1,
+                    entries   : {
+                        $filter: {
+                            input: '$entries',
+                            as   : 'item',
+                            cond : {
+                                $and: dateCondition
+                            }
                         }
-                    });
-
-                    debit = result[0] ? result[0].debit : 0;
-                    credit = result[0] ? result[0].credit : 0;
-
-                    balance = debit - credit;
-
-                    result[0].group = 'assets';
-
-                    if (balance < 0) {
-                        debit = debit * (-1);
-                        credit = credit * (-1);
-                    } else {
-                        debit = 0;
-                        credit = balance;
                     }
                 }
+            }, {
+                $unwind: {
+                    path                      : '$entries',
+                    preserveNullAndEmptyArrays: true
+                }
+            }, {
+                $group: {
+                    _id       : '$category',
+                    debit     : {$sum: '$entries.debit'},
+                    credit    : {$sum: '$entries.credit'},
+                    categoryId: {$first: '$categoryId'},
+                    account   : {$first: '$account'},
+                    acc       : {$first: '$_id'}
+                }
+            }, {
+                $project: {
+                    'category._id'         : '$_id._id',
+                    'category.name'        : '$_id.name',
+                    'category.nestingLevel': '$_id.nestingLevel',
+                    'category.parent'      : '$_id.parent',
+                    'category.debit'       : '$debit',
+                    'category.credit'      : '$credit',
+                    account                : 1,
+                    debit                  : 1,
+                    credit                 : 1,
+                    categoryId             : 1,
+                    acc                    : 1,
+                    group                  : {$concat: ['equity']},
+                    entries                : 1
+                }
+            }, {
+                $group: {
+                    _id         : '$acc',
+                    debit       : {$sum: '$debit'},
+                    credit      : {$sum: '$credit'},
+                    categoryId  : {$first: '$categoryId'},
+                    root        : {$push: '$category'},
+                    nestingLevel: {$max: '$category.nestingLevel'},
+                    group       : {$first: '$group'}
+                }
+            }, {
+                $sort: {group: 1}
+            }];
 
-                cb(null, result);
+            AccountsCategory.aggregate(aggregate, function (err, resultArr) {
+                if (err) {
+                    return cb(err);
+                }
+
+                return cb(null, resultArr);
             });
         };
 
         async.parallel([getAssets, getLiabilities, getEquities], function (err, result) {
+            var assetsArray;
+            var newLiabilities;
+
             if (err) {
                 return next(err);
             }
 
-            var assetsArray = result[0];
+            assetsArray = result[0];
+            newLiabilities = result[1] || [];
 
-            if (resultLiabilities) {
-                assetsArray = _.union(assetsArray, resultLiabilities);
-            }
-
-            res.status(200).send({assets: assetsArray, liabilities: result[1], equity: result[2]});
+            res.status(200).send({assets: assetsArray, liabilities: newLiabilities, equity: result[2]});
         });
     };
 
     this.getBalanceForAccount = function (req, res, next) {
-        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var Model = models.get(req.session.lastDb, journalEntryCT, journalEntrySchema);
         var query = req.query;
         var account = query.account;
         var date = query.date;
@@ -4630,7 +4722,7 @@ var Module = function (models, event) {
     };
 
     this.getExpenses = function (req, res, next) {
-        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var Model = models.get(req.session.lastDb, journalEntryCT, journalEntrySchema);
         var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var query = req.query;
         var month = parseInt(query.month, 10);
@@ -4800,11 +4892,9 @@ var Module = function (models, event) {
     };
 
     this.getInventoryReport = function (req, res, next) {
-        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var Model = models.get(req.session.lastDb, journalEntryCT, journalEntrySchema);
         var JobsModel = models.get(req.session.lastDb, 'jobs', jobsSchema);
         var query = req.query;
-        /*var startDate = query.startDate || query.filter.startDate.value;
-         var endDate = query.endDate || query.filter.endDate.value;*/
         var findJobs;
         var composeReport;
         var waterfallTasks;
@@ -4813,14 +4903,25 @@ var Module = function (models, event) {
         var limit = paginationObject.limit;
         var skip = paginationObject.skip;
         var filter = query.filter || {};
-        var filterObject = {};
+        var dateObject = filterMapper.mapFilter(filter, {
+            contentType: 'inventoryReport',
+            keysArray  : 'date'
+        });
+        var filterObjectNoDate = filterMapper.mapFilter(filter, {
+            contentType : 'inventoryReport',
+            keysArray   : 'date',
+            withoutState: true
+        });
         var key;
         var sortKey;
         var i;
-        var filterMapper = new FilterMapper();
-        var matchObject = {};
-        var startDate;
-        var endDate;
+        var startDate = filter.date && filter.date.value && filter.date.value.length && filter.date.value[0];
+        var debitAccounts;
+        var creditAccounts;
+        var accounts;
+        var goodsNotes;
+
+        startDate = new Date(startDate);
 
         if (query.sort) {
             sort = {};
@@ -4833,47 +4934,99 @@ var Module = function (models, event) {
         }
 
         findJobs = function (wfCb) {
-            JobsModel.find({}, function (err, result) {
-                var jobs = [];
+            JobsModel.aggregate([{
+                $lookup: {
+                    from        : 'Products',
+                    localField  : '_id',
+                    foreignField: 'job',
+                    as          : 'products'
+                }
+            }, {
+                $lookup: {
+                    from        : 'GoodsNote',
+                    localField  : 'order',
+                    foreignField: 'order',
+                    as          : 'goodsNote'
+                }
+            }, {
+                $project: {
+                    goodsNote: {$arrayElemAt: ['$goodsNote', 0]},
+                    products : 1
+                }
+            }, {
+                $project: {
+                    orderRows: '$goodsNote.orderRows',
+                    goodsId  : '$goodsNote._id',
+                    products : 1
+                }
+            }, {
+                $unwind: {
+                    path                      : '$orderRows',
+                    preserveNullAndEmptyArrays: true
+                }
+            }, {
+                $lookup: {
+                    from        : 'orderRows',
+                    localField  : 'orderRows.orderRowId',
+                    foreignField: '_id',
+                    as          : 'orderRow'
+                }
+            }, {
+                $project: {
+                    orderRow: {$arrayElemAt: ['$orderRow', 0]},
+                    products: 1,
+                    goodsId : 1
+                }
+            }, {
+                $project: {
+                    orderRow      : 1,
+                    products      : 1,
+                    goodsId       : 1,
+                    debitAccounts : '$orderRow.debitAccount',
+                    creditAccounts: '$orderRow.creditAccount'
+                }
+            }, {
+                $unwind: {
+                    path                      : '$products',
+                    preserveNullAndEmptyArrays: true
+                }
+            }, {
+                $group: {
+                    _id           : null,
+                    products      : {$addToSet: '$products._id'},
+                    debitAccounts : {$addToSet: '$debitAccounts'},
+                    creditAccounts: {$addToSet: '$creditAccounts'},
+                    goodsId       : {$addToSet: '$goodsId'}
+                }
+            }], function (err, result) {
+                var products;
 
                 if (err) {
                     return wfCb(err);
                 }
 
-                result.forEach(function (el) {
-                    jobs.push(el._id);
-                });
+                products = result && result.length ? result[0].products : [];
+                debitAccounts = result && result.length ? result[0].debitAccounts.objectID() : [];
+                creditAccounts = result && result.length ? result[0].creditAccounts.objectID() : [];
 
-                wfCb(null, jobs);
+                goodsNotes = result && result.length ? result[0].goodsId.objectID() : [];
+
+                accounts = debitAccounts.concat(creditAccounts);
+
+                wfCb(null, products);
             });
         };
 
-        /* i f (filter) {
-         filterArray = caseFilter(filter);
-
-         if (filterArray.length) {*/
-
-        filterObject = filterMapper.mapFilter(filter, 'inventoryReport'); // filterArray;
-
-        if (filterObject.date) {
-            matchObject = filterObject.date;
-
-            delete filterObject.date;
-        }
-
-        startDate = matchObject.$gte;
-        endDate = matchObject.$lte;
-
-        composeReport = function (jobs, wfCb) {
+        composeReport = function (products, wfCb) {
             var parallelTasks;
 
             var getOpening = function (pCb) {
                 Model.aggregate([{
                     $match: {
-                        date                  : {$lte: matchObject.$gte},
+                        date                  : {$lte: startDate},
                         debit                 : {$gt: 0},
-                        'sourceDocument._id'  : {$in: jobs},
-                        'sourceDocument.model': 'wTrack'
+                        'sourceDocument._id'  : {$in: products},
+                        'sourceDocument.model': 'product'
                     }
                 }, {
                     $project: {
@@ -4887,7 +5040,7 @@ var Module = function (models, event) {
                     }
                 }, {
                     $lookup: {
-                        from        : 'jobs',
+                        from        : 'Products',
                         localField  : '_id',
                         foreignField: '_id',
                         as          : '_id'
@@ -4898,16 +5051,34 @@ var Module = function (models, event) {
                         debit: 1
                     }
                 }, {
+                    $match: {
+                        '_id.job': {$exists: true}
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'jobs',
+                        localField  : '_id.job',
+                        foreignField: '_id',
+                        as          : '_id.job'
+                    }
+                }, {
+                    $project: {
+                        '_id.job' : {$arrayElemAt: ['$_id.job', 0]},
+                        '_id.name': 1,
+                        '_id._id' : 1,
+                        debit     : 1
+                    }
+                }, {
                     $lookup: {
                         from        : 'projectMembers',
-                        localField  : '_id.project',
+                        localField  : '_id.job.project',
                         foreignField: 'projectId',
                         as          : 'projectMembers'
                     }
                 }, {
                     $lookup: {
                         from        : 'Project',
-                        localField  : '_id.project',
+                        localField  : '_id.job.project',
                         foreignField: '_id',
                         as          : 'project'
                     }
@@ -4956,7 +5127,7 @@ var Module = function (models, event) {
                         salesmanager: {$arrayElemAt: ['$salesManager', 0]}
                     }
                 }, {
-                    $match: filterObject
+                    $match: filterObjectNoDate
                 }, {
                     $project: {
                         _id         : 1,
@@ -4976,11 +5147,12 @@ var Module = function (models, event) {
 
             var getInwards = function (pCb) {
                 Model.aggregate([{
+                    $match: dateObject
+                }, {
                     $match: {
-                        date                  : matchObject,
                         debit                 : {$gt: 0},
-                        'sourceDocument._id'  : {$in: jobs},
-                        'sourceDocument.model': 'wTrack'
+                        'sourceDocument._id'  : {$in: products},
+                        'sourceDocument.model': 'product'
                     }
                 }, {
                     $project: {
@@ -4994,7 +5166,7 @@ var Module = function (models, event) {
                     }
                 }, {
                     $lookup: {
-                        from        : 'jobs',
+                        from        : 'Products',
                         localField  : '_id',
                         foreignField: '_id',
                         as          : '_id'
@@ -5005,9 +5177,34 @@ var Module = function (models, event) {
                         debit: 1
                     }
                 }, {
+                    $match: {
+                        '_id.job': {$exists: true}
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'jobs',
+                        localField  : '_id.job',
+                        foreignField: '_id',
+                        as          : '_id.job'
+                    }
+                }, {
+                    $project: {
+                        '_id.job' : {$arrayElemAt: ['$_id.job', 0]},
+                        '_id.name': 1,
+                        '_id._id' : 1,
+                        debit     : 1
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'projectMembers',
+                        localField  : '_id.job.project',
+                        foreignField: 'projectId',
+                        as          : 'projectMembers'
+                    }
+                }, {
                     $lookup: {
                         from        : 'Project',
-                        localField  : '_id.project',
+                        localField  : '_id.job.project',
                         foreignField: '_id',
                         as          : 'project'
                     }
@@ -5016,20 +5213,6 @@ var Module = function (models, event) {
                         _id    : '$_id._id',
                         name   : '$_id.name',
                         project: {$arrayElemAt: ['$project', 0]},
-                        debit  : 1
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'projectMembers',
-                        localField  : 'project._id',
-                        foreignField: 'projectId',
-                        as          : 'projectMembers'
-                    }
-                }, {
-                    $project: {
-                        _id    : 1,
-                        name   : 1,
-                        project: 1,
                         debit  : 1,
 
                         salesManagers: {
@@ -5045,15 +5228,14 @@ var Module = function (models, event) {
                                 }
                             }
                         }
-
                     }
                 }, {
                     $project: {
+                        salesManager: {$arrayElemAt: ['$salesManagers', 0]},
                         _id         : 1,
                         name        : 1,
                         project     : 1,
-                        debit       : 1,
-                        salesManager: {$arrayElemAt: ['$salesManagers', 0]}
+                        debit       : 1
                     }
                 }, {
                     $lookup: {
@@ -5071,7 +5253,7 @@ var Module = function (models, event) {
                         salesmanager: {$arrayElemAt: ['$salesManager', 0]}
                     }
                 }, {
-                    $match: filterObject
+                    $match: filterObjectNoDate
                 }, {
                     $project: {
                         _id         : 1,
@@ -5080,9 +5262,7 @@ var Module = function (models, event) {
                         debit       : 1,
                         salesmanager: {$concat: ['$salesmanager.name.first', ' ', '$salesmanager.name.last']}
                     }
-
-                }
-                ], function (err, result) {
+                }], function (err, result) {
                     if (err) {
                         return pCb(err);
                     }
@@ -5093,47 +5273,98 @@ var Module = function (models, event) {
 
             var getOutwards = function (pCb) {
                 Model.aggregate([{
+                    $match: dateObject
+                }, {
                     $match: {
-                        date                : {$lte: matchObject.$lte/* , $gte: startDate*/},
                         debit               : {$gt: 0},
-                        'sourceDocument._id': {$in: jobs},
-                        journal             : objectId(CONSTANTS.CLOSED_JOB)/* objectId(CONSTANTS.FINISHED_JOB_JOURNAL)*/
+                        'sourceDocument._id': {$in: goodsNotes}
+                    }
+                }, {
+                    $project: {
+                        sourceDocument: 1,
+                        debit         : 1
+                    }
+                }, {
+                    $group: {
+                        _id  : '$sourceDocument._id',
+                        debit: {$sum: '$debit'}
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'GoodsNote',
+                        localField  : '_id',
+                        foreignField: '_id',
+                        as          : '_id'
+                    }
+                }, {
+                    $project: {
+                        _id  : {$arrayElemAt: ['$_id', 0]},
+                        debit: 1
+                    }
+                }, {
+                    $project: {
+                        order: '$_id.order',
+                        debit: 1
                     }
                 }, {
                     $lookup: {
                         from        : 'jobs',
-                        localField  : 'sourceDocument._id',
+                        localField  : 'order',
+                        foreignField: 'order',
+                        as          : '_id.job'
+                    }
+                }, {
+                    $unwind: {
+                        path                      : '$_id.job',
+                        preserveNullAndEmptyArrays: true
+                    }
+                }, {
+                    $match: {
+                        '_id.job': {$exists: true}
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'Products',
+                        localField  : '_id.job._id',
+                        foreignField: 'job',
+                        as          : 'product'
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'jobs',
+                        localField  : '_id.job',
                         foreignField: '_id',
-                        as          : 'sourceDocument'
+                        as          : '_id.job'
+                    }
+                }, {
+                    $project: {
+                        '_id.job' : {$arrayElemAt: ['$_id.job', 0]},
+                        product   : {$arrayElemAt: ['$product', 0]},
+                        '_id.name': 1,
+                        '_id._id' : 1,
+                        debit     : 1
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'projectMembers',
+                        localField  : '_id.job.project',
+                        foreignField: 'projectId',
+                        as          : 'projectMembers'
                     }
                 }, {
                     $lookup: {
                         from        : 'Project',
-                        localField  : 'project',
+                        localField  : '_id.job.project',
                         foreignField: '_id',
                         as          : 'project'
                     }
                 }, {
                     $project: {
-                        sourceDocument: {$arrayElemAt: ['$sourceDocument', 0]},
-                        project       : {$arrayElemAt: ['$project', 0]},
-                        debit         : 1,
-                        date          : 1
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'projectMembers',
-                        localField  : 'project._id',
-                        foreignField: 'projectId',
-                        as          : 'projectMembers'
-                    }
-                }, {
-                    $project: {
-                        _id    : '$sourceDocument._id',
-                        name   : '$sourceDocument.name',
-                        project: 1,
+                        _id    : '$product._id',
+                        product: 1,
+                        name   : '$_id.product.name',
+                        project: {$arrayElemAt: ['$project', 0]},
                         debit  : 1,
-                        date   : 1,
 
                         salesManagers: {
                             $filter: {
@@ -5151,25 +5382,37 @@ var Module = function (models, event) {
                     }
                 }, {
                     $project: {
+                        salesManager: {$arrayElemAt: ['$salesManagers', 0]},
                         _id         : 1,
                         name        : 1,
                         project     : 1,
-                        debit       : 1,
-                        date        : 1,
-                        salesmanager: {$arrayElemAt: ['$salesManager', 0]}
+                        debit       : 1
                     }
                 }, {
-                    $match: filterObject
+                    $lookup: {
+                        from        : 'Employees',
+                        localField  : 'salesManager.employeeId',
+                        foreignField: '_id',
+                        as          : 'salesManager'
+                    }
                 }, {
                     $project: {
                         _id         : 1,
                         name        : 1,
                         project     : 1,
                         debit       : 1,
-                        date        : 1,
+                        salesmanager: {$arrayElemAt: ['$salesManager', 0]}
+                    }
+                }, {
+                    $match: filterObjectNoDate
+                }, {
+                    $project: {
+                        _id         : 1,
+                        name        : 1,
+                        project     : 1,
+                        debit       : 1,
                         salesmanager: {$concat: ['$salesmanager.name.first', ' ', '$salesmanager.name.last']}
                     }
-
                 }], function (err, result) {
                     if (err) {
                         return pCb(err);
@@ -5193,21 +5436,21 @@ var Module = function (models, event) {
                 resultArray = [];
                 sortField = Object.keys(sort)[0];
 
-                jobs.forEach(function (job) { // need refactor on aggregate function
+                products.forEach(function (el) { // need refactor on aggregate function
                     var newElement = {};
                     var project;
 
-                    var opening = _.find(result[0], function (el) {
-                        return el._id.toString() === job.toString();
+                    var opening = _.find(result[0], function (elem) {
+                        return elem._id.toString() === el.toString();
                     });
-                    var inwards = _.find(result[1], function (el) {
-                        return el._id.toString() === job.toString();
+                    var inwards = _.find(result[1], function (elem) {
+                        return elem._id.toString() === el.toString();
                     });
-                    var outwards = _.find(result[2], function (el) {
-                        return el._id.toString() === job.toString();
+                    var outwards = _.find(result[2], function (elem) {
+                        return elem._id.toString() === el.toString();
                     });
 
-                    newElement._id = job;
+                    newElement._id = el;
                     newElement.name = opening ? opening.name : (inwards ? inwards.name : outwards ? outwards.name : '');
 
                     project = opening ? opening.project : (inwards ? inwards.project : outwards ? outwards.name : {});
@@ -5223,7 +5466,7 @@ var Module = function (models, event) {
                     newElement.closingBalance = newElement.openingBalance + newElement.inwards - newElement.outwards;
 
                     if (newElement.name && !(outwards && outwards.date < startDate)) {
-                        if (!Object.keys(filterObject)) {
+                        if (!Object.keys(filter)) {
                             resultArray.push(newElement);
                         } else {
                             if (newElement.inwards || newElement.outwards) {
@@ -5272,538 +5515,96 @@ var Module = function (models, event) {
     };
 
     this.getCashFlow = function (req, res, next) {
-        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var Model = models.get(req.session.lastDb, journalEntryCT, journalEntrySchema);
         var getOperating;
         var getInvesting;
         var getFinancing;
-        var query = req.query;
-        var startDate = query.startDate;
-        var endDate = query.endDate;
+        var query = req.query || {};
+        var filter = query.filter;
+        var liabilities = CONSTANTS.LIABILITIES;
+        var dateObject = filterMapper.mapFilter(filter, {
+            contentType: journalEntryCT,
+            keysArray  : ['date']
+        });
 
-        startDate = moment(new Date(startDate)).startOf('day');
-        endDate = moment(new Date(endDate)).endOf('day');
+        liabilities.push(CONSTANTS.ACCOUNT_PAYABLE);
+        liabilities = liabilities.objectID();
 
         getOperating = function (cb) {
 
-            var getEBIT = function (cb) {
-                var getGrossFit = function (pcb) {
-                    Model.aggregate([{
-                        $match: {
-                            date: {
-                                $gte: new Date(startDate),
-                                $lte: new Date(endDate)
-                            },
-
-                            account: objectId(CONSTANTS.PRODUCT_SALES)
-                        }
+            Model.aggregate([{
+                $match: dateObject
+            }, {
+                $group: {
+                    _id   : '$account',
+                    debit : {$sum: '$debit'},
+                    credit: {$sum: '$credit'}
+                }
+            }, {
+                $lookup: {
+                    from        : 'chartOfAccount',
+                    localField  : '_id',
+                    foreignField: '_id',
+                    as          : '_id'
+                }
+            }, {
+                $project: {
+                    balance: {$multiply: [{$subtract: ['$debit', '$credit']}, -1]},
+                    _id    : {$arrayElemAt: ['$_id', 0]}
+                }
+            }, {
+                $match: {
+                    $or: [{
+                        '_id.category': {$in: [EQUITY, CURRENT_ASSETS, INVENTORY]}
                     }, {
-                        $lookup: {
-                            from        : 'chartOfAccount',
-                            localField  : 'account',
-                            foreignField: '_id',
-                            as          : 'account'
-                        }
-                    }, {
-                        $project: {
-                            date   : 1,
-                            debit  : 1,
-                            credit : 1,
-                            account: {$arrayElemAt: ['$account', 0]}
-                        }
-                    }, {
-                        $group: {
-                            _id   : '$account._id',
-                            name  : {$addToSet: '$account.name'},
-                            debit : {$sum: '$debit'},
-                            credit: {$sum: '$credit'}
-                        }
-                    }], function (err, result) {
-                        if (err) {
-                            return pcb(err);
-                        }
-
-                        pcb(null, result);
-                    });
-                };
-
-                var getExpenses = function (pcb) {
-                    Model.aggregate([{
-                        $match: {
-                            date: {
-                                $gte: new Date(startDate),
-                                $lte: new Date(endDate)
-                            },
-
-                            account: objectId(CONSTANTS.COGS)
-                        }
-                    }, {
-                        $lookup: {
-                            from        : 'chartOfAccount',
-                            localField  : 'account',
-                            foreignField: '_id',
-                            as          : 'account'
-                        }
-                    }, {
-                        $project: {
-                            date   : 1,
-                            debit  : 1,
-                            credit : 1,
-                            account: {$arrayElemAt: ['$account', 0]}
-                        }
-                    }, {
-                        $group: {
-                            _id   : '$account._id',
-                            name  : {$addToSet: '$account.name'},
-                            credit: {$sum: '$credit'},
-                            debit : {$sum: '$debit'}
-                        }
-                    }], function (err, result) {
-                        if (err) {
-                            return pcb(err);
-                        }
-
-                        pcb(null, result);
-                    });
-                };
-
-                async.parallel([getGrossFit, getExpenses], function (err, result) {
-                    var grossProfit;
-                    var expenses;
-                    var EBIT;
-
-                    if (err) {
-                        return cb(err);
+                        '_id._id': {$in: liabilities}
+                    }]
+                }
+            }, {
+                $lookup: {
+                    from        : 'accountsCategories',
+                    localField  : '_id.category',
+                    foreignField: '_id',
+                    as          : '_id.category'
+                }
+            }, {
+                $project: {
+                    balance       : 1,
+                    '_id._id'     : 1,
+                    '_id.name'    : 1,
+                    '_id.category': {
+                        $arrayElemAt: ['$_id.category', 0]
                     }
+                }
+            }, {
+                $sort: {
+                    '_id.name': 1
+                }
+            }, {
+                $group: {
+                    _id    : '$_id.category',
+                    balance: {
+                        $sum: '$balance'
+                    },
 
-                    grossProfit = result[0] && result[0][0] ? result[0][0].credit : 0;
-                    expenses = result[1] && result[1][0] ? result[1][0].debit : 0;
-
-                    EBIT = grossProfit - expenses;
-
-                    cb(null, [{name: 'Operating Income (EBIT)', debit: EBIT}]);
-                });
-            };
-
-            var getAR = function (cb) {
-                Model.aggregate([{
-                    $match: {
-                        date: {
-                            $gte: new Date(startDate),
-                            $lte: new Date(endDate)
-                        },
-
-                        account: objectId(CONSTANTS.ACCOUNT_RECEIVABLE)
+                    root: {
+                        $push: '$$ROOT'
                     }
-                }, {
-                    $lookup: {
-                        from        : 'chartOfAccount',
-                        localField  : 'account',
-                        foreignField: '_id',
-                        as          : 'account'
-                    }
-                }, {
-                    $project: {
-                        date   : 1,
-                        debit  : 1,
-                        credit : 1,
-                        account: {$arrayElemAt: ['$account', 0]}
-                    }
-                }, {
-                    $group: {
-                        _id   : '$account._id',
-                        name  : {$addToSet: '$account.name'},
-                        debit : {$sum: '$debit'},
-                        credit: {$sum: '$credit'}
-                    }
-                }], function (err, result) {
-                    var sum;
-                    var fieldName;
-
-                    if (err) {
-                        return cb(err);
-                    }
-
-                    sum = result[0] ? result[0].debit - result[0].credit : 0;
-
-                    sum = sum * (-1);
-
-                    fieldName = result[0] ? result[0].name[0] : 'Account receivable';
-
-                    cb(null, [{name: fieldName, debit: sum}]);
-                });
-            };
-
-            var getCurrentLiabilities = function (cb) {
-                Model.aggregate([{
-                    $match: {
-                        date: {
-                            $gte: new Date(startDate),
-                            $lte: new Date(endDate)
-                        },
-
-                        account: objectId(CONSTANTS.CURRENT_LIABILITIES)
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'chartOfAccount',
-                        localField  : 'account',
-                        foreignField: '_id',
-                        as          : 'account'
-                    }
-                }, {
-                    $project: {
-                        date   : 1,
-                        credit : 1,
-                        debit  : 1,
-                        account: {$arrayElemAt: ['$account', 0]}
-                    }
-                }, {
-                    $group: {
-                        _id   : '$account._id',
-                        name  : {$addToSet: '$account.name'},
-                        debit : {$sum: '$debit'},
-                        credit: {$sum: '$credit'}
-                    }
-                }, {
-                    $group: {
-                        _id   : null,
-                        name  : {$addToSet: '$name'},
-                        debit : {$sum: '$debit'},
-                        credit: {$sum: '$credit'}
-                    }
-                }], function (err, result) {
-                    var sum;
-                    var fieldName;
-
-                    if (err) {
-                        return cb(err);
-                    }
-
-                    sum = result[0] ? result[0].debit - result[0].credit : 0;
-
-                    fieldName = result[0] ? result[0].name[0] : 'Current Liabilities';
-
-                    cb(null, [{name: fieldName, debit: sum * (-1)}]);
-                });
-            };
-
-            var getSalaryPayable = function (cb) {
-                Model.aggregate([{
-                    $match: {
-                        date: {
-                            $gte: new Date(startDate),
-                            $lte: new Date(endDate)
-                        },
-
-                        account: objectId(CONSTANTS.SALARY_PAYABLE_ACCOUNT)
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'chartOfAccount',
-                        localField  : 'account',
-                        foreignField: '_id',
-                        as          : 'account'
-                    }
-                }, {
-                    $project: {
-                        date   : 1,
-                        credit : 1,
-                        debit  : 1,
-                        account: {$arrayElemAt: ['$account', 0]}
-                    }
-                }, {
-                    $group: {
-                        _id   : '$account._id',
-                        name  : {$addToSet: '$account.name'},
-                        debit : {$sum: '$debit'},
-                        credit: {$sum: '$credit'}
-                    }
-                }, {
-                    $group: {
-                        _id   : null,
-                        name  : {$addToSet: '$name'},
-                        debit : {$sum: '$debit'},
-                        credit: {$sum: '$credit'}
-                    }
-                }], function (err, result) {
-                    var sum;
-                    var sp;
-                    var fieldName;
-
-                    if (err) {
-                        return cb(err);
-                    }
-
-                    sum = result[0] ? result[0].debit - result[0].credit : 0;
-
-                    sp = 0 - sum;
-
-                    if (sp < 0) {
-                        sp = sp * (-1);
-                    }
-
-                    fieldName = result[0] ? result[0].name[0] : 'Salary Payable';
-
-                    cb(null, [{name: fieldName, debit: sp}]);
-                });
-            };
-
-            var getSalaryOvertimePayable = function (cb) {
-                Model.aggregate([{
-                    $match: {
-                        date: {
-                            $gte: new Date(startDate),
-                            $lte: new Date(endDate)
-                        },
-
-                        account: objectId(CONSTANTS.SALARY_OVERTIME_ACCOUNT)
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'chartOfAccount',
-                        localField  : 'account',
-                        foreignField: '_id',
-                        as          : 'account'
-                    }
-                }, {
-                    $project: {
-                        date   : 1,
-                        credit : 1,
-                        debit  : 1,
-                        account: {$arrayElemAt: ['$account', 0]}
-                    }
-                }, {
-                    $group: {
-                        _id   : '$account._id',
-                        name  : {$addToSet: '$account.name'},
-                        debit : {$sum: '$debit'},
-                        credit: {$sum: '$credit'}
-                    }
-                }, {
-                    $group: {
-                        _id   : null,
-                        name  : {$addToSet: '$name'},
-                        debit : {$sum: '$debit'},
-                        credit: {$sum: '$credit'}
-                    }
-                }], function (err, result) {
-                    var sum;
-                    var sp;
-                    var fieldName;
-
-                    if (err) {
-                        return cb(err);
-                    }
-
-                    sum = result[0] ? result[0].debit - result[0].credit : 0;
-
-                    sp = 0 - sum;
-
-                    if (sp < 0) {
-                        sp = sp * (-1);
-                    }
-
-                    fieldName = result[0] ? result[0].name[0] : 'Salary Overtime Payable';
-
-                    cb(null, [{name: fieldName, debit: sp}]);
-                });
-            };
-
-            var getWIP = function (cb) {
-                Model.aggregate([{
-                    $match: {
-                        date: {
-                            $gte: new Date(startDate),
-                            $lte: new Date(endDate)
-                        },
-
-                        account: objectId(CONSTANTS.WORK_IN_PROCESS)
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'chartOfAccount',
-                        localField  : 'account',
-                        foreignField: '_id',
-                        as          : 'account'
-                    }
-                }, {
-                    $project: {
-                        date   : 1,
-                        credit : 1,
-                        debit  : 1,
-                        account: {$arrayElemAt: ['$account', 0]}
-                    }
-                }, {
-                    $group: {
-                        _id   : '$account._id',
-                        name  : {$addToSet: '$account.name'},
-                        debit : {$sum: '$debit'},
-                        credit: {$sum: '$credit'}
-                    }
-                }, {
-                    $group: {
-                        _id   : null,
-                        debit : {$sum: '$debit'},
-                        credit: {$sum: '$credit'},
-                        name  : {$addToSet: '$name'}
-                    }
-                }], function (err, result) {
-                    var sum;
-                    var fieldName;
-
-                    if (err) {
-                        return cb(err);
-                    }
-
-                    sum = result[0] ? result[0].debit - result[0].credit : 0;
-
-                    sum = sum * (-1);
-
-                    fieldName = result[0] ? result[0].name[0] : 'Work in process';
-
-                    cb(null, [{name: fieldName, debit: sum}]);
-                });
-            };
-
-            var getCOGS = function (cb) {
-                Model.aggregate([{
-                    $match: {
-                        date: {
-                            $gte: new Date(startDate),
-                            $lte: new Date(endDate)
-                        },
-
-                        account: objectId(CONSTANTS.FINISHED_GOODS)
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'chartOfAccount',
-                        localField  : 'account',
-                        foreignField: '_id',
-                        as          : 'account'
-                    }
-                }, {
-                    $project: {
-                        date   : 1,
-                        credit : 1,
-                        debit  : 1,
-                        account: {$arrayElemAt: ['$account', 0]}
-                    }
-                }, {
-                    $group: {
-                        _id   : '$account._id',
-                        name  : {$addToSet: '$account.name'},
-                        debit : {$sum: '$debit'},
-                        credit: {$sum: '$credit'}
-                    }
-                }, {
-                    $group: {
-                        _id   : null,
-                        debit : {$sum: '$debit'},
-                        credit: {$sum: '$credit'},
-                        name  : {$addToSet: '$name'}
-                    }
-                }], function (err, result) {
-                    var sum;
-                    var sp;
-                    var fieldName;
-
-                    if (err) {
-                        return cb(err);
-                    }
-
-                    sum = result[0] ? result[0].debit - result[0].credit : 0;
-
-                    sp = Math.abs(0 - sum);
-
-                    fieldName = result[0] ? result[0].name[0] : 'Finished goods';
-
-                    cb(null, [{name: fieldName, debit: sp}]);
-                });
-            };
-
-            var getAccountPayable = function (cb) {
-                Model.aggregate([{
-                    $match: {
-                        date: {
-                            $gte: new Date(startDate),
-                            $lte: new Date(endDate)
-                        },
-
-                        account: objectId(CONSTANTS.ACCOUNT_PAYABLE)
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'chartOfAccount',
-                        localField  : 'account',
-                        foreignField: '_id',
-                        as          : 'account'
-                    }
-                }, {
-                    $project: {
-                        date   : 1,
-                        credit : 1,
-                        debit  : 1,
-                        account: {$arrayElemAt: ['$account', 0]}
-                    }
-                }, {
-                    $group: {
-                        _id   : '$account._id',
-                        name  : {$addToSet: '$account.name'},
-                        debit : {$sum: '$debit'},
-                        credit: {$sum: '$credit'}
-                    }
-                }, {
-                    $group: {
-                        _id   : null,
-                        debit : {$sum: '$debit'},
-                        credit: {$sum: '$credit'},
-                        name  : {$addToSet: '$name'}
-                    }
-                }], function (err, result) {
-                    var sum;
-                    var sp;
-                    var fieldName;
-
-                    if (err) {
-                        return cb(err);
-                    }
-
-                    sum = result[0] ? result[0].debit - result[0].credit : 0;
-
-                    sp = 0 - sum;
-
-                    if (sp < 0) {
-                        sp = sp * (-1);
-                    }
-
-                    fieldName = result[0] ? result[0].name[0] : 'Account Payable';
-
-                    cb(null, [{name: fieldName, debit: sp}]);
-                });
-            };
-
-            async.parallel([getEBIT, getAR, getCOGS, getWIP, getSalaryPayable, getSalaryOvertimePayable, getCurrentLiabilities, getAccountPayable], function (err, result) {
-                var response;
-
+                }
+            }], function (err, result) {
                 if (err) {
                     return cb(err);
                 }
 
-                response = _.union(result[0], result[1], result[2], result[3], result[4], result[5], result[6], result[7]);
-
-                cb(null, response);
+                cb(null, result);
             });
         };
 
         getInvesting = function (cb) {
             Model.aggregate([{
+                $match: dateObject
+            }, {
                 $match: {
-                    date: {
-                        $gte: new Date(startDate),
-                        $lte: new Date(endDate)
-                    },
-
                     account: {$in: CONSTANTS.INVESTING.objectID()}
                 }
             }, {
@@ -5845,58 +5646,63 @@ var Module = function (models, event) {
 
         getFinancing = function (cb) {
             Model.aggregate([{
+                $match: dateObject
+            }, {
                 $match: {
-                    date: {
-                        $gte: new Date(startDate),
-                        $lte: new Date(endDate)
-                    },
-
-                    account: {$in: CONSTANTS.FINANCING.objectID()}
-                }
-            }, {
-                $lookup: {
-                    from        : 'chartOfAccount',
-                    localField  : 'account',
-                    foreignField: '_id',
-                    as          : 'account'
-                }
-            }, {
-                $project: {
-                    date   : 1,
-                    credit : 1,
-                    debit  : 1,
-                    account: {$arrayElemAt: ['$account', 0]}
+                    journal: DIVIDEND_INVOICE
                 }
             }, {
                 $group: {
-                    _id   : '$account._id',
-                    name  : {$addToSet: '$account.name'},
+                    _id   : '$account',
                     debit : {$sum: '$debit'},
                     credit: {$sum: '$credit'}
                 }
             }, {
+                $lookup: {
+                    from        : 'chartOfAccount',
+                    localField  : '_id',
+                    foreignField: '_id',
+                    as          : '_id'
+                }
+            }, {
+                $project: {
+                    balance: {$subtract: ['$debit', '$credit']},
+                    _id    : {$arrayElemAt: ['$_id', 0]}
+                }
+            }, {
+                $match: {
+                    '_id.category': LIABILITIES
+                }
+            }, {
+                $lookup: {
+                    from        : 'accountsCategories',
+                    localField  : '_id.category',
+                    foreignField: '_id',
+                    as          : '_id.category'
+                }
+            }, {
+                $project: {
+                    balance       : 1,
+                    '_id._id'     : 1,
+                    '_id.name'    : 1,
+                    '_id.category': {$arrayElemAt: ['$_id.category', 0]}
+                }
+            }, {
+                $sort: {
+                    '_id.name': 1
+                }
+            }, {
                 $group: {
-                    _id   : null,
-                    debit : {$sum: '$debit'},
-                    credit: {$sum: '$credit'},
-                    name  : {$addToSet: '$name'}
+                    _id    : '$_id.category',
+                    balance: {$sum: '$balance'},
+                    root   : {$push: '$$ROOT'}
                 }
             }], function (err, result) {
-                var sum;
-                var sp;
-                var fieldName;
-
                 if (err) {
                     return cb(err);
                 }
 
-                sum = result[0] ? result[0].credit : 0;
-
-                sp = 0 - sum;
-
-                fieldName = result[0] ? result[0].name[0] : '777777 Dividends Payable';
-
-                cb(null, [{name: fieldName, debit: sp}]);
+                cb(null, result);
             });
         };
 
@@ -5910,27 +5716,28 @@ var Module = function (models, event) {
     };
 
     this.getProfitAndLoss = function (req, res, next) {
-        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
-        var getGrossFit;
+        var Model = models.get(req.session.lastDb, journalEntryCT, journalEntrySchema);
+        var getIncome;
         var getExpenses;
         var getDividends;
-        var query = req.query;
-        var startDate = query.startDate;
-        var endDate = query.endDate;
+        var getCOGS;
+        var getTaxes;
+        var INCOME = objectId('5810c75b2b225158086d7f83');
+        var EXPENSE = objectId('5810c75b2b225158086d7f89');
+        var query = req.query || {};
+        var filter = query.filter;
+        var dateObject = filterMapper.mapFilter(filter, {
+            contentType: journalEntryCT,
+            keysArray  : ['date']
+        });
+        var TAX_ACCOUNT = objectId('565eb53a6aa50532e5df0bdd');
 
-        startDate = moment(new Date(startDate)).startOf('day');
-        endDate = moment(new Date(endDate)).endOf('day');
-
-        getGrossFit = function (cb) {
+        getIncome = function (cb) {
             Model.aggregate([{
+                $match: dateObject
+            }, {
                 $match: {
-                    date: {
-                        $gte: new Date(startDate),
-                        $lte: new Date(endDate)
-                    },
-
-                    account: objectId(CONSTANTS.PRODUCT_SALES),
-                    credit : {$gt: 0}
+                    credit: {$gt: 0}
                 }
             }, {
                 $lookup: {
@@ -5946,16 +5753,57 @@ var Module = function (models, event) {
                     account: {$arrayElemAt: ['$account', 0]}
                 }
             }, {
+                $match: {
+                    'account.category': INCOME
+                }
+            }, {
                 $group: {
                     _id  : '$account._id',
-                    name : {$addToSet: '$account.name'},
+                    name : {$first: '$account.name'},
                     debit: {$sum: '$credit'}
                 }
             }, {
+                $sort: {
+                    name: 1
+                }
+            }], function (err, result) {
+                if (err) {
+                    return cb(err);
+                }
+
+                cb(null, result);
+            });
+        };
+
+        getCOGS = function (cb) {
+            Model.aggregate([{
+                $match: dateObject
+            }, {
+                $match: {
+                    debit: {$gt: 0}
+                }
+            }, {
+                $lookup: {
+                    from        : 'chartOfAccount',
+                    localField  : 'account',
+                    foreignField: '_id',
+                    as          : 'account'
+                }
+            }, {
                 $project: {
-                    _id  : 1,
-                    debit: 1,
-                    name : {$arrayElemAt: ['$name', 0]}
+                    date   : 1,
+                    debit  : 1,
+                    account: {$arrayElemAt: ['$account', 0]}
+                }
+            }, {
+                $match: {
+                    'account._id': objectId(CONSTANTS.COGS)
+                }
+            }, {
+                $group: {
+                    _id  : '$account._id',
+                    name : {$first: '$account.name'},
+                    debit: {$sum: '$debit'}
                 }
             }, {
                 $sort: {
@@ -5972,14 +5820,100 @@ var Module = function (models, event) {
 
         getExpenses = function (cb) {
             Model.aggregate([{
+                $match: dateObject
+            }, {
                 $match: {
-                    date: {
-                        $gte: new Date(startDate),
-                        $lte: new Date(endDate)
-                    },
+                    debit: {$gt: 0}
+                }
+            }, {
+                $lookup: {
+                    from        : 'chartOfAccount',
+                    localField  : 'account',
+                    foreignField: '_id',
+                    as          : 'account'
+                }
+            }, {
+                $project: {
+                    date   : 1,
+                    debit  : 1,
+                    account: {$arrayElemAt: ['$account', 0]}
+                }
+            }, {
+                $match: {
+                    'account.budgeted': {$ne: true},
+                    'account.category': EXPENSE,
+                    'account._id'     : {$nin: [objectId(CONSTANTS.COGS), objectId("56cc6bf2541812c07197356a")]},
 
-                    account: objectId(CONSTANTS.COGS),
-                    debit  : {$gt: 0}
+                }
+            }, {
+                $group: {
+                    _id  : '$account._id',
+                    name : {$first: '$account.name'},
+                    debit: {$sum: '$debit'}
+                }
+            }, {
+                $sort: {
+                    name: 1
+                }
+            }], function (err, result) {
+                if (err) {
+                    return cb(err);
+                }
+
+                cb(null, result);
+            });
+        };
+
+        getTaxes = function (cb) {
+            Model.aggregate([{
+                $match: dateObject
+            }, {
+                $match: {
+                    debit: {$gt: 0}
+                }
+            }, {
+                $lookup: {
+                    from        : 'chartOfAccount',
+                    localField  : 'account',
+                    foreignField: '_id',
+                    as          : 'account'
+                }
+            }, {
+                $project: {
+                    date   : 1,
+                    debit  : 1,
+                    account: {$arrayElemAt: ['$account', 0]}
+                }
+            }, {
+                $match: {
+                    'account._id': TAX_ACCOUNT
+                }
+            }, {
+                $group: {
+                    _id  : '$account._id',
+                    name : {$first: '$account.name'},
+                    debit: {$sum: '$debit'}
+                }
+            }, {
+                $sort: {
+                    name: 1
+                }
+            }], function (err, result) {
+                if (err) {
+                    return cb(err);
+                }
+
+                cb(null, result);
+            });
+        };
+
+        getDividends = function (cb) {
+            Model.aggregate([{
+                $match: dateObject
+            }, {
+                $match: {
+                    debit  : {$gt: 0},
+                    journal: DIVIDEND_INVOICE
                 }
             }, {
                 $lookup: {
@@ -5997,14 +5931,8 @@ var Module = function (models, event) {
             }, {
                 $group: {
                     _id  : '$account._id',
-                    name : {$addToSet: '$account.name'},
+                    name : {$first: '$account.name'},
                     debit: {$sum: '$debit'}
-                }
-            }, {
-                $project: {
-                    _id  : 1,
-                    debit: 1,
-                    name : {$arrayElemAt: ['$name', 0]}
                 }
             }, {
                 $sort: {
@@ -6019,56 +5947,36 @@ var Module = function (models, event) {
             });
         };
 
-        getDividends = function (cb) {
-            Model.aggregate([{
-                $match: {
-                    date: {
-                        $gte: new Date(startDate),
-                        $lte: new Date(endDate)
-                    },
-
-                    journal: objectId(CONSTANTS.DIVIDEND_INVOICE_JOURNAL),
-                    debit  : {$gt: 0}
-                }
-            }, {
-                $group: {
-                    _id  : null,
-                    debit: {$sum: '$debit'}
-                }
-            }], function (err, result) {
-                var dividends;
-
-                if (err) {
-                    return cb(err);
-                }
-
-                dividends = result && result.length ? result[0].debit : 0;
-
-                cb(null, dividends);
-            });
-        };
-
-        async.parallel([getGrossFit, getExpenses, getDividends], function (err, result) {
+        async.parallel([getIncome, getCOGS, getExpenses, getTaxes, getDividends], function (err, result) {
             if (err) {
                 return next(err);
             }
 
-            res.status(200).send({grossFit: result[0], expenses: result[1], dividends: result[2]});
+            res.status(200).send({
+                income   : result[0],
+                cogs     : result[1],
+                expenses : result[2],
+                taxes    : result[3],
+                dividends: result[4]
+            });
         });
     };
 
     this.getCashBook = function (req, res, next) {
-        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var Model = models.get(req.session.lastDb, journalEntryCT, journalEntrySchema);
         var PaymentMethod = models.get(req.session.lastDb, 'PaymentMethod', PaymentMethodSchema);
         var cashTransferModel = models.get(req.session.lastDb, 'cashTransfer', cashTransferSchema);
-        var Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
+        var Payment = models.get(req.session.lastDb, 'InvoicePayment', InvoicePaymentSchema);
         var Employee = models.get(req.session.lastDb, 'Employees', employeeSchema);
-        var query = req.query;
-        var startDate = query.startDate;
-        var endDate = query.endDate;
+        var query = req.query || {};
+        var filter = query.filter || {};
+        var dateObject = filterMapper.mapFilter(filter, {
+            contentType: journalEntryCT,
+            keysArray  : ['date']
+        });
+        var startDate = filter.date.value[0];
 
-        startDate = moment(new Date(startDate)).startOf('day');
-        endDate = moment(new Date(endDate)).endOf('day');
+        startDate = new Date(startDate);
 
         PaymentMethod.aggregate([{
             $group: {
@@ -6084,12 +5992,10 @@ var Module = function (models, event) {
             accounts = _.pluck(result, '_id');
 
             Model.aggregate([{
+                $match: dateObject
+            }, {
                 $match: {
-                    account: {$in: accounts},
-                    date   : {
-                        $gte: new Date(startDate),
-                        $lte: new Date(endDate)
-                    }
+                    account: {$in: accounts}
                 }
             }, {
                 $lookup: {
@@ -6123,116 +6029,41 @@ var Module = function (models, event) {
                 }
             }, {
                 $group: {
-                    _id     : '$sourceDocument.model',
+                    _id     : null,
                     accounts: {$addToSet: '$account'},
                     root    : {$push: '$$ROOT'}
                 }
-            }], function (err, result) {
-                var paymentResult;
-                var cashTransfer;
-                var populateCashTransfer;
-                var populateSalaryPayment;
-                var populatePayment;
-                var getOpeningBalance;
-                var salaryPayment;
+            }], function (err, resultAccounts) {
 
                 if (err) {
                     return next(err);
                 }
 
-                paymentResult = _.find(result, function (el) {
-                    return el._id === 'Payment';
-                });
-
-                cashTransfer = _.find(result, function (el) {
-                    return el._id === 'cashTransfer';
-                });
-
-                salaryPayment = _.find(result, function (el) {
-                    return el._id === 'salaryPayment';
-                });
-
-                cashTransfer = cashTransfer || {};
-                paymentResult = paymentResult || {};
-                salaryPayment = salaryPayment || {};
-
-                populatePayment = function (cb) {
-                    Payment.populate(paymentResult.root, {
-                        path  : 'sourceDocument._id',
-                        select: 'name',
-                        lean  : true
-                    }, function (err) {
-                        if (err) {
-                            return cb(err);
+                Model.aggregate([{
+                    $match: {
+                        account: {$in: accounts},
+                        date   : {
+                            $lt: new Date(startDate)
                         }
-
-                        cb();
-                    })
-                };
-
-                populateSalaryPayment = function (cb) {
-                    Employee.populate(salaryPayment.root, {
-                        path  : 'sourceDocument._id',
-                        select: 'name',
-                        lean  : true
-                    }, function (err) {
-                        if (err) {
-                            return cb(err);
-                        }
-
-                        cb();
-                    })
-                };
-
-                getOpeningBalance = function (cb) {
-                    Model.aggregate([{
-                        $match: {
-                            account: {$in: accounts},
-                            date   : {
-                                $lt: new Date(startDate)
-                            }
-                        }
-                    }, {
-                        $project: {
-                            debit  : {$divide: ['$debit', '$currency.rate']},
-                            credit : {$divide: ['$credit', '$currency.rate']},
-                            account: 1
-                        }
-                    }, {
-                        $group: {
-                            _id   : '$account',
-                            debit : {$sum: '$debit'},
-                            credit: {$sum: '$credit'}
-                        }
-                    }, {
-                        $project: {
-                            balance: {$subtract: ['$debit', '$credit']}
-                        }
-                    }], function (err, result) {
-                        if (err) {
-                            return cb(err);
-                        }
-
-                        cb(null, result);
-                    });
-                };
-
-                populateCashTransfer = function (cb) {
-                    cashTransferModel.populate(cashTransfer.root, {
-                        path  : 'sourceDocument._id',
-                        select: 'name',
-                        lean  : true
-                    }, function (err) {
-                        if (err) {
-                            return cb(err);
-                        }
-
-                        cb();
-                    })
-                };
-
-                async.parallel([populatePayment, populateCashTransfer, populateSalaryPayment, getOpeningBalance], function (err, result) {
-                    var accounts;
+                    }
+                }, {
+                    $project: {
+                        debit  : {$divide: ['$debit', '$currency.rate']},
+                        credit : {$divide: ['$credit', '$currency.rate']},
+                        account: 1
+                    }
+                }, {
+                    $group: {
+                        _id   : '$account',
+                        debit : {$sum: '$debit'},
+                        credit: {$sum: '$credit'}
+                    }
+                }, {
+                    $project: {
+                        balance: {$subtract: ['$debit', '$credit']}
+                    }
+                }], function (err, result) {
+                    var resObj;
                     var newAccounts = [];
                     var keys = {};
 
@@ -6240,9 +6071,12 @@ var Module = function (models, event) {
                         return next(err);
                     }
 
-                    accounts = _.union(paymentResult.accounts || [], cashTransfer.accounts || [], salaryPayment.accounts || []);
+                    resObj = resultAccounts && resultAccounts.length ? resultAccounts[0] : {};
 
-                    accounts.forEach(function (el) {
+                    resObj.accounts = resObj.accounts || [];
+                    resObj.root = resObj.root || [];
+
+                    resObj.accounts.forEach(function (el) {
                         if (!keys[el._id.toString()]) {
                             newAccounts.push(el);
                             keys[el._id.toString()] = true;
@@ -6250,7 +6084,7 @@ var Module = function (models, event) {
                     });
 
                     newAccounts.forEach(function (acc) {
-                        var balance = _.find(result[3], function (el) {
+                        var balance = _.find(resObj.root, function (el) {
                             return el && el._id ? el._id.toString() === acc._id.toString() : null;
                         });
 
@@ -6260,33 +6094,25 @@ var Module = function (models, event) {
                     });
 
                     res.status(200).send({
-                        data    : _.union(paymentResult.root || [], cashTransfer.root || [], salaryPayment.root || []),
+                        data    : resObj.root,
                         accounts: newAccounts
                     });
                 });
             });
-        })
+        });
 
     };
 
     this.getForGL = function (req, res, next) {
-        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var Model = models.get(req.session.lastDb, journalEntryCT, journalEntrySchema);
         var query = req.query;
-        var startDate = query.startDate;
-        var endDate = query.endDate;
-
-        startDate = moment(new Date(startDate)).startOf('day');
-        endDate = moment(new Date(endDate)).endOf('day');
-
-        // var filter = query.filter;
+        var filter = query.filter || {};
 
         Model.aggregate([{
-            $match: {
-                date: {
-                    $gte: new Date(startDate),
-                    $lte: new Date(endDate)
-                }
-            }
+            $match: filterMapper.mapFilter(filter, {
+                contentType: journalEntryCT,
+                keysArray  : ['date']
+            })
         }, {
             $group: {
                 _id   : '$account',
@@ -6308,18 +6134,18 @@ var Module = function (models, event) {
             }
         }, {
             $lookup: {
-                from        : 'accountTypes',
-                localField  : '_id.type',
+                from        : 'accountsCategories',
+                localField  : '_id.category',
                 foreignField: '_id',
-                as          : '_id.type'
+                as          : '_id.category'
             }
         }, {
             $project: {
-                debit     : 1,
-                credit    : 1,
-                '_id._id' : 1,
-                '_id.name': 1,
-                '_id.type': {$arrayElemAt: ['$_id.type', 0]}
+                debit         : 1,
+                credit        : 1,
+                '_id._id'     : 1,
+                '_id.name'    : 1,
+                '_id.category': {$arrayElemAt: ['$_id.category', 0]}
             }
         }, {
             $sort: {
@@ -6327,7 +6153,7 @@ var Module = function (models, event) {
             }
         }, {
             $group: {
-                _id   : '$_id.type',
+                _id   : '$_id.category',
                 debit : {$sum: '$debit'},
                 credit: {$sum: '$credit'},
                 root  : {$push: '$$ROOT'}
@@ -6343,7 +6169,7 @@ var Module = function (models, event) {
     };
 
     this.getPayrollForReport = function (req, res, next) {
-        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var Model = models.get(req.session.lastDb, journalEntryCT, journalEntrySchema);
         var query = req.query;
         var sourceDocument = query._id;
         var journalArray = [objectId(CONSTANTS.SALARY_PAYABLE), objectId(CONSTANTS.OVERTIME_PAYABLE)];
@@ -6353,1161 +6179,17 @@ var Module = function (models, event) {
         var date = moment().year(year).month(month - 1).startOf('month');
         var endDate = moment(date).endOf('month');
 
-        function matchEmployee(pcb) {
-            Model.aggregate([{
-                $match: {
-                    'sourceDocument.model': 'Employees',
-                    'sourceDocument._id'  : objectId(sourceDocument),
-                    date                  : {
-                        $gte: new Date(date),
-                        $lte: new Date(endDate)
-                    },
-
-                    debit: {$gt: 0}
-                }
-            }, {
-                $lookup: {
-                    from        : 'Employees',
-                    localField  : 'sourceDocument._id',
-                    foreignField: '_id',
-                    as          : 'employee'
-                }
-            }, {
-                $lookup: {
-                    from        : 'journals',
-                    localField  : 'journal',
-                    foreignField: '_id',
-                    as          : 'journal'
-                }
-            }, {
-                $project: {
-                    date          : 1,
-                    currency      : 1,
-                    debit         : 1,
-                    credit        : 1,
-                    sourceDocument: {$arrayElemAt: ['$employee', 0]},
-                    journal       : {$arrayElemAt: ['$journal', 0]}
-                }
-            }, {
-                $lookup: {
-                    from        : 'chartOfAccount',
-                    localField  : 'journal.debitAccount',
-                    foreignField: '_id',
-                    as          : 'journal.debitAccount'
-                }
-            }, {
-                $lookup: {
-                    from        : 'chartOfAccount',
-                    localField  : 'journal.creditAccount',
-                    foreignField: '_id',
-                    as          : 'journal.creditAccount'
-                }
-            }, {
-                $project: {
-                    date                   : 1,
-                    debit                  : {$divide: ['$debit', 100]},
-                    credit                 : {$divide: ['$credit', 100]},
-                    'journal.creditAccount': {$arrayElemAt: ['$journal.creditAccount', 0]},
-                    'journal.debitAccount' : {$arrayElemAt: ['$journal.debitAccount', 0]},
-                    employee               : {$concat: ['$sourceDocument.name.first', ' ', '$sourceDocument.name.last']},
-                    journalName            : '$journal.name'
-                }
-            }, {
-                $sort: {date: 1}
-            }], function (err, result) {
-                if (err) {
-                    return pcb(err);
-                }
-
-                pcb(null, result);
-            });
-        }
-
-        function matchByWTrack(pcb) {
-            Model.aggregate([{
-                $match: {
-                    'sourceDocument.model': 'wTrack',
-                    journal               : {$in: journalArray},
-                    date                  : {
-                        $gte: new Date(date),
-                        $lte: new Date(endDate)
-                    },
-
-                    credit: {$gt: 0}
-                }
-            }, {
-                $lookup: {
-                    from        : 'journals',
-                    localField  : 'journal',
-                    foreignField: '_id',
-                    as          : 'journal'
-                }
-            }, {
-                $project: {
-                    date          : 1,
-                    currency      : 1,
-                    debit         : 1,
-                    credit        : 1,
-                    sourceDocument: 1,
-                    journal       : {$arrayElemAt: ['$journal', 0]}
-                }
-            }, {
-                $lookup: {
-                    from        : 'chartOfAccount',
-                    localField  : 'journal.debitAccount',
-                    foreignField: '_id',
-                    as          : 'journal.debitAccount'
-                }
-            }, {
-                $lookup: {
-                    from        : 'chartOfAccount',
-                    localField  : 'journal.creditAccount',
-                    foreignField: '_id',
-                    as          : 'journal.creditAccount'
-                }
-            }, {
-                $project: {
-                    debit                  : {$divide: ['$debit', 100]},
-                    credit                 : {$divide: ['$credit', 100]},
-                    'journal.creditAccount': {$arrayElemAt: ['$journal.creditAccount', 0]},
-                    'journal.debitAccount' : {$arrayElemAt: ['$journal.debitAccount', 0]},
-                    journalName            : '$journal.name',
-                    sourceDocument         : 1,
-                    date                   : 1
-                }
-            }, {
-                $project: {
-                    debit      : '$debit',
-                    credit     : '$credit',
-                    journal    : 1,
-                    journalName: 1,
-                    employee   : '$sourceDocument.employee',
-                    date       : 1
-                }
-            }, {
-                $match: {
-                    employee: objectId(sourceDocument)
-                }
-            }, {
-                $lookup: {
-                    from        : 'Employees',
-                    localField  : 'employee',
-                    foreignField: '_id',
-                    as          : 'employee'
-                }
-            }, {
-                $project: {
-                    date                   : 1,
-                    debit                  : 1,
-                    credit                 : 1,
-                    'journal.creditAccount': 1,
-                    'journal.debitAccount' : 1,
-                    employee               : {$arrayElemAt: ['$employee', 0]},
-                    journalName            : 1
-                }
-            }, {
-                $project: {
-                    date                   : 1,
-                    debit                  : 1,
-                    credit                 : 1,
-                    'journal.creditAccount': 1,
-                    'journal.debitAccount' : 1,
-                    employee               : {$concat: ['$employee.name.first', ' ', '$employee.name.last']},
-                    journalName            : 1
-                }
-            }, {
-                $sort: {date: 1}
-            }], function (err, result) {
-                if (err) {
-                    return pcb(err);
-                }
-
-                pcb(null, result);
-            });
-        }
-
-        async.parallel([matchByWTrack, matchEmployee], function (err, result) {
-
-            var empIds;
-            var empIdsSecond;
-
-            if (err) {
-                return next(err);
-            }
-
-            empIds = result[0];
-            empIdsSecond = result[1];
-
-            res.status(200).send({data: _.union(empIds, empIdsSecond)});
-        });
-    };
-
-    this.getForReport = function (req, res, next) {
-        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
-        var Journal = models.get(req.session.lastDb, 'journal', journalSchema);
-        var query = req.query;
-        var sourceDocument = query._id;
-
-        Model
-            .aggregate([{
-                $match: {
-                    'sourceDocument.model': 'wTrack',
-                    'sourceDocument._id'  : objectId(sourceDocument),
-                    debit                 : {$gt: 0}
-                }
-            }, {
-                $project: {
-                    date : 1,
-                    debit: 1
-                }
-            }, {
-                $group: {
-                    _id     : '$date',
-                    totalSum: {$sum: '$debit'}
-                }
-            }, {
-                $sort: {
-                    _id: 1
-                }
-            }], function (err, result) {
-                if (err) {
-                    return next(err);
-                }
-
-                Journal.populate(result, {
-                    path: 'journal'
-                }, function (err, result) {
-                    res.status(200).send({data: {wagesPayable: result}});
-                });
-            });
-
-    };
-
-    /*function getForView(req, mainCallback) {
-     var dbIndex = req.session.lastDb;
-     var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
-     var data = req.query;
-     var sort = data.sort;
-     var findInvoice;
-     var findSalary;
-     var findByEmployee;
-     var paginationObject = pageHelper(data);
-     var limit = paginationObject.limit;
-     var skip = paginationObject.skip;
-     var filter = data.filter || {};
-     var filterObj = {};
-     var key;
-     // var startDate = data.startDate || filter.startDate.value;
-     // var endDate = data.endDate || filter.endDate.value;
-     var findJobsFinished;
-     var findPayments;
-     var findSalaryPayments;
-     var findCashTransfer;
-     var matchObject = {};
-     // var filterArray;
-     var parallelTasks;
-     var filterMapper = new FilterMapper();
-
-     // startDate = moment(new Date(startDate)).startOf('day');
-     // endDate = moment(new Date(endDate)).endOf('day');
-
-     /!*matchObject = {
-     date: {
-     $gte: new Date(startDate),
-     $lte: new Date(endDate)
-     }
-     };*!/
-
-     if (sort) {
-     key = Object.keys(data.sort)[0].toString();
-     data.sort[key] = parseInt(data.sort[key], 10);
-     sort = data.sort;
-     } else {
-     sort = {date: 1, 'journal.name': 1};
-     }
-
-     /!*if (filter) {
-     filterArray = caseFilter(filter);
-
-     if (filterArray.length) {
-     filterObj.$and = filterArray;
-     }
-     }*!/
-
-     filterObj = filterMapper.mapFilter(filter, 'journalEntry');
-
-     if (filterObj.date) {
-     matchObject.date = filterObj.date;
-
-     delete filterObj.date;
-     }
-
-     findInvoice = function (cb) {
-     Model
-     .aggregate([{
-     $match: matchObject
-     }, {
-     $match: {
-     'sourceDocument.model': {$in: ['Invoice', 'Proforma', 'dividendInvoice', 'writeOff']},
-     debit                 : {$gt: 0}
-     }
-     }, {
-     $lookup: {
-     from        : 'chartOfAccount',
-     localField  : 'account',
-     foreignField: '_id',
-     as          : 'account'
-     }
-     }, {
-     $lookup: {
-     from        : 'Invoice',
-     localField  : 'sourceDocument._id',
-     foreignField: '_id',
-     as          : 'sourceDocument._id'
-     }
-     }, {
-     $lookup: {
-     from        : 'journals',
-     localField  : 'journal',
-     foreignField: '_id',
-     as          : 'journal'
-     }
-     }, {
-     $project: {
-     debit                 : 1,
-     currency              : 1,
-     journal               : {$arrayElemAt: ['$journal', 0]},
-     account               : {$arrayElemAt: ['$account', 0]},
-     'sourceDocument._id'  : {$arrayElemAt: ['$sourceDocument._id', 0]},
-     'sourceDocument.model': 1,
-     date                  : 1
-     }
-     }, {
-     $lookup: {
-     from        : 'chartOfAccount',
-     localField  : 'journal.debitAccount',
-     foreignField: '_id',
-     as          : 'journal.debitAccount'
-     }
-     }, {
-     $lookup: {
-     from        : 'chartOfAccount',
-     localField  : 'journal.creditAccount',
-     foreignField: '_id',
-     as          : 'journal.creditAccount'
-     }
-     }, {
-     $lookup: {
-     from        : 'Customers',
-     localField  : 'sourceDocument._id.supplier',
-     foreignField: '_id',
-     as          : 'sourceDocument.subject'
-     }
-     }, {
-     $project: {
-     debit                   : 1,
-     currency                : 1,
-     'journal.debitAccount'  : {$arrayElemAt: ['$journal.debitAccount', 0]},
-     'journal.creditAccount' : {$arrayElemAt: ['$journal.creditAccount', 0]},
-     'journal.name'          : 1,
-     date                    : 1,
-     'sourceDocument._id'    : 1,
-     'sourceDocument.name'   : '$sourceDocument._id.name',
-     'sourceDocument.model'  : 1,
-     'sourceDocument.subject': {$arrayElemAt: ['$sourceDocument.subject', 0]},
-     account                 : 1
-     }
-     }, {
-     $match: filterObj
-     }, {
-     $project: {
-     debit                        : 1,
-     currency                     : 1,
-     journal                      : 1,
-     date                         : 1,
-     'sourceDocument.model'       : 1,
-     'sourceDocument._id'         : 1,
-     'sourceDocument.name'        : 1,
-     'sourceDocument.subject.name': '$sourceDocument.subject.name'
-     }
-     }, {
-     $sort: sort
-     }, {
-     $skip: skip
-     }, {
-     $limit: limit
-     }], function (err, result) {
-     if (err) {
-     return cb(err);
-     }
-
-     cb(null, result);
-     });
-     };
-
-     findCashTransfer = function (cb) {
-     Model
-     .aggregate([{
-     $match: matchObject
-     }, {
-     $match: {
-     'sourceDocument.model': 'cashTransfer',
-     debit                 : {$gt: 0}
-     }
-     }, {
-     $lookup: {
-     from        : 'chartOfAccount',
-     localField  : 'account',
-     foreignField: '_id',
-     as          : 'account'
-     }
-     }, {
-     $lookup: {
-     from        : 'cashTransfer',
-     localField  : 'sourceDocument._id',
-     foreignField: '_id',
-     as          : 'sourceDocument._id'
-     }
-     }, {
-     $lookup: {
-     from        : 'journals',
-     localField  : 'journal',
-     foreignField: '_id',
-     as          : 'journal'
-     }
-     }, {
-     $project: {
-     debit                 : 1,
-     currency              : 1,
-     journal               : {$arrayElemAt: ['$journal', 0]},
-     account               : {$arrayElemAt: ['$account', 0]},
-     'sourceDocument._id'  : {$arrayElemAt: ['$sourceDocument._id', 0]},
-     'sourceDocument.model': 1,
-     date                  : 1
-     }
-     }, {
-     $lookup: {
-     from        : 'chartOfAccount',
-     localField  : 'journal.debitAccount',
-     foreignField: '_id',
-     as          : 'journal.debitAccount'
-     }
-     }, {
-     $lookup: {
-     from        : 'chartOfAccount',
-     localField  : 'journal.creditAccount',
-     foreignField: '_id',
-     as          : 'journal.creditAccount'
-     }
-     }, {
-     $project: {
-     debit                  : 1,
-     currency               : 1,
-     'journal.debitAccount' : {$arrayElemAt: ['$journal.debitAccount', 0]},
-     'journal.creditAccount': {$arrayElemAt: ['$journal.creditAccount', 0]},
-     'journal.name'         : 1,
-     date                   : 1,
-     'sourceDocument._id'   : 1,
-     'sourceDocument.name'  : '$sourceDocument._id.name',
-     'sourceDocument.model' : 1,
-     account                : 1
-     }
-     }, {
-     $match: filterObj
-     }, {
-     $project: {
-     debit                              : 1,
-     currency                           : 1,
-     journal                            : 1,
-     date                               : 1,
-     'sourceDocument.model'             : 1,
-     'sourceDocument._id'               : 1,
-     'sourceDocument.name'              : 1,
-     'sourceDocument.subject.name.first': '$sourceDocument.model'
-     }
-     }, {
-     $sort: sort
-     }, {
-     $skip: skip
-     }, {
-     $limit: limit
-     }], function (err, result) {
-     if (err) {
-     return cb(err);
-     }
-
-     cb(null, result);
-     });
-     };
-
-     findSalary = function (cb) {
-     var query = Model
-     .aggregate([{
-     $match: matchObject
-     }, {
-     $match: {
-     'sourceDocument.model': 'wTrack',
-     debit                 : {$gt: 0}
-     }
-     }, {
-     $lookup: {
-     from        : 'chartOfAccount',
-     localField  : 'account',
-     foreignField: '_id',
-     as          : 'account'
-     }
-     }, {
-     $lookup: {
-     from        : 'journals',
-     localField  : 'journal',
-     foreignField: '_id',
-     as          : 'journal'
-     }
-     }, {
-     $project: {
-     debit                    : 1,
-     currency                 : 1,
-     journal                  : {$arrayElemAt: ['$journal', 0]},
-     account                  : {$arrayElemAt: ['$account', 0]},
-     'sourceDocument._id'     : 1,
-     'sourceDocument.model'   : 1,
-     'sourceDocument.employee': 1,
-     date                     : 1
-     }
-     }, {
-     $lookup: {
-     from        : 'jobs',
-     localField  : 'sourceDocument._id',
-     foreignField: '_id',
-     as          : 'sourceDocument._id'
-     }
-     }, {
-     $lookup: {
-     from        : 'chartOfAccount',
-     localField  : 'journal.debitAccount',
-     foreignField: '_id',
-     as          : 'journal.debitAccount'
-     }
-     }, {
-     $lookup: {
-     from        : 'chartOfAccount',
-     localField  : 'journal.creditAccount',
-     foreignField: '_id',
-     as          : 'journal.creditAccount'
-     }
-     }, {
-     $lookup: {
-     from        : 'Employees',
-     localField  : 'sourceDocument.employee',
-     foreignField: '_id',
-     as          : 'employee'
-     }
-     }, {
-     $project: {
-     debit                   : 1,
-     currency                : 1,
-     'journal.debitAccount'  : {$arrayElemAt: ['$journal.debitAccount', 0]},
-     'journal.creditAccount' : {$arrayElemAt: ['$journal.creditAccount', 0]},
-     'journal.name'          : 1,
-     date                    : 1,
-     'sourceDocument._id'    : 1,
-     'sourceDocument.model'  : 1,
-     'sourceDocument.jobs'   : {$arrayElemAt: ['$sourceDocument._id', 0]},
-     'sourceDocument.subject': {$arrayElemAt: ['$employee', 0]},
-     'sourceDocument.name'   : 1,
-     account                 : 1
-     }
-     }, {
-     $project: {
-     debit                   : 1,
-     currency                : 1,
-     'journal.debitAccount'  : 1,
-     'journal.creditAccount' : 1,
-     'journal.name'          : 1,
-     date                    : 1,
-     'sourceDocument._id'    : 1,
-     'sourceDocument.model'  : 1,
-     'sourceDocument.subject': 1,
-     'sourceDocument.name'   : '$sourceDocument._id.name',
-     account                 : 1
-     }
-     }, {
-     $match: filterObj
-     }, {
-     $project: {
-     debit                        : 1,
-     currency                     : 1,
-     journal                      : 1,
-     date                         : 1,
-     'sourceDocument.model'       : 1,
-     'sourceDocument._id'         : 1,
-     'sourceDocument.name'        : 1,
-     'sourceDocument.subject.name': '$sourceDocument.subject.name'
-     }
-     }, {
-     $sort: sort
-     }, {
-     $skip: skip
-     }, {
-     $limit: limit
-     }]);
-
-     query.options = {allowDiskUse: true};
-
-     query.exec(function (err, result) {
-     if (err) {
-     return cb(err);
-     }
-
-     cb(null, result);
-     });
-     };
-
-     findByEmployee = function (cb) {
-     var query = Model
-     .aggregate([{
-     $match: matchObject
-     }, {
-     $match: {
-     'sourceDocument.model': 'Employees',
-     debit                 : {$gt: 0}
-     }
-     }, {
-     $lookup: {
-     from        : 'chartOfAccount',
-     localField  : 'account',
-     foreignField: '_id',
-     as          : 'account'
-     }
-     }, {
-     $lookup: {
-     from        : 'Employees',
-     localField  : 'sourceDocument._id',
-     foreignField: '_id',
-     as          : 'sourceDocument._id'
-     }
-     }, {
-     $lookup: {
-     from        : 'journals',
-     localField  : 'journal',
-     foreignField: '_id',
-     as          : 'journal'
-     }
-     }, {
-     $project: {
-     debit                 : 1,
-     currency              : 1,
-     journal               : {$arrayElemAt: ['$journal', 0]},
-     account               : {$arrayElemAt: ['$account', 0]},
-     'sourceDocument._id'  : {$arrayElemAt: ['$sourceDocument._id', 0]},
-     'sourceDocument.model': 1,
-     date                  : 1
-     }
-     }, {
-     $lookup: {
-     from        : 'chartOfAccount',
-     localField  : 'journal.debitAccount',
-     foreignField: '_id',
-     as          : 'journal.debitAccount'
-     }
-     }, {
-     $lookup: {
-     from        : 'chartOfAccount',
-     localField  : 'journal.creditAccount',
-     foreignField: '_id',
-     as          : 'journal.creditAccount'
-     }
-     }, {
-     $lookup: {
-     from        : 'Department',
-     localField  : 'sourceDocument._id.department',
-     foreignField: '_id',
-     as          : 'sourceDocument._id.department'
-     }
-     }, {
-     $project: {
-     debit                          : 1,
-     currency                       : 1,
-     'journal.debitAccount'         : {$arrayElemAt: ['$journal.debitAccount', 0]},
-     'journal.creditAccount'        : {$arrayElemAt: ['$journal.creditAccount', 0]},
-     'sourceDocument._id.department': {$arrayElemAt: ['$sourceDocument._id.department', 0]},
-     'journal.name'                 : 1,
-     date                           : 1,
-     'sourceDocument.model'         : 1,
-     'sourceDocument.subject'       : '$sourceDocument._id',
-     account                        : 1
-     }
-     }, {
-     $project: {
-     debit                          : 1,
-     currency                       : 1,
-     'journal.debitAccount'         : 1,
-     'journal.creditAccount'        : 1,
-     'sourceDocument._id.department': 1,
-     'journal.name'                 : 1,
-     date                           : 1,
-     'sourceDocument.model'         : 1,
-     'sourceDocument.subject'       : 1,
-     'sourceDocument.name'          : '$sourceDocument._id.department.name',
-     account                        : 1
-     }
-     }, {
-     $match: filterObj
-     }, {
-     $project: {
-     debit                        : 1,
-     currency                     : 1,
-     journal                      : 1,
-     date                         : 1,
-     'sourceDocument.model'       : 1,
-     'sourceDocument._id'         : 1,
-     'sourceDocument.name'        : 1,
-     'sourceDocument.subject.name': '$sourceDocument.subject.name'
-     }
-     }, {
-     $sort: sort
-     }, {
-     $skip: skip
-     }, {
-     $limit: limit
-     }
-     ]);
-
-     query.options = {allowDiskUse: true};
-
-     query.exec(function (err, result) {
-     if (err) {
-     return cb(err);
-     }
-
-     cb(null, result);
-     });
-     };
-
-     findJobsFinished = function (cb) {
-     var query = Model
-     .aggregate([{
-     $match: matchObject
-     }, {
-     $match: {
-     'sourceDocument.model': 'jobs',
-     debit                 : {$gt: 0}
-     }
-     }, {
-     $lookup: {
-     from        : 'chartOfAccount',
-     localField  : 'account',
-     foreignField: '_id',
-     as          : 'account'
-     }
-     }, {
-     $lookup: {
-     from        : 'jobs',
-     localField  : 'sourceDocument._id',
-     foreignField: '_id',
-     as          : 'sourceDocument._id'
-     }
-     }, {
-     $lookup: {
-     from        : 'journals',
-     localField  : 'journal',
-     foreignField: '_id',
-     as          : 'journal'
-     }
-     }, {
-     $project: {
-     debit                 : 1,
-     currency              : 1,
-     journal               : {$arrayElemAt: ['$journal', 0]},
-     account               : {$arrayElemAt: ['$account', 0]},
-     'sourceDocument._id'  : {$arrayElemAt: ['$sourceDocument._id', 0]},
-     'sourceDocument.model': 1,
-     date                  : 1
-     }
-     }, {
-     $lookup: {
-     from        : 'chartOfAccount',
-     localField  : 'journal.debitAccount',
-     foreignField: '_id',
-     as          : 'journal.debitAccount'
-     }
-     }, {
-     $lookup: {
-     from        : 'chartOfAccount',
-     localField  : 'journal.creditAccount',
-     foreignField: '_id',
-     as          : 'journal.creditAccount'
-     }
-     }, {
-     $lookup: {
-     from        : 'Invoice',
-     localField  : 'sourceDocument._id.invoice',
-     foreignField: '_id',
-     as          : 'sourceDocument._id.invoice'
-     }
-     }, {
-     $project: {
-     debit                       : 1,
-     currency                    : 1,
-     'journal.debitAccount'      : {$arrayElemAt: ['$journal.debitAccount', 0]},
-     'journal.creditAccount'     : {$arrayElemAt: ['$journal.creditAccount', 0]},
-     'sourceDocument._id.invoice': {$arrayElemAt: ['$sourceDocument._id.invoice', 0]},
-     'journal.name'              : 1,
-     date                        : 1,
-     'sourceDocument.model'      : 1,
-     'sourceDocument.subject'    : '$sourceDocument._id',
-     account                     : 1
-     }
-     }, {
-     $project: {
-     debit                              : 1,
-     currency                           : 1,
-     'journal.debitAccount'             : 1,
-     'journal.creditAccount'            : 1,
-     'sourceDocument._id.department'    : 1,
-     'journal.name'                     : 1,
-     date                               : 1,
-     'sourceDocument.model'             : 1,
-     'sourceDocument.subject._id'       : 1,
-     'sourceDocument.subject.name.first': '$sourceDocument.subject.name',
-     'sourceDocument.name'              : '$sourceDocument._id.invoice.name',
-     account                            : 1
-     }
-     }, {
-     $match: filterObj
-     }, {
-     $project: {
-     debit                        : 1,
-     currency                     : 1,
-     journal                      : 1,
-     date                         : 1,
-     'sourceDocument.model'       : 1,
-     'sourceDocument._id'         : 1,
-     'sourceDocument.name'        : 1,
-     'sourceDocument.subject.name': '$sourceDocument.subject.name'
-     }
-     }, {
-     $sort: sort
-     }, {
-     $skip: skip
-     }, {
-     $limit: limit
-     }]);
-
-     query.options = {allowDiskUse: true};
-
-     query.exec(function (err, result) {
-     if (err) {
-     return cb(err);
-     }
-
-     cb(null, result);
-     });
-     };
-
-     findPayments = function (cb) {
-     var query = Model
-     .aggregate([{
-     $match: matchObject
-     }, {
-     $match: {
-     'sourceDocument.model': 'Payment',
-     debit                 : {$gt: 0}
-     }
-     }, {
-     $lookup: {
-     from        : 'chartOfAccount',
-     localField  : 'account',
-     foreignField: '_id',
-     as          : 'account'
-     }
-     }, {
-     $lookup: {
-     from        : 'Payment',
-     localField  : 'sourceDocument._id',
-     foreignField: '_id',
-     as          : 'sourceDocument._id'
-     }
-     }, {
-     $lookup: {
-     from        : 'journals',
-     localField  : 'journal',
-     foreignField: '_id',
-     as          : 'journal'
-     }
-     }, {
-     $project: {
-     debit                 : 1,
-     currency              : 1,
-     journal               : {$arrayElemAt: ['$journal', 0]},
-     account               : {$arrayElemAt: ['$account', 0]},
-     'sourceDocument._id'  : {$arrayElemAt: ['$sourceDocument._id', 0]},
-     'sourceDocument.model': 1,
-     date                  : 1
-     }
-     }, {
-     $lookup: {
-     from        : 'chartOfAccount',
-     localField  : 'journal.debitAccount',
-     foreignField: '_id',
-     as          : 'journal.debitAccount'
-     }
-     }, {
-     $lookup: {
-     from        : 'chartOfAccount',
-     localField  : 'journal.creditAccount',
-     foreignField: '_id',
-     as          : 'journal.creditAccount'
-     }
-     }, {
-     $lookup: {
-     from        : 'Customers',
-     localField  : 'sourceDocument._id.supplier',
-     foreignField: '_id',
-     as          : 'sourceDocument._id.supplier'
-     }
-     }, {
-     $project: {
-     debit                        : 1,
-     currency                     : 1,
-     'journal.debitAccount'       : {$arrayElemAt: ['$journal.debitAccount', 0]},
-     'journal.creditAccount'      : {$arrayElemAt: ['$journal.creditAccount', 0]},
-     'sourceDocument._id.supplier': {$arrayElemAt: ['$sourceDocument._id.supplier', 0]},
-     'journal.name'               : 1,
-     date                         : 1,
-     'sourceDocument.model'       : 1,
-     'sourceDocument.subject'     : '$sourceDocument._id',
-     'sourceDocument.name'        : '$sourceDocument._id.name',
-     account                      : 1
-     }
-     }, {
-     $project: {
-     debit                   : 1,
-     currency                : 1,
-     'journal.debitAccount'  : 1,
-     'journal.creditAccount' : 1,
-     'journal.name'          : 1,
-     date                    : 1,
-     'sourceDocument.model'  : 1,
-     'sourceDocument.subject': '$sourceDocument._id.supplier',
-     'sourceDocument.name'   : 1,
-     account                 : 1
-     }
-     }, {
-     $match: filterObj
-     }, {
-     $project: {
-     debit                        : 1,
-     currency                     : 1,
-     journal                      : 1,
-     date                         : 1,
-     'sourceDocument.model'       : 1,
-     'sourceDocument._id'         : 1,
-     'sourceDocument.name'        : 1,
-     'sourceDocument.subject.name': '$sourceDocument.subject.name'
-     }
-     }, {
-     $sort: sort
-     }, {
-     $skip: skip
-     }, {
-     $limit: limit
-     }]);
-
-     query.options = {allowDiskUse: true};
-
-     query.exec(function (err, result) {
-     if (err) {
-     return cb(err);
-     }
-
-     cb(null, result);
-     });
-     };
-
-     findSalaryPayments = function (cb) {
-     var query = Model
-     .aggregate([{
-     $match: matchObject
-     }, {
-     $match: {
-     'sourceDocument.model': 'salaryPayment',
-     debit                 : {$gt: 0}
-     }
-     }, {
-     $lookup: {
-     from        : 'chartOfAccount',
-     localField  : 'account',
-     foreignField: '_id',
-     as          : 'account'
-     }
-     }, {
-     $lookup: {
-     from        : 'Employees',
-     localField  : 'sourceDocument._id',
-     foreignField: '_id',
-     as          : 'sourceDocument._id'
-     }
-     }, {
-     $lookup: {
-     from        : 'journals',
-     localField  : 'journal',
-     foreignField: '_id',
-     as          : 'journal'
-     }
-     }, {
-     $project: {
-     debit                 : 1,
-     currency              : 1,
-     journal               : {$arrayElemAt: ['$journal', 0]},
-     account               : {$arrayElemAt: ['$account', 0]},
-     'sourceDocument._id'  : {$arrayElemAt: ['$sourceDocument._id', 0]},
-     'sourceDocument.model': 1,
-     date                  : 1
-     }
-     }, {
-     $lookup: {
-     from        : 'chartOfAccount',
-     localField  : 'journal.debitAccount',
-     foreignField: '_id',
-     as          : 'journal.debitAccount'
-     }
-     }, {
-     $lookup: {
-     from        : 'chartOfAccount',
-     localField  : 'journal.creditAccount',
-     foreignField: '_id',
-     as          : 'journal.creditAccount'
-     }
-     }, {
-     $lookup: {
-     from        : 'Department',
-     localField  : 'sourceDocument._id.department',
-     foreignField: '_id',
-     as          : 'sourceDocument._id.department'
-     }
-     }, {
-     $project: {
-     debit                   : 1,
-     currency                : 1,
-     'journal.debitAccount'  : {$arrayElemAt: ['$journal.debitAccount', 0]},
-     'journal.creditAccount' : {$arrayElemAt: ['$journal.creditAccount', 0]},
-     'journal.name'          : 1,
-     date                    : 1,
-     'sourceDocument.model'  : 1,
-     'sourceDocument.subject': '$sourceDocument._id',
-     'sourceDocument.name'   : {$arrayElemAt: ['$sourceDocument._id.department', 0]},
-     account                 : 1
-     }
-     }, {
-     $project: {
-     debit                   : 1,
-     currency                : 1,
-     'journal.debitAccount'  : 1,
-     'journal.creditAccount' : 1,
-     'journal.name'          : 1,
-     date                    : 1,
-     'sourceDocument.model'  : 1,
-     'sourceDocument.subject': 1,
-     'sourceDocument.name'   : '$sourceDocument.name.name',
-     account                 : 1
-     }
-     }, {
-     $match: filterObj
-     }, {
-     $project: {
-     debit                        : 1,
-     currency                     : 1,
-     journal                      : 1,
-     date                         : 1,
-     'sourceDocument.model'       : 1,
-     'sourceDocument._id'         : 1,
-     'sourceDocument.name'        : 1,
-     'sourceDocument.subject.name': '$sourceDocument.subject.name'
-     }
-     }, {
-     $sort: sort
-     }, {
-     $skip: skip
-     }, {
-     $limit: limit
-     }]);
-
-     query.options = {allowDiskUse: true};
-
-     query.exec(function (err, result) {
-     if (err) {
-     return cb(err);
-     }
-
-     cb(null, result);
-     });
-     };
-
-     parallelTasks = [findInvoice, findSalary, findByEmployee, findJobsFinished, findPayments, findSalaryPayments, findCashTransfer];
-
-     async.parallel(parallelTasks, function (err, result) {
-     var invoices;
-     var salary;
-     var salaryEmployee;
-     var jobsResult;
-     var paymentsResult;
-     var salaryPaymentResult;
-     var models;
-     var cashTransfer;
-
-     if (err) {
-     return mainCallback(err);
-     }
-     invoices = result[0];
-     salary = result[1];
-     salaryEmployee = result[2];
-     jobsResult = result[3];
-     paymentsResult = result[4];
-     salaryPaymentResult = result[5];
-     cashTransfer = result[6];
-     models = _.union(invoices, salary, salaryEmployee, jobsResult, paymentsResult, salaryPaymentResult, cashTransfer);
-
-     mainCallback(null, models);
-     });
-     }*/
-
-    function getForView(req, mainCallback) {
-        var dbIndex = req.session.lastDb;
-        var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
-        var data = req.query;
-        var sort = data.sort;
-        var paginationObject = pageHelper(data);
-        var limit = paginationObject.limit;
-        var skip = paginationObject.skip;
-        var filter = data.filter || {};
-        var filterObj;
-        var key;
-        var matchObject = {};
-        var filterMapper = new FilterMapper();
-
-        if (sort) {
-            key = Object.keys(data.sort)[0].toString();
-            data.sort[key] = parseInt(data.sort[key], 10);
-            sort = data.sort;
-        } else {
-            sort = {date: 1, 'journal.name': 1};
-        }
-
-        filterObj = filterMapper.mapFilter(filter, 'journalEntry');
-
-        if (filterObj.date) {
-            matchObject.date = filterObj.date;
-
-            delete filterObj.date;
-        }
-
         Model.aggregate([{
             $match: {
-                debit: {$gt: 0}
+                $and: [{$or: [{'sourceDocument.employee': objectId(sourceDocument)}, {'sourceDocument._id': objectId(sourceDocument)}]}, {
+                    date: {
+                        $gte: new Date(date),
+                        $lte: new Date(endDate)
+                    }
+                }, {
+                    journal: {$ne: objectId('56cc734b541812c071973572')}
+                }]
             }
-        }, {
-            $match: matchObject
         }, {
             $lookup: {
                 from        : 'chartOfAccount',
@@ -7523,50 +6205,244 @@ var Module = function (models, event) {
                 as          : 'journal'
             }
         }, {
+            $lookup: {
+                from        : 'currency',
+                localField  : 'currency._id',
+                foreignField: '_id',
+                as          : 'currency._id'
+            }
+        }, {
             $project: {
-                journal       : {$arrayElemAt: ['$journal', 0]},
-                account       : {$arrayElemAt: ['$account', 0]},
+                journal        : {$arrayElemAt: ['$journal', 0]},
+                account        : {$arrayElemAt: ['$account', 0]},
+                'currency._id' : {$arrayElemAt: ['$currency._id', 0]},
+                sourceDocument : 1,
+                'currency.name': 1,
+                debit          : 1,
+                credit         : 1,
+                debitFC        : 1,
+                creditFC       : 1,
+                date           : 1,
+                timestamp      : 1,
+                createdBy      : 1,
+                _type          : 1
+            }
+        }, {
+            $project: {
+                'account._id' : 1,
+                'account.name': 1,
+                'journal.name': '$journal.name',
+                'journal._id' : '$journal._id',
                 sourceDocument: 1,
                 currency      : 1,
-                debit         : 1,
+                debit         : {$divide: ['$debit', 100]},
+                credit        : {$divide: ['$credit', 100]},
+                debitFC       : {$divide: ['$debitFC', 100]},
+                creditFC      : {$divide: ['$creditFC', 100]},
                 date          : 1,
+                timestamp     : 1,
+                createdBy     : 1,
                 _type         : 1
             }
         }, {
-            $lookup: {
-                from        : 'chartOfAccount',
-                localField  : 'journal.debitAccount',
-                foreignField: '_id',
-                as          : 'debitAccount'
+            $sort: {date: 1}
+        }], function (err, result) {
+            if (err) {
+                return next(err);
             }
+
+            res.status(200).send({data: result});
+        });
+    };
+
+    this.getForReport = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, journalEntryCT, journalEntrySchema);
+        var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
+        var query = req.query;
+        var sourceDocument = query._id;
+        var product;
+
+        Product.findOne({job: sourceDocument}, {_id: 1}, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            product = result ? result._id : null;
+
+            Model
+                .aggregate([{
+                    $match: {
+                        'sourceDocument.model': 'product',
+                        'sourceDocument._id'  : objectId(product),
+                        debit                 : {$gt: 0}
+                    }
+                }, {
+                    $project: {
+                        date : 1,
+                        debit: 1
+                    }
+                }, {
+                    $group: {
+                        _id     : '$date',
+                        totalSum: {$sum: '$debit'}
+                    }
+                }, {
+                    $sort: {
+                        _id: 1
+                    }
+                }], function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    res.status(200).send({data: {wagesPayable: result}});
+                });
+        });
+
+    };
+
+    function getForView(req, mainCallback) {
+        var dbIndex = req.session.lastDb;
+        var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
+        var data = req.query;
+        var sort = data.sort;
+        var paginationObject = pageHelper(data);
+        var limit = paginationObject.limit;
+        var skip = paginationObject.skip;
+        var filter = data.filter || {};
+        var filterObj;
+        var key;
+        var matchObject = {};
+        var filterMapper = new FilterMapper();
+        var aggregate;
+        var matchFilter;
+        var matchWithoutState;
+
+        if (sort) {
+            key = Object.keys(data.sort)[0].toString();
+            data.sort[key] = parseInt(data.sort[key], 10);
+            sort = data.sort;
+        } else {
+            sort = {date: -1, 'journal.name': 1, timestamp: 1, 'createdBy.date': -1};
+        }
+
+        /* filterObj = filterMapper.mapFilter(filter, 'journalEntry');
+
+         if (filterObj.date) {
+         matchObject.date = filterObj.date;
+
+         delete filterObj.date;
+         }*/
+
+        if (filter.hasOwnProperty('sum')) {
+            filter.debit = {
+                key  : 'debit',
+                value: filter.sum.value,
+                type : 'integer'
+            };
+
+            filter.credit = {
+                key  : 'credit',
+                value: filter.sum.value,
+                type : 'integer'
+            };
+
+            delete filter.sum;
+        }
+
+        matchFilter = filterMapper.mapFilter(filter, {
+            contentType: journalEntryCT,
+            keysArray  : ['date']
+        });
+        matchWithoutState = filterMapper.mapFilter(filter, {
+            contentType : journalEntryCT,
+            keysArray   : ['date'],
+            withoutState: true
+        });
+
+        if (matchWithoutState.debit && matchWithoutState.credit) {
+            matchWithoutState.$or = [{debit: matchWithoutState.debit}, {credit: matchWithoutState.credit}];
+
+            delete matchWithoutState.debit;
+            delete matchWithoutState.credit;
+
+            if (matchWithoutState.timestamp) {
+                matchWithoutState.timestamp = matchWithoutState.timestamp;
+
+                delete matchWithoutState.$or;
+            }
+
+        }
+
+        aggregate = Model.aggregate([{
+            $match: matchFilter
         }, {
             $lookup: {
                 from        : 'chartOfAccount',
-                localField  : 'journal.creditAccount',
+                localField  : 'account',
                 foreignField: '_id',
-                as          : 'creditAccount'
+                as          : 'account'
+            }
+        }, {
+            $lookup: {
+                from        : 'journals',
+                localField  : 'journal',
+                foreignField: '_id',
+                as          : 'journal'
+            }
+        }, {
+            $lookup: {
+                from        : 'currency',
+                localField  : 'currency._id',
+                foreignField: '_id',
+                as          : 'currency._id'
             }
         }, {
             $project: {
-                debitAccount  : {$arrayElemAt: ['$debitAccount', 0]},
-                creditAccount : {$arrayElemAt: ['$creditAccount', 0]},
+                journal        : {$arrayElemAt: ['$journal', 0]},
+                account        : {$arrayElemAt: ['$account', 0]},
+                'currency._id' : {$arrayElemAt: ['$currency._id', 0]},
+                sourceDocument : 1,
+                'currency.name': 1,
+                debit          : 1,
+                credit         : 1,
+                debitFC        : 1,
+                creditFC       : 1,
+                date           : 1,
+                timestamp      : 1,
+                createdBy      : 1,
+                _type          : 1
+            }
+        }, {
+            $project: {
+                'account._id' : 1,
+                'account.name': 1,
                 'journal.name': '$journal.name',
                 'journal._id' : '$journal._id',
                 sourceDocument: 1,
                 currency      : 1,
                 debit         : 1,
+                credit        : 1,
+                debitFC       : 1,
+                creditFC      : 1,
                 date          : 1,
+                timestamp     : 1,
+                createdBy     : 1,
                 _type         : 1
             }
         }, {
-            $match: filterObj
+            $match: matchWithoutState
         }, {
             $sort: sort
         }, {
             $skip: skip
         }, {
             $limit: limit
-        }], function (err, result) {
+        }]);
+
+        aggregate.options = {allowDiskUse: true};
+
+        aggregate.exec(function (err, result) {
             if (err) {
                 return mainCallback(err);
             }
@@ -7592,13 +6468,19 @@ var Module = function (models, event) {
                 return next(err);
             }
 
-            res.status(200).send({total: result[0].total || 0, data: result[1], totalValue: result[0].totalValue});
+            res.status(200).send({
+                total      : result[0].total || 0,
+                totalDebit : result[0].totalDebit || 0,
+                totalCredit: result[0].totalCredit || 0,
+                data       : result[1],
+                totalValue : result[0].totalValue
+            });
         });
 
     };
 
     this.removeByDocId = function (docId, dbIndex, callback) {
-        var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
+        var Model = models.get(dbIndex, journalEntryCT, journalEntrySchema);
         var id = docId;
         var query;
 
@@ -7615,7 +6497,7 @@ var Module = function (models, event) {
     };
 
     this.changeDate = function (query, date, dbIndex, callback) {
-        var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
+        var Model = models.get(dbIndex, journalEntryCT, journalEntrySchema);
 
         Model
             .update(query, {$set: {date: new Date(date)}}, {multi: true}, callback);
@@ -7623,7 +6505,7 @@ var Module = function (models, event) {
 
     this.removeBulk = function (req, res, next) {
         var dbIndex = req.session.lastDb;
-        var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
+        var Model = models.get(dbIndex, journalEntryCT, journalEntrySchema);
         var body = req.body || {ids: []};
         var ids = body.ids;
 

@@ -31,7 +31,8 @@ define([
             'change .editable'                                 : 'setEditable',
             'keydown input.editing '                           : 'keyDown',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
-            'click .current-selected'                          : 'showNewSelect'
+            'click .current-selected'                          : 'showNewSelect',
+            'click .checkBudget'                               : 'changeBudgeted'
         },
 
         initialize: function (options) {
@@ -48,11 +49,12 @@ define([
             this.page = options.collection.currentPage;
             this.ContentCollection = ContentCollection;
 
-            this.render();
+            ListViewBase.prototype.initialize.call(this, options);
         },
 
         chooseOption: function (e) {
             var target = $(e.target);
+            var closestA = target.closest('a');
             var targetElement = target.parents('td');
             var tr = target.parents('tr');
             var modelId = tr.attr('data-id');
@@ -70,12 +72,13 @@ define([
             }
 
             changedAttr = this.changedModels[modelId];
-            if (attr === 'type') {
+            if (attr === 'category') {
 
-                changedAttr.type = target.attr('id');
+                changedAttr.category = target.attr('id');
+                closestA.text(target.text());
+            } else {
+                targetElement.text(target.text());
             }
-
-            targetElement.text(target.text());
 
             this.hide(e);
             this.setEditable(targetElement);
@@ -93,7 +96,15 @@ define([
             context.editCollection.on('updated', context.updatedOptions, context);
         },
 
-        setChangedValueToModel: function () {
+        changeBudgeted: function (e) {
+            e.stopPropagation();
+
+            $(e.target).addClass('editing');
+            this.setEditable($(e.target));
+            this.setChangedValueToModel(true);
+        },
+
+        setChangedValueToModel: function (budgeted) {
             var editedElement = this.$el.find('.editing');
             var editedCol;
             var editedElementRowId;
@@ -105,6 +116,10 @@ define([
                 editedElementRowId = editedElement.closest('tr').data('id');
                 editedElementContent = editedCol.data('content');
                 editedElementValue = editedElement.val();
+
+                if (editedElementContent === 'budgeted') {
+                    budgeted = true;
+                }
 
                 if (!this.changedModels[editedElementRowId]) {
                     this.changedModels[editedElementRowId] = {};
@@ -123,7 +138,14 @@ define([
                     }
                 }
 
-                this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
+                if (budgeted) {
+                    editedElementValue = editedElement.closest('tr').find('.checkBudget').prop('checked');
+                    this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
+
+                    return false;
+                }
+
+                this.changedModels[editedElementRowId][editedElementContent] = $.trim(editedElementValue);
 
                 editedCol.text(editedElementValue);
                 editedElement.remove();
@@ -135,18 +157,23 @@ define([
             var code;
             var account;
             var id;
-            var errors = this.$el.find('.errorContent');
-            var keys = Object.keys(this.changedModels);
+            var errors;
+            var keys;
             var i;
+
+            this.setChangedValueToModel();
+
+            errors = this.$el.find('.errorContent');
+            keys = Object.keys(this.changedModels);
 
             for (i = keys.length - 1; i >= 0; i--) {
                 id = keys[i];
                 model = this.editCollection.get(id) || this.collection.get(id);
                 if (model) {
                     model.changed = this.changedModels[id];
-                    code = this.changedModels[id].code || model.get('code');
+                    code = parseInt(this.changedModels[id].code, 10) || model.get('code');
                     account = this.changedModels[id].account || model.get('account');
-                    model.changed.name = code + ' ' + account;
+                    model.changed.name = code.toString() + ' ' + account;
                 }
             }
 
@@ -162,6 +189,37 @@ define([
             }
 
             this.deleteEditable();
+        },
+
+        editRow: function (e) {
+            var el = $(e.target);
+            var tr = $(e.target).closest('tr');
+            var trId = tr.data('id');
+            var colType = el.data('type');
+            var isSelect = colType !== 'input' && el.prop('tagName') !== 'INPUT';
+            var tempContainer;
+            var width;
+
+            e.stopPropagation();
+
+            if (el.attr('id') === 'selectInput') {
+                return false;
+            }
+
+            if (trId && el.prop('tagName') !== 'INPUT') {
+                this.modelId = trId;
+                this.setChangedValueToModel();
+            }
+
+            if (isSelect) {
+                this.showNewSelect(e);
+            } else {
+                tempContainer = el.text();
+                width = el.width() - 6;
+                el.html("<input class='editing' type='text' value='" + tempContainer + " ' style='width:'" + width + "px'>");
+            }
+
+            return false;
         },
 
         render: function () {
@@ -217,7 +275,7 @@ define([
 
             // this.renderPagination($currentEl);
 
-            populate.get('#accountTypeDd', '/accountTypes/getForDD', {}, 'name', this, true, true);
+            populate.get('#accountsCategory', '/accountsCategories/getAll', {}, 'name', this, true, true);
 
             setTimeout(function () {
                 self.editCollection = new EditCollection(self.collection.toJSON());
@@ -232,4 +290,5 @@ define([
     });
 
     return ProjectsListView;
-});
+})
+;

@@ -7,9 +7,10 @@ define([
     'use strict';
 
     var TopBarView = BaseView.extend({
-        el         : '#top-bar',
-        contentType: CONSTANTS.INVOICEAGING,
-        template   : _.template(ContentTopBarTemplate)
+        el           : '#top-bar',
+        contentType  : CONSTANTS.INVOICEAGING,
+        contentHeader: 'Invoice Aging',
+        template     : _.template(ContentTopBarTemplate)
     });
 
     return TopBarView;

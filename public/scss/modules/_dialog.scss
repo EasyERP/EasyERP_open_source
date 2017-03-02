@@ -8,40 +8,154 @@
       padding-left: 5px;
     }
   }
+
+  ._dialogTitle {
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #7eadcc;
+    color: #5b91b5;
+  }
 }
 
-ul.dialog-tabs, ul.chart-tabs {
+.ui-resizable {
+  position: relative
+}
+
+.ui-resizable-handle {
+  position: absolute;
+  font-size: .1px;
+  display: block
+}
+
+.ui-resizable-disabled .ui-resizable-handle,
+.ui-resizable-autohide .ui-resizable-handle {
+  display: none
+}
+
+.ui-resizable-n {
+  cursor: n-resize;
+  height: 7px;
+  width: 100%;
+  top: -5px;
+  left: 0
+}
+
+.ui-resizable-s {
+  cursor: s-resize;
+  height: 7px;
+  width: 100%;
+  bottom: -5px;
+  left: 0
+}
+
+.ui-resizable-e {
+  cursor: e-resize;
+  width: 7px;
+  right: -5px;
+  top: 0;
+  height: 100%
+}
+
+.ui-resizable-w {
+  cursor: w-resize;
+  width: 7px;
+  left: -5px;
+  top: 0;
+  height: 100%
+}
+
+.ui-resizable-se {
+  cursor: se-resize;
+  width: 12px;
+  height: 12px;
+  right: 1px;
+  bottom: 1px
+}
+
+.ui-resizable-sw {
+  cursor: sw-resize;
+  width: 9px;
+  height: 9px;
+  left: -5px;
+  bottom: -5px
+}
+
+.ui-resizable-nw {
+  cursor: nw-resize;
+  width: 9px;
+  height: 9px;
+  left: -5px;
+  top: -5px
+}
+
+.ui-resizable-ne {
+  cursor: ne-resize;
+  width: 9px;
+  height: 9px;
+  right: -5px;
+  top: -5px
+}
+
+.ui-draggable .ui-dialog-titlebar {
+  cursor: move
+}
+
+.tabsHolder {
+  width: calc(100% - 40px);
+  margin: 20px;
+
+  .dialog-tabs {
+    li {
+      border-left: 1px solid #c4ced1;
+
+      &:first-child{
+        border-left: 0;
+      }
+
+      &:first-child a {
+        border-radius: 3px 0px 0 0;
+      }
+
+      &:last-child a {
+        border-radius: 0px 3px 0 0;
+      }
+
+      a {
+        background: #e2e6e8;
+      }
+    }
+  }
+}
+
+ul.dialog-tabs,
+ul.chart-tabs {
 
   li {
     float: left;
 
     a {
-      border: 1px solid rgba(0, 0, 0, 0);
       display: block;
       float: left;
-      //border-radius: 3px 3px 0 0;
-      padding-left: 20px;
-      padding-right: 20px;
-      height: 35px;
+      border: 1px solid rgba(0, 0, 0, 0);
+      padding-left: 14px;
+      padding-right: 14px;
+      height: 40px;
       text-align: center;
-      line-height: 35px;
+      line-height: 38px;
       text-decoration: none;
       color: $mainText-color;
 
+
       &.active {
-        height: 35px;
-        line-height: 34px;
         border-bottom: none;
-        background-color: $bg-main-menu-selected;
+        background-color: #7eadcc;
         color: $whiteText;
       }
 
     }
+
     &.right {
       float: right;
-      //button {
-      //  margin-top: 4px;
-      //}
     }
   }
 
@@ -72,22 +186,22 @@ ul.dialog-tabs, ul.chart-tabs {
       }
     }
 
-    .endContractReasonList, .arrow {
+    .endContractReasonList,
+    .arrow {
       width: 98px;
       height: 20px;
-      line-height: 19px;
       border-radius: 0;
+      line-height: 19px;
       text-align: center;
       float: right;
     }
 
     .arrow {
+      width: 20px;
       border-left: 1px solid #ABABAB;
-      //font-family: Icons;
       color: white;
       font-weight: 500;
       font-size: 10px;
-      width: 16px;
       margin-left: -2px;
       line-height: 20px;
 
@@ -100,6 +214,7 @@ ul.dialog-tabs, ul.chart-tabs {
 }
 
 ul.chart-tabs {
+
   li.right {
     button {
       margin-top: 4px;
@@ -107,7 +222,7 @@ ul.chart-tabs {
   }
 
   &.dashboard {
-    margin: 10px 0;
+    margin: 0 0 10px;
   }
 }
 
@@ -119,6 +234,20 @@ ul.chart-tabs {
 
     &.active {
       display: block;
+    }
+
+  }
+}
+
+.ui-dialog {
+  .dialog-tabs-items {
+    .dialog-tabs-item,
+    .chart-tabs-item {
+      @extend %clearfix;
+
+      .formTitle {
+        margin-top: -10px;
+      }
     }
   }
 }
@@ -136,16 +265,13 @@ ul.chart-tabs {
 }
 
 .ui-dialog {
-  //overflow-y: auto;
-  //overflow-x: hidden;
-  //max-height: 100%;
 
-  &-buttonpane {
-    padding: 0 0 10px !important;
-    margin-top: 0 !important;
-    margin-right: 20px !important;
-    margin-left: 20px !important;
-  }
+  //&-buttonpane {
+  //  padding: 0 0 10px !important;
+  //  margin-top: 0 !important;
+  //  margin-right: 30px !important;
+  //  margin-left: 30px !important;
+  //}
 
   .form-holder {
     @include clearfix;
@@ -162,12 +288,19 @@ ul.chart-tabs {
     position: relative;
   }
 
-
   .attach_file {
     position: absolute;
     bottom: 25px;
     right: 5px;
     font-size: 16px;
+  }
+
+  ._animateTextareaBox {
+    .attach_file {
+      bottom: 10px;
+      right: 15px;
+      background-color: #fff;
+    }
   }
 
   ._leadsDialog {
@@ -209,8 +342,16 @@ ul.chart-tabs {
       }
     }
   }
+
   .form-holder._listModalWrap {
     padding: 10px;
+  }
+}
+
+._listModal {
+  ._circleRadioRadianceWrap {
+    padding: 0 15px;
+    margin-left: 0;
   }
 }
 
@@ -225,7 +366,9 @@ ul.chart-tabs {
 }
 
 .ui-dialog {
-  box-shadow: 5px 5px rgba(102, 102, 102, 0.1);
+  box-shadow: 0 8px 10px 1px rgba(0,0,0,0.14),
+  0 3px 14px 2px rgba(0,0,0,0.12),
+  0 5px 5px -3px rgba(0,0,0,0.3);
 
   .form-holder {
     &._dialogWrap {
@@ -242,7 +385,7 @@ ul.chart-tabs {
     color: #fff;
     background-color: #7eadcc;
     font: {
-      family: $light-font-family;
+      //family: $light-font-family;
       size: 18px;
     };
   }
@@ -251,9 +394,15 @@ ul.chart-tabs {
     padding: 12px;
   }
 
-  ._dialogRow + ._dialogRow {
-    margin-top: 5px;
+  ._dialogRow {
+    label[for='default'] > label._customCHeckbox.flex {
+      align-items: center;
+    }
+    + ._dialogRow {
+      margin-top: 5px;
+    }
   }
+
 }
 
 ._createNewProjectDialog {
@@ -292,8 +441,35 @@ ul.chart-tabs {
   .dialog-tabs {
     border-bottom: 1px solid #7eadcc;
 
-    &._btnsBlockFixed {
+    &._forOverview {
+      border-bottom: 1px solid #d7d7d7;
+    }
+
+    &._btnsBlockFixed,
+    &._withoutBorder {
       border-bottom: 0;
+    }
+  }
+}
+
+ul.chart-tabs {
+
+  &._materialTabs {
+    border-bottom: 1px solid #c8c8d3;
+
+    li {
+
+      a {
+        border: 0;
+        border-bottom: 2px solid transparent;
+
+        &.active {
+          background-color: transparent;
+          border-bottom-color: #7eadcc;
+          color: #3e88b9;
+          font-family: inherit;
+        }
+      }
     }
   }
 }

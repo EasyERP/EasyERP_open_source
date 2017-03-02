@@ -102,11 +102,7 @@ define([
                 });
             });
         },
-
-        clickInput: function () {
-            $('.input-file .inputAttach').click();
-        },
-
+        
         receiveInvoice: function (e) {
             var self = this;
             var url = '/invoices/receive';

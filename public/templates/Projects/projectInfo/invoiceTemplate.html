@@ -1,10 +1,10 @@
 <div id="top-bar-payments">
-    <div id="createBtnHolder" class="btnsBlock">
+    <div id="createBtnHolder" class="btnsBlock _underTabs">
         <a href="javascript:;" class="btn blue slim" title="Remove" id="removeInvoice">Delete</a>
         <a href="javascript:;" class="btn blue slim" title="Save" id="saveInvoice">Save</a>
     </div>
 </div>
-<div class="_invoiceTableWrap">
+<div class="_tableWrap _invoiceTableWrap">
     <table class="list stripedList">
         <colgroup>
             <col width="43px">
@@ -21,7 +21,12 @@
         </colgroup>
         <thead>
         <tr>
-            <th class="centerCell"><input type="checkbox" id="checkAll_invoice" class="checkAll"/></th>
+            <th class="centerCell">
+                <label class="_customCHeckbox">
+                    <input type="checkbox" id="checkAll_invoice" class="checkAll"/>
+                    <span></span>
+                </label>
+            </th>
             <th class="oe_sortable" data-sort="supplier.name.first">Customer<span class="arrow down"></span><span
                     class="arrow up"></span></th>
             <th class="oe_sortable" data-sort="name">Invoice Number<span class="arrow down"></span><span
@@ -44,8 +49,6 @@
                     class="arrow up"></span></th>
             <th class="oe_sortable" data-sort="invoiceDate">Invoice Date<span class="arrow down"></span><span
                     class="arrow up"></span></th>
-            <!--<th class="oe_sortable" data-sort="validated">Validated<span class="arrow down"></span><span-->
-            <!--class="arrow up"></span></th>-->
         </tr>
         </thead>
         <tbody id="listTable">
@@ -55,7 +58,7 @@
         <%var total = 0;%>
         <%var currencyClassVal;%>
         <% collection.forEach(function(invoice, index){ %>
-        <%currencyClassVal = currencyClass(invoice.currency._id)%>
+        <%currencyClassVal = (invoice.currency && invoice.currency._id ? invoice.currency._id.symbol : '');%>
         <% var overdue = 0%>
         <% if(invoice.workflow && (invoice.workflow.status === 'Done')){ %>
         <% overdue = new Date(invoice.paymentDate) - new Date(invoice.dueDate) %>
@@ -63,50 +66,60 @@
         <% overdue = new Date() - new Date(invoice.dueDate) %>
         <% } %>
         <tr data-id="<%=invoice._id%>">
-        <td class="notForm centerCell"><input type="checkbox" value="<%=invoice._id%>" class="checkbox <%=invoice.removable ? '' : 'notRemovable'%>"/>
-        </td>
-        <td><%=(invoice.supplier && invoice.supplier.name) ? invoice.supplier.name.first + ' ' +
-            invoice.supplier.name.last : ''%>
-        </td>
-        <td><%=invoice.name%></td>
-        <td><%=invoice.paymentDate%></td>
-        <td><%=(invoice.salesPerson && invoice.salesPerson.name) ? invoice.salesPerson.name.first + ' ' + invoice.salesPerson.name.last : ''%></td>
-        <td><% if (overdue > 0) {%>
-            <span class="red"><%=Math.ceil(overdue / (1000 * 3600 * 24)) + " days"%></span>
-            <% } else {%>
-            <span><%= invoice.dueDate%></span>
-            <%}%>
-        </td>
-        <td class="<%=currencyClassVal%>"><%=currencySplitter(invoice.paymentInfo.balance.toString())%></td>
-        <td class="paid <%=currencyClassVal%>"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.paid.toString()) : '0.00'%></td>
-        <td class="total <%=currencyClassVal%>"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.total.toString()) : '0.00'%></td>
-        <td id='<%=invoice._id%>'>
-            <%if(invoice.workflow){%>
-            <%if(invoice.workflow.status === 'In Progress'){%>
-            <span class="<%=invoice.workflow.status.toLowerCase().replace(' ', '')%>"><%=invoice.workflow.name%></span>
-            <% } else {%>
-            <%if(invoice.approved){%>
-            <span class="<%=invoice.workflow.name.toLowerCase()%>"><%=invoice.workflow.name%></span>
-            <% } else {%>
-            <span class="notApproved">Not Approved</span>
-            <%}%>
-            <%}%>
-            <% } else {%>
-            <span> </span>
-            <%}%>
-        </td>
-        <td><%=invoice.invoiceDate%></td>
-        <!--<td class="validated"><a href="javascript:;" class="selectList <%=invoice.validated%>"><%=invoice.validated%></a>-->
-        <!--<ul class="newSelectList" style="display: none;">-->
-        <!--<li>Draft</li>-->
-        <!--<li>Done</li>-->
-        <!--</ul>-->
-        <!--</td>-->
+            <td class="notForm centerCell">
+                <label class="_customCHeckbox">
+                    <input type="checkbox" value="<%=invoice._id%>"
+                    <% if (!invoice.removable) { %>
+                    class="checkbox notRemovable" disabled='disabled'
+                    <% } else {%>
+                    class="checkbox"
+                    <% } %>
+                    />
+                    <span></span>
+                </label>
+            </td>
+            <td><%=(invoice.supplier && invoice.supplier.name) ? invoice.supplier.name.first + ' ' +
+                invoice.supplier.name.last : ''%>
+            </td>
+            <td><%=invoice.name%></td>
+            <td><%=invoice.paymentDate%></td>
+            <td><%=(invoice.salesPerson && invoice.salesPerson.name) ? invoice.salesPerson.name.first + ' ' +
+                invoice.salesPerson.name.last : ''%>
+            </td>
+            <td><% if (overdue > 0) {%>
+                <span class="red"><%=Math.ceil(overdue / (1000 * 3600 * 24)) + " days"%></span>
+                <% } else {%>
+                <span><%= invoice.dueDate%></span>
+                <%}%>
+            </td>
+            <td class=""><%=currencyClassVal + currencySplitter(invoice.paymentInfo.balance.toString())%></td>
+            <td class="paid"><%=(invoice.paymentInfo) ?
+                currencyClassVal + currencySplitter(invoice.paymentInfo.paid.toString()) : currencyClassVal + '0.00'%>
+            </td>
+            <td class="total"><%=(invoice.paymentInfo) ?
+                currencyClassVal + currencySplitter(invoice.paymentInfo.total.toString()) : currencyClassVal + '0.00'%>
+            </td>
+            <td id='<%=invoice._id%>'>
+                <%if(invoice.workflow){%>
+                <%if(invoice.workflow.status === 'In Progress'){%>
+                <span class="<%=invoice.workflow.status.toLowerCase().replace(' ', '')%>"><%=invoice.workflow.name%></span>
+                <% } else {%>
+                <%if(invoice.approved){%>
+                <span class="<%=invoice.workflow.name.toLowerCase()%>"><%=invoice.workflow.name%></span>
+                <% } else {%>
+                <span class="notApproved">Not Approved</span>
+                <%}%>
+                <%}%>
+                <% } else {%>
+                <span> </span>
+                <%}%>
+            </td>
+            <td><%=invoice.invoiceDate%></td>
 
-        <% var rate = invoice.currency.rate || 1 %>
-        <%balance += parseFloat(invoice.paymentInfo.balance.toString())/rate %>
-        <%paid += parseFloat(invoice.paymentInfo.paid.toString())/rate %>
-        <%total += parseFloat(invoice.paymentInfo.total.toString())/rate %>
+            <% var rate = invoice.currency.rate || 1 %>
+            <%balance += parseFloat(invoice.paymentInfo.balance.toString())/rate %>
+            <%paid += parseFloat(invoice.paymentInfo.paid.toString())/rate %>
+            <%total += parseFloat(invoice.paymentInfo.total.toString())/rate %>
         </tr>
         <% }) %>
 
@@ -114,7 +127,7 @@
         <% if (collection.length) {%>
         <tfoot id="listTotal">
         <tr>
-            <td colspan="6"></td>
+            <td colspan="6">Total</td>
             <td><span id="balance" class="money"><%=currencySplitter((balance.toFixed(2)).toString())%></span></td>
             <td><span id="paid" class="money"><%=currencySplitter((paid.toFixed(2)).toString())%></span></td>
             <td><span id="total" class="money"><%=currencySplitter((total.toFixed(2)).toString())%></span></td>

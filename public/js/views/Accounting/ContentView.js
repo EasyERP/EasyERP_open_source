@@ -7,10 +7,14 @@ define([
     'collections/paymentMethod/paymentMethods',
     'collections/currency/currencies',
     'collections/paymentTerms/paymentTerms',
+    'collections/accountsCategories/filterCollection',
+    'collections/rates/filterCollection',
     'views/Accounting/paymentMethod/paymentMethodView',
     'views/Accounting/paymentTerms/paymentTermsView',
-    'views/Accounting/currency/currencyView'
-], function (Backbone, _, DashboardTemplate, async, dataService, PayMethodsCollection, CurrencyCollection, PaymentTermsCollection, PaymentMethodView, PaymentTermsView, CurrencyView) {
+    'views/Accounting/currency/currencyView',
+    'views/Accounting/accountsCategories/accCategoryView',
+    'views/Accounting/rates/indexView'
+], function (Backbone, _, DashboardTemplate, async, dataService, PayMethodsCollection, CurrencyCollection, PaymentTermsCollection, AccountsCategoriesCollection, RatesCollection, PaymentMethodView, PaymentTermsView, CurrencyView, AccCategoryView, RatesView) {
     'use strict';
 
     var ContentView = Backbone.View.extend({
@@ -20,13 +24,19 @@ define([
         el         : '#content-holder',
         initialize : function (options) {
             this.startTime = options.startTime;
+            this.type = options.type || 'currency';
 
             this.payMethodsCollection = new PayMethodsCollection();
             this.currencyCollection = new CurrencyCollection();
             this.paymentTermsCollection = new PaymentTermsCollection();
+            this.accountsCategoriesCollection = new AccountsCategoriesCollection();
+            this.ratesCollection = new RatesCollection();
+
             this.currencyCollection.bind('reset', this.renderCurrencies, this);
             this.payMethodsCollection.bind('reset', this.renderPaymentMethods, this);
             this.paymentTermsCollection.bind('reset', this.renderPaymentTerms, this);
+            this.accountsCategoriesCollection.bind('reset', this.renderAccountsCategories, this);
+            this.ratesCollection.bind('reset', this.renderRates, this);
 
             this.render();
         },
@@ -39,6 +49,18 @@ define([
             new CurrencyView({
                 collection: this.currencyCollection
             }).render();
+        },
+
+        renderRates: function () {
+            new RatesView({
+                collection: this.ratesCollection
+            }).render();
+        },
+
+        addHash: function (hash) {
+            var newUrl = '#easyErp/' + this.contentType + '/' + hash;
+
+            Backbone.history.navigate(newUrl, {replace: true});
         },
 
         chooseDetailes: function (e) {
@@ -62,6 +84,8 @@ define([
 
             $thisEl.find('#' + name + '-holder').removeClass('hidden');
 
+            this.addHash($target.attr('data-id'));
+
         },
 
         renderPaymentMethods: function () {
@@ -76,13 +100,36 @@ define([
             }).render();
         },
 
+        renderAccountsCategories: function () {
+            new AccCategoryView({
+                collection: this.accountsCategoriesCollection
+            }).render();
+        },
+
         render: function () {
             this.$el.html(this.template({
-                data: [{_id: 'currency', name: 'Currencies'}, {
+                data: [{
+                    _id : 'currency',
+                    name: 'Currency'
+                }, {
                     _id : 'paymentmethods',
                     name: 'Bank Accounts'
-                }, {_id: 'paymentterms', name: 'Payment Terms'}]
+                }, {
+                    _id : 'paymentterms',
+                    name: 'Payment Terms'
+                }, {
+                    _id : 'accountscategories',
+                    name: 'Chart Of Accounts Categories'
+                }/*, {
+                    _id : 'rates',
+                    name: 'Currency Rates'
+                }*/]
             }));
+
+            this.$el.find('[data-id="' + this.type + '"]').addClass('active');
+            this.$el.find('#' + this.type + '-holder').removeClass('hidden');
+
+            return this;
         }
 
     });

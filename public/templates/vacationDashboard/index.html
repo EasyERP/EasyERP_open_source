@@ -1,4 +1,4 @@
-<span class="openAll"><a class="icon"></a> Expand all</span>
+<span class="openAll"><a class="icon icon-plus"></a>Expand all</span>
 <div class="grid-conatiner">
     <div class="_gridTableWrap">
         <table class="grid dashBoardMargin" cellspacing="0" cellpadding="0">
@@ -40,22 +40,20 @@
                             </span>
                 </td>
                 <td class="employee">
-                            <span>
-                                <%= employee.name || '&nbsp' %>
-                                <a class="icon employeesRow"></a>
-                            </span>
+                    <span><%= employee.name || '&nbsp' %>
+                        <a class="icon icon-plus employeesRow"></a>
+                    </span>
                 </td>
                 <%employee.weekData.forEach(function(week){%>
                 <td class="dashboardWeek <%= week.vacations ? 'withVacation' : ''%> <%=getCellClass(week, self, employee)%>">
                     <%if(week.holidays){%>
                     <span class="viewCount"><%=week.holidays || 0%>d</span>
                     <%}%>
-                                <span class="view">
-                                    <%if(week.vacations){%>
-                                        <span class="vacation <%=getCellSize(week, true)%>"><%=(week.vacations || 0) * 8%> h</span>
-                                    <%}%>
-                                    <span class="vacationHours <%=getCellSize(week, false)%>"><%=week.hours || 0%> / <%=week.projects || 0%> p</span>
-                                </span>
+                    <span class="view"><%if(week.vacations){%>
+                        <span class="vacation <%=getCellSize(week, true)%>"><%=(week.vacations || 0) * 8%> h</span>
+                        <%}%>
+                        <span class="vacationHours <%=getCellSize(week, false)%>"><%=week.hours || 0%> / <%=week.projects || 0%> p</span>
+                    </span>
                 </td>
                 <%})%>
             </tr>
@@ -84,7 +82,8 @@
                 <%})%>
             </tr>
             <% } %>
-            <tr class="projectsFor<%= department.department ? department.department._id: '' %> employeeProjects <%= employee._id%> createWTrack" data-content="project" data-employee="<%=employee._id%>">
+            <tr class="projectsFor<%= department.department ? department.department._id: '' %> employeeProjects <%= employee._id%> createWTrack"
+                data-content="project" data-employee="<%=employee._id%>">
                 <td colspan="2"><span>&nbsp;</span></td>
                 <%employee.weekData.forEach(function(week){%>
                 <td class="createTd <%=isWorking(employee, week) ? '' : 'inactive'%>" data-date="<%=week.dateByWeek%>">
@@ -96,14 +95,10 @@
             </tbody>
         </table>
     </div>
-
     <div class="statisticsAtten stick">
         <table>
-            <tbody id="statistics">
-
-            </tbody>
+            <tbody id="statistics"></tbody>
         </table>
     </div>
-
     <div id='timeRecivingDataFromServer'></div>
 </div>

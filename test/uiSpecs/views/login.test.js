@@ -144,7 +144,7 @@ define([
                 server.respond();
 
                 expect($loginForm).to.have.class('notRegister');
-                expect($errorContainer).to.contain('Wrong Password or such user');
+                expect($errorContainer).to.contain('Wrong password, or user');
                 expect($loginButton).to.exist;
                 expect(customSpy.called).to.be.false;
             });

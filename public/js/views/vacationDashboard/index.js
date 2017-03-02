@@ -32,10 +32,10 @@ define([
     var View = Backbone.View.extend({
         el: '#content-holder',
 
-        contentType: CONSTANTS.DASHBOARD_VACATION,
-
-        template : _.template(mainTemplate),
-        expandAll: false,
+        contentType  : CONSTANTS.DASHBOARD_VACATION,
+        contentHeader: 'Planning',
+        template     : _.template(mainTemplate),
+        expandAll    : false,
 
         events: {
             'click .openAll'                   : 'openAll',
@@ -60,17 +60,10 @@ define([
 
             this.dateByWeek = year * 100 + week;
 
-            if (filter && filter.startDate) {
-                filter.startDate = new Date(filter.startDate);
-                this.momentDate = moment(filter.startDate);
-            } else {
-                this.momentDate = moment().subtract(CONSTANTS.DASH_VAC_WEEK_BEFORE, 'weeks');
-            }
-
-            dashCollection = this.dashCollection = custom.retriveFromCash('dashboardVacation');
-            custom.cacheToApp('DashVacation.filter', this.filter);
+            dashCollection = this.dashCollection = options.collection || custom.retriveFromCash('dashboardVacation');
 
             if (!dashCollection) {
+                options.filter = filter;
                 dashCollection = this.dashCollection = this.fetchData(options);
                 dashCollection.on('reset sort', this.render, this);
             } else {
@@ -139,7 +132,7 @@ define([
                     rows.eq(i).show();
                 }
 
-                self.$el.find('.icon').text('-');
+                self.$el.find('.icon').removeClass('icon-plus').addClass('icon-minus');
                 self.expandAll = true;
             } else {
                 for (i = countEmployees; i >= 0; i--) {
@@ -149,7 +142,7 @@ define([
                     projectsRows.eq(i).hide();
                 }
 
-                self.$el.find('.icon').text('5');
+                self.$el.find('.icon').removeClass('icon-minus').addClass('icon-plus');
                 self.expandAll = false;
             }
         },
@@ -163,10 +156,10 @@ define([
 
             if (display === 'none') {
                 self.$el.find(targetEmployee).show();
-                targetIcon.text('-');
+                targetIcon.removeClass('icon-plus').addClass('icon-minus');
             } else {
                 self.$el.find(targetEmployee).hide();
-                targetIcon.text('5');
+                targetIcon.removeClass('icon-minus').addClass('icon-plus');
             }
         },
 
@@ -423,16 +416,18 @@ define([
             this.$endDate = $('#endDate');
         },
 
-        changeDateRange: function () {
-            var startDateStr = this.$startDate.val();
-            var endDateStr = this.$endDate.val();
-
-            var dashCollection = this.dashCollection;
-            var startDate;
-            var endDate;
+        changeDateRange: function (dateArray) {
+            var dashCollection;
             var year;
             var week;
             var filter;
+
+            if (!dateArray || !dateArray.length) {
+                App.render({
+                    type   : 'error',
+                    message: 'Can\'t change date filter to null'
+                });
+            }
 
             this.startTime = new Date();
 
@@ -441,14 +436,10 @@ define([
 
             this.dateByWeek = year * 100 + week;
 
-            startDateStr = moment.utc(startDateStr);
-            endDate = moment.utc(endDateStr);
-            startDate = moment.utc(startDateStr);
-
             filter = this.filter || custom.retriveFromCash('DashVacation.filter') || {};
-
-            filter.startDate = startDate.toDate();
-            filter.endDate = endDate.toDate();
+            filter.date = {
+                value: dateArray
+            };
 
             dashCollection = this.dashCollection = this.fetchData({
                 filter: filter
@@ -457,6 +448,7 @@ define([
             dashCollection.on('reset sort', this.render, this);
 
             this.filter = filter;
+
             custom.cacheToApp('DashVacation.filter', this.filter);
         },
 
@@ -510,7 +502,7 @@ define([
                 dashboardData = dashboardData.toJSON();
             }
 
-            $('title').text(this.contentType);
+            $('title').text(this.contentHeader);
 
             custom.cacheToApp('dashboardVacation', this.dashCollection);
 
@@ -533,13 +525,7 @@ define([
             $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
             this.calculateStatistics();
 
-            this.findDataPickers();
-
-            if (filter) {
-                url += '/filter=' + encodeURIComponent(JSON.stringify(filter));
-
-                Backbone.history.navigate(url);
-            }
+            /* this.findDataPickers(); */
 
             if (!this.filterView) {
                 if (!App || !App.filtersObject || !App.filtersObject.filtersValues || !App.filtersObject.filtersValues.DashVacation) {

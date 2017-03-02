@@ -17,13 +17,47 @@ define(
         var moneyAmountRegExp = /^([0-9]{1,9})\.?([0-9]{1,2})?$/;
         var emailRegExp = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         var loggedRegExp = /^([0-9]{1,9})\.?([0-9]{1,2})?$/;
+        //var urlRegExp = /(http|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/;
+        var cleanUrlRegExp = /(http|https):\/\/[\w-]+(\.[\w-]+)+(\/?)$/;
         var loginCharRegex = /[a-zA-Z0-9\.]/;
+        var socialFacebookRegExp = /(?:http:\/\/)?(?:www.)?facebook.com\/(?:(?:\w)*#!\/)?(?:pages\/)?(?:[?\w\-]*\/)?(?:profile.php\?id=(\d.*))?([\w\-]*)?/;
+        var socialLinkedinRegExp = /(ftp|http|https):\/\/?((www|\w\w)\.)?([\w[]]|linkedin).com(\w+:{0,1}\w*@)?(\S+)(:([0-9])+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/g;
         var MIN_LENGTH = 2;
         var LOGIN_MIN_LENGTH = 4;
         var WORKFLOW_MIN_LENGTH = 3;
 
+        var errorMessages = {
+            userName         : 'value incorrect. Only A-Z, a-z symbols allowed',
+            invalidNameMsg   : 'field value incorrect. It should start with letter or number',
+            invalidLoginMsg  : 'field value incorrect. Only A-Z, a-z, 0-9, _ @ symbols allowed',
+            notNumberMsg     : 'field should contain a valid integer value',
+            notPriceMsg      : 'field should contain a valid price value with only two digest after dot and contain only the following symbols: 0-9, .',
+            invalidCountryMsg: 'field should contain only letters, whitespaces and ' - ' sign',
+            loggedNotValid   : 'field should contain a valid decimal value with max 1 digit after dot',
+            minLengthMsg     : function (minLength) {
+                return 'field should be at least ' + minLength + ' characters long';
+            },
+
+            invalidMoneyAmountMsg: 'field should contain a positive number with max 2 digits after dot',
+            invalidEmailMsg      : 'field should contain a valid email address',
+            requiredMsg          : 'field can not be empty',
+            invalidCharsMsg      : "field can not contain '~ < > ^ * ₴' signs",
+            invalidStreetMsg     : "field can contain only letters, numbers and '. , - /' signs",
+            invalidPhoneMsg      : "field should contain only numbers and '+ - ( )' signs",
+            invalidZipMsg        : "field should contain only letters, numbers and '-' sing",
+            passwordsNotMatchMsg : 'Password and confirm password field do not match',
+            invalidCleanUrl      : ' can only contain real and active domain name',
+            mustToBePositive     : 'field should has positive value',
+            mustToBeOnlyNubmer   : 'field should contain only numbers',
+            isOutOfRange         : 'is out of range '
+        };
+
         var validateEmail = function (validatedString) {
             return emailRegExp.test(validatedString);
+        };
+
+        var validateUrl = function (validateString) {
+            return cleanUrlRegExp.test(validateString);
         };
 
         var validateLogin = function (validatedString) {
@@ -90,30 +124,16 @@ define(
             return new Date(validatedString).getYear() ? true : false;
         };
 
-        var hasInvalidChars = function (validatedString) {
-            return invalidCharsRegExp.test(validatedString);
+        var validateFacebookSocial = function (validatedString) {
+            return socialFacebookRegExp.test(validatedString);
         };
 
-        var errorMessages = {
-            userName         : 'field value is incorrect. It should contain only the following symbols: A-Z, a-z',
-            invalidNameMsg   : 'field value is incorrect. It should start with letter or number',
-            invalidLoginMsg  : 'field value is incorrect. It should contain only the following symbols: A-Z, a-z, 0-9, _ @',
-            notNumberMsg     : 'field should contain a valid integer value',
-            notPriceMsg      : 'field should contain a valid price value with only two digest after dot and contain only the following symbols: 0-9, .',
-            invalidCountryMsg: 'field should contain only letters, whitespaces and ' - ' sign',
-            loggedNotValid   : 'field should contain a valid decimal value with max 1 digit after dot',
-            minLengthMsg     : function (minLength) {
-                return 'field should be at least ' + minLength + ' characters long';
-            },
+        /*var validateLinkedinSocial = function (validatedString) {
+            return socialLinkedinRegExp.test(validatedString);
+        };*/
 
-            invalidMoneyAmountMsg: 'field should contain a number with max 2 digits after dot',
-            invalidEmailMsg      : 'field should contain a valid email address',
-            requiredMsg          : 'field can not be empty',
-            invalidCharsMsg      : "field can not contain '~ < > ^ * ₴' signs",
-            invalidStreetMsg     : "field can contain only letters, numbers and '. , - /' signs",
-            invalidPhoneMsg      : "field should contain only numbers and '+ - ( )' signs",
-            invalidZipMsg        : "field should contain only letters, numbers and '-' sing",
-            passwordsNotMatchMsg : 'Password and confirm password field do not match'
+        var hasInvalidChars = function (validatedString) {
+            return invalidCharsRegExp.test(validatedString);
         };
 
         var checkDateField = function (errorArray, required, fieldValue, fieldName) {
@@ -146,6 +166,32 @@ define(
             }
         };
 
+        var checkUrl = function (errorArray, required, fieldValue, fieldName) {
+            if (required) {
+                if (!fieldValue) {
+                    errorArray.push([fieldName, errorMessages.requiredMsg].join(' '));
+                }
+            }
+
+            if (!validateUrl(fieldValue)) {
+                errorArray.push([fieldName, errorMessages.invalidCleanUrl].join(' '));
+            }
+            return;
+        };
+
+        var checkPresent = function (errorArray, required, fieldValue, fieldName) {
+            if (required) {
+                if (typeof fieldValue === 'object' && !fieldValue.length) {
+                    errorArray.push([fieldName, errorMessages.requiredMsg].join(' '));
+                    return;
+                }
+                if (!fieldValue) {
+                    errorArray.push([fieldName, errorMessages.requiredMsg].join(' '));
+                    return;
+                }
+            }
+        };
+
         var checkNameField = function (errorArray, required, fieldValue, fieldName) {
             if (required) {
                 if (!fieldValue) {
@@ -167,10 +213,11 @@ define(
                 if (fieldValue) {
                     if (hasInvalidChars(fieldValue)) {
                         errorArray.push([fieldName, errorMessages.invalidCharsMsg].join(' '));
-                        return;
+                        return errorMessages.invalidCharsMsg;
                     }
                     if (!validateName(fieldValue)) {
                         errorArray.push([fieldName, errorMessages.userName].join(' '));
+                        return errorMessages.userName;
                     }
                 }
             }
@@ -347,6 +394,46 @@ define(
                 }
             }
 
+        };
+
+        var checkFacebookSocial = function (errorArray, required, fieldValue, fieldName) {
+            if (required) {
+                if (!fieldValue) {
+                    errorArray.push([fieldName, errorMessages.requiredMsg].join(' '));
+                    return;
+                }
+
+                if (!validateFacebookSocial(fieldValue)) {
+                    errorArray.push([fieldName, errorMessages.invalidLoginMsg].join(' '));
+                }
+            } else {
+                if (fieldValue) {
+                    if (!validateFacebookSocial(fieldValue)) {
+                        errorArray.push([fieldName, errorMessages.invalidLoginMsg].join(' '));
+                    }
+                }
+            }
+        };
+
+        var checkLinkedinSocial = function (errorArray, required, fieldValue, fieldName) {
+            var check = /(ftp|http|https):\/\/?((www|\w\w)\.)?([\w[]]|linkedin).com(\w+:{0,1}\w*@)?(\S+)(:([0-9])+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/g.test(fieldValue);
+
+            if (required) {
+                if (!fieldValue) {
+                    errorArray.push([fieldName, errorMessages.requiredMsg].join(' '));
+                    return;
+                }
+
+                if (!check) {
+                    errorArray.push([fieldName, errorMessages.invalidLoginMsg].join(' '));
+                }
+            } else {
+                if (fieldValue) {
+                    if (!check) {
+                        errorArray.push([fieldName, errorMessages.invalidLoginMsg].join(' '));
+                    }
+                }
+            }
         };
 
         var checkWorkflowNameField = function (errorArray, required, fieldValue, fieldName) {
@@ -623,8 +710,31 @@ define(
             }
         };
 
+        var checkForPositiveValue = function (errorArray, fieldValue, fieldName) {
+            if (fieldValue < 0) {
+                errorArray.push([fieldName, errorMessages.mustToBePositive].join(' '));
+            }
+        };
+
+        var checkForOnlyNumber = function (errorArray, fieldValue, fieldName) {
+            if (isNaN(+fieldValue)) {
+                errorArray.push([fieldName, errorMessages.mustToBeOnlyNubmer].join(' '));
+            }
+        };
+
         var loginCharNotValid = function (char) {
             return !char.match(loginCharRegex);
+        };
+
+        var isOfRange = function (errorArray, fieldValue, fieldName, start, end) {
+
+            if (!end && fieldValue < start) {
+                return errorArray.push([fieldName, errorMessages.isOutOfRange + start + ' - infinity'].join(' '));
+            }
+
+            if (fieldValue < start || fieldValue > end) {
+                errorArray.push([fieldName, errorMessages.isOutOfRange + start + ' - ' + end].join(' '));
+            }
         };
 
         return {
@@ -640,6 +750,7 @@ define(
             checkCountryCityStateField: checkCountryCityStateField,
             checkPhoneField           : checkPhoneField,
             checkNameField            : checkNameField,
+            checkPresent              : checkPresent,
             checkGroupsNameField      : checkGroupsNameField,
             validEmail                : validateEmail,
             withMinLength             : requiredFieldLength,
@@ -657,6 +768,12 @@ define(
             checkPriceField           : checkPriceField,
             checkJobPositionField     : checkJobPositionField,
             checkDateField            : checkDateField,
+            checkUrl                  : checkUrl,
+            checkForPositiveValue     : checkForPositiveValue,
+            checkForOnlyNumber        : checkForOnlyNumber,
+            checkFacebookSocial       : checkFacebookSocial,
+            checkLinkedinSocial       : checkLinkedinSocial,
+            isOfRange                 : isOfRange,
 
             loginCharNotValid: loginCharNotValid
         };

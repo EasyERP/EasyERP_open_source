@@ -49,7 +49,7 @@ define([
 
             this.forSales = options.forSales;
 
-           /* this.render();*/
+            /* this.render();*/
 
             products = new ProductCollection(options);
             products.bind('reset', function () {
@@ -234,7 +234,7 @@ define([
         recalculateDiscount: function (e) {
             var $target = $(e.target);
             var parentTr = $target.closest('tr');
-            var quantity = parseFloat($target.val()/100);
+            var quantity = parseFloat($target.val() / 100);
             var cost = parseFloat(helpers.spaceReplacer(this.$el.find('#totalUntaxes').text()));
             var discount = quantity * cost;
             discount = discount.toFixed(2);
@@ -244,10 +244,10 @@ define([
             this.calculateTotal(discount);
         },
 
-        discountChange : function (e){
+        discountChange: function (e) {
             var $targetEl = $(e.target);
 
-            if($targetEl.val() > 100){
+            if ($targetEl.val() > 100) {
                 $targetEl.val(100);
             }
         },
@@ -289,7 +289,7 @@ define([
 
             total = totalUntax + taxes;
 
-            if (discount){
+            if (discount) {
                 total = total - discount;
             }
 

@@ -1,11 +1,12 @@
 <div id="searchContainer"></div>
-<div id="createBtnHolder" class="btnsBlock">
+<div id="createBtnHolder" class="btnsBlock _underTabs">
     <a href="javascript:;" class="btn blue slim" title="Save" id="savewTrack">Save</a>
     <a href="javascript:;" class="btn blue slim" title="Remove" id="deletewTrack">Delete</a>
-    <a href="javascript:;" class="icon-plus btn blue slim" title="Create" id="createBtn">New</a>
+    <a href="javascript:;" class="icon-plus btn blue slim" title="Create" id="createBtn">New Time Card</a>
     <!--<button id="top-bar-generateBtn" class="red disabled">Generate Invoice</button>-->
-    <button id="top-bar-copyBtn" class="red disabled">Copy</button>
+    <button id="top-bar-copyBtn" class="btn slim red disabled">Copy</button>
 </div>
+<div class="clearfix"></div>
 <div class="_timeCardTableWrap">
     <table class="list stripedList">
         <colgroup>
@@ -30,7 +31,12 @@
         </colgroup>
         <thead>
         <tr>
-            <th class="centerCell"><input type="checkbox" id="checkAll" class="checkAll"/></th>
+            <th class="centerCell">
+                <label class="_customCHeckbox">
+                    <input type="checkbox" id="checkAll" class="checkAll"/>
+                    <span></span>
+                </label>
+            </th>
             <th>Type</th>
             <th class="oe_sortable" data-sort="jobs.name">
                 Sprint<span class="arrow down"></span><span class="arrow up"></span>

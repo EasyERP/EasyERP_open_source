@@ -85,14 +85,12 @@ define([
             var self = this;
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'edit-dialog',
-                title        : 'Create ScheduledPay',
-                width        : '900px',
-                position     : {within: $('#wrapper')},
-                buttons      : [
+                autoOpen   : true,
+                dialogClass: 'edit-dialog',
+                title      : 'Create ScheduledPay',
+                width      : '900px',
+                position   : {within: $('#wrapper')},
+                buttons    : [
                     {
                         id   : 'create-scheduledPay-dialog',
                         class: 'btn blue',

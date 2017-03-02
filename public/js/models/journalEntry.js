@@ -23,6 +23,13 @@ define([
                 if (response.credit) {
                     response.credit = response.credit / 100;
                 }
+
+                if (response.debitFC) {
+                    response.debitFC = response.debitFC / 100;
+                }
+                if (response.creditFC) {
+                    response.creditFC = response.creditFC / 100;
+                }
             }
 
             return response;

@@ -37,7 +37,13 @@ define([
         },
 
         parse: function (response) {
-            var jobs = [response];
+            var jobs;
+
+            if (response.length) {
+                jobs = response;
+            } else {
+                jobs = [response];
+            }
 
             _.map(jobs, function (job) {
                 var i;

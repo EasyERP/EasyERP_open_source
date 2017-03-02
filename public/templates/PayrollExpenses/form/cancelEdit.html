@@ -1,7 +1,12 @@
 <tr data-id="<%=model._id%>">
     <td data-content="number"><%=model.startNumber%></td>
-    <td class="notForm"><input id="<%=model._id%>" type="checkbox"
-                                          value="<%=model._id%>" class="checkbox"/></td>
+    <td class="notForm">
+        <label class="_customCHeckbox">
+            <input id="<%=model._id%>" type="checkbox"
+                   value="<%=model._id%>" class="checkbox"/>
+            <span></span>
+        </label>
+    </td>
     <td class="editable" data-content="employee"><%=model.employee ? model.employee.name.first + ' ' + model.employee.name.last : ''%></td>
     <td data-content="dataKey"><%=model.month + '/' + model.year%></td>
     <td class="editable" data-content="paymentType"><%=model.type ? model.type.name : ''%></td>

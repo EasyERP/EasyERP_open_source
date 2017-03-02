@@ -32,13 +32,11 @@ define([
             var self = this;
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'edit-dialog',
-                title        : 'Create Payment',
-                width        : '900px',
-                buttons      : [
+                autoOpen   : true,
+                dialogClass: 'edit-dialog',
+                title      : 'Create Payment',
+                width      : '900px',
+                buttons    : [
                     {
                         text : 'OK',
                         click: function () {

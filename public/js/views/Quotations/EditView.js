@@ -586,13 +586,11 @@ define([
             }
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'edit-dialog',
-                title        : 'Edit Quotation',
-                width        : '900px',
-                buttons      : buttons
+                autoOpen   : true,
+                dialogClass: 'edit-dialog',
+                title      : 'Edit Quotation',
+                width      : '900px',
+                buttons    : buttons
 
             });
 

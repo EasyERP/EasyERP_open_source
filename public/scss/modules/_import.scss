@@ -274,17 +274,26 @@
   }
 }
 
+._singleRow {
+  display: flex;
+  align-items: center;
+  margin: 5px 0;
+
+  ._singleRowItem + ._singleRowItem {
+    margin-left: 10px;
+  }
+}
+
 ._importTabs {
   .tabListItem {
     span {
-      //display: inline-block !important;
       color: $white;
       line-height: 12px;
     }
 
     ._importStep {
       color: $importStepColor;
-      font-weight: bold;
+      font-family: $semibold-font-family;
     }
   }
 }
@@ -308,7 +317,7 @@
   margin: 40px auto;
   padding: 50px 20px 20px;
   text-align: center;
-  border: 3px dashed $importAttachBorderColor;
+  border: 3px dashed #7eadcc;
   background: $importAttachBg;
 
   .attachFileName {

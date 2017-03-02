@@ -1,55 +1,106 @@
 <div>
-    <table id="wagesPayable" class="list report-list tableFixed">
-        <colgroup span="7">
-            <col span="1" width="3%">
-            <col span="1" width="15%">
-            <col span="1" width="22%">
-            <col span="1" width="18%">
-            <col span="1" width="22%">
-            <col span="1" width="15%">
-            <col span="1" width="5%">
+    <table id="wagesPayable" class="list stripedList">
+        <colgroup>
+            <col width="180px">
+            <col width="180px">
+            <col width="150px">
+            <col width="180px">
+            <col width="120px">
+            <col width="120px">
         </colgroup>
         <thead>
-        <th>#</th>
-        <th>Employee</th>
-        <th>Date</th>
-        <th>Journal</th>
-        <th>Debit Account</th>
-        <th>Credit Account</th>
-        <th>Sum</th>
+        <tr>
+            <th>Number</th>
+            <th>Accounting date</th>
+            <th>Source document</th>
+            <th>Account</th>
+            <th>Debit</th>
+            <th>Credit</th>
+        </tr>
         </thead>
 
         <tbody id="report-TableBody">
-        <%var total = 0;%>
-        <%wagesPayable.forEach(function (journalEntry, index) {%>
-        <% if (journalEntry.debit){ %>
-        <tr data-id="<%=journalEntry._id%>" class="mainTr">
-            <td><%=index + 1%></td>
-            <td><%=journalEntry.employee%></td>
-            <td><%=dateFormat(journalEntry.date)%></td>
-            <td><%=journalEntry.journalName%></td>
-            <td><%=journalEntry.journal.debitAccount.name%></td>
-            <td><%=journalEntry.journal.creditAccount.name%></td>
-            <td><%=currencySplitter(journalEntry.debit.toFixed(2))%></td>
-            <%total += journalEntry.debit%>
+        <%var totalDebit = 0;%>
+        <%var totalCredit = 0;%>
+        <%var checkObj = {};%>
+        <% var className = 1;%>
+        <% var timestamp = wagesPayable.length ? wagesPayable[0].timestamp : null;%>
+        <% wagesPayable.forEach(function(journalEntry, index){ %>
+
+        <% className = (timestamp === journalEntry.timestamp) ? className : className * (-1);%>
+        <% timestamp = journalEntry.timestamp;%>
+
+        <% var currency = journalEntry.currency && journalEntry.currency._id ? journalEntry.currency._id.symbol : '';%>
+        <%if (!checkObj[journalEntry.timestamp]) {%>
+        <%checkObj[journalEntry.timestamp] = true;%>
+        <tr data-index="<%= className %>" data-id="<%=journalEntry._id%>">
+
+            <td><%=journalEntry.timestamp ? 'JE_' + journalEntry.timestamp : ''%></td>
+            <!--
+                <td><%=journalEntry.journal ? journalEntry.journal.name : ''%></td>
+            -->
+            <td><%=journalEntry.date%></td>
+
+            <td><%=journalEntry.sourceDocument.name%></span>
+            </td>
+
+            <td><%=journalEntry.account ? journalEntry.account.name : ''%></td>
+
+            <td class="<%=journalEntry.debit? 'money' : ''%>" data-amount="<%= journalEntry.debit%>">
+                <%=journalEntry.debit ?
+                currencySplitter(journalEntry.debit.toFixed(2)) : '&nbsp'%>
+                <%if (journalEntry.debitFC) {%>
+                (<%=currency %><%=currencySplitter(journalEntry.debitFC.toFixed(2))%>)
+                <%}%>
+
+                <%totalDebit += journalEntry.debit; %>
+            </td>
+
+            <td class="<%=journalEntry.credit ? 'money' : ''%>" data-amount="<%=journalEntry.credit%>">
+                <%=journalEntry.credit ?
+                currencySplitter(journalEntry.credit.toFixed(2)) : '&nbsp'%>
+                <%if (journalEntry.creditFC) {%>
+                (<%=currency %><%=currencySplitter(journalEntry.creditFC.toFixed(2))%>)
+                <%}%>
+
+                <%totalCredit += journalEntry.credit; %>
+
+            </td>
         </tr>
+
         <%} else {%>
-        <tr data-id="<%=journalEntry._id%>" class="mainTr">
-            <td><%=index + 1%></td>
-            <td><%=journalEntry.employee%></td>
-            <td><%=dateFormat(journalEntry.date)%></td>
-            <td><%=journalEntry.journalName%></td>
-            <td><%=journalEntry.journal.debitAccount.name%></td>
-            <td><%=journalEntry.journal.creditAccount.name%></td>
-            <td><%=currencySplitter(journalEntry.credit.toFixed(2))%></td>
-            <%total += journalEntry.credit%>
+        <tr data-index="<%= className %>" data-id="<%=journalEntry._id%>">
+
+            <td colspan="3"></td>
+
+            <td><%=journalEntry.account ? journalEntry.account.name : ''%></td>
+
+            <td class="<%=journalEntry.debit? 'money' : ''%>" data-amount="<%= journalEntry.debit%>">
+                <%=journalEntry.debit ?
+                currencySplitter(journalEntry.debit.toFixed(2)) : '&nbsp'%>
+                <%if (journalEntry.debitFC) {%>
+                (<%=currency %><%=currencySplitter(journalEntry.debitFC.toFixed(2))%>)
+                <%}%>
+                <%totalDebit += journalEntry.debit; %>
+            </td>
+
+            <td class="<%=journalEntry.credit ? 'money' : ''%>" data-amount="<%=journalEntry.credit%>">
+                <%=journalEntry.credit ?
+                currencySplitter(journalEntry.credit.toFixed(2)) : '&nbsp'%>
+                <%if (journalEntry.creditFC) {%>
+                (<%=currency %><%=currencySplitter(journalEntry.creditFC.toFixed(2))%>)
+                <%}%>
+                <%totalCredit += journalEntry.credit; %>
+            </td>
         </tr>
         <%}%>
-        <%})%>
+        <% }) %>
+
         </tbody>
         <tfoot>
-        <td colspan="6"></td>
-        <td><%=currencySplitter(total.toFixed(2))%></td>
+        <td colspan="4"></td>
+        <td><%=currencySplitter(totalDebit.toFixed(2))%></td>
+        <td><%=currencySplitter(totalCredit.toFixed(2))%></td>
         </tfoot>
     </table>
 </div>

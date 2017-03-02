@@ -289,8 +289,8 @@ define([
             if (this.forSales) {
                 productItemContainer.append(
                     new ProductItemView({
-                        canBeSold: true,
-                        quotations: true,
+                        canBeSold     : true,
+                        quotations    : true,
                         currencySymbol: this.currencySymbol
                     }).render().el
                 );
@@ -307,13 +307,11 @@ define([
             var curDate = new Date();
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'edit-dialog',
-                title        : 'Create Quotation',
-                width        : '950px',
-                buttons      : [
+                autoOpen   : true,
+                dialogClass: 'edit-dialog',
+                title      : 'Create Quotation',
+                width      : '950px',
+                buttons    : [
                     {
                         id   : 'create-person-dialog',
                         text : 'Create',

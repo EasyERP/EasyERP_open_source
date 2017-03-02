@@ -15,7 +15,11 @@ var Categories = function (models, event) {
 
         ProductCategory
             .find({parent: objectId(parentId)})
-            .sort({fullName: 1, nestingLevel: 1, sequence: 1})
+            .sort({
+                fullName    : 1,
+                nestingLevel: 1,
+                sequence    : 1
+            })
             .populate('parent')
             .exec(function (err, categories) {
                 if (err) {
@@ -37,6 +41,12 @@ var Categories = function (models, event) {
         ProductCategory
             .findById(id)
             .populate('parent')
+            .populate('debitAccount', 'name')
+            .populate('creditAccount', 'name')
+            .populate('taxesAccount', 'name')
+            .populate('bankExpensesAccount', 'name')
+            .populate('otherIncome', 'name')
+            .populate('otherLoss', 'name')
             .exec(function (err, category) {
                 if (err) {
                     return next(err);
@@ -46,22 +56,59 @@ var Categories = function (models, event) {
     }
 
     this.getForDd = function (req, res, next) {
+        var Product = models.get(req.session.lastDb, 'Product', ProductsSchema);
         var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
 
         if (req.query.id || req.params.id) {
             return getById(req, res, next);
         }
 
-        ProductCategory
-            .find()
-            .sort({fullName: 1, nestingLevel: 1, sequence: 1})
-            .populate('parent')
-            .exec(function (err, categories) {
-                if (err) {
-                    return next(err);
-                }
-                res.status(200).send({data: categories});
-            });
+        Product.aggregate([{
+            $project: {
+                categories: '$info.categories'
+            }
+        }, {
+            $unwind: {
+                path                      : '$categories',
+                preserveNullAndEmptyArrays: true
+            }
+        }, {
+            $group: {
+                _id  : '$categories',
+                count: {$sum: 1}
+            }
+        }], function (err, categoriesCount) {
+            if (err) {
+                return next(err);
+            }
+
+            ProductCategory
+                .find()
+                .sort({
+                    /*fullName: 1,*/
+                    nestingLevel: 1,
+                    sequence    : 1
+                })
+                .populate('parent')
+                .lean()
+                .exec(function (err, categories) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    categories = categories.map(function (el) {
+                        var count = _.find(categoriesCount, function (catCount) {
+                            return catCount && catCount._id ? catCount._id.toString() === el._id.toString() : null;
+                        });
+
+                        el.productsCount = count ? count.count : 0;
+
+                        return el;
+                    });
+                    res.status(200).send({data: categories});
+                });
+        });
+
     };
 
     this.getById = function (req, res, next) {
@@ -110,7 +157,7 @@ var Categories = function (models, event) {
                 return callback(err);
             }
 
-            if (!result.parent) {
+            if (!result || !result.parent) {
                 return callback(null);
             }
 
@@ -145,13 +192,21 @@ var Categories = function (models, event) {
             }
 
             newModelId = category._id;
+            req.query.id = newModelId;
 
-            updateParentsCategory(req, newModelId, parentId, 'add', function (error) {
-                if (error) {
-                    return next(error);
+            if (!body.parent) {
+                return getById(req, res, next);
+                //res.status(200).send(category);
+                return;
+            }
+
+            updateParentsCategory(req, newModelId, parentId, 'add', function () {
+                if (err) {
+                    return next(err);
                 }
 
-                res.status(200).send(category);
+                return getById(req, res, next);
+                //res.status(200).send(category);
             });
         });
     };
@@ -305,7 +360,7 @@ var Categories = function (models, event) {
                     updateParentsCategory(req, _id, newParentId, 'add', cb);
                 },
 
-                function(cb) {
+                function (cb) {
                     updateFullName(_id, ProductCategory, cb);
                 }
             ], function (err) {
@@ -313,10 +368,10 @@ var Categories = function (models, event) {
                     return next(err);
                 }
 
-                res.send(200, {success: 'Category updated success'});
+                getById(req, res, next);
+                //res.send(200, {success: 'Category updated success'});
             });
         });
-
 
     };
 
@@ -475,7 +530,6 @@ var Categories = function (models, event) {
                     return next(err);
                 }
 
-                //res.status(200).send({success: 'Category was removed'}
                 res.status(200).send(result);
             });
 

@@ -16,7 +16,7 @@
 
         initialize: function (options) {
             this.collection = options.collection;
-            this.render();
+            // this.render();
         },
 
         goToCharts: function (e) {

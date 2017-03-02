@@ -2,10 +2,11 @@ var mongoose = require('mongoose');
 
 var Module = function (models) {
     'use strict';
-    
+
     var CustomChartSchema = mongoose.Schemas.CustomChart;
     var CustomDashboardSchema = mongoose.Schemas.CustomDashboard;
     var async = require('async');
+    var _ = require('lodash');
 
     this.restoreCharts = function (req, res, next) {
         var Chart = models.get(req.session.lastDb, 'CustomChart', CustomChartSchema);
@@ -24,108 +25,144 @@ var Module = function (models) {
             });
     };
 
+    this.update = function (req, res, next) {
+        var Chart = models.get(req.session.lastDb, 'CustomChart', CustomChartSchema);
+        var data = req.body;
+        var id = req.params.id;
+
+        Chart.findByIdAndUpdate(id, data, {new: true}, function (err, charts) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(charts);
+
+        });
+    };
+
     this.createCharts = function (req, res, next) {
         var Chart = models.get(req.session.lastDb, 'CustomChart', CustomChartSchema);
         var Dashboard = models.get(req.session.lastDb, 'CustomDashboard', CustomDashboardSchema);
         var data = req.body;
-        var dashboardId = data[0].dashboard;
-        var description = data[0].dashboardDescription;
-        var name = data[0].dashboardName;
+        var dashboardId = data.dashboard;
+        var description = data.dashboardDescription;
+        var name = data.dashboardName;
         var chartsIds = [];
         var i;
 
         async.waterfall([
-            function (waterfallCb) {
+                function (waterfallCb) {
 
-                if (Object.keys(data[0]).indexOf('name') + 1) {
+                    var id = data._id;
 
-                    Chart.create(data, function (err, charts) {
+                    if (!id || id.length < 24) {
+                        id = mongoose.Types.ObjectId();
+                    }
+
+                    delete data._id;
+
+                    id = id.toString();
+
+                    Chart.update({_id: id}, data, {upsert: true}, function (err, charts) {
+                        var modelId;
+
                         if (err) {
-                            return next(err);
+                            return waterfallCb(err);
                         }
 
-                        for (i = charts.length; i--;) {
-
-                            chartsIds.push({
-                                _id: charts[i]._id
-                            });
+                        if (charts && charts.upserted && charts.upserted.length) {
+                            console.log('upserted');
                         }
+
+                        modelId = charts && charts.upserted && charts.upserted.length ? charts.upserted[0]._id : id;
+
+                        chartsIds.push(modelId);
 
                         waterfallCb();
+
                     });
+                },
 
-                } else {
-                    waterfallCb();
-                }
-            },
-            function (waterfallCb) {
+                function (waterfallCb) {
 
-                Dashboard.findByIdAndUpdate(dashboardId, {
-                    $set: {
-                        name       : name,
-                        description: description
-                    }
-                })
-                    .exec(function (error, dashboard) {
-                        if (error) {
-                            return next(error);
+                    Dashboard.findByIdAndUpdate(dashboardId, {
+                        $set: {
+                            name       : name,
+                            description: description
                         }
-
-                        waterfallCb(null, dashboard);
-                    });
-            },
-            function (dashboard, waterfallCb) {
-
-                if (chartsIds.length) {
-                    Dashboard.findByIdAndUpdate(dashboardId, {$push: {charts: {$each: chartsIds}}})
-                        .exec(function (error, dashboards) {
+                    })
+                        .exec(function (error, dashboard) {
                             if (error) {
                                 return next(error);
                             }
 
-                            waterfallCb(null, dashboards);
+                            waterfallCb(null, dashboard);
                         });
-                } else {
+                },
 
-                    waterfallCb(null, dashboard);
+                function (dashboard, waterfallCb) {
+
+                    if (chartsIds.length) {
+                        Dashboard.findByIdAndUpdate(dashboardId, {$push: {charts: {$each: chartsIds}}})
+                            .exec(function (error, dashboards) {
+                                if (error) {
+                                    return next(error);
+                                }
+
+                                waterfallCb(null, dashboards);
+                            });
+                    } else {
+                        Dashboard.findByIdAndUpdate(dashboardId, {$set: {charts: []}})
+                            .exec(function (error, dashboards) {
+                                if (error) {
+                                    return next(error);
+                                }
+
+                                waterfallCb(null, dashboards);
+                            });
+                    }
                 }
-            }
-        ], function (error, dashboard) {
-            if (error) {
-                return next(error);
-            }
+            ], function (error, dashboard) {
+                if (error) {
+                    return next(error);
+                }
 
-            res.status(200).send(dashboard);
-        });
+                res.status(200).send(dashboard);
+            }
+        );
     };
 
     this.deleteCharts = function (req, res, next) {
         var Chart = models.get(req.session.lastDb, 'CustomChart', CustomChartSchema);
         var Dashboard = models.get(req.session.lastDb, 'CustomDashboard', CustomDashboardSchema);
-        var dashboardId = Object.keys(req.body);
+        var chartIds = Object.keys(req.body);
 
-        Chart
-            .remove({
-                dashboard: dashboardId
-            })
-            .exec(function (err, charts) {
+        async.each(chartIds, function (id, cb) {
+            if (id && id.length < 24) {
+                return cb();
+            }
+
+            Chart.findByIdAndRemove(id, function (err, chart) {
                 if (err) {
                     return next(err);
                 }
 
-                Dashboard.findByIdAndUpdate(dashboardId, {
-                    $set: {
-                        charts: []
+                Dashboard.findByIdAndUpdate(chart.dashboard, {$pull: {charts: chart._id}}, function (error, dashboard) {
+                    if (error) {
+                        return cb(error);
                     }
-                })
-                    .exec(function (error, dashboard) {
-                        if (error) {
-                            return next(error);
-                        }
 
-                        res.status(200).send(dashboard);
-                    });
+                    cb();
+                });
             });
+        }, function (err) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send();
+        });
+
     };
 };
 

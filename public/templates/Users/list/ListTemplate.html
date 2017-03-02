@@ -1,6 +1,14 @@
 <% usersCollection.forEach(function(user, index){ %>
 <tr data-index="<%= index %>" data-id="<%= user._id%>">
-    <td class="centerCell"><input type="checkbox" value="<%=user._id%>" class="checkbox"/></td>
+    <td class="centerCell checkbox">
+        <label class="_customCHeckbox">
+            <input type="checkbox" value="<%=user._id%>" class="checkbox"/>
+            <span></span>
+        </label>
+    </td>
+    <td>
+        <img src="<%= user.imageSrc%>" alt="Avatar" class="iconEmployee">
+    </td>
     <td><%=user.login%></td>
     <td><%=user.email%></td>
     <td><%=user.department ? user.department : ''%></td>

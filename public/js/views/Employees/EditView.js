@@ -4,9 +4,12 @@ define([
     'Underscore',
     'text!templates/Employees/EditTemplate.html',
     'text!templates/Employees/EditTransferTemplate.html',
-    'views/Notes/NoteView',
-    'views/dialogViewBase',
+    'text!templates/myProfile/ChangePassword.html',
+    'views/Editor/NoteView',
+  'views/Editor/AttachView',
+  'views/dialogViewBase',
     'models/TransferModel',
+    'models/UsersModel',
     'collections/transfer/editCollection',
     'common',
     'populate',
@@ -14,15 +17,19 @@ define([
     'helpers/keyCodeHelper',
     'constants',
     'helpers',
-    'dataService'
+    'dataService',
+    'mixins/changePassword'
 ], function (Backbone,
              $,
              _,
              EditTemplate,
              EditTransferTemplate,
+             ChangePassTempl,
              NoteView,
+             AttachView,
              ParentView,
              TransferModel,
+             UsersModel,
              EditCollection,
              common,
              populate,
@@ -30,33 +37,34 @@ define([
              keyCodes,
              CONSTANTS,
              helpers,
-             dataService) {
+             dataService,
+             changePasswordMixIn) {
     'use strict';
     var EditView = ParentView.extend({
-        el            : '#content-holder',
-        contentType   : 'Employees',
-        imageSrc      : '',
-        template      : _.template(EditTemplate),
-        templateEdit  : _.template(EditTransferTemplate),
-        responseObj   : {},
-        editCollection: null,
-        changedModels : {},
-        removeTransfer: [],
+        el             : '#content-holder',
+        contentType    : 'Employees',
+        imageSrc       : '',
+        UsersModel     : UsersModel,
+        template       : _.template(EditTemplate),
+        templateEdit   : _.template(EditTransferTemplate),
+        changePassTempl: _.template(ChangePassTempl),
+        responseObj    : {},
+        editCollection : null,
+        changedModels  : {},
+        removeTransfer : [],
 
         events: {
             'mouseenter .avatar'                                   : 'showEdit',
             'mouseleave .avatar'                                   : 'hideEdit',
             'click .endContractReasonList, .withEndContract .arrow': 'showEndContractSelect',
             'click .withEndContract .newSelectList li'             : 'endContract',
-            // 'click .newSelectList li:not(.miniStylePagination, #selectInput)': 'chooseOption',
             'click td.editable'                                    : 'editJob',
             'click #update'                                        : 'addNewRow',
             'keydown .salary'                                      : 'validateNumbers',
-            'click .fa-trash'                                      : 'deleteRow',
-            'click #jobPosition,#department,#manager,#jobType'     : 'showNotification',
+            'click .icon-trash'                                    : 'deleteRow',
             'change .editable '                                    : 'setEditable',
-            'keydown input.editing'                                : 'keyDown'
-
+            'keydown input.editing'                                : 'keyDown',
+            'click #changePassword'                                : 'changePassword'
         },
 
         initialize: function (options) {
@@ -78,6 +86,7 @@ define([
             isSalary = transfers[0];
             isSalary = isSalary ? isSalary.salary : false;
             isSalary = !!(isSalary || isSalary === 0);
+
             this.isSalary = isSalary;
 
             this.editCollection = new EditCollection(transfers);
@@ -133,7 +142,7 @@ define([
             this.removeTransfer = [];
             this.changedModels = {};
 
-            this.render();
+            this.render(options);
         },
 
         keyDown: function (e) {
@@ -158,6 +167,7 @@ define([
         },
 
         deleteRow: function (e) {
+            var self = this;
             var target = $(e.target);
             var tr = target.closest('tr');
             var transferId = tr.attr('id');
@@ -171,7 +181,8 @@ define([
                 transfer = this.editCollection.get(prevTrId);
                 editRow = this.templateEdit({
                     transfer        : transfer.toJSON(),
-                    currencySplitter: helpers.currencySplitter
+                    currencySplitter: helpers.currencySplitter,
+                    isForProfile    : self.isForProfile
                 });
                 prevTr.after(editRow);
                 prevTr.remove();
@@ -299,11 +310,19 @@ define([
         },
 
         renderRemoveBtn: function () {
-            var table = this.$el.find('#hireFireTable');
-            var trs = table.find('tr');
-            var removeBtn = CONSTANTS.TRASH_BIN;
+            var table;
+            var trs;
+            var removeBtn;
             var lastTr;
             var status;
+
+            if (this.isForProfile) {
+                return;
+            }
+
+            table = this.$el.find('#hireFireTable');
+            trs = table.find('tr');
+            removeBtn = CONSTANTS.TRASH_BIN;
 
             trs.find('td:first-child').text('');
             lastTr = trs.last();
@@ -529,7 +548,7 @@ define([
                 }
 
             } else {
-                $target.parents('dd').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
+                $target.parents('ul').closest('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
             }
         },
 
@@ -576,18 +595,16 @@ define([
             var contractEndReason = $(e.target).text();
 
             this.activeTab();
-
             this.addNewRow(null, contractEndReason);
+            this.currentModel.set('_isFire', true);
         },
 
         saveItem: function () {
             var $thisEl = this.$el;
             var weeklyScheduler;
-            var transferArray;
             var homeAddress;
             var dateBirthSt;
             var self = this;
-            var previousDep;
             var nationality;
             var jobPosition;
             var relatedUser;
@@ -614,12 +631,11 @@ define([
             var event;
             var data;
             var date;
-            var info;
             var haveSalary;
 
             this.setChangedValueToModel();
 
-            relatedUser = $thisEl.find('#relatedUsersDd').attr('data-id') || null;
+            // relatedUser = $thisEl.find('#relatedUsersDd').attr('data-id') || null;
             coach = $.trim($thisEl.find('#coachDd').attr('data-id')) || null;
             whoCanRW = $thisEl.find("[name='whoCanRW']:checked").val();
             dateBirthSt = helpers.setTimeToDate($.trim(self.$el.find('#dateBirth').val()));
@@ -659,7 +675,7 @@ define([
                 var _event;
 
                 _$tr = $thisEl.find(_$tr);
-                _date = $.trim(_$tr.find('td').eq(2).text());
+                _date = $.trim(_$tr.find('td.date').text());
                 _date = _date ? helpers.setTimeToDate(new Date(_date)) : helpers.setTimeToDate(new Date());
                 _event = _$tr.attr('data-content');
 
@@ -695,11 +711,9 @@ define([
                     last : $.trim($thisEl.find('#last').val())
                 },
 
-                gender        : gender,
-                jobType       : jobType,
-                marital       : marital,
-                employmentType: employmentType,
-                workAddress   : {
+                gender     : gender,
+                marital    : marital,
+                workAddress: {
                     street : $.trim($thisEl.find('#street').val()),
                     city   : $.trim($thisEl.find('#city').val()),
                     state  : $.trim($thisEl.find('#state').val()),
@@ -721,39 +735,44 @@ define([
                     mobile: $.trim($thisEl.find('#mobile').val())
                 },
 
-                officeLocation : $.trim($thisEl.find('#officeLocation').val()),
-                bankAccountNo  : $.trim($thisEl.find('#bankAccountNo').val()),
-                relatedUser    : relatedUser,
-                department     : department,
-                jobPosition    : jobPosition,
-                weeklyScheduler: weeklyScheduler,
-                manager        : manager,
-                coach          : coach,
-                identNo        : $.trim($thisEl.find('#identNo').val()),
-                passportNo     : $.trim($thisEl.find('#passportNo').val()),
-                otherId        : $.trim($thisEl.find('#otherId').val()),
-                homeAddress    : homeAddress,
-                dateBirth      : dateBirthSt,
-                source         : sourceId,
-                imageSrc       : self.imageSrc,
-                nationality    : nationality,
-                isEmployee     : isEmployee,
-                lastFire       : lastFire,
-                groups         : {
+                officeLocation: $.trim($thisEl.find('#officeLocation').val()),
+                bankAccountNo : $.trim($thisEl.find('#bankAccountNo').val()),
+                identNo       : $.trim($thisEl.find('#identNo').val()),
+                passportNo    : $.trim($thisEl.find('#passportNo').val()),
+                otherId       : $.trim($thisEl.find('#otherId').val()),
+                homeAddress   : homeAddress,
+                dateBirth     : dateBirthSt,
+                imageSrc      : self.imageSrc,
+                nationality   : nationality,
+                isEmployee    : isEmployee,
+                isFire        : this.currentModel.get('_isFire'),
+                lastFire      : lastFire,
+                groups        : {
                     owner: $thisEl.find('#allUsersSelect').attr('data-id') || null,
                     users: usersId,
                     group: groupsId
-                },
+                }
+                ,
 
                 whoCanRW: whoCanRW,
                 hire    : hireArray,
                 fire    : fireArray
             };
 
+            if (!this.isForProfile) {
+                // data.relatedUser = relatedUser;
+                data.department = department;
+                data.jobPosition = jobPosition;
+                data.weeklyScheduler = weeklyScheduler;
+                data.employmentType = employmentType;
+                data.manager = manager;
+                data.coach = coach;
+                data.source = sourceId;
+                data.jobType = jobType;
+            }
             if (!haveSalary) {
                 delete data.transfer;
             }
-
             if (!isEmployee) {
                 data.workflow = CONSTANTS.END_CONTRACT_WORKFLOW_ID;
             }
@@ -870,24 +889,55 @@ define([
             this.$el.find('.edited').removeClass('edited');
         },
 
-        render: function () {
+        render: function (options) {
+            var self = this;
             var $lastElement;
             var $firstElement;
             var $jobPosElement;
             var $departmentElement;
             var $projectManagerElement;
-            var formString = this.template({
-                model           : this.currentModel.toJSON(),
-                currencySplitter: helpers.currencySplitter
-            });
+            var isForProfile = !!options.currentUser;
+            var timezoneOffset = (new Date()).getTimezoneOffset();
             var transfer = this.currentModel.toJSON().transfer;
             var lastTransfer = transfer[transfer.length - 1];
-            var editRow;
-            var self = this;
-            var notDiv;
-            var $thisEl;
-            var lastTr;
+            var dialogOptions = {
+                dialogClass: 'edit-dialog',
+                width      : 1000,
+                buttons    : {
+                    save: {
+                        text : 'Save',
+                        class: 'btn blue',
+                        click: self.saveItem
+                    }
+                }
+            };
             var firstEL = false;
+            var login = '';
+            var formString;
+            var timezone;
+            var editRow;
+            var $thisEl;
+            var notDiv;
+            var lastTr;
+
+            if (timezoneOffset < 0) {
+                timezone = ('UTC +' + (timezoneOffset / 60) * (-1));
+            } else {
+                timezone = ('UTC -' + (timezoneOffset / 60) * (-1));
+            }
+
+            if (isForProfile) {
+                login = App.currentUser.login || '';
+                this.isForProfile = true;
+            }
+
+            formString = this.template({
+                model           : this.currentModel.toJSON(),
+                currencySplitter: helpers.currencySplitter,
+                isForProfile    : isForProfile,
+                timezone        : timezone,
+                login           : login
+            });
 
             if (lastTransfer.status === 'transfer') {
                 lastTransfer = transfer[transfer.length - 2] || null;
@@ -896,7 +946,8 @@ define([
 
             editRow = this.templateEdit({
                 transfer        : lastTransfer,
-                currencySplitter: helpers.currencySplitter
+                currencySplitter: helpers.currencySplitter,
+                isForProfile    : isForProfile
             });
 
             if (this.currentModel.get('dateBirth')) {
@@ -907,52 +958,65 @@ define([
                 });
             }
 
-            this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                dialogClass  : 'edit-dialog',
-                width        : 1000,
-                buttons      : {
-                    save: {
-                        text : 'Save',
-                        class: 'btn blue',
-                        click: self.saveItem
-                    },
+            if (!isForProfile) {
+                dialogOptions.buttons.cancel = {
+                    text : 'Cancel',
+                    class: 'btn',
+                    click: self.hideDialog
+                };
+                dialogOptions.buttons.delete = {
+                    text : 'Delete',
+                    class: 'btn',
+                    click: self.deleteItem
+                };
+            } else {
+                dialogOptions.buttons.close = {
+                    text : 'Close',
+                    class: 'btn',
+                    click: self.hideDialog
+                };
+            }
 
-                    cancel: {
-                        text : 'Cancel',
-                        class: 'btn',
-                        click: self.hideDialog
-                    },
-
-                    delete: {
-                        text : 'Delete',
-                        class: 'btn',
-                        click: self.deleteItem
-                    }
-                }
-            });
+            this.$el = $(formString).dialog(dialogOptions);
             $thisEl = this.$el;
 
-            if (firstEL) {
-                lastTr = $thisEl.find('#transfersTable');
-                lastTr.html(editRow);
-            } else {
-                if (transfer.length === 1 && lastTransfer) {
+            if (!isForProfile) {
+                $thisEl.on('click', '#jobPosition,#department,#manager,#jobType', self.showNotification);
+
+                if (firstEL) {
                     lastTr = $thisEl.find('#transfersTable');
-                    lastTr.append(editRow);
-                } else if (lastTransfer) {
-                    lastTr = $thisEl.find('.transfer').last();
-                    lastTr.after(editRow);
+                    lastTr.html(editRow);
+                } else {
+                    if (transfer.length === 1 && lastTransfer) {
+                        lastTr = $thisEl.find('#transfersTable');
+                        lastTr.append(editRow);
+                    } else if (lastTransfer) {
+                        lastTr = $thisEl.find('.transfer').last();
+                        lastTr.after(editRow);
+                    }
                 }
             }
 
-            notDiv = $thisEl.find('.attach-container');
+            notDiv = $thisEl.find('#attach-container');
+
+          this.editorView = new NoteView({
+            model      : this.currentModel,
+            contentType: 'Employees',
+            onlyNote: true
+          });
+
             notDiv.append(
-                new NoteView({
-                    model      : this.currentModel,
-                    contentType: self.contentType
-                }).render().el
+              this.editorView.render().el
             );
+
+          $thisEl.find('.attachments').append(
+            new AttachView({
+              model      : this.currentModel,
+              contentType: 'Employees',
+              noteView   : this.editorView,
+              forDoc: true
+            }).render().el
+          );
 
             this.renderAssignees(this.currentModel);
 
@@ -1014,5 +1078,9 @@ define([
 
     });
 
+    EditView = changePasswordMixIn(EditView);
+
     return EditView;
 });
+
+

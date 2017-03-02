@@ -3,16 +3,22 @@
     'Underscore',
     'jQuery',
     'text!templates/Users/EditTemplate.html',
+    'text!templates/myProfile/ChangePassword.html',
+    'models/UsersModel',
     'common',
     'populate',
     'Validation',
-    'constants'
-], function (Backbone, _, $, EditTemplate, common, populate, Validation, CONSTANTS) {
+    'constants',
+    'mixins/changePassword',
+    'views/selectView/selectView'
+], function (Backbone, _, $, EditTemplate, ChangePassTempl, UsersModel, common, populate, Validation, CONSTANTS, changePasswordMixIn, SelectView) {
     var EditView = Backbone.View.extend({
-        el         : '#content-holder',
-        contentType: 'Users',
-        imageSrc   : '',
-        template   : _.template(EditTemplate),
+        el             : '#content-holder',
+        contentType    : 'Users',
+        imageSrc       : '',
+        UsersModel     : UsersModel,
+        template       : _.template(EditTemplate),
+        changePassTempl: _.template(ChangePassTempl),
 
         initialize: function (options) {
             _.bindAll(this, 'saveItem');
@@ -20,6 +26,7 @@
             this.currentModel = options.model || options.collection.getElement();
             this.currentModel.urlRoot = '/users';
             this.responseObj = {};
+            this.isForProfile = App.currentUser && App.currentUser._id === this.currentModel.id;
             this.render();
         },
 
@@ -32,21 +39,42 @@
             'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
             'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect',
             click                                                             : 'hideNewSelect',
-            'keypress #login'                                                 : 'checkLoginInputKey'
+            'keypress #login'                                                 : 'checkLoginInputKey',
+            'click #changePassword'                                           : 'changePassword'
         },
 
         notHide: function () {
             return false;
         },
 
-        showNewSelect: function (e, prev, next) {
-            populate.showSelect(e, prev, next, this);
+        showNewSelect: function (e) {
+            var $target = $(e.target);
+
+            e.stopPropagation();
+
+            if ($target.attr('id') === 'selectInput') {
+                return false;
+            }
+
+            if (this.selectView) {
+                this.selectView.remove();
+            }
+
+            this.selectView = new SelectView({
+                e          : e,
+                responseObj: this.responseObj
+            });
+
+            $target.append(this.selectView.render().el);
+
             return false;
         },
 
         chooseOption: function (e) {
-            $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
-            $('.newSelectList').hide();
+            var $target = $(e.target);
+
+            $target.parents('ul').closest('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
+            this.$el.find('.newSelectList').hide();
         },
 
         nextSelect: function (e) {
@@ -172,9 +200,12 @@
         },
 
         render: function () {
-            var formString = this.template(this.currentModel.toJSON());
+            var model = this.currentModel.toJSON();
+            var currentUser = App.currentUser;
+            var timezoneOffset = (new Date()).getTimezoneOffset();
+            var timezone;
             var self = this;
-            this.$el = $(formString).dialog({
+            var dialogOptions = {
                 dialogClass: 'edit-dialog',
                 width      : 600,
                 title      : 'Edit User',
@@ -191,21 +222,41 @@
                         click: function () {
                             self.hideDialog();
                         }
-                    },
-
-                    delete: {
-                        text : 'Delete',
-                        class: 'btn',
-                        click: self.deleteItem
                     }
                 }
-            });
+            };
+            var formString;
+
+            if (timezoneOffset < 0) {
+                timezone = ('UTC +' + (timezoneOffset / 60) * (-1));
+            } else {
+                timezone = ('UTC -' + (timezoneOffset / 60) * (-1));
+            }
+
+            model.isForProfile = this.isForProfile;
+            model.timezone = timezone;
+
+            formString = this.template(model);
+
+            if (!currentUser || currentUser._id !== model._id) {
+                dialogOptions.buttons.delete = {
+                    text : 'Delete',
+                    class: 'btn',
+                    click: self.deleteItem
+                };
+            }
+
+            this.$el = $(formString).dialog(dialogOptions);
+
             populate.get('#profilesDd', CONSTANTS.URLS.PROFILES_FOR_DD, {}, 'profileName', this);
             common.canvasDraw({model: this.model.toJSON()}, this);
+
             return this;
         }
 
     });
+
+    EditView = changePasswordMixIn(EditView);
 
     return EditView;
 });

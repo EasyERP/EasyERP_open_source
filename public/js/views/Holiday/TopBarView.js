@@ -7,9 +7,10 @@ define([
     'use strict';
 
     var TopBarView = BaseView.extend({
-        el         : '#top-bar',
-        contentType: CONSTANTS.HOLIDAY,
-        template   : _.template(ContentTopBarTemplate)
+        el           : '#top-bar',
+        contentType  : CONSTANTS.HOLIDAY,
+        contentHeader: 'Holidays',
+        template     : _.template(ContentTopBarTemplate)
     });
 
     return TopBarView;

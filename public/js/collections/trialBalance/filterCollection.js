@@ -5,10 +5,11 @@
 define([
     'Backbone',
     'models/hiredFired',
+    'helpers/getDateHelper',
     'custom',
     'moment'
-], function (Backbone, journalEntryModel, Custom, moment) {
-    var gLReportCollection = Backbone.Collection.extend({
+], function (Backbone, journalEntryModel, DateHelper, Custom) {
+    var TrialBalanceCollection = Backbone.Collection.extend({
 
         model       : journalEntryModel,
         url         : 'journalEntries/getTrialBalance',
@@ -18,40 +19,39 @@ define([
         viewType    : 'list',
 
         initialize: function (options) {
-            options = options || {};
-            this.startTime = new Date();
+            var _opts;
+            var dateRange;
+
             this.filter = options.filter || Custom.retriveFromCash('trialBalance.filter');
-            var startDate = moment(new Date());
-            var endDate = moment(new Date());
 
-            startDate.month(startDate.month() - 1);
-            startDate.date(1);
-            endDate.month(startDate.month());
-            endDate.endOf('month');
+            dateRange = this.filter && this.filter.date ? this.filter.date.value : null;
 
-            var dateRange = Custom.retriveFromCash('trialBalanceDateRange') || {};
-            this.startDate = dateRange.startDate;
-            this.endDate = dateRange.endDate;
+            dateRange = dateRange || DateHelper.getDate('thisMonth');
 
-            this.startDate = dateRange.startDate ||  new Date(startDate);
-            this.endDate = dateRange.endDate || new Date(endDate);
+            this.startDate = new Date(dateRange[0]);
+            this.endDate = new Date(dateRange[1]);
 
-            options.startDate = this.startDate;
-            options.endDate = this.endDate;
-            options.filter = this.filter;
+            options.filter = this.filter || {};
 
-            Custom.cacheToApp('trialBalanceDateRange', {
-                startDate: this.startDate,
-                endDate  : this.endDate
-            });
+            options.filter.date = {
+                value: [this.startDate, this.endDate]
+            };
+
+            Custom.cacheToApp('trialBalance.filter', options.filter);
+
+            this.page = options.page;
+
+            _opts = options || {};
+
+            this.startTime = new Date();
 
             this.fetch({
-                data   : options,
+                data   : _opts,
                 reset  : true,
-                success: function (newCollection) {
-
+                success: function () {
                 },
-                error  : function (err, xhr) {
+
+                error: function (err, xhr) {
                     console.log(xhr);
                 }
             });
@@ -59,27 +59,24 @@ define([
 
         showMore: function (options) {
             var that = this;
-            var filterObject = options || {};
-
-            filterObject.filter = options ? options.filter : {};
 
             this.fetch({
-                data   : filterObject,
+                data   : options,
                 waite  : true,
                 success: function (models) {
                     that.page += 1;
                     that.trigger('showmore', models);
                 },
-                error  : function () {
+
+                error: function () {
                     App.render({
-                        type: 'error',
-                        message: "Some Error."
+                        type   : 'error',
+                        message: 'Some Error.'
                     });
                 }
             });
         }
     });
 
-    return gLReportCollection;
+    return TrialBalanceCollection;
 });
-

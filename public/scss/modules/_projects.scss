@@ -14,7 +14,7 @@
 ._projectTableVisible {
   td {
     overflow: visible;
-    position: relative;
+    //position: relative;
   }
 
   &._tableAlignLeft {
@@ -25,5 +25,40 @@
         text-align: left;
       }
     }
+  }
+}
+
+.projectInfoTopBar {
+  h3 {
+    line-height: 40px;
+    padding: 0 10px;
+    color: #666666  !important;
+    font-family: 'OpenSans Regular', sans-serif, Verdana;;
+    font-weight: normal;
+    float: left;
+    overflow: visible;
+  }
+  &.banned {
+    border-bottom: 0
+  }
+  #reconcileDate {
+    color: #333;
+  }
+  margin-left: 0;
+}
+
+._projectsOverviewTop {
+  display: flex;
+  max-width:1200px;
+  margin-bottom: 26px;
+
+  ._projectsOverviewForm {
+    flex-shrink: 0;
+    flex-basis: 450px;
+  }
+
+  ._projectsOverviewGraphic {
+    flex-grow: 1;
+    flex-basis:40%;
   }
 }

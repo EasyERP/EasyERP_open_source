@@ -45,7 +45,7 @@ define([
                 Validation.comparePasswords(errors, attrs.pass, options.confirmPass);
             } else if (options.editMode === true) {
                 Validation.checkLoginField(errors, true, attrs.login, 'Login');
-                Validation.checkEmailField(errors, false, attrs.email, 'Email');
+                Validation.checkEmailField(errors, true, attrs.email, 'Email');
             } else {
                 Validation.checkLoginField(errors, true, attrs.login, 'Login');
                 Validation.checkEmailField(errors, true, attrs.email, 'Email');

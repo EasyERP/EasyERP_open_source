@@ -1,37 +1,51 @@
 <div id="top-bar-orders">
-    <div id="createBtnHolder" class="projectInfoTopBar">
+    <div id="createBtnHolder" class="projectInfoTopBar  btnsBlock _underTabs">
+        <a href="javascript:;" class="icon-plus btn blue slim" title="Create" id="createOrder">New Order</a>
         <a href="javascript:;" class="btn blue slim" title="Remove" id="removeOrder">Delete</a>
     </div>
 </div>
 <div id="ordersTable" class="_ordersTableWrap">
-    <table class="list stripedList">
+    <table class="list  stripedList order-list">
         <colgroup>
-            <col width="43px">
-            <col width="20%">
-            <col width="20%">
-            <col width="20%">
+            <col width="42px">
             <col width="15%">
-            <col width="15%">
+            <col width="14%">
+            <col width="8%">
+            <col width="8%">
+            <col width="8%">
+            <col width="10%">
+            <col width="12%">
+            <col width="10%">
             <col width="10%">
         </colgroup>
         <thead>
         <tr>
-            <th class="notForm centerCell"><input type="checkbox" id="checkAll_orders" class="checkAll"/></th>
-            <th class="oe_sortable" data-sort="name">Number<span class="arrow down"></span><span
+            <th class="centerCell">
+                <label class="_customCHeckbox">
+                    <input type="checkbox" id="checkAll_orders" class="checkAll"/>
+                    <span></span>
+                </label>
+            </th>
+            <th class="oe_sortable" data-sort="name">Reference<span class="arrow down"></span><span
                     class="arrow up"></span></th>
-            <th class="oe_sortable" data-sort="supplier.name.first">Customer<span class="arrow down"></span><span
+            <th class="oe_sortable" data-sort="supplier.name.first">Supplier<span class="arrow down"></span><span
                     class="arrow up"></span></th>
-            <th class="oe_sortable" data-sort="projectmanager.name.first">Sales Person<span
-                    class="arrow down"></span><span
+            <th class="oe_sortable centerCell" data-sort="status.allocateStatus">Allocated<span class="arrow down"></span><span
                     class="arrow up"></span></th>
-            <th class="oe_sortable sortDn" data-sort="paymentInfo.total">Total<span class="arrow down"></span><span
+            <th class="oe_sortable centerCell" data-sort="status.fulfillStatus">Fulfilled<span class="arrow down"></span><span
                     class="arrow up"></span></th>
-            <th class="oe_sortable" data-sort="workflow">Status<span class="arrow down"></span><span
+            <th class="oe_sortable centerCell" data-sort="status.shippingStatus">Shipped<span class="arrow down"></span><span
                     class="arrow up"></span></th>
-            <th class="oe_sortable" data-sort="orderDate">Date<span class="arrow down"></span><span
+            <th class="oe_sortable" data-sort="workflow.name">Status<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="paymentInfo.unTaxed">Untaxed<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="paymentInfo.total">Total<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="orderDate">Order Date<span class="arrow down"></span><span
                     class="arrow up"></span></th>
         </tr>
         </thead>
-        <tbody id="orderTable"></tbody>
+        <tbody id="orderTable" class="enableTableOdd"></tbody>
     </table>
 </div>

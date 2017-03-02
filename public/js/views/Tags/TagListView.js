@@ -23,6 +23,7 @@ define([
                 self.renderContent(self.e);
             }
 
+            this.type = options.type;
             this.contentType = options.contentType;
             this.collection = new TagsCollection();
             this.filteredCollection = new TagsCollection();
@@ -90,7 +91,7 @@ define([
         createTag: function (e) {
             e.preventDefault();
             $('.tag-list-dialog').hide();
-            return new CreateView({collection: this.collection});
+            return new CreateView({collection: this.collection, type: this.type});
         },
 
         editTag: function (e) {
@@ -135,10 +136,8 @@ define([
             });
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                position     : {
+                autoOpen: true,
+                position: {
                     at: 'top+35%'
                 },
 

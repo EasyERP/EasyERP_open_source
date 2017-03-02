@@ -1,24 +1,48 @@
 var mongoose = require('mongoose');
 var Mailer = require('../helpers/mailer');
 var mailer = new Mailer();
+var async = require('async');
 
 var Module = function (models) {
-    var followersSchema = mongoose.Schemas.followers;
-    var EmployeeSchema = mongoose.Schemas.Employee;
-    var OrgSettingsSchema = mongoose.Schemas.orgSettingsSchema;
+    var OrgSettingsService = require('../services/organizationSetting')(models);
+    var EmployeeService = require('../services/employee')(models);
+    var FollowersService = require('../services/followers')(models);
 
-    function sendEmailToFollower(req, empId, contentName, collectionName) {
+
+    function sendEmailToFollower(options, callback) {
+        var collectionName;
         var mailOptions;
-        var Employee;
+        var contentName;
+        var followerId;
+        var err;
 
-        Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        if (typeof options === 'function') {
+            callback = options;
+            options = {};
+        }
 
-        Employee.findById(empId, {}, function (err, modelEmployee) {
+        if (typeof callback !== 'function') {
+            callback = function () {
+            };
+        }
+
+        collectionName = options.collectionName;
+        contentName = options.contentName;
+        followerId = options.followerId;
+
+        if (!followerId) {
+            err = new Error('Invalid input parameters');
+            err.status = 400;
+
+            return callback(err);
+        }
+
+        EmployeeService.findById(followerId, options, function (err, modelEmployee) {
             var workEmail;
             var employee;
 
             if (err) {
-                return console.log('email send to follower error');
+                return callback(err);
             }
 
             workEmail = modelEmployee.get('workEmail');
@@ -30,52 +54,61 @@ var Module = function (models) {
                     employee      : employee,
                     contentName   : contentName || '',
                     collectionName: collectionName,
-                    req           : req
+                    dbName        : options.dbName
                 };
 
-                getFromMail(mailOptions, function (err, result) {
+                OrgSettingsService.getFromMail(mailOptions, function (err, settings) {
                     if (err) {
-                        console.log(err);
+                        return callback(err);
                     }
-                    console.log('email was send to ' + workEmail);
+                    if (settings && !settings.defaultEmail && settings.contact) {
+                        mailOptions.from = settings.contact.email;
+                    }
+
+                    mailer.sendAddedFollower(mailOptions, callback);
                 });
             } else {
                 console.log('employee have not work email');
+                callback();
             }
         });
     }
 
     this.create = function (req, res, next) {
-        var FollowersModel = models.get(req.session.lastDb, 'followers', followersSchema);
         var body = req.body;
+        var dbName = req.session.lastDb;
         var contentName = body.contentName;
-        var newModel;
 
-        body.createdBy = {
-            date: new Date(),
-            user: req.session.uId
-        };
+        body.dbName = dbName;
 
-        newModel = new FollowersModel(body);
+        function findFollower(options, callback) {
+            FollowersService.find({
+                contentId : options.contentId,
+                followerId: options.followerId
+            }, {
+                dbName: options.dbName
+            }, callback);
+        }
 
-        FollowersModel.find({contentId: body.contentId, followerId: body.followerId}, function (err, result) {
-            if (err) {
-                return next(err);
-            }
-
-            if (!result.length) {
-                newModel.save(function (err, result) {
+        function saveFollower(options, callback) {
+            if (!options.length) {
+                FollowersService.create(body, function (err, result) {
                     if (err) {
-                        return next(err);
+                        return callback(err);
                     }
 
-                    sendEmailToFollower(req, result.followerId, contentName, result.collectionName);
+                    sendEmailToFollower({
+                        followerId    : result.followerId,
+                        contentName   : contentName,
+                        collectionName: result.collectionName,
+                        dbName        : dbName
+                    });
 
-                    FollowersModel.find({contentId: body.contentId})
+                    FollowersService.find({contentId: body.contentId}, {dbName: dbName})
                         .populate('followerId', 'name fullName')
                         .exec(function (err, result) {
                             if (err) {
-                                return next(err);
+                                return callback(err);
                             }
 
                             result = result.map(function (elem) {
@@ -86,49 +119,38 @@ var Module = function (models) {
                                 };
                             });
 
-                            res.status(200).send({data: result});
-
+                            callback(null, result);
                         });
                 });
             } else {
-                res.status(200).send({error: 'Dublicate'});
+                callback();
             }
-
-        });
-
-    };
-
-    function getFromMail(mailOptions, cb){
-
-        var OrgSettings;
-        if (mailOptions.req){
-            OrgSettings = models.get(mailOptions.req.session.lastDb, 'orgSettings', OrgSettingsSchema);
-            OrgSettings.findOne()
-                .populate('contact', 'email')
-                .exec(function(err, settings){
-                    if (err){
-                        return console.log(err);
-                    }
-                    if (settings && !settings.defaultEmail && settings.contact){
-                        mailOptions.from = settings.contact.email;
-                    }
-                    mailer.sendAddedFollower(mailOptions, cb);
-                });
-        } else {
-            mailer.sendAddedFollower(mailOptions, cb);
         }
-    }
 
-    this.remove = function (req, res, next) {
-        var FollowersModel = models.get(req.session.lastDb, 'followers', followersSchema);
-        var id = req.params.id || req.body._id;
+        body.createdBy = {
+            date: new Date(),
+            user: req.session.uId
+        };
 
-        FollowersModel.findByIdAndRemove(id, function (err, result) {
+        async.waterfall([async.apply(findFollower, body), saveFollower], function (err, result) {
             if (err) {
                 return next(err);
             }
 
-            FollowersModel.find({contentId: result.contentId})
+            res.status(200).send({data: result});
+        });
+    };
+
+    this.remove = function (req, res, next) {
+        var id = req.params.id || req.body._id;
+        var dbName = req.session.lastDb;
+
+        FollowersService.findByIdAndRemove(id, {dbName: dbName}, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            FollowersService.find({contentId: result.contentId}, {dbName: dbName})
                 .populate('followerId', 'name fullName')
                 .exec(function (err, result) {
                     if (err) {
@@ -148,6 +170,8 @@ var Module = function (models) {
         });
 
     };
+
+    this.sendEmailToFollower = sendEmailToFollower;
 };
 
 module.exports = Module;

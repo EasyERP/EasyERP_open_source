@@ -5,10 +5,10 @@
 define([
     'Backbone',
     'models/journalEntry',
-    'custom',
-    'moment'
-], function (Backbone, journalEntryModel, Custom, moment) {
-    var gLReportCollection = Backbone.Collection.extend({
+    'helpers/getDateHelper',
+    'custom'
+], function (Backbone, journalEntryModel, DateHelper, Custom) {
+    var ProfitAndLossCollection = Backbone.Collection.extend({
 
         model       : journalEntryModel,
         url         : 'journalEntries/getProfitAndLoss',
@@ -18,40 +18,36 @@ define([
         viewType    : 'list',
 
         initialize: function (options) {
-            options = options || {};
-            this.startTime = new Date();
+            var dateRange;
+            var _opts;
+
             this.filter = options.filter || Custom.retriveFromCash('profitAndLoss.filter');
-            var startDate = moment(new Date());
-            var endDate = moment(new Date());
 
-            startDate.month(startDate.month() - 1);
-            startDate.date(1);
-            endDate.month(startDate.month());
-            endDate.endOf('month');
+            dateRange = this.filter && this.filter.date ? this.filter.date.value : null;
 
-            var dateRange = Custom.retriveFromCash('profitAndLossDateRange') || {};
-            this.startDate = dateRange.startDate;
-            this.endDate = dateRange.endDate;
+            dateRange = dateRange || DateHelper.getDate('thisMonth');
 
-            this.startDate = dateRange.startDate ||  new Date(startDate);
-            this.endDate = dateRange.endDate || new Date(endDate);
+            this.startDate = new Date(dateRange[0]);
+            this.endDate = new Date(dateRange[1]);
 
-            options.startDate = this.startDate;
-            options.endDate = this.endDate;
-            options.filter = this.filter;
+            options.filter = this.filter || {};
 
-            Custom.cacheToApp('profitAndLossDateRange', {
-                startDate: this.startDate,
-                endDate  : this.endDate
-            });
+            options.filter.date = {
+                value: [this.startDate, this.endDate]
+            };
+
+            Custom.cacheToApp('profitAndLoss.filter', options.filter);
+
+            _opts = options || {};
+            this.startTime = new Date();
 
             this.fetch({
-                data   : options,
+                data   : _opts,
                 reset  : true,
-                success: function (newCollection) {
-
+                success: function () {
                 },
-                error  : function (err, xhr) {
+
+                error: function (err, xhr) {
                     console.log(xhr);
                 }
             });
@@ -70,16 +66,16 @@ define([
                     that.page += 1;
                     that.trigger('showmore', models);
                 },
-                error  : function () {
+
+                error: function () {
                     App.render({
-                        type: 'error',
-                        message: "Some Error."
+                        type   : 'error',
+                        message: 'Some Error.'
                     });
                 }
             });
         }
     });
 
-    return gLReportCollection;
+    return ProfitAndLossCollection;
 });
-

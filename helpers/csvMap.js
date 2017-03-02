@@ -7,13 +7,13 @@ module.exports = (function () {
         collection: 'journalentries',
         schema    : 'journalEntry',
         aliases   : {
-            'journal.name'               : 'Journal',
-            date                         : 'Accounting date',
-            'sourceDocument.subject.name': 'Subject',
-            'sourceDocument.name'        : 'Source Document',
-            'journal.debitAccount.name'  : 'Debit Account',
-            'journal.creditAccount.name' : 'Credit Account',
-            debit                        : 'Summ'
+            timestamp            : 'Number',
+            date                 : 'Accounting date',
+            'journal.name'       : 'Journal',
+            'sourceDocument.name': 'Source Document',
+            'account.name'       : 'Account',
+            debit                : 'Debit',
+            credit               : 'Credit'
         },
         formatters: {
             'Accounting date': function (date) {
@@ -138,7 +138,8 @@ module.exports = (function () {
             jobType              : 'JobType',
             'social.FB'          : 'Facebook',
             'social.LI'          : 'Linkedin',
-            'social.GP'          : 'Google+'
+            'social.GP'          : 'Google+',
+            transfers            : 'transfers'
         },
 
         arrayKeys: {
@@ -146,7 +147,8 @@ module.exports = (function () {
             'groups.group': true,
             hire          : true,
             fire          : true,
-            attachments   : true
+            attachments   : true,
+            transfers     : true
         },
 
         formatters: {
@@ -182,18 +184,26 @@ module.exports = (function () {
                 }
             },
 
-            Hire: function (array) {
-                var result = [];
-                array.forEach(function (item) {
-                    result.push(moment(item).utc().format(dateFormat));
-                });
-                return result;
-            },
+            /* Hire: function (array) {
+             var result = [];
+             array.forEach(function (item) {
+             result.push(moment(item).utc().format(dateFormat));
+             });
+             return result;
+             },
 
-            Fire: function (array) {
+             Fire: function (array) {
+             var result = [];
+             array.forEach(function (item) {
+             result.push(moment(item).utc().format(dateFormat));
+             });
+             return result;
+             },*/
+
+            transfers: function (array) {
                 var result = [];
                 array.forEach(function (item) {
-                    result.push(moment(item).utc().format(dateFormat));
+                    result.push(moment(item.date).format(dateFormat));
                 });
                 return result;
             }

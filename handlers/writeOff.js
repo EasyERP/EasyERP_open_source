@@ -23,8 +23,8 @@ var WriteOffObj = function (models, event) {
     var JournalEntryHandler = require('./journalEntry');
     var _journalEntryHandler = new JournalEntryHandler(models, event);
     var _ = require('../node_modules/underscore');
-
-    oxr.set({app_id: process.env.OXR_APP_ID});
+    var ratesService = require('../services/rates')(models);
+    var ratesRetriever = require('../helpers/ratesRetriever')();
 
     this.create = function (req, res, next) {
         var dbIndex = req.session.lastDb;
@@ -42,9 +42,11 @@ var WriteOffObj = function (models, event) {
         jobs = jobs.objectID();
 
         function getRates(callback) {
-            oxr.historical(date, function () {
-                fx.rates = oxr.rates;
-                fx.base = oxr.base;
+            ratesService.getById({id: date, dbName: req.session.lastDb}, function (err, result) {
+
+                fx.rates = result && result.rates ? result.rates : {};
+                fx.base = result && result.base ? result.base : 'USD';
+
                 callback();
             });
         }
@@ -172,7 +174,7 @@ var WriteOffObj = function (models, event) {
 
             saveObject.paymentInfo.balance = 0;
 
-            saveObject.currency.rate = oxr.rates[oxr.base];
+            saveObject.currency.rate = 1;
 
             writeOff = new WriteOff(saveObject);
 
@@ -196,7 +198,7 @@ var WriteOffObj = function (models, event) {
 
         function createJournalEntry(writeOff, callback) {
             var body = {
-                currency      : CONSTANTS.CURRENCY_USD,
+                currency      : writeOff.currency,
                 journal       : data.journal,
                 sourceDocument: {
                     model: 'writeOff',
@@ -208,12 +210,11 @@ var WriteOffObj = function (models, event) {
                 date  : writeOff.invoiceDate
             };
 
-            var amount = writeOff.currency.rate * writeOff.paymentInfo.total;
+            var amount = writeOff.paymentInfo.total;
 
             body.amount = amount;
 
-            _journalEntryHandler.create(body, req.session.lastDb, function () {
-            }, req.session.uId);
+            _journalEntryHandler.createReconciled(body, {dbName: req.session.lastDb, uId: req.session.uId});
 
             callback(null, writeOff);
         }
@@ -358,7 +359,7 @@ var WriteOffObj = function (models, event) {
          }
          }*/
 
-        parallelTasks = [fetchFirstWorkflow, getRates];
+        parallelTasks = [fetchFirstWorkflow/*, getRates*/];
         waterFallTasks = [parallel, updateJobs, getJobCosts, createWriteOff, createJournalEntry/*,  removeDocsByJob*/];
 
         async.waterfall(waterFallTasks, function (err, result) {

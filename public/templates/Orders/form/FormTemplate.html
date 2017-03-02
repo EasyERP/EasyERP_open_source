@@ -3,28 +3,28 @@
 
     <fieldset>
         <div class="inner">
-            <ul class="dialog-tabs" data-class="mainTabs">
+            <ul data-class="mainTabs">
 
                 <li class="right _btnsBlockFixed">
-                    <button id="editButton" class="btn">
+                    <button id="editButton" class="btn slim">
                         <span class="icon-pencil2"></span>
                     </button>
-                    <button id="exportToPdf" class="btn ">
+                    <button id="exportToPdf" class="btn slim ">
                         <span class="icon-pdf"></span>
                     </button>
-                    <button class="btn attach_file" id="attachment_file">
+                    <button class="btn slim attach_file" id="attachment_file">
                         <span class="icon-attach"></span>
                     </button>
                     <%if(model.workflow && model.workflow.status !== 'Done'){%>
                     <%if(model.workflow && model.workflow.status !== 'Cancelled'){%>
-                    <button class="btn receiveInvoice">
+                    <button class="btn slim receiveInvoice">
                         <span>Receive Invoice</span>
                     </button>
                     <!--<button class="btn cancelOrder">-->
                     <!--<span>Cancel</span>-->
                     <!--</button>-->
                     <%} else {%>
-                    <button class="btn setDraft">
+                    <button class="btn slim setDraft">
                         <span>Set Draft</span>
                     </button>
                     <%}%>
@@ -32,9 +32,14 @@
                 </li>
             </ul>
             <div class="clearfix"></div>
-            <div id="historyDiv" class="_pureTemplate"></div>
-            <div id="templateDiv"></div>
-            <div id="attachments"></div>
+            <div class="_templateInvoiceWrp">
+                <div id="templateDiv" class="_templateDiv"></div>
+                <div class="addingInfoWrp">
+                    <div id="historyDiv" class="_pureTemplate"></div>
+                    <div id="attachments" class="invoiceAttachments"></div>
+                </div>
+            </div>
+
         </div>
         <div class="clearfix"></div>
 </div>

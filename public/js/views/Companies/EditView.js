@@ -210,13 +210,11 @@ define([
             var model;
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : false,
-                dialogClass  : 'edit-companies-dialog',
-                width        : '80%',
-                title        : 'Edit Company',
-                buttons      : [
+                autoOpen   : true,
+                dialogClass: 'edit-companies-dialog',
+                width      : '80%',
+                title      : 'Edit Company',
+                buttons    : [
                     {
                         text : 'Save',
                         class: 'btn blue',

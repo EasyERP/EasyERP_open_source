@@ -2,18 +2,18 @@
     <form method="post" action="" class="form " id="invoiceForm">
         <fieldset>
             <div class="inner">
-                <ul class="dialog-tabs" data-class="mainTabs">
+                <ul class="dialog-tabs _btnsBlockFixed" data-class="mainTabs">
                     <li><a class="active" href="javascript:;">Main</a></li>
                     <li><a href="javascript:;">Assignees</a></li>
                     <li class="right">
                         <%if(model.workflow && model.workflow.name !== 'Invoiced' && model.workflow.name !== 'Paid' && model.workflow.name !== 'Cancelled'){%>
                             <%if(model.approved){%>
-                                <button class="btn newPayment">
+                                <button class="btn slim newPayment">
                                     <span>Pay</span>
                                 </button>
                             <%} else {%>
                                 <%if(isFinancial){%>
-                                    <button class="btn approve">
+                                    <button class="btn slim approve">
                                         <span>Approve</span>
                                     </button>
                                 <%} else {%>

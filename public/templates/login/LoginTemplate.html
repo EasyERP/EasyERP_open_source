@@ -6,30 +6,28 @@
         </div>
         <div class="loginContent col m-6">
             <div class="loginContainer">
-                <div class=" ">
-                    <div class="loginWrapper row">
-                        <div class="col s-6 m-6 l-6">
-                            <h1 id="titleForm" class="loginTitle float-left">Login to account</h1>
-                            <%
-                            currentDb = currentDb || 'production';
-                            var validDb = currentDb ? !!dbs[currentDb] : false;
-                            var dbNames = Object.keys(dbs);
-                            var firstDb = dbNames[0];
-                            %>
-                        </div>
-                        <div class="col s-6 m-6 l-6 float-right">
-                            <div class="selectDd">
-                                <span id="selectedDb" class="selectedDb" data-id="<%= validDb ? currentDb : firstDb %>"><%= validDb ? currentDb + ' (' + dbs[currentDb].url + ')' : firstDb +' (' + dbs[firstDb].url + ')'%></span>
-                                <ul id="dbs" class="float-right">
-                                    <% for(var i = dbNames.length-1; i>=0; i-- ){
-                                    var dbName = dbNames[i];
-                                    %>
-                                    <li data-id="<%=dbName%>"
-                                    <%if(dbName === currentDb) {%>class="selected"<%}%>><%=dbName%> (<%=dbs[dbName].url%>)
-                                    </li>
-                                    <%}%>
-                                </ul>
-                            </div>
+                <div class="loginWrapper row">
+                    <div class="col s-6 m-6 l-6">
+                        <h1 id="titleForm" class="loginTitle float-left">Login to account</h1>
+                        <%
+                        currentDb = currentDb || 'production';
+                        var validDb = currentDb ? !!dbs[currentDb] : false;
+                        var dbNames = Object.keys(dbs);
+                        var firstDb = dbNames[0];
+                        %>
+                    </div>
+                    <div class="col s-6 m-6 l-6 float-right">
+                        <div class="selectDd">
+                            <span id="selectedDb" class="selectedDb" data-id="<%= validDb ? currentDb : firstDb %>"><%= validDb ? currentDb + ' (' + dbs[currentDb].url + ')' : firstDb +' (' + dbs[firstDb].url + ')'%></span>
+                            <ul id="dbs" class="float-right">
+                                <% for(var i = dbNames.length-1; i>=0; i-- ){
+                                var dbName = dbNames[i];
+                                %>
+                                <li data-id="<%=dbName%>"
+                                <%if(dbName === currentDb) {%>class="selected"<%}%>><%=dbName%> (<%=dbs[dbName].url%>)
+                                </li>
+                                <%}%>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -37,26 +35,40 @@
                 <form id="loginForm" class="loginWrap" action="javascript:;">
                     <div class="row">
                         <div class="col s-6">
-                            <input type="text" placeholder="Username or Email" class="ulogin inputField" name="ulogin"
-                                   value="<%-login || ''%>"
-                                   autofocus
-                                   maxlength="60"/>
+                            <div class="_animateInputBox">
+                                <input type="text"
+                                       name="ulogin"
+                                       class="_animate ulogin"
+                                       required
+                                       autofocus
+                                       value="<%-login || ''%>"
+                                       maxlength="60"/>
+                                <label class="_animate">Username or Email</label>
+                            </div>
                         </div>
                         <div class="col s-6">
-                            <input type="password" placeholder="Password" id="upass" name="upass" class="inputField"
-                                   value="<%-password || ''%>" maxlength="60"/>
+                            <div class="_animateInputBox">
+                                <input type="password"
+                                       name="upass"
+                                       class="_animate"
+                                       id="upass"
+                                       required
+                                       value="<%-password || ''%>"
+                                       maxlength="60"/>
+                                <label class="_animate">Password</label>
+                            </div>
                         </div>
                     </div>
                     <div class="formActions">
                         <div class="row">
-                            <div class="col xs-12 s-4">
+                            <div class="col xs-12 s-4 m-5">
                                 <label class="switchLabel rememberCheckWrap" for="switchElement">
                                     <input type="checkbox" name="switch" class="rememberCheck" id="switchElement" checked>
                                     Remember me
                                     <span></span>
                                 </label>
                             </div>
-                            <div class="col xs-12 s-8 text-right loginForgot">
+                            <div class="col xs-12 s-8 m-7 text-right loginForgot">
                                 <a id="forgotPass" class="forgotPass" href="javascript:;">Forgot Password?</a>
                                 <a class="login-button btn blue" href="javascript:;">Sign In</a>
                             </div>
@@ -68,9 +80,16 @@
                     <p class="forgotDescription">Enter your e-mail address below to reset your password.</p>
 
                     <div class="formGroup">
-                        <input type="text" placeholder="Username or Email" class="ulogin inputBordered" name="ulogin"
-                               value="" autofocus
-                               maxlength="60"/>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   name="ulogin"
+                                   class="_animate ulogin"
+                                   required
+                                   autofocus
+                                   value=""
+                                   maxlength="60"/>
+                            <label class="_animate">Username or Email</label>
+                        </div>
                     </div>
                     <div class="formActions">
                         <a id="backToLogin" class="forgot-button btn  blue" href="javascript:;">Back</a>

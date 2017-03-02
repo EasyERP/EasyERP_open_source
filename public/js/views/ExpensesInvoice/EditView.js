@@ -4,9 +4,8 @@ define([
     'Backbone',
     'views/dialogViewBase',
     'text!templates/ExpensesInvoice/EditTemplate.html',
-    'views/Notes/AttachView',
-    'views/Invoices/InvoiceProductItems',
-    'views/salesInvoices/wTrack/wTrackRows',
+    'views/Editor/AttachView',
+    'views/Products/orderRows/ProductItems',
     'views/Payment/CreateView',
     'views/salesInvoices/EmailView',
     'views/Payment/list/ListHeaderInvoice',
@@ -22,8 +21,7 @@ define([
              ParentView,
              EditTemplate,
              AttachView,
-             InvoiceItemView,
-             wTrackRows,
+             ProductItemView,
              PaymentCreateView,
              EmailVew,
              listHederInvoice,
@@ -40,14 +38,12 @@ define([
         template   : _.template(EditTemplate),
 
         events: {
-            'click #saveBtn'      : 'saveItem',
             'click .details'      : 'showDetailsBox',
             'click .newPayment'   : 'newPayment',
             'click .sendEmail'    : 'sendEmail',
-            'click .approve'      : 'approve',
             'click .cancelInvoice': 'cancelInvoice',
-            'click .setDraft'     : 'setDraft'
-
+            'click .setDraft'     : 'setDraft',
+            'click .approve'      : 'approve'
         },
 
         initialize: function (options) {
@@ -71,6 +67,50 @@ define([
             this.render();
 
             App.stopPreload();
+        },
+
+        approve: function (e) {
+            var self = this;
+            var model = this.currentModel.toJSON();
+            var data;
+            var url;
+            var redirectUrl;
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            url = '/invoice/approve';
+            data = {
+                invoiceId      : model._id,
+                invoiceDate    : model.invoiceDate,
+                expensesInvoice: true
+            };
+
+            this.saveItem(function () {
+                App.startPreload();
+                dataService.patchData(url, data, function (err) {
+                    if (!err) {
+                        self.currentModel.set({approved: true});
+
+                        App.stopPreload();
+
+                        if (self.eventChannel) {
+                            self.eventChannel.trigger('invoiceUpdated');
+                        } else {
+                            redirectUrl = window.location.hash;
+
+                            Backbone.history.fragment = '';
+                            Backbone.history.navigate(redirectUrl, {trigger: true});
+                        }
+
+                    } else {
+                        App.render({
+                            type   : 'error',
+                            message: 'Approve fail'
+                        });
+                    }
+                });
+            });
         },
 
         newPayment: function (e) {
@@ -176,6 +216,164 @@ define([
             });
         },
 
+        saveItem: function (cb) {
+            var self = this;
+            var mid = 97;
+            var $currentEl = this.$el;
+            var selectedProducts = $currentEl.find('.productItem');
+            var products = [];
+            var selectedLength = selectedProducts.length;
+            var targetEl;
+            var quantity;
+            var price;
+            var whoCanRW;
+            var data;
+            var description;
+            var i;
+            var supplier = $currentEl.find('#supplier').attr('data-id');
+            var invoiceDate = $currentEl.find('#invoice_date').val();
+            var dueDate = $currentEl.find('#due_date').val();
+            var account;
+            var usersId = [];
+            var groupsId = [];
+            var total = helpers.spaceReplacer($currentEl.find('#totalAmount').text());
+            var discount = parseFloat($currentEl.find('#discount').val()) || 0;
+            var unTaxed = helpers.spaceReplacer($currentEl.find('#totalUntaxes').text());
+            var balance = helpers.spaceReplacer($currentEl.find('#balance').text());
+            var taxes = helpers.spaceReplacer($currentEl.find('#taxes').text());
+            var subTotal;
+            var taxCode;
+            var payments;
+            var currency;
+
+            total = parseFloat(total);
+            balance = parseFloat(balance);
+            unTaxed = parseFloat(unTaxed);
+            taxes = parseFloat(taxes);
+
+            payments = {
+                total   : total * 100,
+                taxes   : taxes * 100,
+                unTaxed : unTaxed * 100,
+                balance : balance * 100,
+                discount: discount
+            };
+
+            currency = {
+                _id : $currentEl.find('#currencyDd').attr('data-id'),
+                name: $.trim($currentEl.find('#currencyDd').text())
+            };
+
+            if (selectedLength) {
+                for (i = selectedLength - 1; i >= 0; i--) {
+                    targetEl = $(selectedProducts[i]);
+
+                    quantity = targetEl.find('[data-name="quantity"] input').val() || targetEl.find('[data-name="quantity"] span').text();
+                    price = helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val()) * 100;
+
+                    if (isNaN(price) || price <= 0) {
+                        return App.render({
+                            type   : 'error',
+                            message: 'Please, enter Unit Price!'
+                        });
+                    }
+                    taxes = helpers.spaceReplacer(targetEl.find('.taxes .sum').text());
+                    description = targetEl.find('.productDescr').val();
+                    subTotal = helpers.spaceReplacer(targetEl.find('.subtotal .sum').text());
+                    subTotal = parseFloat(subTotal) * 100;
+                    account = targetEl.find('.current-selected.accountDd').attr('data-id');
+                    taxCode = targetEl.find('.current-selected.taxCode').attr('data-id') || null;
+
+                    if (!price) {
+                        return App.render({
+                            type   : 'error',
+                            message: 'Unit price can\'t be empty'
+                        });
+                    }
+
+                    if (!quantity) {
+                        return App.render({
+                            type   : 'error',
+                            message: 'Quantity can\'t be empty'
+                        });
+                    }
+
+                    if (!account) {
+                        return App.render({
+                            type   : 'error',
+                            message: 'Account can\'t be empty'
+                        });
+                    }
+
+                    products.push({
+                        unitPrice    : price,
+                        quantity     : quantity,
+                        description  : description,
+                        subTotal     : subTotal,
+                        debitAccount : account,
+                        creditAccount: CONSTANTS.ACCOUNT_PAYABLE,
+                        taxes        : [{
+                            taxCode: taxCode || null,
+                            tax    : taxes
+                        }]
+                    });
+                }
+            }
+
+            whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
+            data = {
+                forSales   : false,
+                supplier   : supplier,
+                name       : $.trim($('#supplier_invoice_num').val()),
+                invoiceDate: invoiceDate,
+                dueDate    : dueDate,
+                journal    : null,
+                products   : products,
+                paymentInfo: payments,
+                currency   : currency,
+                groups     : {
+                    owner: this.$el.find('#allUsersSelect').attr('data-id') || null,
+                    users: usersId,
+                    group: groupsId
+                },
+
+                whoCanRW: whoCanRW || 'everyOne',
+                workflow: this.defaultWorkflow
+            };
+
+            if (supplier) {
+                this.currentModel.urlRoot = '/invoice';
+
+                this.currentModel.set(data);
+
+                this.currentModel.save(this.currentModel.changed, {
+                    patch  : true,
+                    wait   : true,
+                    headers: {
+                        mid: mid
+                    },
+                    success: function () {
+                        if (cb) {
+                            return cb();
+                        }
+                        self.hideDialog();
+                        Backbone.history.navigate('#easyErp/ExpensesInvoice', {trigger: true});
+                    },
+
+                    error: function (model, xhr) {
+                        self.errorNotification(xhr);
+                    }
+                });
+
+            } else {
+                App.render({
+                    type   : 'error',
+                    message: 'Please fill all fields.'
+                });
+            }
+
+        },
+
         showDetailsBox: function (e) {
             $(e.target).parent().find('.details-box').toggle();
         },
@@ -228,17 +426,12 @@ define([
         render: function () {
             var self = this;
             var formString;
-            var notDiv;
             var model;
             var invoiceItemContainer;
             var paymentContainer;
-            var wTracks;
-            var project;
-            var assigned;
-            var customer;
-            var total;
             var buttons;
             var isFinancial;
+            var $notDiv;
 
             model = this.currentModel.toJSON();
 
@@ -246,53 +439,50 @@ define([
 
             this.notAddItem = true;
 
-            if (this.isWtrack) {
-                wTracks = _.map(model.products, function (product) {
-                    return product.product;
-                });
-                project = model.project;
-                assigned = model.salesPerson;
-                customer = model.supplier;
-                total = model.paymentInfo ? model.paymentInfo.total : '0.00';
-            }
-
             isFinancial = CONSTANTS.INVOICE_APPROVE_PROFILES.indexOf(App.currentUser.profile._id) !== -1;
 
-            formString = this.template({
-                model           : this.currentModel.toJSON(),
-                isWtrack        : self.isWtrack,
-                isPaid          : this.isPaid,
-                notAddItem      : this.notAddItem,
-                wTracks         : wTracks,
-                project         : project,
-                assigned        : assigned,
-                customer        : customer,
-                total           : total,
-                currencySplitter: helpers.currencySplitter,
-                isFinancial     : isFinancial
-            });
+            buttons = [{
+                id   : 'create-invoice-dialog',
+                class: 'btn blue',
+                text : 'Save',
+                click: function () {
+                    self.saveItem();
+                }
+            }, {
+                text : 'Cancel',
+                class: 'btn',
+                click: self.hideDialog
+            }, {
+                text : 'Delete',
+                class: 'btn',
+                click: self.deleteItem
+            }];
 
-            buttons = [
-                {
+            if (model.approved) {
+                buttons = [{
                     text : 'Close',
                     class: 'btn',
                     click: self.hideDialog
-                }, {
-                    text : 'Delete',
-                    class: 'btn',
-                    click: self.deleteItem
-                }
-            ];
+                }];
+
+                this.notAddItem = true;
+                this.notEditable = true;
+            }
+
+            formString = this.template({
+                model           : this.currentModel.toJSON(),
+                currencySplitter: helpers.currencySplitter,
+                isFinancial     : isFinancial,
+                notEditable     : this.notEditable
+            });
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'edit-invoice-dialog',
-                title        : 'Edit Invoice',
-                width        : '900',
-                position     : {my: 'center bottom', at: 'center', of: window},
-                buttons      : buttons
+                autoOpen   : true,
+                dialogClass: 'edit-invoice-dialog',
+                title      : 'Edit Invoice',
+                width      : '900px',
+                position   : {my: 'center bottom', at: 'center', of: window},
+                buttons    : buttons
 
             });
 
@@ -303,31 +493,65 @@ define([
                 new listHederInvoice().render({model: this.currentModel.toJSON()}).el
             );
 
+            $notDiv = this.$el.find('#attach-container');
+            this.attachView = new AttachView({
+                model      : this.currentModel,
+                contentType: 'invoices'
+            });
+            $notDiv.append(this.attachView.render().el);
+
             this.delegateEvents(this.events);
 
             invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
 
             invoiceItemContainer.append(
-                new InvoiceItemView({
-                    balanceVisible: true,
-                    forSales      : self.forSales,
-                    isPaid        : this.isPaid,
-                    notAddItem    : this.notAddItem
+                new ProductItemView({
+                    canBeSold      : false,
+                    expense        : true,
+                    balanceVisible : true,
+                    discountVisible: true,
+                    forSales       : self.forSales,
+                    isPaid         : this.isPaid,
+                    responseObj    : this.responseObj,
+                    notAddItem     : this.notAddItem,
+                    parentModel    : self.model,
+                    notEditable    : this.notEditable
                 }).render({model: model}).el
-            );
-
-            notDiv = this.$el.find('#attach-container');
-            notDiv.append(
-                new AttachView({
-                    model: this.currentModel,
-                    url  : '/uploadInvoiceFiles'
-                }).render().el
             );
 
             if (model.approved) {
                 self.$el.find('.input-file').remove();
                 self.$el.find('a.deleteAttach').remove();
             }
+
+            if (!this.notEditable) {
+                this.$el.find('#invoice_date').datepicker({
+                    dateFormat : 'd M, yy',
+                    changeMonth: true,
+                    changeYear : true
+                }).datepicker('setDate', this.currentModel.get('invoiceDate'));
+
+                this.$el.find('#due_date').datepicker({
+                    dateFormat : 'd M, yy',
+                    changeMonth: true,
+                    changeYear : true,
+                    onSelect   : function () {
+                        var targetInput = $(this);
+                        targetInput.removeClass('errorContent');
+                    }
+                }).datepicker('setDate', this.currentModel.get('dueDate'));
+            }
+
+            populate.get('#currencyDd', '/currency/getForDd', {}, 'name', this, true);
+            populate.get('#taxCode', '/taxSettings/getForDd', {}, 'name', this, true, true);
+            populate.get('#accountDd', '/chartOfAccount/getForDd', {}, 'name', this, true, true);
+
+            populate.get2name('#supplier', '/supplier', {}, this, false, true);
+            populate.fetchWorkflow({wId: 'Purchase Invoice'}, function (response) {
+                if (!response.error) {
+                    self.defaultWorkflow = response._id;
+                }
+            });
 
             if (model.groups) {
                 if (model.groups.users.length > 0 || model.groups.group.length) {

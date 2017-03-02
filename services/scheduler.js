@@ -2,6 +2,7 @@ module.exports = function (model) {
     'use strict';
     var nodeScheduler = require('node-schedule');
     var mongoose = require('mongoose');
+    var async = require('async');
     var employeeSchema = mongoose.Schemas.Employee;
     var logWriter = require('../helpers/logger');
 
@@ -78,13 +79,22 @@ module.exports = function (model) {
         });
     }
 
-    function updateYearEmployees(dbId) {
-        return findBirthdayToday(model.get(dbId, 'Employees', employeeSchema));
+    function updateYearEmployees() {
+        var dbsObject = this.dbsObject;
+
+        async.each(dbsObject, function (connection, eachCb) {
+            var dbId = connection.name;
+
+            findBirthdayToday(model.get(dbId, 'Employees', employeeSchema));
+            eachCb();
+        });
     }
 
-    function Scheduler(dbId) {
+    function Scheduler(dbsObject) {
+        this.dbsObject = dbsObject;
+
         this.initEveryDayScheduler = function () {
-            var _updateYearEmployees = updateYearEmployees.bind(this, dbId);
+            var _updateYearEmployees = updateYearEmployees.bind(this);
 
             if (!process.env.INITED_SCHEDULER) {
                 nodeScheduler.scheduleJob(rule, _updateYearEmployees);

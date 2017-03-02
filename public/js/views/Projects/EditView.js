@@ -32,7 +32,7 @@ define([
         },
 
         chooseOption: function (e) {
-            $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
+            $(e.target).closest('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
             $('.newSelectList').hide();
         },
 
@@ -269,13 +269,11 @@ define([
             var self = this;
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : false,
-                title        : 'Edit Project',
-                dialogClass  : 'edit-project-dialog',
-                width        : '900px',
-                buttons      : {
+                autoOpen   : true,
+                title      : 'Edit Project',
+                dialogClass: 'edit-project-dialog',
+                width      : '900px',
+                buttons    : {
                     save: {
                         text : 'Save',
                         class: 'btn blue',

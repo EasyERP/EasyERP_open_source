@@ -81,14 +81,12 @@ define([
             var formString = this.template({type: self.type});
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'edit-dialog',
-                title        : 'Create',
-                width        : '900px',
-                position     : {within: $('#wrapper')},
-                buttons      : [
+                autoOpen   : true,
+                dialogClass: 'edit-dialog',
+                title      : 'Create',
+                width      : '700px',
+                position   : {within: $('#wrapper')},
+                buttons    : [
                     {
                         id   : 'create-weeklyScheduler-dialog',
                         class: 'btn blue',

@@ -28,17 +28,24 @@ var workflows = function (models, event) {
     this.getWorkflowsForDd = function (req, res, next) {
         var Workflow = models.get(req.session.lastDb, 'workflows', WorkflowSchema);
         var data = req.query;
-        var query = Workflow.find({wId: data.id, visible: true});
+        var status = data.status;
+        var query = {wId: data.id, visible: true};
 
-        query.select('name wName');
-        query.sort({sequence: -1, 'editedBy.date': -1});
-        query.exec(function (err, result) {
-            if (err) {
-                return next(err);
-            }
+        if (status) {
+            query.status = status;
+        }
 
-            res.status(200).send({data: result});
-        });
+        Workflow
+            .find(query)
+            .select('name wName status')
+            .sort({sequence: -1, 'editedBy.date': -1})
+            .exec(function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send({data: result});
+            });
 
     };
 
@@ -213,7 +220,7 @@ var workflows = function (models, event) {
             return next(err);
         }
 
-        Workflow.find({$and: [{wId: data._id}, {name: data.name}]}, function (err, workflows) {
+        Workflow.find({$and: [{wId: data.wId}, {name: data.name}]}, function (err, workflows) {
             if (err) {
                 return next(err);
             }
@@ -224,10 +231,10 @@ var workflows = function (models, event) {
                 }
             } else {
                 body = new Workflow();
-                body.wId = data._id;
+                body.wId = data.wId;
                 body.name = data.name;
                 body.status = data.status;
-                updateSequence(Workflow, 'sequence', 0, 0, data._id, true, false, function (sequence) {
+                updateSequence(Workflow, 'sequence', 0, 0, data.wId, true, false, function (sequence) {
                     body.sequence = sequence;
 
                     body.save(function (err, result) {

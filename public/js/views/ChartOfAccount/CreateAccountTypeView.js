@@ -55,10 +55,10 @@ define([
             this.stopDefaultEvents(e);
 
             if (name) {
-                dataService.postData('/chartOfAccount/createAccountType', data, function (err, response) {
+                dataService.postData('/accountsCategories/getAll', data, function (err, response) {
                     self.hideDialog();
 
-                    self.responseObj['#accountTypeDd'].push({name: response.success.name, _id: response.success._id});
+                    self.responseObj['#accountsCategory'].push({name: response.success.name, _id: response.success._id});
                 });
             } else {
                 App.render({

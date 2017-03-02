@@ -34,7 +34,7 @@ define([
             var type = $target.attr('data-level');
             var aEl;
 
-            var currencyElement = $target.parents('dd').find('.current-selected');
+            var currencyElement = $target.parent('ul').closest('.current-selected');
             var oldCurrency = currencyElement.attr('data-id');
             var newCurrency = $target.attr('id');
             var oldCurrencyClass = helpers.currencyClass(oldCurrency);
@@ -49,7 +49,7 @@ define([
                 aEl.attr('data-id', 'jobs');
             }
 
-            $target.parents('dd').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
+            $target.parents('ul').closest('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
 
             this.hideNewSelect();
 
@@ -140,7 +140,7 @@ define([
                     users: usersId,
                     group: groupsId
                 },
-                
+
                 whoCanRW: whoCanRW
 
             };
@@ -188,14 +188,12 @@ define([
             var paymentContainer;
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'edit-dialog',
-                title        : 'Create WriteOff',
-                width        : '900px',
-                position     : {within: $('#wrapper')},
-                buttons      : [
+                autoOpen   : true,
+                dialogClass: 'edit-dialog',
+                title      : 'Create WriteOff',
+                width      : '900px',
+                position   : {within: $('#wrapper')},
+                buttons    : [
                     {
                         id   : 'create-write-off-dialog',
                         class: 'btn blue',

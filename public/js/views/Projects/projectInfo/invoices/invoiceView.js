@@ -1,12 +1,12 @@
 define([
     'Underscore',
     'jQuery',
-    'views/salesInvoices/list/ListView',
+    'views/invoice/list/ListView',
     'text!templates/Projects/projectInfo/invoiceTemplate.html',
-    'views/salesInvoices/EditView',
-    'views/salesInvoices/list/ListItemView',
-    'collections/salesInvoices/filterCollection',
-    'models/InvoiceModel',
+    'views/invoice/EditView',
+    'views/invoice/list/ListItemView',
+    'collections/invoice/filterCollection',
+    'models/InvoicesModel',
     'common',
     'helpers',
     'dataService',
@@ -114,7 +114,7 @@ define([
                         $('#checkAll_invoice').prop('checked', false);
 
                         if (that.eventChannel) {
-                            that.eventChannel.trigger('invoiceRemove');
+                            that.eventChannel.trigger('invoiceRemove', null, null, true);
                         }
                         that.collection.remove(checkbox.value);
 
@@ -167,7 +167,7 @@ define([
 
             var model = new InvoiceModel({validate: false});
 
-            model.urlRoot = '/invoices/';
+            model.urlRoot = '/invoice/';
             model.fetch({
                 data: {
                     id       : orderId,
@@ -202,32 +202,34 @@ define([
 
             e.preventDefault();
 
-            model.urlRoot = '/invoices/';
-            model.fetch({
-                data: {
-                    id       : id,
-                    currentDb: App.currentDb,
-                    viewType : 'form',
-                    forSales : true
-                },
+            if (id && id.length === 24) {
+                model.urlRoot = '/invoice/';
+                model.fetch({
+                    data: {
+                        id       : id,
+                        currentDb: App.currentDb,
+                        viewType : 'form',
+                        forSales : true
+                    },
 
-                success: function (model) {
-                    return new EditView({
-                        model       : model,
-                        redirect    : true,
-                        collection  : self.collection,
-                        notCreate   : true,
-                        eventChannel: self.eventChannel
-                    });
-                },
+                    success: function (model) {
+                        return new EditView({
+                            model       : model,
+                            redirect    : true,
+                            collection  : self.collection,
+                            notCreate   : true,
+                            eventChannel: self.eventChannel
+                        });
+                    },
 
-                error: function () {
-                    App.render({
-                        type   : 'error',
-                        message: 'Please refresh browser'
-                    });
-                }
-            });
+                    error: function () {
+                        App.render({
+                            type   : 'error',
+                            message: 'Please refresh browser'
+                        });
+                    }
+                });
+            }
         },
 
         checked: function (e) {

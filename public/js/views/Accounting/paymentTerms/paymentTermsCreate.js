@@ -56,7 +56,7 @@ define([
                 wait   : true,
                 success: function (res, model) {
                     self.hideDialog();
-                    $('#paymentTermsTable').append(_.template(tableEL, {elem: model}));
+                    $('#paymentTermsTable').prepend(_.template(tableEL, {elem: model}));
                     self.collection.add(res);
                 },
 
@@ -77,13 +77,11 @@ define([
             });
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'edit-dialog',
-                title        : 'Create Bank Account',
-                width        : '250px',
-                buttons      : [
+                autoOpen   : true,
+                dialogClass: 'edit-dialog',
+                title      : 'Create Bank Account',
+                width      : '250px',
+                buttons    : [
                     {
                         text : 'Save',
                         class: 'btn blue',

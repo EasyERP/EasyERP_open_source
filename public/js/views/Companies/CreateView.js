@@ -29,14 +29,26 @@ define([
         },
 
         events: {
-            'mouseenter .avatar': 'showEdit',
-            'mouseleave .avatar': 'hideEdit',
-            'click .details'    : 'toggleDetails'
+            'mouseenter .avatar'  : 'showEdit',
+            'mouseleave .avatar'  : 'hideEdit',
+            'click .details'      : 'toggleDetails',
+            'click .shippingRadio': 'shippingShow'
         },
 
         chooseOption: function (e) {
             var $target = $(e.target);
-            $target.parents('dd').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
+            $target.parents('ul').closest('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
+        },
+
+        shippingShow: function (e) {
+            var $target = $(e.target);
+            var val = parseInt($target.val(), 10);
+
+            if (val) {
+                this.$el.find('#shippingAddress').removeClass('hidden');
+            } else {
+                this.$el.find('#shippingAddress').addClass('hidden');
+            }
         },
 
         saveItem: function () {
@@ -47,7 +59,6 @@ define([
                 first: $.trim(this.$el.find('#companyName').val()),
                 last : ''
             };
-            var address = {};
             var email = $.trim(this.$el.find('#email').val());
             var phone = $.trim(this.$el.find('#phone').val());
             var mobile = $.trim(this.$el.find('#mobile').val());
@@ -69,11 +80,26 @@ define([
             var usersId = [];
             var groupsId = [];
             var whoCanRW;
+            var sameShippingAddress = parseInt(this.$el.find('input[name=shippingAddress]:checked').val(), 10);
+            var address = {
+                street : $.trim($('#addressInput').val()),
+                city   : $.trim($('#cityInput').val()),
+                state  : $.trim($('#stateInput').val()),
+                zip    : $.trim($('#zipInput').val()),
+                country: $.trim(this.$el.find('#countryInputCreate').attr('data-id')) || ''
+            };
+            var shippingAddress = sameShippingAddress ? {
+                street : $.trim($('#addressInputShipping').val()),
+                city   : $.trim($('#cityInputShipping').val()),
+                state  : $.trim($('#stateInputShipping').val()),
+                zip    : $.trim($('#zipInputShipping').val()),
+                name   : $.trim($('#nameInputShipping').val()),
+                country: $.trim(this.$el.find('#countryInputCreateShipping').attr('data-id')) || ''
+            } : address;
 
-            this.$el.find('.person-info').find('.address').each(function () {
-                var el = $(this);
-                address[el.attr('name')] = $.trim(el.val() || el.text());
-            });
+            if (!sameShippingAddress) {
+                shippingAddress.name = name.first;
+            }
 
             $('.groupsAndUser tr').each(function () {
                 if ($(this).data('type') === 'targetUsers') {
@@ -90,7 +116,7 @@ define([
                 name    : name,
                 imageSrc: this.imageSrc,
                 email   : email,
-                social: {
+                social  : {
                     LI: LI,
                     FB: FB
                 },
@@ -101,9 +127,10 @@ define([
                     fax   : fax
                 },
 
-                address      : address,
-                website      : website,
-                internalNotes: internalNotes,
+                address        : address,
+                shippingAddress: shippingAddress,
+                website        : website,
+                internalNotes  : internalNotes,
 
                 salesPurchases: {
                     isCustomer   : isCustomer,
@@ -131,18 +158,23 @@ define([
                 wait: true,
 
                 success: function (model, res) {
-                    var navigateUrl;
+                    var navigateUrl = window.location.hash;
+
                     self.hideDialog();
 
                     if (self.saveDeal && (typeof self.saveDeal === 'function')) {
-                        self.saveDeal({company : res.id}, 'formProperty');
+                        self.saveDeal({company: res.id}, 'formProperty');
                     } else {
-                        custom.getFiltersValues(true); // added for refreshing filters after creating
+                        custom.getFiltersValues(self); // added for refreshing filters after creating
 
-                        navigateUrl = (viewType === 'form') ? '#easyErp/Companies/form/' + res.id : window.location.hash;
+                        if (viewType !== 'thumbnails') {
+                            navigateUrl = (viewType === 'form') ? '#easyErp/Companies/form/' + res.id : window.location.hash;
+                        }
+
+                        Backbone.history.fragment = '';
+
                         Backbone.history.navigate(navigateUrl, {trigger: true});
                     }
-
 
                 },
 
@@ -159,13 +191,11 @@ define([
             var salesPurchasesEl;
 
             var thisEl = this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'create-dialog',
-                title        : 'Create Company',
-                width        : '80%',
-                buttons      : [
+                autoOpen   : true,
+                dialogClass: 'create-dialog',
+                title      : 'Create Company',
+                width      : '800px',
+                buttons    : [
                     {
                         text : 'Create',
                         class: 'btn blue',
@@ -182,7 +212,7 @@ define([
 
             salesPurchasesEl = thisEl.find('#salesPurchases-container');
 
-           /* this.renderAssignees(this.currentModel);*/
+            /* this.renderAssignees(this.currentModel);*/
 
             salesPurchasesEl.append(
                 new SalesPurchasesView({
@@ -191,6 +221,9 @@ define([
             );
 
             populate.get('#countryInputCreate', CONSTANTS.URLS.COUNTRIES, {}, '_id', this);
+            populate.get('#countryInputCreateShipping', CONSTANTS.URLS.COUNTRIES, {}, '_id', this);
+            populate.get2name('#employeesDd', '/employees/getForDD', {}, this);
+            populate.get('#language', CONSTANTS.URLS.EMPLOYEES_LANGUAGES, {}, 'name', this.parrent);
 
             common.canvasDraw({model: companyModel.toJSON()}, this);
 

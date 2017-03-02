@@ -37,10 +37,12 @@ var Module = function (models, event) {
     var _journalEntryHandler = new JournalEntryHandler(models, event);
     var path = require('path');
     var Uploader = require('../services/fileStorage/index');
-    var HistoryWriter = require('../helpers/historyWriter.js');
-    var historyWriter = new HistoryWriter(models);
+    var HistoryService = require('../services/history.js')(models);
     var uploader = new Uploader();
     var FilterMapper = require('../helpers/filterMapper');
+    var filterMapper = new FilterMapper();
+
+    var wTrackInvoiceCT = 'wTrackInvoice';
 
     oxr.set({app_id: process.env.OXR_APP_ID});
 
@@ -77,14 +79,16 @@ var Module = function (models, event) {
     }
 
     function getHistory(req, invoice, cb) {
-        var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+        var dbName = req.session.lastDb;
+        var Invoice = models.get(dbName, wTrackInvoiceCT, wTrackInvoiceSchema);
 
         var historyOptions = {
-            req: req,
-            id : invoice._id
+            forNote: true,
+            dbName : dbName,
+            id     : invoice._id
         };
 
-        historyWriter.getHistoryForTrackedObject(historyOptions, function (err, history) {
+        HistoryService.getHistoryForTrackedObject(historyOptions, function (err, history) {
             var notes;
             var payments;
 
@@ -101,37 +105,36 @@ var Module = function (models, event) {
             });
 
             Invoice.populate(invoice, {
-                path: 'payments.createdBy.user',
-                model: 'Users',
+                path  : 'payments.createdBy.user',
+                model : 'Users',
                 select: 'login'
             }, function (err, invoice) {
 
                 Invoice.populate(invoice, {
-                    path: 'payments.currency._id',
-                    model: 'currency',
+                    path  : 'payments.currency._id',
+                    model : 'currency',
                     select: 'symbol'
-                },function (err, invoice) {
+                }, function (err, invoice) {
                     var payments;
 
                     payments = invoice.payments.map(function (elem) {
                         return {
-                            date   : elem.createdBy ? elem.createdBy.date : '',
-                            pay    : (elem.currency && elem.currency._id  ? elem.currency._id.symbol : '') + (elem.paidAmount/100).toFixed(2),
-                            user   : elem.createdBy && elem.createdBy.user ? elem.createdBy.user.toJSON() : ''
+                            date: elem.createdBy ? elem.createdBy.date : '',
+                            pay : (elem.currency && elem.currency._id ? elem.currency._id.symbol : '') + (elem.paidAmount / 100).toFixed(2),
+                            user: elem.createdBy && elem.createdBy.user ? elem.createdBy.user.toJSON() : ''
                         };
                     });
+
+                    if (!invoice.notes) {
+                        invoice.notes = [];
+                    }
 
                     invoice.notes = invoice.notes.concat(notes, payments);
                     invoice.notes = _.sortBy(invoice.notes, 'date');
                     cb(null, invoice);
                 });
-
-
             });
-
-
-
-        }, true);
+        });
 
     }
 
@@ -158,8 +161,6 @@ var Module = function (models, event) {
             invoice.save(function (err, result) {
                 var historyOptions;
 
-
-
                 if (err) {
                     return waterfallCb(err);
                 }
@@ -167,12 +168,11 @@ var Module = function (models, event) {
                 historyOptions = {
                     contentType: 'invoice',
                     data       : result.toJSON(),
-                    req        : req,
+                    dbName     : dbIndex,
                     contentId  : result._id
                 };
 
-                historyWriter.addEntry(historyOptions, function () {
-
+                HistoryService.addEntry(historyOptions, function () {
                     result = result.toObject();
                     result.currency = result.currency || {};
                     result.currency.name = body.currency ? body.currency.name : 'USD';
@@ -183,12 +183,11 @@ var Module = function (models, event) {
                         waterfallCb(null, result);
                     }
                 });
-
             });
         }
 
         if (forSales) {
-            Invoice = models.get(dbIndex, 'wTrackInvoice', wTrackInvoiceSchema);
+            Invoice = models.get(dbIndex, wTrackInvoiceCT, wTrackInvoiceSchema);
             waterfallTasks = [invoiceSaver];
         } else {
             Invoice = models.get(dbIndex, 'Invoice', InvoiceSchema);
@@ -205,50 +204,58 @@ var Module = function (models, event) {
     };
 
     this.getSalesByCountry = function (req, res, next) {
-        var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
-        var query = req.query;
-        var startDate = query.startDay;
-        var endDate = query.endDay;
+        var Invoice = models.get(req.session.lastDb, wTrackInvoiceCT, wTrackInvoiceSchema);
+        var filter = req.query.filter || {};
+        filter._type = {
+            value: [wTrackInvoiceCT]
+        };
 
-        startDate = new Date(moment(new Date(startDate)).startOf('day'));
-        endDate = new Date(moment(new Date(endDate)).endOf('day'));
+        Invoice.aggregate([
+            {
+                $match: {
+                    $and: [
+                        {
+                            forSales: true
+                        },
+                        filterMapper.mapFilter(filter, {contentType: wTrackInvoiceCT})
+                    ]
+                }
+            },
+            {
+                $lookup: {
+                    from        : 'Customers',
+                    localField  : 'supplier',
+                    foreignField: '_id',
+                    as          : 'supplier'
+                }
+            },
+            {
+                $lookup: {
+                    from        : 'journalentries',
+                    localField  : '_id',
+                    foreignField: 'sourceDocument._id',
+                    as          : 'journalEntries'
+                }
+            },
+            {
+                $match: {
+                    journalEntries: {$exists: true, $not: {$size: 0}}
+                }
+            },
+            {
+                $project: {
+                    supplier: {$arrayElemAt: ['$supplier', 0]},
+                    pays    : {$sum: '$journalEntries.debit'}
+                }
+            },
+            {
+                $group: {
+                    _id : '$supplier.address.country',
+                    pays: {$sum: '$pays'}
 
-        Invoice.aggregate([{
-            $match: {
-                forSales   : true,
-                _type      : 'wTrackInvoice',
-                invoiceDate: {$lte: endDate, $gte: startDate}
+                }
             }
-        }, {
-            $lookup: {
-                from        : 'Customers',
-                localField  : 'supplier',
-                foreignField: '_id',
-                as          : 'supplier'
-            }
-        }, {
-            $lookup: {
-                from        : 'journalentries',
-                localField  : '_id',
-                foreignField: 'sourceDocument._id',
-                as          : 'journalEntries'
-            }
-        }, {
-            $match: {
-                journalEntries: {$exists: true, $not: {$size: 0}}
-            }
-        }, {
-            $project: {
-                supplier: {$arrayElemAt: ['$supplier', 0]},
-                pays    : {$sum: '$journalEntries.debit'}
-            }
-        }, {
-            $group: {
-                _id : '$supplier.address.country',
-                pays: {$sum: '$pays'}
-
-            }
-        }], function (err, result) {
+        ], function (err, result) {
             if (err) {
                 return next(err);
             }
@@ -263,7 +270,7 @@ var Module = function (models, event) {
         var journal = req.body.journal;
         var dbIndex = req.session.lastDb;
         var Invoice = models.get(dbIndex, 'Invoice', InvoiceSchema);
-        var wTrackInvoice = models.get(dbIndex, 'wTrackInvoice', wTrackInvoiceSchema);
+        var wTrackInvoice = models.get(dbIndex, wTrackInvoiceCT, wTrackInvoiceSchema);
         var Order = models.get(dbIndex, 'Quotation', OrderSchema);
         var Company = models.get(dbIndex, 'Customer', CustomerSchema);
         var request;
@@ -419,6 +426,7 @@ var Module = function (models, event) {
         }
 
         function createInvoice(parallelResponse, callback) {
+            var userId = req.session.uId;
             var order;
             var workflow;
             var err;
@@ -435,7 +443,7 @@ var Module = function (models, event) {
                 workflow = parallelResponse[1];
 
                 // order.attachments[0].shortPas = order.attachments[0].shortPas.replace('..%2Froutes', '');
-              //  delete order.attachments;
+                //  delete order.attachments;
 
             } else {
                 err = new Error(RESPONSES.BAD_REQUEST);
@@ -469,12 +477,12 @@ var Module = function (models, event) {
                 invoice.paymentDate = proforma.paymentDate;
             }
 
-            if (req.session.uId) {
-                invoice.createdBy.user = req.session.uId;
-                invoice.editedBy.user = req.session.uId;
+            if (userId) {
+                invoice.createdBy.user = userId;
+                invoice.editedBy.user = userId;
             }
 
-            invoice.currency.rate = oxr.rates[invoiceCurrency];
+            invoice.currency.rate = oxr.rates[invoiceCurrency][oxr.base];
 
             // invoice.sourceDocument = order.name;
             invoice.payments = payments;
@@ -516,11 +524,11 @@ var Module = function (models, event) {
                     historyOptions = {
                         contentType: 'invoice',
                         data       : result.toJSON(),
-                        req        : req,
+                        dbName     : dbIndex,
                         contentId  : result._id
                     };
 
-                    historyWriter.addEntry(historyOptions, function () {
+                    HistoryService.addEntry(historyOptions, function () {
                         callback(null, result);
                     });
                 });
@@ -549,11 +557,11 @@ var Module = function (models, event) {
                         historyOptions = {
                             contentType: 'invoice',
                             data       : result.toJSON(),
-                            req        : req,
+                            dbName     : dbIndex,
                             contentId  : result._id
                         };
 
-                        historyWriter.addEntry(historyOptions, function () {
+                        HistoryService.addEntry(historyOptions, function () {
                             callback(null, result);
                         });
 
@@ -614,20 +622,22 @@ var Module = function (models, event) {
                 return next(err);
             }
 
-
             if (addNote) {
                 notes = file.map(function (elem) {
                     return {
-                        _id       : mongoose.Types.ObjectId(),
+                        _id: mongoose.Types.ObjectId(),
+
                         attachment: {
                             name    : elem.name,
                             shortPas: elem.shortPas
                         },
-                        user      : {
+
+                        user: {
                             _id  : req.session.uId,
                             login: req.session.uName
                         },
-                        date      : new Date()
+
+                        date: new Date()
                     }
                 });
             }
@@ -651,7 +661,7 @@ var Module = function (models, event) {
         var db = req.session.lastDb;
         var id = req.params.id;
         var data = req.body;
-        var Invoice = models.get(db, 'wTrackInvoice', wTrackInvoiceSchema);
+        var Invoice = models.get(db, wTrackInvoiceCT, wTrackInvoiceSchema);
         var JobsModel = models.get(db, 'jobs', JobsSchema);
         var ProductModel = models.get(db, 'Product', ProductSchema);
         var Customer = models.get(db, 'Customers', CustomerSchema);
@@ -682,7 +692,7 @@ var Module = function (models, event) {
         date = moment(new Date(data.invoiceDate));
         date = date.format('YYYY-MM-DD');
 
-        Invoice = models.get(db, 'wTrackInvoice', wTrackInvoiceSchema);
+        Invoice = models.get(db, wTrackInvoiceCT, wTrackInvoiceSchema);
 
         if (data.notes && data.notes.length !== 0) {
             obj = data.notes[data.notes.length - 1];
@@ -691,7 +701,7 @@ var Module = function (models, event) {
                 obj._id = mongoose.Types.ObjectId();
             }
 
-            obj.date = new Date();
+            // obj.date = new Date();
 
             if (!obj.user) {
                 obj.user = {};
@@ -778,134 +788,39 @@ var Module = function (models, event) {
                     historyOptions = {
                         contentType: 'invoice',
                         data       : data,
-                        req        : req,
+                        dbName     : db,
                         contentId  : invoice._id
                     };
 
-
-                        if (products) {
-                            async.each(products, function (result, cb) {
-                                var jobs = result.jobs;
-                                var productId = result.product;
-                                var editedBy = {
-                                    user: req.session.uId,
-                                    date: new Date()
-                                };
-                                ProductModel.findByIdAndUpdate(productId, {
-                                    'info.description' : result.description
-                                }, function(err) {
-                                    if (err) {
-                                        return next(err);
-                                    }
-                                    JobsModel.findByIdAndUpdate(jobs, {
-                                        $set: {
-                                            description: result.jobDescription,
-                                            editedBy   : editedBy
-                                        }
-                                    }, {new: true}, function (err, job) {
-                                        if (err) {
-                                            return cb(err);
-                                        }
-
-                                        cb();
-                                    });
-                                });
-
-
-
-                            }, function () {
-                                if (invoice && invoice._type === 'Proforma') {
-                                    model = 'Proforma';
-
-                                    query = {
-                                        'sourceDocument.model': model,
-                                        'sourceDocument._id'  : id,
-                                        journal               : CONSTANTS.BEFORE_INVOICE
-                                    };
-                                    _journalEntryHandler.changeDate(query, data.invoiceDate, req.session.lastDb, function () {
-                                    });
-
-                                    journal = invoice.journal; // CONSTANTS.PROFORMA_JOURNAL;
-                                } else {
-                                    model = 'Invoice';
-                                    journal = invoice.journal; // CONSTANTS.INVOICE_JOURNAL;
-
-                                    dateForJobs = moment(new Date(data.invoiceDate)).subtract(1, 'seconds');
-                                    dateForJobsFinished = moment(new Date(data.invoiceDate)).subtract(2, 'seconds');
-
-                                    invoiceProducts = invoice.products;
-
-                                    invoiceJobs = [];
-
-                                    invoiceProducts.forEach(function (prod) {
-                                        invoiceJobs.push(prod.jobs);
-                                    });
-
-                                    query = {
-                                        'sourceDocument.model': 'jobs',
-                                        'sourceDocument._id'  : {$in: invoiceJobs},
-                                        journal               : CONSTANTS.JOB_FINISHED
-                                    };
-                                    _journalEntryHandler.changeDate(query, dateForJobs, req.session.lastDb, function () {
-                                    });
-
-                                    queryForClosed = {
-                                        'sourceDocument.model': 'jobs',
-                                        'sourceDocument._id'  : {$in: invoiceJobs},
-                                        journal               : CONSTANTS.CLOSED_JOB
-                                    };
-                                    _journalEntryHandler.changeDate(query, dateForJobsFinished, req.session.lastDb, function () {
-                                    });
-
-                                    query = {'sourceDocument.model': model, 'sourceDocument._id': id, journal: journal};
-                                    _journalEntryHandler.changeDate(query, data.invoiceDate, req.session.lastDb, function () {
-                                    });
+                    if (products) {
+                        async.each(products, function (result, cb) {
+                            var jobs = result.jobs;
+                            var productId = result.product;
+                            var editedBy = {
+                                user: req.session.uId,
+                                date: new Date()
+                            };
+                            ProductModel.findByIdAndUpdate(productId, {
+                                'info.description': result.description
+                            }, function (err) {
+                                if (err) {
+                                    return next(err);
                                 }
+                                JobsModel.findByIdAndUpdate(jobs, {
+                                    $set: {
+                                        description: result.jobDescription,
+                                        editedBy   : editedBy
+                                    }
+                                }, {new: true}, function (err, job) {
+                                    if (err) {
+                                        return cb(err);
+                                    }
 
-                                historyWriter.addEntry(historyOptions, function () {
-                                    Customer.populate(invoice, {
-                                        path  : 'supplier',
-                                        select: '_id name fullName'
-                                    }, function (err) {
-                                        if (err) {
-                                            return next(err);
-                                        }
-
-                                        invoice.populate('workflow', '_id name status')
-                                            .populate('sourceDocument', '_id name')
-                                            .populate('journal', '_id name')
-                                            .populate('payments', '_id name date paymentRef paidAmount createdBy currency')
-                                            .populate('department', '_id name')
-                                            .populate('currency._id', 'name symbol')
-                                            .populate('products.jobs', 'name description')
-                                            .populate('products.product', 'name info')
-                                            .populate('paymentTerms', function (err) {
-                                                if (err) {
-                                                    return next(err);
-                                                }
-
-                                                if (invoice && invoice._type !== 'Proforma'){
-                                                    getHistory(req, invoice, function(err, invoice){
-                                                        if (err) {
-                                                            return next(err);
-                                                        }
-
-                                                        res.status(200).send(invoice);
-                                                    });
-                                                } else {
-                                                    res.status(200).send(invoice);
-                                                }
-
-
-                                            });
-                                    });
+                                    cb();
                                 });
-
-
-
-
                             });
-                        } else {
+
+                        }, function () {
                             if (invoice && invoice._type === 'Proforma') {
                                 model = 'Proforma';
 
@@ -950,10 +865,11 @@ var Module = function (models, event) {
                                 });
 
                                 query = {'sourceDocument.model': model, 'sourceDocument._id': id, journal: journal};
-                                _journalEntryHandler.changeDate(query, invoice.invoiceDate, req.session.lastDb, function () {
+                                _journalEntryHandler.changeDate(query, data.invoiceDate, req.session.lastDb, function () {
                                 });
                             }
-                            historyWriter.addEntry(historyOptions, function () {
+
+                            HistoryService.addEntry(historyOptions, function () {
                                 Customer.populate(invoice, {
                                     path  : 'supplier',
                                     select: '_id name fullName'
@@ -970,13 +886,13 @@ var Module = function (models, event) {
                                         .populate('currency._id', 'name symbol')
                                         .populate('products.jobs', 'name description')
                                         .populate('products.product', 'name info')
-                                        .populate('paymentTerms', function (err, invoice){
+                                        .populate('paymentTerms', function (err) {
                                             if (err) {
                                                 return next(err);
                                             }
 
-                                            if (invoice && invoice._type !== 'Proforma'){
-                                                getHistory(req, invoice.toJSON(), function(err, invoice){
+                                            if (invoice && invoice._type !== 'Proforma') {
+                                                getHistory(req, invoice, function (err, invoice) {
                                                     if (err) {
                                                         return next(err);
                                                     }
@@ -986,18 +902,99 @@ var Module = function (models, event) {
                                             } else {
                                                 res.status(200).send(invoice);
                                             }
+
                                         });
-
-
-
                                 });
                             });
 
+                        });
+                    } else {
+                        if (invoice && invoice._type === 'Proforma') {
+                            model = 'Proforma';
 
+                            query = {
+                                'sourceDocument.model': model,
+                                'sourceDocument._id'  : id,
+                                journal               : CONSTANTS.BEFORE_INVOICE
+                            };
+                            _journalEntryHandler.changeDate(query, data.invoiceDate, req.session.lastDb, function () {
+                            });
+
+                            journal = invoice.journal; // CONSTANTS.PROFORMA_JOURNAL;
+                        } else {
+                            model = 'Invoice';
+                            journal = invoice.journal; // CONSTANTS.INVOICE_JOURNAL;
+
+                            dateForJobs = moment(new Date(data.invoiceDate)).subtract(1, 'seconds');
+                            dateForJobsFinished = moment(new Date(data.invoiceDate)).subtract(2, 'seconds');
+
+                            invoiceProducts = invoice.products;
+
+                            invoiceJobs = [];
+
+                            invoiceProducts.forEach(function (prod) {
+                                invoiceJobs.push(prod.jobs);
+                            });
+
+                            query = {
+                                'sourceDocument.model': 'jobs',
+                                'sourceDocument._id'  : {$in: invoiceJobs},
+                                journal               : CONSTANTS.JOB_FINISHED
+                            };
+                            _journalEntryHandler.changeDate(query, dateForJobs, req.session.lastDb, function () {
+                            });
+
+                            queryForClosed = {
+                                'sourceDocument.model': 'jobs',
+                                'sourceDocument._id'  : {$in: invoiceJobs},
+                                journal               : CONSTANTS.CLOSED_JOB
+                            };
+                            _journalEntryHandler.changeDate(query, dateForJobsFinished, req.session.lastDb, function () {
+                            });
+
+                            query = {'sourceDocument.model': model, 'sourceDocument._id': id, journal: journal};
+                            _journalEntryHandler.changeDate(query, invoice.invoiceDate, req.session.lastDb, function () {
+                            });
                         }
+                        HistoryService.addEntry(historyOptions, function () {
+                            Customer.populate(invoice, {
+                                path  : 'supplier',
+                                select: '_id name fullName'
+                            }, function (err) {
+                                if (err) {
+                                    return next(err);
+                                }
 
+                                invoice.populate('workflow', '_id name status')
+                                    .populate('sourceDocument', '_id name')
+                                    .populate('journal', '_id name')
+                                    .populate('payments', '_id name date paymentRef paidAmount createdBy currency')
+                                    .populate('department', '_id name')
+                                    .populate('currency._id', 'name symbol')
+                                    .populate('products.jobs', 'name description')
+                                    .populate('products.product', 'name info')
+                                    .populate('paymentTerms', function (err, invoice) {
+                                        if (err) {
+                                            return next(err);
+                                        }
 
+                                        if (invoice && invoice._type !== 'Proforma') {
+                                            getHistory(req, invoice.toJSON(), function (err, invoice) {
+                                                if (err) {
+                                                    return next(err);
+                                                }
 
+                                                res.status(200).send(invoice);
+                                            });
+                                        } else {
+                                            res.status(200).send(invoice);
+                                        }
+                                    });
+
+                            });
+                        });
+
+                    }
 
                 });
             });
@@ -1006,7 +1003,7 @@ var Module = function (models, event) {
 
     this.getEmails = function (req, res, next) {
         var id = req.params.id;
-        var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+        var Invoice = models.get(req.session.lastDb, wTrackInvoiceCT, wTrackInvoiceSchema);
 
         Invoice.aggregate([
             {
@@ -1056,7 +1053,7 @@ var Module = function (models, event) {
         var products;
         var project;
 
-        var Invoice = models.get(db, 'wTrackInvoice', wTrackInvoiceSchema);
+        var Invoice = models.get(db, wTrackInvoiceCT, wTrackInvoiceSchema);
 
         Invoice.findByIdAndUpdate(id, {
             $set: {
@@ -1075,23 +1072,26 @@ var Module = function (models, event) {
 
             historyOptions = {
                 contentType: 'invoice',
-                data       : {
-                    approved   : ' '
+
+                data: {
+                    approved: ' '
                 },
-                req        : req,
-                contentId  : id
+
+                dbName   : db,
+                contentId: id
             };
 
-            historyWriter.addEntry(historyOptions, function () {
+            HistoryService.addEntry(historyOptions, function () {
                 products = resp.products;
 
                 if (resp._type !== 'Proforma') {
                     setWorkflow = function (callback) {
+                        var request;
 
                         journalEntryComposer(resp, req.session.lastDb, function () {
                         }, req.session.uId);
 
-                        var request = {
+                        request = {
                             query: {
                                 wId   : 'Proforma',
                                 status: 'Cancelled'
@@ -1166,7 +1166,6 @@ var Module = function (models, event) {
                 }
             });
 
-
         });
     };
 
@@ -1182,73 +1181,6 @@ var Module = function (models, event) {
             res.status(200).send(invoices);
         });
     };
-
-    /*TODO remove after filters check*/
-
-    /*function ConvertType(element, type) {
-     if (type === 'boolean') {
-     if (element === 'true') {
-     element = true;
-     } else if (element === 'false') {
-     element = false;
-     }
-     }
-
-     return element;
-     }*/
-
-    /*function caseFilter(filter) {
-     var condition;
-     var resArray = [];
-     var filtrElement = {};
-     var key;
-     var filterName;
-     var keys = Object.keys(filter);
-     var i;
-
-     for (i = keys.length - 1; i >= 0; i--) {
-     filterName = keys[i];
-     condition = filter[filterName].value;
-     key = filter[filterName].key;
-
-     switch (filterName) {
-     case 'project':
-     if (condition) {
-     filtrElement[key] = {$in: condition.objectID()};
-     resArray.push(filtrElement);
-     }
-     break;
-     case 'salesPerson':
-     if (condition) {
-     filtrElement[key] = {$in: condition.objectID()};
-     resArray.push(filtrElement);
-     }
-     break;
-     case 'supplier':
-     if (condition) {
-     filtrElement[key] = {$in: condition.objectID()};
-     resArray.push(filtrElement);
-     }
-     break;
-     case 'workflow':
-     if (condition) {
-     filtrElement[key] = {$in: condition.objectID()};
-     resArray.push(filtrElement);
-     }
-     break;
-     case 'forSales':
-     if (condition) {
-     condition = ConvertType(condition[0], 'boolean');
-     filtrElement[key] = condition;
-     resArray.push(filtrElement);
-     }
-     break;
-     // skip default;
-     }
-     }
-
-     return resArray;
-     }*/
 
     this.getForView = function (req, res, next) {
         var db = req.session.lastDb;
@@ -1268,7 +1200,6 @@ var Module = function (models, event) {
         var keys;
         var keysLength;
         var i;
-        var filterMapper = new FilterMapper();
         var aggregation;
         var forPurchase = false;
 
@@ -1306,7 +1237,7 @@ var Module = function (models, event) {
                 value: ['false']
             };
         } else {
-            Invoice = models.get(db, 'wTrackInvoice', wTrackInvoiceSchema);
+            Invoice = models.get(db, wTrackInvoiceCT, wTrackInvoiceSchema);
 
             filter.forSales = {
                 key  : 'forSales',
@@ -1368,8 +1299,7 @@ var Module = function (models, event) {
 
             optionsObject.$and = [];
             if (filter && typeof filter === 'object') {
-                // optionsObject.$and = caseFilter(filter);
-                optionsObject.$and.push(filterMapper.mapFilter(filter, contentType));
+                optionsObject.$and.push(filterMapper.mapFilter(filter, {contentType: contentType}));
             }
 
             optionsObject.$and.push({_id: {$in: invoicesIds}});
@@ -1453,7 +1383,7 @@ var Module = function (models, event) {
                             'workflow.name'  : 1,
                             'workflow.status': 1,
                             'supplier._id'   : '$supplier._id',
-                            'supplier.name'  : '$supplier.name',
+                            'supplier.name'  : {$concat: ['$supplier.name.first', ' ', '$supplier.name.last']},
                             'journal.name'   : '$journal.name',
                             'journal._id'    : '$journal._id',
                             expense          : 1,
@@ -1512,7 +1442,7 @@ var Module = function (models, event) {
                     }, {
                         $project: {
                             _id               : '$root._id',
-                            'salesPerson.name': '$root.salesPerson.name',
+                            'salesPerson.name': {$concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']},
                             'salesPerson._id' : '$root.salesPerson._id',
                             workflow          : '$root.workflow',
                             supplier          : '$root.supplier',
@@ -1614,7 +1544,7 @@ var Module = function (models, event) {
                             'workflow.name'  : 1,
                             'workflow.status': 1,
                             'supplier._id'   : '$supplier._id',
-                            'supplier.name'  : '$supplier.name',
+                            'supplier.name'  : {$concat: ['$supplier.name.first', ' ', '$supplier.name.last']},
                             'project._id'    : '$project._id',
                             'project.name'   : '$project.name',
                             'journal.name'   : '$journal.name',
@@ -1675,7 +1605,7 @@ var Module = function (models, event) {
                     }, {
                         $project: {
                             _id               : '$root._id',
-                            'salesPerson.name': '$root.salesPerson.name',
+                            'salesPerson.name': {$concat: ['$$root.salesPerson.name.first', ' ', '$$root.salesPerson.name.last']},
                             'salesPerson._id' : '$root.salesPerson._id',
                             workflow          : '$root.workflow',
                             supplier          : '$root.supplier',
@@ -1723,7 +1653,7 @@ var Module = function (models, event) {
                 return next(err);
             }
 
-            firstElement = result[0];
+            firstElement = result && result.length ? result[0] : {};
             count = firstElement && firstElement.total ? firstElement.total : 0;
             response.total = count;
             response.data = result;
@@ -1753,7 +1683,7 @@ var Module = function (models, event) {
         if ((contentType === 'DividendInvoice') || (contentType === 'dividendInvoice')) {
             Invoice = models.get(req.session.lastDb, 'dividendInvoice', DividendInvoiceSchema);
         } else if (forSales) {
-            Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+            Invoice = models.get(req.session.lastDb, wTrackInvoiceCT, wTrackInvoiceSchema);
         } else if (contentType === 'WriteOff') {
             Invoice = models.get(req.session.lastDb, 'writeOff', WriteOffSchema);
         } else {
@@ -1848,8 +1778,8 @@ var Module = function (models, event) {
             if (err) {
                 return next(err);
             }
-            if (result && result._type !== 'Proforma'){
-                getHistory(req, result.toJSON(), function(err, invoice){
+            if (result && result._type !== 'Proforma') {
+                getHistory(req, result.toJSON(), function (err, invoice) {
                     if (err) {
                         return next(err);
                     }
@@ -1859,7 +1789,6 @@ var Module = function (models, event) {
             } else {
                 res.status(200).send(result);
             }
-
 
         });
     };
@@ -2086,7 +2015,7 @@ var Module = function (models, event) {
                     editedBy: editedBy
                 };
                 if (result && result._type === 'writeOff') {
-                    updateObject.type = 'Not Quoted';
+                    updateObject.type = 'Not Ordered';
                 }
 
                 async.each(jobs, function (id, cb) {
@@ -2100,14 +2029,14 @@ var Module = function (models, event) {
                             return console.log(err);
                         }
 
-                        _journalEntryHandler.checkAndCreateForJob({
-                            req     : req,
-                            jobId   : id,
-                            jobName : result.name,
-                            workflow: CONSTANTS.JOBSINPROGRESS,
-                            wTracks : result ? result.wTracks : [],
-                            date    : invoiceDeleted.invoiceDate
-                        });
+                        /*_journalEntryHandler.checkAndCreateForJob({
+                         req     : req,
+                         jobId   : id,
+                         jobName : result.name,
+                         workflow: CONSTANTS.JOBSINPROGRESS,
+                         wTracks : result ? result.wTracks : [],
+                         date    : invoiceDeleted.invoiceDate
+                         });*/
 
                         project = result ? result.project : null;
                         array = result ? result.wTracks : [];
@@ -2166,7 +2095,7 @@ var Module = function (models, event) {
     };
 
     this.updateInvoice = function (req, res, _id, data, next) {
-        var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+        var Invoice = models.get(req.session.lastDb, wTrackInvoiceCT, wTrackInvoiceSchema);
 
         if (_id.length < 24) {
             return res.status(400).send();
@@ -2183,55 +2112,55 @@ var Module = function (models, event) {
     };
 
     this.revenueByCountry = function (req, res, next) {
-        var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+        var Invoice = models.get(req.session.lastDb, wTrackInvoiceCT, wTrackInvoiceSchema);
         var data = req.query;
-        var startDay = new Date(data.startDay);
-        var endDay = new Date(data.endDay);
         var filter = data.filter || {};
-        var matchObject = {
-            _type      : 'wTrackInvoice',
-            invoiceDate: {$gte: startDay, $lte: endDay}
+
+        filter._type = {
+            backend: '_type',
+            value  : [wTrackInvoiceCT]
         };
-        var filterObject = {};
-        var filterMapper = new FilterMapper();
 
-        filterObject = filterMapper.mapFilter(filter);
-
-        Invoice.aggregate([{
-            $match: matchObject
-        }, {
-            $match: filterObject
-        }, {
-            $project: {
-                paymentInfo: 1,
-                invoiceDate: 1,
-                supplier   : 1,
-                currency   : 1
+        Invoice.aggregate([
+            {
+                $match: filterMapper.mapFilter(filter, {contentType: wTrackInvoiceCT})
+            },
+            {
+                $project: {
+                    paymentInfo: 1,
+                    invoiceDate: 1,
+                    supplier   : 1,
+                    currency   : 1
+                }
+            },
+            {
+                $lookup: {
+                    from        : 'Customers',
+                    localField  : 'supplier',
+                    foreignField: '_id',
+                    as          : 'supplier'
+                }
+            },
+            {
+                $project: {
+                    paymentInfo: 1,
+                    currency   : 1,
+                    supplier   : {$arrayElemAt: ['$supplier', 0]}
+                }
+            },
+            {
+                $project: {
+                    sum    : {$divide: ['$paymentInfo.total', '$currency.rate']},
+                    country: '$supplier.address.country'
+                }
+            },
+            {
+                $group: {
+                    _id: '$country',
+                    sum: {$sum: '$sum'}
+                }
             }
-        }, {
-            $lookup: {
-                from        : 'Customers',
-                localField  : 'supplier',
-                foreignField: '_id',
-                as          : 'supplier'
-            }
-        }, {
-            $project: {
-                paymentInfo: 1,
-                currency   : 1,
-                supplier   : {$arrayElemAt: ['$supplier', 0]}
-            }
-        }, {
-            $project: {
-                sum    : {$divide: ['$paymentInfo.total', '$currency.rate']},
-                country: '$supplier.address.country'
-            }
-        }, {
-            $group: {
-                _id: '$country',
-                sum: {$sum: '$sum'}
-            }
-        }], function (err, result) {
+        ], function (err, result) {
             if (err) {
                 return next(err);
             }
@@ -2241,55 +2170,55 @@ var Module = function (models, event) {
     };
 
     this.revenueByCustomer = function (req, res, next) {
-        var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+        var Invoice = models.get(req.session.lastDb, wTrackInvoiceCT, wTrackInvoiceSchema);
         var data = req.query;
-        var startDay = new Date(data.startDay);
-        var endDay = new Date(data.endDay);
         var filter = data.filter || {};
-        var matchObject = {
-            _type      : 'wTrackInvoice',
-            invoiceDate: {$gte: startDay, $lte: endDay}
+
+        filter._type = {
+            backend: '_type',
+            value  : [wTrackInvoiceCT]
         };
-        var filterObject = {};
-        var filterMapper = new FilterMapper();
 
-        filterObject = filterMapper.mapFilter(filter);
-
-        Invoice.aggregate([{
-            $match: matchObject
-        }, {
-            $match: filterObject
-        }, {
-            $project: {
-                paymentInfo: 1,
-                invoiceDate: 1,
-                supplier   : 1,
-                currency   : 1
+        Invoice.aggregate([
+            {
+                $match: filterMapper.mapFilter(filter, {contentType: wTrackInvoiceCT})
+            },
+            {
+                $project: {
+                    paymentInfo: 1,
+                    invoiceDate: 1,
+                    supplier   : 1,
+                    currency   : 1
+                }
+            },
+            {
+                $lookup: {
+                    from        : 'Customers',
+                    localField  : 'supplier',
+                    foreignField: '_id',
+                    as          : 'supplier'
+                }
+            },
+            {
+                $project: {
+                    paymentInfo: 1,
+                    currency   : 1,
+                    supplier   : {$arrayElemAt: ['$supplier', 0]}
+                }
+            },
+            {
+                $project: {
+                    sum     : {$divide: ['$paymentInfo.total', '$currency.rate']},
+                    supplier: {$concat: ['$supplier.name.first', ' ', '$supplier.name.last']}
+                }
+            },
+            {
+                $group: {
+                    _id: '$supplier',
+                    sum: {$sum: '$sum'}
+                }
             }
-        }, {
-            $lookup: {
-                from        : 'Customers',
-                localField  : 'supplier',
-                foreignField: '_id',
-                as          : 'supplier'
-            }
-        }, {
-            $project: {
-                paymentInfo: 1,
-                currency   : 1,
-                supplier   : {$arrayElemAt: ['$supplier', 0]}
-            }
-        }, {
-            $project: {
-                sum     : {$divide: ['$paymentInfo.total', '$currency.rate']},
-                supplier: {$concat: ['$supplier.name.first', ' ', '$supplier.name.last']}
-            }
-        }, {
-            $group: {
-                _id: '$supplier',
-                sum: {$sum: '$sum'}
-            }
-        }], function (err, result) {
+        ], function (err, result) {
             if (err) {
                 return next(err);
             }
@@ -2299,16 +2228,9 @@ var Module = function (models, event) {
     };
 
     this.revenueBySales = function (req, res, next) {
-        var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+        var Invoice = models.get(req.session.lastDb, wTrackInvoiceCT, wTrackInvoiceSchema);
         var data = req.query;
-        var startDay = new Date(data.startDay);
-        var endDay = new Date(data.endDay);
         var filter = data.filter || {};
-        var matchObject = {
-            _type      : 'wTrackInvoice',
-            invoiceDate: {$gte: startDay, $lte: endDay}
-        };
-        var filterObject = {};
         var salesManagers = objectId(CONSTANTS.SALESMANAGER);
         var salesManagersMatch = {
             $and: [{
@@ -2341,70 +2263,80 @@ var Module = function (models, event) {
                 }]
             }]
         };
-        var filterMapper = new FilterMapper();
 
-        filterObject = filterMapper.mapFilter(filter);
+        filter._type = {
+            backend: '_type',
+            value  : [wTrackInvoiceCT]
+        };
 
-        Invoice.aggregate([{
-            $match: matchObject
-        }, {
-            $match: filterObject
-        }, {
-            $project: {
-                paymentInfo: 1,
-                invoiceDate: 1,
-                project    : 1,
-                currency   : 1
-            }
-        }, {
-            $lookup: {
-                from        : 'projectMembers',
-                localField  : 'project',
-                foreignField: 'projectId',
-                as          : 'salesPersons'
-            }
-        }, {
-            $project: {
-                salesPersons: {
-                    $filter: {
-                        input: '$salesPersons',
-                        as   : 'salesPerson',
-                        cond : salesManagersMatch
-                    }
-                },
+        Invoice.aggregate([
+            {
+                $match: filterMapper.mapFilter(filter, {contentType: wTrackInvoiceCT})
+            },
+            {
+                $project: {
+                    paymentInfo: 1,
+                    invoiceDate: 1,
+                    project    : 1,
+                    currency   : 1
+                }
+            },
+            {
+                $lookup: {
+                    from        : 'projectMembers',
+                    localField  : 'project',
+                    foreignField: 'projectId',
+                    as          : 'salesPersons'
+                }
+            },
+            {
+                $project: {
+                    salesPersons: {
+                        $filter: {
+                            input: '$salesPersons',
+                            as   : 'salesPerson',
+                            cond : salesManagersMatch
+                        }
+                    },
 
-                currency   : 1,
-                paymentInfo: 1
+                    currency   : 1,
+                    paymentInfo: 1
+                }
+            },
+            {
+                $unwind: {
+                    path                      : '$salesPersons',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $lookup: {
+                    from        : 'Employees',
+                    localField  : 'salesPersons.employeeId',
+                    foreignField: '_id',
+                    as          : 'salesPerson'
+                }
+            },
+            {
+                $project: {
+                    paymentInfo: 1,
+                    currency   : 1,
+                    salesPerson: {$arrayElemAt: ['$salesPerson', 0]}
+                }
+            },
+            {
+                $project: {
+                    sum        : {$divide: ['$paymentInfo.total', '$currency.rate']},
+                    salesPerson: {$concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']}
+                }
+            },
+            {
+                $group: {
+                    _id: '$salesPerson',
+                    sum: {$sum: '$sum'}
+                }
             }
-        }, {
-            $unwind: {
-                path                      : '$salesPersons',
-                preserveNullAndEmptyArrays: true
-            }
-        }, {
-            $lookup: {
-                from        : 'Employees',
-                localField  : 'salesPersons.employeeId',
-                foreignField: '_id',
-                as          : 'salesPerson'
-            }
-        }, {
-            $project: {
-                paymentInfo: 1,
-                currency   : 1,
-                salesPerson: {$arrayElemAt: ['$salesPerson', 0]}
-            }
-        }, {
-            $project: {
-                sum        : {$divide: ['$paymentInfo.total', '$currency.rate']},
-                salesPerson: {$concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']}
-            }
-        }, {
-            $group: {
-                _id: '$salesPerson',
-                sum: {$sum: '$sum'}
-            }
-        }], function (err, result) {
+        ], function (err, result) {
             if (err) {
                 return next(err);
             }
@@ -2414,29 +2346,23 @@ var Module = function (models, event) {
     };
 
     this.invoiceByWeek = function (req, res, next) {
-        var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
-        var matchObject;
+        var Invoice = models.get(req.session.lastDb, wTrackInvoiceCT, wTrackInvoiceSchema);
         var data = req.query;
-        var startDay = new Date(data.startDay);
-        var endDay = new Date(data.endDay);
         var filter = data.filter || {};
-        var filterMapper = new FilterMapper();
 
-        matchObject = filterMapper.mapFilter(filter);
+        filter._type = {
+            backend: '_type',
+            value  : ['Proforma', wTrackInvoiceCT]
+        };
 
         Invoice.aggregate([{
-            $match: {
-                _type      : {$in: ['Proforma', 'wTrackInvoice']},
-                invoiceDate: {$gte: startDay, $lte: endDay}
-            }
-        }, {
-            $match: matchObject
+            $match: filterMapper.mapFilter(filter, {contentType: wTrackInvoiceCT})
         }, {
             $project: {
                 week: {$week: '$invoiceDate'},
                 year: {$year: '$invoiceDate'}
             }
-        },{
+        }, {
             $group: {
                 _id  : '$week',
                 count: {$sum: 1}
@@ -2564,7 +2490,7 @@ var Module = function (models, event) {
                     }]
                 }]
         };
-        var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+        var Invoice = models.get(req.session.lastDb, wTrackInvoiceCT, wTrackInvoiceSchema);
         sortObj = req.query.sort || sortObj;
         keys = Object.keys(sortObj);
 
@@ -2777,15 +2703,11 @@ var Module = function (models, event) {
     };
 
     this.getStatsForProject = function (req, res, next) {
-        var db = req.session.lastDb;
-        var moduleId = 64;
-        var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+        var Invoice = models.get(req.session.lastDb, wTrackInvoiceCT, wTrackInvoiceSchema);
         var baseUrl = req.baseUrl;
-
         var query = req.query;
         var queryObject = {};
         var filter = query.filter;
-
         var optionsObject = {};
 
         var departmentSearcher;
@@ -2836,7 +2758,6 @@ var Module = function (models, event) {
 
         contentSearcher = function (invoicesIds, waterfallCallback) {
             var condition = '$and';
-            var filterMapper = new FilterMapper();
 
             invoicesIds = _.pluck(invoicesIds, '_id');
 
@@ -2844,8 +2765,7 @@ var Module = function (models, event) {
                 optionsObject[condition] = [];
                 condition = filter.condition || 'and';
                 condition = '$' + condition;
-                // optionsObject[condition] = caseFilter(filter);
-                optionsObject[condition].push(filterMapper.mapFilter(filter));
+                optionsObject[condition].push(filterMapper.mapFilter(filter, {}));
             }
 
             optionsObject[condition].push({_id: {$in: invoicesIds}});
@@ -3067,15 +2987,6 @@ var Module = function (models, event) {
             };
 
             optionsObject.$and = [];
-
-            /* if (filter && typeof filter === 'object') {
-             if (filter.condition === 'or') {
-             optionsObject['$or'] = caseFilter(filter);
-             } else {
-             optionsObject['$and'] = caseFilter(filter);
-             }
-             }*/
-
             optionsObject.$and.push({_id: {$in: _.pluck(invoicesIds, '_id')}});
             optionsObject.$and.push({expense: {$exists: false}});
 

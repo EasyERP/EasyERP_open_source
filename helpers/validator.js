@@ -1,51 +1,46 @@
+'use strict';
 var validator = require('validator');
 var xssFilters = require('xss-filters');
-var dateCalculator = require('./dateCalculator')
+var dateCalculator = require('./dateCalculator');
+var mongoose = require('mongoose');
 
 validator.extend('isLogin', function (str) {
-    "use strict";
     var regExp = /[\w\.@]{4,100}$/;
 
     return regExp.test(str);
 });
 
 validator.extend('isNotValidChars', function (str) {
-    "use strict";
     var regExp = /[~<>\^\*₴]/;
 
     return regExp.test(str);
 });
 
 validator.extend('isPass', function (str) {
-    "use strict";
     var regExp = /^[\w\.@]{3,100}$/;
 
     return regExp.test(str);
 });
 
 validator.extend('isProfile', function (str) {
-    "use strict";
     var regExp = /^\d+$/;
 
     return regExp.test(str);
 });
 
 validator.extend('isEmployeeName', function (str) {
-    "use strict";
     var regExp = /^[a-zA-Z]+[a-zA-Z-_\s]+$/;
 
     return regExp.test(str);
 });
 
 validator.extend('isEmployeeDate', function (str) {
-    "use strict";
     var regExp = /[a-zA-Z0-9]+[a-zA-Z0-9-,#@&*-_\s()\.\/\s]+$/;
 
     return regExp.test(str);
 });
 
 function getValidUserBody(body) {
-    "use strict";
     var hasLogin = body.hasOwnProperty('login');
     var hasEmail = body.hasOwnProperty('email');
     var hasPass = body.hasOwnProperty('pass');
@@ -60,7 +55,6 @@ function getValidUserBody(body) {
 }
 
 function parseUserBody(body) {
-    "use strict";
     var email = body.email;
 
     if (body.login) {
@@ -82,7 +76,6 @@ function parseUserBody(body) {
 }
 
 function getValidProfileBody(body) {
-    "use strict";
     var hasName = body.hasOwnProperty('profileName');
 
     //not sure about regexp
@@ -93,8 +86,6 @@ function getValidProfileBody(body) {
 }
 
 function parseProfileBody(body) {
-    "use strict";
-
     if (body.profileName) {
         body.profileName = validator.escape(body.profileName);
         body.profileName = xssFilters.inHTMLData(body.profileName);
@@ -117,19 +108,16 @@ function parseProfileBody(body) {
 }
 
 function getValidTaskBody(body) {
-    "use strict";
     //toDo not finished
     var hasSummary = body.hasOwnProperty('summary');
 
     hasSummary = hasSummary ? !!body.summary : false;
     hasSummary = hasSummary ? !validator.isNotValidChars(body.summary) : false;
 
-    return hasSummary ;
+    return hasSummary;
 }
 
 function parseTaskBody(body) {
-    "use strict";
-
     if (body.summary) {
         body.summary = validator.escape(body.summary);
         body.summary = xssFilters.inHTMLData(body.summary);
@@ -147,7 +135,7 @@ function parseTaskBody(body) {
         body.type = xssFilters.inHTMLData(body.type);
     }
     if (body.tags) {
-        body.tags = body.tags.map(function(tag, i, tags) {
+        body.tags = body.tags.map(function (tag, i, tags) {
             tag = validator.escape(tag);
             tag = xssFilters.inHTMLData(tag);
             return tag;
@@ -225,7 +213,7 @@ function parseTaskBody(body) {
             if (!obj._id) {
                 obj._id = mongoose.Types.ObjectId();
             }
-            obj.date = new Date();
+            // obj.date = new Date();
             if (!obj.author) {
                 obj.author = req.session.uName;
             }
@@ -257,12 +245,11 @@ function parseTaskBody(body) {
 }
 
 function validEmployeeBody(body) {
-    "use strict";
     var hasName = body.hasOwnProperty('name');
     var dateBirth = body.hasOwnProperty('dateBirth');
 
     var hasNameFirst = hasName ? validator.isEmployeeName(body.name.first) : false;
-    var hasNameLast = hasName ? validator.isEmployeeName(body.name.first) : false;
+    var hasNameLast = hasName ? validator.isEmployeeName(body.name.last) : false;
 
     dateBirth = dateBirth ? validator.isDate(body.dateBirth) : false;
 
@@ -270,11 +257,11 @@ function validEmployeeBody(body) {
 }
 
 module.exports = {
-    validUserBody: getValidUserBody,
-    parseUserBody: parseUserBody,
-    validProfileBody: getValidProfileBody,
-    parseProfileBody: parseProfileBody,
-    validTaskBody: getValidTaskBody,
-    parseTaskBody: parseTaskBody,
+    validUserBody    : getValidUserBody,
+    parseUserBody    : parseUserBody,
+    validProfileBody : getValidProfileBody,
+    parseProfileBody : parseProfileBody,
+    validTaskBody    : getValidTaskBody,
+    parseTaskBody    : parseTaskBody,
     validEmployeeBody: validEmployeeBody
 };

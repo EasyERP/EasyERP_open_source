@@ -2,20 +2,19 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
-    'text!templates/settingsProduct/CreateTemplate.html',
+    'views/dialogViewBase',
+    'text!templates/ProductCategory/CreateTemplate.html',
     'models/Category',
     'common',
     'custom',
-    'populate'
-], function (Backbone, $, _, CreateTemplate, Model, common, Custom, populate) {
+    'populate',
+    'dataService'
+], function (Backbone, $, _, ParentView, CreateTemplate, Model, common, Custom, populate, dataService) {
 
-    var CreateView = Backbone.View.extend({
+    var CreateView = ParentView.extend({
         el         : '#content-holder',
         contentType: 'Departments',
         template   : _.template(CreateTemplate),
-        events     : {
-            // 'keydown': 'keydownHandler'
-        },
 
         initialize: function (options) {
             _.bindAll(this, 'saveItem', 'render');
@@ -26,6 +25,12 @@ define([
             this.render();
         },
 
+        chooseOption: function (e) {
+            var $target = $(e.target);
+
+            $target.closest('a').text($target.text()).attr('data-id', $target.attr('id'));
+        },
+
         close: function () {
             this._modelBinder.unbind();
         },
@@ -33,7 +38,6 @@ define([
         saveItem: function () {
             var thisEl = this.$el;
             var self = this;
-            var mid = 39;
             var categoryName = $.trim(thisEl.find('#categoryName').val());
             var parentCategory = thisEl.find('#parentCategory').data('id') || null;
             var nestingLevel = thisEl.find('#parentCategory').data('level') || null;
@@ -41,6 +45,13 @@ define([
             var res = _.filter(this.responseObj['#parentCategory'], function (item) {
                 return item.parentCategory === parentCategory;
             });
+            var otherIncome = thisEl.find('#otherIncome').attr('data-id') || null;
+            var otherLoss = thisEl.find('#otherLoss').attr('data-id') || null;
+            var bankExpensesAccount = thisEl.find('#bankExpensesAccount').attr('data-id') || null;
+            var taxesAccount = thisEl.find('#taxesAccount').attr('data-id') || null;
+            var creditAccount = thisEl.find('#creditAccount').attr('data-id') || null;
+            var debitAccount = thisEl.find('#debitAccount').attr('data-id') || null;
+            var data;
 
             if (fullName) {
                 fullName += ' / ' + categoryName;
@@ -48,61 +59,68 @@ define([
                 fullName = categoryName;
             }
 
-            this.model.save(
-                {
-                    name        : categoryName,
-                    parent      : parentCategory,
-                    nestingLevel: ++nestingLevel,
-                    sequence    : res.length,
-                    fullName    : fullName
+            data = {
+                name               : categoryName,
+                parent             : parentCategory,
+                nestingLevel       : ++nestingLevel,
+                sequence           : res.length,
+                fullName           : fullName,
+                debitAccount       : debitAccount,
+                creditAccount      : creditAccount,
+                taxesAccount       : taxesAccount,
+                bankExpensesAccount: bankExpensesAccount,
+                otherIncome        : otherIncome,
+                otherLoss          : otherLoss
+            };
+
+            this.model.save(data, {
+                success: function () {
+                    Backbone.history.fragment = '';
+                    Backbone.history.navigate(window.location.hash, {trigger: true});
                 },
-                {
-                    headers: {
-                        mid: mid
-                    },
-                    wait   : true,
-                    success: function (model) {
-                        Backbone.history.fragment = '';
-                        Backbone.history.navigate('easyErp/Products', {trigger: true});
-                    },
 
-                    error: function (model, xhr) {
-                        self.errorNotification(xhr);
-                    }
-                });
-        },
-
-        hideDialog: function () {
-            $('.create-dialog').remove();
+                error: function (model, xhr) {
+                    self.errorNotification(xhr);
+                }
+            });
         },
 
         render: function () {
-            var categoryUrl = '/category/' + this.parentId;
+            var categoryUrl = '/category/'/* + this.parentId*/;
             var self = this;
             var formString = this.template({});
 
             this.$el = $(formString).dialog({
                 autoOpen   : true,
-                resizable  : true,
                 dialogClass: 'create-dialog',
-                width      : '900px',
-                buttons    : [
-                    {
-                        text : 'Create',
-                        click: function () {
-                            self.saveItem();
-                        }
-                    },
-                    {
-                        text : 'Cancel',
-                        click: function () {
-                            self.hideDialog();
-                        }
-                    }]
+                width      : '450px',
+                buttons    : [{
+                    text : 'Create',
+                    class: 'btn blue',
+
+                    click: function () {
+                        self.saveItem();
+                    }
+                }, {
+                    text : 'Cancel',
+                    class: 'btn',
+                    click: function () {
+                        self.hideDialog();
+                    }
+                }]
 
             });
 
-            populate.getParrentCategoryById('#parentCategory', categoryUrl, {}, this, true);
+            populate.get('#parentCategory', categoryUrl, {}, 'name', this, true);
+
+            dataService.getData('/chartOfAccount/getForDd', {}, function (resp) {
+                self.responseObj['#debitAccount'] = resp.data;
+                self.responseObj['#creditAccount'] = resp.data;
+                self.responseObj['#taxesAccount'] = resp.data;
+                self.responseObj['#bankExpensesAccount'] = resp.data;
+                self.responseObj['#otherIncome'] = resp.data;
+                self.responseObj['#otherLoss'] = resp.data;
+            });
 
             this.delegateEvents(this.events);
 

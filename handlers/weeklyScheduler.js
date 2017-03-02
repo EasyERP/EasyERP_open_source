@@ -63,7 +63,7 @@ var Module = function (models) {
         var id = req.params.id;
         var data = req.body;
 
-        WeeklyScheduler.findByIdAndUpdate(id, data, function (err, result) {
+        WeeklyScheduler.findByIdAndUpdate(id, data, {new: true}, function (err, result) {
             if (err) {
                 return next(err);
             }

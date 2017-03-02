@@ -1,17 +1,20 @@
 define([
+    'jQuery',
     'Underscore',
     'views/topBarViewBase',
+    'views/Filter/dateFilter',
     'text!templates/contractJobs/TopBarTemplate.html',
     'custom',
     'common',
     'moment'
-], function (_, BaseView, ContentTopBarTemplate, Custom, common, moment) {
+], function ($, _, BaseView, DateFilterView, ContentTopBarTemplate, Custom, common, moment) {
     'use strict';
 
     var TopBarView = BaseView.extend({
-        el         : '#top-bar',
-        contentType: 'contractJobs',
-        template   : _.template(ContentTopBarTemplate),
+        el           : '#top-bar',
+        contentType  : 'contractJobs',
+        contentHeader: 'Contract Jobs',
+        template     : _.template(ContentTopBarTemplate),
 
         initialize: function (options) {
             if (options.collection) {
@@ -22,11 +25,11 @@ define([
         },
 
         events: {
-            'click #updateDate'                 : 'changeDateRange',
-            'click .dateRange'                  : 'toggleDateRange',
-            'click #cancelBtn'                  : 'cancel',
-            'click li.filterValues:not(#custom)': 'setDateRange',
-            'click #custom'                     : 'showDatePickers'
+            // 'click #updateDate'                 : 'changeDateRange',
+            // 'click .dateRange'                  : 'toggleDateRange',
+            // 'click #cancelBtn'                  : 'cancel',
+            // 'click li.filterValues:not(#custom)': 'setDateRange',
+            // 'click #custom'                     : 'showDatePickers'
         },
 
         removeAllChecked: function () {
@@ -57,13 +60,13 @@ define([
 
             this.removeAllChecked();
 
-            if ($target.text() !== "Custom Dates") {
+            if ($target.text() !== 'Custom Dates') {
                 $target.toggleClass('checkedValue');
             } else {
-                $target.toggleClass('checkedArrow')
+                $target.toggleClass('checkedArrow');
             }
 
-            //$target.toggleClass('checkedValue');
+            // $target.toggleClass('checkedValue');
 
             switch (id) {
                 case 'thisMonth':
@@ -102,12 +105,12 @@ define([
 
             this.removeAllChecked();
 
-            if ($target.text() !== "Custom Dates") {
+            if ($target.text() !== 'Custom Dates') {
                 $target.toggleClass('checkedValue');
             } else {
-                $target.toggleClass('checkedArrow')
+                $target.toggleClass('checkedArrow');
             }
-            //$target.toggleClass('checkedValue');
+            // $target.toggleClass('checkedValue');
             this.$el.find('.customTime').toggleClass('hidden');
             this.$el.find('.buttons').toggleClass('hidden');
         },
@@ -124,11 +127,6 @@ define([
 
             startTime.text(startDate);
             endTime.text(endDate);
-
-            Custom.cacheToApp('contractJobsDateRange', {
-                startDate: startDate,
-                endDate  : endDate
-            });
 
             this.trigger('changeDateRange');
 
@@ -187,13 +185,15 @@ define([
         },
 
         render: function () {
-            var dateRange = Custom.retriveFromCash('contractJobsDateRange');
+            var self = this;
             var viewType = Custom.getCurrentVT();
+            var filter = Custom.retriveFromCash('contractJobs.filter');
+            var dateRange = filter && filter.date ? filter.date.value : [];
 
-            $('title').text(this.contentType);
+            $('title').text(this.contentHeader);
 
-            this.startDate = common.utcDateToLocaleDate(dateRange.startDate);
-            this.endDate = common.utcDateToLocaleDate(dateRange.endDate);
+            this.startDate = common.utcDateToLocaleDate(new Date(dateRange[0]));
+            this.endDate = common.utcDateToLocaleDate(new Date(dateRange[1]));
 
             this.$el.html(this.template({
                 viewType   : viewType,
@@ -202,7 +202,21 @@ define([
                 endDate    : this.endDate
             }));
 
-            this.bindDataPickers(this.startDate, this.endDate);
+            this.cotractsJobsDateFilterView = new DateFilterView({
+                contentType: 'contractJobs',
+                el         : this.$el.find('#contractJobsDateFilter')
+            });
+
+            this.cotractsJobsDateFilterView.on('dateChecked', function () {
+                self.trigger('changeDateRange', self.cotractsJobsDateFilterView.dateArray);
+            });
+
+            this.cotractsJobsDateFilterView.checkElement('custom', [
+                moment(this.collection.startDate).format('D MMM, YYYY'),
+                moment(this.collection.endDate).format('D MMM, YYYY')
+            ]);
+
+            // this.bindDataPickers(this.startDate, this.endDate);
 
             return this;
         }

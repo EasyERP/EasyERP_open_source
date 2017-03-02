@@ -1,21 +1,58 @@
-<div class="form-holder">
-    <form method="post" action="" id="createProfileForm" class="form">
-        <fielset>
-            <dl class="profile-create">
-                <dt><label for="profileName">Profile Name </label></dt>
-                <dd><input type="text" id="profileName" required maxlength="12" placeholder="Profile Name"/></dd>
-                <dt><label for="profileDescription">Description </label></dt>
-                <dd><input type="text" id="profileDescription" maxlength="32" placeholder="Description"/></dd>
-                <dt><label for="baseProfile">Use base profile and edit privileges</label></dt>
-                <dd><input type="radio" name="group" value="base" checked id="baseProfile"/></dd>
-                <dt><label>Base Profile:</label></dt>
-                <dd class="_newSelectListWrap">
-                    <a id="profilesDd" class="current-selected" href="javascript:;"></a>
-                </dd>
-                <dt><label for="newProfile">Create new profile from scratch</label></dt>
-                <dd><input type="radio" name="group" value="new" id="newProfile"/></dd>
-            </dl>
-            <div class="clearfix"></div>
-        </fielset>
+<div class="form-holder _newForm">
+    <form method="post" action="" id="createProfileForm">
+        <h4 class="_dialogMainTitle">Create new profile</h4>
+        <div class="_formWrap _enlargedItemMargin">
+            <div class="_formBlock">
+                <div class="_animateInputBox">
+                    <input type="text"
+                           class="_animate"
+                           id="profileName"
+                           required
+                           autofocus
+                           maxlength="12"/>
+                    <label class="_animate">Profile Name</label>
+                </div>
+                <div class="_animateInputBox">
+                    <input type="text"
+                           class="_animate"
+                           id="profileDescription"
+                           required
+                           maxlength="32"/>
+                    <label class="_animate">Description</label>
+                </div>
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Base Profile: </span>
+                    <div class="_newSelectListWrap">
+                        <a id="profilesDd"
+                           class="current-selected"
+                           href="javascript:;">Select assigner
+                        </a>
+                    </div>
+                </div>
+                <div class="_formRow">
+                    <div class="_circleRadioRadianceWrap">
+                        <input type="radio"
+                               name="group"
+                               value="base"
+                               checked
+                               id="baseProfile"
+                               class="_circleRadioRadiance"/>
+                        <label for="baseProfile" class="_circleRadioRadianceLabel"></label>
+                    </div>
+                    <label for="baseProfile">Use base profile and edit privileges</label>
+                </div>
+                <div class="_formRow">
+                    <div class="_circleRadioRadianceWrap">
+                        <input type="radio"
+                               name="group"
+                               value="new"
+                               id="newProfile"
+                               class="_circleRadioRadiance"/>
+                        <label for="newProfile" class="_circleRadioRadianceLabel"></label>
+                    </div>
+                    <label for="newProfile">Create new profile from scratch</label>
+                </div>
+            </div>
+        </div>
     </form>
 </div>

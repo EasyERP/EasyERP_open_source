@@ -16,14 +16,14 @@ define([
     'use strict';
 
     var View = Backbone.View.extend({
-        el: '#content-holder',
-
-        contentType: CONSTANTS.DASHBOARD_HR,
-
-        template: _.template(mainTemplate),
+        el           : '#content-holder',
+        contentType  : CONSTANTS.DASHBOARD_HR,
+        contentHeader: 'HR Dashboard',
+        template     : _.template(mainTemplate),
 
         events: {
-            'click .chart-tabs a': 'changeTab'
+            'click .chart-tabs a': 'changeTab',
+            'click .HRTabsButtons': 'activateTabs'
         },
 
         initialize: function (options) {
@@ -49,6 +49,17 @@ define([
             } else {
                 this.render();
             }
+        },
+
+        activateTabs: function (e) {
+            var $thisEl = this.$el;
+            var $target = $thisEl.find(e.target);
+            var info = $target.attr('data-click');
+
+            $thisEl.find('.HRTabsButtons').removeClass('active');
+            $thisEl.find('.HRTabsButtons').removeClass('active');
+            $target.addClass('active');
+            $thisEl.find('#' + info).addClass('active');
         },
 
         changeTab: function (e) {
@@ -392,7 +403,7 @@ define([
 
             $('.dashboard-stat').children('.number').empty();
             $('.dashboard-stat').children('.desc').empty();
-            
+
             common.getEmployeesCount({month: self.month, year: self.year}, function (response) {
                 var totalEmployeesCount = response.employeeCount;
                 var hiredCount = response.hiredCount;
@@ -463,19 +474,19 @@ define([
             common.getVacationForChart({month: self.month, year: self.year}, function (response) {
                 var data = [
                     {
-                        key  : 'vacation',
+                        key  : 'Vacation',
                         value: response.vacation
                     },
                     {
-                        key  : 'personal',
+                        key  : 'Personal',
                         value: response.personal
                     },
                     {
-                        key  : 'sick',
+                        key  : 'Sick',
                         value: response.sick
                     },
                     {
-                        key  : 'education',
+                        key  : 'Education',
                         value: response.education
                     }
                 ];
@@ -514,7 +525,7 @@ define([
                     .select('.desc')
                     .append('span')
                     .text(function (d) {
-                        if(d){
+                        if (d) {
                             return d.key;
                         }
 
@@ -533,19 +544,19 @@ define([
             common.getHoursForChart({month: self.month, year: self.year}, function (response) {
                 var data = [
                     {
-                        key  : 'total',
+                        key  : 'Total',
                         value: response.total
                     },
                     {
-                        key  : 'actual',
+                        key  : 'Actual',
                         value: response.actual
                     },
                     {
-                        key  : 'idle',
+                        key  : 'Idle',
                         value: response.idle
                     },
                     {
-                        key  : 'overtime',
+                        key  : 'Overtime',
                         value: response.overtime
                     }
                 ];
@@ -582,7 +593,7 @@ define([
                     .select('.desc')
                     .append('span')
                     .text(function (d) {
-                        if(d){
+                        if (d) {
                             return d.key;
                         }
 
@@ -614,6 +625,12 @@ define([
                 y = d3.scale.ordinal()
                     .rangeRoundBands([0, height], 0.3);
 
+                /*x = d3.scale.linear()
+                    .range([80, (width - 160) / 2]);
+
+                x2 = d3.scale.linear()
+                    .range([(width - 160) / 2, width + 80]);
+*/
                 x = d3.scale.linear()
                     .range([0, width / 2]);
 
@@ -644,10 +661,10 @@ define([
 
                 x.domain([d3.max(self.departments, function (d) {
                     return d.maleCount;
-                }), 0]);
+                }) + 10, 0]);
 
                 x2.domain([0, d3.max(self.departments, function (d) {
-                    return d.maleCount + d.femaleCount;
+                    return d.femaleCount;
                 }) + 10]);
 
                 chart.append('g')
@@ -871,6 +888,22 @@ define([
                         },
                         'style': 'stroke: #f2f2f2'
                     });
+
+                chart.append('text')
+                    .attr('class', 'y2 label')
+                    .attr('text-anchor', 'end')
+                    .attr('y', -40)
+                    .attr('x', 0)
+                    .attr('dy', '2em')
+                    .text('Salary');
+
+                chart.append('text')
+                    .attr('class', 'y2 label')
+                    .attr('text-anchor', 'end')
+                    .attr('y', height - 30)
+                    .attr('x', width + 30)
+                    .attr('dy', '2em')
+                    .text('Count');
             });
         },
 
@@ -984,9 +1017,25 @@ define([
                         },
                         'style': 'stroke: #f2f2f2'
                     });
-            })
+
+                chart.append('text')
+                    .attr('class', 'y2 label')
+                    .attr('text-anchor', 'end')
+                    .attr('y', -40)
+                    .attr('x', 0)
+                    .attr('dy', '2em')
+                    .text('Department');
+
+                chart.append('text')
+                    .attr('class', 'y2 label')
+                    .attr('text-anchor', 'end')
+                    .attr('y', height - 20)
+                    .attr('x', width + 60)
+                    .attr('dy', '2em')
+                    .text('Salary');
+            });
         },
-        
+
         render: function () {
             var self = this;
             var $currentEl = this.$el;
@@ -1001,7 +1050,7 @@ define([
             var now;
             var i;
 
-            $('title').text(this.contentType);
+            $('title').text(this.contentHeader);
 
             if (!arrOfDates || !arrOfDates.length) {
                 for (i = 0; i < 12; i++) {

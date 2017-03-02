@@ -75,8 +75,8 @@
                                 <tbody class="enableTableOdd">
                                 <%for(var i = model.earnings.length - 1; i >= 0; i--){%>
                                 <tr>
-                                    <td><%=model.earnings[i].formula%></td>
-                                    <td class="money"><%= currencySplitter(model.earnings[i].amount.toFixed(2))%></td>
+                                    <td class="text-left"><%=model.earnings[i].formula%></td>
+                                    <td class="money text-left"><%= currencySplitter(model.earnings[i].amount.toFixed(2))%></td>
                                 </tr>
                                 <%}%>
                                 </tbody>
@@ -97,8 +97,8 @@
                                 <tbody class="enableTableOdd">
                                 <%for(var i = model.deductions.length - 1; i >= 0; i--){%>
                                 <tr>
-                                    <td><%=model.deductions[i].formula%></td>
-                                    <td class="money"><%= currencySplitter(model.deductions[i].amount.toFixed(2))%></td>
+                                    <td class="text-left"><%=model.deductions[i].formula%></td>
+                                    <td class="money text-left"><%= currencySplitter(model.deductions[i].amount.toFixed(2))%></td>
                                 </tr>
                                 <%}%>
                                 </tbody>

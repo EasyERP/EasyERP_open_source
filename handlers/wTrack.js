@@ -30,6 +30,8 @@ var TCard = function (event, models) {
 
     var JournalEntryHandler = require('./journalEntry');
     var journalEntry = new JournalEntryHandler(models);
+    var ProductService = require('../services/products')(models);
+    var AvailabilityService = require('../services/productAvailability')(models);
 
     var lookupForWTrackArrayBeforeFilter = [{
         $lookup: {
@@ -368,91 +370,6 @@ var TCard = function (event, models) {
         });
     };
 
-    /*function convertType(array, type) {
-     var i;
-
-     if (type === 'integer') {
-     for (i = array.length - 1; i >= 0; i--) {
-     array[i] = parseInt(array[i], 10);
-     }
-     } else if (type === 'boolean') {
-     for (i = array.length - 1; i >= 0; i--) {
-     if (array[i] === 'true') {
-     array[i] = true;
-     } else if (array[i] === 'false') {
-     array[i] = false;
-     } else {
-     array[i] = null;
-     }
-     }
-     }
-     }*/
-
-    /*function caseFilter(filter) {
-     var condition;
-     var resArray = [];
-     var filtrElement = {};
-     var key;
-     var filterName;
-
-     for (filterName in filter) {
-     if (filter.hasOwnProperty(filterName)) {
-     condition = filter[filterName].value;
-     key = filter[filterName].key;
-
-     switch (filterName) {
-     case 'project':
-     filtrElement['project._id'] = {$in: condition.objectID()};
-     resArray.push(filtrElement);
-     break;
-     case 'customer':
-     filtrElement['customer._id'] = {$in: condition.objectID()};
-     resArray.push(filtrElement);
-     break;
-     case 'employee':
-     filtrElement.employee = {$in: condition.objectID()};
-     resArray.push(filtrElement);
-     break;
-     case 'department':
-     filtrElement.department = {$in: condition.objectID()};
-     resArray.push(filtrElement);
-     break;
-     case 'year':
-     convertType(condition, 'integer');
-     filtrElement[key] = {$in: condition};
-     resArray.push(filtrElement);
-     break;
-     case 'month':
-     convertType(condition, 'integer');
-     filtrElement[key] = {$in: condition};
-     resArray.push(filtrElement);
-     break;
-     case 'week':
-     convertType(condition, 'integer');
-     filtrElement[key] = {$in: condition};
-     resArray.push(filtrElement);
-     break;
-     case 'isPaid':
-     convertType(condition, 'boolean');
-     filtrElement[key] = {$in: condition};
-     resArray.push(filtrElement);
-     break;
-     case '_type':
-     filtrElement[key] = {$in: condition};
-     resArray.push(filtrElement);
-     break;
-     case 'jobs':
-     filtrElement[key] = {$in: condition.objectID()};
-     resArray.push(filtrElement);
-     break;
-     // skip default
-     }
-     }
-     }
-
-     return resArray;
-     }*/
-
     this.totalCollectionLength = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var contentSearcher;
@@ -466,38 +383,11 @@ var TCard = function (event, models) {
         };
 
         if (filter) {
-            filterObj.$and = filterMapper.mapFilter(filter, 'wTrack'); // caseFilter(filter);
+            filterObj.$and = filterMapper.mapFilter(filter, {contentType: 'wTrack'});
         }
 
         contentSearcher = function (wTrackIDs, waterfallCallback) {
             var queryObject = {};
-            /* var salesManagerMatch = {
-             $or: [{
-             $and: [{
-             $eq: ['$startDateWeek', null]
-             }, {
-             $eq: ['$endDateWeek', null]
-             }]
-             }, {
-             $and: [{
-             $eq: ['$startDateWeek', null]
-             }, {
-             $gte: ['$endDateWeek', '$dateByWeek']
-             }]
-             }, {
-             $and: [{
-             $lte: ['$startDateWeek', '$dateByWeek']
-             }, {
-             $eq: ['$endDateWeek', null]
-             }]
-             }, {
-             $and: [{
-             $lte: ['$startDateWeek', '$dateByWeek']
-             }, {
-             $gte: ['$endDateWeek', '$dateByWeek']
-             }]
-             }]
-             };*/
 
             queryObject.$and = [];
 
@@ -798,7 +688,7 @@ var TCard = function (event, models) {
         };
 
         var sort = {};
-        var filterObj = filter ? filterMapper.mapFilter(filter, 'wTrack') : null;
+        var filterObj = filter ? filterMapper.mapFilter(filter, {contentType: 'wTrack'}) : null;
         var count = parseInt(query.count, 10) || CONSTANTS.DEF_LIST_COUNT;
         var page = parseInt(query.page, 10);
         var skip;
@@ -1251,6 +1141,9 @@ var TCard = function (event, models) {
         var jobName = req.headers.jobname;
         var jobDescr = req.headers.jobdesc;
         var project = req.headers.project;
+        var warehouse = req.headers.warehouse;
+        var productType = req.headers.producttype;
+        var categoryIds = JSON.parse(req.headers.categoryids);
 
         var tasks;
 
@@ -1260,15 +1153,16 @@ var TCard = function (event, models) {
 
         function createJobFunc(mainCb) {
             var job = {
-                name    : jobName,
-                workflow: CONSTANTS.JOBSINPROGRESS,
-                description : jobDescr,
-                type    : 'Not Quoted',
-                wTracks : [],
-                project : objectId(project)
+                name       : jobName,
+                workflow   : CONSTANTS.JOBSINPROGRESS,
+                description: jobDescr,
+                type       : 'Not Ordered',
+                wTracks    : [],
+                project    : objectId(project)
             };
             var newJob;
             var editedBy;
+            var body;
 
             if (createJob) {
                 editedBy = {
@@ -1285,6 +1179,26 @@ var TCard = function (event, models) {
                     }
 
                     jobId = job.toJSON()._id;
+
+                    body = {
+                        job      : job._id,
+                        warehouse: warehouse,
+                        name     : job.name,
+                        info     : {
+                            productType: productType,
+                            categories : categoryIds
+                        }
+                    };
+
+                    ProductService.createProduct({
+                        body  : body,
+                        dbName: req.session.lastDb,
+                        uId   : req.session.uId
+                    }, function (err, data) {
+                        if (!err && data) {
+                            AvailabilityService.createAvailabilityJob({product: data._id, dbName: req.session.lastDb});
+                        }
+                    });
 
                     Project.findByIdAndUpdate(objectId(project), {
                         $push: {'budget.projectTeam': jobId},
@@ -2161,10 +2075,9 @@ var TCard = function (event, models) {
         var type = req.query.type || 'wTrack';
         var filterObj = {};
         var options;
-        var filterMapper = new FilterMapper();
 
         if (filter && typeof filter === 'object') {
-            filterObj = filterMapper.mapFilter(filter, type);
+            filterObj = filterMapper.mapFilter(filter, {contentType: type});
         }
 
         options = {
@@ -2219,10 +2132,9 @@ var TCard = function (event, models) {
         var type = req.query.type || 'wTrack';
         var filterObj = {};
         var options;
-        var filterMapper = new FilterMapper();
 
         if (filter && typeof filter === 'object') {
-            filterObj = filterMapper.mapFilter(filter, type);
+            filterObj = filterMapper.mapFilter(filter, {contentType: type});
         }
 
         options = {

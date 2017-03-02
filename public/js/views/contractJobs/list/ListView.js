@@ -34,25 +34,25 @@ define([
             this.page = options.collection.currentPage;
             this.contentCollection = contentCollection;
 
-            dateRange = custom.retriveFromCash('contractJobsDateRange');
-
             this.filter = options.filter || custom.retriveFromCash('contractJobs.filter');
 
             if (!this.filter) {
                 this.filter = {};
             }
 
+            dateRange = this.filter.date ? this.filter.date.value : [];
+
             if (!this.filter.date) {
                 this.filter.date = {
-                    key  : 'date',
-                    type : 'date',
-                    value: [dateRange.startDate, dateRange.endDate]
+                    value: [new Date(dateRange.startDate), new Date(dateRange.endDate)]
                 };
 
             }
 
-            this.startDate = new Date(this.filter.date.value[0]);
-            this.endDate = new Date(this.filter.date.value[1]);
+            options.filter = this.filter;
+
+            this.startDate = new Date(dateRange[0]);
+            this.endDate = new Date(dateRange[1]);
 
             custom.cacheToApp('contractJobs.filter', this.filter);
 
@@ -166,28 +166,19 @@ define([
             });
         },
 
-        changeDateRange: function () {
-            var stDate = $('#startDate').val();
-            var enDate = $('#endDate').val();
+        changeDateRange: function (dateArray) {
             var searchObject;
-
-            this.startDate = new Date(stDate);
-            this.endDate = new Date(enDate);
 
             if (!this.filter) {
                 this.filter = {};
             }
 
             this.filter.date = {
-                key  : 'date',
-                type : 'date',
-                value: [stDate, enDate]
+                value: dateArray
             };
 
             searchObject = {
-                startDate: stDate,
-                endDate  : enDate,
-                filter   : this.filter
+                filter: this.filter
             };
 
             this.collection.getPage(1, searchObject);
@@ -209,9 +200,7 @@ define([
             this.collection.getPage(1, {
                 count    : itemsNumber,
                 page     : 1,
-                filter   : filter,
-                startDate: this.startDate,
-                endDate  : this.endDate
+                filter   : filter
             });
         },
 

@@ -1,51 +1,83 @@
-<div class="form-holder">
-
-    <form method="post" action="" id="createUserForm" class="form">
-        <fieldset>
-            <div class="inner">
+<div class="form-holder _newForm">
+    <form method="post" action="" id="createUserForm">
+        <div class="_formWrap">
+            <div class="_avatarBlock">
                 <div class="avatar left">
-                    <div class="upload">
-                        Edit
-                        <input type="file" value="Edit" id="inputImg" accept="image/*">
+                    <div class="upload">Edit
+                        <input type="file"
+                               value="Edit"
+                               id="inputImg"
+                               accept="image/*">
                     </div>
-                    <canvas id="avatar" width="140" height="140"></canvas>
+                    <canvas id="avatar"
+                            width="140"
+                            height="140">
+                    </canvas>
                 </div>
-                <div style="margin-left:160px;">
-                    <div class="left full-width">
-                        <dl class="person-info">
-                            <dt><label for="login">User Name</label></dt>
-                            <dd><input type="text" name="login" id="login" value="" required maxlength="24"
-                                       placeholder="Name"/></dd>
-                            <dt><label for="password">Password </label></dt>
-                            <dd><input type="password" name="password" maxlength="32" id="password" required
-                                       placeholder="Password"/></dd>
-                            <dt><label for="confirmpassword">Confirm Password</label></dt>
-                            <dd><input type="password" maxlength="32" name="confirmpassword" id="confirmpassword"
-                                       required placeholder="Confirm password"/></dd>
-                            <dt><label for="email">Email </label></dt>
-                            <dd><input type="text" name="email" id="email" value="" required maxlength="48"
-                                       placeholder="Email"/></dd>
-                            <dt><label for="profilesDd">Profile</label></dt>
-                            <dd class="_newSelectListWrap">
-                                <a id="profilesDd" class="current-selected" href="javascript:;"></a>
-                            </dd>
-                        </dl>
+            </div>
+            <div class="_formBlock">
+                <div class="_animateInputBox">
+                    <input type="text"
+                           name="login"
+                           class="_animate"
+                           id="login"
+                           autofocus
+                           required
+                           value=""
+                           maxlength="24"/>
+                    <label class="_animate">User Name</label>
+                </div>
+                <div class="_animateInputBox">
+                    <input type="password"
+                           name="confirmpassword"
+                           class="_animate"
+                           id="confirmpassword"
+                           maxlength="32"
+                           required/>
+                    <label class="_animate">Password</label>
+                </div>
+                <div class="_animateInputBox">
+                    <input type="password"
+                           name="password"
+                           class="_animate"
+                           id="password"
+                           required
+                           value=""
+                           maxlength="32"/>
+                    <label class="_animate">Confirm Password</label>
+                </div>
+                <div class="_animateInputBox">
+                    <input type="confirmpassword"
+                           name="email"
+                           class="_animate"
+                           id="email"
+                           maxlength="48"
+                           value=""
+                           required/>
+                    <label class="_animate">Email</label>
+                </div>
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Profile</span>
+                    <div class="_newSelectListWrap">
+                        <a href="javascript:;"
+                           class="current-selected"
+                           id="profilesDd"
+                           data-id="address_country">Select profile</a>
                     </div>
                 </div>
             </div>
-            <div class="cropImages form" style="display:none;">
-                <div class="formTitle">
-                    <h3 class="left">Crop Images</h3>
-
-                    <div class="clearfix"></div>
-                </div>
-                <br/>
-
-                <div class="image_input" style="float: left;margin-right: 20px;"></div>
-                <img class="image_output"/>
+        </div>
+        <div class="cropImages form" style="display:none;">
+            <div class="formTitle">
+                <h3 class="left">Crop Images</h3>
 
                 <div class="clearfix"></div>
             </div>
-        </fieldset>
+            <br/>
+
+            <div class="image_input" style="float: left;margin-right: 20px;"></div>
+            <img class="image_output"/>
+
+        </div>
     </form>
 </div>

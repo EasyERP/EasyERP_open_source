@@ -8,7 +8,8 @@ module.exports = (function () {
         account   : {type: String, default: ''},
         name      : {type: String, default: ''},
         subAccount: {type: ObjectId, ref: 'chartOfAccount', default: null},
-        type      : {type: ObjectId, ref: 'accountTypes', default: null},
+        category  : {type: ObjectId, ref: 'accountsCategory', default: null},
+        budgeted  : {type: Boolean, default: false},
 
         payMethod: {type: ObjectId, ref: 'PaymentMethod', default: null},
 

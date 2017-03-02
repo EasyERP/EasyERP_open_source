@@ -129,6 +129,7 @@ function exportToXlsx(options) {
     var headersArray = [];
     var project = createProjection(map.aliases, {putHeadersTo: headersArray});
     var formatters = map.formatters;
+    var type = options.type;
     var nameOfFile = fileName ? fileName : type ? type : 'data';
     var resultAggregate;
     var returnResult = options.returnResult;
@@ -195,8 +196,28 @@ function exportToXlsx(options) {
 
         });
     } else {
-        writeXlsx(resultArray);
-    }
+        if (formatters) {
+            async.each(resultArray, function (item, callback) {
+
+                var keys = Object.keys(formatters);
+
+                for (var i = keys.length - 1; i >= 0; i--) {
+                    var key = keys[i];
+                    item[key] = formatters[key](item[key]);
+                }
+
+                callback();
+
+            }, function (err) {
+                if (err) {
+                    return next(err);
+                }
+                writeXlsx(resultArray);
+            });
+        } else {
+            writeXlsx(resultArray);
+        }
+}
 }
 
 function reportToXlsx(options) {

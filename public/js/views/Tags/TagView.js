@@ -9,21 +9,20 @@ define([
     var TagView = Backbone.View.extend({
 
         template: _.template(tagTemplate),
-        
+
         initialize: function (options) {
             this.contentType = options.contentType;
             this.needNotes = options.hasOwnProperty('needNotes') ? options.needNotes : true;
         },
 
         events: {
-            'click .editTags'    : 'editTags'
+            'click .editTags': 'editTags'
         },
-
 
         editTags: function (e) {
             e.preventDefault();
 
-            new TagListView({model : this.model, contentType :  this.contentType});
+            new TagListView({model: this.model, contentType: this.contentType});
         },
 
         render: function () {

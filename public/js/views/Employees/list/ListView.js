@@ -21,13 +21,13 @@ define([
         contentType      : 'Employees',
         formUrl          : '#easyErp/Employees/',
         letterKey        : 'name.last',
-        type: 'Employees',
+        type             : 'Employees',
 
         initialize: function (options) {
             this.startTime = options.startTime;
             this.collection = options.collection;
             _.bind(this.collection.showMoreAlphabet, this.collection);
-            this.allAlphabeticArray = common.buildAllAphabeticArray();
+            this.allAlphabeticArray = common.buildAllAphabeticArray(this.contentType);
             this.filter = options.filter;
             this.defaultItemsNumber = this.collection.namberToShow || 100;
             this.deleteCounter = 0;

@@ -206,7 +206,7 @@ var MonthHours = function (event, models) {
         async.each(ids, function (id, cb) {
             MonthHoursModel.findByIdAndRemove(id, function (err, result) {
                 if (err) {
-                    return err(err);
+                    return next(err);
                 }
 
                 composeAndCash(req);

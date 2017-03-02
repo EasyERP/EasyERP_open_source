@@ -559,50 +559,17 @@ var Module = function (models) {
         var date = new Date();
         var db = req.session.lastDb;
         var Employee = models.get(db, 'Employees', EmployeeSchema);
-        var query = req.query;
+        var query = req.query || {};
         var filter = query.filter || {};
-        var startDate = new Date(query.startDate);
-        var endDate = new Date(query.endDate);
+        var dateFilter = filter.date || {};
+        var startDate = new Date(dateFilter.value && dateFilter.value[0]);
+        var endDate = new Date(dateFilter.value && dateFilter.value[1]);
         var key = 'salaryReport' + filter + startDate.toString() + endDate.toString();
         var redisStore = require('../helpers/redisClient');
         var waterfallTasks;
         var startDateKey = moment(startDate).year() * 100 + moment(startDate).week(); // todo isoWeek (changed on week)
         var endDateKey = moment(endDate).year() * 100 + moment(endDate).week(); // todo isoWeek (changed on week)
-        // var filterValue;
         var filterMapper = new FilterMapper();
-
-        /*function caseFilterEmployee(filter) {
-         var condition;
-         var resArray = [];
-         var filtrElement = {};
-         var filterName;
-         var keyCase;
-         var i;
-         var filterNameKeys = Object.keys(filter);
-
-         for (i = filterNameKeys.length - 1; i >= 0; i--) {
-         filterName = filterNameKeys[i];
-         condition = filter[filterName].value;
-         keyCase = filter[filterName].key;
-
-         switch (filterName) {
-         case 'employee':
-         filtrElement[keyCase] = {$in: condition.objectID()};
-         resArray.push(filtrElement);
-         break;
-         case 'department':
-         filtrElement[keyCase] = {$in: condition.objectID()};
-         resArray.push(filtrElement);
-         break;
-         case 'onlyEmployees':
-         resArray.push({isEmployee: true});
-         break;
-         // skip default;
-         }
-         }
-
-         return resArray;
-         }*/
 
         function checkFilter(callback) {
             callback(null, filter);
@@ -616,22 +583,12 @@ var Module = function (models) {
                     $or: [{
                         $and: [{
                             isEmployee: true
-                        }, /* { // commented in case of employee that was fired and again hired
-                         $or: [{
-                         lastFire: null
-                         }, {
-                         lastFire: {
-                         $ne : null,
-                         $gte: startDateKey
-                         }
-                         }]
-                         },*/
-                            {
-                                firstHire: {
-                                    $ne : null,
-                                    $lte: endDateKey
-                                }
-                            }]
+                        }, {
+                            firstHire: {
+                                $ne : null,
+                                $lte: endDateKey
+                            }
+                        }]
                     }, {
                         $and: [{
                             isEmployee: false
@@ -652,15 +609,11 @@ var Module = function (models) {
             };
 
             if (filter && typeof filter === 'object') {
-                /*filterValue = caseFilterEmployee(filter);
-                 if (filterValue.length) {*/
-                // matchObj.$and.push({$and: caseFilterEmployee(filter)});
-
-                delete filter.startDate;
-                delete filter.endDate;
-
-                matchObj.$and.push(filterMapper.mapFilter(filter, 'salaryReport'));
-                // }
+                matchObj.$and.push(filterMapper.mapFilter(filter, {
+                    contentType : 'salaryReport',
+                    keysArray   : ['date'],
+                    withoutState: true
+                }));
             }
 
             Employee
@@ -1003,8 +956,8 @@ var Module = function (models) {
                 var hire = empObject.hire;
                 var fire = empObject.fire;
                 var dateToCreate = endDate;
-                var hireKey = moment(new Date(hire[0].date)).year() * 100 + moment(new Date(hire[0].date)).month() + 1;
-                var fireKey = fire[0] ? moment(new Date(fire[0])).year() * 100 + moment(new Date(fire[0])).month() + 1 : Infinity;
+                var hireKey;
+                var fireKey;
                 var localKey = moment(dateToCreate).year() * 100 + moment(dateToCreate).month() + 1;
                 var payrollStructureType = empObject.payrollStructureType || {};
                 var earnings = payrollStructureType.earnings || [];
@@ -1021,6 +974,14 @@ var Module = function (models) {
                 var payForDay;
                 var removeJournalEntries;
                 var createJournalEntries;
+                var firstHire = _.sortBy(hire, 'date');
+                var lastFire = _.sortBy(fire, 'date');
+
+                lastFire = lastFire && lastFire.length ? lastFire[0] : {};
+                firstHire = firstHire && firstHire.length ? firstHire[0] : {};
+
+                hireKey = moment(new Date(firstHire.date)).year() * 100 + moment(new Date(firstHire.date)).month() + 1;
+                fireKey = fire[0] ? moment(new Date(lastFire)).year() * 100 + moment(new Date(lastFire)).month() + 1 : Infinity;
 
                 if (hireKey === localKey) {
                     daysInMonth = moment(dateToCreate).endOf('month').date();
@@ -1088,7 +1049,7 @@ var Module = function (models) {
                     JournalEntry.aggregate([{
                         $match: {
                             'sourceDocument.employee': employee,
-                            'sourceDocument.model'   : 'wTrack',
+                            'sourceDocument.model'   : 'product',
                             journal                  : ObjectId(CONSTANTS.OVERTIME_PAYABLE),
                             date                     : {
                                 $gte: date,
@@ -1120,7 +1081,7 @@ var Module = function (models) {
                         JournalEntry.aggregate([{
                             $match: {
                                 'sourceDocument.employee': employee,
-                                'sourceDocument.model'   : 'wTrack',
+                                'sourceDocument.model'   : 'product',
                                 journal                  : ObjectId(CONSTANTS.SALARY_PAYABLE),
                                 date                     : {
                                     $gte: date,
@@ -1351,7 +1312,11 @@ var Module = function (models) {
                         };
 
                         createJournalEntries = function (result, cb) {
-                            journalEntry.createReconciled(bodySalary, req.session.lastDb, cb, req.session.uId);
+                            journalEntry.createReconciled(bodySalary, {
+                                dbName: req.session.lastDb,
+                                uId   : req.session.uId,
+                                cb    : cb
+                            });
                         };
 
                         newPayrollModel.save(function (err, result) {

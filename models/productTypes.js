@@ -1,9 +1,9 @@
 module.exports = (function () {
     var mongoose = require('mongoose');
     var productTypesSchema = mongoose.Schema({
-        _id : String,
-        neme: String
-
+        name        : String,
+        options     : {type: Array, default: []},
+        creationDate: {type: Date, default: Date.now}
     }, {collection: 'productTypes'});
 
     mongoose.model('productTypes', productTypesSchema);

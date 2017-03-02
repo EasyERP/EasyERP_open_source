@@ -43,7 +43,7 @@ define([
 
             if (options) {
                 this.invoiceModel = options.model;
-                this.totalAmount = this.invoiceModel.get('paymentInfo').balance || 0;
+                this.totalAmount = this.invoiceModel.get('paymentInfo').balance || this.invoiceModel.get('paymentInfo').total || 0;
                 this.forSales = this.invoiceModel.get('forSales');
                 this.mid = options.mid || 56;
             } else {
@@ -55,6 +55,9 @@ define([
 
             this.redirect = options.redirect;
             this.collection = options.collection;
+            this.title = options.title;
+            this.prepayment = options.prepayment;
+            this.paymentsSum = options.paymentsSum || 0;
 
             this.currency = options.currency || {};
             this.changePaidAmount = _.debounce(this.changePaidAmount, 500);
@@ -64,7 +67,101 @@ define([
 
         events: {
             'keypress:not(#selectInput)': 'keypressHandler',
-            'keyup #paidAmount'         : 'changePaidAmount'
+            'keyup #paidAmount'         : 'changePaidAmount',
+            'keyup #prepaidAmount'      : 'changePrepaidAmount',
+            'keyup #bankExpenses'       : 'changeBankExpensesAmount'
+        },
+
+        changePrepaidAmount: function () {
+            var self = this;
+            var targetEl = $('#prepaidAmount');
+            var changedValue = $.trim(targetEl.val());
+            var currency = $.trim(this.$el.find('#currencyDd').text());
+            var overPaymentContainer = this.$el.find('#overPayment');
+            var bankExpensesInput = this.$el.find('#bankExpenses');
+            var overPaymentDiffInput = overPaymentContainer.find('#overPaymentDiff');
+            var totalAmount = parseFloat(this.invoiceModel.get('paymentInfo').total) - this.paymentsSum;
+            var date = $('#paymentDate').val();
+            var data = {};
+            var bankExpenses;
+
+            changedValue = parseFloat(helpers.spaceReplacer(changedValue)) || 0;
+            bankExpenses = parseFloat(helpers.spaceReplacer(bankExpensesInput.val())) || 0;
+
+            data.totalAmount = totalAmount;
+            data.paymentAmount = changedValue;
+            data.invoiceCurrency = this.currency.name;
+            data.paymentCurrency = currency;
+            data.date = date;
+
+            if (!changedValue || changedValue === totalAmount) {
+                if (!overPaymentContainer.hasClass('hidden')) {
+                    overPaymentContainer.addClass('hidden');
+                }
+
+                this.bankExpenses = 0;
+
+                return bankExpensesInput.val('');
+            }
+
+            this.bankExpenses = this.bankExpenses || 0;
+
+            if (changedValue + this.bankExpenses >= totalAmount) {
+                dataService.getData(CONSTANTS.URLS.PAYMENT_AMOUNT_LEFT, data,
+                    function (res, self) {
+                        if (res.difference) {
+                            res.difference *= -1;
+                            overPaymentDiffInput.val(res.difference.toFixed(2));
+                            self.differenceAmount = res.difference;
+
+                            self.overPayment = res.difference;
+
+                            if (changedValue > totalAmount) {
+                                targetEl.val(helpers.currencySplitter((totalAmount - bankExpenses).toFixed(2)));
+                            }
+
+                            return overPaymentContainer.removeClass('hidden');
+                        }
+
+                        if (!overPaymentContainer.hasClass('hidden')) {
+                            return overPaymentContainer.addClass('hidden');
+                        }
+                    }, self);
+            }
+
+            App.stopPreload();
+        },
+
+        changeBankExpensesAmount: function () {
+            var targetEl = $('#bankExpenses');
+            var changedValue = $.trim(targetEl.val());
+            var prepaidAmountInput = this.$el.find('#prepaidAmount');
+            var prepaidAmount;
+
+            changedValue = parseFloat(helpers.spaceReplacer(changedValue)) || 0;
+
+            /*if (!prepaidAmountInput.length) {
+             prepaidAmountInput = this.$el.find('#paidAmount');
+             }*/
+
+            /*prepaidAmount = parseFloat(helpers.spaceReplacer(prepaidAmountInput.val()));
+
+             if (changedValue > prepaidAmount) {
+             return targetEl.val(0);
+             }*/
+
+            this.bankExpenses = this.bankExpenses || 0;
+            //this.overPayment = this.overPayment || 0;
+
+            if (changedValue < 0) {
+                changedValue = 0;
+                targetEl.val(changedValue);
+            }
+
+            // prepaidAmountInput.val(helpers.currencySplitter(((prepaidAmount + this.bankExpenses/* + this.overPayment*/) - changedValue).toFixed(2)));
+
+            this.bankExpenses = changedValue;
+
         },
 
         changePaidAmount: function (e) {
@@ -74,7 +171,7 @@ define([
             var currency = $.trim(this.$el.find('#currencyDd').text());
             var differenceAmountContainer = this.$el.find('#differenceAmountContainer');
             var differenceAmount = differenceAmountContainer.find('#differenceAmount');
-            var totalAmount = parseFloat(this.totalAmount);
+            var totalAmount = parseFloat(this.totalAmount) - this.paymentsSum;
             var date = $('#paymentDate').val();
             var data = {};
 
@@ -112,10 +209,6 @@ define([
             var newCurrencyClass = helpers.currencyClass(newCurrency);
             var paymentMethods;
             var el;
-            var accountName = this.forSales ? 'debitAccount' : 'creditAccount';
-            var query = {
-                transaction: 'Payment'
-            };
 
             var array = this.$el.find('#paidAmountDd');
             array.attr('class', newCurrencyClass);
@@ -129,29 +222,17 @@ define([
                 });
 
                 if (el && el.chartAccount && el.chartAccount._id) {
-
-                    query[accountName] = el.chartAccount._id;
-
-                    dataService.getData('/journals/getByAccount', query, function (resp) {
-                        // self.responseObj['#journal'] = resp.data || [];
-
-                        if (resp.data && resp.data.length) {
-                            (self.$el.find('#journal').text(resp.data[0].name)).attr('data-id', resp.data[0]._id);
-                        } else {
-                            (self.$el.find('#journal').text('Select')).attr('data-id', null);
-                            self.$el.find('#journal').addClass('errorContent');
-                        }
-
-                    });
+                    (self.$el.find('#account').text(el.chartAccount.name)).attr('data-id', el.chartAccount._id);
                 } else {
-                    (self.$el.find('#journal').text('Select')).attr('data-id', null);
+                    (this.$el.find('#account').text('None')).attr('data-id', null);
+                    self.$el.find('#account').addClass('errorContent');
                 }
 
-                $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
+                $(e.target).closest('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
 
                 this.changePaidAmount();
             } else {
-                $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
+                $(e.target).closest('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
 
                 this.changePaidAmount();
             }
@@ -168,7 +249,7 @@ define([
         saveItem: function () {
 
             var self = this;
-            var data;
+            var data = {};
             // FixMe change mid value to proper number after inserting it into DB
             var mid = self.mid || 56;
             var thisEl = this.$el;
@@ -176,20 +257,27 @@ define([
             var invoiceModel = this.invoiceModel.toJSON();
             var supplier = thisEl.find('#supplierDd');
             var supplierId = supplier.attr('data-id');
-            var paidAmount = thisEl.find('#paidAmount').val();
+            var paidAmount = helpers.spaceReplacer(thisEl.find('#paidAmount').val()) || helpers.spaceReplacer(thisEl.find('#prepaidAmount').val()) || 0;
+            var bankExpensesAccount = thisEl.find('#bankExpensesAccountDd').attr('data-id');
+            var bankExpenses = helpers.spaceReplacer(thisEl.find('#bankExpenses').val()) || 0;
+            var overPaymentAccount = thisEl.find('#overPaymentAccountDd').attr('data-id');
+            var overPayment = helpers.spaceReplacer(thisEl.find('#overPaymentDiff').val()) || 0;
             var paymentMethod = thisEl.find('#paymentMethod');
             var paymentMethodID = paymentMethod.attr('data-id');
             var date = thisEl.find('#paymentDate').val();
             var paymentRef = thisEl.find('#paymentRef').val();
             var period = thisEl.find('#period').attr('data-id');
-            var journal = thisEl.find('#journal').attr('data-id');
+            var account = thisEl.find('#account').attr('data-id');
             var currency = {
                 _id : thisEl.find('#currencyDd').attr('data-id'),
                 name: $.trim(thisEl.find('#currencyDd').text())
             };
 
             paidAmount = parseFloat(paidAmount);
-            if (isNaN(paidAmount) || paidAmount <= 0) {
+            bankExpenses = parseFloat(bankExpenses);
+            overPayment = parseFloat(overPayment);
+
+            if (isNaN(paidAmount) || paidAmount + bankExpenses + overPayment <= 0) {
                 return App.render({
                     type   : 'error',
                     message: 'Please, enter Paid Amount!'
@@ -203,17 +291,30 @@ define([
                 });
             }
 
-            if (!journal) {
+            if (!account) {
                 return App.render({
                     type   : 'error',
-                    message: "Journal can't be empty."
+                    message: "Account can't be empty."
+                });
+            }
+
+            if (bankExpenses && !bankExpensesAccount) {
+                return App.render({
+                    type   : 'error',
+                    message: "Bank Expenses Account can't be empty if is some Bank Expenses sum."
+                });
+            }
+
+            if (overPayment && !overPaymentAccount) {
+                return App.render({
+                    type   : 'error',
+                    message: "Over Payment Account can't be empty if is some Over Payment sum."
                 });
             }
 
             data = {
                 mid             : mid,
                 forSale         : this.forSales,
-                invoice         : invoiceModel._id,
                 supplier        : supplierId,
                 paymentMethod   : paymentMethodID,
                 date            : helpers.setTimeToDate(date),
@@ -222,8 +323,23 @@ define([
                 paidAmount      : paidAmount,
                 currency        : currency,
                 differenceAmount: this.differenceAmount,
-                journal         : journal
+                bankAccount     : account,
+                overPayment     : {
+                    account: overPaymentAccount,
+                    amount : overPayment
+                },
+
+                bankExpenses: {
+                    account: bankExpensesAccount,
+                    amount : bankExpenses
+                }
             };
+
+            if (mid === 123 || mid === 129) {
+                data.order = invoiceModel._id;
+            } else {
+                data.invoice = invoiceModel._id;
+            }
 
             if (supplier) {
                 this.model.save(data, {
@@ -240,7 +356,7 @@ define([
                             redirectUrl = '#easyErp/DividendPayments/list';
                         } else if (mid === 109) {
                             redirectUrl = '#easyErp/purchasePayments/list';
-                        } else if (mid === 95) {
+                        } else if (mid === 95 || mid === 129 || mid === 130) {
                             redirectUrl = '#easyErp/purchasePayments/list';
                         } else {
                             redirectUrl = self.forSales ? 'easyErp/customerPayments' : 'easyErp/supplierPayments';
@@ -274,19 +390,21 @@ define([
             var self = this;
             var model = this.invoiceModel.toJSON();
             var account = model.project && model.project.paymentMethod || model.paymentMethod;
+            var el;
             var htmBody = this.template({
                 invoice      : model,
+                paymentsSum  : this.paymentsSum,
                 currency     : self.currency,
-                currencyClass: helpers.currencyClass
+                currencyClass: helpers.currencyClass,
+                title        : this.title,
+                prepayment   : this.prepayment
             });
 
             this.$el = $(htmBody).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'edit-dialog',
-                title        : 'Create Payment',
-                buttons      : [
+                autoOpen   : true,
+                dialogClass: 'edit-dialog',
+                title      : 'Create Payment',
+                buttons    : [
                     {
                         id   : 'create-payment-dialog',
                         class: 'btn blue',
@@ -309,13 +427,19 @@ define([
             populate.get('#period', '/period', {}, 'name', this, true, true);
 
             if (!model.paymentMethod && model.project && model.project.paymentMethod) {
-                populate.get('#paymentMethod', '/paymentMethod', {}, 'name', this, true, true, model.project.paymentMethod);
+                populate.get('#paymentMethod', '/paymentMethod', {}, 'name', this, true, true, model.project.paymentMethod, null);
             } else {
                 populate.get('#paymentMethod', '/paymentMethod', {}, 'name', this, true, true, model.paymentMethod, null, this.$el);
             }
 
             populate.get('#currencyDd', '/currency/getForDd', {}, 'name', this, true);
-            populate.get('#journal', '/journals/getForDd', {}, 'name', this, true, true);
+            // populate.get('#journal', '/journals/getForDd', {}, 'name', this, true, true);
+
+            dataService.getData('/chartOfAccount/getForDd', {category: 'ACCOUNTS_EXPENSES'}, function (response) {
+                self.responseObj['#overPaymentAccountDd'] = response.data;
+                self.responseObj['#bankExpensesAccountDd'] = response.data;
+                self.responseObj['#accountDd'] = response.data;
+            });
 
             this.$el.find('#paymentDate').datepicker({
                 dateFormat : 'd M, yy',

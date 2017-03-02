@@ -3,12 +3,82 @@ define([
     'dataService',
     'text!templates/main/selectTemplate.html'
 ], function (_, dataService, selectTemplate) {
-    var dataFormServer = {};
-
-    var get = function (id, url, data, field, content, isCreate, canBeEmpty, parrrentContentId, defaultId, $parentContainer) {
+    var get = function (id, url, data, field, content, isCreate, canBeEmpty, parrrentContentId, defaultId, $parentContainer, setAccount) {
         defaultId = defaultId || 0;
         dataService.getData(url, data, function (response) {
+
+            var $thisEl = content && content.$el ? content.$el : $;
+            var curEl = ($parentContainer) ? $parentContainer.find(id) : $thisEl.find(id);
+
+            content.responseObj[id] = [];
+            /*if (canBeEmpty) {
+             content.responseObj[id].push({_id: "", name: "Select"});
+             }*/
+            content.responseObj[id] = content.responseObj[id].concat(_.map(response.data, function (item) {
+                return {
+                    _id          : item._id,
+                    name         : item[field],
+                    level        : item.projectShortDesc || item.count || item.email || item.rate || '',
+                    imageSrc     : item.imageSrc || '',
+                    chartAccount : item.chartAccount || null,
+                    currency     : item.currency || item.symbol || '',
+                    account      : item.account || '',
+                    debitAccount : item.debitAccount || '',
+                    creditAccount: item.creditAccount || '',
+                    type         : item.type || item.isDefault || ''
+                };
+            }));
+
+            if (isCreate) {
+                // add check on data-id exist. if not set first one in responseObj
+                // if element was set from model data-id exist.
+                if (!curEl.attr('data-id')) {
+                    if (canBeEmpty) {   // took off element Select from responseObj, changed on default select at start
+                        curEl.text('Select');
+                    } else {
+                        if (content.responseObj[id] && content.responseObj[id].length) {
+                            curEl.text(content.responseObj[id][defaultId].name).attr('data-id', content.responseObj[id][defaultId]._id);
+                            curEl.attr('data-type', content.responseObj[id][defaultId].type);
+
+                            if (content.responseObj[id][defaultId].currency) {
+                                curEl.attr('data-symbol', content.responseObj[id][defaultId].currency);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (parrrentContentId && typeof(parrrentContentId) === 'string'  && parrrentContentId.split('=').length === 2) {
+                parrrentContentId = parrrentContentId.split('=')[1];
+            }
+
+            if (parrrentContentId) {
+                var current = _.filter(content.responseObj[id], function (item) {
+                    return item._id === parrrentContentId;
+                });
+
+                if (current[0]) {
+                    if (current[0].level) {
+                        curEl.attr('data-level', current[0].level);
+                    }
+
+                    if (current[0].chartAccount) {
+                        $('#account').text(current[0].chartAccount.name).attr('data-id', current[0].chartAccount._id);
+                    }
+
+                    curEl.text(current[0].name).attr('data-id', current[0]._id);
+                }
+            }
+        });
+    };
+
+    var getProductTypeOrCategory = function (id, url, data, field, content, isCreate, canBeEmpty, parrrentContentId, defaultId, $parentContainer) {
+        defaultId = defaultId || 0;
+        content.responseObj = {};
+        dataService.getData(url, data, function (response) {
             var curEl = ($parentContainer) ? $parentContainer.find(id) : $(id);
+            var defaultObj;
+            var firstElement;
 
             content.responseObj[id] = [];
             /*if (canBeEmpty) {
@@ -29,17 +99,25 @@ define([
             }));
 
             if (isCreate) {
-                // add check on data-id exist. if not set first one in responseObj
-                // if element was set from model data-id exist.
+                //add check on data-id exist. if not set first one in responseObj
+                //if element was sat from model data-id exist.
                 if (!curEl.attr('data-id')) {
                     if (canBeEmpty) {   // took off element Select from responseObj, changed on default select at start
                         curEl.text('Select');
                     } else {
-                        curEl.text(content.responseObj[id][defaultId].name).attr('data-id', content.responseObj[id][defaultId]._id);
-                        curEl.attr('data-type', content.responseObj[id][defaultId].type);
-                        if (content.responseObj[id][defaultId].currency) {
-                            curEl.attr('data-symbol', content.responseObj[id][defaultId].currency);
+                        defaultObj = _.findWhere(content.responseObj[id], {_id: defaultId});
+                        if (defaultObj) {
+                            curEl.text(defaultObj.name).attr('data-id', defaultObj._id);
+                            curEl.attr('data-type', defaultObj.type);
+                        } else {
+                            firstElement = content.responseObj[id] && content.responseObj[id].length ? content.responseObj[id][0] : {
+                                _id : null,
+                                name: 'Select'
+                            };
+                            curEl.text(firstElement.name).attr('data-id', firstElement._id);
+                            curEl.attr('data-type', firstElement.type);
                         }
+
                     }
                 }
             }
@@ -66,7 +144,7 @@ define([
         dataService.getData(url, data, function (response) {
             content.responseObj[id] = [];
             if (canBeEmpty) {
-                content.responseObj[id].push({_id: "", name: "Select"});
+                content.responseObj[id].push({_id: '', name: 'Select'});
             }
             content.responseObj[id] = content.responseObj[id].concat(_.map(response.data, function (item) {
                 return {
@@ -76,8 +154,9 @@ define([
                     parentDepartment: item.parentDepartment
                 };
             }));
+
             if (isCreate) {
-                $(id).text(content.responseObj[id][0].name).attr("data-id", content.responseObj[id][0]._id);
+                $(id).text(content.responseObj[id][0].name).attr('data-id', content.responseObj[id][0]._id);
             }
         });
     };
@@ -86,7 +165,7 @@ define([
         dataService.getData(url, data, function (response) {
             content.responseObj[id] = [];
             if (canBeEmpty) {
-                content.responseObj[id].push({_id: "", name: "Select"});
+                content.responseObj[id].push({_id: '', name: 'Select'});
             }
             content.responseObj[id] = content.responseObj[id].concat(_.map(response.data, function (item) {
                 return {
@@ -97,8 +176,25 @@ define([
                     fullName: item.fullName
                 };
             }));
+
             if (isCreate) {
                 $(id).text(content.responseObj[id][0].name).attr("data-id", content.responseObj[id][0]._id).attr("data-level", content.responseObj[id][0].level).attr("data-fullname", content.responseObj[id][0].fullName);
+            }
+
+            if (parrrentContentId) {
+                var current = _.filter(content.responseObj[id], function (item) {
+                    return item._id === parrrentContentId;
+                });
+
+                if (current[0].level) {
+                    $(id).attr('data-level', current[0].level);
+                }
+
+                if (current[0].fullName) {
+                    $(id).attr('data-fullname', current[0].fullName);
+                }
+
+                $(id).text(current[0].name).attr('data-id', current[0]._id);
             }
 
         });
@@ -152,8 +248,13 @@ define([
             });
 
             if (isCreate) {
-                $(nameId).text(content.responseObj[nameId][0].name).attr("data-id", content.responseObj[nameId][0]._id);
-                $(statusId).text(content.responseObj[statusId][0].name).attr("data-id", content.responseObj[statusId][0]._id);
+                if (content.responseObj[nameId] && content.responseObj[nameId][0]) {
+                    content.$el.find(nameId).text(content.responseObj[nameId][0].name).attr("data-id", content.responseObj[nameId][0]._id);
+                }
+
+                if (content.responseObj[statusId] && content.responseObj[statusId][0]) {
+                    content.$el.find(statusId).text(content.responseObj[statusId][0].name).attr("data-id", content.responseObj[statusId][0]._id);
+                }
             }
             if (callback) {
                 callback(content.responseObj[nameId]);
@@ -557,18 +658,19 @@ define([
     };
 
     return {
-        get                   : get,
-        get2name              : get2name,
-        getPriority           : getPriority,
-        getWorkflow           : getWorkflow,
-        showSelect            : showSelect,
-        getParrentDepartment  : getParrentDepartment,
-        getParrentCategory    : getParrentCategory,
-        getCompanies          : getCompanies,
-        showSelectPriority    : showSelectPriority,
-        showProductsSelect    : showProductsSelect,
-        fetchWorkflow         : fetchWorkflow,
-        getParrentCategoryById: getParrentCategoryById
+        get                     : get,
+        get2name                : get2name,
+        getPriority             : getPriority,
+        getWorkflow             : getWorkflow,
+        showSelect              : showSelect,
+        getParrentDepartment    : getParrentDepartment,
+        getParrentCategory      : getParrentCategory,
+        getCompanies            : getCompanies,
+        showSelectPriority      : showSelectPriority,
+        showProductsSelect      : showProductsSelect,
+        fetchWorkflow           : fetchWorkflow,
+        getParrentCategoryById  : getParrentCategoryById,
+        getProductTypeOrCategory: getProductTypeOrCategory
 //            getProductsInfo       : getProductsInfo
     };
 });

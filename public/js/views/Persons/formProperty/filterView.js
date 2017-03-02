@@ -7,7 +7,7 @@ define([
     'views/Persons/CreateView',
     'dataService',
     'collections/Filter/filterCollection'
-], function (Backbone, $, _, TagListTemplate, TagsContentTemplate, CreateView,dataService, FilterCollection) {
+], function (Backbone, $, _, TagListTemplate, TagsContentTemplate, CreateView, dataService, FilterCollection) {
     'use strict';
 
     var NoteView = Backbone.View.extend({
@@ -27,7 +27,7 @@ define([
 
             this.saveDeal = options.saveDeal;
 
-            dataService.getData('/Persons/', {type : 'Person'}, function (res) {
+            dataService.getData('/Persons/', {type: 'Person'}, function (res) {
                 res = _.map(res.data, function (elem) {
                     elem.name = elem.fullName;
 
@@ -83,7 +83,7 @@ define([
 
             $('.tag-list-dialog').remove();
 
-            new CreateView({saveDeal : this.saveDeal, attribute : this.attribute});
+            new CreateView({saveDeal: this.saveDeal, attribute: this.attribute});
         },
 
         changeSelected: function (e) {
@@ -112,10 +112,8 @@ define([
             var formString = this.template();
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                position     : {
+                autoOpen: true,
+                position: {
                     at: 'top+35%'
                 },
 

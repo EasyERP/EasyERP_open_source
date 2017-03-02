@@ -1,4 +1,5 @@
 define([
+    'Backbone',
     'jQuery',
     'Underscore',
     'views/listViewBase',
@@ -11,7 +12,7 @@ define([
     'dataService',
     'helpers',
     'custom'
-], function ($, _, listViewBase, listTemplate, ListItemView, FilterView, reportCollection, CONSTANTS, moment, dataService, helpers, custom) {
+], function (Backbone, $, _, listViewBase, listTemplate, ListItemView, FilterView, reportCollection, CONSTANTS, moment, dataService, helpers, custom) {
     'use strict';
 
     var ListView = listViewBase.extend({
@@ -36,7 +37,7 @@ define([
             this.sort = options.sort || {};
             this.defaultItemsNumber = this.collection.namberToShow || 100;
             this.page = options.collection.page;
-            dateRange = custom.retriveFromCash('salaryReportDateRange');
+            /* dateRange = custom.retriveFromCash('salaryReportDateRange'); */
 
             this.filter = options.filter || custom.retriveFromCash('salaryReport.filter');
 
@@ -44,26 +45,38 @@ define([
                 this.filter = {};
             }
 
-            if (!this.filter.startDate) {
-                this.filter.startDate = {
-                    key  : 'startDate',
-                    type : 'date',
-                    value: new Date(dateRange.startDate)
-                };
-                this.filter.endDate = {
-                    key  : 'endDate',
-                    type : 'date',
-                    value: new Date(dateRange.endDate)
+            dateRange = this.filter.date ? this.filter.date.value : [];
+
+            if (!this.filter.date) {
+                this.filter.date = {
+                    key  : 'date',
+                    value: [new Date(dateRange.startDate), new Date(dateRange.endDate)]
                 };
             }
 
-            this.startDate = new Date(this.filter.startDate.value);
-            this.endDate = new Date(this.filter.endDate.value);
+            this.startDate = new Date(dateRange[0]);
+            this.endDate = new Date(dateRange[1]);
+            this.contentCollection = reportCollection;
+
+            custom.cacheToApp('salaryReport.filter', this.filter);
+
+            /* if (!this.filter.startDate) {
+             this.filter.startDate = {
+             key  : 'startDate',
+             type : 'date',
+             value: new Date(dateRange.startDate)
+             };
+             this.filter.endDate = {
+             key  : 'endDate',
+             type : 'date',
+             value: new Date(dateRange.endDate)
+             };
+             }
+
+             this.startDate = new Date(this.filter.startDate.value);
+             this.endDate = new Date(this.filter.endDate.value); */
 
             listViewBase.prototype.initialize.call(this, options);
-
-            this.contentCollection = reportCollection;
-            custom.cacheToApp('salaryReport.filter', this.filter);
         },
 
         goSort: function (e) {
@@ -109,37 +122,46 @@ define([
             this.$el.append(itemView.render());
         },
 
-        changeDateRange: function () {
-            var stDate = $('#startDate').val();
-            var enDate = $('#endDate').val();
+        changeDateRange: function (dateArray) {
+            /* var stDate = $('#startDate').val();
+             var enDate = $('#endDate').val(); */
             var searchObject;
 
-            this.startDate = new Date(stDate);
-            this.endDate = new Date(enDate);
+            /* this.startDate = new Date(stDate);
+             this.endDate = new Date(enDate);
+
+             if (!this.filter) {
+             this.filter = {};
+             }
+
+             this.filter.startDate = {
+             key  : 'startDate',
+             type : 'date',
+             value: stDate
+             };
+
+             this.filter.endDate = {
+             key  : 'endDate',
+             type : 'date',
+             value: enDate
+             };
+
+             this.startKey = moment(this.startDate).year() * 100 + moment(this.startDate).month();
+             this.endKey = moment(this.endDate).year() * 100 + moment(this.endDate).month(); */
 
             if (!this.filter) {
                 this.filter = {};
             }
 
-            this.filter.startDate = {
-                key  : 'startDate',
-                type: 'date',
-                value: stDate
+            this.filter.date = {
+                value: dateArray
             };
 
-            this.filter.endDate = {
-                key  : 'endDate',
-                type: 'date',
-                value: enDate
-            };
-
-            this.startKey = moment(this.startDate).year() * 100 + moment(this.startDate).month();
-            this.endKey = moment(this.endDate).year() * 100 + moment(this.endDate).month();
+            this.startDate = dateArray[0];
+            this.endDate = dateArray[1];
 
             searchObject = {
-                startDate: stDate,
-                endDate  : enDate,
-                filter   : this.filter
+                filter: this.filter
             };
 
             this.collection.showMore(searchObject);
@@ -201,8 +223,8 @@ define([
         },
 
         render: function () {
-            var self = this;
             var $currentEl = this.$el;
+            var filter = this.filter || custom.retriveFromCash('salaryReport.filter');
             var collection;
             var itemView;
 
@@ -230,7 +252,9 @@ define([
 
             $currentEl.append(itemView.render());
 
-            App.filtersObject.filter = this.filter;
+            App.filtersObject.filter = filter;
+
+            this.filter = filter;
 
             // this.renderFilter();
 

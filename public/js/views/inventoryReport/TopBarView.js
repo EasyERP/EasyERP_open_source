@@ -3,26 +3,28 @@ define([
     'jQuery',
     'Underscore',
     'views/topBarViewBase',
+    'views/Filter/dateFilter',
     'text!templates/inventoryReport/TopBarTemplate.html',
     'custom',
     'constants',
     'dataService',
     'common',
     'moment'
-], function (Backbone, $, _, BaseView, ContentTopBarTemplate, Custom, CONSTANTS, dataService, common, moment) {
+], function (Backbone, $, _, BaseView, DateFilterView, ContentTopBarTemplate, Custom, CONSTANTS, dataService, common, moment) {
     'use strict';
 
     var TopBarView = BaseView.extend({
-        el         : '#top-bar',
-        contentType: CONSTANTS.INVENTORYREPORT,
-        template   : _.template(ContentTopBarTemplate),
+        el           : '#top-bar',
+        contentType  : CONSTANTS.INVENTORYREPORT,
+        contentHeader: 'Inventory Report',
+        template     : _.template(ContentTopBarTemplate),
 
         events: {
-            'click #updateDate'                 : 'changeDateRange',
-            'click .dateRange'                  : 'toggleDateRange',
-            'click #cancelBtn'                  : 'cancel',
-            'click li.filterValues:not(#custom)': 'setDateRange',
-            'click #custom'                     : 'showDatePickers'
+            // 'click #updateDate'                 : 'changeDateRange',
+            // 'click .dateRange'                  : 'toggleDateRange',
+            // 'click #cancelBtn'                  : 'cancel',
+            // 'click li.filterValues:not(#custom)': 'setDateRange',
+            // 'click #custom'                     : 'showDatePickers'
         },
 
         removeAllChecked: function () {
@@ -60,7 +62,6 @@ define([
                 $target.toggleClass('checkedArrow')
             }
 
-
             switch (id) {
                 case 'thisMonth':
                     startDate = date.startOf('month');
@@ -97,13 +98,12 @@ define([
             var $target = $(e.target);
 
             this.removeAllChecked();
-            if ($target.text() !== "Custom Dates") {
+            if ($target.text() !== 'Custom Dates') {
                 $target.toggleClass('checkedValue');
             } else {
-                $target.toggleClass('checkedArrow')
+                $target.toggleClass('checkedArrow');
             }
 
-            //$target.toggleClass('checkedValue');
             this.$el.find('.customTime').toggleClass('hidden');
             this.$el.find('.buttons').toggleClass('hidden');
         },
@@ -121,12 +121,7 @@ define([
             startTime.text(startDate);
             endTime.text(endDate);
 
-            /*Custom.cacheToApp('inventoryReportDateRange', {
-                startDate: startDate,
-                endDate  : endDate
-            });*/
-
-            this.trigger('changeDateRange');
+            this.trigger('changeDateRange', [startDate, endDate]);
             this.toggleDateRange();
         },
 
@@ -192,28 +187,44 @@ define([
         },
 
         render: function () {
+            var self = this;
             var viewType = Custom.getCurrentVT();
-            // var dateRange = Custom.retriveFromCash('inventoryReportDateRange');
 
             var filter = Custom.retriveFromCash('inventoryReport.filter');
-            var dateRange = filter && filter.date ? filter.date.value : [];
+            var dateRange;
+            var startDate;
+            var endDate;
 
-            /*this.startDate = common.utcDateToLocaleDate(dateRange.startDate);
-            this.endDate = common.utcDateToLocaleDate(dateRange.endDate);*/
+            if (!this.collection) {
+                dateRange = filter && filter.date ? filter.date.value : [];
 
-            this.startDate = common.utcDateToLocaleDate(new Date(dateRange[0]));
-            this.endDate = common.utcDateToLocaleDate(new Date(dateRange[1]));
-            
-            $('title').text(this.contentType);
+                startDate = new Date(dateRange[0]);
+                endDate = new Date(dateRange[1]);
+            } else {
+                startDate = this.collection.startDate;
+                endDate = this.collection.endDate;
+            }
+
+            startDate = moment(startDate).format('D MMM, YYYY');
+            endDate = moment(endDate).format('D MMM, YYYY');
+
+            $('title').text(this.contentHeader || this.contentType);
 
             this.$el.html(this.template({
                 viewType   : viewType,
-                contentType: this.contentType,
-                startDate  : this.startDate,
-                endDate    : this.endDate
+                contentType: this.contentType
             }));
 
-            this.bindDataPickers(this.startDate, this.endDate);
+            this.dateFilterView = new DateFilterView({
+                contentType: 'inventoryReport',
+                el         : this.$el.find('#dateFilter')
+            });
+
+            this.dateFilterView.on('dateChecked', function () {
+                self.trigger('changeDateRange', self.dateFilterView.dateArray);
+            });
+
+            this.dateFilterView.checkElement('custom', [startDate, endDate]);
 
             return this;
         }

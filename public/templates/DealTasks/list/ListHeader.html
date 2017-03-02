@@ -9,7 +9,7 @@
       <li><input type="checkbox"  value="null" checked="checked"><span>Undefinded</span></li>
 	</ul>-->
 <div id="searchContainer"></div>
-<div class="_tableTackWrap">
+<div class="_tableWrap _tableTackWrap">
     <table class="list stripedList">
         <colgroup>
             <col width="43px">
@@ -23,7 +23,10 @@
         <thead>
         <tr>
             <th class="centerCell">
-                <input type="checkbox" id="checkAll"/>
+                <label class="_customCHeckbox">
+                    <input type="checkbox" id="checkAll"/>
+                    <span></span>
+                </label>
             </th>
             <th class="oe_sortable" data-sort="dueDate">Due Date
                 <span class="arrow down"></span>

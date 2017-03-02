@@ -85,7 +85,7 @@ define([
     function hideHealth() {
         var $thisEl = this.$el;
 
-        $thisEl.find('.health-wrapper ul').hide();
+        $thisEl.find('.health-wrapper').removeClass('open');
         $thisEl.find('.newSelectList').remove();
     }
 

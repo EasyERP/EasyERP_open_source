@@ -1,17 +1,10 @@
-/*TODO remove caseFilter methid after testing filters*/
-
 var mongoose = require('mongoose');
 var moment = require('../public/js/libs/moment/moment');
 var RESPONSES = require('../constants/responses');
-var HistoryWriter = require('../helpers/historyWriter');
 var tasksSchema = mongoose.Schemas.DealTasks;
-var department = mongoose.Schemas.Department;
-var projectSchema = mongoose.Schemas.Project;
 var prioritySchema = mongoose.Schemas.Priority;
-var CustomerSchema = mongoose.Schemas.Customer;
 var EmployeeSchema = mongoose.Schemas.Employee;
 var OrgSettingsSchema = mongoose.Schemas.orgSettingsSchema;
-var opportunitiesSchema = mongoose.Schemas.Opportunitie;
 var objectId = mongoose.Types.ObjectId;
 var _ = require('underscore');
 var async = require('async');
@@ -27,9 +20,11 @@ var Module = function (models, event) {
     var path = require('path');
     var Uploader = require('../services/fileStorage/index');
     var uploader = new Uploader();
-
-    var historyWriter = new HistoryWriter(models);
+    var HistoryService = require('../services/history.js')(models);
     var FilterMapper = require('../helpers/filterMapper');
+    var filterMapper = new FilterMapper();
+
+    var dealTasksCT = 'DealTasks';
 
     function sendEmailToAssigned(req, dealTask) {
         var mailOptions;
@@ -72,18 +67,18 @@ var Module = function (models, event) {
         });
     }
 
-    function getFromMail(mailOptions, cb){
+    function getFromMail(mailOptions, cb) {
 
         var OrgSettings;
-        if (mailOptions.req){
+        if (mailOptions.req) {
             OrgSettings = models.get(mailOptions.req.session.lastDb, 'orgSettings', OrgSettingsSchema);
             OrgSettings.findOne()
                 .populate('contact', 'email')
-                .exec(function(err, settings){
-                    if (err){
+                .exec(function (err, settings) {
+                    if (err) {
                         return console.log(err);
                     }
-                    if (settings && !settings.defaultEmail && settings.contact){
+                    if (settings && !settings.defaultEmail && settings.contact) {
                         mailOptions.from = settings.contact.email;
                     }
                     mailer.sendEmailFromTask(mailOptions, cb);
@@ -93,190 +88,15 @@ var Module = function (models, event) {
         }
     }
 
-    this.createTask = function (req, res, next) {
-        var body = req.body;
-        var dealId = body.deal;
-        var TasksModel = models.get(req.session.lastDb, 'DealTasks', tasksSchema);
-
-        body.uId = req.session.uId;
-
-        TasksModel.find({deal: dealId})
-            .sort({taskCount: -1})
-            .exec(function (err, tasks) {
-                var n;
-                var task;
-
-                if (err) {
-                    return next(err);
-                }
-
-                n = (tasks[0]) ? ++tasks[0].taskCount : 1;
-                body = validator.parseTaskBody(body);
-                body.taskCount = n;
-
-                task = new TasksModel(body);
-
-                event.emit('updateSequence', TasksModel, 'sequence', 0, 0, task.workflow, task.workflow, true, false, function (sequence) {
-                    task.sequence = sequence;
-                    task.save(function (err, result) {
-                        var historyOptions;
-
-                        if (err) {
-                            return next(err);
-                        }
-
-                        historyOptions = {
-                            contentType: 'dealTask',
-                            data       : result.toJSON(),
-                            req        : req,
-                            contentId  : result._id,
-                            deal       : result.deal,
-                            followerId : result.assignedTo
-                        };
-
-                        sendEmailToAssigned(req, result);
-
-                        historyWriter.addEntry(historyOptions, function () {
-                            res.status(201).send({success: 'New Task created success', id: result._id});
-                        });
-
-                    });
-                });
-
-            });
-
-    };
-
-    this.uploadFile = function (req, res, next) {
-        var Model = models.get(req.session.lastDb, 'DealTasks', tasksSchema);
-        var headers = req.headers;
-        var id = headers.modelid || 'empty';
-        var contentType = headers.modelname || 'tasks';
-        var files = req.files && req.files.attachfile ? req.files.attachfile : null;
-        var dir;
-        var err;
-
-        contentType = contentType.toLowerCase();
-        dir = path.join(contentType, id);
-
-        if (!files) {
-            err = new Error(RESPONSES.BAD_REQUEST);
-            err.status = 400;
-
-            return next(err);
-        }
-
-        uploader.postFile(dir, files, {userId: req.session.uName}, function (err, file) {
-            if (err) {
-                return next(err);
-            }
-
-            Model.findByIdAndUpdate(id, {$push: {attachments: {$each: file}}}, {new: true}, function (err, response) {
-                if (err) {
-                    return next(err);
-                }
-
-                res.status(200).send({success: 'Tasks updated success', data: response});
-            });
-        });
-    };
-
-    this.taskUpdateOnlySelectedFields = function (req, res, next) {
-        var _id = req.params._id;
-        var data = req.body;
-        var fileName = data.fileName;
-        var DealTask = models.get(req.session.lastDb, 'DealTasks', tasksSchema);
-        var obj;
-
-        delete data._id;
-
-        function updateTask() {
-            models.get(req.session.lastDb, 'DealTasks', tasksSchema).findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
-                var historyOptions;
-                var os = require('os');
-                var osType = (os.type().split('_')[0]);
-                var path;
-                var dir;
-                var newDirname;
-
-                if (err) {
-                    return next(err);
-                }
-
-                historyOptions = {
-                    contentType: 'dealTask',
-                    data       : data,
-                    req        : req,
-                    contentId  : result._id,
-                    deal       : result.deal,
-                    followerId : result.assignedTo
-                };
-
-                historyWriter.addEntry(historyOptions, function () {
-                    res.send(200, {success: 'Tasks updated', sequence: result.sequence});
-                });
-
-            });
-        }
-
-        function sequenceUpdate() {
-            if (data.sequence === -1) {
-                event.emit('updateSequence', models.get(req.session.lastDb, 'DealTasks', tasksSchema), 'sequence', data.sequenceStart, data.sequence, data.workflowStart, data.workflowStart, false, true, function () {
-                    event.emit('updateSequence', models.get(req.session.lastDb, 'DealTasks', tasksSchema), 'sequence', data.sequenceStart, data.sequence, data.workflow, data.workflow, true, false, function (sequence) {
-                        data.sequence = sequence;
-                        if (data.workflow === data.workflowStart) {
-                            data.sequence -= 1;
-                        }
-                        updateTask();
-                    });
-                });
-            } else {
-                event.emit('updateSequence', models.get(req.session.lastDb, 'DealTasks', tasksSchema), 'sequence', data.sequenceStart, data.sequence, data.workflowStart, data.workflow, false, false, function (sequence) {
-                    delete data.sequenceStart;
-                    delete data.workflowStart;
-                    data.sequence = sequence;
-                    updateTask();
-                });
-            }
-        }
-
-        if (data.notes && data.notes.length !== 0) {
-            obj = data.notes[data.notes.length - 1];
-            if (!obj._id) {
-                obj._id = mongoose.Types.ObjectId();
-            }
-            obj.date = new Date();
-            if (!obj.author) {
-                obj.author = req.session.uName;
-            }
-            data.notes[data.notes.length - 1] = obj;
-        }
-
-        if (data.assignedTo && typeof (data.assignedTo) === 'object') {
-            data.assignedTo = data.assignedTo._id;
-        }
-        if (data.customer && typeof (data.customer) === 'object') {
-            data.customer = data.customer._id;
-        }
-        if (data.workflow) {
-            sequenceUpdate();
-        } else {
-            updateTask();
-        }
-    };
-
     function getTasksForKanban(req, res, next) {
         var startTime = new Date();
-        var data = req.query;
+        var data = req.query || {};
+        var filter = data.filter;
+        var optionsObject = {};
         var responseData = {};
         var addObj = {};
-        var query;
-        var filter = data.filter || {};
-        var or;
-        var filterObj = {};
-        var optionsObject = {};
 
-        var filterMapper = new FilterMapper();
+        var query;
 
         responseData.workflowId = data.workflowId;
 
@@ -284,11 +104,11 @@ var Module = function (models, event) {
             addObj._id = objectId(data.parrentContentId);
         }
 
-        query = models.get(req.session.lastDb, 'DealTasks', tasksSchema).where('workflow', objectId(data.workflowId));
+        query = models.get(req.session.lastDb, dealTasksCT, tasksSchema).where('workflow', objectId(data.workflowId));
 
-        if (data && Object.keys(filter).length) {
+        if (filter) {
             optionsObject.$and = [];
-            optionsObject.$and.push(filterMapper.mapFilter(filter, 'DealTasks'));
+            optionsObject.$and.push(filterMapper.mapFilter(filter, {contentType: dealTasksCT}));
         }
 
         query.find(optionsObject)
@@ -344,13 +164,13 @@ var Module = function (models, event) {
     }
 
     function getTasksForList(req, res, next) {
-        var data = req.query;
+        var data = req.query || {};
+        var filter = data.filter;
         var limit = parseInt(data.count, 10);
         var skip = (parseInt(data.page || 1, 10) - 1) * limit;
-        var obj = {};
+        var Task = models.get(req.session.lastDb, dealTasksCT, tasksSchema);
         var addObj = {};
-        var Task = models.get(req.session.lastDb, 'DealTasks', tasksSchema);
-        var filterMapper = new FilterMapper();
+        var obj = {};
 
         var keys;
         var sort;
@@ -359,9 +179,9 @@ var Module = function (models, event) {
             addObj._id = objectId(data.parrentContentId);
         }
 
-        if (data && data.filter) {
+        if (filter) {
             obj.$and = [];
-            obj.$and.push(filterMapper.mapFilter(data.filter, 'DealTasks'));
+            obj.$and.push(filterMapper.mapFilter(data.filter, {contentType: dealTasksCT}));
         }
 
         if (data.sort) {
@@ -466,9 +286,11 @@ var Module = function (models, event) {
                 },
                 {
                     $sort: sort
-                }, {
+                },
+                {
                     $skip: skip
-                }, {
+                },
+                {
                     $limit: limit
                 }
             ], function (err, result) {
@@ -488,78 +310,27 @@ var Module = function (models, event) {
 
     }
 
-    this.getActivity = function (req, res, next) {
-        var data = req.query;
-        var filterMapper = new FilterMapper();
-        var obj = {};
-        if (data && data.filter) {
-            obj.$and = [];
-            obj.$and.push(filterMapper.mapFilter(data.filter, 'DealTasks'));
-        }
-        var Task = models.get(req.session.lastDb, 'DealTasks', tasksSchema);
-
-        Task.find(obj, {_id: 1, description: 1}, function (err, docs) {
-            var ids;
-            var historyOptions;
-
-            if (err) {
-                return next(err);
-            }
-
-            ids = docs.map(function (elem) {
-                return elem._id;
-            });
-            historyOptions = {
-                req   : req,
-                id    : {$in: ids},
-                filter: {
-                    date: {$gte: moment().subtract(1, 'days').toDate()}
-                }
-
-            };
-            historyWriter.getHistoryForTrackedObject(historyOptions, function (err, history) {
-                if (err) {
-                    return next(err);
-                }
-
-                history = history.map(function (elem) {
-                    var doc = _.find(docs, function (opp) {
-                        return (opp._id.toJSON() === elem.contentId.toJSON());
-                    });
-
-                    elem.name = doc ? doc.description : '';
-                    return elem;
-                });
-
-                history = history.reverse();
-
-                res.status(200).send({data: history});
-
-            }, true);
-        });
-
-    }
-
     function getTasksForDateList(req, res, next) {
         var data = req.query;
+        var filter = data.filter;
         var obj = {};
         var addObj = {};
-        var Task = models.get(req.session.lastDb, 'DealTasks', tasksSchema);
-        var filterMapper = new FilterMapper();
+        var Task = models.get(req.session.lastDb, dealTasksCT, tasksSchema);
 
         if (data.parrentContentId) {
             addObj._id = objectId(data.parrentContentId);
         }
 
-        if (data && data.filter) {
+        if (filter) {
             obj.$and = [];
-            obj.$and.push(filterMapper.mapFilter(data.filter, 'DealTasks'));
+            obj.$and.push(filterMapper.mapFilter(data.filter, {contentType: dealTasksCT}));
         }
 
         Task
-            .aggregate([{
-                $match: obj
-            },
+            .aggregate([
+                {
+                    $match: obj
+                },
                 {
                     $lookup: {
                         from        : 'Employees',
@@ -622,12 +393,14 @@ var Module = function (models, event) {
                         sequence   : 1,
                         taskCount  : 1
                     }
-                }, {
+                },
+                {
                     $group: {
                         _id: null,
                         doc: {$push: '$$ROOT'}
                     }
-                }, {
+                },
+                {
                     $project: {
                         _id      : 0,
                         overdue  : {
@@ -667,10 +440,7 @@ var Module = function (models, event) {
                         }
                     }
                 }
-
             ], function (err, result) {
-                var count;
-
                 if (err) {
                     return next(err);
                 }
@@ -679,6 +449,230 @@ var Module = function (models, event) {
             });
 
     }
+
+    this.createTask = function (req, res, next) {
+        var dbName = req.session.lastDb;
+        var body = req.body;
+        var dealId = body.deal;
+        var TasksModel = models.get(dbName, 'DealTasks', tasksSchema);
+
+        body.uId = req.session.uId;
+
+        TasksModel.find({deal: dealId})
+            .sort({taskCount: -1})
+            .exec(function (err, tasks) {
+                var n;
+                var task;
+
+                if (err) {
+                    return next(err);
+                }
+
+                n = (tasks[0]) ? ++tasks[0].taskCount : 1;
+                body = validator.parseTaskBody(body);
+                body.taskCount = n;
+
+                task = new TasksModel(body);
+
+                event.emit('updateSequence', TasksModel, 'sequence', 0, 0, task.workflow, task.workflow, true, false, function (sequence) {
+                    task.sequence = sequence;
+                    task.save(function (err, result) {
+                        var historyOptions;
+
+                        if (err) {
+                            return next(err);
+                        }
+
+                        historyOptions = {
+                            contentType: 'dealTask',
+                            data       : result.toJSON(),
+                            dbName     : dbName,
+                            contentId  : result._id,
+                            deal       : result.deal,
+                            followerId : result.assignedTo
+                        };
+
+                        sendEmailToAssigned(req, result);
+
+                        HistoryService.addEntry(historyOptions, function () {
+                            res.status(201).send({success: 'New Task created success', id: result._id});
+                        });
+
+                    });
+                });
+
+            });
+
+    };
+
+    this.uploadFile = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'DealTasks', tasksSchema);
+        var headers = req.headers;
+        var id = headers.modelid || 'empty';
+        var contentType = headers.modelname || 'tasks';
+        var files = req.files && req.files.attachfile ? req.files.attachfile : null;
+        var dir;
+        var err;
+
+        contentType = contentType.toLowerCase();
+        dir = path.join(contentType, id);
+
+        if (!files) {
+            err = new Error(RESPONSES.BAD_REQUEST);
+            err.status = 400;
+
+            return next(err);
+        }
+
+        uploader.postFile(dir, files, {userId: req.session.uName}, function (err, file) {
+            if (err) {
+                return next(err);
+            }
+
+            Model.findByIdAndUpdate(id, {$push: {attachments: {$each: file}}}, {new: true}, function (err, response) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send({success: 'Tasks updated success', data: response});
+            });
+        });
+    };
+
+    this.taskUpdateOnlySelectedFields = function (req, res, next) {
+        var dbName = req.session.lastDb;
+        var _id = req.params._id;
+        var data = req.body;
+        var obj;
+
+        delete data._id;
+
+        function updateTask() {
+            models.get(dbName, 'DealTasks', tasksSchema).findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
+                var historyOptions;
+
+                if (err) {
+                    return next(err);
+                }
+
+                historyOptions = {
+                    contentType: 'dealTask',
+                    data       : data,
+                    dbName     : dbName,
+                    contentId  : result._id,
+                    deal       : result.deal,
+                    followerId : result.assignedTo
+                };
+
+                HistoryService.addEntry(historyOptions, function () {
+                    res.send(200, {success: 'Tasks updated', sequence: result.sequence});
+                });
+
+            });
+        }
+
+        function sequenceUpdate() {
+            if (data.sequence === -1) {
+                event.emit('updateSequence', models.get(dbName, 'DealTasks', tasksSchema), 'sequence', data.sequenceStart, data.sequence, data.workflowStart, data.workflowStart, false, true, function () {
+                    event.emit('updateSequence', models.get(dbName, 'DealTasks', tasksSchema), 'sequence', data.sequenceStart, data.sequence, data.workflow, data.workflow, true, false, function (sequence) {
+                        data.sequence = sequence;
+                        if (data.workflow === data.workflowStart) {
+                            data.sequence -= 1;
+                        }
+                        updateTask();
+                    });
+                });
+            } else {
+                event.emit('updateSequence', models.get(dbName, 'DealTasks', tasksSchema), 'sequence', data.sequenceStart, data.sequence, data.workflowStart, data.workflow, false, false, function (sequence) {
+                    delete data.sequenceStart;
+                    delete data.workflowStart;
+                    data.sequence = sequence;
+                    updateTask();
+                });
+            }
+        }
+
+        if (data.notes && data.notes.length !== 0) {
+            obj = data.notes[data.notes.length - 1];
+            if (!obj._id) {
+                obj._id = mongoose.Types.ObjectId();
+            }
+            // obj.date = new Date();
+            if (!obj.author) {
+                obj.author = req.session.uName;
+            }
+            data.notes[data.notes.length - 1] = obj;
+        }
+
+        if (data.assignedTo && typeof (data.assignedTo) === 'object') {
+            data.assignedTo = data.assignedTo._id;
+        }
+        if (data.customer && typeof (data.customer) === 'object') {
+            data.customer = data.customer._id;
+        }
+        if (data.workflow) {
+            sequenceUpdate();
+        } else {
+            updateTask();
+        }
+    };
+
+    this.getActivity = function (req, res, next) {
+        var dbName = req.session.lastDb;
+        var data = req.query || {};
+        var filter = data.filter;
+        var obj = {};
+        var Task;
+
+        if (filter) {
+            obj.$and = [];
+            obj.$and.push(filterMapper.mapFilter(data.filter, {contentType: dealTasksCT}));
+        }
+
+        Task = models.get(dbName, dealTasksCT, tasksSchema);
+        Task.find(obj, {_id: 1, description: 1}, function (err, docs) {
+            var ids;
+            var historyOptions;
+
+            if (err) {
+                return next(err);
+            }
+
+            ids = docs.map(function (elem) {
+                return elem._id;
+            });
+            historyOptions = {
+                dbName: dbName,
+                id    : {$in: ids},
+
+                filter: {
+                    date: {$gte: moment().subtract(1, 'days').toDate()}
+                },
+
+                forNote: true
+            };
+            HistoryService.getHistoryForTrackedObject(historyOptions, function (err, history) {
+                if (err) {
+                    return next(err);
+                }
+
+                history = history.map(function (elem) {
+                    var doc = _.find(docs, function (opp) {
+                        return (opp._id.toJSON() === elem.contentId.toJSON());
+                    });
+
+                    elem.name = doc ? doc.description : '';
+                    return elem;
+                });
+
+                history = history.reverse();
+
+                res.status(200).send({data: history});
+
+            });
+        });
+
+    };
 
     this.getTasks = function (req, res, next) {
         var viewType = req.query.viewType;
@@ -734,15 +728,12 @@ var Module = function (models, event) {
                 return next(err);
             }
 
-            /* if (deleteHistory){
-             historyWriter.deleteHistoryById(req, _id);
-             }*/
-
             event.emit('updateContent', req, res, task.project, 'remove');
             event.emit('updateSequence', DealTask, 'sequence', task.sequence, 0, task.workflow, task.workflow, false, true);
             res.send(200, {success: 'Success removed'});
         });
     };
+
     this.getById = function (req, res, next) {
         getTaskById(req, res, next);
     };

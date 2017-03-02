@@ -1,45 +1,31 @@
 ﻿define([
-        'models/WeeklySchedulerModel'
-    ],
-    function (WeeklySchedulerModel) {
-        var InvoiceCollection = Backbone.Collection.extend({
-            model       : WeeklySchedulerModel,
-            url         : '/weeklyScheduler/list/',
-            page        : null,
-            namberToShow: null,
-            viewType    : null,
-            contentType : null,
+    'Backbone',
+    'collections/parent',
+    'models/WeeklySchedulerModel',
+    'constants'
+], function (Backbone, Parent, Model, CONSTANTS) {
+    'use strict';
 
-            initialize: function (options) {
-                var that = this;
+    var Collection = Parent.extend({
+        model: Model,
+        url  : CONSTANTS.URLS.WEEKLYSCHEDULER_LIST,
 
-                this.startTime = new Date();
-                this.namberToShow = options.count;
-                this.viewType = options.viewType;
-                this.contentType = options.contentType;
-                this.page = options.page || 1;
+        initialize: function () {
 
-                this.filter = options.filter;
+            this.fetch({
+                reset  : true,
+                success: function () {
+                },
 
-                this.fetch({
-                    data   : options,
-                    reset  : true,
-                    success: function (newCollection) {
-                        that.page++;
-                    },
-                    error  : function (models, xhr) {
-                        if (xhr.status === 401) {
-                            Backbone.history.navigate('#login', {trigger: true});
-                        }
-                        if (xhr.status === 403) {
-                            App.render({
-                                type   : 'error',
-                                message: 'No access'
-                            });
-                        }
+                error: function (models, xhr) {
+                    if (xhr.status === 401) {
+                        Backbone.history.navigate('#login', {trigger: true});
                     }
-                });
-            },
-        });
-        return InvoiceCollection;
+                }
+            });
+        }
     });
+    return Collection;
+});
+
+

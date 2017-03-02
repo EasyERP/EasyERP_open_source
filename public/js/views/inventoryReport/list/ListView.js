@@ -39,26 +39,10 @@ define([
                 this.filter = {};
             }
 
-            // dateRange = custom.retriveFromCash('inventoryReportDateRange');
-
             dateRange = this.filter.date ? this.filter.date.value : [];
-
-            /*if (!this.filter.startDate) {
-                this.filter.startDate = {
-                    key  : 'startDate',
-                    value: new Date(dateRange.startDate)
-                };
-                this.filter.endDate = {
-                    key  : 'endDate',
-                    value: new Date(dateRange.endDate)
-                };
-            }*/
 
             this.startDate = new Date(dateRange[0]);
             this.endDate = new Date(dateRange[1]);
-
-            /*this.startDate = new Date(this.filter.startDate.value);
-            this.endDate = new Date(this.filter.endDate.value);*/
 
             custom.cacheToApp('inventoryReport.filter', this.filter);
 
@@ -67,41 +51,27 @@ define([
             listViewBase.prototype.initialize.call(this, options);
         },
 
-        changeDateRange: function () {
+        changeDateRange: function (dateArray) {
             var itemsNumber = $('#itemsNumber').text();
-            var stDate = $('#startDate').val();
-            var enDate = $('#endDate').val();
             var searchObject;
-
-            this.startDate = new Date(stDate);
-            this.endDate = new Date(enDate);
 
             if (!this.filter) {
                 this.filter = {};
             }
 
-            /*this.filter.startDate = {
-                key  : 'startDate',
-                value: stDate
-            };
-
-            this.filter.endDate = {
-                key  : 'endDate',
-                value: enDate
-            };*/
-
             this.filter.date = {
-                value: [stDate, enDate]
+                value: dateArray
             };
 
             searchObject = {
-                page     : 1,
-                startDate: stDate,
-                endDate  : enDate,
-                filter   : this.filter
+                page  : 1,
+                filter: this.filter
             };
 
-            this.collection.showMore(searchObject);
+            // this.collection.showMore(searchObject);
+
+            this.collection.getPage(1, searchObject);
+
             this.changeLocationHash(1, itemsNumber, this.filter);
 
             App.filtersObject.filter = this.filter;
@@ -112,6 +82,8 @@ define([
         showFilteredPage: function (filter) {
             var itemsNumber = $('#itemsNumber').text();
 
+            var searchObject;
+
             this.startTime = new Date();
             this.newCollection = false;
 
@@ -119,14 +91,15 @@ define([
 
             custom.cacheToApp('inventoryReport.filter', this.filter);
 
-            this.changeLocationHash(1, itemsNumber, filter);
-            this.collection.showMore({
-                count    : itemsNumber,
-                page     : 1,
-                filter   : filter,
-                startDate: this.startDate,
-                endDate  : this.endDate
-            });
+            this.changeLocationHash(1, itemsNumber, this.filter);
+
+            searchObject = {
+                count : itemsNumber,
+                page  : 1,
+                filter: this.filter
+            };
+
+            this.collection.getPage(1, searchObject);
         },
 
         recalcTotal: function () {

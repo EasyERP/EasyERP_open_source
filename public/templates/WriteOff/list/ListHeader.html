@@ -1,4 +1,5 @@
 ﻿<div id="searchContainer"></div>
+<div class="_tableWriteOff">
 <table class="list stripedList">
     <colgroup>
         <col width="42px">
@@ -11,7 +12,12 @@
     </colgroup>
     <thead>
     <tr>
-        <th class="centerCell"><input type="checkbox" id="checkAll"/></th>
+        <th class="centerCell">
+            <label class="_customCHeckbox">
+                <input type="checkbox" id="checkAll"/>
+                <span></span>
+            </label>
+        </th>
         <th class="centerCell">N</th>
         <th class="oe_sortable" data-sort="name">WriteOff Number<span class="arrow down"></span><span
                 class="arrow up"></span></th>
@@ -29,9 +35,10 @@
     <tbody id="listTable" class="enableTableOdd"></tbody>
     <tfoot id="listTotal">
     <tr>
-        <td colspan="5"></td>
+        <td colspan="5">Total</td>
         <td class="money"><span id="total"></span></td>
         <td></td>
     </tr>
     </tfoot>
 </table>
+ </div>

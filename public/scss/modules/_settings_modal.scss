@@ -6,22 +6,18 @@
   .setting_element {
     margin-bottom: 20px;
 
-    .fa {
-      color: #000;//@mainText-color;
-      text-decoration: none;
-      vertical-align: top;
-    }
-    .fa, .selected {
-      line-height: 30px;
-    }
     .setting_title {
       display: inline-block;
     }
+
     .selected {
       vertical-align: top;
       padding-left: 15px;
     }
 
+    .createBtn {
+      color: #7eadcc;
+    }
   }
   .settings_list {
     .content {
@@ -36,4 +32,10 @@
 
 ._setInputTitle {
   line-height: 22px;
+}
+
+._basedRange {
+  ._customCHeckbox {
+    margin-top: 5px;
+  }
 }

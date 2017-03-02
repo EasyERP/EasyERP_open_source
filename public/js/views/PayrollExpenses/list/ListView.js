@@ -36,13 +36,13 @@ define([
         changesCount  : 0,
 
         events: {
-            'click .statusCheckbox'      : 'showDropDown',
-            'click li'                   : 'statusCheck',
-            'click tr.mainRow'           : 'gotoForm',
-            'click .datePicker'          : 'datePickerClick',
-            'change .datePicker'         : 'datePickerChange',
-            'click .totalRowCB'          : 'dataKeyCbCheck',
-            'click :not(.statusCheckbox)': 'hideDropDowns'
+            'click .statusCheckbox'            : 'showDropDown',
+            'click li'                         : 'statusCheck',
+            'click tr.mainRow td:not(.notForm)': 'gotoForm',
+            'click .datePicker'                : 'datePickerClick',
+            'change .datePicker'               : 'datePickerChange',
+            'click .totalRowCB'                : 'dataKeyCbCheck',
+            'click :not(.statusCheckbox)'      : 'hideDropDowns'
         },
 
         initialize: function (options) {
@@ -309,6 +309,7 @@ define([
             if (!this.formUrl) {
                 return;
             }
+
             App.ownContentType = true;
             id = $(e.target).closest('tr').attr('id');
             window.location.hash = this.formUrl + 'form/' + id;

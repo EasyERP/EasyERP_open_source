@@ -40,10 +40,10 @@ define([
         template: _.template(paymentTemplate),
 
         events: {
-            'click .checkbox'              : 'checked',
-            'click #savePayment'           : 'saveItem',
-            'click #removePayment'         : 'deleteItems',
-            'click tbody td:not(.checkbox)': 'goToEditDialog'
+            'click .checkbox'                        : 'checked',
+            'click #savePayment'                     : 'saveItem',
+            'click #removePayment'                   : 'deleteItems',
+            'click tbody td:not(.checkbox, .notForm)': 'goToEditDialog'
         },
 
         goToEditDialog: function (e) {
@@ -61,7 +61,6 @@ define([
             var listTableCheckedInput;
             var answer;
 
-            
             listTableCheckedInput = $('#paymentsTable').find("input:not('#checkAll_payments'):checked");
             this.collectionLength = this.collection.length;
 

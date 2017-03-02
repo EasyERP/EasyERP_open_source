@@ -82,8 +82,7 @@ define([
         createCustomer: function () {
             $('.tag-list-dialog').remove();
 
-
-            new CreateView({company : this.company});
+            new CreateView({company: this.company});
         },
 
         changeSelected: function (e) {
@@ -94,9 +93,9 @@ define([
 
             this.model.set({_id: id});
             this.model.save({company: this.company}, {
-                validate : false,
-                patch : true,
-                success: function (err, res) {
+                validate: false,
+                patch   : true,
+                success : function (err, res) {
                     Backbone.history.fragment = '';
                     Backbone.history.navigate(window.location.hash, {trigger: true});
                 }
@@ -121,10 +120,8 @@ define([
             var formString = this.template();
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                position     : {
+                autoOpen: true,
+                position: {
                     at: 'top+35%'
                 },
 

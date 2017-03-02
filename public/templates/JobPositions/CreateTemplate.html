@@ -1,63 +1,64 @@
-<div class="form-holder">
-    <form method="post" action="" id="createJobPositionForm" class="form">
-        <fieldset>
-            <div class="inner">
-                <ul class="dialog-tabs">
-                    <li><a class="active" href="javascript:;">Main</a></li>
-                    <li><a href="javascript:;">Assignees</a></li>
-                </ul>
-                <div class="clearfix"></div>
-                <div class="dialog-tabs-items">
-                    <div class="dialog-tabs-item active">
-                        <div class="half-block left">
-                            <dl class="job-create-info">
-                                <dt><label for="name">Job Name </label></dt>
-                                <dd><input type="text" class="title-input blueback" name="name" id="name"
-                                           placeholder="e.g. Manager" required maxlength="32"/></dd>
-                                <dt><label for="departmentDd">Department</label></dt>
-                                <dd class="_newSelectListWrap">
-                                    <a id="departmentDd" class="current-selected" href="javascript:;"></a>
-                                </dd>
-
-                            </dl>
+<div class="form-holder _newForm">
+    <form method="post" action="" id="createJobPositionForm">
+        <h4 class="_dialogTitlePositioned">Create new job</h4>
+        <ul class="dialog-tabs">
+            <li><a class="active" href="javascript:;">Main</a></li>
+            <li><a href="javascript:;">Assignees</a></li>
+        </ul>
+        <div class="dialog-tabs-items">
+            <div class="dialog-tabs-item active">
+                <div class="_formWrap">
+                    <div class="_formBlock _equal">
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   name="name"
+                                   class="_animate"
+                                   id="name"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">Job Name</label>
                         </div>
-                        <div class="half-block left">
-                            <dl class="job-create-info">
-
-                                <dt><label for="expectedRecruitment">Expected in Recruitment</label></dt>
-                                <dd><input type="text" name="expectedRecruitment" id="expectedRecruitment"
-                                           class="onlyNumber" value="0" maxlength="4"/></dd>
-                                <dt><label for="workflowsDd">Stage</label></dt>
-                                <dd class="_newSelectListWrap">
-                                    <a id="workflowsDd" class="current-selected" href="javascript:;"></a>
-                                </dd>
-                            </dl>
+                        <div class="_animateSelectBox">
+                            <span class="_selectTitle">Department</span>
+                            <div class="_newSelectListWrap">
+                                <a id="departmentDd"
+                                   class="current-selected"
+                                   href="javascript:;">Select department</a>
+                            </div>
                         </div>
-                        <div class="clearfix"></div>
-                        <div class="half-block left">
-                            <dl class="job-create-info">
-                                <dt><label for="description">Job Description</label></dt>
-                                <dd><textarea maxlength="1000" placeholder="Description" id="description"></textarea>
-                                </dd>
-                            </dl>
-                        </div>
-                        <div class="half-block left">
-                            <dl class="job-create-info">
-                                <dt><label for="requirements">Requirements </label></dt>
-                                <dd><textarea maxlength="1000" placeholder="Requirements" id="requirements"></textarea>
-                                </dd>
-
-                            </dl>
-                        </div>
-                        <div class="clearfix"></div>
                     </div>
-                    <div class="dialog-tabs-item">
-                        <div class="assignees-container"></div>
+                    <div class="_formBlock _equal">
+                        <div class="_animateInputBox">
+                            <span class="_staticLabel">Expected in Recruitment</span>
+                            <input type="text"
+                                   name="expectedRecruitment"
+                                   class="_animate onlyNumber"
+                                   id="expectedRecruitment"
+                                   value="0"
+                                   maxlength="4"/>
+                        </div>
+                        <div class="_animateSelectBox">
+                            <span class="_selectTitle">Stage</span>
+                            <div class="_newSelectListWrap">
+                                <a id="workflowsDd"
+                                   data-id=""
+                                   class="current-selected"
+                                   href="javascript:;">Select stage</a>
+                            </div>
+                        </div>
+                        <div class="_animateTextareaBox">
+                            <textarea maxlength="1000"
+                                  class="_animate"
+                                  id="requirements"
+                                  required></textarea>
+                            <label for="requirements" class="_animate">Job Description</label>
+                        </div>
                     </div>
                 </div>
-                <div class="clearfix"></div>
             </div>
-        </fieldset>
+            <div class="dialog-tabs-item">
+                <div class="assignees-container _formWrap _innedFlexDiv"></div>
+            </div>
+        </div>
     </form>
-    <div class="clearfix"></div>
 </div>

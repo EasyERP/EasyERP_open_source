@@ -3,39 +3,39 @@
 @import "utilities/variables";
 @import "utilities/fonts_var";
 @import "utilities/mixins";
-@import "utilities/vendor";
+//@import "utilities/vendor";
 @import "utilities/placeholder";
 // Base styles
 //@import "base/normalize";
 @import "base/fonts";
 @import "base/base";
 @import "base/typography";
-
 // Styles for grid
 @import "layouts/grid";
 @import "layouts/flexgrid";
 @import "layouts/media";
 // General styles
-
 @import "modules/modal";//passed from modules before forms.scss styling
 
 //@import "general/forms";
-
-@import "general/general";
 @import "general/buttons";
+@import "general/general";
 @import "general/forms";
 @import "general/erp-icons";
 @import "general/table";
 @import "general/dashboard-item";
 @import "general/inputs";
 @import "general/customRadioInput";
+@import "general/hacks";
 
 // Styles for specific modules
 @import "modules/products";
+@import "modules/bx-slider";
 @import "modules/lists";
 @import "modules/listStriped";
 @import "modules/dialog";
 @import "modules/import";
+@import "modules/formNew";
 @import "modules/opportunities";
 @import "modules/dashboard";
 @import "modules/holidays";
@@ -46,14 +46,18 @@
 @import "modules/datapicker";
 @import "modules/navigation";
 @import "modules/acounting";
+@import "modules/settings";
 @import "modules/autocomplete";
 @import "modules/birth_thumbnail";
+@import "modules/reports";
+//@import "modules/autocomplete";
 @import "modules/icons";
 @import "modules/login";
 @import "modules/tags";
+@import "modules/projects";
 @import "modules/kanban";
-@import "modules/tables";
 @import "modules/list";
+@import "modules/tables";
 @import "modules/notes";
 @import "modules/pagination";
 @import "modules/content";
@@ -66,6 +70,7 @@
 @import "modules/quotations_tabs";
 @import "modules/invoiceTemplate";
 @import "modules/badCode";
+@import "modules/integrationApp";
 
 
 @import "state/alerts";
@@ -73,13 +78,13 @@
 @import "state/states";
 
 @import "tmp/wTrackCreate";
+@import "tmp/customScrollbar";
+@import "tmp/integrationRow";
 
+
+@import "modules/tempV";
 
 // Styles for condition
-
-
-
-
 
 
 

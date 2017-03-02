@@ -1139,6 +1139,7 @@ require.config({
         models           : './public/js/models',
         collections      : './public/js/collections',
         views            : './public/js/views',
+        mixins           : './public/js/mixins',
         services         : './public/js/services',
         templates        : './public/templates',
         helpers          : './public/js/helpers',
@@ -1156,6 +1157,7 @@ require.config({
         populate         : './public/js/populate',
         constants        : './public/js/constants',
         dataService      : './public/js/dataService',
+        tracker          : './public/js/tracker',
         moment           : './public/js/libs/moment/moment',
         router           : './public/js/router',
         async            : './public/js/libs/async/lib/async',
@@ -1169,7 +1171,6 @@ require.config({
         testConstants    : './constants/test',
         dashboardVacation: './constants/test/dashboardVacation',
         filter           : './constants/test/filter',
-        constants     : './public/js/constants',
         filterTest       : './test/uiSpecs/modules/filterTest'
     },
     shim   : {

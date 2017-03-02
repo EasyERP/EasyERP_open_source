@@ -7,9 +7,11 @@ define([
     'models/TransferModel',
     'common',
     'populate',
-    'views/Notes/AttachView',
-    'views/Assignees/AssigneesView',
+  'views/Editor/NoteView',
+  'views/Editor/AttachView',
+  'views/Assignees/AssigneesView',
     'views/dialogViewBase',
+    'services/employees',
     'constants',
     'moment',
     'helpers',
@@ -22,9 +24,11 @@ define([
              TransferModel,
              common,
              populate,
+             NoteView,
              AttachView,
              AssigneesView,
              ParentView,
+             employees,
              CONSTANTS,
              moment,
              helpers,
@@ -95,14 +99,13 @@ define([
         },
 
         events: {
-            'mouseenter .avatar'   : 'showEdit',
-            'mouseleave .avatar'   : 'hideEdit',
-            'click td.editable'    : 'editJob',
-            'click .icon-attach'   : 'clickInput',
-            'keyup #personalEmail' : 'onEmailEdit',
-            'change #personalEmail': 'onEmailEdit',
-            'paste #personalEmail' : 'onEmailEdit',
-            'cut #personalEmail'   : 'onEmailEdit'
+            'mouseenter .avatar': 'showEdit',
+            'mouseleave .avatar': 'hideEdit',
+            'click td.editable' : 'editJob',
+            'keyup #workEmail'  : employees.onEmailEdit,
+            'change #workEmail' : employees.onEmailEdit,
+            'paste #workEmail'  : employees.onEmailEdit,
+            'cut #workEmail'    : employees.onEmailEdit
         },
 
         clickInput: function () {
@@ -208,7 +211,7 @@ define([
                 }
 
             } else {
-                $target.parents('dd').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
+                $target.parents('ul').closest('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
             }
         },
 
@@ -228,30 +231,6 @@ define([
             $(e.target).closest('.attachFile').remove();
         },
 
-        onEmailEdit: function (e) {
-            var $targetEl = $(e.target);
-            var enteredEmail = $targetEl.val();
-            var $thisEl = this.$el;
-            var $userName = $thisEl.find('#userName');
-
-            function retriveUserName(str) {
-                var symbolPos;
-
-                str = str || '';
-                symbolPos = str.indexOf('@');
-
-                if (symbolPos === -1) {
-                    symbolPos = str.length;
-                }
-
-                return str.substring(0, symbolPos);
-            }
-
-            if ($userName.length) {
-                $userName.text(retriveUserName(enteredEmail));
-            }
-        },
-
         fileSizeIsAcceptable: function (file) {
             if (!file) {
                 return false;
@@ -260,13 +239,16 @@ define([
         },
 
         saveItem: function () {
+            var self = this;
+            var $thisEl = this.$el;
+            var notes = [];
+            var internalNotes = $.trim(this.$el.find('#internalNotes').val());
             var weeklyScheduler;
             var transfer;
             var employeeModel;
             var transferModel;
             var homeAddress;
             var dateBirthSt;
-            var self = this;
             var nationality;
             var jobPosition;
             var relatedUser;
@@ -296,12 +278,9 @@ define([
             var info;
             var $tr;
             var el;
-            var $thisEl = this.$el;
             var payrollStructureType;
             var scheduledPay;
-            var notes = [];
             var note;
-            var internalNotes = $.trim(this.$el.find('#internalNotes').val());
 
             if ($thisEl.find('.errorContent').length) {
                 return App.render({
@@ -312,7 +291,7 @@ define([
 
             employeeModel = new EmployeeModel();
 
-            relatedUser = $thisEl.find('#relatedUsersDd').attr('data-id') || null;
+            // relatedUser = $thisEl.find('#relatedUsersDd').attr('data-id') || null;
             coach = $.trim($thisEl.find('#coachDd').attr('id')) || null;
             whoCanRW = $thisEl.find('[name="whoCanRW"]:checked').val();
             dateBirthSt = $.trim($thisEl.find('#dateBirth').val());
@@ -330,13 +309,15 @@ define([
             groupsId = [];
             usersId = [];
 
-            if (internalNotes) {
+            /*if (internalNotes) {
                 note = {
                     title: '',
                     note : internalNotes
                 };
                 notes.push(note);
-            }
+            }*/
+
+            notes = this.model.get('notes');
 
             $thisEl.find('dd').find('.homeAddress').each(function (index, addressLine) {
                 el = $thisEl.find(addressLine);
@@ -408,7 +389,7 @@ define([
                 notes          : notes,
                 officeLocation : $.trim($thisEl.find('#officeLocation').val()),
                 bankAccountNo  : $.trim($thisEl.find('#bankAccountNo').val()),
-                relatedUser    : relatedUser,
+                // relatedUser    : relatedUser,
                 department     : department,
                 jobPosition    : jobPosition,
                 manager        : manager,
@@ -518,14 +499,33 @@ define([
 
             $thisEl = this.$el;
 
-            $notDiv = $thisEl.find('.attach-container');
+            $notDiv = $thisEl.find('#attach-container');
 
-            this.attachView = new AttachView({
-                model      : new EmployeeModel(),
-                contentType: self.contentType,
-                isCreate   : true
-            });
-            $notDiv.append(this.attachView.render().el);
+            this.model = new EmployeeModel();
+
+          this.editorView = new NoteView({
+            model      : this.model,
+            contentType: self.contentType,
+            onlyNote: true,
+            isCreate: true
+          });
+
+          $notDiv.append(
+            this.editorView.render().el
+          );
+
+          this.attachView =  new AttachView({
+            model      : this.model,
+            contentType: self.contentType,
+            noteView   : this.editorView,
+            forDoc: true,
+            isCreate: true
+          });
+
+          $thisEl.find('.attachments').append(
+            this.attachView.render().el
+          );
+
             $notDiv = this.$el.find('.assignees-container');
             $notDiv.append(
                 new AssigneesView({
@@ -549,8 +549,6 @@ define([
                 self.responseObj['#jobPositionDd'] = jobPositions.data;
             });
 
-            common.canvasDraw({model: this.model.toJSON()}, this);
-
             $thisEl.find('#dateBirth').datepicker({
                 changeMonth: true,
                 changeYear : true,
@@ -564,6 +562,10 @@ define([
                 changeMonth: true,
                 changeYear : true
             });
+
+            common.canvasDraw({
+                model: this.model.toJSON()
+            }, this);
 
             this.delegateEvents(this.events);
 

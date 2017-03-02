@@ -4,28 +4,30 @@ define([
     'text!templates/Projects/projectInfo/orders/ListTemplate.html',
     'text!templates/Projects/projectInfo/orders/ListHeader.html',
     'text!templates/Pagination/PaginationTemplate.html',
-    'views/salesOrders/EditView',
-    'views/salesOrders/list/ListView',
-    'collections/Quotations/filterCollection',
-    'models/QuotationModel',
+    'views/order/EditView',
+    'views/order/list/ListView',
+    'views/Projects/projectInfo/orders/CreateView',
+    'collections/order/filterCollection',
+    'models/orderModel',
     'dataService',
     'common',
     'helpers',
     'constants',
     'helpers/eventsBinder'
-], function (_, $, ListTemplate, lisHeader, paginationTemplate, EditView, listView, quotationCollection, OrderModel, dataService, common, helpers, CONSTANTS, eventsBinder) {
+], function (_, $, ListTemplate, lisHeader, paginationTemplate, EditView, listView, CreateView, OrderCollection, OrderModel, dataService, common, helpers, CONSTANTS, eventsBinder) {
     'use strict';
 
     var orderView = listView.extend({
 
         el                  : '#orders',
-        contentCollection   : quotationCollection,
+        contentCollection   : OrderCollection,
         preventChangLocation: true,
         templateList        : _.template(ListTemplate),
         templateHeader      : _.template(lisHeader),
 
         events: {
             'click .checkbox'                        : 'checked',
+            'click #createOrder'                     : 'createOrder',
             'click #removeOrder'                     : 'removeItems',
             'click .list td:not(.notForm, .checkbox)': 'goToEditDialog'
         },
@@ -47,11 +49,23 @@ define([
             this.render(options);
         },
 
+        createOrder: function (e) {
+            e.preventDefault();
+            return new CreateView({
+                projectId   : this.projectID,
+                customerId  : this.customerId,
+                collection  : this.collection,
+                salesManager: this.salesManager,
+                projectModel: this.projectModel,
+                eventChannel: this.eventChannel
+            });
+        },
+
         showOrderDialog: function (id) {
             var self = this;
             var model = new OrderModel({validate: false});
 
-            model.urlRoot = '/orders/';
+            model.urlRoot = '/order/';
             model.fetch({
                 data   : {id: id, contentType: this.contentType},
                 success: function (model) {
@@ -86,7 +100,7 @@ define([
                 onlyView = true;
             }
 
-            model.urlRoot = '/orders/';
+            model.urlRoot = '/order/';
             model.fetch({
                 data   : {id: id, contentType: this.contentType, forSales: true},
                 success: function (model) {
@@ -265,6 +279,8 @@ define([
             this.renderPagination($currentEl, this);
 
             this.$el.find('.fa.fa-times').hide();
+
+            $('#removeOrder').hide();
 
             $('#checkAll_orders').click(function () {
                 self.$el.find(':checkbox:not(.notRemovable)').prop('checked', this.checked);

@@ -1,19 +1,26 @@
 var express = require('express');
 var router = express.Router();
 var ProductHandler = require('../handlers/product');
+var ProductOptionsHandler = require('../handlers/productOptions');
+var ProductOptionsValuesHandler = require('../handlers/productOptionsValues');
+var ProductTypesHandler = require('../handlers/productTypes');
 var authStackMiddleware = require('../helpers/checkAuth');
 var MODULES = require('../constants/modules');
 var multipart = require('connect-multiparty');
 var multipartMiddleware = multipart();
 
-module.exports = function (models) {
-    var handler = new ProductHandler(models);
+module.exports = function (models, event) {
+    var handler = new ProductHandler(models, event);
+    var optionsHandler = new ProductOptionsHandler(models);
+    var optionsValuesHandler = new ProductOptionsValuesHandler(models);
+    var optionsTypesHandler = new ProductTypesHandler(models);
     var moduleId = MODULES.PRODUCT;
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
     router.use(authStackMiddleware);
 
     router.get('/', handler.getForView);
+    router.get('/stockInventory/:id', handler.getInventoryForProduct);
 
     router.use(accessStackMiddleware);
 
@@ -84,12 +91,50 @@ module.exports = function (models) {
     router.get('/getProductsTypeForDd', handler.getProductsTypeForDd);
     // router.get('/totalCollectionLength', handler.totalCollectionLength);
     router.get('/getProductsImages', handler.getProductsImages);
-    // router.get('/exportToXlsx',handler.exportToXlsx);
-    // router.get('/exportToCsv',handler.exportToCsv);
+    // router.get('/exportToXlsx', handler.exportToXlsx);
+    // router.get('/exportToCsv', handler.exportToCsv);
 
     router.post('/', handler.create);
     router.post('/uploadFiles', multipartMiddleware, handler.uploadFile);
+    router.post('/variants/:id', handler.createProductVariants);
+    router.post('/sku', handler.updateSkuForGroup);
 
+    /*// product types
+
+     router.post('/type', handler.createProductType);*/
+
+    // product options
+    router.get('/options/:_id', optionsHandler.getOneOption);
+    router.get('/options', optionsHandler.getForList);
+    router.get('/productAvalaible', handler.getProductsAvailable);
+
+    router.post('/options', optionsHandler.createOptions);
+    router.get('/productVariants/:id', optionsHandler.getProductVariants);
+    router.post('/newVariants', optionsHandler.newVariants);
+    router.patch('/options/:_id', optionsHandler.updateOptions);
+    router.delete('/options/:id', optionsHandler.deleteOptions);
+
+    // product options values
+    router.get('/optionsValues', optionsValuesHandler.getForList);
+    router.get('/optionsValues/getForFiler', optionsValuesHandler.getByProductId);
+    router.post('/optionsValues', optionsValuesHandler.createOptions);
+    //router.post('/options/productTypes', optionsTypesHandler.changeTypesForOptions);
+    router.patch('/optionsValues', optionsValuesHandler.updateOptions);
+    router.delete('/optionsValues', optionsValuesHandler.deleteOptions);
+
+    // product types
+    router.get('/productTypes/:_id', optionsTypesHandler.getProductTypeById);
+    router.get('/productTypes', optionsTypesHandler.getAllProductTypes);
+    router.post('/productTypes', optionsTypesHandler.createProductType);
+    router.patch('/productTypes/:_id', optionsTypesHandler.updateProductType);
+    router.delete('/productTypes', optionsTypesHandler.deleteProductType);
+    router.delete('/productTypes/:id', optionsTypesHandler.deleteProductType);
+
+    router.patch('/channelLinks', handler.unpublishFromChannel);
+    router.patch('/channelLinks/unlink', handler.unlinkFromChannel);
+    router.post('/channelLinks', handler.publishToChannel);
+
+    router.get('/:id', handler.getForView);
     /* router.post('/uploadProductFiles', multipartMiddleware, handler.uploadProductFiles);*/// FixMe
     router.patch('/:_id', handler.productsUpdateOnlySelectedFields);
 

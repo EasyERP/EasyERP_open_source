@@ -62,3 +62,7 @@ karma.conf.js
 /karma.conf.js
 /.gitlab-ci.yml
 /.sass-cache/
+/updateCollections/toDo/updateProductsCategories.js
+/.gitignore
+cron.txt
+exportFiles/

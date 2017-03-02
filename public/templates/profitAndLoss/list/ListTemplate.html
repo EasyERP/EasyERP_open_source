@@ -2,6 +2,6 @@
 <tr data-id="<%=account._id%>" class="mainTr">
     <td class="expand centerCell"><span class="icon-caret-right"></span></td>
     <td colspan="2"><%=account.name%></td>
-    <td class="money textRight" data-id="debit" data-value="<%=account.debit%>"><%=currencySplitter((account.debit / 100).toFixed(2))%></td>
+    <td class="money textRight countable" data-id="debit" data-value="<%=account.debit%>"><%=currencySplitter((account.debit / 100).toFixed(2))%></td>
 </tr>
 <% }) %>

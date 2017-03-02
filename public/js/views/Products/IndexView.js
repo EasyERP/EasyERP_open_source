@@ -7,12 +7,13 @@ define([
     'models/Category',
     'views/Products/category/CreateView',
     'views/Products/category/EditView',
+    'views/Products/category/TopBarView',
     'collections/Products/filterCollection',
     'views/Products/thumbnails/ThumbnailsView',
     'helpers/eventsBinder',
     'dataService',
     'constants'
-], function (Backbone, $, _, ContentTemplate, ItemTemplate, CurrentModel, CreateCategoryView, EditCategoryView, ProductsCollection, ThumbnailsView, eventsBinder, dataService, CONSTANTS) {
+], function (Backbone, $, _, ContentTemplate, ItemTemplate, CurrentModel, CreateCategoryView, EditCategoryView, TopBarView, ProductsCollection, ThumbnailsView, eventsBinder, dataService, CONSTANTS) {
     var ProductsView = Backbone.View.extend({
         el               : '#content-holder',
         thumbnailsView   : null,
@@ -24,7 +25,9 @@ define([
             'click .item > .content': 'selectCategory',
             'click .editCategory'   : 'editItem',
             'click .deleteCategory' : 'deleteItem',
-            'click .addProduct'     : 'addProduct'
+            'click .addProduct'     : 'addProduct',
+            'click #magentoExport'  : 'magentoProductExport',
+            'click #magentoImport'  : 'magentoProductImport'
         },
 
         initialize: function (options) {
@@ -32,6 +35,7 @@ define([
 
             _.extend(eventChannel, Backbone.Events);
 
+            this.topBar = options.topBar;
             this.startTime = options.startTime;
             this.collection = options.collection;
             this.eventChannel = eventChannel;
@@ -55,9 +59,18 @@ define([
             this.listenTo(eventChannel, 'itemCreated', this.renderFilteredContent);
         },
 
-        addProduct: function (e) {
-            e.preventDefault();
-            this.thumbnailsView.createItem();
+        magentoProductExport: function (event) {
+            event.preventDefault();
+            this.thumbnailsView.magentoExport();
+        },
+        magentoProductImport: function (event) {
+            event.preventDefault();
+            this.thumbnailsView.magentoImport();
+        },
+
+        addProduct: function (event) {
+            event.preventDefault();
+            this.thumbnailsView.createItemProduct();
         },
 
         selectFirstCategory: function () {
@@ -65,44 +78,6 @@ define([
 
             $thisEl.find('.groupList .selected').removeClass('selected');
             $thisEl.find('.content').first().addClass('selected');
-        },
-
-        expandHideItem: function (e) {
-            var $target = $(e.target);
-            var $ulEl = $target.closest('li').find('ul');
-
-            if ($target.text() === '+') {
-                $ulEl.first().removeClass('hidden');
-                $ulEl.closest('li').find('.expand').first().text('-');
-            } else {
-                $ulEl.addClass('hidden');
-                $ulEl.closest('li').find('.expand').text('+');
-            }
-        },
-
-        renderFilteredContent: function (categoryId) {
-            var self = this;
-            var categoryUrl = '/category/' + categoryId;
-            var ids;
-
-            dataService.getData(categoryUrl, {}, function (category) {
-
-                ids = category.child;
-                ids.push(categoryId);
-
-                if (!App.filtersObject.filter) {
-                    App.filtersObject.filter = {};
-                }
-
-                App.filtersObject.filter.productCategory = {
-                    key  : 'accounting.category._id',
-                    value: ids,
-                    type : this.filterType || null
-                };
-
-                self.thumbnailsView.showFilteredPage(App.filtersObject.filter);
-                self.thumbnailsView.filterView.showFilterIcons(self.filter);
-            }, this);
         },
 
         selectCategory: function (e) {
@@ -129,9 +104,47 @@ define([
             var $selectedEl = $groupList.find('.selected').length ? $groupList.find('.selected').closest('li') : $groupList.find('li').first();
             var categoryId = $selectedEl.attr('data-id');
 
-            new CreateCategoryView({
+            return new CreateCategoryView({
                 _id: categoryId
             });
+        },
+
+        expandHideItem: function (e) {
+            var $target = $(e.target);
+            var $ulEl = $target.closest('li').find('ul');
+
+            if ($target.hasClass('disclosed')) {
+                $ulEl.addClass('hidden');
+                $ulEl.closest('li').find('.expand').removeClass('disclosed icon-folder-open3').addClass('icon-folder3');
+            } else {
+                $ulEl.first().removeClass('hidden');
+                $ulEl.closest('li').find('.expand').first().removeClass('icon-folder3').addClass('disclosed icon-folder-open3');
+            }
+        },
+
+        renderFilteredContent: function (categoryId) {
+            var self = this;
+            var categoryUrl = '/category/' + categoryId;
+            var ids;
+
+            dataService.getData(categoryUrl, {}, function (category) {
+
+                ids = category.child;
+                ids.push(categoryId);
+
+                if (!App.filtersObject.filter) {
+                    App.filtersObject.filter = {};
+                }
+
+                App.filtersObject.filter.productCategory = {
+                    key  : 'info.categories',
+                    value: ids,
+                    type : this.filterType || null
+                };
+
+                self.thumbnailsView.showFilteredPage(App.filtersObject.filter);
+                self.thumbnailsView.filterView.showFilterIcons(self.filter);
+            }, this);
         },
 
         editItem: function (e) {
@@ -141,7 +154,7 @@ define([
             model.urlRoot = '/category/' + id;
             model.fetch({
                 success: function (model) {
-                    new EditCategoryView({myModel: model});
+                    return new EditCategoryView({myModel: model});
                 },
 
                 error: function () {
@@ -158,19 +171,17 @@ define([
         deleteItem: function (e) {
             var $targetEl = $(e.target);
             var myModel = this.collection.get($targetEl.closest('li').data('id'));
-            var mid = 39;
             var answer = confirm('Really DELETE items ?!');
 
             e.preventDefault();
 
             if (answer === true) {
                 myModel.destroy({
-                    headers: {
-                        mid: mid
-                    },
                     wait   : true,
                     success: function () {
-                        Backbone.history.navigate('easyErp/Products', {trigger: true});
+                        var url = window.location.hash;
+                        Backbone.history.fragment = '';
+                        Backbone.history.navigate(url, {trigger: true});
                     },
 
                     error: function (model, err) {
@@ -237,7 +248,7 @@ define([
                     par = $thisEl.find("[data-id='" + product.parent._id + "']").removeClass('child').addClass('parent');
 
                     if (!par.find('.expand').length) {
-                        par.append('<a class="expand" href="javascript:;">-</a>')
+                        par.append('<a class="expand disclosed icon-folder-open3" href="javascript:;"></a>');
                     }
 
                     if (par.find('ul').length === 0) {
@@ -257,16 +268,8 @@ define([
                     var $draggable = ui.draggable;
                     var productId = $draggable.attr('id');
                     var categoryId = $droppable.data('id');
-                    var categoryName = $droppable.data('fullname');
-                    var update = {
-                        category: {
-                            _id : categoryId,
-                            name: categoryName
-                        }
-                    };
                     var changed;
                     var currentModel = self.productCollection.get(productId);
-
 
                     if (!currentModel) {
                         currentModel = new CurrentModel({validate: false});
@@ -277,7 +280,7 @@ define([
                             data   : {id: productId, viewType: 'form'},
                             success: function (response) {
                                 currentModel.set({
-                                    accounting: update
+                                    'info.category': categoryId
                                 });
 
                                 changed = currentModel.changed;
@@ -302,7 +305,7 @@ define([
                         });
                     } else {
                         currentModel.set({
-                            accounting: update
+                            'info.category': categoryId
                         });
 
                         changed = currentModel.changed;
@@ -334,17 +337,31 @@ define([
         },
 
         renderThumbnails: function () {
+            var topBarView;
 
             this.thumbnailsView = new ThumbnailsView({
                 collection  : this.productCollection,
+                categories  : this.collection,
                 startTime   : new Date(),
                 filter      : this.filter,
                 el          : '#productsHolder',
-                eventChannel: this.eventChannel
+                eventChannel: this.eventChannel,
+                topBar      : this.topBar
             });
 
             this.productCollection.unbind('reset');
 
+            /*if (this.topBarView) {
+                this.topBarView.undelegateEvents();
+                this.topBarView.stopListening();
+            }
+
+            this.topBarView = new TopBarView({
+                collection: this.productCollection,
+                actionType: 'Content'
+            });
+
+            eventsBinder.subscribeTopBarEvents(this.topBarView, this.thumbnailsView);*/
             eventsBinder.subscribeCollectionEvents(this.productCollection, this.thumbnailsView);
 
             this.productCollection.trigger('fetchFinished', {

@@ -24,6 +24,7 @@ define([
             'click #checkAll'          : 'checkAll',
             'click td.notRemovable'    : 'onDisabledClick',
             'click .letter:not(.empty)': 'alpabeticalRender',
+            'click .allPage'           : 'togglePagesList',
             click                      : 'hide'
         },
 
@@ -50,13 +51,13 @@ define([
             }
         },
 
-
         afterRender: function (options) {
             var createdInTag;
             var $curEl = this.$el;
             var contentType = options.contentType || null;
             var paginationEl = options.paginationEl || null;
-            var ifFilter = FILTERS.hasOwnProperty(contentType);
+            var filterObj = FILTERS[contentType];
+            var ifFilter = filterObj && filterObj.array && filterObj.array.length;
             var $paginationContainer;
 
             if (ifFilter) {
@@ -86,11 +87,16 @@ define([
                 });
             }
 
-            createdInTag = '<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + 'ms </div>';
-            $curEl.append(createdInTag);
+            if (!this.noNeedCreatedIn) {
+                createdInTag = '<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + 'ms </div>';
+                $curEl.append(createdInTag);
+            }
         },
 
         hideDeleteBtnAndUnSelectCheckAll: function () {
+            $('#top-bar-toPublishBtn').hide();
+            $('#top-bar-toUnpublishBtn').hide();
+            $('#top-bar-toUnlinkBtn').hide();
             $('#top-bar-deleteBtn').hide();
             $('#top-bar-generateBtn').hide();
             $('#top-bar-copyBtn').hide();
@@ -127,7 +133,7 @@ define([
         checked: function (e) {
             var $thisEl = this.$el;
             var $topBar = $('#top-bar');
-            var $checkBoxes = $thisEl.find('.checkbox:checked:not(#checkAll,notRemovable)');
+            var $checkBoxes = $thisEl.find('.checkbox:checked:not(#checkAll,notRemovable,.productCategory)');
             var notRemovable = $thisEl.find('.notRemovable');
             var $checkAll = $thisEl.find('#checkAll');
             var $currentChecked = e ? $(e.target) : $thisEl.find('#checkAll');
@@ -137,10 +143,14 @@ define([
             var $createButton = $topBar.find('#top-bar-createBtn');
             var $copyButton = $topBar.find('#top-bar-copyBtn');
             var $saveButton = $topBar.find('#top-bar-saveBtn');
+            var $publishButton = $topBar.find('#top-bar-toPublishBtn');
+            var $unPublishButton = $topBar.find('#top-bar-toUnpublishBtn');
+            var $unLinkButton = $topBar.find('#top-bar-toUnlinkBtn');
             var spesialContentTypes = CONSTANTS.SPECIAL_CONTENT_TYPES;
             var contentType = this.contentType;
             var changedRows;
             var haveNewRow;
+            var action = App.publishProductState;
 
             changedRows = this.changedModels ? Object.keys(this.changedModels) : null;
             haveNewRow = $thisEl.find('#false, .false').length;
@@ -155,10 +165,29 @@ define([
                 $deleteButton.show();
                 $copyButton.show();
                 $createButton.hide();
+
+                if (typeof(this.hidePublish) === 'function') {  
+                    this.hidePublish();
+                }
+
+                if (action === 'publish') {
+                    $publishButton.show();
+                } else if (action === 'unpublish') {
+                    $unPublishButton.show();
+                } else if (action === 'unlink') {
+                    $unLinkButton.show();
+                }
             } else {
+                $publishButton.hide();
+                $unPublishButton.hide();
+                $unLinkButton.hide();
                 $deleteButton.hide();
                 $copyButton.hide();
                 $createButton.show();
+
+                if (typeof(this.showPublish) === 'function') {
+                    this.showPublish();
+                }
             }
 
             if (contentType && spesialContentTypes.indexOf(contentType) !== -1 && haveNewRow) {
@@ -184,7 +213,7 @@ define([
 
         goSort: function (e) {
             var $targetEl;
-            var newRows = this.$el.find('#false');
+            var newRows = this.$el.find('#false').length ? this.$el.find('#false') : this.$el.find('.false');
             var filter = this.filter || {};
             var target$;
             var currentParrentSortClass;
@@ -267,11 +296,6 @@ define([
             this.collection.getFirstPage(data);
         },
 
-        showPagesPopup: function (e) {
-            $(e.target).closest('button').next('ul').toggle();
-            return false;
-        },
-
         hide: function (e) { // hide all popups and selects, filterView and set changes to model
             var $el = $(e.target);
             var $thisEl = this.$el;
@@ -284,7 +308,8 @@ define([
                 this.selectView.remove();
             }
 
-            $thisEl.find('.allNumberPerPage, .newSelectList').hide();
+            $thisEl.find('.newSelectList').hide();
+            $thisEl.find('.allPage').removeClass('open');
             $thisEl.find('.health-container ul').hide();
 
             if (!$el.closest('.search-view').length) {
@@ -298,6 +323,10 @@ define([
                 //     $('.filter-check-list').hide();
                 //     this.showFilteredPage();
                 // }
+            }
+
+            if (!$el.closest('#variantsCategoriesBlock').length) {
+                $el.find('._categoriesList').hide();
             }
 
             if (typeof(this.setChangedValueToModel) === 'function' && $el.tagName !== 'SELECT') { // added for SetChangesToModel in ListView
@@ -372,7 +401,7 @@ define([
 
         checkPage: function (event) {
             var newRows = this.$el.find('#false');
-            var elementId = $(event.target).attr('id');
+            var elementId = $(event.target).closest('button').attr('id');
             var data = {
                 sort       : this.sort,
                 filter     : this.filter,
@@ -475,6 +504,13 @@ define([
             });
         },
 
+        togglePagesList: function (e) {
+            $targetEl = $(e.target).closest('.allPage');
+            e.stopPropagation();
+
+            $targetEl.toggleClass('open');
+        },
+
         renderAlphabeticalFilter: function () { // added from listViewBase
             var self = this;
             var currentLetter;
@@ -523,7 +559,12 @@ define([
                 });
             }
 
-            this.getPage({page: page, viewType: this.viewType, contentType: this.contentType});
+            this.getPage({
+                page       : page,
+                viewType   : this.viewType,
+                contentType: this.contentType,
+                sort       : this.sort
+            });
         },
 
         nextPage: function (options) {
@@ -707,7 +748,7 @@ define([
         },
 
         isNewRow: function () {
-            var newRow = this.$el.find('#false');
+            var newRow = this.$el.find('#false').length ? this.$el.find('#false') : this.$el.find('.false');
 
             return !!newRow.length;
         },

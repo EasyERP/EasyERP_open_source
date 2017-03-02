@@ -301,14 +301,12 @@
             formString = this.template(options);
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'edit-dialog',
-                title        : 'Create Invoice',
-                width        : '1200',
-                position     : {within: $('#wrapper')},
-                buttons      : [
+                autoOpen   : true,
+                dialogClass: 'edit-dialog',
+                title      : 'Create Invoice',
+                width      : '1200',
+                position   : {within: $('#wrapper')},
+                buttons    : [
                     {
                         id   : 'create-invoice-dialog',
                         text : 'Create',

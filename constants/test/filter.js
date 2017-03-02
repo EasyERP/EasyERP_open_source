@@ -17717,12 +17717,8 @@ define([], function () {
             _id          : null,
             type: [
                 {
-                    _id : 'Not Quoted',
-                    name: 'Not Quoted'
-                },
-                {
-                    _id : 'Quoted',
-                    name: 'Quoted'
+                    _id : 'Not Ordered',
+                    name: 'Not Ordered'
                 },
                 {
                     _id : 'Ordered',

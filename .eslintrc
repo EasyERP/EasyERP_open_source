@@ -3,6 +3,7 @@
   "globals": {
     "App": true,
     "FlurryAgent": true,
+    "String": true,
     "sinon": true
   },
   "rules": {
@@ -30,7 +31,12 @@
         "props": false
       }
     ],
-    //    "default-case": ["error", { "commentPattern": "^skip\\sdefault" }],
+    "default-case": [
+      "error",
+      {
+        "commentPattern": "^skip\\sdefault"
+      }
+    ],
     "no-extend-native": [
       "error",
       {

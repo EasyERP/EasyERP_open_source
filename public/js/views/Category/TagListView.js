@@ -23,9 +23,10 @@ define([
                 self.renderContent(self.e);
             }
 
+            this.type = options.type;
             this.contentType = options.contentType;
-            this.collection = new TagsCollection({type : 'Category'});
-            this.filteredCollection = new TagsCollection({type : 'Category'});
+            this.collection = new TagsCollection({type: 'Category'});
+            this.filteredCollection = new TagsCollection({type: 'Category'});
             this.filteredCollection.unbind();
             this.filteredCollection.bind('reset', resetCollection);
             this.collection.on('change add destroy', this.changeFilter, this);
@@ -69,9 +70,9 @@ define([
         },
 
         events: {
-            'click .editTag'                                                  : 'editTag',
-            'click #newTag'                                                   : 'createTag',
-            'click li span:not(.editTag)'                                     : 'changeSelected'
+            'click .editTag'             : 'editTag',
+            'click #newTag'              : 'createTag',
+            'click li span:not(.editTag)': 'changeSelected'
         },
 
         changeSelected: function (e) {
@@ -80,12 +81,13 @@ define([
             var color = $target.attr('data-color');
             var text = $target.text();
 
-
-            this.model.set({category: {
-                _id : id,
-                color : color,
-                name  : text
-            }});
+            this.model.set({
+                category: {
+                    _id  : id,
+                    color: color,
+                    name : text
+                }
+            });
             $('.tag-list-dialog').remove();
         },
 
@@ -100,7 +102,7 @@ define([
         createTag: function (e) {
             e.preventDefault();
             $('.tag-list-dialog').hide();
-            return new CreateView({collection: this.collection, type : 'Category'});
+            return new CreateView({collection: this.collection, type: 'Category'});
         },
 
         editTag: function (e) {
@@ -113,21 +115,21 @@ define([
             e.preventDefault();
 
             if (model) {
-                return new EditView({model: model, collection: this.collection, type : 'Category'});
+                return new EditView({model: model, collection: this.collection, type: 'Category'});
             }
         },
 
         hideDialog: function () {
-           /* var selectedElements = this.$el.find('.selected').closest('li');
-            var tags = selectedElements.map(function () {
-                return $(this).attr('data-id');
-            }).get();
-            var collection = this.collection.toJSON();
-            var selectedItems = collection.filter(function (elem) {
-                return (tags.indexOf(elem._id) !== -1);
-            });
+            /* var selectedElements = this.$el.find('.selected').closest('li');
+             var tags = selectedElements.map(function () {
+             return $(this).attr('data-id');
+             }).get();
+             var collection = this.collection.toJSON();
+             var selectedItems = collection.filter(function (elem) {
+             return (tags.indexOf(elem._id) !== -1);
+             });
 
-            this.model.set({tags: selectedItems});*/
+             this.model.set({tags: selectedItems});*/
             $('.tag-list-dialog').remove();
         },
 
@@ -145,18 +147,16 @@ define([
             });
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                position     : {
+                autoOpen   : true,
+                position   : {
                     at: "top+35%"
                 },
-                dialogClass  : 'tag-list-dialog',
-                title        : 'Tag List',
-                width        : '300px',
-                buttons      : [
+                dialogClass: 'tag-list-dialog',
+                title      : 'Tag List',
+                width      : '300px',
+                buttons    : [
                     {
-                        class   : 'exitButton',
+                        class: 'exitButton',
                         click: function () {
                             self.hideDialog();
                         }

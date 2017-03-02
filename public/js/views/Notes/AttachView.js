@@ -31,6 +31,8 @@ define([
                 this.contentType = 'import';
             }
 
+            this.$el.find('div.attachWrapper.noteWrapper').removeClass('hidden');
+
             if (this.isCreate) {
                 s = this.$el.find('.inputAttach:last').val().split('\\')[this.$el.find('.inputAttach:last').val().split('\\').length - 1];
                 this.$el.find('.attachContainer').append('<li class="attachFile">' +
@@ -55,6 +57,7 @@ define([
             var elementId = this.elementId || 'addAttachments';
             var currentModelId = currentModel ? currentModel.id : null;
             var addFrmAttach = this.$el.find('#' + elementId);
+            var $atachments = this.$el.find('li .inputAttach');
             var fileArr = [];
             var addInptAttach;
 
@@ -66,7 +69,7 @@ define([
                 currentModel = model;
                 currentModelId = currentModel.id || currentModel._id;
 
-                this.$el.find('li .inputAttach').each(function () {
+                $atachments.each(function () {
 
                     addInptAttach = $(this)[0].files[0];
 
@@ -79,7 +82,7 @@ define([
                         });
                     }
                 });
-                if (this.$el.find('li .inputAttach').length === 0) {
+                if ($atachments.length === 0) {
 
                     if (this.contentType === CONSTANTS.PRODUCTS) {
                         self.hideDialog();
@@ -87,7 +90,7 @@ define([
                     }
 
                     Backbone.history.fragment = '';
-                    Backbone.history.navigate(window.location.hash, {trigger: true});
+                    Backbone.history.navigate(self.url || window.location.hash, {trigger: true});
 
                     return;
                 }
@@ -118,12 +121,12 @@ define([
                 var contentType = self.contentType ? self.contentType.toLowerCase() : '';
                 var formURL;
 
-                $('.input-file-button').off('click');
+                $('.input-file').off('click');
 
                 if (self.contentType === CONSTANTS.IMPORT) {
-                    formURL = 'http://' + window.location.host + '/importFile';
+                    formURL = '/importFile';
                 } else {
-                    formURL = 'http://' + window.location.host + '/' + contentType + '/uploadFiles/';
+                    formURL = '/' + contentType + '/uploadFiles/';
                 }
 
                 e.preventDefault();
@@ -166,7 +169,7 @@ define([
                             }
 
                             Backbone.history.fragment = '';
-                            Backbone.history.navigate(window.location.hash, {trigger: true});
+                            Backbone.history.navigate(self.url || window.location.hash, {trigger: true});
                         } else if (self.contentType === CONSTANTS.IMPORT) {
                             self.trigger('uploadCompleted');
                         } else {
@@ -224,9 +227,7 @@ define([
             if (confirm('You really want to remove this file?')) {
                 $target = $(e.target);
 
-                if ($target.closest('li').hasClass('attachFile')) {
-                    $target.closest('.attachFile').remove();
-                } else {
+                if (!this.isCreate) {
                     id = $target.attr('id');
                     newAttachments = _.filter(attachments, function (attach) {
                         if (attach._id !== id) {
@@ -246,6 +247,12 @@ define([
                             }
                         });
                 }
+
+                $target.closest('li[class^=\'attachFile\']').remove();
+
+                if (!$('li[class^=\'attachFile\']').length) {
+                    this.$el.find('div.attachWrapper.noteWrapper').addClass('hidden');
+                }
             }
         },
 
@@ -261,6 +268,10 @@ define([
                 elementId  : this.elementId || 'addAttachments',
                 moment     : moment
             }));
+
+            if (!this.$el.find('li.attach').length) {
+                this.$el.find('div.attachWrapper.noteWrapper').addClass('hidden');
+            }
 
             return this;
         }

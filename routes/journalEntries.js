@@ -70,6 +70,7 @@ module.exports = function (models, event) {
            ]
      }
      * */
+
     router.get('/getAsyncDataForGL', _journalEntryHandler.getAsyncDataForGL);
 
     /**
@@ -632,7 +633,7 @@ module.exports = function (models, event) {
      * */
     router.get('/', _journalEntryHandler.getForView);
 
-    router.post('/', _journalEntryHandler.create);
+   // router.post('/', _journalEntryHandler.create);
 
     /**
      *@api {post} /journalEntries/reconcile/ Request for creating Reconcile
@@ -655,6 +656,8 @@ module.exports = function (models, event) {
      * */
     router.post('/reconcile', _journalEntryHandler.reconcile);
     router.post('/createManual', _journalEntryHandler.createManual);
+    router.post('/closeDay', _journalEntryHandler.closeDay);
+    router.post('/recloseDay', _journalEntryHandler.recloseDay);
     router.post('/closeMonth', _journalEntryHandler.closeMonth);
     router.post('/recloseMonth', _journalEntryHandler.recloseMonth);
 

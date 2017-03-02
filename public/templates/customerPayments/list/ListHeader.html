@@ -5,25 +5,36 @@
             <col width="42px">
             <col width="18%">
             <col width="18%">
-            <col width="18%">
-            <col width="17%">
+            <col width="16%">
             <col width="12%">
-            <col width="17%">
+            <col width="12%">
+            <col width="12%">
+            <col width="12%">
+            <col width="12%">
         </colgroup>
         <thead>
         <tr>
-            <th class="centerCell"><input type="checkbox" id="checkAll"/></th>
+            <th class="centerCell">
+                <label class="_customCHeckbox">
+                    <input type="checkbox" id="checkAll"/>
+                    <span></span>
+                </label>
+            </th>
             <th class="oe_sortable" data-sort="assigned.name.first">Assigned<span class="arrow down"></span><span
                     class="arrow up"></span></th>
             <th class="oe_sortable" data-sort="supplier.name.first">Company<span class="arrow down"></span><span
                     class="arrow up"></span></th>
-            <th class="oe_sortable" data-sort="invoice.name">Invoice<span class="arrow down"></span><span
+            <th class="oe_sortable" data-sort="invoice.name">Source Document<span class="arrow down"></span><span
                     class="arrow up"></span></th>
             <th class="oe_sortable" data-sort="paymentMethod.name">Bank account<span class="arrow down"></span><span
                     class="arrow up"></span></th>
             <th class="oe_sortable" data-sort="paidAmount">Paid<span class="arrow down"></span><span
                     class="arrow up"></span></th>
+            <th class="oe_sortable" data-sort="bankExpenses.amount">Bank Expenses<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
             <th class="oe_sortable sortDn" data-sort="date">Payment Date<span class="arrow down"></span><span
+                    class="arrow up"></span></th>
+            <th class="oe_sortable sortDn" data-sort="refund">Type<span class="arrow down"></span><span
                     class="arrow up"></span></th>
         </tr>
         </thead>
@@ -32,6 +43,7 @@
         <tr>
             <td colspan="5"></td>
             <td><span id="totalPaidAmount" class="money">0.00</span></td>
+            <td></td>
         </tr>
         </tfoot>
     </table>

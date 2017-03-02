@@ -1,23 +1,88 @@
 ﻿<div id="searchContainer"></div>
-<table class="list stripedList">
-    <colgroup>
-        <col width="42px">
-        <col width="42px">
-        <col width="180px">
-        <col width="180px">
-        <col width="120px">
-    </colgroup>
-    <thead>
-    <tr>
-        <th class="centerCell"><input type="checkbox" id="checkAll"/></th>
-        <th class="centerCell">N</th>
-        <th class="oe_sortable" data-sort="name">Product Name<span class="arrow down"></span><span
-                class="arrow up"></span></th>
-        <th class="oe_sortable" data-sort="info.productType">Product Type<span class="arrow down"></span><span
-                class="arrow up"></span></th>
-        <th class="oe_sortable" data-sort="info.salePrice">Sale Price<span class="arrow down"></span><span
-                class="arrow up"></span></th>
-    </tr>
-    </thead>
-    <tbody id="listTable" class="enableTableOdd"></tbody>
-</table>
+<div class="_inventoryProductWrap">
+    <table class="list stripedList">
+        <colgroup>
+            <% if(toExpand){ %>
+            <col width="38px">
+            <col width="65px">
+            <col width="24%">
+            <col width="10%">
+            <col width="15%">
+            <col width="18%">
+            <col width="15%">
+          <!--  <col width="100px">
+            <col width="100px">
+            <col width="100px">-->
+            <col width="18%">
+            <% } else { %>
+            <col width="38px">
+            <col width="65px">
+            <col width="18%">
+            <col width="21%">
+            <col width="20%">
+            <col width="20%">
+            <col width="20%">
+           <!-- <col width="100px">
+            <col width="100px">
+            <col width="100px">-->
+            <% } %>
+        </colgroup>
+        <thead>
+        <tr>
+            <th class="centerCell">
+                <label class="_customCHeckbox">
+                    <input type="checkbox" id="checkAll"/>
+                    <span></span>
+                </label>
+            </th>
+            <th class="centerCell">Image</th>
+            <th class="oe_sortable"
+                data-sort="data.name">Product Name
+                <span class="arrow down"></span>
+                <span class="arrow up"></span>
+            </th>
+            <th class="oe_sortable"
+                data-sort="data.info.SKU">SKU
+                <span class="arrow down"></span>
+                <span class="arrow up"></span>
+            </th>
+            <% if(!toExpand){ %>
+            <th class="oe_sortable"
+                data-sort="data.variantsCount.count">Variants
+                <span class="arrow down"></span>
+                <span class="arrow up"></span>
+            </th>
+            <% } else { %>
+            <th>Variant</th>
+            <% }%>
+            <th class="oe_sortable"
+                data-sort="data.ProductTypesName">Product Type
+                <span class="arrow down"></span>
+                <span class="arrow up"></span>
+            </th>
+            <th>Product Categories</th>
+          <!--  <th class="oe_sortable"
+                data-sort="onHand">On Hand
+                <span class="arrow down"></span>
+                <span class="arrow up"></span>
+            </th>
+            <th class="oe_sortable"
+                data-sort="allocated">Fulfilled
+                <span class="arrow down"></span>
+                <span class="arrow up"></span>
+            </th>
+            <th class="oe_sortable"
+                data-sort="inStock">In Stock
+                <span class="arrow down"></span>
+                <span class="arrow up"></span>
+            </th>-->
+            <% if(toExpand) {%>
+            <th>
+                Channel
+            </th>
+            <% }%>
+        </tr>
+        </thead>
+        <tbody id="listTable" class="enableTableOdd"></tbody>
+    </table>
+</div>

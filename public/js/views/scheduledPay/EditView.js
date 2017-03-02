@@ -84,14 +84,12 @@ define([
             var formString = this.template({model: self.model.toJSON()});
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'edit-dialog',
-                title        : 'Edit ScheduledPay',
-                width        : '900px',
-                position     : {within: $('#wrapper')},
-                buttons      : [
+                autoOpen   : true,
+                dialogClass: 'edit-dialog',
+                title      : 'Edit ScheduledPay',
+                width      : '900px',
+                position   : {within: $('#wrapper')},
+                buttons    : [
                     {
                         id   : 'create-scheduledPay-dialog',
                         class: 'btn blue',

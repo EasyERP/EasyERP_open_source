@@ -1,7 +1,7 @@
 ﻿define([
     'Backbone',
     'collections/parent',
-    'models/customDashboardModel',
+    'models/CustomDashboardModel',
     'constants'
 ], function (Backbone, Parent, Model, CONSTANTS) {
     'use strict';

@@ -2,7 +2,20 @@
     <div class="popup"></div>
 </div>
 
-<div id="topbar-holder" class="topbarHolder">
+<%  var isBaned = profile.profileName === 'baned';
+var imgUrl;
+var name;
+
+if (!imageSrc && relatedEmployee) {
+imgUrl = relatedEmployee.imageSrc;
+name = relatedEmployee.name ? relatedEmployee.name.first + ' ' + relatedEmployee.name.last : '';
+}
+
+name = name || login || 'Nick';
+imgUrl = imageSrc || imgUrl || 'http://cdn.slidesharecdn.com/profile-photo-johndoewho-48x48.jpg';
+%>
+
+<div id="topbar-holder" class="topbarHolder <%= isBaned ? 'banned' : '' %>">
     <div id="logo" class="topbarLogo">
         <a href="javascript:;" class="mainLogo">Easy<span>Erp</span></a>
         <div class="sidebarToggler">
@@ -13,26 +26,39 @@
     </div>
     <div class="loginPanel" id="loginPanel">
         <div class="dropdownButton">
-            <img src="http://cdn.slidesharecdn.com/profile-photo-johndoewho-48x48.jpg" alt="logo" class="iconEmployee"/>
-            <span id="userName" class="userName">Nick</span>
+            <img src="<%= imgUrl %>"
+                 alt="logo"
+                 class="iconEmployee"/>
+            <span id="userName" class="userName"><%= name %></span>
 
             <ul class="loginList">
+                <% if(!isBaned) {%>
                 <li id="userpage"><a href="#easyErp/myProfile">My profile</a></li>
+                <%};%>
                 <li id="logout"><a href="/logout">Logout</a></li>
             </ul>
         </div>
     </div>
+    <a href="#easyErp/integrations" class="btn right integrationBtn">Integrations</a>
 </div>
 
 <div id="submenuHolder" class="sideMenu">
-
     <nav></nav>
-
 </div>
 
 <div class="content_wrapper">
     <div id="top-bar" class="top-bar"></div>
-    <div id="content-holder" class="content-holder"></div>
+    <div id="content-holder" class="content-holder">
+        <% if (isBaned) {%>
+        <div id='banned'>
+            <div class='icon-banned'></div>
+            <div class='text-banned'>
+                <h1>Sorry, this user is banned!</h1>
+                <p>Please contact the administrator.</p>
+            </div>
+        </div>
+        <%};%>
+    </div>
 </div>
 <!--<div class="clearfix"></div>-->
 <!--</div>-->

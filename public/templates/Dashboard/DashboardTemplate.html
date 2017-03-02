@@ -1,251 +1,101 @@
-<ul class="chart-tabs dashboard">
-    <li><a class="active" href="javascript:;" class="">Leads by researcher</a></li>
-    <li><a href="javascript:;" class="">Leads by source</a></li>
-    <li><a href="javascript:;" class="">Opportunity Conversion</a></li>
-    <li><a href="javascript:;" class="">Opportunity Aging</a></li>
-    <li><a href="javascript:;" class="">Opportunities</a></li>
-    <li><a href="javascript:;" class="">Won/Lost</a></li>
-    <li><a href="javascript:;" class="">Sales by country</a></li>
-    <li><a href="javascript:;" class="">Leads by date</a></li>
-    <li><a href="javascript:;" class="">Leads by names</a></li>
-</ul>
+<div class="_breadcrunmbs">
+    <a href="#easyErp/reports">General</a>
+    <span class="_breadcrunmbItem"> / CRM</span>
+</div>
+<div>
+    <ul class="chart-tabs dashboard">
+        <li><a href="javascript:;" class="leadsByResearcher">Leads By Manager</a></li>
+        <li><a href="javascript:;" class="leadsBySource">Leads By Source</a></li>
+        <li><a href="javascript:;" class="opportunityConversion">Opportunity Conversion</a></li>
+        <li><a href="javascript:;" class="opportunityAging">Opportunity Aging</a></li>
+        <li><a href="javascript:;" class="opportunities">Opportunities</a></li>
+        <li><a href="javascript:;" class="wonLost">Won / Lost</a></li>
+        <li><a href="javascript:;" class="salesByCountry">Sales by Country</a></li>
+        <li><a href="javascript:;" class="leadsByDate">Leads by Date</a></li>
+        <li><a href="javascript:;" class="leadsByNames">Leads by Names</a></li>
+    </ul>
 
-<div class="chart-tabs-items">
-    <div class="chart-tabs-item active">
-        <div class="clearfix"></div>
-        <h3 class="dashboard">Who created most leads?</h3>
-        <div class="chartTopBox">
-            <div class="legend-box small">
-                <div class="total">
-                    <div class="square" style="background: linear-gradient(to left, #ACC7F2, #FFA17F); opacity: 1">
+    <div class="chart-tabs-items">
+        <div class="chart-tabs-item active">
+            <div class="clearfix"></div>
+            <h3 class="dashboard">Who created most leads?</h3>
+            <div class="chartTopBox">
+                <div class="legend-box small">
+                    <div class="total">
+                        <div class="square" style="background: linear-gradient(to left, #ACC7F2, #FFA17F); opacity: 1">
+                        </div>
+                        <div class="text">
+                            Total Leads
+                        </div>
                     </div>
-                    <div class="text">
-                        Total Leads
+                    <div class="opportunities">
+                        <div class="square" style="background: linear-gradient(to left, #6b456c, #98aac4)">
+                        </div>
+                        <div class="text">
+                            Opportunities
+                        </div>
                     </div>
                 </div>
-                <div class="opportunities">
-                    <div class="square" style="background: linear-gradient(to left, #6b456c, #98aac4)">
-                    </div>
-                    <div class="text">
-                        Opportunities
-                    </div>
-                </div>
+                <div id="LeadsBySaleDateFilter" class="vocationFilter _filterDropDownWrap"></div>
             </div>
-            <div class="vocationFilter _filterDropDownWrap">
-                <ul class="dateFilterLeadsBySale ">
-                    <li class="dateRangeLeadsBySale">
-                        <span class="icon-calendar"></span>
-                        <span id="startTimeLeadsBySale"><%= startDateLeadsBySale%></span> - <span id="endTimeLeadsBySale"><%= endDateLeadsBySale%></span>
-                        <span class="icon-arrow-down2"></span>
-                    </li>
-                    <li>
-                        <ul class="frameDetail _filterDropDownBody hidden">
-                            <li id="thisMonthLeadsBySale" class="filterValues checked checkedValue" data-type="leadsSale">This Month</li>
-                            <li id="thisYearLeadsBySale" class="filterValues checked" data-type="leadsSale">This Financial Year</li>
-                            <li class="listLine"></li>
-                            <li id="lastMonthLeadsBySale" class="filterValues checked" data-type="leadsSale">Last Month</li>
-                            <li id="lastQuarterLeadsBySale" class="filterValues checked" data-type="leadsSale">Last Quarter</li>
-                            <li id="lastYearLeadsBySale" class="filterValues checked" data-type="leadsSale">Last Financial Year</li>
-                            <li class="listLine"></li>
-                            <li id="customLeadsBySale" class="_filterArrow filterValues checked" data-type="leadsSale">Custom Dates</li>
-                            <li class="customTimeLeadsBySale customTime hidden">
-                                <div class="customTimeItem">
-                                    <label for="startDateLeadsBySale">Start Date: </label>
-                                    <input readonly type="text" id="startDateLeadsBySale">
-                                </div>
-                                <div class="customTimeItem">
-                                    <label for="endDateLeadsBySale">End Date: </label>
-                                    <input readonly type="text" id="endDateLeadsBySale">
-                                </div>
-                            </li>
-                            <li class="buttons">
-                                <button id="updateDateLeadsBySale" class="btn">
-                                    <span>Update</span>
-                                </button>
-                                <button id="cancelBtnLeadsBySale" class="btn">
-                                    <span>Cancel</span>
-                                </button>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
+            <svg class="chart salesChart"></svg>
         </div>
-        <svg class="chart salesChart"></svg>
-    </div>
-    <div class="chart-tabs-item">
-        <div class="clearfix"></div>
-        <h3 class="dashboard">What are our best primary campaigs?</h3>
-        <div class="dashbordActions chartTopBox">
-            <div class="vocationFilter _filterDropDownWrap">
+        <div class="chart-tabs-item">
+            <div class="clearfix"></div>
+            <h3 class="dashboard">What are our best primary campaigns?</h3>
+            <div class="dashbordActions chartTopBox">
+                <div id="LeadsBySourceDateFilter" class="vocationFilter _filterDropDownWrap"></div>
+                <div class="legend-box small clearfix">
+                    <div class="total">
+                        <div class="square" style="background: linear-gradient(to left, #ACC7F2, #FFA17F); opacity: 1">
+                        </div>
+                        <div class="text">
+                            Total Leads
+                        </div>
+                    </div>
+                    <div class="opportunities ">
+                        <div class="square" style="background: linear-gradient(to left, #6b456c, #98aac4)">
+                        </div>
+                        <div class="text">
+                            Opportunities
+                        </div>
+                    </div>
 
-                <ul class="dateFilterLeadsBySource">
-                    <li class="dateRangeLeadsBySource">
-                        <span class="icon-calendar"></span>
-                        <span id="startTimeLeadsBySource"><%= startDateLeadsBySource%></span> - <span id="endTimeLeadsBySource"><%= endDateLeadsBySource%></span>
-                        <span class="icon-arrow-down2"></span>
-                    </li>
-                    <li>
-                        <ul class="frameDetail _filterDropDownBody hidden">
-                            <li id="thisMonthLeadsBySource" class="filterValues checked checkedValue" data-type="leadsSource">This Month</li>
-                            <li id="thisYearLeadsBySource" class="filterValues checked" data-type="leadsSource">This Financial Year</li>
-                            <li class="listLine"></li>
-                            <li id="lastMonthLeadsBySource" class="filterValues checked" data-type="leadsSource">Last Month</li>
-                            <li id="lastQuarterLeadsBySource" class="filterValues checked" data-type="leadsSource">Last Quarter</li>
-                            <li id="lastYearLeadsBySource" class="filterValues checked" data-type="leadsSource">Last Financial Year</li>
-                            <li class="listLine"></li>
-                            <li id="customLeadsBySource" class="_filterArrow filterValues checked" data-type="leadsSource">Custom Dates</li>
-                            <li class="customTimeLeadsBySource customTime hidden">
-                                <div  class="customTimeItem">
-                                    <label for="startDateLeadsBySource">Start Date: </label>
-                                    <input readonly type="text" id="startDateLeadsBySource">
-                                </div>
-                                <div class="customTimeItem">
-                                    <label for="endDateLeadsBySource">End Date: </label>
-                                    <input readonly type="text" id="endDateLeadsBySource">
-                                </div>
-                            </li>
-                            <li class="buttons">
-                                <button id="updateDateLeadsBySource" class="btn">
-                                    <span>Update</span>
-                                </button>
-                                <button id="cancelBtnLeadsBySource" class="btn">
-                                    <span>Cancel</span>
-                                </button>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-            <div class="legend-box small clearfix">
-                <div class="total">
-                    <div class="square" style="background: linear-gradient(to left, #ACC7F2, #FFA17F); opacity: 1">
-                    </div>
-                    <div class="text">
-                        Total Leads
-                    </div>
                 </div>
-                <div class="opportunities ">
-                    <div class="square" style="background: linear-gradient(to left, #6b456c, #98aac4)">
-                    </div>
-                    <div class="text">
-                        Opportunities
-                    </div>
-                </div>
-
             </div>
+            <svg class="chart sourcesChart"></svg>
         </div>
-        <svg class="chart sourcesChart"></svg>
-    </div>
-    <div class="chart-tabs-item">
-        <h3 class="dashboard">What is the conversion rate per Sale?</h3>
-        <div class="_clearfix">
-            <div class="dropDownDateRangeContainer">
-                <div class="choseDateRange dropDownDateRange" data-type="opportunitieConversion">
-                    <div class="item" data-day="7">7D</div>
-                    <div class="item" data-day="30">30D</div>
-                    <div class="item active" data-day="90">90D</div>
-                    <div class="item" data-day="365">12M</div>
-                    <span class="selectArrow"></span>
-                </div>
-            </div>
-            <div class="legend-box medium opportunities">
-                <div class="new">
-                    <div style="background-color: rgb(38, 167, 222);" class="square">
-                    </div>
-                    <div class="text">
-                        Finished Opportinities
+        <div class="chart-tabs-item">
+            <h3 class="dashboard">What is the conversion rate per Sale?</h3>
+            <div class="_clearfix">
+                <div class="dropDownDateRangeContainer">
+                    <div id="OpportunitiesConversionDateFilter" class="choseDateRange dropDownDateRange">
                     </div>
                 </div>
-                <div class="convertRate">
-                    <div style="background-color: #66ff66" class="square">
+                <div class="legend-box medium opportunities">
+                    <div class="new">
+                        <div style="background-color: rgb(38, 167, 222);" class="square">
+                        </div>
+                        <div class="text">
+                            Finished Opportinities
+                        </div>
                     </div>
-                    <div class="text">
-                        Opportunity Conversion Rate
+                    <div class="convertRate">
+                        <div style="background-color: #66ff66" class="square">
+                        </div>
+                        <div class="text">
+                            Opportunity Conversion Rate
+                        </div>
                     </div>
                 </div>
             </div>
+            <svg class="opportunitieConversionAmount"></svg>
+            <svg class="opportunitieConversionCount"></svg>
         </div>
-        <svg class="opportunitieConversionAmount"></svg>
-        <svg class="opportunitieConversionCount"></svg>
-    </div>
-    <div class="chart-tabs-item">
-        <div class="clearfix"></div>
-        <h3 class="dashboard">How long last activity was?</h3>
-        <div class="legend-box opportunities medium">
-            <div class="new">
-                <div style="background-color: #93648D;" class="square">
-                </div>
-                <div class="text">
-                    New
-                </div>
-            </div>
-            <div class="new">
-                <div style="background-color: #4CC3D9;" class="square">
-                </div>
-                <div class="text">
-                    To estimate
-                </div>
-            </div>
-            <div class="new">
-                <div style="background-color: #F1DD9E;" class="square">
-                </div>
-                <div class="text">
-                    Done estimate
-                </div>
-            </div>
-            <div class="% 25-50">
-                <div style="background-color: #7BC8A4;" class="square">
-                </div>
-                <div class="text">
-                    Send offer
-                </div>
-            </div>
-            <div class="% 50-75">
-                <div style="background-color: #FFC65D;" class="square">
-                </div>
-                <div class="text">
-                    PM approve
-                </div>
-            </div>
-            <div class="% 75-100">
-                <div style="background-color: #5D4C46;" class="square">
-                </div>
-                <div class="text">
-                    Pre-development
-                </div>
-            </div>
-            <div class="% 75-100">
-                <div style="background-color: #EB6E44;" class="square">
-                </div>
-                <div class="text">
-                    In development
-                </div>
-            </div>
-            <div class="% 75-100">
-                <div style="background-color: #93073E;" class="square">
-                </div>
-                <div class="text">
-                    Lost
-                </div>
-            </div>
-        </div>
-        <svg class="opportunitieAgingSum"></svg>
-        <svg class="opportunitieAgingCount"></svg>
-    </div>
-    <div class="chart-tabs-item">
-        <h3 class="dashboard">What stage are my opportunities in?</h3>
-        <div>
-            <div class="dropDownDateRangeContainer">
-                <div class="choseDateRange dropDownDateRange" data-type="opportunitie">
-                    <div class="item" data-day="7">7D</div>
-                    <div class="item active" data-day="30">30D</div>
-                    <div class="item" data-day="90">90D</div>
-                    <div class="item" data-day="365">12M</div>
-                    <span class="selectArrow"></span>
-                </div>
-            </div>
-            <div class="legend-box opportunities">
+        <div class="chart-tabs-item">
+            <div class="clearfix"></div>
+            <h3 class="dashboard">How long last activity was?</h3>
+            <div class="legend-box opportunities medium">
                 <div class="new">
                     <div style="background-color: #93648D;" class="square">
                     </div>
@@ -303,254 +153,201 @@
                     </div>
                 </div>
             </div>
+            <svg class="opportunitieAgingSum"></svg>
+            <svg class="opportunitieAgingCount"></svg>
         </div>
-        <div class="clearfix"></div>
-        <svg class="opportunitiesChart"></svg>
-    </div>
-    <div class="chart-tabs-item">
-        <h3 class="dashboard">How many of our opportunities do we win?</h3>
-        <div class="dropDownDateRangeContainer left">
-            <div class="choseDateRange dropDownDateRange choseDateItem" data-type="winLost">
-                <div class="item active" data-item="D">Day</div>
-                <div class="item" data-item="W">Week</div>
-                <div class="item" data-item="M">Month</div>
-                <div class="item" data-item="DW">Day of Week</div>
-                <div class="item" data-item="DM">Day of Month</div>
-                <span class="selectArrow"></span>
-            </div>
-        </div>
-
-        <div class="legend-box wonLegend">
-            <div class="converted ">
-                <div class="square" style="background: #6CC062">
+        <div class="chart-tabs-item">
+            <h3 class="dashboard">What stage are my opportunities in?</h3>
+            <div>
+                <div class="dropDownDateRangeContainer">
+                    <div id="OpportunitiesDateFilter" class="choseDateRange dropDownDateRange">
+                    </div>
                 </div>
-                <div class="text">
-                    Won Count
-                </div>
-                <div class="square" style="background: #00B4EA">
-                </div>
-                <div class="text">
-                    Open Count
-                </div>
-                <div class="square" style="background: #F68065">
-                </div>
-                <div class="text">
-                    Lost Count
-                </div>
-                <div class="square legendCircle" style="background: #6CC062">
-                </div>
-                <div class="text">
-                    Win % (Count)
-                </div>
-            </div>
-        </div>
-
-        <div class="dropDownDateRangeContainer">
-            <div class="choseDateRange dropDownDateRange" data-type="winLost">
-                <div class="item" data-day="7">7D</div>
-                <div class="item active" data-day="30">30D</div>
-                <div class="item" data-day="90">90D</div>
-                <div class="item" data-day="365">12M</div>
-                <span class="selectArrow"></span>
-            </div>
-        </div>
-        <div class="clearfix"></div>
-
-
-        <svg class="winAndLostOpportunitiesChart"></svg>
-    </div>
-    <div class="chart-tabs-item">
-        <h3>Sales by country</h3>
-        <div class="filterWrap salesTab">
-            <div class="vocationFilter _filterDropDownWrap small">
-
-                <ul class="dateFilter">
-                    <li class="dateRange">
-                        <span class="icon-calendar"></span>
-                        <span id="startTime"><%= startDate%></span> - <span id="endTime"><%= endDate%></span>
-                        <span class="icon-arrow-down2"></span>
-                    </li>
-                    <li>
-                        <ul class="frameDetail _filterDropDownBody hidden">
-                            <li id="thisMonth" class="filterValues checked checkedValue" data-type="">This Month</li>
-                            <li id="thisYear" class="filterValues checked" data-type="">This Financial Year</li>
-                            <li class="listLine"></li>
-                            <li id="lastMonth" class="filterValues checked" data-type="">Last Month</li>
-                            <li id="lastQuarter" class="filterValues checked" data-type="">Last Quarter</li>
-                            <li id="lastYear" class="filterValues checked" data-type="">Last Financial Year</li>
-                            <li class="listLine"></li>
-                            <li id="custom" class="_filterArrow filterValues checked" data-type="">Custom Dates</li>
-                            <li class="customTime customTime hidden">
-                                <div  class="customTimeItem">
-                                    <label for="startDate">Start Date: </label>
-                                    <input readonly type="text" id="startDate">
-                                </div>
-                                <div  class="customTimeItem">
-                                    <label for="endDate">End Date: </label>
-                                    <input readonly type="text" id="endDate">
-                                </div>
-                            </li>
-                            <li class="buttons">
-                                <button id="updateDate" class="btn">
-                                    <span>Update</span>
-                                </button>
-                                <button id="cancelBtn" class="btn">
-                                    <span>Cancel</span>
-                                </button>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <div class="clearfix"></div>
-        <div class="dashboardGraphicsWrap">
-            <div class="treemap_sales halfWidth leftMap"></div>
-            <div class="halfWidth">
-                <svg class="salesByCountryChart"></svg>
-            </div>
-            <div class="fullWidth">
-                <svg class="salesByCountryBarChart"></svg>
-            </div>
-        </div>
-    </div>
-    <div class="chart-tabs-item leadsTab">
-        <h3>Leads</h3>
-        <div class="leadsTop align-left clearfix">
-            <div class="col xs-4">
-                <div class="vocationFilter _filterDropDownWrap">
-                    <ul class="dateFilterLeads">
-                        <li class="dateRangeLeads">
-                            <span class="icon-calendar"></span>
-                            <span id="startTimeLeads"><%= startDateLeads%></span> - <span id="endTimeLeads"><%= endDateLeads%></span>
-                            <span class="icon-arrow-down2"></span>
-                        </li>
-                        <li>
-                            <ul class="frameDetail _filterDropDownBody hidden">
-                                <li id="thisMonthLeads" class="leads filterValues checked checkedValue" data-type="leads">This Month</li>
-                                <li id="thisYearLeads" class="leads filterValues checked" data-type="leads">This Financial Year</li>
-                                <li class="listLine"></li>
-                                <li id="lastMonthLeads" class="leads filterValues checked" data-type="leads">Last Month</li>
-                                <li id="lastQuarterLeads" class="leads filterValues checked" data-type="leads">Last Quarter</li>
-                                <li id="lastYearLeads" class="leads filterValues checked" data-type="leads">Last Financial Year</li>
-                                <li class="listLine"></li>
-                                <li id="customLeads" class="_filterArrow leads filterValues checked" data-type="leads">Custom Dates</li>
-                                <li class="customTimeLeads customTime hidden">
-                                    <div class="customTimeItem">
-                                        <label for="startDate">Start Date: </label>
-                                        <input readonly type="text" id="startDateLeads">
-                                    </div>
-                                    <div class="customTimeItem">
-                                        <label for="endDate">End Date: </label>
-                                        <input readonly type="text" id="endDateLeads">
-                                    </div>
-                                </li>
-                                <li class="buttons">
-                                    <button id="updateDateLeads" class="btn">
-                                        <span>Update</span>
-                                    </button>
-                                    <button id="cancelBtnLeads" class="btn">
-                                        <span>Cancel</span>
-                                    </button>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-                <div data-type="leadsChart" class="choseDateItem">
-                    <div class="item active" data-item="createdBy">Created By</div>
-                    <div class="item" data-item="assignedTo">Assigned To</div>
-                </div>
-            </div>
-            <div class="col xs-8">
-                <div class="legend-box">
-                    <div class="converted">
-                        <div class="square" style="background: #57D0B5">
+                <div class="legend-box opportunities">
+                    <div class="new">
+                        <div style="background-color: #93648D;" class="square">
                         </div>
                         <div class="text">
-                            Converted Leads
+                            New
                         </div>
                     </div>
-
-                    <div class="unconverted">
-                        <div class="square" style="background: #00B4EA">
+                    <div class="new">
+                        <div style="background-color: #4CC3D9;" class="square">
                         </div>
                         <div class="text">
-                            Unconverted Leads
+                            To estimate
                         </div>
                     </div>
-
-                    <div class="convertRate">
-                        <div class="square" style="background: #00B4EA">
+                    <div class="new">
+                        <div style="background-color: #F1DD9E;" class="square">
                         </div>
                         <div class="text">
-                            Opportunity Conversion Rate
+                            Done estimate
+                        </div>
+                    </div>
+                    <div class="% 25-50">
+                        <div style="background-color: #7BC8A4;" class="square">
+                        </div>
+                        <div class="text">
+                            Send offer
+                        </div>
+                    </div>
+                    <div class="% 50-75">
+                        <div style="background-color: #FFC65D;" class="square">
+                        </div>
+                        <div class="text">
+                            PM approve
+                        </div>
+                    </div>
+                    <div class="% 75-100">
+                        <div style="background-color: #5D4C46;" class="square">
+                        </div>
+                        <div class="text">
+                            Pre-development
+                        </div>
+                    </div>
+                    <div class="% 75-100">
+                        <div style="background-color: #EB6E44;" class="square">
+                        </div>
+                        <div class="text">
+                            In development
+                        </div>
+                    </div>
+                    <div class="% 75-100">
+                        <div style="background-color: #93073E;" class="square">
+                        </div>
+                        <div class="text">
+                            Lost
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <svg class="opportunitiesChart"></svg>
+            </div>
+        </div>
+        <div class="chart-tabs-item">
+            <h3 class="dashboard">How many of our opportunities do we win?</h3>
+            <div class="dropDownDateRangeContainer left">
+                <div class="choseDateRange dropDownDateRange choseDateItem" data-type="WonLost">
+                    <div class="item active" data-item="D">Day</div>
+                    <div class="item" data-item="W">Week</div>
+                    <div class="item" data-item="M">Month</div>
+                    <div class="item" data-item="DW">Day of Week</div>
+                    <div class="item" data-item="DM">Day of Month</div>
+                    <span class="selectArrow"></span>
+                </div>
+            </div>
+
+            <div class="legend-box wonLegend">
+                <div class="converted ">
+                    <div class="square" style="background: #6CC062">
+                    </div>
+                    <div class="text">
+                        Won Count
+                    </div>
+                    <div class="square" style="background: #00B4EA">
+                    </div>
+                    <div class="text">
+                        Open Count
+                    </div>
+                    <div class="square" style="background: #F68065">
+                    </div>
+                    <div class="text">
+                        Lost Count
+                    </div>
+                    <div class="square legendCircle" style="background: #6CC062">
+                    </div>
+                    <div class="text">
+                        Win % (Count)
+                    </div>
+                </div>
+            </div>
+
+            <div class="dropDownDateRangeContainer">
+                <div id="WonLostDateFilter" class="choseDateRange dropDownDateRange">
+                </div>
+            </div>
+            <div class="clearfix"></div>
+
+            <svg class="winAndLostOpportunitiesChart"></svg>
+        </div>
+        <div class="chart-tabs-item">
+            <h3>Sales by country</h3>
+            <div class="filterWrap salesTab">
+                <div id="SalesByCountryDateFilter" class="vocationFilter _filterDropDownWrap"></div>
+            </div>
+            <div class="clearfix"></div>
+            <div class="dashboardGraphicsWrap">
+                <div class="treemap_sales halfWidth leftMap"></div>
+                <div class="halfWidth">
+                    <svg class="salesByCountryChart"></svg>
+                </div>
+                <div class="fullWidth">
+                    <svg class="salesByCountryBarChart"></svg>
+                </div>
+            </div>
+        </div>
+        <div class="chart-tabs-item leadsTab">
+            <h3>Leads</h3>
+            <div class="leadsTop align-left clearfix">
+                <div class="col xs-4">
+                    <div id="LeadsDateFilter" class="vocationFilter _filterDropDownWrap"></div>
+                    <div data-type="Leads" class="choseDateItem">
+                        <div class="item active" data-item="createdBy">Created By</div>
+                        <div class="item" data-item="assignedTo">Assigned To</div>
+                    </div>
+                </div>
+                <div class="col xs-8">
+                    <div class="legend-box">
+                        <div class="converted">
+                            <div class="square" style="background: #57D0B5">
+                            </div>
+                            <div class="text">
+                                Converted Leads
+                            </div>
+                        </div>
+
+                        <div class="unconverted">
+                            <div class="square" style="background: #00B4EA">
+                            </div>
+                            <div class="text">
+                                Unconverted Leads
+                            </div>
+                        </div>
+
+                        <div class="convertRate">
+                            <div class="square" style="background: #00B4EA">
+                            </div>
+                            <div class="text">
+                                Opportunity Conversion Rate
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
 
-        <div class="clearfix"></div>
-        <div>
-            <svg class="leadsBarChart"></svg>
-        </div>
-    </div>
-    <div class="chart-tabs-item">
-
-        <h3>Leads By Names</h3>
-        <div class="leadsTop align-left">
-            <div class="vocationFilter _filterDropDownWrap">
-                <ul class="dateFilterLeadsByName">
-                    <li class="dateRangeLeadsByName">
-                        <span class="icon-calendar"></span>
-                        <span id="startTimeLeadsByName"><%= startDateLeadsByNames%></span> - <span id="endTimeLeadsByName"><%= endDateLeadsByNames%></span>
-                        <span class="icon-arrow-down2"></span>
-                    </li>
-                    <li>
-                        <ul class="frameDetail _filterDropDownBody hidden">
-                            <li id="thisMonthLeadsByName" class="leadsName filterValues checked checkedValue" data-type="leadsName">This Month</li>
-                            <li id="thisYearLeadsByName" class="leadsName filterValues checked" data-type="leadsName">This Financial Year</li>
-                            <li class="listLine"></li>
-                            <li id="lastMonthLeadsByName" class="leadsName filterValues checked" data-type="leadsName">Last Month</li>
-                            <li id="lastQuarterLeadsByName" class="leadsName filterValues checked" data-type="leadsName">Last Quarter</li>
-                            <li id="lastYearLeadsByName" class="leadsName filterValues checked" data-type="leadsName">Last Financial Year</li>
-                            <li class="listLine"></li>
-                            <li id="customLeadsByName" class="_filterArrow leadsName filterValues checked" data-type="leadsName">Custom Dates</li>
-                            <li class="customTimeLeadsByName customTime hidden">
-                                <div class="customTimeItem">
-                                    <label for="startDateLeadsByName">Start Date: </label>
-                                    <input readonly type="text" id="startDateLeadsByName">
-                                </div>
-                                <div class="customTimeItem">
-                                    <label for="endDateLeadsByName">End Date: </label>
-                                    <input readonly type="text" id="endDateLeadsByName">
-                                </div>
-                            </li>
-                            <li class="buttons">
-                                <button id="updateDateLeadsByName" class="btn">
-                                    <span>Update</span>
-                                </button>
-                                <button id="cancelBtnLeadsByName" class="btn">
-                                    <span>Cancel</span>
-                                </button>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-            <div data-type="leadsByName" class="choseDateItem">
-                <div class="item active" data-item="leadsBySales">Assigned To</div>
-                <div class="item" data-item="qualifiedBy">Qualified By</div>
-                <div class="item" data-item="qualifiedFrom">Qualified From</div>
+            <div class="clearfix"></div>
+            <div>
+                <svg class="leadsBarChart"></svg>
             </div>
         </div>
+        <div class="chart-tabs-item">
 
-        <div class="clearfix"></div>
+            <h3>Leads By Names</h3>
+            <div class="leadsTop align-left">
+                <div id="LeadsByNameDateFilter" class="vocationFilter _filterDropDownWrap"></div>
+                <div data-type="LeadsByName" class="choseDateItem">
+                    <div class="item active" data-item="leadsBySales">Assigned To</div>
+                    <div class="item" data-item="qualifiedBy">Qualified By</div>
+                    <div class="item" data-item="qualifiedFrom">Qualified From</div>
+                </div>
+            </div>
 
-        <svg class="leadsByNameBarChart"></svg>
+            <div class="clearfix"></div>
 
+            <svg class="leadsByNameBarChart"></svg>
+
+        </div>
     </div>
 </div>
-

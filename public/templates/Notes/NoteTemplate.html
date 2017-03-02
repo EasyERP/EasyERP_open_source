@@ -6,7 +6,7 @@
         <div>
             <label>Note Content</label>
             <div class="area_holder">
-                <textarea id="noteArea" placeholder="Add a Note..." maxlength="500"></textarea>
+                <textarea id="noteArea" placeholder="Add a Note...Max 500 symbols." maxlength="500"></textarea>
                 <a href="javascript:;" class="attach_file">
                     <span class="icon-attach"></span>
                 </a>
@@ -64,8 +64,10 @@
 
                     <div class="noteBtn">
                       <span>
-                        <a href="javascript:;" id="edit_<%=val['_id']%>" data-id="<%=val['_id']%>"
-                           class="btn  editDelNote editNote">Edit</a>
+                        <a href="javascript:;"
+                           id="edit_<%=val['_id']%>"
+                           data-id="<%=val['_id']%>"
+                           class="btn editDelNote editNote">Edit</a>
                       </span>
 
                       <span>

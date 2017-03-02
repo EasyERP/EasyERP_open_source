@@ -1,9 +1,9 @@
 <div class="form-holder">
-    <% if(!isPaid){%>
-    <span class="btn blue btnSave saveBtn positioned">Save</span>
-    <%}%>
     <form method="post" action="" class="form" id="invoiceForm">
         <fieldset>
+            <% if(!isPaid){%>
+            <span class="btn blue btnSave saveBtn">Save</span>
+            <%}%>
             <div class="inner">
                 <div class="clearfix"></div>
                 <div class="dialog-tabs-items mainTabs">
@@ -29,7 +29,8 @@
 -->
                                 <dt><label for="source_document">Order Number</label></dt>
                                 <dd>
-                                    <span type="text" id="source_document"><%=(model.sourceDocument) ? model.sourceDocument.name : ''%></span>
+                                    <%var reference = '#easyErp/order/tform/' + model.sourceDocument._id;%>
+                                    <span type="text" id="source_document">#<a href="<%=reference%>"><%=(model.sourceDocument) ? model.sourceDocument.name : ''%></a></span>
                                 </dd>
 
                                 <dt><label for="supplier_invoice_num">Invoice Number</label></dt>
@@ -145,7 +146,8 @@
 
                                 <dt><label for="source_document">Order Number</label></dt>
                                 <dd>
-                                    <span type="text" id="source_document"><%=(model.sourceDocument) ? model.sourceDocument.name : ''%></span>
+                                    <%var reference = '#easyErp/order/tform/' + model.sourceDocument._id;%>
+                                    <span type="text" id="source_document">#<a href="<%=reference%>"><%=(model.sourceDocument) ? model.sourceDocument.name : ''%></a></span>
                                 </dd>
 
                                 <dt><label for="supplier_invoice_num">Invoice Number</label></dt>

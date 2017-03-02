@@ -1,4 +1,9 @@
 var winston = require('winston');
+var path = require('path');
+var basePath = path.join(__dirname, '..');
+var info = path.join(basePath, 'info.log');
+var error = path.join(basePath, 'error.log');
+var exception = path.join(basePath, 'exceptions.log');
 var logger = new (winston.Logger)({
     transports: [
         new (winston.transports.Console)({
@@ -8,7 +13,7 @@ var logger = new (winston.Logger)({
 
         new (winston.transports.File)({
             name    : 'infoFile',
-            filename: 'info.log',
+            filename: info,
             level   : 'info',
             json    : false,
             maxsize : 1024 * 1024 * 10
@@ -16,7 +21,7 @@ var logger = new (winston.Logger)({
 
         new (winston.transports.File)({
             name    : 'errorFile',
-            filename: 'error.log',
+            filename: error,
             json    : false,
             level   : 'error',
             maxsize : 1024 * 1024 * 10
@@ -29,11 +34,11 @@ var logger = new (winston.Logger)({
             timestamp: true
         }),
         new winston.transports.File({
-            filename: 'exceptions.log',
+            filename: exception,
             json    : false
         })
     ],
-    
+
     exitOnError: false
 });
 

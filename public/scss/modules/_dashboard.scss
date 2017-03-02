@@ -5,12 +5,16 @@
   position: relative;
 }
 
+.dashBoardVocationSearch {
+  margin-top: 7px !important;
+}
+
 .choseDateRange.dropDownDateRange {
   display: flex;
   flex-direction: column;
   height: 22px;
   width: 110px;
-  padding: 1px 33px 3px 10px;
+  padding: 0;
   margin-right: 0;
   border: 1px solid $property-box-border-color;
   background: $white;
@@ -19,6 +23,7 @@
 
   &.open {
     height: auto;
+    z-index: 11;
 
     .selectArrow {
       transform: rotate(180deg);
@@ -26,10 +31,9 @@
   }
 
   .item {
-    min-height: 20px !important;
-    line-height: 18px;
-    margin-bottom: 5px;
-    margin-left: 0 !important;
+    height: 22px;
+    line-height: 20px;
+    margin: 0;
     padding: 0;
     border: none;
     text-align: center;
@@ -37,6 +41,10 @@
     white-space: nowrap;
     order: 1;
     float: none;
+
+    &:hover {
+      background-color: #fafafa;
+    }
 
     &.active {
       order: 0;
@@ -49,17 +57,16 @@
     height: 0;
     width: 0;
     border: {
-      top: 5px solid $property-box-border-color;
-      left: 3px solid transparent;
-      right: 3px solid transparent;
+      top: 6px solid $property-box-border-color;
+      left: 4px solid transparent;
+      right: 4px solid transparent;
     }
     position: absolute;
-    right: 10px;
+    right: 5px;
     top: 8px;
     cursor: pointer;
   }
 }
-
 
 .dashboardGraphicsWrap {
   .halfWidth,
@@ -73,23 +80,25 @@
 
   .fullWidth {
     width: 100%;
-
   }
 }
 
-
 ._customDashboard {
   position: relative;
-  background-color: #f1f1f1;
+  min-width: 1000px;
+  width: 100%;
   padding: 5px;
+  background-color: #f1f1f1;
+  overflow: auto;
 
   &InputGroup {
     padding: 0 15px;
+
     input {
+      float: left;
       width: 200px;
       height: 25px;
       margin-top: 7px;
-      float: left;
 
       & + input {
         margin-left: 15px;
@@ -110,36 +119,53 @@
   }
 
   .panel {
-    background-color: $white;
     display: inline-block;
-    box-shadow: $dashboard-cell-bigger-shadow;
+    //min-width: 400px;
+    padding-bottom: 30px;
     border: 1px solid $dashboard-panel-border;
+    background-color: $white;
+    box-shadow: $dashboard-cell-bigger-shadow;
+    overflow: hidden;
+    z-index: 1;
 
     &-heading {
-      @include flexbox;
-      @include justify-content(space-between);
+      display: flex;
+      justify-content: space-between;
       width: 100%;
     }
 
-    .chartName {
-      font-size: 20px;
-      color: $dashboard-text-color;
-      padding: 10px 10px;
+    ._filterDropDownWrap {
+      width: 200px;
+      float: right;
+
+      .dateFilter {
+        text-align: right;
+      }
 
     }
 
-    &HeadingDescr {
-      padding: 7px 12px;
+    .notResize {
+      min-height: 400px !important;
+      min-width: 400px !important;
+    }
+
+    .chartName {
+      font-size: 16px;
       color: $dashboard-text-color;
-      //border-bottom: 1px solid $dashboard-panel-border;
-      @include flexbox;
-      @include flex-direction(column);
-      @include align-items(flex-end);
+      padding: 10px 5px;
+    }
+
+    &HeadingDescr {
+      padding: 7px 5px;
+      color: $dashboard-text-color;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
       min-width: 100px;
 
-      >span {
-        font-size: 10px;
+      > span {
         display: block;
+        font-size: 10px;
 
         &:first-child {
           margin-top: 10px;
@@ -148,13 +174,13 @@
       }
 
       button {
+        margin: 5px 5px;
         background-color: transparent;
-        margin: 5px 5px ;
 
         .fa {
-          font-size: 16px;
           background-color: transparent;
           color: $dashboard-text-color;
+          font-size: 16px;
         }
       }
 
@@ -162,6 +188,53 @@
         margin-right: 5px;
       }
 
+    }
+
+    .editChart {
+      background-color: transparent !important;
+      top: 0px;
+      position: relative;
+      line-height: 1;
+      width: 20px;
+      > span {
+        position: absolute;
+        top: 3px;
+        right: 9px;
+      }
+    }
+
+    .removeChart {
+      background-color: transparent;
+      top: 0px;
+      position: relative;
+      line-height: 1;
+      width: 20px;
+      > span {
+        position: absolute;
+        top: 3px;
+        right: 3px;
+      }
+    }
+
+    ._viewAll {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      padding: 10px 5px;
+      border-top: 1px solid $dashboard-panel-border;
+      text-decoration: none !important;
+      text-transform: uppercase;
+      color: $dashboard-text-color;;
+
+      &:after {
+        content: '\f105';
+        font-family: 'erp-icons';
+        right: 10px;
+        font-size: 20px;
+        line-height: 11px;
+        position: absolute;
+      }
     }
 
     .chartHolder {
@@ -185,6 +258,139 @@
           font-size: 25px;
         }
       }
+      ._overviewOrderWrap {
+        margin-top: 30px;
+      }
+
+      ._overviewTable {
+        width: calc(100% - 10px);
+        margin: 0 5px;
+
+        tbody {
+          &:first-child {
+            tr {
+              background-color: #c6d8f5 !important;
+            }
+          }
+          &:nth-child(odd) {
+            tr {
+              background-color: #f2f7fd;
+            }
+          }
+          tr {
+            background-color: transparent;
+          }
+        }
+      }
+
+      .revenueCountWrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 5px;
+        word-wrap: break-word;
+
+        > div {
+          align-self: center;
+          justify-content: center;
+          width: 40%;
+          min-width: 100px;
+          height: 60px;
+          text-align: right;
+        }
+
+        + ._overviewOrderWrap {
+          padding: 0 5px;
+          margin-top: 0;
+
+          > ._overviewTable.stripedList {
+            width: 100%;
+            margin: 0;
+
+            tr {
+              border-top: 1px solid #d7dde4;
+              border-bottom: 1px solid #d7dde4;
+              border-left: none;
+              border-right: none;
+
+              td {
+                border: none;
+                background-color: #F7F7F7;
+                vertical-align: top;
+                word-break: inherit;
+                text-align: center;
+                &:hover {
+                  background-color: #F7F7F7;
+                }
+                &:last-child {
+                  .flex {
+                    &:after {
+                      border-right: none;
+                    }
+                  }
+                }
+                .flex {
+                  flex-wrap: wrap;
+                  height: 50px;
+                  position: relative;
+
+                  &:after {
+                    content: '';
+                    border-right: 1px solid #d7dde4;
+                    position: absolute;
+                    height: 100%;
+                    right: -12px;
+                  }
+                }
+                .workflowName {
+                  flex-grow: 2;
+                  width: 100%;
+                  text-transform: uppercase;
+                  align-self: center;
+                  color: $dashboard-text-color;
+                }
+
+                .count {
+                  display: block;
+                  text-align: center;
+                  align-self: flex-end;
+                  width: 100%;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      .singleBlockWrap {
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+
+        .block {
+          display: inline-block;
+          padding: 10px;
+          margin: 5px;
+          width: calc(50% - 12px);
+          max-width: 200px;
+          background-color: #F7F7F7;
+          border: 1px solid #d7dde4;
+          > span {
+            text-align: right;
+            line-height: 20px;
+            display: block;
+          }
+          .blockTitle {
+            font-size: 14px;
+            text-transform: uppercase;
+            color: $dashboard-text-color;
+            + span {
+              font-size: 18px;
+              color: $black;
+            }
+          }
+        }
+      }
     }
   }
 
@@ -200,3 +406,85 @@
     }
   }
 }
+
+._customDashboardActions {
+  position: fixed;
+  z-index: 3;
+  top: 53px;
+  right: 30px;
+
+  ._filterDropDownWrap {
+    margin: 3px 20px;
+
+    > ul > li:first-child{
+      text-align: center;
+    }
+  }
+}
+
+.revenueCountWrap {
+  p {
+    font-size: 18px;
+    color: $black;
+  }
+  span {
+    &._shipped {
+      font-size: 18px;
+    }
+    &._fullfilled {
+      font-size: 15px;
+    }
+    display: block;
+    font-size: 14px;
+    text-transform: uppercase;
+    color: $dashboard-text-color;
+  }
+
+  .status {
+    width: 20% !important;
+    min-width: 140px !important;
+
+    &.hidden {
+      display: block !important;
+      visibility: hidden;
+    }
+
+    ._statusOrdersWrap {
+      text-align: left;
+      @extend ._statusOrders;
+      display: flex;
+      align-items: center;
+      line-height: 20px !important;
+
+      > span {
+        width: 70px;
+        font-size: 12px;
+        text-align: left;
+        &:first-child{
+          margin-left: 0;
+          margin-right: 0;
+        }
+      }
+
+      ._statusOrders {
+        flex-grow: 2;
+
+        span, p {
+          display: inline-block;
+          font-size: 12px;
+        }
+        > span {
+          width: 12px;
+          height: 12px;
+        }
+      }
+    }
+  }
+}
+
+.chartHolder {
+  ._statusOrders {
+    line-height: 20px;
+  }
+}
+

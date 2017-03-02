@@ -111,8 +111,14 @@ define([
             var i;
             var minDate = new Date(CONSTANTS.MIN_DATE);
             var minYear = moment(minDate).get('year');
+            var dialog;
 
-            var dialog = this.template({
+            if (month === 0) {
+                month = 12;
+                year -= 1;
+            }
+
+            dialog = this.template({
                 month: month,
                 year : year,
                 title: this.title

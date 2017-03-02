@@ -28,7 +28,7 @@ define([
         },
 
         chooseOption: function (e) {
-            $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
+            $(e.target).parents('ul').closest('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
             $('.newSelectList').hide();
         },
 
@@ -115,9 +115,8 @@ define([
             });
             this.$el = $(formString).dialog({
                 autoOpen   : true,
-                resizable  : false,
                 dialogClass: 'edit-dialog',
-                width      : '900',
+                width      : '700',
                 title      : 'Edit Job Position',
                 buttons    : [
                     {

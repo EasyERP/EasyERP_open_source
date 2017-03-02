@@ -1,5 +1,5 @@
 ﻿define([
-        'collections/Invoices/filterCollection'
+        'collections/invoice/filterCollection'
     ],
     function (filterCollection) {
         return filterCollection;

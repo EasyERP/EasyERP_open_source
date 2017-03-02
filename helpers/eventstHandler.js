@@ -1,5 +1,6 @@
 var events = require('events');
 var event = new events.EventEmitter();
+var async = require('async');
 var eventsHandler;
 
 require('pmx').init();
@@ -19,6 +20,11 @@ eventsHandler = function (app, mainDb) {
     var opportunitiesSchema = mongoose.Schemas.Opportunitie;
     var wTrackSchema = mongoose.Schemas.wTrack;
     var jobsSchema = mongoose.Schemas.jobs;
+
+    var OrderSchema = mongoose.Schemas.Order;
+    var GoodsOutSchema = mongoose.Schemas.GoodsOutNote;
+    var OrderRowsSchema = mongoose.Schemas.OrderRow;
+    var AvailabilitySchema = mongoose.Schemas.productsAvailability;
 
     var io = app.get('io');
     var redisStore = require('./redisClient');
@@ -101,6 +107,8 @@ eventsHandler = function (app, mainDb) {
 
     });
 
+    event.on('recalculateStatus', recalculateStatus);
+
     event.on('setReconcileTimeCard', function (options) {
         var req = options.req;
         var wTrackModel = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
@@ -150,7 +158,6 @@ eventsHandler = function (app, mainDb) {
             });
         }
 
-
         if (date) {
             journalEntry.setReconcileDate(req, date);
         } else if (employee) {
@@ -165,6 +172,230 @@ eventsHandler = function (app, mainDb) {
             });
         }
     });
+
+    function recalculateStatus(req, orderId, next) {
+        var dbName = req;
+        var OrderRows;
+        var Order;
+
+        if (typeof req === 'object') {
+            dbName = req.session.lastDb;
+        }
+
+        Order = models.get(dbName, 'Order', OrderSchema);
+        OrderRows = models.get(dbName, 'orderRows', OrderRowsSchema);
+
+        OrderRows.find({
+            order  : orderId,
+            product: {$ne: null}
+        })
+            .populate('product', 'cost name sku info')
+            .exec(function (err, docs) {
+                if (err) {
+                    return next(err);
+                }
+
+                getAvailableForRows(req, docs, function (err, status) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    Order.findByIdAndUpdate(orderId, {status: status}, function (err, el) {
+                        if (err) {
+                            return next(err);
+                        }
+                        console.log('Status updated');
+
+                    });
+                });
+
+            });
+    }
+
+    function getAvailableForRows(req, docs, cb) {
+        var dbName = req;
+        var Availability;
+        var GoodsOutNote;
+
+        if (typeof req === 'object') {
+            dbName = req.session.lastDb;
+        }
+
+        Availability = models.get(dbName, 'productsAvailability', AvailabilitySchema);
+        GoodsOutNote = models.get(dbName, 'GoodsOutNote', GoodsOutSchema);
+        var stockStatus = {};
+
+        if (docs && docs.length) {
+            async.each(docs, function (elem, eahcCb) {
+                var product;
+
+                elem = elem.toJSON();
+                product = elem.product ? elem.product._id : null;
+
+                Availability.aggregate([{
+                    $match: {
+                        product  : product,
+                        warehouse: elem.warehouse
+                    }
+                }, {
+                    $project: {
+                        product   : 1,
+                        warehouse : 1,
+                        onHand    : 1,
+                        filterRows: {
+                            $filter: {
+                                input: '$orderRows',
+                                as   : 'elem',
+                                cond : {$eq: ['$$elem.orderRowId', elem._id]}
+                            }
+                        },
+
+                        orderRows: 1
+                    }
+                }, {
+                    $project: {
+                        product  : 1,
+                        warehouse: 1,
+                        onHand   : 1,
+                        allocated: {
+                            $sum: '$filterRows.quantity'
+                        }
+                    }
+                }, {
+                    $project: {
+                        product  : 1,
+                        warehouse: 1,
+                        onHand   : 1,
+                        allocated: 1
+                    }
+                }, {
+                    $group: {
+                        _id      : '$warehouse',
+                        allocated: {
+                            $sum: '$allocated'
+                        }
+                    }
+                }], function (err, availability) {
+                    if (err) {
+                        return eahcCb(err);
+                    }
+
+                    GoodsOutNote.aggregate([{
+                        $match: {
+                            'orderRows.orderRowId': elem._id,
+                            _type                 : {$ne: 'stockReturns'}
+                        }
+                    }, {
+                        $project: {
+                            name    : '$name',
+                            orderRow: {
+                                $filter: {
+                                    input: '$orderRows',
+                                    as   : 'elem',
+                                    cond : {$eq: ['$$elem.orderRowId', elem._id]}
+                                }
+                            },
+
+                            status: 1
+                        }
+                    }, {
+                        $project: {
+                            name    : '$name',
+                            orderRow: {$arrayElemAt: ['$orderRow', 0]},
+                            status  : 1
+                        }
+                    }, {
+                        $project: {
+                            name    : '$name',
+                            orderRow: '$orderRow.orderRowId',
+                            quantity: '$orderRow.quantity',
+                            status  : 1
+                        }
+                    }], function (err, docs) {
+                        var fullfillOnRow = 0;
+                        var shippedOnRow = 0;
+                        var allocatedOnRow;
+                        var shippedDocs;
+
+                        if (err) {
+                            return eahcCb(err);
+                        }
+
+                        availability = availability && availability.length ? availability[0].allocated : 0;
+
+                        if (!docs || !docs.length) {
+
+                            /*if (!stockStatus.fulfillStatus) {
+                             stockStatus.fulfillStatus = 'NOA';
+                             }*/
+
+                            stockStatus.fulfillStatus = (stockStatus.fulfillStatus === 'NOA') || (stockStatus.fulfillStatus === 'ALL') ? 'NOA' : 'NOT';
+                            stockStatus.shippingStatus = (stockStatus.shippingStatus === 'NOA') || (stockStatus.shippingStatus === 'ALL') ? 'NOA' : 'NOT';
+                        } else {
+                            shippedDocs = _.filter(docs, function (el) {
+                                if (el.status && el.status.shipped) {
+                                    return el;
+                                }
+                            });
+
+                            if (shippedDocs.length) {
+                                shippedDocs.forEach(function (el) {
+                                    shippedOnRow += el.quantity;
+                                });
+
+                                if (shippedOnRow !== elem.quantity) {
+                                    stockStatus.shippingStatus = 'NOA';
+                                } else {
+                                    stockStatus.shippingStatus = stockStatus.shippingStatus && (stockStatus.shippingStatus === 'NOA') ? 'NOA' : 'ALL';
+                                }
+                            } else {
+                                stockStatus.shippingStatus = ((stockStatus.shippingStatus === 'NOA') || (stockStatus.shippingStatus === 'ALL')) ? 'NOA' : 'NOT';
+                            }
+
+                            docs.forEach(function (el) {
+                                fullfillOnRow += el.quantity;
+                            });
+
+                            if (fullfillOnRow !== elem.quantity) {
+                                stockStatus.fulfillStatus = 'NOA';
+                            } else {
+                                stockStatus.fulfillStatus = (stockStatus.fulfillStatus === 'NOA') ? 'NOA' : 'ALL';
+                            }
+                        }
+
+                        allocatedOnRow = fullfillOnRow + availability;
+
+                        if (!allocatedOnRow) {
+                            // stockStatus.allocateStatus = stockStatus.allocateStatus || 'NOA';
+                            stockStatus.allocateStatus = ((stockStatus.allocateStatus === 'NOA') || (stockStatus.allocateStatus === 'ALL')) ? 'NOA' : 'NOT';
+                        } else if (allocatedOnRow !== elem.quantity) {
+                            stockStatus.allocateStatus = 'NOA';
+                        } else {
+                            stockStatus.allocateStatus = stockStatus.allocateStatus && (stockStatus.allocateStatus === 'NOA') ? 'NOA' : 'ALL';
+                        }
+
+                        eahcCb();
+
+                    });
+                });
+
+            }, function (err) {
+                if (err) {
+                    return cb(err);
+                }
+
+                cb(null, stockStatus);
+
+            });
+        } else {
+            stockStatus.fulfillStatus = 'NOR';
+            stockStatus.allocateStatus = 'NOR';
+            stockStatus.shippingStatus = 'NOR';
+
+            cb(null, stockStatus);
+        }
+
+    }
 
 // if name was updated, need update related wTrack, or other models
     event.on('updateName', function (id, targetModel, searchField, fieldName, fieldValue, fieldInArray) {
@@ -285,6 +516,42 @@ eventsHandler = function (app, mainDb) {
 
     event.on('sendMessage', function (options) {
         io.emit('sendMessage', options);
+    });
+
+    event.on('savedCategories', function (options) {
+        io.emit('savedCategories', options);
+    });
+
+    event.on('savedProduct', function (options) {
+        io.emit('savedProduct', options);
+    });
+
+    event.on('savedCustomers', function (options) {
+        io.emit('savedCustomers', options);
+    });
+
+    event.on('savedOrders', function (options) {
+        io.emit('savedOrders', options);
+    });
+
+    event.on('savedInvoices', function (options) {
+        io.emit('savedInvoices', options);
+    });
+
+    event.on('savedInventory', function (options) {
+        io.emit('savedInventory', options);
+    });
+
+    event.on('getAllDone', function (options) {
+        io.emit('getAllDone', options);
+    });
+
+    event.on('recollectedStats', function (options) {
+        io.emit('recollectedStats', options);
+    });
+
+    event.on('showResolveConflict', function (options) {
+        io.emit('showResolveConflict', options);
     });
 
     return event;

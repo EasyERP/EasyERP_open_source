@@ -1,7 +1,10 @@
 <% employeesCollection.forEach(function(employee, index){ %>
 <tr data-index="<%=index + 1%>" data-id="<%=employee._id%>">
     <td class="notForm centerCell">
-        <input type="checkbox" value="<%=employee._id%>" class="checkbox"/>
+        <label class="_customCHeckbox">
+            <input type="checkbox" value="<%=employee._id%>" class="checkbox"/>
+            <span></span>
+        </label>
     </td>
     <td><%=employee.name.first%> <%=employee.name.last%></td>
     <td class="notForm"><a href="skype:<%=employee.workPhones.mobile%>?call"><%=employee.workPhones.mobile%></a></td>

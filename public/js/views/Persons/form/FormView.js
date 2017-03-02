@@ -8,6 +8,7 @@ define([
     'views/Editor/AttachView',
     'views/Companies/formPropertyView',
     'views/Opportunities/formProperty/formPropertyView',
+    'views/CustomersSuppliers/salesPurchases',
     'common',
     'constants',
     'dataService',
@@ -21,6 +22,7 @@ define([
              AttachView,
              CompanyFormProperty,
              OpportunityFormProperty,
+             SalesPurchasesView,
              common,
              CONSTANTS,
              dataService,
@@ -64,6 +66,7 @@ define([
             'mouseleave .avatar'                               : 'hideEdit',
             'click #tabList a'                                 : 'switchTab',
             'keyup .editable'                                  : 'setChangeValueToModel',
+            'change .checkbox'                                 : 'setChangeValueToModel',
             'click #cancelBtn'                                 : 'cancelChanges',
             'click #saveBtn'                                   : 'saveChanges',
             'click .current-selected:not(.jobs)'               : 'showNewSelect',
@@ -82,6 +85,8 @@ define([
             var $target = $(e.target);
             var property = $target.attr('data-id').replace('_', '.');
             var value = $target.val();
+            var checked = $target.prop('checked');
+            var newProperty;
 
             $target.closest('.propertyFormList').addClass('active');
 
@@ -89,7 +94,21 @@ define([
                 value = value.replace('linkedin', '[]');
             }
 
-            this.modelChanged[property] = value;
+            /*if (property === 'social.LI' || property === 'social.FB') {
+                newProperty = property.slice(-2, property.length);
+
+                if (!this.modelChanged.social) {
+                    this.modelChanged.social = {};
+                }
+
+                this.modelChanged.social[newProperty] = value;
+            } else */if (property === 'salesPurchases.isSupplier' || property === 'salesPurchases.isCustomer') {
+                this.modelChanged[property] = checked;
+
+            } else {
+                this.modelChanged[property] = value;
+            }
+
             this.showButtons();
         },
 
@@ -142,10 +161,14 @@ define([
             var text = $target.text();
             var id = $target.attr('id');
 
-            holder.text($target.text());
+            holder.text(text);
 
-            this.modelChanged[type] = id;
-            // this.$el.find('#assignedToDd').text(text).attr('data-id', id);
+            if (type === 'salesPurchases.language') {
+                this.modelChanged[type] = $.trim(text);
+            } else {
+                this.modelChanged[type] = id;
+            }
+
             this.showButtons();
         },
 
@@ -155,6 +178,10 @@ define([
             var changedAttributesForEvent = ['name.first', 'name.last', 'email', 'phones.phone', 'address.country'];
             var changedListAttr = _.intersection(Object.keys(changedAttrs), changedAttributesForEvent);
             var sendEvent = !!(changedListAttr.length);
+
+            if (changedAttrs.social && !Object.keys(changedAttrs.social).length) {
+                delete changedAttrs.social;
+            }
 
             this.formModel.save(changedAttrs, {
                 wait   : true,
@@ -168,6 +195,18 @@ define([
                         self.renderAbout();
                         self.modelChanged = {};
                         self.hideButtons();
+
+                        if (changedAttrs.hasOwnProperty('skype')) {
+                            $thisEl.find('.skype').attr('href', 'skype:' + changedAttrs.skype + '?call');
+                        }
+
+                        if (changedAttrs.hasOwnProperty('social.FB')) {
+                            $thisEl.find('.facebook').attr('href', changedAttrs['social.FB']);
+                        }
+
+                        if (changedAttrs.hasOwnProperty('social.LI')) {
+                            $thisEl.find('.linkedin').attr('href', changedAttrs['social.LI']);
+                        }
 
                         if (sendEvent) {
                             if (changedAttrs.hasOwnProperty('name.first') || changedAttrs.hasOwnProperty('name.last')) {
@@ -206,9 +245,20 @@ define([
         renderAbout: function (cancel) {
             var self = this;
             var $thisEl = this.$el;
+            var salesPurchasesEl;
 
             if (cancel) {
                 $thisEl.find('.aboutHolder').html(_.template(aboutTemplate, this.formModel.toJSON()));
+
+                salesPurchasesEl = $thisEl.find('#salesPurchases-container');
+
+                salesPurchasesEl.append(
+                    new SalesPurchasesView({
+                        parrent  : self,
+                        tForm    : true,
+                        editState: true
+                    }).render().el
+                );
             }
             common.canvasDraw({model: this.formModel.toJSON()}, this);
             $thisEl.find('#dateBirth').datepicker({
@@ -230,6 +280,7 @@ define([
             var formModel = this.formModel.toJSON();
             var self = this;
             var $thisEl = this.$el;
+            var salesPurchasesEl;
 
             $thisEl.html(_.template(personFormTemplate, formModel));
 
@@ -240,6 +291,7 @@ define([
 
             dataService.getData('/countries/getForDD', {}, function (countries) {
                 self.responseObj['#country'] = countries.data;
+                self.responseObj['#shippingCountry'] = countries.data;
             });
 
             $thisEl.find('#companyHolder').html(
@@ -264,7 +316,17 @@ define([
             );
             common.canvasDraw({model: this.formModel.toJSON()}, this);
 
-            $thisEl.find('#dateBirth').datepicker({
+            salesPurchasesEl = $thisEl.find('#salesPurchases-container');
+
+            salesPurchasesEl.append(
+                new SalesPurchasesView({
+                    parrent  : self,
+                    tForm    : true,
+                    editState: true
+                }).render().el
+            );
+
+            $thisEl.find('#dateBirthEdit').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,

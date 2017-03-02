@@ -3,5 +3,6 @@
     <!--<td><%=model.startNumber%></td>-->
     <td data-type="input" data-content="code"><%=model.code%></td>
     <td data-type="input" data-content="account"><%=model.account%></td>
+    <td><%=model.payMethod && model.payMethod.currency ? model.payMethod.currency : '---'%></td>
     <td data-type="input" data-content="type"><%=model.type%></td>
 </tr>

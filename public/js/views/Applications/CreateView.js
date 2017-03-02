@@ -6,11 +6,12 @@ define([
     'models/ApplicationsModel',
     'common',
     'populate',
-    'views/Notes/AttachView',
-    'views/dialogViewBase',
+  'views/Editor/NoteView',
+  'views/Editor/AttachView',
+  'views/dialogViewBase',
     'constants',
     'helpers'
-], function (Backbone, $, _, CreateTemplate, ApplicationModel, common, populate, AttachView, ParentView, CONSTANTS, helpers) {
+], function (Backbone, $, _, CreateTemplate, ApplicationModel, common, populate, NoteView, AttachView, ParentView, CONSTANTS, helpers) {
     'use strict';
     var CreateView = ParentView.extend({
         el         : '#content-holder',
@@ -78,8 +79,7 @@ define([
             'mouseenter .avatar'                               : 'showEdit',
             'mouseleave .avatar'                               : 'hideEdit',
             'click .dialog-tabs a'                             : 'changeTab',
-            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
-            'click .icon-attach'                               : 'clickInput'
+            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
         },
 
         clickInput: function () {
@@ -203,15 +203,17 @@ define([
             var note;
             var internalNotes = $.trim(this.$el.find('#internalNotes').val());
 
-            if (internalNotes) {
+           /* if (internalNotes) {
                 note = {
                     title: '',
                     note : internalNotes
                 };
                 notes.push(note);
-            }
+            }*/
 
-            $thisEl.find('dd').find('.homeAddress').each(function () {
+          notes = this.model.get('notes');
+
+          $thisEl.find('dd').find('.homeAddress').each(function () {
                 var elem = $(this);
                 homeAddress[elem.attr('name')] = $.trim(elem.val()) || elem.attr('data-id');
             });
@@ -287,7 +289,7 @@ define([
 
         chooseOption: function (e) {
             var $target = $(e.target);
-            $target.parents('dd').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
+            $target.parents('ul').closest('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
         },
 
         render: function () {
@@ -296,11 +298,10 @@ define([
             var $thisEl;
             var notDiv;
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                dialogClass  : 'edit-dialog create-app-dialog',
-                width        : 1000,
-                title        : 'Create Application',
-                buttons      : {
+                dialogClass: 'edit-dialog create-app-dialog',
+                width      : 800,
+                title      : 'Create Application',
+                buttons    : {
                     save: {
                         text : 'Create',
                         class: 'btn blue',
@@ -323,9 +324,32 @@ define([
                 isCreate   : true
             });
 
-            notDiv = $thisEl.find('.attach-container');
-            notDiv.append(this.attachView.render().el);
+            notDiv = $thisEl.find('#attach-container');
 
+          this.model = new ApplicationModel();
+
+          this.editorView = new NoteView({
+            model      : this.model,
+            contentType: self.contentType,
+            onlyNote: true,
+            isCreate: true
+          });
+
+          notDiv.append(
+            this.editorView.render().el
+          );
+
+          this.attachView =  new AttachView({
+            model      : this.model,
+            contentType: self.contentType,
+            noteView   : this.editorView,
+            forDoc: true,
+            isCreate: true
+          });
+
+          $thisEl.find('.attachments').append(
+            this.attachView.render().el
+          );
             this.renderAssignees(this.currentModel);
             populate.getWorkflow('#workflowsDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'Applications'}, 'name', this, true, function (data) {
                 var i;

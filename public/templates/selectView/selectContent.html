@@ -1,22 +1,39 @@
 <ul data-page="<%=currentPage%>">
-    <% var isFired = ''; %>
+    <%if (!collection.length) { %>
+    <span class="empty">Empty list</span>
+    <%} else {%>
     <% collection.forEach(function(item){ %>
+    <% var isFired = ''; %>
     <% if (item.isEmployee !== undefined) { %>
     <%      isFired = item.isEmployee ? '' : 'fired'; %>
     <% } %>
+    <% if (!item.selectedElement) { %>
     <li id="<%= item._id %>" class="<%= isFired %>"
         data-level="<%= item.level%>" data-fullname="<%= item.fullName%>"
         data-status="<%= item.status?item.status.replace(' ','').toLowerCase():''%>"
+        data-type="<%= item.type || ''%>"
         <% if (item.imageSrc) { %>
         data-img="<%= item.imageSrc%>"
         <% } %>
-    ><%= item.name %>
+    ><%=(item.info && item.info.SKU ? '<b>' + item.info.SKU +'</b>' + ' <span class="name">' + item.name +'</span>' : item.name)%>
+
+    <% if (item.variants && item.variants instanceof Array) { %>
+    <div >
+        <span class="variants"><% item.variants.forEach(function(el){  %>
+             <%= el.value %>|
+          <%  });%>
+        </span>
+    </div>
+
+    <% } %>
     </li>
+    <% } %>
     <% }) %>
 
     <% if (dataLength>elementVisible){%>
     <li class="miniStylePagination"><a class="prev<%=currentPage==1?' disabled':''%>" href="javascript:;">
         &lt;Prev</a><span class="counter"><%=(start+1)%>-<%=end%> of <%=dataLength%></span><a
             class="next<%=(currentPage==allPages?' disabled':'')%>" href="javascript:;">Next&gt;</a></li>
+    <%}%>
     <%}%>
 </ul>

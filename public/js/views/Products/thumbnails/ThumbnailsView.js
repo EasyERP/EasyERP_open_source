@@ -12,33 +12,30 @@
     'constants'
 ], function (Backbone, $, _, thumbnailsItemTemplate, BaseView, EditView, CreateView, dataService, CurrentModel, common, CONSTANTS) {
     var ProductThumbnalView = BaseView.extend({
-        //el         : '#content-holder',
         template   : _.template(thumbnailsItemTemplate),
         contentType: 'Products',
-        //hasAlphabet: true,
-
 
         initialize: function (options) {
-            //$(document).off('click');
-
             this.EditView = EditView;
-            this.CreateView = CreateView;
+            this.categories = options.categories;
             this.eventChannel = options.eventChannel;
+            this.topBar = options.topBar;
+            this.formUrl = '#easyErp/' + this.contentType + '/tform/';
 
-            //_.bind(this.collection.showMoreAlphabet, this.collection);
-
-            this.allAlphabeticArray = common.buildAllAphabeticArray();
             this.filter = options.filter;
 
-            this.asyncLoadImgs(this.collection);
+            if (this.filter) {
+                delete this.filter.productId;
+                delete this.filter.toExpand;
+                delete this.filter.groupId;
+            }
 
             BaseView.prototype.initialize.call(this, options);
         },
 
         events: {
             'click #showMore'        : 'showMore',
-            'click .thumbnailElement': 'gotoEditForm',
-            'click .addProduct'      : 'createItem'
+            'click .thumbnailElement': 'gotoForm'
         },
 
         asyncLoadImgs: function (collection) {
@@ -48,7 +45,7 @@
             common.getImages(ids, '/products/getProductsImages');
         },
 
-        createItem: function () {
+        createItemProduct: function () {
             new CreateView({
                 eventChannel: this.eventChannel,
                 viewType    : 'thumbnails'
@@ -57,6 +54,7 @@
 
         render: function () {
             var $currentEl = this.$el;
+
             $currentEl
                 .find('#thumbnailContent')
                 .append(this.template({collection: this.collection.toJSON()}));
@@ -64,40 +62,83 @@
             return this;
         },
 
-        gotoEditForm: function (e) {
-            var className;
-            var id;
-            var model;
+        importFromMagento: function () {
+            var url = '/integration/categories';
             var self = this;
-            var target = $(e.target);
 
-            this.$el.delegate('a', 'click', function (event) {
-                event.stopPropagation();
-                event.preventDefault();
+            dataService.getData(url, {}, function (err, result) {
+                if (err) {
+                    return self.errorNotification(err);
+                }
+
+                self.render();
             });
+        },
 
-            className = target.parent().attr('class');
+        exportToMagento: function () {
+            var url = '/integration/categories';
+            var data;
+            var self = this;
+            var ids = _.pluck(self.categories.toJSON(), '_id');
 
-            if ((className !== 'dropDown') || (className !== 'inner')) {
-                id = target.closest('.product').attr('id');
-                model = new CurrentModel({validate: false});
+            data = {
+                categories: ids
+            };
 
-                model.urlRoot = CONSTANTS.URLS.PRODUCT;
+            dataService.postData(url, data, function (err, result) {
+                if (err) {
+                    return self.errorNotification(err);
+                }
+                alert(result.success);
+            });
+        },
 
-                model.fetch({
-                    data   : {id: id, viewType: 'form'},
-                    success: function (response) {
-                        return new self.EditView({model: response});
-                    },
+        gotoForm: function (e) {
+            var $target = $(e.target);
+            var id = $target.closest('.product').attr('id');
+            var page = this.collection.currentPage;
+            var countPerPage = this.collection.pageSize;
+            var url = this.formUrl + id + '/p=' + page + '/c=' + countPerPage;
 
-                    error: function () {
-                        App.render({
-                            type   : 'error',
-                            message: 'Please refresh browser'
-                        });
-                    }
-                });
+            if (this.filter) {
+                url += '/filter=' + encodeURI(JSON.stringify(this.filter));
             }
+
+            this.topBar.unbind();
+            this.topBar.undelegateEvents();
+
+            App.ownContentType = true;
+            Backbone.history.navigate(url, {trigger: true});
+        },
+
+        magentoImport: function () {
+            var url = '/integration/product';
+            var self = this;
+
+            dataService.getData(url, {}, function (err, result) {
+                if (err) {
+                    return self.errorNotification(err);
+                }
+
+                self.render();
+            });
+        },
+
+        magentoExport: function () {
+            var url = '/integration/product';
+            var data;
+            var self = this;
+
+            data = {
+                products: self.collection.toJSON()
+            };
+
+            dataService.postData(url, data, function (err, result) {
+                if (err) {
+                    return self.errorNotification(err);
+                }
+                alert(result.success);
+            });
         },
 
         exportToCsv: function () {

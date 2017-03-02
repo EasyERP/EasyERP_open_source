@@ -72,6 +72,7 @@
         width: 50%;
         border: 0;
         border-bottom: 1px solid #4d5a75;
+        padding: 0 2px;
 
         option {
           background-color: $selected-data-color;
@@ -230,4 +231,9 @@
   .ui-priority-primary {
     margin-left: 10px;
   }
+}
+
+.wickedpicker__title {
+  text-align: center;
+  margin-top: 5px;
 }

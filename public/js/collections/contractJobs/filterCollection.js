@@ -3,63 +3,59 @@
     'Underscore',
     'collections/parent',
     'models/contractJobsModel',
+    'helpers/getDateHelper',
     'dataService',
     'constants',
     'moment',
     'custom'
-], function (Backbone, _, Parent, Model, dataService, CONSTANTS, moment, Custom) {
+], function (Backbone, _, Parent, Model, DateHelper, dataService, CONSTANTS, moment, Custom) {
     'use strict';
 
-    var CompaniesCollection = Parent.extend({
+    var ContractJobsCollection = Parent.extend({
         model      : Model,
         url        : CONSTANTS.URLS.CONTRACTJOBS,
         pageSize   : 10,
-        contentType: 'Companies',
+        contentType: 'contractJobs',
 
         initialize: function (options) {
-            var page;
-            var startDate = moment(new Date());
-            var endDate = moment(new Date());
+            var dateRange;
+            var _opts;
 
-            options = options || {};
-            options.error = options.error || _errHandler;
-            page = options.page;
+            this.filter = options.filter || Custom.retriveFromCash(this.contentType + '.filter');
 
-            this.filter = options.filter || Custom.retriveFromCash('balanceSheet.filter');
+            dateRange = this.filter && this.filter.date ? this.filter.date.value : null;
 
-            startDate.month(startDate.month() - 1);
-            startDate.date(1);
-            endDate.month(startDate.month());
-            endDate.endOf('month');
+            dateRange = dateRange || DateHelper.getDate('thisMonth');
 
-            var dateRange = Custom.retriveFromCash('contractJobsDateRange') || {};
-            this.startDate = dateRange.startDate;
-            this.endDate = dateRange.endDate;
+            this.startDate = new Date(dateRange[0]);
+            this.endDate = new Date(dateRange[1]);
 
-            this.startDate = dateRange.startDate || new Date(startDate);
-            this.endDate = dateRange.endDate || new Date(endDate);
+            options.filter = this.filter || {};
 
-            options.startDate = this.startDate;
-            options.endDate = this.endDate;
-            options.filter = this.filter;
+            options.filter.date = {
+                value: [this.startDate, this.endDate]
+            };
 
-            Custom.cacheToApp('contractJobsDateRange', {
-                startDate: this.startDate,
-                endDate  : this.endDate
-            });
+            Custom.cacheToApp(this.contentType + '.filter', options.filter);
+
             function _errHandler(models, xhr) {
                 if (xhr.status === 401) {
                     Backbone.history.navigate('#login', {trigger: true});
                 }
             }
 
+            this.page = options.page;
+
+            _opts = options || {};
+            _opts.error = _opts.error || _errHandler;
+
             this.startTime = new Date();
 
-            if (page) {
-                return this.getPage(page, options);
+            if (this.page) {
+                return this.getPage(this.page, _opts);
             }
 
-            this.getFirstPage(options);
+            this.getFirstPage(_opts);
         },
 
         parse: function (response) {
@@ -95,5 +91,5 @@
         }
     });
 
-    return CompaniesCollection;
+    return ContractJobsCollection;
 });

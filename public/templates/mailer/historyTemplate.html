@@ -7,6 +7,19 @@
 Dear <b><%=employee%></b>,
 <br>
 <br>
+<!--
+<% var login; %>
+<% var prevValue; %>
+<% var changedField; %>
+<% var date; %>
+<% var contentName; %>
+<% var filesName; %>
+<% var author = history && history.author; %>
+<% var note; %>
+<% var files; %>-->
+
+
+
 <% if (note && !edit) {%>
 <%= you ? 'You' : history.author || history.user.login%> added comment "<%=history.note%>" to "<%=contentName%>" on <%=date%>
 <%} else if (note && edit) {%>
@@ -25,6 +38,10 @@ were added to "<%=contentName%>" on <%=date%>
 <%= you ? 'You' : history.editedBy.login%> converted <b>Lead</b> to <b>Opportunity</b> on <%=date%> in
 <%=history.collectionName%>
 <% } else {%>
+<% switch(history.changedField) { %>
+    <% case 'expectedRevenue': history.changedField = 'Amount'; break %>
+    <% default: {  history.changedField } %>
+<% } %>
 <%= you ? 'You' : history.editedBy.login%> changed <%=history.changedField%> <%=history.prevValue ? 'from ' : '' %> <b><%=history.prevValue%> </b>
 to <b><%=history.newValue%></b>
 on <%=date%> in <%=history.collectionName%>

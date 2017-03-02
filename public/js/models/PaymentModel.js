@@ -14,6 +14,11 @@ define([
                 fullName: ''
             },
 
+            bankExpenses: {
+                amount : 0,
+                account: null
+            },
+
             paidAmount      : 0,
             paymentMethod   : null,
             date            : new Date(),
@@ -54,9 +59,18 @@ define([
             paid = paid.toFixed(2);
 
             model.differenceAmount = differenceAmount;
-            model.paidAmount = paidAmount;
+            model.paidAmount = model.refund ? (paidAmount * -1).toFixed(2) : paidAmount;
             model.invoiced = invoiced;
             model.paid = paid;
+
+            if (model.bankExpenses && model.bankExpenses.amount) {
+                model.bankExpenses.amount /= 100;
+            } else {
+                if (!model.bankExpenses) {
+                    model.bankExpenses = {};
+                }
+                model.bankExpenses.amount = 0;
+            }
 
             if (model.paymentInfo) {
                 balance = model.paymentInfo.balance || 0;

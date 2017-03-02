@@ -9,7 +9,7 @@ define([
     var CustomChartModel = Backbone.Model.extend({
         idAttribute: '_id',
         urlRoot    : function () {
-            return '/customCharts';
+            return '/customChart';
         }
     });
 

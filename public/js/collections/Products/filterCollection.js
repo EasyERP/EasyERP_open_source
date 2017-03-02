@@ -29,25 +29,27 @@
             this.startTime = new Date();
             this.mid = options.contentType && options.contentType === 'Products' ? 58 : 65;
 
-            if (options.contentType && !(options.filter)) {
-                options.filter = {};
-                if (regex.test(options.contentType)) {
-                    options.filter = {
-                        canBeSold: {
-                            key  : 'canBeSold',
-                            value: ['true']
-                        }
+            /* if (options.contentType && !(options.filter)) {
+             options.filter = {};
+             if (regex.test(options.contentType)) {
+             options.filter = {
+             canBeSold: {
+             key  : 'canBeSold',
+             value: ['true']
+             }
 
-                    };
-                } else {
-                    options.filter = {
-                        canBePurchased: {
-                            key  : 'canBePurchased',
-                            value: ['true']
-                        }
-                    };
-                }
-            }
+             };
+             } else {
+             options.filter = {
+             canBePurchased: {
+             key  : 'canBePurchased',
+             value: ['true']
+             }
+             };
+             }
+             }*/
+
+            this.filter = options.filter;
 
             if (page) {
                 return this.getPage(page, options);

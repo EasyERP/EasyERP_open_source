@@ -2,10 +2,10 @@ var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var aggent;
-var dbId = 'vasyadb';
+var dbId = 'production';
 var admin = {
-    login: 'superAdmin',
-    pass : '111111',
+    login: 'test',
+    pass : '1234567890',
     dbId : dbId
 };
 var bannedUser = {
@@ -14,11 +14,11 @@ var bannedUser = {
     dbId : dbId
 };
 
-describe("User Specs", function () {
+describe('User Specs', function () {
     'use strict';
     this.timeout(10000);
 
-    describe("Create User block", function () {
+    describe('Create User block', function () {
         var id;
         var idCur;
 
@@ -30,12 +30,12 @@ describe("User Specs", function () {
                 .expect(200, done);
         });
 
-        it("should create user", function (done) {
+        it('should create user', function (done) {
             var body = {
-                "login"  : "super.duper",
-                "pass"   : "superpass",
-                "email"  : "super.user@valid.com",
-                "profile": 123456789
+                login  : 'super.duper',
+                pass   : 'superpass',
+                email  : 'super.user@valid.com',
+                profile: 123456789
             };
 
             aggent
@@ -60,11 +60,11 @@ describe("User Specs", function () {
                 });
         });
 
-        it("should fail create user", function (done) {
+        it('should fail create user', function (done) {
             var body = {
-                "login"  : "super.duper",
-                "pass"   : "superpass",
-                "profile": 123456789
+                login  : 'super.duper',
+                pass   : 'superpass',
+                profile: 123456789
             };
 
             aggent
@@ -247,7 +247,7 @@ describe("User Specs", function () {
                 });
         });
 
-        it("should don't update password", function (done) {
+        it('should don\'t update password', function (done) {
             var body = {
                 oldpass: 'superpas',
                 pass   : 'superpass'
@@ -260,9 +260,7 @@ describe("User Specs", function () {
         });
 
         it('should update current + id', function (done) {
-            var body = {
-
-            };
+            var body = {};
 
             aggent
                 .patch('users/current/' + id)
@@ -286,10 +284,10 @@ describe("User Specs", function () {
 
         it('should create current user', function (done) {
             var body = {
-                "login"  : "super.current",
-                "pass"   : "superpass",
-                "email"  : "super.current@valid.com",
-                "profile": 1234
+                login  : 'super.current',
+                pass   : 'superpass',
+                email  : 'super.current@valid.com',
+                profile: 1234
             };
 
             aggent
@@ -327,12 +325,12 @@ describe("User Specs", function () {
         });
     });
 
-    describe("User login methods", function () {
+    describe('User login methods', function () {
         before(function () {
             aggent = request.agent(url);
         });
 
-        it("should login success", function (done) {
+        it('should login success', function (done) {
             var body = admin;
 
             aggent
@@ -341,10 +339,10 @@ describe("User Specs", function () {
                 .expect(200, done);
         });
 
-        it("should fail login, empty pass field", function (done) {
+        it('should fail login, empty pass field', function (done) {
             var body = {
-                "login" : "admin",
-                "dbId"  : dbId
+                login: 'admin',
+                dbId : dbId
             };
 
             aggent
@@ -353,11 +351,11 @@ describe("User Specs", function () {
                 .expect(400, done);
         });
 
-        it("should fail login, wrong pass", function (done) {
+        it('should fail login, wrong pass', function (done) {
             var body = {
-                "login": "admin",
-                "pass" : "jdgfdfjkgbdjgbjhfdbgdfbg",
-                "dbId" : dbId
+                login: 'admin',
+                pass : 'jdgfdfjkgbdjgbjhfdbgdfbg',
+                dbId : dbId
             };
 
             aggent

@@ -1,7 +1,7 @@
 'use strict';
 var cluster = require('cluster');
 
-if (cluster.isMaster) {
+/*if (cluster.isMaster) {
     var cpuCount = require('os').cpus().length;
 
     for (var i = 0; i < cpuCount; i += 1) {
@@ -21,6 +21,6 @@ if (cluster.isMaster) {
         console.log("A worker " + worker.id + " is now connected to " + address.address + ":" + address.port);
     });
 
-} else {
+} else {*/
     require('./server');
-}
+/*}*/

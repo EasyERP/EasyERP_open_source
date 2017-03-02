@@ -176,16 +176,16 @@ define([
             });
 
             this.responseObj['#transaction'] = [{
-                _id : 'Invoice',
+                _id : 'invoice',
                 name: 'Invoice'
             }, {
-                _id : 'Payment',
+                _id : 'payment',
                 name: 'Payment'
             }, {
-                _id : 'Accrual',
+                _id : 'accrual',
                 name: 'Accrual'
             },{
-                _id : 'WriteOff',
+                _id : 'writeoff',
                 name: 'WriteOff'
             }];
 

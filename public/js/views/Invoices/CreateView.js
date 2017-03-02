@@ -31,8 +31,8 @@ define([
         },
 
         events: {
-            'click .details'     : 'showDetailsBox',
-            'click .icon-attach' : 'clickInput'
+            'click .details'    : 'showDetailsBox',
+            'click .icon-attach': 'clickInput'
         },
 
         clickInput: function () {
@@ -45,8 +45,8 @@ define([
             var symbol;
             var currency;
 
-            if ($target.closest('a').attr('id') === 'currencyDd'){
-                currency =  _.findWhere(this.responseObj['#currencyDd'], {_id : $target.attr('id')});
+            if ($target.closest('a').attr('id') === 'currencyDd') {
+                currency = _.findWhere(this.responseObj['#currencyDd'], {_id: $target.attr('id')});
                 symbol = currency ? currency.currency : '$';
                 $target.closest('dd').find('.current-selected').attr('data-symbol', symbol);
                 this.$el.find('.currencySymbol').text(symbol);
@@ -256,14 +256,12 @@ define([
             var invoiceDate;
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'edit-dialog',
-                title        : 'Create Invoice',
-                width        : '900px',
-                position     : {within: $('#wrapper')},
-                buttons      : [
+                autoOpen   : true,
+                dialogClass: 'edit-dialog',
+                title      : 'Create Invoice',
+                width      : '900px',
+                position   : {within: $('#wrapper')},
+                buttons    : [
                     {
                         id   : 'create-invoice-dialog',
                         class: 'btn blue',
@@ -285,12 +283,10 @@ define([
 
             this.renderAssignees(this.model);
 
-
-
             /*invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
-            invoiceItemContainer.append(
-                new InvoiceItemView({balanceVisible: true, canBeSold: this.forSales}).render().el
-            );*/
+             invoiceItemContainer.append(
+             new InvoiceItemView({balanceVisible: true, canBeSold: this.forSales}).render().el
+             );*/
 
             paymentContainer = this.$el.find('#payments-container');
             paymentContainer.append(

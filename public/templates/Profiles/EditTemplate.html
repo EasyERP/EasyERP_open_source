@@ -4,7 +4,7 @@
 <span>Profile Description<input type="text" id="profileDescription" value="<%= profileDescription %>"
                                 maxlength="32"/></span>
 
-<table class="list" id="modulesAccessTable">
+<table class="list _modulesAccessTable" id="modulesAccessTable">
     <thead>
     <tr>
         <td>Module Name</td>
@@ -18,9 +18,24 @@
     <% profile.profileAccess.forEach(function(item){ %>
     <tr>
         <td class="mname"> <%=item.module.mname %></td>
-        <td><input type="checkbox" class="read" <% if(item.access[0]) { %> checked="checked" <% } %> enabled /></td>
-        <td><input type="checkbox" class="write" <% if(item.access[1]) { %> checked="checked" <% } %> enabled/></td>
-        <td><input type="checkbox" class="delete" <% if(item.access[2]) { %> checked="checked" <% } %> enabled/></td>
+        <td>
+            <label class="_customCHeckbox">
+                <input type="checkbox" class="read" <% if(item.access[0]) { %> checked="checked" <% } %> enabled />
+                <span></span>
+            </label>
+        </td>
+        <td>
+            <label class="_customCHeckbox">
+                <input type="checkbox" class="write" <% if(item.access[1]) { %> checked="checked" <% } %> enabled/>
+                <span></span>
+            </label>
+        </td>
+        <td>
+            <label class="_customCHeckbox">
+                <input type="checkbox" class="delete" <% if(item.access[2]) { %> checked="checked" <% } %> enabled/>
+                <span></span>
+            </label>
+        </td>
     </tr>
     <% }) %>
     <% } %>

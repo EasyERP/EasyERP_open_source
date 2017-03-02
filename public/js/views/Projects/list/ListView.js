@@ -15,7 +15,7 @@ define([
 ], function ($, _, ListViewBase, listTemplate, stagesTamplate, CreateView, ListItemView, EditView, CurrentModel, ContentCollection, projects, selectService, common) {
     var ProjectsListView = ListViewBase.extend({
         CreateView       : CreateView,
-        listTemplate     : listTemplate,
+        listTemplate     : _.template(listTemplate),
         ListItemView     : ListItemView,
         ContentCollection: ContentCollection,
         formUrl          : '#easyErp/Projects/form/',
@@ -61,8 +61,8 @@ define([
 
             $currentEl = this.$el;
 
-            $currentEl.html('');
-            $currentEl.append(_.template(listTemplate));
+            $currentEl.html(this.listTemplate());
+
             itemView = new ListItemView({
                 collection : this.collection,
                 page       : this.page,

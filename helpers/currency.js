@@ -21,11 +21,12 @@ var Module = function (date, cb) {
     date = date.format('YYYY-MM-DD');
 
     oxr.historical(date, function () {
-        if (oxr.error) {
+        if (oxr.error && oxr.error.status >= 400) {
             return oxr.latest(function () {
                 cb(null, oxr);
             });
         }
+
         cb(null, oxr);
     });
 };

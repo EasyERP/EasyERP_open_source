@@ -1,18 +1,30 @@
 <div class="form-holder _dialogWrap">
     <div class="_dialogMainTitle">Bank Accounts</div>
-    <div class="_dialogBlock">
+    <div class="_dialogBlock half-block left">
         <div class="_dialogRow">Name</div>
         <div class="_dialogRow"><input id="paymentMethodName" value="<%=model.name%>"></div>
-        <div class="_dialogRow">Currency</div>
-        <div class="_dialogRow account-wrapper"><a href="javascript:;" class="current-selected _newSelectListWrap" id="currency" data-id="<%=model.currency%>"><%=model.currency%></a></div>
-        <div class="_dialogRow">Bank</div>
-        <div class="_dialogRow"><input id="bankName" value="<%=model.bank%>"></div>
-        <!--<div class="_dialogRow">Name</div>
-            <div class="_dialogRow" id="owner" data-id="<%=model.owner%>"><%=model.owner%></div>-->
-        <div class="_dialogRow">Account</div>
+        <div class="_dialogRow">IBAN</div>
         <div class="_dialogRow"><input id="account" value="<%=model.account%>"></div>
         <div class="_dialogRow">Chart of Account</div>
-        <div class="_dialogRow account-wrapper"><a href="javascript:;" class="current-selected _newSelectListWrap" id="chartAccount" data-id="<%=model.chartAccount ? model.chartAccount._id : null%>"><%=model.chartAccount ? model.chartAccount.name : 'Select'%></a></div>
+        <div class="_dialogRow account-wrapper"><a href="javascript:;" class="current-selected _newSelectListWrap"
+                                                   id="chartAccount"
+                                                   data-id="<%=model.chartAccount ? model.chartAccount._id : null%>"><%=model.chartAccount
+            ? model.chartAccount.name : 'Select'%></a></div>
+        <div class="_dialogRow">Currency</div>
+        <div class="_dialogRow account-wrapper"><a href="javascript:;" class="current-selected _newSelectListWrap"
+                                                   id="currency" data-id="<%=model.currency%>"><%=model.currency%></a>
+        </div>
+
+    </div>
+    <div class="_dialogBlock half-block right">
+        <div class="_dialogRow">Short Bank Name</div>
+        <div class="_dialogRow"><input id="bankName" value="<%=model.bank%>"></div>
+        <div class="_dialogRow">Bank Address</div>
+        <div class="_dialogRow"><input id="address" value="<%=model.address%>"></div>
+        <div class="_dialogRow">Owner</div>
+        <div class="_dialogRow"><input id="owner" value="<%=model.owner%>"></div>
+        <div class="_dialogRow">SWIFT Code</div>
+        <div class="_dialogRow"><input id="swiftCode" value="<%=model.swiftCode%>"></div>
     </div>
 </div>
 

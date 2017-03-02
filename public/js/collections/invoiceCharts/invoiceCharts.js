@@ -1,8 +1,10 @@
 ﻿define([
     'Backbone',
-    'moment'
-], function (Backbone, moment) {
-    "use strict";
+    'helpers/getDateHelper',
+    'moment',
+    'custom'
+], function (Backbone, DateHelper, moment, custom) {
+    'use strict';
     var Model = Backbone.Model.extend({
         idAttribute: '_id',
 
@@ -79,13 +81,41 @@
         url: 'revenue/synthetic',
 
         initialize: function (options) {
-            options = options || {};
+            var dateRange;
+            var _opts = options || {};
 
-            this.byWeek = !!options.byWeek;
+            this.startTime = new Date();
+
+            this.filter = _opts.filter || custom.retriveFromCash('invoiceCharts.filter');
+
+            dateRange = this.filter && this.filter.date ? this.filter.date.value : null;
+
+            dateRange = dateRange || DateHelper.getDate({
+                    count: 2,
+                    type : 'year'
+                });
+
+            this.startDate = new Date(dateRange[0]);
+            this.endDate = new Date(dateRange[1]);
+            this.byWeek = !!_opts.byWeek;
+
+            _opts.filter = this.filter || {};
+
+            _opts.filter.date = {
+                value: [this.startDate, this.endDate]
+            };
+
+            custom.cacheToApp('invoiceCharts.filter', _opts.filter);
 
             this.fetch({
-                data : options,
-                reset: true
+                data   : _opts,
+                reset  : true,
+                success: function () {
+                },
+
+                error: function (err, xhr) {
+                    console.log(xhr);
+                }
             });
         },
 

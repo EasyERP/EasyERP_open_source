@@ -1,5 +1,5 @@
 ﻿<div id="searchContainer"></div>
-<div class="_tableLeadsWrap">
+<div class="_tableLeadsWrap customScroll">
     <table class="list stripedList">
         <colgroup>
             <col width="42px">
@@ -13,8 +13,13 @@
         </colgroup>
         <thead>
         <tr>
-            <th class="centerCell"><input type="checkbox" id="checkAll"/></th>
-            <th class="oe_sortable" data-sort="name">Subject<span class="arrow down"></span><span
+            <th class="centerCell">
+                <label class="_customCHeckbox">
+                    <input type="checkbox" id="checkAll"/>
+                    <span></span>
+                </label>
+            </th>
+            <th class="oe_sortable" data-sort="name">Contact Name<span class="arrow down"></span><span
                     class="arrow up"></span></th>
             <th>Tags</th>
             <th class="oe_sortable" data-sort="priority">Priority<span class="arrow down"></span><span
@@ -31,9 +36,9 @@
                     class="arrow up"></span></th>
             <th class="oe_sortable" data-sort="workflow.name">Stage<span class="arrow down"></span><span
                     class="arrow up"></span></th>
-            <th class="oe_sortable" data-sort="salesPerson.name.first">Assigned To<span class="arrow down"></span><span
+            <th class="oe_sortable" data-sort="salesPerson.name">Assigned To<span class="arrow down"></span><span
                     class="arrow up"></span></th>
-            <th class="oe_sortable sortDn" data-sort="editedBy.date">Date of Editing<span class="arrow down"></span><span
+            <th class="oe_sortable sortDn" data-sort="editedBy.date">Date Edited<span class="arrow down"></span><span
                     class="arrow up"></span></th>
         </tr>
         </thead>

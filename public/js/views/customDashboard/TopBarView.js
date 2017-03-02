@@ -6,9 +6,10 @@ define([
     'constants'
 ], function ($, _, TopBarBase, ContentTopBarTemplate, CONSTANTS) {
     var TopBarView = TopBarBase.extend({
-        el         : '#top-bar',
-        contentType: CONSTANTS.CUSTOMDASHBOARD,
-        template   : _.template(ContentTopBarTemplate)
+        el           : '#top-bar',
+        contentType  : CONSTANTS.CUSTOMDASHBOARD,
+        contentHeader: 'Custom Dashboard',
+        template     : _.template(ContentTopBarTemplate)
     });
 
     return TopBarView;

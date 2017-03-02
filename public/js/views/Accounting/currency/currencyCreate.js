@@ -26,7 +26,7 @@ define([
         },
 
         events: {
-            'click .current-selected'               : 'showNewSelect',
+            'click .current-selected'                          : 'showNewSelect',
             click                                              : 'hideNewSelect',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
         },
@@ -45,7 +45,7 @@ define([
                 decPlace: decPlaces
             };
 
-            if (!symbol){
+            if (!symbol) {
                 return App.render({
                     type   : 'error',
                     message: 'Please add Symbol'
@@ -56,7 +56,7 @@ define([
                 wait   : true,
                 success: function (res, model) {
                     self.hideDialog();
-                    $('#currencyTable').append(_.template(tableEL, {elem : model}));
+                    $('#currencyTable').prepend(_.template(tableEL, {elem: model}));
                     self.collection.add(res);
                 },
 
@@ -113,12 +113,10 @@ define([
             });
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'edit-dialog',
-                width        : '250px',
-                buttons      : [
+                autoOpen   : true,
+                dialogClass: 'edit-dialog',
+                width      : '250px',
+                buttons    : [
                     {
                         text : 'Save',
                         class: 'btn blue',

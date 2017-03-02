@@ -26,16 +26,40 @@
     });
 
     function writeToStorage(name, key, value) {
-        client.hset(name, key, value, redis.print);
+        return client.hset(name, key, value, redis.print);
+    }
+
+    function hSetNXToStorage(name, key, value, callback) {
+        return client.hsetnx(name, key, value, callback);
     }
 
     function readFromStorage(name, key, callback) {
-        client.hget(name, key, function (err, value) {
+        return client.hget(name, key, function (err, value) {
             if (err) {
                 callback(err);
             } else {
                 callback(null, value);
             }
+        });
+    }
+
+    function getKeysFromStorage(name, callback) {
+        return client.hkeys(name, function (err, values) {
+            if (err) {
+                return callback(err);
+            }
+
+            callback(null, values);
+        });
+    }
+
+    function hGetAllFromStorage(name, callback) {
+        client.hgetall(name, function (err, items) {
+            if (err) {
+                return callback(err);
+            }
+
+            callback(null, items);
         });
     }
 
@@ -64,7 +88,7 @@
                 });
             }, function (err) {
                 if (err) {
-                   return callback(err);
+                    return callback(err);
                 }
                 console.log('---------- Removed All from Redish ---------');
                 callback();
@@ -73,11 +97,82 @@
         });
     }
 
+    function sAdd(key, value, callback) {
+        var valuesString;
+
+        callback = callback || function () {
+            };
+
+        if (!(value instanceof Array)) {
+            return client.sadd(key, value, callback);
+        }
+
+        valuesString = value.join(' ');
+
+        client.sadd(key, valuesString, callback);
+    }
+
+    function sMove(key, value, callback) {
+        var valuesString;
+
+        callback = callback || function () {
+            };
+
+        if (!(value instanceof Array)) {
+            return client.srem(key, value, callback);
+        }
+
+        valuesString = value.join(' ');
+
+        client.srem(key, valuesString, callback);
+    }
+
+    function sMembers(key, callback) {
+        callback = callback || function () {
+            };
+
+        client.smembers(key, callback);
+    }
+
+    function sIsMember(key, value, callback) {
+        callback = callback || function () {
+            };
+
+        client.sismember(key, value, function (err, reply) {
+            if (err) {
+                return callback(err);
+            }
+
+            callback(null, !!reply);
+        });
+    }
+
+    function sPop(key, callback) {
+        callback = callback || function () {
+
+            };
+
+        client.spop(key, function (err, item) {
+            if (err) {
+                return callback(err);
+            }
+
+            callback(null, item);
+        });
+    }
+
     return {
         writeToStorage      : writeToStorage,
         removeFromStorage   : removeFromStorage,
         removeAllFromStorage: removeAllFromStorage,
         readFromStorage     : readFromStorage,
-        removeAllStorages   : removeAllStorages
+        removeAllStorages   : removeAllStorages,
+        getKeysFromStorage  : getKeysFromStorage,
+        hGetAllFromStorage  : hGetAllFromStorage,
+        sAdd                : sAdd,
+        sIsMember           : sIsMember,
+        sMove               : sMove,
+        sMembers            : sMembers,
+        hSetNXToStorage     : hSetNXToStorage
     };
 })();

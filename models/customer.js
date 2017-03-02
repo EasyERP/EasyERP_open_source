@@ -121,6 +121,15 @@ module.exports = (function () {
             country: {type: String, default: ''}
         },
 
+        shippingAddress: {
+            street : {type: String, default: ''},
+            city   : {type: String, default: ''},
+            state  : {type: String, default: ''},
+            zip    : {type: String, default: ''},
+            country: {type: String, default: ''},
+            name   : {type: String, default: ''}
+        },
+
         website    : {type: String, default: ''},
         jobPosition: {type: String, default: ''},
         skype      : {type: String, default: ''},
@@ -163,7 +172,7 @@ module.exports = (function () {
             group: [{type: ObjectId, ref: 'Department', default: null}]
         },
 
-        notes      : [{
+        notes: [{
             note      : String,
             title     : String,
             task      : {type: ObjectId, ref: 'DealTasks', default: null},
@@ -174,6 +183,7 @@ module.exports = (function () {
                 login: String
             }
         }],
+
         attachments: {type: Array, default: []},
         history    : {type: Array, default: []},
 
@@ -192,8 +202,10 @@ module.exports = (function () {
             industry: {type: ObjectId, ref: 'Industries', default: null}
         },
 
-        ID        : Number,
-        externalId: {type: String, default: null}
+        ID           : Number,
+        integrationId: {type: String, default: ''},
+        channel      : {type: ObjectId, ref: 'integrations', default: null}
+
     }, {collection: 'Customers'});
 
     mongoose.model('Customers', customerSchema);

@@ -34,7 +34,7 @@
   display: flex;
   height: 46px;
   margin: 15px 0;
-  cursor: pointer;
+
 
   .dateListCheckboxWrap {
     padding: 0 20px;
@@ -59,8 +59,8 @@
 
   ._tagSmall {
     flex-shrink: 0;
-
     margin-right: 5px;
+    cursor: pointer;
   }
 
   .dateListDescription {
@@ -75,9 +75,10 @@
   ._taskListDateBlock {
     width: calc(100% - (35% + 159px));
     overflow: auto;
+    min-width: 420px;
 
     ._dateListElement {
-      max-height: 380px;
+      max-height: 400px;
       overflow: hidden;
       position: relative;
       font-size: 14px;
@@ -165,6 +166,48 @@
     padding: 0 10px;
     border-radius: 3px;
     cursor: pointer;
+  }
+
+  .dateListHeader {
+    display: block;
+    height: 40px;
+    overflow: hidden;
+    position: relative;
+
+    &:before, &:after {
+      box-sizing:initial;
+    }
+
+    &:before {
+      content: "";
+      float: left;
+      height: 100%;
+      width: 0.5em;
+    }
+
+    &:after {
+      content: '...';
+      float: right;
+      left: 100%;
+      margin-left: -6em;
+      padding-right: 0.5em;
+      position: relative;
+      text-align: left;
+      //top: -25px;
+      top: -20px;
+      width: 6em;
+      background: linear-gradient(to right, rgba(255, 255, 255, 0), white 15%, white);
+      text-align: left;
+      text-indent: 0.75em;
+    }
+
+
+    .textEllipsis {
+      float: right;
+      width: 100%;
+      margin-left: -0.5em;
+      cursor: pointer;
+    }
   }
 }
 
@@ -365,6 +408,30 @@
     clear: both;
   }
 
+  ._showMoreTagsBtn {
+    display: none;
+
+    float: left;
+    color: #364150;
+    padding: 3px 4px;
+    margin-top: 5px;
+    font-family: $semibold-font-family;
+    border-radius: 3px;
+  }
+
+  &._showLess {
+
+    ._showMoreTagsBtn {
+      display: block;
+    }
+
+    ._tagSmall {
+      &:nth-child(n+6) {
+        display: none;
+      }
+    }
+  }
+
   ._tagSmall {
     float: left;
     margin: 5px 5px 0 0;
@@ -401,78 +468,77 @@
 
 ._contractJobsListWrap {
   table-layout: fixed;
+
+  ._contractJobsListItem {
+
+    td {
+      vertical-align: top;
+
+      &._contractJobsStatusBlock {
+        vertical-align: middle;
+      }
+
+      + td {
+        padding-top: 10px !important;
+        border-left: 1px solid #d7d7d7;
+      }
+    }
+
+    ._contractJobsStatusBlock {
+      font-family: $semibold-font-family;
+
+      &.finished,
+      &.inProgress {
+        color: #fff;
+      }
+
+      &.finished {
+        background-color: $contractJobs-green-bg;
+      }
+
+      &.inProgress {
+        background-color: $contractJobs-blue-bg;
+      }
+    }
+
+    ._contractJobsJobBlock {
+
+      > div {
+        line-height: 20px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+
+      ._contractJobsName {
+        font-size: 16px;
+        font-family: $bold-font-family;
+      }
+      ._contractJobsCustomer {
+        font-style: italic;
+      }
+    }
+
+    ._contractJobsInvoiceBlock {
+      > div {
+        line-height: 20px;
+      }
+    }
+
+    ._contractJobsRevenueBlock {
+      > div {
+        line-height: 20px;
+      }
+    }
+  }
 }
 
-._contractJobsListItem {
+._contractJobsCostBlock,
+._contractJobsProfitBlock,
+._contractJobsRevenueBlock {
 
-  td + td {
-    border-left: 1px solid #d7d7d7;
+  > div {
+    padding: 3px 0;
   }
-
-  ._contractJobsStatusBlock {
-    font-family: $semibold-font-family;
-
-    &.finished,
-    &.inProgress  {
-      color: #fff;
-    }
-
-    &.finished {
-      background-color: $contractJobs-green-bg;
-    }
-
-    &.inProgress {
-      background-color: $contractJobs-blue-bg;
-    }
-  }
-  ._contractJobsJobBlock {
-
-    > div {
-      line-height: 20px;
-      text-overflow: ellipsis;
-      overflow: hidden;
-    }
-
-    ._contractJobsName {
-      font-size: 16px;
-      font-family: $bold-font-family;
-    }
-    ._contractJobsCustomer {
-      font-style: italic;
-    }
-  }
-
-  ._contractJobsInvoiceBlock {
-    > div {
-      line-height: 20px;
-    }
-  }
-  ._contractJobsRevenueBlock {
-    > div {
-      line-height: 20px;
-    }
-  }
-}
-
-//
-//.list tbody tr._contractJobsListItem td {
-//  padding: 10px;
-//  text-align: left;
-//  vertical-align: top;
-//
-//  &.contractCell {
-//    text-align: center;
-//  }
-//}
-//
-//.list tbody td {
-//  &.contractCell {
-//    text-align: center;
-//  }
-//}
-
-.semiBold {
-  font-family: $semibold-font-family;
 }
 
 .workflow-list-wrapper,
@@ -588,7 +654,7 @@
 /*added from _icons.scss 22.09*/
 
 .btn-list {
-  @extend .defaultBorRad;
+  //@extend .defaultBorRad;
   height: 24px;
   margin: 0 12px 0 5px;
   border: 1px solid #7f7f80; //@thin-border @border-color-main;
@@ -633,7 +699,7 @@
 
 /*23.09*/
 .newSelectList {
-  max-width: 200px;
+  //max-width: 200px;
   text-align: center;
 
   li {
@@ -678,8 +744,10 @@
     width: 100% !important;
     height: 24px;
     margin: 0;
+    padding: 0 5px;
     border: 0;
     border-bottom: 1px solid #7f7f80;
+    text-align: left;
     float: left;
   }
 }

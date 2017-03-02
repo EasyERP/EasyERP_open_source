@@ -1,32 +1,17 @@
-.holidays.projectTimeCardCustomList {
-  float: none;
-  margin: -30px auto 20px;
-  width: 415px !important;
-
-  &._timeCardLegend {
-    margin-top: 20px;
-
-    thead tr {
-      border-top: none;
-    }
-  }
-}
-
 #searchContainer.projectTimeCardCustomSearch {
   top: -32px;
   margin-right: 23px;
   width: 20%;
 
   &._timeCardSearch {
-    top: 50px;
+    top: 47px;
   }
 }
-
 
 .kanban {
   @extend .noPaddingMargin;
   min-width: 100%;
-  //table-layout: fixed;
+  background-color: #fdfdfd;
 
   tbody {
     width: 100%;
@@ -72,15 +57,15 @@
       min-height: 40px;
       text-align: left;
       border: 1px solid #7f7f80;//$thin-border $border-color-main;
-      background-color: $bg-main;
+      background-color: #fdfdfd;
       color: $kanab-text-color;
       cursor: move;
-      transition: border-color 1s ease, box-shadow 1s ease;
+      transition: border-color 1s ease, box-shadow .5s ease;
       @extend  .defaultBorRad;
 
       &.active {
-        box-shadow: 0 1px 10px #656565;
-        transition: border-color 1s ease, box-shadow 1s ease;
+        background-color: #fff;
+        box-shadow: 5px 5px rgba(102, 102, 102, 0.2);
       }
 
       .inner {
@@ -162,16 +147,18 @@
         font-weight: normal;
         font-size: 11px;
         line-height: 11px;
+
         &.text {
           @extend %text-overflow;
           margin-right: 45px;
           display: block;
           line-height: 20px;
         }
+
         span {
           font-weight: normal;
           line-height: 13px;
-          font-size: 18px;
+          font-size: 17px;
         }
       }
     }
@@ -180,6 +167,7 @@
       background: $bg-main;
       height: 35px;
       position: relative;
+      cursor: default;
 
       &.task {
         height: 42px;
@@ -414,8 +402,8 @@
   }
 }
 
-@media screen and (max-width: $extra-large-screen) {
-  .holidays.projectTimeCardCustomList {
-    margin-top: 20px;
-  }
-}
+//@media screen and (max-width: $extra-large-screen) {
+//  .holidays.projectTimeCardCustomList {
+//    margin-top: 20px;
+//  }
+//}

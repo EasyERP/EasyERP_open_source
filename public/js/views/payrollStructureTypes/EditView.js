@@ -323,14 +323,12 @@ define([
             var typeDeduction = 'deduction';
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'edit-dialog',
-                title        : 'Edit Payroll Structure Types',
-                width        : '900px',
-                position     : {within: $('#wrapper')},
-                buttons      : [
+                autoOpen   : true,
+                dialogClass: 'edit-dialog',
+                title      : 'Edit Payroll Structure Types',
+                width      : '700px',
+                position   : {within: $('#wrapper')},
+                buttons    : [
                     {
                         text : 'Save',
                         class: 'btn blue',

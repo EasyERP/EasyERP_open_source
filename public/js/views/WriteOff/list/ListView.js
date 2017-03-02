@@ -125,6 +125,10 @@ define([
 
             e.preventDefault();
 
+            if ($(e.target).closest('tfoot').length) {
+                return;
+            }
+
             model.urlRoot = '/Invoices';
             model.fetch({
                 data: {

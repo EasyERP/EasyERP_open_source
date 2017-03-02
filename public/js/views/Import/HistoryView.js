@@ -15,17 +15,17 @@ define([
         el             : '#historyBlock',
         historyTemplate: _.template(HistoryTemplate),
         childView      : null,
-        contentType      : CONSTANTS.IMPORT,
+        contentType    : CONSTANTS.IMPORT,
         hasPagination  : true,
         ListItemView   : ListItemView,
 
         initialize: function (options) {
             this.headers = {
-                date: 'Date of import',
-                user: 'User',
-                type: 'Type',
-                status: 'Status',
-                fileName: 'Source File',
+                date          : 'Date of import',
+                user          : 'User',
+                type          : 'Type',
+                status        : 'Status',
+                fileName      : 'Source File',
                 reportFileName: 'Skipped file'
             };
 
@@ -42,7 +42,7 @@ define([
 
             $thisEl.html(this.historyTemplate({
                 history: this.collection,
-                keys: [
+                keys   : [
                     'date',
                     'user',
                     'type',

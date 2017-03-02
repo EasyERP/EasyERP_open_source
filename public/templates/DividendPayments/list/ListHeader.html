@@ -1,3 +1,4 @@
+<div class="_dividendPaymentsTable">
 <table class="list stripedList">
     <colgroup>
         <col width="42px">
@@ -8,7 +9,12 @@
     </colgroup>
     <thead>
     <tr>
-        <th class="centerCell"><input type="checkbox" id="checkAll"/></th>
+        <th class="centerCell">
+            <label class="_customCHeckbox">
+                <input type="checkbox" id="checkAll"/>
+                <span></span>
+            </label>
+        </th>
         <th class="oe_sortable" data-sort="name">Name<span class="arrow down"></span><span
                 class="arrow up"></span></th>
         <th class="oe_sortable" data-sort="invoice">Declaration<span class="arrow down"></span><span
@@ -23,9 +29,9 @@
     <tbody id="listTable" class="enableTableOdd"></tbody>
     <tfoot id="listTotal">
     <tr>
-        <td colspan="4"></td>
+        <td colspan="4">Total</td>
         <td class="money"><span id="totalPaid"></span></td>
     </tr>
     </tfoot>
 </table>
-
+</div>

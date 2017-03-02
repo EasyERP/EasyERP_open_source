@@ -98,8 +98,8 @@ define([
                 skype: skype,
 
                 social: {
-                    LI: LI,
-                    FB: FB
+                    LI: this.currentModel.changed['social.LI'] || LI,
+                    FB: this.currentModel.changed['social.FB'] || FB
                 },
 
                 company      : company,
@@ -279,10 +279,9 @@ define([
             var that = this; // DO NOT confuse with "self" below! it's other context!
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                dialogClass  : 'edit-dialog',
-                width        : 800,
-                buttons      : {
+                dialogClass: 'edit-dialog',
+                width      : 800,
+                buttons    : {
                     save: {
                         text : 'Save',
                         class: 'btn blue',
@@ -393,21 +392,21 @@ define([
                     $(this).dialog('close');
                 }
             }, this);
-/*
-            if (model.groups) {
-                if (model.groups.users.length > 0 || model.groups.group.length) {
-                    $('.groupsAndUser').show();
-                    model.groups.group.forEach(function (item) {
-                        $('.groupsAndUser').append("<tr data-type='targetGroups' data-id='" + item._id + "'><td>" + item.name + "</td><td class='text-right'></td></tr>");
-                        $('#targetGroups').append("<li id='" + item._id + "'>" + item.name + '</li>');
-                    });
-                    model.groups.users.forEach(function (item) {
-                        $('.groupsAndUser').append("<tr data-type='targetUsers' data-id='" + item._id + "'><td>" + item.login + "</td><td class='text-right'></td></tr>");
-                        $('#targetUsers').append("<li id='" + item._id + "'>" + item.login + '</li>');
-                    });
+            /*
+             if (model.groups) {
+             if (model.groups.users.length > 0 || model.groups.group.length) {
+             $('.groupsAndUser').show();
+             model.groups.group.forEach(function (item) {
+             $('.groupsAndUser').append("<tr data-type='targetGroups' data-id='" + item._id + "'><td>" + item.name + "</td><td class='text-right'></td></tr>");
+             $('#targetGroups').append("<li id='" + item._id + "'>" + item.name + '</li>');
+             });
+             model.groups.users.forEach(function (item) {
+             $('.groupsAndUser').append("<tr data-type='targetUsers' data-id='" + item._id + "'><td>" + item.login + "</td><td class='text-right'></td></tr>");
+             $('#targetUsers').append("<li id='" + item._id + "'>" + item.login + '</li>');
+             });
 
-                }
-            }*/
+             }
+             }*/
             return this;
         }
 

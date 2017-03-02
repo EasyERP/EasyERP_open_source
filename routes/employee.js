@@ -14,6 +14,23 @@ module.exports = function (event, models) {
     var multipart = require('connect-multiparty');
     var multipartMiddleware = multipart();
 
+    function profileAccess(req, res, next) {
+        var currentUserId = req.session && req.session.uId;
+        var id = req.params.userId;
+        var isValidId = id === currentUserId;
+        var err;
+
+        if (isValidId) {
+            req.notCheck = true;
+            return next();
+        }
+
+        err = new Error('Permission denied');
+        err.status = 403;
+
+        next(err);
+    }
+
     router.use(authStackMiddleware);
 
     /**
@@ -709,6 +726,7 @@ module.exports = function (event, models) {
     router.get('/getSalaryForChart', handler.getSalaryForChart);
     router.get('/getSalaryByDepartment', handler.getSalaryForChartByDepartment);
     router.get('/settings', handler.getSettings);
+    router.get('/:userId', profileAccess, handler.forProfile);
 
     /**
      *@api {post} /employees/ Request for creating Employee

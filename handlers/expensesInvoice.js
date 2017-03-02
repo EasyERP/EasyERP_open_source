@@ -2,11 +2,8 @@ var mongoose = require('mongoose');
 var WorkflowHandler = require('./workflow');
 var RESPONSES = require('../constants/responses');
 var CONSTANTS = require('../constants/mainConstants');
-var oxr = require('open-exchange-rates');
 var fx = require('money');
 var moment = require('../public/js/libs/moment/moment');
-var fs = require('fs');
-var pathMod = require('path');
 
 var Proforma = function (models) {
     'use strict';
@@ -18,8 +15,8 @@ var Proforma = function (models) {
     var workflowHandler = new WorkflowHandler(models);
     var JournalEntryHandler = require('./journalEntry');
     var _journalEntryHandler = new JournalEntryHandler(models);
-
-    oxr.set({app_id: process.env.OXR_APP_ID});
+    var ratesService = require('../services/rates')(models);
+    var ratesRetriever = require('../helpers/ratesRetriever')();
 
     this.create = function (req, res, next) {
         var dbIndex = req.session.lastDb;
@@ -31,10 +28,12 @@ var Proforma = function (models) {
         var waterFallTasks;
 
         function getRates(callback) {
-            oxr.historical(date, function () {
-                fx.rates = oxr.rates;
-                fx.base = oxr.base;
-                callback();
+            ratesService.getById({id: date, dbName: req.session.lastDb}, function (err, result) {
+
+                fx.rates = result && result.rates ? result.rates : {};
+                fx.base = result && result.base ? result.base : 'USD';
+
+                callback(null, callback);
             });
         }
 
@@ -94,7 +93,7 @@ var Proforma = function (models) {
             saveObject.paymentInfo.balance = data.paymentInfo.total;
             saveObject.journal = CONSTANTS.EXPENSES_INVOICE_JOURNAL;
 
-            saveObject.currency.rate = oxr.rates[data.currency.name];
+            saveObject.currency.rate = ratesRetriever.getRate(fx.rates, fx.base, data.currency._id);
 
             expensesInvoice = new ExpensesInvoice(saveObject);
 
@@ -109,7 +108,7 @@ var Proforma = function (models) {
 
         function createJournalEntry(expensesInvoice, callback) {
             var body = {
-                currency      : CONSTANTS.CURRENCY_USD,
+                currency      : expensesInvoice.currency,
                 journal       : CONSTANTS.EXPENSES_INVOICE_JOURNAL,
                 sourceDocument: {
                     model: 'expensesInvoice',
@@ -121,18 +120,17 @@ var Proforma = function (models) {
                 date  : expensesInvoice.invoiceDate
             };
 
-            var amount = expensesInvoice.currency.rate * expensesInvoice.paymentInfo.total;
+            var amount = expensesInvoice.paymentInfo.total;
 
             body.amount = amount;
 
-            _journalEntryHandler.create(body, req.session.lastDb, function () {
-            }, req.session.uId);
+            _journalEntryHandler.createReconciled(body, {dbName: req.session.lastDb, uId: req.session.uId});
 
             callback(null, expensesInvoice);
         }
 
         parallelTasks = [fetchFirstWorkflow, getRates];
-        waterFallTasks = [parallel, createExpensesInvoice, createJournalEntry];
+        waterFallTasks = [parallel, createExpensesInvoice/*, createJournalEntry*/];
 
         async.waterfall(waterFallTasks, function (err, result) {
             if (err) {

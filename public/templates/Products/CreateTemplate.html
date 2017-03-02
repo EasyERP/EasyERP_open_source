@@ -1,178 +1,311 @@
-<div class="form-holder productForm">
+<div class="form-holder _newForm productForm">
     <form method="post" action="" id="createEmployeeForm" class="form">
-        <fieldset>
-            <div class="inner">
-                <ul class="dialog-tabs" data-class="mainTabs">
-                    <li><a class="active" href="javascript:;">Main</a></li>
-                    <li><a href="javascript:;">Assignees</a></li>
-                </ul>
-                <div class="clearfix"></div>
-                <div class="dialog-tabs-items mainTabs">
-                    <div class="dialog-tabs-item mainTabs active">
+        <h4 class="_dialogTitlePositioned">Add New Product</h4>
+        <ul class="dialog-tabs" data-class="mainTabs">
+            <li><a class="active" href="javascript:;">Product Info</a></li>
+            <li><a href="javascript:;">Stock/Inventory</a></li>
+            <li><a href="javascript:;">Bundle</a></li>
+            <li><a href="javascript:;">Prices</a></li>
+        </ul>
+        <div class="dialog-tabs-items mainTabs">
+            <div class="dialog-tabs-item mainTabs active">
+                <div class="_formWrap _enlargedItemMargin">
+                    <div class="_avatarBlock">
                         <div class="avatar">
-                            <div class="upload">Edit<input type="file" value="Edit" id="inputImg"></div>
-                            <canvas id="avatar" width="140" height="140">
-                                <input type="file" value="Edit" id="File1">
+                            <div class="upload">Edit
+                                <input type="file"
+                                       value="Edit"
+                                       id="inputImg">
+                            </div>
+                            <canvas id="avatar"
+                                    width="140"
+                                    height="140">
+                                <input type="file"
+                                       value="Edit"
+                                       id="File1">
                             </canvas>
                         </div>
-                        <div class="avatarInfoContainer">
-                            <div class="half-block left">
-                                <div class="product-info">
-                                    <div class="inputField">
-                                        <label for="product">
-                                            <input type="text" id="product" required maxlength="32"/>
-                                            <span>Product Name</span>
-                                        </label>
-                                    </div>
-                                    <div>
-                                        <label for="sold">
-                                            <input type="checkbox" id="sold" <% if (contentType === 'salesProduct') {%>
-                                            checked
-                                            <%}%> class="checkbox left"/>
-                                            <span>Can be Sold</span>
-                                        </label>
-                                    </div>
-                                    <div>
-                                        <label for="expensed">
-                                            <input type="checkbox" id="expensed" class="checkbox left"/>
-                                            <span>Can be Expensed</span>
-                                        </label>
-                                    </div>
-                                    <!--
-                                                        <dt><label for="subscription">Event Subscription</label></dt><dd><input type="checkbox" id="subscription" required class="checkbox left"/></dd>-->
-                                    <div>
-                                        <label for="purchased">
-                                            <input type="checkbox" id="purchased" <% if (contentType === 'Product') {%>
-                                            checked
-                                            <%}%> class="checkbox left"/>
-                                            <span>Can be Purchased</span>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="clearfix"></div>
-                        <ul class="dialog-tabs" data-class="childTabs">
-                            <li><a class="active" href="javascript:;">Information</a></li>
-                            <!--<li><a href="javascript:;">Accounting</a></li>-->
-                        </ul>
-                        <div class="dialog-tabs-items childTabs">
-                            <div class="dialog-tabs-item childTabs active">
-                                <div class="clearfix"></div>
-                                <div class="half-block left">
-                                    <dl class="product-info">
-                                        <dl class="product-info">
-                                            <dt class="productCategory"><label for="productCategory">Product Category</label></dt>
-                                            <dd class="productCategory _newSelectListWrap"><a id="productCategory" class="current-selected" href="javascript:;">All</a></dd>
-                                            <!-- <dt><label for="assetType">Asset Type</label></dt>
-                                             <dd><a id="assetType" class="current-selected" href="javascript:;">Select</a></dd>
-                                             <dt><label for="deferredRevenueType">Deferred Revenue Type</label></dt>
-                                             <dd><a id="deferredRevenueType" class="current-selected" href="javascript:;">Select</a></dd>-->
-                                        </dl>
-                                        <!--
-                                        <dt><label for="productType">Product Type</label></dt>
-                                        <dd><a id="productType" class="current-selected" href="javascript:;">Select</a>
-                                        </dd>
-                                        -->
-                                        <!--                    <dl id="typeOfEvent" class="hidden">
-                                                                <dt><label for="eventType">Type of Event</label></dt><dd><a id="eventType" class="current-selected" href="javascript:;">Select</a></dd>
-                                                            </dl>-->
-
-                                    </dl>
-                                </div>
-                                <div class="half-block left">
-                                    <div class="inputField">
-                                        <label for="salePrice">
-                                            <input type="text" id="salePrice" class="extra-info" maxlength="10"
-                                                   placeholder="0.00"/>
-                                            <span>Sale Price</span>
-                                        </label>
-                                    </div>
-                                    <!--<dd></dd>-->
-                                    <!--
-                                    <dt><label for="active">Active</label></dt>
-                                    <dd><input type="checkbox" id="active" checked class="checkbox left"/></dd>
-                                    <dt><label for="barcode">Barcode</label></dt>
-                                    <dd>
-                                        <input type="text" id="barcode" class="extra-info" maxlength="20"
-                                               placeholder=""/>
-                                    </dd>
-                                    -->
-                                </div>
-                                <div class="clearfix"></div>
-                                <div class="full-width left">
-                                    <div class="inner">
-                                        <div class="textarea-wrapper inputField">
-                                            <label for="description">
-                                                <textarea type="text" class="full-width productDescriptionCreate"
-                                                          name="description"
-                                                          id="description"
-                                                          maxlength="500" required/>
-                                                <span>Add a Description</span>
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="dialog-tabs-item childTabs">
-                                <div class="clearfix"></div>
-                                <!--
-                                <div class="full-width left">
-                                    <dl class="product-info">
-                                        <dt><label for="productCategory">Product Category</label></dt>
-                                        <dd><a id="productCategory" class="current-selected" href="javascript:;">All</a>
-                                        </dd>
-                                        <!-- <dt><label for="assetType">Asset Type</label></dt>
-                                         <dd><a id="assetType" class="current-selected" href="javascript:;">Select</a></dd>
-                                         <dt><label for="deferredRevenueType">Deferred Revenue Type</label></dt>
-                                         <dd><a id="deferredRevenueType" class="current-selected" href="javascript:;">Select</a></dd>-->
-                                <!--
-                                    </dl>
-                                </div>
-                                -->
-                                <!-- <div class="clearfix"></div>
-                                 <div class="bottomLine">
-                                     <div class="half-block left">
-                                         <dt><label for="incomeAccount">Income Account</label></dt>
-                                         <dd><a id="incomeAccount" class="current-selected" href="javascript:;">Select</a></dd>
-                                         <dt><label for="customerTaxes">Customer Taxes</label></dt>
-                                         <dd><a id="customerTaxes" class="current-selected" href="javascript:;">Select</a></dd>
-                                     </div>
-                                     <div class="half-block left">
-                                         <dt><label for="expenseAccount">Expense Account</label></dt>
-                                         <dd><a id="expenseAccount" class="current-selected" href="javascript:;">Select</a></dd>
-                                         <dt><label for="supplierTaxes">Supplier Taxes</label></dt>
-                                         <dd><a id="supplierTaxes" class="current-selected" href="javascript:;">Select</a></dd>
-                                     </div>
-                                 </div>-->
-                            </div>
-                        </div>
-                        <div class="clearfix"></div>
-                        <div class="clearfix">
-                            <div class="cropImages form" style="display:none;">
-                                <div class="formTitle">
-                                    <h3 class="left">Crop Images</h3>
-
-                                    <div class="clearfix"></div>
-                                </div>
-                                <br/>
-
-                                <div class="image_input" style="float: left;margin-right: 20px;"></div>
-                                <img class="image_output"/>
-
-                                <div class="clearfix"></div>
-                            </div>
-                        </div>
-                        <div class="clearfix"></div>
                     </div>
-                    <div class="dialog-tabs-item mainTabs">
-                        <div class="assignees-container"></div>
+                    <div class="_formBlock _equal">
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="product"
+                                   autofocus
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">Product Name</label>
+                        </div>
+                        <div class="_formRow">
+                            <label class="_animatedCheckbox">
+                                <input id="sold"
+                                       type="checkbox" <% if (contentType === 'salesProduct') {%>
+                                checked
+                                <%}%> >
+                                <span></span>
+                            </label>
+                            <label for="sold">Can be Sold</label>
+                        </div>
+                        <div class="_formRow">
+                            <label class="_animatedCheckbox">
+                                <input id="expensed"
+                                       type="checkbox">
+                                <span></span>
+                            </label>
+                            <label for="expensed">Can be Expensed</label>
+                        </div>
+                        <div class="_formRow">
+                            <label class="_animatedCheckbox">
+                                <input id="purchased"
+                                       type="checkbox"<% if (contentType === 'Product') {%>
+                                checked
+                                <%}%> >
+                                <span></span>
+                            </label>
+                            <label for="purchased">Can be Purchased</label>
+                        </div>
+                        <div class="_animateSelectBox">
+                            <span class="_selectTitle">Product type</span>
+                            <div class="_newSelectListWrap">
+                                <a id="productType"
+                                   class="current-selected">Select product type</a>
+                            </div>
+                        </div>
+                        <span class="_variantsLabel">Product Categories:</span>
+                        <div id="variantsCategoriesBlock" class="_variantsBlock">
+                            <div class="_checkCategoriesWrap">
+                                <ul id="checkedProductCategories" class="_checkCategories"></ul>
+                                <span id="showBtn" class="_arrow"></span>
+                            </div>
+                            <ul id="productCategories" class="_categoriesList"></ul>
+                        </div>
+                    </div>
+                    <div class="_formBlock _equal">
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="SKU"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">Model / SKU</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="UPC"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">UPC</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="ISBN"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">ISBN</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="EAN"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">EAN</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="weight"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">Weight in kilograms</label>
+                        </div>
+                        <div class="_animateTextareaBox">
+                            <textarea class="_animate"
+                                      id="description"
+                                      maxlength="500"
+                                      required></textarea>
+                            <label class="_animate" for="description">Description</label>
+                        </div>
                     </div>
                 </div>
+            </div>
+            <div class="dialog-tabs-item mainTabs">
+                <div class="_formWrap _enlargedItemMargin">
+                    <div class="_formBlock _equal">
+                        <div class="_animateInputBox">
+                            <input type="text"
+                                   class="_animate"
+                                   id="mainMinStockLevel"
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">Minimum stock level</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="dialog-tabs-item mainTabs">
+                <div class="_formWrap searchContainer">
+                    <div class="_formBlock _equal">
+                        <div class="_searchContWrap">
+                            <label for="searchProducts" class="_searchTitle">Name | SKU</label>
+                            <input type="text" id="searchProducts" class="_searchInput"/>
+                            <button id="searchBtn" class="_searchBtn">
+                                <span class="icon-search2-"></span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="_formBlock _equal">
+                        <div class="_bundleTitle">Create the bundle by adding products</div>
+                    </div>
+                    <div class="_formBlock _equal">
+                        <div class="_bundleListTitle">Products list:</div>
+                        <ul id='productsForBundle' class="_productsForBundle"></ul>
+                    </div>
+                    <div class="_formBlock _equal">
+                        <div class="_bundleListTitle">Bundle consists of:</div>
+                        <ul id='productsBundle' class="_productsBundle"></ul>
+                    </div>
+                </div>
+            </div>
+            <div class="dialog-tabs-item mainTabs">
+                <div class="_formWrap">
+                    <div class="_formBlock">
+                        <div id="priceBlock">
+                            <ul class="dialog-tabs" data-class="subTabs">
+                                <% _.each(priceLists, function(priceList) { %>
+                                <li><a href="javascript:;"><%= priceList.priceListCode %> <%=priceList.cost ? '(costs)'
+                                    :
+                                    ''%></a></li>
+                                <% }) %>
+                            </ul>
+                            <div class="dialog-tabs-items subTabs">
+                                <p>Breaks and Prices:</p>
+                                <% _.each(priceLists, function(priceList) { %>
+                                <div data-id="<%= priceList._id %>" class="dialog-tabs-item subTabs priceListCreate">
+                                    <div class="_priceBlockWrap">
+                                        <dl class="priceBlock">
+                                            <div>
+                                                <dt>Count 1</dt>
+                                                <dd>
+                                                    <input type="text"
+                                                           value="1"
+                                                           placeholder="count1"
+                                                           class="forNum productCount"/>
+                                                </dd>
+                                            </div>
+                                            <div>
+                                                <dt>Price 1</dt>
+                                                <dd>
+                                                    <input type="text"
+                                                           value="0"
+                                                           placeholder="price1"
+                                                           class="forNum productPrice"/>
+                                                </dd>
+                                            </div>
+                                        </dl>
+                                        <dl class="priceBlock">
+                                            <div>
+                                                <dt>Count 2</dt>
+                                                <dd>
+                                                    <input type="text"
+                                                           value="0"
+                                                           placeholder="count1"
+                                                           class="forNum productCount"/>
+                                                </dd>
+                                            </div>
+                                            <div>
+                                                <dt>Price 2</dt>
+                                                <dd>
+                                                    <input type="text"
+                                                           value="0"
+                                                           placeholder="price1"
+                                                           class="forNum productPrice">
+                                                </dd>
+                                            </div>
+                                        </dl>
+                                        <dl class="priceBlock">
+                                            <div>
+                                                <dt>Count 3</dt>
+                                                <dd>
+                                                    <input type="text"
+                                                           value="0"
+                                                           placeholder="count1"
+                                                           class="forNum productCount">
+                                                </dd>
+                                            </div>
+                                            <div>
+                                                <dt>Price 3</dt>
+                                                <dd>
+                                                    <input type="text"
+                                                           value="0"
+                                                           placeholder="price1"
+                                                           class="forNum productPrice">
+                                                </dd>
+                                            </div>
+                                        </dl>
+                                        <dl class="priceBlock">
+                                            <div>
+                                                <dt>Count 4</dt>
+                                                <dd>
+                                                    <input type="text"
+                                                           value="0"
+                                                           placeholder="count1"
+                                                           class="forNum productCount">
+                                                </dd>
+                                            </div>
+                                            <div>
+                                                <dt>Price 4</dt>
+                                                <dd>
+                                                    <input type="text"
+                                                           value="0"
+                                                           placeholder="price1"
+                                                           class="forNum productPrice">
+                                                </dd>
+                                            </div>
+                                        </dl>
+                                        <dl class="priceBlock">
+                                            <div>
+                                                <dt>Count 5</dt>
+                                                <dd>
+                                                    <input type="text"
+                                                           value="0"
+                                                           placeholder="count1"
+                                                           class="forNum productCount">
+                                                </dd>
+                                            </div>
+                                            <div>
+                                                <dt>Price 5</dt>
+                                                <dd>
+                                                    <input type="text"
+                                                           value="0"
+                                                           placeholder="price1"
+                                                           class="forNum productPrice">
+                                                </dd>
+                                            </div>
+                                        </dl>
+                                    </div>
+                                </div>
+                                <% }); %>
+                                <div class="half-block right"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="cropImages form" style="display:none;">
+            <div class="formTitle">
+                <h3 class="left">Crop Images</h3>
                 <div class="clearfix"></div>
             </div>
-        </fieldset>
+            <br/>
+
+            <div class="image_input" style="float: left;margin-right: 20px;"></div>
+            <img class="image_output"/>
+            <div class="clearfix"></div>
+        </div>
     </form>
 </div>
 

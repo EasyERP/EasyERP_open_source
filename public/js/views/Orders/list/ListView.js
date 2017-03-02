@@ -3,14 +3,14 @@ define([
     'jQuery',
     'Underscore',
     'views/listViewBase',
-    'text!templates/Orders/list/ListHeader.html',
+    'text!templates/order/list/ListHeader.html',
     'text!templates/stages.html',
-    'views/Quotations/CreateView',
-    'views/Orders/list/ListItemView',
-    'views/Orders/list/ListTotalView',
-    'views/Orders/EditView',
-    'models/QuotationModel',
-    'collections/Orders/filterCollection',
+    'views/order/CreateView',
+    'views/order/list/ListItemView',
+    'views/order/list/ListTotalView',
+    'views/order/EditView',
+    'models/orderModel',
+    'collections/order/filterCollection',
     'common',
     'dataService',
     'helpers',
@@ -103,6 +103,10 @@ define([
 
             if (this.filter) {
                 url += '/filter=' + encodeURI(JSON.stringify(this.filter));
+            }
+
+            if ($(e.target).closest('tfoot').length) {
+                return;
             }
 
             App.ownContentType = true;

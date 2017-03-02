@@ -346,9 +346,9 @@ define([
             var $combobox;
 
             this.entity = this.checkedCombobox;
+            //this.checkEntity();
 
             $thisEl.html(this.contentTemplate({fileName: this.fileName}));
-
             $combobox = $('#changeTableCombobox');
             $thisEl.find('.changeTableBtn[value="' + this.checkedCombobox + '"]').click();
             this.drowingCombobox($combobox, this.entity, this);

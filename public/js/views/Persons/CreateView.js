@@ -33,14 +33,26 @@ define([
         },
 
         events: {
-            'mouseenter .avatar': 'showEdit',
-            'mouseleave .avatar': 'hideEdit',
-            'click .details'    : 'showDetailsBox'
+            'mouseenter .avatar'  : 'showEdit',
+            'mouseleave .avatar'  : 'hideEdit',
+            'click .details'      : 'showDetailsBox',
+            'click .shippingRadio': 'shippingShow'
         },
 
         chooseOption: function (e) {
-            $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
+            $(e.target).parents('ul').closest('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
 
+        },
+
+        shippingShow: function (e) {
+            var $target = $(e.target);
+            var val = parseInt($target.val(), 10);
+
+            if (val) {
+                this.$el.find('#shippingAddress').removeClass('hidden');
+            } else {
+                this.$el.find('#shippingAddress').addClass('hidden');
+            }
         },
 
         saveItem: function () {
@@ -58,6 +70,29 @@ define([
             var whoCanRW;
             var data;
             var model;
+            var firstName = $.trim(thisEl.find('#firstName').val());
+            var lastName = $.trim(thisEl.find('#lastName').val());
+
+            var sameShippingAddress = parseInt(this.$el.find('input[name=shippingAddress]:checked').val(), 10);
+            var address = {
+                street : $.trim($('#addressInput').val()),
+                city   : $.trim($('#cityInput').val()),
+                state  : $.trim($('#stateInput').val()),
+                zip    : $.trim($('#zipInput').val()),
+                country: $.trim(this.$el.find('#countryInputCreate').attr('data-id')) || ''
+            };
+            var shippingAddress = sameShippingAddress ? {
+                street : $.trim($('#addressInputShipping').val()),
+                city   : $.trim($('#cityInputShipping').val()),
+                state  : $.trim($('#stateInputShipping').val()),
+                zip    : $.trim($('#zipInputShipping').val()),
+                name   : $.trim($('#nameInputShipping').val()),
+                country: $.trim(this.$el.find('#countryInputCreateShipping').attr('data-id')) || ''
+            } : address;
+
+            if (!sameShippingAddress) {
+                shippingAddress.name = firstName + ' ' + lastName;
+            }
 
             $('.groupsAndUser tr').each(function () {
                 if ($(this).data('type') === 'targetUsers') {
@@ -72,26 +107,21 @@ define([
             whoCanRW = this.$el.find('[name="whoCanRW"]:checked').val();
 
             data = {
-                name      : {
-                    first: $.trim(thisEl.find('#firstName').val()),
-                    last : $.trim(thisEl.find('#lastName').val())
-                },
-                imageSrc  : this.imageSrc,
-                dateBirth : dateBirth,
-                company   : company,
-                department: department,
-                address   : {
-                    street : $.trim($('#addressInput').val()),
-                    city   : $.trim($('#cityInput').val()),
-                    state  : $.trim($('#stateInput').val()),
-                    zip    : $.trim($('#zipInput').val()),
-                    country: $.trim(this.$el.find('#countryInputCreate').text())
+                name: {
+                    first: firstName,
+                    last : lastName
                 },
 
-                website    : $.trim($('#websiteInput').val()),
-                jobPosition: $.trim($('#jobPositionInput').val()),
-                skype      : $.trim($('#skype').val()),
-                social     : {
+                imageSrc       : this.imageSrc,
+                dateBirth      : dateBirth,
+                company        : company,
+                department     : department,
+                address        : address,
+                shippingAddress: shippingAddress,
+                website        : $.trim($('#websiteInput').val()),
+                jobPosition    : $.trim($('#jobPositionInput').val()),
+                skype          : $.trim($('#skype').val()),
+                social         : {
                     LI: $.trim(thisEl.find('#LI').val()),
                     FB: $.trim(thisEl.find('#FB').val())
                 },
@@ -158,14 +188,12 @@ define([
             var salesPurchasesEl;
 
             var thisEl = this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'edit-dialog',
-                title        : 'Edit Person',
-                width        : '900px',
-                position     : {within: $('#wrapper')},
-                buttons      : [
+                autoOpen   : true,
+                dialogClass: 'edit-dialog',
+                title      : 'Edit Person',
+                width      : '800px',
+                position   : {within: $('#wrapper')},
+                buttons    : [
                     {
                         id   : 'create-person-dialog',
                         class: 'btn blue',
@@ -195,6 +223,9 @@ define([
             );
 
             populate.get('#countryInputCreate', '/countries/getForDD', {}, 'name', this);
+            populate.get('#countryInputCreateShipping', '/countries/getForDD', {}, 'name', this);
+            populate.get('#language', CONSTANTS.URLS.EMPLOYEES_LANGUAGES, {}, 'name', this);
+            populate.get2name('#employeesDd', '/employees/getForDD', {}, this);
             populate.getCompanies('#companiesDd', '/customers/getCompaniesForDd', {}, this, false, true, this.company);
             common.canvasDraw({model: personModel.toJSON()}, this);
             this.$el.find('.dateBirth').datepicker({

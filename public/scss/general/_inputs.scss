@@ -1,6 +1,6 @@
 /*== Begin Input type number =============*/
 input {
-  &:not([type="checkbox"]) {
+  &:not([type="checkbox"], ._animate) {
 
     &.inputField {
       height: 34px;
@@ -35,6 +35,12 @@ input {
       }
     }
   }
+
+  &:not(.hasDatepicker) {
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
 }
 
 input::-webkit-outer-spin-button,
@@ -42,6 +48,8 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
+input[type=number] {-moz-appearance: textfield;}
 
 .inputBlock {
   width: 100%;
@@ -51,11 +59,12 @@ input::-webkit-inner-spin-button {
   }
 }
 
+
 .ui-spinner {
   position: relative;
   padding: 0;
   display: block;
-  overflow: hidden;
+  //overflow: hidden;
   > input:not([type="checkbox"]) {
     max-width: 100%;
   }
@@ -70,10 +79,11 @@ input::-webkit-inner-spin-button {
     text-align: center;
     padding: 0;
   }
+
   .ui-spinner-up {
     position: absolute;
     right: 8px;
-    top: 2px;
+    top: 3px;
     padding: 0;
     cursor: pointer;
     font-size: 8px;
@@ -87,13 +97,52 @@ input::-webkit-inner-spin-button {
     position: absolute;
     padding: 0;
     right: 8px;
-    bottom: 0;
+    bottom: 4px;
     cursor: pointer;
     font-size: 8px;
     line-height: 8px;
     &:hover {
       text-decoration: none;
       color: #71bbec;//@mainText-color-selected + #333;
+    }
+  }
+}
+
+._animateInputBox {
+
+  .ui-spinner .ui-spinner-input {
+    float: none;
+    border-bottom: 1px solid #c8c8d3;
+  }
+
+  &._withSeparator {
+    display: flex;
+    align-items: center;
+
+    ._locationSeparator {
+      color: #c8c8d3;
+      font-size: 18px;
+    }
+  }
+
+  &._socialWrap {
+    display: flex;
+
+      .social {
+        position: static;
+        margin: 0;
+    }
+  }
+
+  &._kanban {
+    margin-top: 10px;
+  }
+
+  &._staticData {
+    display: flex;
+
+    ._staticInfo {
+      width: 100%;
     }
   }
 }
@@ -118,30 +167,31 @@ input::-webkit-inner-spin-button {
 }
 
 /*== End Input type number =============*/
-.input-file {
-  position: relative;
-  overflow: hidden;
-  float: left;
-  width: 60px;
-  margin-right: 10px;
-  margin-top: 10px;
-  text-align: center;
-  border: 1px solid  #7f7f80;
-  line-height: 20px;
-  height: 20px;
-  cursor: pointer;
-  color: $tilte-color;
-
-  input {
-    position: absolute;
-    top: 0;
-    right: 0;
-    font-size: 200px;
-    opacity: 0;
-    filter: alpha(opacity=0);
-    cursor: pointer;
-  }
-}
+//.input-file {
+//  position: relative;
+//  overflow: hidden;
+//  float: left;
+//  width: 60px;
+//  margin-right: 10px;
+//  margin-top: 10px;
+//  text-align: center;
+//  border: 1px solid  #7f7f80;
+//  line-height: 20px;
+//  height: 20px;
+//  cursor: pointer;
+//  color: $tilte-color;
+//
+//  input {
+//    position: absolute;
+//    top: 0;
+//    right: 0;
+//    //font-size: 200px;
+//    font-size: 0;
+//    opacity: 0;
+//    filter: alpha(opacity=0);
+//    cursor: pointer;
+//  }
+//}
 
 textarea,
 select {
@@ -192,7 +242,7 @@ input {
 
 ._inputIconWrap {
 
-  input[type="text"] {
+  > input {
     position: relative;
     z-index: 999;
 
@@ -218,7 +268,8 @@ input {
       }
     }
 
-    &:active, &:focus {
+    &:active,
+    &:focus {
 
       + label {
 
@@ -229,15 +280,28 @@ input {
       }
     }
 
+    &#first,
     &#firstName,
+    &#last,
     &#lastName,
     &#jobPositionInput,
     &#first,
+    &#login,
     &#last {
 
       + label {
         &:after {
           content: '\f007';
+        }
+      }
+    }
+
+    &#confirmpassword,
+    &#password {
+
+      + label {
+        &:after {
+          content: '\e910';
         }
       }
     }
@@ -270,6 +334,8 @@ input {
       + label {
         &:after {
           content: '\f17e';
+          font-size: 18px;
+          right: 4px;
         }
       }
     }
@@ -297,6 +363,12 @@ input {
     &#stateInput,
     &#street,
     &#city,
+    &#applicationsEditStreet,
+    &#applicationsEditCity,
+    &#applicationsEditState,
+    &#employeeEditStreet,
+    &#employeeEditCity,
+    &#employeeEditState,
     &#state {
       + label {
         &:after {
@@ -338,5 +410,301 @@ input {
 
   .hasWickedpicker {
     margin: 15px auto 0;
+  }
+}
+
+._inputsList {
+  display: flex;
+  align-items: center;
+
+  > input[type="text"] {
+    height: 22px;
+
+    &:nth-child(n+2) {
+      border-left: 0;
+    }
+  }
+}
+
+.avatar,
+._forCheckBox {
+  + ._animateInputBox,
+  + ._animateSelectBox{
+    margin-top: 20px;
+  }
+}
+
+._animateInputBox {
+  position: relative;
+  min-height: 26px;
+  margin-bottom: 15px;
+
+  &._currency {
+    display: flex;
+
+    ._currencyValue {
+      padding: 0 5px;
+      color: #5f92b3;
+      font-family: $semibold-font-family;
+    }
+  }
+
+  ._staticLabel {
+    position: absolute;
+    top: -8px;
+    left: 0;
+    z-index: 1;
+    color: #7eadcc;
+    font-size: 10px;
+  }
+
+  ._staticInfo {
+    display: block;
+    padding: 6px 10px 6px 0;
+    border: none;
+    border-bottom: 1px solid #c8c8d3;
+    transition: all .2s ease-in-out;
+    @include rem('font-size', 13px);
+  }
+
+  .changePassword {
+    margin-top: 10px;
+
+    span {
+      color: #fff !important;
+    }
+  }
+}
+
+._animateHealthBox {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+
+  ._healthLabel {
+    color: #3e88b9;
+  }
+}
+
+input,
+textarea {
+  &._animate {
+    display: block;
+    padding: 5px 10px 5px 0;
+    border: none;
+    color: #666682;
+    border-bottom: 1px solid #c8c8d3;
+    box-shadow: 0 1px 0 0 transparent;
+    transition: all .2s ease-in-out;
+    @include rem('font-size', 13px);
+
+    &[readonly]:focus {
+      border-bottom: 1px solid #c8c8d3;
+      box-shadow: 0 1px 0 0 transparent;
+    }
+
+    &:focus,
+    &:hover,
+    &:active {
+      outline: none;
+    }
+
+    &:focus {
+      border-bottom-color: #7eadcc;
+      box-shadow: 0 1px 0 0 #7eadcc;
+    }
+  }
+}
+
+input {
+  &._animate {
+
+    &:focus {
+
+      + label {
+        color: #4081ad;
+        transform: translateY(-12px);
+        @include rem('font-size', 11px);
+      }
+    }
+
+    &:valid,
+    &[placeholder] {
+      + label {
+        color: #4081ad;
+        transform: translateY(-12px);
+        @include rem('font-size', 11px);
+      }
+    }
+
+    &:-webkit-autofill{
+      + label {
+        color: #4081ad;
+        transform: translateY(-12px);
+        @include rem('font-size', 11px);
+      }
+    }
+  }
+}
+
+textarea {
+  &._animate {
+    height: 120px;
+    width: 100%;
+    padding: 0 10px 5px 0;
+    margin-top: 5px;
+
+    &:focus,
+    &:valid,
+    &[placeholder] {
+      + label {
+        color: #4081ad;
+        transform: translateY(-14px);
+        @include rem('font-size', 11px);
+      }
+    }
+
+    &._medium {
+      height: 90px;
+    }
+  }
+}
+
+label._animate {
+  position: absolute;
+  top:0;
+  left: 0;
+  color: #999;
+  pointer-events: none;
+  transition: all 0.2s ease-in-out;
+  backface-visibility: hidden;
+  @include rem('font-size', 12px);
+}
+
+._animateSelectBox {
+  position: relative;
+  margin-bottom: 15px;
+
+  &._additionalInputWrap {
+    display: flex;
+
+    ._newSelectListWrap {
+      flex-grow: 1;
+      min-width: 100px;
+      padding: 0 25px 0 0;
+
+      .current-selected {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+    }
+
+    ._additionalInput {
+      flex-shrink: 0;
+
+      > input {
+        width: 80px;
+        height: 26px;
+      }
+    }
+  }
+
+  ._selectTitle {
+    position: absolute;
+    top: -9px;
+    left: 0;
+    color: #7eadcc;
+    font-size: 10px;
+    user-select: none;
+  }
+
+  ._newSelectListWrap {
+    position: relative;
+    display: block;
+    padding: 0 10px 0 0;
+    border: none;
+    border-bottom: 1px solid #c8c8d3;
+    font-size: 13px;
+    color: #999 !important;
+
+    .current-selected {
+      position: static;
+      display: block;
+      padding: 6px 0;
+      min-height: auto;
+      line-height: 1;
+      color: #666682;
+
+      &:hover {
+        text-decoration: none;
+      }
+
+      &:after {
+        content: '\f107';
+        position: absolute;
+        display: inline-block;
+        right: 0;
+        bottom: 0;
+        height: 25px;
+        width: 25px;
+        line-height: 25px;
+        text-align: center;
+        font-family: $icon-font;
+        @include rem('font-size', 18px);
+      }
+    }
+  }
+}
+
+._animateSelectBox,
+._animateInputBox {
+  + ._animateTextareaBox {
+    margin-top: 23px;
+  }
+}
+
+._animateTextareaBox {
+  position: relative;
+  margin-bottom: 15px;
+
+  &.offsetTop {
+    margin-top: 25px;
+  }
+
+  label._animate {
+    top: -5px;
+    user-select: none;
+  }
+}
+
+._checkboxWrap {
+  display: flex;
+  margin-bottom: 27px;
+
+  ._checkboxContainer {
+    display: flex;
+    align-items: center;
+
+    + ._checkboxContainer {
+      margin-left: 50px;
+    }
+  }
+}
+
+.searchTagWrap {
+  position: relative;
+  display: inline-block;
+
+  > ._positioned {
+    position: absolute;
+    top: 7px;
+    right: 7px;
+    color: #c8c8d3;
+    font-size: 16px;
+  }
+
+  .searchTagInput {
+    padding-right: 28px;
   }
 }

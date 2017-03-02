@@ -16,8 +16,9 @@ define([
         initialize: function (options) {
             _.bindAll(this, 'render', 'saveItem');
             this.currentModel = new Model();
-            this.render(options);
             this.type = options.type;
+
+            this.render(options);
         },
 
         events: {
@@ -43,7 +44,7 @@ define([
                 color: color,
                 type : this.type
             };
-            if (!name){
+            if (!name) {
                 return App.render({
                     type   : 'error',
                     message: 'Please, choose color!'
@@ -76,16 +77,14 @@ define([
             });
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                position     : {
+                autoOpen   : true,
+                position   : {
                     at: "top+38%"
                 },
-                dialogClass  : 'create-dialog task-dialog',
-                title        : 'Create Tag',
-                width        : '300px',
-                buttons      : [
+                dialogClass: 'create-dialog task-dialog',
+                title      : 'Create Tag',
+                width      : '300px',
+                buttons    : [
                     {
                         text : 'Save',
                         class: 'btn blue',

@@ -16,8 +16,9 @@ var Proforma = function (models) {
     var workflowHandler = new WorkflowHandler(models);
     var JournalEntryHandler = require('./journalEntry');
     var _journalEntryHandler = new JournalEntryHandler(models);
-
-    oxr.set({app_id: process.env.OXR_APP_ID});
+    var ratesService = require('../services/rates')(models);
+    var ratesRetriever = require('../helpers/ratesRetriever')();
+    // oxr.set({app_id: process.env.OXR_APP_ID});
 
     this.create = function (req, res, next) {
         var dbIndex = req.session.lastDb;
@@ -29,10 +30,12 @@ var Proforma = function (models) {
         var waterFallTasks;
 
         function getRates(callback) {
-            oxr.historical(date, function () {
-                fx.rates = oxr.rates;
-                fx.base = oxr.base;
-                callback();
+            ratesService.getById({id: date, dbName: req.session.lastDb}, function (err, result) {
+
+                fx.rates = result && result.rates ? result.rates : {};
+                fx.base = result && result.base ? result.base : 'USD';
+
+                callback(null, fx);
             });
         }
 
@@ -90,7 +93,7 @@ var Proforma = function (models) {
             saveObject.paymentInfo.balance = data.paymentInfo.total;
             saveObject.journal = CONSTANTS.DIVIDEND_INVOICE_JOURNAL;
 
-            saveObject.currency.rate = oxr.rates[data.currency.name];
+            saveObject.currency.rate = ratesRetriever.getRate(fx.rates, fx.base, data.currency._id);
 
             dividendInvoice = new DividendInvoice(saveObject);
 
@@ -105,7 +108,7 @@ var Proforma = function (models) {
 
         function createJournalEntry(dividendInvoice, callback) {
             var body = {
-                currency      : CONSTANTS.CURRENCY_USD,
+                currency      : dividendInvoice.currency,
                 journal       : CONSTANTS.DIVIDEND_INVOICE_JOURNAL,
                 sourceDocument: {
                     model: 'dividendInvoice',
@@ -117,12 +120,11 @@ var Proforma = function (models) {
                 date  : dividendInvoice.invoiceDate
             };
 
-            var amount = dividendInvoice.currency.rate * dividendInvoice.paymentInfo.total;
+            var amount = dividendInvoice.paymentInfo.total;
 
             body.amount = amount;
 
-            _journalEntryHandler.create(body, req.session.lastDb, function () {
-            }, req.session.uId);
+            _journalEntryHandler.createReconciled(body, {dbName: req.session.lastDb, uId: req.session.uId});
 
             callback(null, dividendInvoice);
         }

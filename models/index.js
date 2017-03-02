@@ -11,6 +11,7 @@ module.exports = (function () {
     require('./jobType.js');
     require('./tag.js');
     require('./journal.js');
+    require('./order.js');
     require('./journalEntry.js');
     require('./incoterm.js');
     require('./industry.js');
@@ -20,6 +21,7 @@ module.exports = (function () {
     require('./module.js');
     require('./nationality.js');
     require('./opportunitie.js');
+    require('./orderRows.js');
     require('./payment.js');
     require('./paymentMethod.js');
     require('./paymentTerm.js');
@@ -27,8 +29,12 @@ module.exports = (function () {
     require('./period.js');
     require('./product.js');
     require('./productCategory.js');
+    require('./productsOptions.js');
+    require('./productsOptionsValues.js');
     require('./productTypes.js');
     require('./profile.js');
+    require('./ProductAvailability.js');
+    require('./goodsNote.js');
     require('./project.js');
     require('./projectType.js');
     require('./quotation.js');
@@ -73,4 +79,19 @@ module.exports = (function () {
     require('./customChart.js');
     require('./customDashboard.js');
     require('./accountTypes.js');
+    require('./warehouse.js');
+    require('./locations.js');
+    require('./zones.js');
+    require('./accountsCategories.js');
+    require('./priceList.js');
+    require('./productPrices.js');
+    require('./accountsCategories.js');
+    require('./magentoData');
+    require('./integrations.js');
+    require('./matchMagento.js');
+    require('./taxSettings.js');
+    require('./channelLinks.js');
+    require('./rates.js');
+    require('./shippingMethod.js');
+    require('./images.js');
 })();

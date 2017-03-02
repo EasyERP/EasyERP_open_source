@@ -1,9 +1,9 @@
-.container {
-  width: 100%;
-  margin: 0 auto;
-  display: block;
-  max-width: $container-width;
-}
+//.container {
+//  width: 100%;
+//  margin: 0 auto;
+//  display: block;
+//  max-width: $container-width;
+//}
 
 @for $i from 1 through $cols {
   .col-#{$i}-max {

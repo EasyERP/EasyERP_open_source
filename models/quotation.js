@@ -32,7 +32,7 @@ module.exports = (function () {
 
     quotationSchema = new Schema({
         currency: {
-            _id : {type: ObjectId, ref: 'currency', default: null},
+            _id : {type: String, ref: 'currency', default: null},
             rate: {type: Number, default: 0} // changed default to '0' for catching errors
         },
 

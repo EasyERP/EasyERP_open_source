@@ -6,8 +6,6 @@
   width: 149px;
   min-height: 165px;
   margin: 7px 0 0 7px;
-  //border: 1px solid #7f7f80;
-  //background: transparent !important;
   text-align: center;
   border-radius: 4px;
   float: left;
@@ -15,6 +13,7 @@
   &.employee {
     min-height: 225px;
   }
+
   .info {
     > * {
       @extend %text-overflow;
@@ -35,11 +34,13 @@
     font-weight: 600;
     line-height: 18px;
     font-family: $base-font-family;
-    white-space: normal;
+
     span {
+      display: block;
+      margin-top: 4px;
       overflow: hidden;
-      white-space: normal;
-      width: 182px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
   }
 
@@ -116,14 +117,15 @@
     }
   }
 
-  .email, .company {
+  .email,
+  .company {
     color: $link-color;
   }
+
   .company {
     color: $mainText-color;
   }
 }
-/**/
 
 .notFoundItems {
   text-align: center;

@@ -7,139 +7,85 @@ var cashTransfer = function (models, event) {
     'use strict';
 
     var cashTransferSchema = mongoose.Schemas.cashTransfer;
-    var journalSchema = mongoose.Schemas.journal;
-    var CurrencySchema = mongoose.Schemas.Currency;
 
     var async = require('async');
     var pageHelper = require('../helpers/pageHelper');
-    var CONSTANTS = require('../constants/mainConstants');
+    var JournalEntryService = require('../services/journalEntry')(models);
 
-    var JournalEntryHandler = require('./journalEntry');
-    var _journalEntryHandler = new JournalEntryHandler(models, event);
-
-    oxr.set({app_id: process.env.OXR_APP_ID});
+    var ratesRetriever = require('../helpers/ratesRetriever')();
+    var ratesService = require('../services/rates')(models);
 
     this.create = function (req, res, next) {
         var cashTransferModel = models.get(req.session.lastDb, 'cashTransfer', cashTransferSchema);
-        var Currency = models.get(req.session.lastDb, 'currency', CurrencySchema);
-        var Journal = models.get(req.session.lastDb, 'journal', journalSchema);
         var body = req.body;
         var currencyTo = body.currencyTo;
         var cashTransfer;
         var bodyJournalEntry = {};
-        var waterfallTasks;
-        var getCurrency;
-        var getJournal;
-        var createDocument;
+        var rates;
+        var base;
         var date = moment(new Date(body.date)).format('YYYY-MM-DD');
+        var query = {dbName: req.session.lastDb, id: date};
+        var currency;
 
-        getCurrency = function (cb) {
-            Currency.find({name: body.currency}, {name: 1}, function (err, result) {
+        ratesService.getById(query, function (err, ratesObject) {
+            var currencyRateTo;
+
+            rates = ratesObject ? ratesObject.rates : {};
+            base = ratesObject ? ratesObject.base : 'USD';
+
+            currency = {currency: body.currency};
+            currency.rate = ratesRetriever.getRate(rates, base, currency.name);
+
+            currencyRateTo = ratesRetriever.getRate(rates, base, currencyTo);
+
+            body.currency = currency;
+
+            cashTransfer = new cashTransferModel(body);
+
+            cashTransfer.save(function (err, result) {
                 if (err) {
-                    return cb(err);
+                    return next(err);
                 }
 
-                cb(null, result && result.length ? result[0].toJSON() : {_id: CONSTANTS.CURRENCY_USD, name: 'USD'});
-            });
-        };
+                bodyJournalEntry = { // ToDo Cash Transefer between different accounts
+                    currency: {
+                        name: currencyTo,
+                        rate: currencyRateTo
+                    },
 
-        getJournal = function (currency, cb) {
-            Journal.update({
-                debitAccount : body.debitAccount,
-                creditAccount: body.creditAccount
-            }, {
-                $set: {
-                    debitAccount : body.debitAccount,
-                    creditAccount: body.creditAccount,
-                    name         : 'Cash Transfer',
-                    transaction  : 'Payment'
-                }
-            }, {upsert: true}, function (err, result) {
-                var modelId;
-                var query = {};
+                    journal: null,
+                    date   : new Date(result.date),
 
-                if (err) {
-                    return cb(err);
-                }
+                    sourceDocument: {
+                        model: 'cashTransfer',
+                        name : result.name,
+                        _id  : result._id
+                    },
 
-                modelId = result && result.upserted && result.upserted.length ? result.upserted[0]._id : null;
+                    amount       : result.amount / currency.rate,
+                    notDivideRate: true,
+                    dbName       : req.session.lastDb,
+                    uId          : req.session.uId,
+                    accountsItems: [{
+                        debit  : 0,
+                        credit : result.amount / currency.rate,
+                        account: body.creditAccount
+                    }, {
+                        debit  : result.amount / currency.rate,
+                        credit : 0,
+                        account: body.debitAccount
+                    }]
+                };
 
-                if (modelId) {
-                    query._id = modelId;
-                } else {
-                    query.debitAccount = body.debitAccount;
-                    query.creditAccount = body.creditAccount;
-                }
-
-                Journal.find(query, function (err, result) {
+                JournalEntryService.createMultiRows(bodyJournalEntry, function (err, result) {
                     if (err) {
-                        return cb(err);
+                        return next(err);
                     }
 
-                    cb(null, currency, result && result.length ? result[0]._id : null);
+                    res.status(200).send({success: result});
                 });
             });
-
-        };
-
-        createDocument = function (currency, journal, cb) {
-
-            oxr.historical(date, function () {
-                var currencyRateTo;
-                /* fx.rates = oxr.rates;
-                 fx.base = oxr.base;*/
-
-                if (currency && currency.name) {
-                    currency.rate = oxr.rates[currency.name];
-                }
-
-                currencyRateTo = oxr.rates[currencyTo];
-
-                body.currency = currency;
-
-                cashTransfer = new cashTransferModel(body);
-
-                cashTransfer.save(function (err, result) {
-                    if (err) {
-                        return cb(err);
-                    }
-
-                    bodyJournalEntry = {
-                        currency: {
-                            name: currencyTo,
-                            rate: currencyRateTo
-                        },
-
-                        journal: journal,
-                        date   : new Date(result.date),
-
-                        sourceDocument: {
-                            model: 'cashTransfer',
-                            _id  : result._id
-                        },
-
-                        amount: result.amount * currency.rate
-                    };
-
-                    _journalEntryHandler.createReconciled(bodyJournalEntry, req.session.lastDb, function () {
-
-                    }, req.session.uId);
-
-                    cb();
-                });
-            });
-        };
-
-        waterfallTasks = [getCurrency, getJournal, createDocument];
-
-        async.waterfall(waterfallTasks, function (err, result) {
-            if (err) {
-                return next(err);
-            }
-
-            res.status(200).send({success: result});
         });
-
     };
 
     this.patchM = function (req, res, next) {
@@ -241,7 +187,7 @@ var cashTransfer = function (models, event) {
                     return cb(err);
                 }
 
-                _journalEntryHandler.removeByDocId(id, req.session.lastDb, cb);
+                JournalEntryService.remove({dbName: req.session.lastDb, query: {'sourceDocument._id': id}}, cb);
 
             });
         }, function (err, result) {

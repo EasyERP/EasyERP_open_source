@@ -249,24 +249,23 @@
 
     &.child {
       display: none;
-    }
 
-    &.child.visible {
-
-      display: table-row;
+      &.visible {
+        display: table-row;
+      }
     }
 
     &.parent {
-      background-color: #7eadcc;
       border-color: #fff;
+      background-color: #ecf1f5;
 
       td {
-        color: #fff;
         font-family: $semibold-font-family;
+        color: #2b3643;
       }
     }
   }
-  //copied from main.less 3308
+
   td {
     text-align: center;
 
@@ -671,6 +670,15 @@
 //from projectinfo.less .Main.css 1224
 #forInfo {
   overflow: hidden;
+
+  &._projectsTablesWrap {
+    min-width: 650px;
+
+    .current-selected {
+      line-height: 26px;
+    }
+  }
+
   .forInfo-half-block {
 
     &.left {
@@ -684,14 +692,15 @@
   }
 
   .tableProjects {
-    width: 99%;
     margin-bottom: 10px;
 
     .forCaption {
       line-height: 28px;
+
       &:last-child {
         padding: 0 10px 0 0;
       }
+
       &:first-child {
         text-align: left;
         padding: 0 0 0 10px;
@@ -711,7 +720,17 @@
       border-right-width: 0;
       cursor: pointer;
     }
-
+    
+    .editableJobs {
+      input {
+        width: 115px;
+      }
+      .icon-checked {
+        color: #7eadcc;
+        margin: 0 0 0 5px;
+      }
+    }
+    
     .expand {
       border-left-width: 0;
       text-align: center;
@@ -790,7 +809,7 @@
         @extend %text-overflow;
         display: inline-block;
         width: 99%;
-        line-height: 12px;
+        line-height: 20px;
       }
       a {
         &.fa {
@@ -837,7 +856,6 @@
           position: absolute;
           left: 0px;
           width: 30px;
-
           text-align: right;
           border-right: 1px solid #7f7f80;
         }
@@ -850,8 +868,10 @@
           top: 20px;
         }
         &:last-child {
-          padding: 5px 8px 5px 8px;
+          //padding: 5px 8px 5px 8px;
+          padding: 0;
           border-bottom: none;
+          word-break: break-word;
         }
       }
     }
@@ -1196,33 +1216,44 @@
 /*22.09 added from _main.less*/
 #profileTableWrapper {
   width: calc(100% - 170px);
-  .list {
+
+  > table {
+    width: calc(100% - 20px);
+    margin: 0 0 0 20px;
+
     thead {
       tr {
         border-top: 1px solid #7f7f80;
+      }
+      th:first-of-type {
+        width: auto;
+      }
+    }
+  }
+  tr.child {
+    td {
+      &:first-child {
+        padding-left: 30px;
       }
     }
   }
 }
 
-
-.deleteRow {
-  &:hover {
-    .fa-trash-o {
-      display: inline-block;
-    }
-  }
-  .fa-trash-o {
-    display: none;
-  }
-}
-
-
+//.deleteRow {
+//  &:hover {
+//    .fa-trash-o {
+//      display: inline-block;
+//    }
+//  }
+//  .fa-trash-o {
+//    display: none;
+//  }
+//}
 
 /*28.09 added from modules/acounting*/
 ._acountingTableBlock {
   flex-grow: 1;
-  overflow: auto;
+  //overflow: auto;
 
   .list {
     thead {
@@ -1253,6 +1284,49 @@
     .goToEdit,
     .goToRemove {
       visibility: hidden;
+    }
+  }
+}
+
+
+/*03.10.16 added from forms.scss*/
+
+td.source  .dropDown {
+  padding: 4px;
+  color: #0a92bd;
+  font-size: 9px;
+}
+
+td.source {
+  cursor: pointer;
+}
+
+tr.greyBorder {
+  background-color: #d7d7d7;
+}
+
+table .currenr-selected {
+  font-size: 12px;
+}
+
+table {
+  .icon-caret-down {
+    padding-right: 5px;
+    position: relative;
+  }
+
+  .icon-caret-down:before {
+    position: absolute;
+    font-size: 7px;
+  }
+  td.source{
+    .icon-caret-down{
+      padding-right: 10px;
+
+      &:before {
+        top: 3px;
+        right: -5px;
+      }
     }
   }
 }

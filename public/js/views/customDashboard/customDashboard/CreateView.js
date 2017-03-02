@@ -31,6 +31,7 @@ define([
             this.numberOfColumns = options.numberOfColumns;
             this.numberOfRows = options.numberOfRows;
             this.chartCounter = options.chartCounter;
+            this.eventChannel = options.eventChannel;
             this.defaultValues = {
                 name     : '',
                 dataSet  : 'Invoice By Week',
@@ -42,23 +43,26 @@ define([
             this.cellsModel = options.cellsModel;
             this.ParentView = options.ParentView;
             this.startTime = new Date();
+            this.collection = options.collection;
             this.defaultValues = {
                 name     : '',
                 dataSet  : 'Invoice By Week',
                 typeLabel: 'Line chart'
             };
             this.propsSet = {
-                'Line chart'           : '#invoiceByWeek, #leadsByDay, #leadsByWeek, #leadsByMonth',
-                'Horizontal bar chart' : '#revenueBySales, #revenueByCountry, #revenueByCustomer',
-                'Vertical bar chart'   : '#invoiceByWeek, #leadsByDay, #leadsByWeek, #leadsByMonth',
-                'Donut Chart'          : '#revenueBySales, #revenueByCountry, #revenueByCustomer',
-                'Single value'         : '#amount',
-                'Horizontal Bar Layout': '#leadsBySource'
+                'Line chart'           : '#invoiceByWeek, #purchaseInvoiceByWeek', // '#leadsByDay, #leadsByWeek, #leadsByMonth',
+                'Horizontal bar chart' : '#revenueBySales, #revenueByCountry, #revenueByCustomer, #purchaseRevenueBySales, #purchaseRevenueByCountry, #purchaseRevenueByCustomer',
+                'Vertical bar chart'   : '#invoiceByWeek, #purchaseInvoiceByWeek',
+                'Donut Chart'          : '#revenueBySales, #revenueByCountry, #revenueByCustomer, #purchaseRevenueBySales, #purchaseRevenueByCountry, #purchaseRevenueByCustomer',
+                'Single Value'         : '#totalPurchaseRevenue, #totalSalesRevenue',
+                'Horizontal Bar Layout': '#leadsBySource',
                 // 'Vertical Bar Layout': '#leadsByDay, #leadsByWeek, #leadsByMonth'
-                // 'Table': '#revenueBySales, #revenueByCountry, #revenueByCustomer'
+                'Table'                : '#orders, #purchaseOrders, #totalSalesRevenue, #totalPurchaseRevenue,  #pastDueInvoices, #pastDuePurchaseInvoices',
+                'Overview'             : '#orders, #purchaseOrders, #totalSalesRevenue, #totalPurchaseRevenue'
                 // 'Map chart': '#revenueByCountry'
             };
             this.editOptions = options.editOptions;
+
             this.render();
         },
 
@@ -95,11 +99,12 @@ define([
             $chart.find('#endDate').text(this.endDate);
 
             return new ChartView({
-                el        : this.editOptions.id,
-                dataSelect: datasetId,
-                type      : typeId,
-                startDate : this.startDate,
-                endDate   : this.endDate
+                el          : this.editOptions.id,
+                dataSelect  : datasetId,
+                type        : typeId,
+                startDate   : this.startDate,
+                endDate     : this.endDate,
+                eventChannel: this.eventChannel
             });
         },
 
@@ -243,7 +248,9 @@ define([
                 yPoints        : this.yPoints,
                 cellsModel     : this.cellsModel,
                 startDate      : this.startDate,
-                endDate        : this.endDate
+                endDate        : this.endDate,
+                collection     : this.ParentView.collection,
+                eventChannel   : this.ParentView.eventChannel
             });
 
             eventsBinder.subscribeCustomChartEvents(this.subview, this.ParentView);
@@ -266,13 +273,11 @@ define([
                 startDate: this.startDate,
                 endDate  : this.endDate
             })).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'edit-dialog',
-                title        : 'Edit Company',
-                width        : '1000',
-                buttons      : [{
+                autoOpen   : true,
+                dialogClass: 'edit-dialog',
+                title      : 'Edit Company',
+                width      : '1000',
+                buttons    : [{
                     text : 'Create',
                     class: 'btn blue',
                     id   : 'createBtn',

@@ -26,9 +26,15 @@
                     }
                 });
             },
-            
-            parse     : function (response) {
-                return response.success;
+
+            parse: function (response) {
+                var items = response.success;
+                if (items && items.length) {
+                    items.forEach(function(item){
+                        item.variants = _.pluck(item.variants, 'value').join(', ');
+                    });
+                } // in case of needed special parse variants on this collection, but collection use common model
+                return items;
             }
         });
         return ProductCollection;

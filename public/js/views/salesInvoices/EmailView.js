@@ -111,14 +111,13 @@ define([
             });
 
             this.$el = $(htmBody).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : 'email-dialog',
-                title        : 'Email invoice',
-                buttons      : [
+                autoOpen   : true,
+                dialogClass: 'email-dialog',
+                title      : 'Email invoice',
+                buttons    : [
                     {
                         id   : 'send-email-dialog',
+                        class: 'btn blue',
                         text : 'Send',
                         click: function () {
                             self.send();
@@ -126,6 +125,7 @@ define([
                     },
                     {
                         text : 'Cancel',
+                        class: 'btn',
                         click: function () {
                             self.hideDialog();
                         }

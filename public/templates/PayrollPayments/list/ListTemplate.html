@@ -1,6 +1,11 @@
 <% paymentCollection.forEach(function(payment, index){ %>
 <tr data-id="<%=payment._id%>">
-    <td class="centerCell"><input type="checkbox" value="<%=payment._id%>" class="checkbox"/></td>
+    <td class="centerCell">
+        <label class="_customCHeckbox">
+            <input type="checkbox" value="<%=payment._id%>" class="checkbox"/>
+            <span></span>
+        </label>
+    </td>
     <td><%=startNumber + index + 1%></td>
     <td><%=payment.date%></td>
     <td><%=(payment.name) ? payment.name : ''%></td>

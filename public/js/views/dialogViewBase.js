@@ -13,12 +13,19 @@
         hideNewSelect: select.hideNewSelect,
 
         events: {
-            keydown                                                          : 'keyDownHandler',
-            click                                                            : 'hideNewSelect',
-            'click .dialog-tabs a'                                           : 'changeTab',
-            'click .current-selected:not(.jobs)'                             : 'showNewSelect',
-            'click #exportToPdf'                                             : 'exportToPdf',
-            'click .newSelectList li:not(.miniStylePagination, .endContract)': 'chooseOption'
+            keydown                                                                   : 'keyDownHandler',
+            click                                                                     : 'hideNewSelect',
+            'click .dialog-tabs a'                                                    : 'changeTab',
+            'click .current-selected:not(.jobs)'                                      : 'showNewSelect',
+            'click #exportToPdf'                                                      : 'exportToPdf',
+            'click .newSelectList li:not( .empty, .miniStylePagination, .endContract)': 'chooseOption'
+        },
+
+        clickInput: function (e) {
+            e.stopPropagation();
+            e.preventDefault();
+
+            $('.input-file .inputAttach').first().click();
         },
 
         showEdit: function () {
@@ -40,7 +47,7 @@
         exportToPdf: function (e) {
             var template = this.$el.find('#templateDiv').html();
 
-            exportToPdf({
+            exportToPdf.takeFile({
                 file: template,
                 name: this.model.get('name')
             });
@@ -110,7 +117,6 @@
             var itemActiveSelector = '.dialog-tabs-item' + dataClass + '.active';
             var itemSelector = '.dialog-tabs-item' + dataClass;
 
-
             closestEl.find('a.active').removeClass('active');
             $target.addClass('active');
 
@@ -162,6 +168,8 @@
                 this.currentModel.destroy({
                     success: function () {
                         $('.edit-dialog').remove();
+
+                        Backbone.history.fragment = '';
                         Backbone.history.navigate('easyErp/' + self.contentType, {trigger: true});
                     },
 

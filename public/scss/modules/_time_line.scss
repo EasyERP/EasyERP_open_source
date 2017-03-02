@@ -1,12 +1,13 @@
 .noteMainContainer {
   position: relative;
+  word-break: break-all;
 }
 
 .timeNote {
   .noteContainer {
     position: relative;
     padding-left: 50px;
-    margin-top: 20px;
+    margin-top: 12px;
 
     &:before {
       content: '';
@@ -19,7 +20,7 @@
     }
 
     &:first-child {
-      margin-top: 12px;
+      //margin-top: 12px;
 
       &:before {
         top: -12px;
@@ -44,7 +45,7 @@
     .itemCircle {
       position: absolute;
       left: 11px;
-      top: 10px;
+      top: 4px;
       height: 28px;
       width: 28px;
       border: 1px solid $note-border-color;
@@ -58,10 +59,15 @@
     }
 
     .noteBody {
-      padding: 0 0 17px;
-      border-radius: 3px;
+      padding: 0 0 12px;
       border: 1px solid $note-border-color;
       box-shadow: 1px 1px 3px 0 rgba($black, 0.05);
+      word-break: break-all;
+
+      .noteTopBox {
+        margin-left: -1px;
+        border-left: 3px solid #7eadcc;
+      }
     }
 
     .noteBtnBlock {
@@ -86,6 +92,7 @@
     }
 
     .noteText {
+      cursor: pointer;
       &:last-child {
         margin-bottom: 0 !important;
       }
@@ -109,14 +116,14 @@
       display: block;
     }
     .icon-calendar {
-      line-height: 22px;
+      line-height: 26px;
       display: block;
     }
   }
 }
 
 .noteInner {
-  border: 1px solid $note-inner-border-color;
+  border: 1px solid #7eadcc;
   padding: 5px 20px 20px;
 
   .dateNote {

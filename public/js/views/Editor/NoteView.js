@@ -3,6 +3,7 @@ define([
     'jQuery',
     'Underscore',
     'text!templates/Editor/EditorTemplate.html',
+    'text!templates/Editor/NoteTemplate.html',
     'text!templates/Editor/timelineTemplate.html',
     'text!templates/Editor/editNote.html',
     'models/DealTasksModel',
@@ -12,17 +13,21 @@ define([
     'moment',
     'populate',
     'constants'
-], function (Backbone, $, _, NoteTemplate, timelineTemplate, editNote, TaskModel, EditView, SelectView, CategoryView, moment, populate, CONSTANTS) {
+], function (Backbone, $, _, NoteTemplate, onlyNoteTemplate, timelineTemplate, editNote, TaskModel, EditView, SelectView, CategoryView, moment, populate, CONSTANTS) {
     'use strict';
 
     var NoteView = Backbone.View.extend({
 
         template        : _.template(NoteTemplate),
+        onlyNoteTemplate        : _.template(onlyNoteTemplate),
         timeLineTemplate: _.template(timelineTemplate),
 
         initialize: function (options) {
             this.contentType = options.contentType;
             this.needNotes = options.hasOwnProperty('needNotes') ? options.needNotes : true;
+
+            this.onlyNote = options.onlyNote;
+            this.isCreate = options.isCreate;
             this.responseObj = {};
             this.taskModel = new TaskModel();
             this.taskModel.on('change:category', this.renderCategory, this);
@@ -34,7 +39,7 @@ define([
             'click #addNote, .saveNote'                        : 'saveNote',
             'click .contentHolder'                             : 'showButtons',
             'click #addTask'                                   : 'saveTask',
-            'click .fa-circle-o'                               : 'completeTask',
+            'click .icon-circle'                               : 'completeTask',
             'click .editDelNote'                               : 'editDelNote',
             'click .icon-attach'                               : 'clickInput',
             'click .chart-tabs li'                             : 'changeTab',
@@ -94,7 +99,7 @@ define([
                     patch   : true,
                     validate: false,
                     success : function () {
-                        $target.switchClass('fa-circle-o', 'fa-check-circle-o');
+                        $target.switchClass('icon-circle', 'icon-check-circle');
                         model.unbind();
 
                     },
@@ -108,7 +113,7 @@ define([
 
         },
 
-        saveTask: function () {
+        saveTask: function (dontCheck) {
             var self = this;
             var $thisEl = this.$el;
             var assignedTo = $thisEl.find('#assignedToDd').attr('data-id');
@@ -143,11 +148,13 @@ define([
                     break;
             }
 
-            if (!description) {
+            if (!description && !dontCheck) {
                 return App.render({
                     type   : 'error',
                     message: 'Please add Description'
                 });
+            } else if (!description) {
+                return false;
             }
 
             this.taskModel.save(saveObject, {
@@ -308,11 +315,9 @@ define([
         },
 
         saveNote: function (e) {
-            //console.log('save Note');
             var self = this;
-            var $target = $(e.target);
+            var $target = e ? $(e.target) : $('#noteArea');
             var $noteArea = $target.parents('.addNote').find('#noteArea');
-            /* var $noteTitleArea = $target.parents('.addNote').find('#noteTitleArea');*/
             var $noteContainer = $target.closest('.noteContainer');
             var targetId = $noteContainer.attr('id');
             var $thisEl = this.$el;
@@ -323,25 +328,30 @@ define([
             var editNotes;
             var noteObj;
 
-            if ($noteArea.val().replace(/ /g, '') /*|| $noteTitleArea.val().replace(/ /g, '')*/) {
-                $noteArea.attr('placeholder', 'Add a Note...').parents('.addNote').removeClass('active');
+            if ($noteArea.val().replace(/\s/g, '')) {
+                $noteArea.attr('placeholder', 'Add a Note...Max 500 symbols.').parents('.addNote').removeClass('active');
                 $thisEl.find('.title-wrapper').hide();
                 $thisEl.find('.addTitle').hide();
             } else {
                 $noteArea.focus();
             }
 
-            e.preventDefault();
-            val = $.trim($noteArea.val()).replace(/</g, '&#60;').replace(/>/g, '&#62;');
-            /*  title = $.trim($noteTitleArea.val()).replace(/</g, '&#60;').replace(/>/g, '&#62;');*/
+            if (e) {
+                e.preventDefault();
+            }
 
-            if (!val /*&& !title*/) { // textarrea notes not be empty
+            val = $.trim($noteArea.val()).replace(/</g, '&#60;').replace(/>/g, '&#62;');
+
+            if (!val && e) { // textarrea notes not be empty
                 return App.render({
                     type   : 'error',
                     message: 'Note can not be empty'
                 });
+            } else if (!val) {
+                return false;
             }
-            if (val.replace(/ /g, '') /*|| title.replace(/ /g, '')*/) {
+
+            if (val.replace(/\s/g, '')) {
                 formModel = this.model;
                 notes = formModel.get('notes');
                 notes = notes.filter(function (elem) {
@@ -352,10 +362,14 @@ define([
                     editNotes = _.map(notes, function (note) {
                         if (note._id === targetId) {
                             note.note = val;
-                            /*   note.title = title;*/
                         }
                         return note;
                     });
+
+                  if (self.isCreate){
+                    return formModel.set('notes', editNotes)
+                  }
+
                     formModel.save({notes: editNotes},
                         {
                             validate: false,
@@ -372,14 +386,27 @@ define([
                                 $contentHolder.find('.noteText').text(val).removeClass('hidden');
                                 $contentHolder.show();
                                 $target.closest('.addNote').remove();
-
-                                /*console.log('note is changed 1');
-                                 $noteArea.html('');*/
                             }
                         });
                 } else {
                     noteObj.note = val;
+                    noteObj.date = moment();
+                    //noteObj.date = moment(noteObj.date).format('DD MMM, YYYY);
                     notes.push(noteObj);
+
+                    if (self.isCreate){
+
+                      var formLeftColumn = self.$el.find('.formLeftColumn');
+                      var noteWrapper = formLeftColumn.find('.noteWrapper');
+
+                      formModel.set('notes', notes);
+
+                      noteWrapper.empty();
+                      formLeftColumn.append(self.render());
+
+
+                      return false;
+                    }
                     formModel.save({notes: notes}, {
                         headers : {
                             mid: 39
@@ -393,9 +420,6 @@ define([
 
                             noteWrapper.empty();
                             formLeftColumn.append(self.render());
-
-                            /*console.log('note is changed 2');
-                             $noteArea.html('');*/
                         },
 
                         error: function (models, xhr) {
@@ -410,21 +434,13 @@ define([
 
         },
 
-        /*  showTitle: function (e) {
-
-         $(e.target).hide().parents('.addNote').find('.title-wrapper').show().find('input').focus();
-         },*/
-
         renderTimeline: function () {
             var notes = this.model.get('notes');
-
-            //console.log(notes);
 
             this.$el.find('#timeline').html(_.template(timelineTemplate, {notes: notes}));
         },
 
         renderCategory: function () {
-            var arrType = ['AM', 'PM'];
             var notDiv = this.$el.find('#categoryHolder');
 
             notDiv.html(
@@ -442,21 +458,27 @@ define([
 
         render: function () {
             var modelObj = this.model.toJSON();
-            var date = moment().format("DD MMM, YYYY");
+            var date = moment().format('DD MMM, YYYY');
             var assignedTo = modelObj.salesPerson;
             var $thisEl = this.$el;
             var relatedEmployeeId = App.currentUser.relatedEmployee ? App.currentUser.relatedEmployee._id : null;
 
             modelObj.needNotes = this.needNotes;
 
-            $thisEl.html(this.template({date: date, assignedTo: assignedTo}));
+            if (this.onlyNote){
+              $thisEl.html(this.onlyNoteTemplate({date: date, assignedTo: assignedTo}));
+
+            } else {
+              $thisEl.html(this.template({date: date, assignedTo: assignedTo}));
+            }
+
 
             this.renderTimeline();
 
             this.renderCategory();
             this.$el.find('#timepickerOne').wickedpicker({
-                showSeconds    : true, //Whether or not to show seconds,
-                secondsInterval: 1, //Change interval for seconds, defaults to 1,
+                showSeconds    : true, // Whether or not to show seconds,
+                secondsInterval: 1, // Change interval for seconds, defaults to 1,
                 minutesInterval: 1
             });
 

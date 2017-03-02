@@ -7,9 +7,10 @@ define([
     'use strict';
 
     var TopBarView = BaseView.extend({
-        el         : '#top-bar',
-        contentType: CONSTANTS.CHARTOFACCOUNT,
-        template   : _.template(ContentTopBarTemplate)
+        el           : '#top-bar',
+        contentType  : CONSTANTS.CHARTOFACCOUNT,
+        contentHeader: 'Chart Of Accounts',
+        template     : _.template(ContentTopBarTemplate)
     });
     return TopBarView;
 });

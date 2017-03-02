@@ -1,8 +1,13 @@
 <%var enable = project && project.workflow && project.workflow.name !== 'Closed' ? true : false;%>
 <% wTracks.forEach(function(wTrack, index){ %>
 <tr data-id="<%=wTrack._id%>" class="<%= enable ? 'enableEdit' : ''%> <%=(wTrack._type === 'overtime') ? 'overtime': ''%>">
-    <td class="notForm centerCell"><input type="checkbox" value="<%=wTrack._id%>" class="checkbox listCB"/></td>
-    <td data-content="type" class="editable textUnderlineHover"><%=(wTrack._type === 'overtime') ? 'OT': 'OR'%></td>
+    <td class="notForm centerCell">
+        <label class="_customCHeckbox">
+            <input type="checkbox" value="<%=wTrack._id%>" class="checkbox listCB"/>
+            <span></span>
+        </label>
+    </td>
+    <td data-content="type" class="editable centerCell textUnderlineHover"><%=(wTrack._type === 'overtime') ? 'OT': 'OR'%></td>
     <td data-content="jobs" class="editable <%= enable ? 'textUnderlineHover' : ''%>" data-id="<%=wTrack.jobs._id%>"><%=wTrack.jobs.name%></td>
     <!--<td data-content="assigned"><%=wTrack.salesmanager ? wTrack.salesmanager.name.first + ' ' +
         wTrack.salesmanager.name.last : ''%>

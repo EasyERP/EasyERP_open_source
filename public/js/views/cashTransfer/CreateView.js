@@ -36,15 +36,15 @@ define([
             var currency = this.$el.find('#currency').text();
             var currencyTo;
 
-            var debitAcc = _.find(this.responseObj['#debitAccount'], function (el) {
+            var from = _.find(this.responseObj['#debitAccount'], function (el) {
                 return debitAccount === el._id;
             });
 
-            var creditAcc = _.find(this.responseObj['#creditAccount'], function (el) {
+            var to = _.find(this.responseObj['#creditAccount'], function (el) {
                 return creditAccount === el._id;
             });
 
-            currencyTo = creditAcc ? creditAcc.currency : null;
+            currencyTo = to ? to.currency : null;
 
             if (amount > self.maxAmount) {
                 return App.render({
@@ -61,8 +61,8 @@ define([
             }
 
             data = {
-                debitAccount : debitAcc.chartAccount ? debitAcc.chartAccount._id : null,
-                creditAccount: creditAcc.chartAccount ? creditAcc.chartAccount._id : null,
+                debitAccount : to.chartAccount ? to.chartAccount._id : null,
+                creditAccount: from.chartAccount ? from.chartAccount._id : null,
                 amount       : amount,
                 date         : helpers.setTimeToDate(date),
                 currency     : currency,
@@ -148,7 +148,7 @@ define([
 
             }
 
-            $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
+            $(e.target).closest('.cashBalanceRow').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
 
         },
 
@@ -157,11 +157,10 @@ define([
             var self = this;
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                dialogClass  : 'edit-dialog',
-                width        : 600,
-                title        : 'Create Cash Transfer',
-                buttons      : {
+                dialogClass: 'edit-dialog',
+                width      : 450,
+                title      : 'Create Cash Transfer',
+                buttons    : {
                     save: {
                         text : 'Create',
                         class: 'btn blue',

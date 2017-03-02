@@ -21,7 +21,7 @@ module.exports = (function () {
         year            : {type: Number},
 
         currency: {
-            _id : {type: ObjectId, ref: 'currency', default: null},
+            _id : {type: String, ref: 'currency', default: ''},
             rate: {type: Number, default: 1}
         },
 
@@ -41,10 +41,27 @@ module.exports = (function () {
             date: {type: Date, default: Date.now}
         },
 
-        journal   : {type: ObjectId, ref: 'journal', default: null},
-        externalId: {type: String, default: null},
-        otherIncomeJournal: {type: ObjectId, ref: 'journal', default: null} // journal for other income/loss with different currency of invoice and payment
+        journal               : {type: ObjectId, ref: 'journal', default: null},
+        otherIncomeLossAccount: {type: ObjectId, ref: 'chartOfAccount', default: null}, // journal for other income/loss with different currency of invoice and payment
+        bankAccount           : {type: ObjectId, ref: 'chartOfAccount', default: null},
 
+        bankExpenses: {
+            amount : {type: Number, default: 0, set: setPrice},
+            account: {type: ObjectId, ref: 'chartOfAccount', default: null}
+        },
+
+        overPayment: {
+            amount : {type: Number, default: 0, set: setPrice},
+            account: {type: ObjectId, ref: 'chartOfAccount', default: null}
+        },
+
+        otherIncomeLoss: {
+            amount : {type: Number, default: 0, set: setPrice},
+            account: {type: ObjectId, ref: 'chartOfAccount', default: null}
+        },
+
+        channel      : {type: ObjectId, default: null, ref: 'integrations'},
+        integrationId: {type: String, default: ''}
     }, {collection: 'Payment', discriminatorKey: '_type'});
 
     var PaymentSchema = basePaymentSchema.extend({
@@ -55,11 +72,16 @@ module.exports = (function () {
         paymentMethod: {type: ObjectId, ref: 'PaymentMethod', default: null},
         period       : {type: ObjectId, ref: 'Destination', default: null},
         bonus        : {type: Boolean},
-
-        currency: {
-            _id : {type: ObjectId, ref: 'currency', default: null},
+        order        : {type: ObjectId, ref: 'Order', default: null},
+        currency     : {
+            _id : {type: String, ref: 'currency', default: null},
             rate: {type: Number, default: 1}
-        }
+        },
+
+        channel      : {type: ObjectId, ref: 'integrations', default: null},
+        integrationId: {type: String, default: null},
+        refund       : {type: Boolean, default: false},
+        refundId     : {type: ObjectId, ref: 'Payment', default: null}
     });
 
     var InvoicePaymentSchema = PaymentSchema.extend({});
@@ -71,6 +93,10 @@ module.exports = (function () {
     var DividendInvoicePaymentSchema = PaymentSchema.extend({});
 
     var purchasePaymentSchema = PaymentSchema.extend({
+        forSale: {type: Boolean, default: false}
+    });
+
+    var PrepaymentSchema = PaymentSchema.extend({
         forSale: {type: Boolean, default: false}
     });
 
@@ -86,7 +112,7 @@ module.exports = (function () {
         }],
 
         paymentMethod: {type: ObjectId, ref: 'ProductCategory', default: null},
-        paymentRef   : [{type: ObjectId, ref: 'PayRoll', default: null}],//ref to PayRoll
+        paymentRef   : [{type: ObjectId, ref: 'PayRoll', default: null}], // ref to PayRoll
         period       : {type: Date, default: null}
     });
 
@@ -99,6 +125,7 @@ module.exports = (function () {
     });
 
     mongoose.model('Payment', PaymentSchema);
+    mongoose.model('prepayment', PrepaymentSchema);
     mongoose.model('purchasePayments', purchasePaymentSchema);
     mongoose.model('InvoicePayment', InvoicePaymentSchema);
     mongoose.model('ProformaPayment', ProformaPaymentSchema);
@@ -112,29 +139,26 @@ module.exports = (function () {
         var db = payment.db.db;
 
         db.collection('settings').findOneAndUpdate({
-                dbName: db.databaseName,
-                name  : 'payment'
-            },
-            //[['name', 1]],
-            {
-                $inc: {seq: 1}
-            },
-            {
-                returnOriginal: false,
-                upsert        : true
-            },
-            function (err, rate) {
-                if (err) {
-                    return next(err);
-                }
+            dbName: db.databaseName,
+            name  : 'payment'
+        }, {
+            $inc: {seq: 1}
+        }, {
+            returnOriginal: false,
+            upsert        : true
+        }, function (err, rate) {
+            if (err) {
+                return next(err);
+            }
 
-                payment.name += '_' + rate.value.seq;
+            payment.name += '_' + rate.value.seq;
 
-                next();
-            });
+            next();
+        });
     }
 
     PaymentSchema.pre('save', setName);
+    PrepaymentSchema.pre('save', setName);
     ProformaPaymentSchema.pre('save', setName);
     InvoicePaymentSchema.pre('save', setName);
     ExpensesInvoicePaymentSchema.pre('save', setName);
@@ -142,7 +166,7 @@ module.exports = (function () {
     salaryPaymentSchema.pre('save', setName);
     purchasePaymentSchema.pre('save', setName);
 
-    /*PaymentSchema.post('save', function (doc) {
+    /* PaymentSchema.post('save', function (doc) {
      var payment = this;
      var paymentDate = new Date(this.date);
      var db = payment.db.db;
@@ -181,47 +205,43 @@ module.exports = (function () {
         var db = payment.db.db;
 
         db.collection('settings').findOneAndUpdate({
-                dbName: db.databaseName,
-                name  : 'salary'
+            dbName: db.databaseName,
+            name  : 'salary'
+        }, {
+            $inc: {seq: 1}
+        }, {
+            returnOriginal: false,
+            upsert        : true
+        }, function (err, rate) {
+            if (err) {
+                return next(err);
+            }
+
+            payment.name = payment.year + '/' + payment.month + '_' + rate.value.seq;
+
+            next();
+        });
+    });
+    salaryPaymentSchema.post('save', function (doc) {
+        var payment = this;
+        var db = payment.db.db;
+
+        db.collection('Invoice').findOneAndUpdate({
+                _id: doc.invoice._id
             },
-            //[['name', 1]],
+            [['name', 1]],
             {
-                $inc: {seq: 1}
+                $set: {paymentDate: new Date()}
             },
-            {
-                returnOriginal: false,
-                upsert        : true
-            },
-            function (err, rate) {
+            null,
+            function (err) {
                 if (err) {
-                    return next(err);
+                    return console.error('An error was occurred during updating %s', doc.invoice);
                 }
 
-                payment.name = payment.year + '/' + payment.month + '_' + rate.value.seq;
-
-                next();
+                console.log('Invoice %s was updated success', doc.invoice);
             });
     });
-    /*salaryPaymentSchema.post('save', function (doc) {
-     var payment = this;
-     var db = payment.db.db;
-
-     db.collection('Invoice').findOneAndUpdate({
-     _id: doc.invoice._id
-     },
-     [['name', 1]],
-     {
-     $set: {paymentDate: new Date()}
-     },
-     null,
-     function (err) {
-     if (err) {
-     return console.error('An error was occurred during updating %s', doc.invoice);
-     }
-
-     console.log('Invoice %s was updated success', doc.invoice);
-     });
-     });*/
 
     payOutSchema.pre('save', function (next) {
         var payment = this;
@@ -236,6 +256,7 @@ module.exports = (function () {
 
     mongoose.Schemas.Payment = PaymentSchema;
     mongoose.Schemas.InvoicePayment = InvoicePaymentSchema;
+    mongoose.Schemas.Prepayment = PrepaymentSchema;
     mongoose.Schemas.ProformaPayment = ProformaPaymentSchema;
     mongoose.Schemas.ExpensesInvoicePayment = ExpensesInvoicePaymentSchema;
     mongoose.Schemas.DividendInvoicePayment = DividendInvoicePaymentSchema;

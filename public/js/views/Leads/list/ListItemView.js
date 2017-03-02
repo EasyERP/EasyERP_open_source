@@ -19,7 +19,7 @@
 
         render: function () {
             this.$el.append(_.template(ListTemplate, {
-                leadsCollection: this.collection.toJSON(),
+                leadsCollection: this.collection.toJSON()
                 //startNumber    : this.startNumber
             }));
         }

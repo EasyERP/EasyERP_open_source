@@ -1,6 +1,7 @@
 'use strict';
 
 var mongoose = require('mongoose');
+var async = require('async');
 var dbsObject = {};
 var models = require('./helpers/models')(dbsObject);
 var dbsNames = {};
@@ -18,8 +19,8 @@ connectOptions = {
     db    : {native_parser: true},
     server: {poolSize: 5},
     // replset: { rs_name: 'myReplicaSetName' },
-    //user  : process.env.DB_USER,
-    //pass  : process.env.DB_PASS,
+    // user  : process.env.DB_USER,
+    // pass  : process.env.DB_PASS,
     w     : 1,
     j     : true
     // mongos: true
@@ -27,6 +28,8 @@ connectOptions = {
 mainDb = mongoose.createConnection(process.env.MAIN_DB_HOST, process.env.MAIN_DB_NAME, process.env.DB_PORT, connectOptions);
 mainDb.on('error', function (err) {
     err = err || 'connection error';
+    console.error(err);
+
     process.exit(1, err);
 });
 mainDb.once('open', function callback() {
@@ -57,7 +60,7 @@ mainDb.once('open', function callback() {
             process.exit(1, err);
         }
 
-        result.forEach(function (_db, index) {
+        async.each(result, function (_db, eachCb) {
             var dbInfo = {
                 DBname: '',
                 url   : ''
@@ -66,39 +69,51 @@ mainDb.once('open', function callback() {
                 db    : {native_parser: true},
                 server: {poolSize: 5},
                 // replset: { rs_name: 'myReplicaSetName' },
-                //user  : _db.user,
-                //pass  : _db.pass,
+                // user  : _db.user,
+                // pass  : _db.pass,
                 w     : 1,
                 j     : true
-                // mongos: true
+                // mongos: true,
+                // config: { autoIndex: false } // todo uncomment in production
             };
             var dbObject = mongoose.createConnection(_db.url, _db.DBname, _db.port, opts);
-            var Scheduler = require('./services/scheduler')(models);
 
             dbObject.on('error', function (err) {
                 console.error(err);
+                eachCb(err);
             });
             dbObject.once('open', function () {
-                var scheduler = new Scheduler(_db.DBname);
+                console.log('Connection to ' + _db.DBname + ' is success');
 
-                console.log('Connection to ' + _db.DBname + ' is success' + index);
-                dbInfo.url = result[index].url;
-                dbInfo.DBname = result[index].DBname;
+                dbInfo.url = _db.url;
+                dbInfo.DBname = _db.DBname;
                 dbsObject[_db.DBname] = dbObject;
                 dbsNames[_db.DBname] = dbInfo;
 
-                scheduler.initEveryDayScheduler();
+                eachCb();
+            });
+        }, function (err) {
+            if (err) {
+                return console.error(err);
+            }
+            app = require('./app')(mainDb, dbsNames);
+
+            app.listen(port, function () {
+                var Scheduler = require('./services/scheduler')(models);
+                var scheduler = new Scheduler(dbsObject);
+
+                console.log('==============================================================');
+                console.log('|| server instance=' + instance + ' start success on port=' + port + ' in ' + process.env.NODE_ENV + ' version ||');
+                console.log('==============================================================\n');
+
+                if (result.length > 0) {
+                    scheduler.initEveryDayScheduler();
+                }
             });
         });
     });
 
     mainDb.mongoose = mongoose;
-
-    app = require('./app')(mainDb, dbsNames);
-
-    app.listen(port, function () {
-        console.log('==============================================================');
-        console.log('|| server start success on port=' + port + ' in ' + process.env.NODE_ENV + ' version ||');
-        console.log('==============================================================\n');
-    });
 });
+
+

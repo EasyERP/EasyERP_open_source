@@ -8,19 +8,20 @@
     <%}%>
     >
         <td class="checkboxRow">
-            <label>
+            <label class="_customCHeckbox">
                 <input type="checkbox" value="<%=order._id%>" class="checkbox"
                 <%if (order.workflow && order.workflow.status === 'Done') { %>
                 disabled
                 <% } %>
                 />
+                <span></span>
             </label>
         </td>
         <td>
             <div class="compactRowWrap">
                 <div class="compactRow">
                     <div class="firstName"><%=(order.supplier) ? order.supplier.name.first + ' ' + order.supplier.name.last : ''%></div>
-                    <div><%=(order.salesManager && order.salesManager.name) ? order.salesManager.name.first + ' ' + order.salesManager.name.last : ''%></div>
+                    <div class="user"><%=(order.salesManager && order.salesManager.name) ? order.salesManager.name.first + ' ' + order.salesManager.name.last : ''%></div>
                 </div>
                 <div class="compactRow">
                     <div><%= order.orderDate %></div>

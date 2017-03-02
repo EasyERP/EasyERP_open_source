@@ -23,7 +23,7 @@ define([
                 self.renderContent(self.e);
             }
 
-            dataService.getData('/Companies/', {type : 'Company'}, function (res) {
+            dataService.getData('/Companies/', {type: 'Company'}, function (res) {
                 res = _.map(res.data, function (elem) {
                     elem.name = elem.fullName;
 
@@ -39,8 +39,6 @@ define([
 
             this.attribute = options.attribute;
             this.saveDeal = options.saveDeal;
-
-
 
             this.inputEvent = _.debounce(
                 function (e) {
@@ -58,7 +56,6 @@ define([
 
             _.bindAll(this, 'inputEvent');
             _.bindAll(this, 'renderContent');
-
 
         },
 
@@ -115,16 +112,14 @@ define([
             var formString = this.template();
 
             this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                position     : {
+                autoOpen   : true,
+                position   : {
                     at: "top+35%"
                 },
-                dialogClass  : 'tag-list-dialog',
-                title        : 'Tag List',
-                width        : '300px',
-                buttons      : [
+                dialogClass: 'tag-list-dialog',
+                title      : 'Tag List',
+                width      : '300px',
+                buttons    : [
                     {
                         class: 'exitButton',
                         click: function () {

@@ -1,10 +1,7 @@
-/*TODO remove caseFilter methid after testing filters*/
 module.exports = function (models, event) {
     'use strict';
 
-    var FilterMapper = require('../helpers/filterMapper');
     var mongoose = require('mongoose');
-
     var accessRoll = require('../helpers/accessRollHelper.js')(models);
     var _ = require('../node_modules/underscore');
     var moment = require('../public/js/libs/moment/moment');
@@ -31,6 +28,11 @@ module.exports = function (models, event) {
 
     var exporter = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Project;
+
+    var FilterMapper = require('../helpers/filterMapper');
+    var filterMapper = new FilterMapper();
+
+    var projectCT = 'Project';
 
     var lookupForProjectArray = [
         {
@@ -212,52 +214,6 @@ module.exports = function (models, event) {
         };
     }
 
-    /*function caseFilter(filter) {
-     var condition = [];
-     var keys = Object.keys(filter);
-     var key;
-     var i;
-
-     for (i = keys.length - 1; i >= 0; i--) {
-     key = keys[i]; // added correct fields for Tasks and one new field Summary
-
-     switch (key) {
-     case 'workflow':
-     condition.push({'workflow._id': {$in: filter.workflow.value.objectID()}});
-     break;
-     case 'project':
-     condition.push({'project._id': {$in: filter.project.value.objectID()}});
-     break;
-     case 'customer':
-     condition.push({'customer._id': {$in: filter.customer.value.objectID()}});
-     break;
-     case 'projectManager':
-     if (filter.projectmanager && filter.projectmanager.value) {
-     condition.push({'projectManager._id': {$in: filter.projectManager.value.objectID()}});
-     }
-     break;
-     case 'salesManager':
-     condition.push({'salesManager._id': {$in: filter.salesManager.value.objectID()}});
-     break;
-     case 'name':
-     condition.push({_id: {$in: filter.name.value.objectID()}});
-     break;
-     case 'summary':
-     condition.push({_id: {$in: filter.summary.value.objectID()}});
-     break;
-     case 'type':
-     condition.push({type: {$in: filter.type.value}});
-     break;
-     case 'assignedTo':
-     condition.push({'assignedTo._id': {$in: filter.assignedTo.value.objectID()}});
-     break;
-     // skip default case
-     }
-     }
-
-     return condition;
-     }*/
-
     this.create = function (req, res, next) {
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
         var body = req.body;
@@ -295,7 +251,7 @@ module.exports = function (models, event) {
             if (!obj._id) {
                 obj._id = mongoose.Types.ObjectId();
             }
-            obj.date = new Date();
+            // obj.date = new Date();
             obj.author = req.session.uName;
             data.notes[data.notes.length - 1] = obj;
         }
@@ -391,18 +347,17 @@ module.exports = function (models, event) {
                 as          : 'workflow'
             }
         }];
-        var filterMapper = new FilterMapper();
 
         var projectThumbPipeline = [{
             $project: {
-                name           : 1,
-                workflow       : {$arrayElemAt: ['$workflow', 0]},
-                task           : 1,
-                customer       : {$arrayElemAt: ['$customer', 0]},
-                health         : 1,
-                projecttype    : 1,
-                'editedBy.date': 1,
-                salesManagers  : {
+                name            : 1,
+                workflow        : {$arrayElemAt: ['$workflow', 0]},
+                task            : 1,
+                customer        : {$arrayElemAt: ['$customer', 0]},
+                health          : 1,
+                projecttype     : 1,
+                'createdBy.date': 1,
+                salesManagers   : {
                     $filter: {
                         input: '$projectMembers',
                         as   : 'projectMember',
@@ -432,16 +387,16 @@ module.exports = function (models, event) {
             }
         }, {
             $project: {
-                _id            : 1,
-                name           : 1,
-                task           : 1,
-                workflow       : 1,
-                salesManager   : {$arrayElemAt: ['$salesManagers', 0]},
-                projectManager : {$arrayElemAt: ['$projectManagers', 0]},
-                customer       : 1,
-                health         : 1,
-                projecttype    : 1,
-                'editedBy.date': 1
+                _id             : 1,
+                name            : 1,
+                task            : 1,
+                workflow        : 1,
+                salesManager    : {$arrayElemAt: ['$salesManagers', 0]},
+                projectManager  : {$arrayElemAt: ['$projectManagers', 0]},
+                customer        : 1,
+                health          : 1,
+                projecttype     : 1,
+                'createdBy.date': 1
             }
         }, {
             $lookup: {
@@ -459,16 +414,16 @@ module.exports = function (models, event) {
             }
         }, {
             $project: {
-                _id            : 1,
-                name           : 1,
-                task           : 1,
-                workflow       : 1,
-                salesManager   : {$arrayElemAt: ['$salesManager', 0]},
-                projectManager : {$arrayElemAt: ['$projectManager', 0]},
-                customer       : 1,
-                health         : 1,
-                projecttype    : 1,
-                'editedBy.date': 1
+                _id             : 1,
+                name            : 1,
+                task            : 1,
+                workflow        : 1,
+                salesManager    : {$arrayElemAt: ['$salesManager', 0]},
+                projectManager  : {$arrayElemAt: ['$projectManager', 0]},
+                customer        : 1,
+                health          : 1,
+                projecttype     : 1,
+                'createdBy.date': 1
             }
         }];
 
@@ -579,6 +534,8 @@ module.exports = function (models, event) {
             name       : 1,
             task       : 1,
             health     : 1,
+            createdBy  : 1,
+            editedBy   : 1,
             projecttype: 1,
 
             workflow: {
@@ -603,6 +560,7 @@ module.exports = function (models, event) {
             health      : '$root.health',
             projecttype : '$root.projecttype',
             editedBy    : '$root.editedBy',
+            createdBy   : '$root.createdBy',
             total       : 1
         };
         var keysSort = Object.keys(sort);
@@ -668,7 +626,9 @@ module.exports = function (models, event) {
         }
 
         if (filter && typeof filter === 'object') {
-            optionsObject = filterMapper.mapFilter(filter, 'Projects'); // caseFilter(filter);
+            optionsObject = filterMapper.mapFilter(filter, {
+                contentType: 'Projects'
+            });
         }
 
         accessRollSearcher = function (cb) {
@@ -746,9 +706,6 @@ module.exports = function (models, event) {
         var optionsObject;
         var filter = data.filter || {};
         var response = {};
-
-        var filterMapper = new FilterMapper();
-
         var waterfallTasks;
         var accessRollSearcher;
         var contentSearcher;
@@ -783,7 +740,9 @@ module.exports = function (models, event) {
         response.showMore = false;
 
         if (filter && typeof filter === 'object') {
-            optionsObject = filterMapper.mapFilter(filter, 'Projects'); // caseFilter(filter);
+            optionsObject = filterMapper.mapFilter(filter, {
+                contentType: 'Projects'
+            });
         }
 
         accessRollSearcher = function (cb) {
@@ -1029,7 +988,7 @@ module.exports = function (models, event) {
 
     this.getForQuotation = function (req, res, next) {
         var pId = req.query.projectId;
-        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+        var Project = models.get(req.session.lastDb, projectCT, ProjectSchema);
 
         Project.findOne({_id: objectId(pId)}, function (err, project) {
             if (err) {
@@ -1097,7 +1056,7 @@ module.exports = function (models, event) {
 
     this.getEmails = function (req, res, next) {
         var projectId = req.params.id;
-        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+        var Project = models.get(req.session.lastDb, projectCT, ProjectSchema);
 
         Project.aggregate([
             {
@@ -1158,7 +1117,7 @@ module.exports = function (models, event) {
     };
 
     this.getFilterValues = function (req, res, next) {
-        var project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+        var project = models.get(req.session.lastDb, projectCT, ProjectSchema);
 
         project.aggregate([
             {
@@ -1199,7 +1158,7 @@ module.exports = function (models, event) {
 
     this.getById = function (req, res, next) {
         var id = req.params.id;
-        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+        var Project = models.get(req.session.lastDb, projectCT, ProjectSchema);
 
         Project.aggregate([{
             $match: {
@@ -1433,7 +1392,7 @@ module.exports = function (models, event) {
     };
 
     this.getForDd = function (req, res, next) {
-        var project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+        var project = models.get(req.session.lastDb, projectCT, ProjectSchema);
         var waterfallTasks;
         var accessRollSearcher = function (cb) {
             accessRoll(req, project, cb);
@@ -1468,7 +1427,7 @@ module.exports = function (models, event) {
 
     this.updateAllProjects = function (req, res, next) {
         var projectId;
-        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+        var Project = models.get(req.session.lastDb, projectCT, ProjectSchema);
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var Job = models.get(req.session.lastDb, 'jobs', jobsSchema);
         var count = 0;
@@ -1702,7 +1661,7 @@ module.exports = function (models, event) {
     };
 
     this.getForDashboard = function (req, res, next) {
-        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+        var Project = models.get(req.session.lastDb, projectCT, ProjectSchema);
 
         Project
             .find()
@@ -1717,7 +1676,7 @@ module.exports = function (models, event) {
     };
 
     this.getProjectPMForDashboard = function (req, res, next) {
-        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+        var Project = models.get(req.session.lastDb, projectCT, ProjectSchema);
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var data = {};
         var sort = req.query.sort;
@@ -2014,7 +1973,7 @@ module.exports = function (models, event) {
     };
 
     this.remove = function (req, res, next) {
-        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+        var Project = models.get(req.session.lastDb, projectCT, ProjectSchema);
         var _id = req.params.id;
 
         Project.findByIdAndRemove(_id, function (err) {
@@ -2029,7 +1988,7 @@ module.exports = function (models, event) {
     };
 
     this.bulkRemove = function (req, res, next) {
-        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+        var Project = models.get(req.session.lastDb, projectCT, ProjectSchema);
         var body = req.body || {ids: []};
         var ids = body.ids;
 
@@ -2045,7 +2004,7 @@ module.exports = function (models, event) {
     };
 
     this.uploadFile = function (req, res, next) {
-        var Model = models.get(req.session.lastDb, 'Project', ProjectSchema);
+        var Model = models.get(req.session.lastDb, projectCT, ProjectSchema);
         var headers = req.headers;
         var id = headers.modelid || 'empty';
         var contentType = headers.modelname || 'persons';
@@ -2080,16 +2039,17 @@ module.exports = function (models, event) {
 
     this.exportToXlsx = function (req, res, next) {
         var dbName = req.session.lastDb;
-        var Project = models.get(dbName, 'Project', ProjectSchema);
+        var Project = models.get(dbName, projectCT, ProjectSchema);
 
         var filter = req.query.filter ? JSON.parse(req.query.filter) : JSON.stringify({});
-        var type = req.query.type || 'Project';
+        var type = req.query.type || 'Projects';
         var filterObj = {};
         var options;
-        var filterMapper = new FilterMapper();
 
         if (filter && typeof filter === 'object') {
-            filterObj = filterMapper.mapFilter(filter, type);
+            filterObj = filterMapper.mapFilter(filter, {
+                contentType: type
+            });
         }
 
         options = {
@@ -2134,16 +2094,17 @@ module.exports = function (models, event) {
 
     this.exportToCsv = function (req, res, next) {
         var dbName = req.session.lastDb;
-        var Project = models.get(dbName, 'Project', ProjectSchema);
+        var Project = models.get(dbName, projectCT, ProjectSchema);
 
         var filter = req.query.filter ? JSON.parse(req.query.filter) : JSON.stringify({});
         var type = req.query.type || 'Project';
         var filterObj = {};
         var options;
-        var filterMapper = new FilterMapper();
 
         if (filter && typeof filter === 'object') {
-            filterObj = filterMapper.mapFilter(filter, type);
+            filterObj = filterMapper.mapFilter(filter, {
+                contentType: type
+            });
         }
 
         options = {

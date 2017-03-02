@@ -73,13 +73,11 @@ define([
             e.preventDefault();
 
             this.$el = $(formString).dialog({
-                dialogClass  : 'change-password-dialog',
-                width        : '500px',
-                title        : 'Change Password',
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                buttons      : {
+                dialogClass: 'change-password-dialog',
+                width      : '400px',
+                title      : 'Change Password',
+                autoOpen   : true,
+                buttons    : {
                     save: {
                         text : 'Save',
                         class: 'btn',

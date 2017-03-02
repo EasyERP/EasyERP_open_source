@@ -18,6 +18,9 @@ var User = function (event, models) {
     var ObjectId = mongoose.Types.ObjectId;
     var geoip = require('geoip-lite');
 
+    var UserService = require('../services/user')(models);
+    var EmployeeService = require('../services/employee')(models);
+
     function checkIfUserLoginUnique(req, login, cb) {
         models.get(req.session.lastDb, 'Users', userSchema).find({login: login}, function (error, doc) {
             if (error) {
@@ -64,7 +67,7 @@ var User = function (event, models) {
 
                 callback(null, result);
             });
-        };
+        }
 
         function getUpdateFilterQuery(filterModel, callback) {
             var byDefault;
@@ -167,6 +170,7 @@ var User = function (event, models) {
 
             return updateThisUser(_id, query);
         }
+
         if (deleteFilter) {
             SavedFilters.findByIdAndRemove(deleteFilter.id, function (err, result) {
                 var customError;
@@ -486,11 +490,8 @@ var User = function (event, models) {
      * @instance
      */
     this.create = function (req, res, next) {
-        var UserModel = models.get(req.session.lastDb, 'Users', userSchema);
         var body = req.body;
-        var shaSum = crypto.createHash('sha256');
         var err;
-        var user;
 
         if (!validator.validUserBody(body)) {
             err = new Error();
@@ -500,11 +501,9 @@ var User = function (event, models) {
         }
 
         body = validator.parseUserBody(body);
-        shaSum.update(body.pass);
-        body.pass = shaSum.digest('hex');
+        body.dbName = req.session.lastDb;
 
-        user = new UserModel(body);
-        user.save(function (err, user) {
+        UserService.create(body, function (err, user) {
             if (err) {
                 return next(err);
             }
@@ -559,6 +558,7 @@ var User = function (event, models) {
 
     this.remove = function (req, res, next) {
         var id = req.params.id;
+        var dbName = req.session.lastDb;
         var err;
 
         if (req.session.uId === id) {
@@ -568,42 +568,67 @@ var User = function (event, models) {
             return next(err);
         }
 
-        models.get(req.session.lastDb, 'Users', userSchema).remove({_id: id}, function (err) {
+        UserService.findByIdAndRemove(id, {
+            dbName: dbName
+        }, function (err, _user) {
+            var _id;
+
             if (err) {
                 return next(err);
 
             }
 
-            res.status(200).send({success: 'User remove success'});
+            if (_user && _user.relatedEmployee) {
+                _id = _user.relatedEmployee;
+
+                EmployeeService.findByIdAndUpdate(_id, {$set: {relatedUser: null}}, {
+                    dbName: dbName
+                }, function (err, _employee) {
+                    if (err) {
+                        return next(err);
+
+                    }
+
+                    res.status(200).send({success: 'User remove success'});
+                });
+            } else {
+                res.status(200).send({success: 'User remove success'});
+            }
         });
     };
 
     this.bulkRemove = function (req, res, next) {
-        var Model = models.get(req.session.lastDb, 'Users', userSchema);
         var body = req.body || {ids: []};
+        var dbName = req.session.lastDb;
         var ids = body.ids;
-        var err;
 
-        async.each(ids, function (id, cb) {
-            if (req.session.uId === id) {
-                err = new Error('You cannot delete current user');
-                err.status = 403;
-
-                return cb(err);
-            }
-            Model.findByIdAndRemove(id, function (err) {
-                if (err) {
-                    return err(err);
-                }
-
-                cb();
-            });
+        UserService.findAndRemove({_id: {$in: ids}}, {
+            dbName: dbName
         }, function (err) {
             if (err) {
                 return next(err);
             }
 
-            res.status(200).send({success: true});
+            EmployeeService.findAndUpdate({
+                relatedUser: {
+                    $in: ids
+                }
+            }, {
+                $set: {
+                    relatedUser: null
+                }
+            }, {
+
+                dbName: dbName,
+                multi : true
+            }, function (err, updated) {
+                if (err) {
+                    return next(err);
+
+                }
+
+                res.status(200).send({success: 'User remove success'});
+            });
         });
     };
 
@@ -633,7 +658,7 @@ var User = function (event, models) {
         var data = req.query;
         var UserModel = models.get(req.session.lastDb, 'Users', userSchema);
 
-        findUsers(UserModel, {login: 1, email : 1}, {login: 1}, data, function (err, users) {
+        findUsers(UserModel, {login: 1, email: 1}, {login: 1}, data, function (err, users) {
             if (err) {
                 return next(err);
             }
@@ -988,33 +1013,13 @@ var User = function (event, models) {
                 savedFilters = result && result.savedFilters ? result.savedFilters : []; // bug on keymetrics
 
                 savedFilters = _.groupBy(savedFilters, 'contentType');
-                delete result.savedFilters;
+
+                if (result) {
+                    delete result.savedFilters;
+                }
 
                 res.status(200).send({user: result, savedFilters: savedFilters});
             });
-
-        /*query = UserModel.findById(id, {__v: 0, pass: 0});
-         query
-         .populate('profile', '_id profileName profileAccess')
-         .populate('relatedEmployee', 'imageSrc name fullName')
-         .populate('savedFilters._id');
-
-         query.exec(function (err, result) {
-         var newUserResult = {};
-         var savedFilters;
-
-         if (err) {
-         return next(err);
-         }
-
-         savedFilters = result ? result.toJSON().savedFilters : null;
-
-         if (savedFilters) {
-         newUserResult = _.groupBy(savedFilters, '_id.contentView');
-         }
-
-         res.status(200).send({user: result, savedFilters: newUserResult});
-         });*/
     };
 
     this.totalCollectionLength = function (req, res, next) {

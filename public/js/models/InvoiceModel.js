@@ -39,9 +39,7 @@ define([
                 payments = response.payments;
                 products = response.products;
 
-
-
-                if (response.currency && response.currency._id && response.currency._id.decPlace){
+                if (response.currency && response.currency._id && response.currency._id.decPlace) {
                     decimalPlace = response.currency._id.decPlace;
                 }
 
@@ -105,14 +103,16 @@ define([
 
                 if (response.notes) {
                     _.map(response.notes, function (note, index) {
-                        note.date = moment(note.date).format('DD MMM, YYYY, H:mm:ss');
+                        note.date = moment(new Date(note.date));
 
-                        if (note.history && (['Invoice Date', 'Due Date', 'Creation Date', 'Payment Date'].indexOf(note.history.changedField) !== -1)){
+                        // note.date = moment(note.date).format('DD MMM, YYYY, H:mm:ss');
+
+                        if (note.history && (['Invoice Date', 'Due Date', 'Creation Date', 'Payment Date'].indexOf(note.history.changedField) !== -1)) {
                             note.history.changedValue = note.history.changedValue ? moment(new Date(note.history.changedValue)).format('DD MMM, YYYY') : '';
                             note.history.newValue = note.history.newValue ? moment(new Date(note.history.newValue)).format('DD MMM, YYYY') : '';
                             note.history.prevValue = note.history.prevValue ? moment(new Date(note.history.prevValue)).format('DD MMM, YYYY') : '';
                         }
-                        if (!note.name && note.history && (note.history.changedField === 'Creation Date')){
+                        if (!note.name && note.history && (note.history.changedField === 'Creation Date')) {
                             response.notes.splice(index, 1);
                             response.notes.unshift(note);
                             return;
@@ -164,6 +164,7 @@ define([
             products   : [],
             paymentInfo: {
                 total  : 0,
+                taxes  : 0,
                 unTaxed: 0,
                 balance: 0,
                 paid   : 0

@@ -204,7 +204,8 @@ module.exports = (function () {
         transfer: {type: Array, default: []},
 
         lastFire  : {type: Number, default: null},
-        externalId: {type: String, default: null}
+        externalId: {type: String, default: null},
+        userName  : String
     }, {collection: 'Employees'});
 
     employeeSchema.virtual('fullName').get(function () {
