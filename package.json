@@ -104,8 +104,8 @@
     "phantomjs-prebuilt": "2.1.4",
     "pixrem": "^3.0.1",
     "requirejs": "2.1.22",
-    "sinon": "1.17.2",
-    "sinon-chai": "2.8.0",
+    "sinon": "2.1.0",
+    "sinon-chai": "2.9.0",
     "supertest": "1.0.1"
   }
 }
