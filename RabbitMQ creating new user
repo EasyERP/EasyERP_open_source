@@ -1,0 +1,1 @@
+curl -i -u test:test http://localhost:15672/api/whoami
