@@ -56,6 +56,9 @@ var stockCorrections = function (models, event) {
 
     this.getList = function (req, res, next) {
         var data = req.query;
+        var quickSearch = data.quickSearch;
+        var matchObject = {};
+        var regExp;
         var limit = parseInt(data.count, 10);
         var skip = (parseInt(data.page || 1, 10) - 1) * limit;
         var obj = {};
@@ -72,6 +75,13 @@ var stockCorrections = function (models, event) {
             obj.$and.push(filterMapper.mapFilter(data.filter, 'stockTransactions'));
         }
 
+        if (quickSearch) {
+            regExp = new RegExp(quickSearch, 'ig');
+            matchObject['warehouse.name'] = {
+                $regex: regExp
+            };
+        }
+
         if (data.sort) {
             keys = Object.keys(data.sort)[0];
             data.sort[keys] = parseInt(data.sort[keys], 10);
@@ -81,11 +91,12 @@ var stockCorrections = function (models, event) {
         }
 
         options = {
-            match : obj,
-            sort  : sort,
-            skip  : skip,
-            limit : limit,
-            dbName: req.session.lastDb
+            match      : obj,
+            matchObject: matchObject,
+            sort       : sort,
+            skip       : skip,
+            limit      : limit,
+            dbName     : req.session.lastDb
         };
 
         StockTransactionService.get(options, function (err, result) {

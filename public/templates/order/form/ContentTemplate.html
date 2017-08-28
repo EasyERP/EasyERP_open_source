@@ -1,7 +1,8 @@
-<div class="listWrap ordersList">
-    <div class="listContentWrap">
+<div class="listWrap">
+    <div class="listContentWrap orderList closed">
         <div class="listContentTitle">
-            <div class="dropDown">
+            <div class="dropDown"
+                 title="sort items">
                 <a id="sortBy" class="icon-list5 dropBtn"></a>
                 <ul>
                     <li class="oe_sortable" data-sort="name">
@@ -23,18 +24,19 @@
                 </ul>
             </div>
             <div id="searchContainer"></div>
+            <button class="btn-toggle"
+                    id="toggleList"
+                    title="toggle list">
+                <span class="icon-arrow-left2"></span>
+            </button>
         </div>
-        <div id="listContent" class="listContent">
-
-        </div>
+        <div id="listContent" class="listContent"></div>
         <div id="listPagination"></div>
     </div>
     <div class="formContentWrap">
         <div class="formContentTitle">
             <span class="closeBtn"></span>
         </div>
-        <div id="formContent" class="formContent">
-
-        </div>
+        <div id="formContent" class="formContent"></div>
     </div>
 </div>

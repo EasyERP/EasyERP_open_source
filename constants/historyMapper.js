@@ -145,6 +145,39 @@ module.exports = {
         }
     },
 
+    MANUFACTURINGORDER: {
+        collectionName: 'manufacturingOrder',
+
+        map: {
+            'status.fulfillStatus': {
+                name : 'Fulfilled',
+                isRef: false
+            },
+
+            orderDate: {
+                name : 'Order Date',
+                isRef: false
+            },
+
+            expectedDate: {
+                name : 'Payment Due Date',
+                isRef: false
+            },
+
+            workflow: {
+                name      : 'Status',
+                isRef     : true,
+                collection: 'workflows',
+                project   : '$tmp.name'
+            },
+
+            'createdBy.date': {
+                name : 'Creation Date',
+                isRef: false
+            }
+        }
+    },
+
     PERSON: {
         collectionName: 'Persons',
 

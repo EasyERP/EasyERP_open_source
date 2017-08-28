@@ -8,6 +8,12 @@ module.exports = function (models, event) {
     var handler = new QuotationHandler(models, event);
     var moduleId = MODULES.ORDERS;
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
+    //var accessDeleteStackMiddleware = require('../helpers/checkDelete');
+
+
+    /*function accessDeleteStackMiddlewareFunction(req, res, next) {
+        accessDeleteStackMiddleware(req, res, next, models, 'order');
+    }*/
 
     router.use(authStackMiddleware);
 
@@ -372,7 +378,7 @@ module.exports = function (models, event) {
 
     router.patch('/:id', accessStackMiddleware, handler.putchModel);
 
-    router.delete('/:id', accessStackMiddleware, handler.remove);
+    router.delete('/:id', accessStackMiddleware, /*accessDeleteStackMiddlewareFunction,*/ handler.remove);
 
     return router;
 };

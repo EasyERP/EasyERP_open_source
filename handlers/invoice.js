@@ -1351,6 +1351,13 @@ var Module = function (models, event) {
                         }
                     }, {
                         $lookup: {
+                            from        : 'expensesCategories',
+                            localField  : 'expensesCategory',
+                            foreignField: '_id',
+                            as          : 'expensesCategory'
+                        }
+                    }, {
+                        $lookup: {
                             from        : 'Customers',
                             localField  : 'supplier',
                             foreignField: '_id',
@@ -1358,23 +1365,24 @@ var Module = function (models, event) {
                         }
                     }, {
                         $project: {
-                            workflow       : {$arrayElemAt: ['$workflow', 0]},
-                            supplier       : {$arrayElemAt: ['$supplier', 0]},
-                            journal        : {$arrayElemAt: ['$journal', 0]},
-                            expense        : 1,
-                            forSales       : 1,
-                            'currency._id' : {$arrayElemAt: ['$currency._id', 0]},
-                            'currency.rate': '$currency.rate',
-                            paymentInfo    : 1,
-                            invoiceDate    : 1,
-                            name           : 1,
-                            paymentDate    : 1,
-                            dueDate        : 1,
-                            approved       : 1,
-                            _type          : 1,
-                            removable      : 1,
-                            'editedBy.date': 1,
-                            paid           : {$divide: [{$subtract: ['$paymentInfo.total', '$paymentInfo.balance']}, 100]}
+                            workflow        : {$arrayElemAt: ['$workflow', 0]},
+                            supplier        : {$arrayElemAt: ['$supplier', 0]},
+                            journal         : {$arrayElemAt: ['$journal', 0]},
+                            expense         : 1,
+                            forSales        : 1,
+                            'currency._id'  : {$arrayElemAt: ['$currency._id', 0]},
+                            'currency.rate' : '$currency.rate',
+                            paymentInfo     : 1,
+                            invoiceDate     : 1,
+                            name            : 1,
+                            paymentDate     : 1,
+                            dueDate         : 1,
+                            approved        : 1,
+                            expensesCategory: 1,
+                            _type           : 1,
+                            removable       : 1,
+                            'editedBy.date' : 1,
+                            paid            : {$divide: [{$subtract: ['$paymentInfo.total', '$paymentInfo.balance']}, 100]}
                         }
                     }, {
                         $project: {
@@ -1399,7 +1407,8 @@ var Module = function (models, event) {
                             _type            : 1,
                             removable        : 1,
                             editedBy         : 1,
-                            paid             : 1
+                            paid             : 1,
+                            expensesCategory : 1
                         }
                     }, {
                         $lookup: {
@@ -1410,24 +1419,25 @@ var Module = function (models, event) {
                         }
                     }, {
                         $project: {
-                            salesPerson: {$arrayElemAt: ['$salesManager', 0]},
-                            workflow   : 1,
-                            supplier   : 1,
-                            project    : 1,
-                            expense    : 1,
-                            forSales   : 1,
-                            currency   : 1,
-                            paymentInfo: 1,
-                            invoiceDate: 1,
-                            name       : 1,
-                            paymentDate: 1,
-                            dueDate    : 1,
-                            approved   : 1,
-                            _type      : 1,
-                            removable  : 1,
-                            journal    : 1,
-                            paid       : 1,
-                            editedBy   : 1
+                            salesPerson     : {$arrayElemAt: ['$salesManager', 0]},
+                            workflow        : 1,
+                            supplier        : 1,
+                            project         : 1,
+                            expense         : 1,
+                            forSales        : 1,
+                            currency        : 1,
+                            paymentInfo     : 1,
+                            invoiceDate     : 1,
+                            name            : 1,
+                            paymentDate     : 1,
+                            dueDate         : 1,
+                            approved        : 1,
+                            _type           : 1,
+                            removable       : 1,
+                            journal         : 1,
+                            paid            : 1,
+                            editedBy        : 1,
+                            expensesCategory: 1
                         }
                     }, {
                         $match: optionsObject
@@ -1442,7 +1452,9 @@ var Module = function (models, event) {
                     }, {
                         $project: {
                             _id               : '$root._id',
-                            'salesPerson.name': {$concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']},
+                            'salesPerson.name': {
+                                $concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']
+                            },
                             'salesPerson._id' : '$root.salesPerson._id',
                             workflow          : '$root.workflow',
                             supplier          : '$root.supplier',
@@ -1459,6 +1471,7 @@ var Module = function (models, event) {
                             removable         : '$root.removable',
                             paid              : '$root.paid',
                             editedBy          : '$root.editedBy',
+                            expensesCategory  : '$root.expensesCategory',
                             total             : 1
                         }
                     }
@@ -1508,6 +1521,13 @@ var Module = function (models, event) {
                             as          : 'project'
                         }
                     }, {
+                        $lookup: {
+                            from        : 'expensesCategories',
+                            localField  : 'expensesCategory',
+                            foreignField: '_id',
+                            as          : 'expensesCategory'
+                        }
+                    }, {
                         $project: {
                             workflow: {$arrayElemAt: ['$workflow', 0]},
                             supplier: {$arrayElemAt: ['$supplier', 0]},
@@ -1522,20 +1542,21 @@ var Module = function (models, event) {
                                 }
                             },
 
-                            expense        : 1,
-                            forSales       : 1,
-                            'currency._id' : {$arrayElemAt: ['$currency._id', 0]},
-                            'currency.rate': '$currency.rate',
-                            paymentInfo    : 1,
-                            invoiceDate    : 1,
-                            name           : 1,
-                            paymentDate    : 1,
-                            dueDate        : 1,
-                            approved       : 1,
-                            _type          : 1,
-                            removable      : 1,
-                            'editedBy.date': 1,
-                            paid           : {$divide: [{$subtract: ['$paymentInfo.total', '$paymentInfo.balance']}, 100]}
+                            expense         : 1,
+                            forSales        : 1,
+                            'currency._id'  : {$arrayElemAt: ['$currency._id', 0]},
+                            'currency.rate' : '$currency.rate',
+                            paymentInfo     : 1,
+                            invoiceDate     : 1,
+                            name            : 1,
+                            paymentDate     : 1,
+                            expensesCategory: 1,
+                            dueDate         : 1,
+                            approved        : 1,
+                            _type           : 1,
+                            removable       : 1,
+                            'editedBy.date' : 1,
+                            paid            : {$divide: [{$subtract: ['$paymentInfo.total', '$paymentInfo.balance']}, 100]}
                         }
                     }, {
                         $project: {
@@ -1557,6 +1578,7 @@ var Module = function (models, event) {
                             name             : 1,
                             paymentDate      : 1,
                             dueDate          : 1,
+                            expensesCategory : 1,
                             payments         : 1,
                             approved         : 1,
                             _type            : 1,
@@ -1573,24 +1595,25 @@ var Module = function (models, event) {
                         }
                     }, {
                         $project: {
-                            salesPerson: {$arrayElemAt: ['$salesManagers', 0]},
-                            workflow   : 1,
-                            supplier   : 1,
-                            project    : 1,
-                            expense    : 1,
-                            forSales   : 1,
-                            currency   : 1,
-                            paymentInfo: 1,
-                            invoiceDate: 1,
-                            name       : 1,
-                            paymentDate: 1,
-                            dueDate    : 1,
-                            approved   : 1,
-                            _type      : 1,
-                            removable  : 1,
-                            journal    : 1,
-                            paid       : 1,
-                            editedBy   : 1
+                            salesPerson     : {$arrayElemAt: ['$salesManagers', 0]},
+                            workflow        : 1,
+                            supplier        : 1,
+                            project         : 1,
+                            expense         : 1,
+                            forSales        : 1,
+                            currency        : 1,
+                            paymentInfo     : 1,
+                            expensesCategory: 1,
+                            invoiceDate     : 1,
+                            name            : 1,
+                            paymentDate     : 1,
+                            dueDate         : 1,
+                            approved        : 1,
+                            _type           : 1,
+                            removable       : 1,
+                            journal         : 1,
+                            paid            : 1,
+                            editedBy        : 1
                         }
                     }, {
                         $match: optionsObject
@@ -1622,6 +1645,7 @@ var Module = function (models, event) {
                             removable         : '$root.removable',
                             paid              : '$root.paid',
                             editedBy          : '$root.editedBy',
+                            expensesCategory  : '$root.expensesCategory',
                             total             : 1
                         }
                     }
@@ -2158,6 +2182,11 @@ var Module = function (models, event) {
                 $group: {
                     _id: '$country',
                     sum: {$sum: '$sum'}
+                }
+            }, {
+                $match: {
+                    _id: {$ne: null},
+                    sum: {$ne: null}
                 }
             }
         ], function (err, result) {

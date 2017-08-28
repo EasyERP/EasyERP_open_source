@@ -14,15 +14,18 @@ module.exports = function (models, event) {
 
     router.use(authStackMiddleware);
 
-    router.get('/', integrations.getCredentials);
+    //router.get('/', integrations.getCredentials);
     router.get('/testConnection', integrations.testConnection);
     router.get('/auth_callback', integrations.approveIntegrationEtsy);
     router.get('/test', integrations.getTestConnection);
     router.get('/import', integrations.getImportConnection);
     router.get('/getForDD', integrations.getForDd);
+    router.get('/getOnlyProducts', integrations.getOnlyProducts);
+
+    router.get('/:type?', integrations.getCredentials);
 
     router.post('/:type', integrations.saveIntegrations);
-    router.patch('/:id', integrations.updateChannel);
+    router.patch('/:id', integrations.saveIntegrations);
 
     router.put('/:id', integrations.saveIntegrations);
 

@@ -8,6 +8,11 @@ module.exports = function (models, event) {
     var _journalHandler = new JournalHandler(models, event);
     var moduleId = MODULES.JOURNAL;
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
+    var accessDeleteStackMiddleware = require('../helpers/checkDelete');
+
+    function accessDeleteStackMiddlewareFunction(req, res, next) {
+        accessDeleteStackMiddleware(req, res, next, models, 'journal', event);
+    }
 
     router.use(authStackMiddleware);
 
@@ -170,7 +175,7 @@ HTTP/1.1 200 OK
     router.patch('/', _journalHandler.putchBulk);
 
     router.delete('/:id', accessStackMiddleware, _journalHandler.remove);
-    router.delete('/', accessStackMiddleware, _journalHandler.bulkRemove);
+    router.delete('/', accessStackMiddleware, accessDeleteStackMiddlewareFunction, _journalHandler.bulkRemove);
     router.delete('/:id', _journalHandler.remove);
 
     /**
@@ -197,7 +202,7 @@ HTTP/1.1 200 OK
     "n": 3
 }
      */
-    router.delete('/', _journalHandler.bulkRemove);
+    router.delete('/', accessDeleteStackMiddlewareFunction, _journalHandler.bulkRemove);
 
     return router;
 };

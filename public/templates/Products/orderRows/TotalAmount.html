@@ -72,7 +72,7 @@
             <label>Discount</label>
         </td>
         <td>
-            <input class="percentage _inputBordered forNum discountPercentage" maxlength="5" id="discount" <%= notEditable? 'disabled' : '' %>
+            <input class="percentage _animate forNum discountPercentage" maxlength="5" id="discount" <%= notEditable? 'disabled' : '' %>
                    value="<%=discount%>" <%= model && (model.approved || (model.workflow && model.workflow.status ===
             'Done') ) ? 'readonly' : ''%> \>
         </td>

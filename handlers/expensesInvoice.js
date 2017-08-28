@@ -56,18 +56,7 @@ var Proforma = function (models) {
             var workflow;
             var err;
             var expensesInvoice;
-            var saveObject = {
-                currency   : data.currency,
-                dueDate    : data.dueDate,
-                forSales   : data.forSales,
-                groups     : data.groups,
-                invoiceDate: data.invoiceDate,
-                paymentInfo: data.paymentInfo,
-                products   : data.products,
-                supplier   : data.supplier,
-                name       : data.supplierInvoiceNumber,
-                whoCanRW   : data.whoCanRW
-            };
+            var saveObject = data;
 
             if (parallelResponse && parallelResponse.length) {
                 workflow = parallelResponse[0];
@@ -94,6 +83,9 @@ var Proforma = function (models) {
             saveObject.journal = CONSTANTS.EXPENSES_INVOICE_JOURNAL;
 
             saveObject.currency.rate = ratesRetriever.getRate(fx.rates, fx.base, data.currency._id);
+
+            delete saveObject.salesPerson;
+            delete saveObject.sourceDocument;
 
             expensesInvoice = new ExpensesInvoice(saveObject);
 

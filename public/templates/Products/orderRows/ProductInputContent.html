@@ -1,73 +1,83 @@
-<tr class="productItem deleteRow" data-id="" data-error="true">
-
-    <td data-name="productName" class="product" rowspan="2">
-        <div class="_newSelectListWrap">
-            <a class="current-selected productsDd" data-content="productsDd" href="javascript:;" data-id="">Select</a>
-        </div>
-    </td>
-    <td data-name="description" class="description" rowspan="2">
-        <div>
-            <div class="jobsWescWrap _newSelectListWrap">
-                <textarea class="productDescr"></textarea>
+<tr class="productItem deleteRow "
+    data-id=""
+    data-error="true">
+    <td data-name="productName"
+        class="product text-left"
+        rowspan="2">
+        <div class="_animateSelectBox">
+            <div class="_newSelectListWrap">
+                <a class="current-selected productsDd"
+                   data-content="productsDd"
+                   href="javascript:;"
+                   data-id="">Select SKU</a>
             </div>
         </div>
     </td>
-    <td data-name="account" class="account">
-        <div class="_newSelectListWrap">
-             <span class="accountDd" data-content="accountDd"></span>
+    <td data-name="description"
+        class="description"
+        rowspan="2">
+        <div class="jobsWescWrap">
+            <textarea class="_animate productDescr"
+                      maxlength="200"
+                      placeholder="Write Order info"></textarea>
         </div>
     </td>
-    <td data-name="account" class="taxCodeLine">
-        <div class="_newSelectListWrap">
-            <a class="current-selected taxCode" data-content="taxCode" href="javascript:;" data-id="">Select</a>
+    <td data-name="account"
+        class="account">
+        <span class="accountDd"
+              data-content="accountDd">Acount info is empty..</span>
+    </td>
+    <td data-name="account"
+        class="taxCodeLine">
+        <div class="_animateSelectBox">
+            <div class="_newSelectListWrap">
+                <a class="current-selected taxCode"
+                   data-content="taxCode"
+                   href="javascript:;"
+                   data-id="">Select</a>
+            </div>
         </div>
     </td>
     <td data-name="quantity">
-        <div>
-            <input id="quantity" class="quantity statusInfo forNum" maxlength="9" size=7 type="text"
-            <%if (project) {%>
-            disabled
-            <%}%>
-            />
-        </div>
+        <input id="quantity"
+               class="_animate  quantity statusInfo forNum"
+               maxlength="9"
+               size=7
+               type="text"
+               required
+        <%if (project) {%>
+        disabled
+        <%}%> />
     </td>
     <% if (!writeOff){
     currencyClassVal = curSymbol;
     %>
     <td data-name="price" class="price">
-        <div>
-            <span class="currencySymbol"><%=currencyClassVal %></span>
-            <input id="editInput" class="statusInfo forNum" maxlength="9" size=7 type="text"/>
-        </div>
+        <input id="editInput"
+               class="_animate  statusInfo forNum"
+               required
+               maxlength="9"
+               size=7
+               type="text"/>
     </td>
-    <!-- <td data-name="cost" class="cost">
-         <div>
-             <span class="currencySymbol"><%=currencyClassVal %></span>
-             <span class="sum"></span>
-         </div>
-     </td>-->
-    <td data-name="taxes" class="taxes">
-        <div>
-            <span class="currencySymbol"><%=currencyClassVal%></span><span class="sum"></span>
-        </div>
+    <td data-name="taxes"
+        class="taxes">
+        <span class="sum _staticInfo"></span>
     </td>
-    <td data-name="subtotal" class="subtotal">
-        <div>
-            <span class="currencySymbol"><%=currencyClassVal %></span><span class="sum"></span>
-        </div>
+    <td data-name="subtotal"
+        class="subtotal">
+        <span class="sum _staticInfo"></span>
     </td>
     <% }%>
     <td class="deleteCell centerCell">
-        <span title="Delete" class="icon-close5 removeJob"></span>
+        <span title="Delete"
+              class="icon-close5 removeJob"></span>
     </td>
 </tr>
 <tr class="info">
     <td colspan="6" class="fullfilledHolder scuItemHolder">
         <div class="fullfilledWrap">
-            <div>
-            </div>
-            <div class="fullfilledInfo">
-            </div>
+            <div class="fullfilledInfo"></div>
         </div>
     </td>
 </tr>

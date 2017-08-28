@@ -1,122 +1,139 @@
 <div class="_balanceSheetWrap">
     <div id="searchContainer"></div>
-    <div class="container">
-        <div class="row">
-            <div class="col l-6">
-                <div class="_balanceSheetTableWrap">
-                    <div class="row">
-                        <div class="col s-6">
-                            <div class="_balancePercentage _profitSubTitle">
-                                <span>Current Ratio</span>
-                                <span id="currentRatio" class="fontSemiBold"></span>
-                            </div>
-                            <div class="_balancePercentage _profitSubTitle">
-                               <span>Quick Ratio</span>
-                               <span id="quickRatio" class="fontSemiBold">0,29</span>
-                           </div>
-                            <div class="_balancePercentage _profitSubTitle">
-                               <span>Cash Ratio</span>
-                               <span id="cashRatio" class="fontSemiBold">0,05</span>
-                           </div>
-                        </div>
-                        <div class="col s-6">
-                            <div class="_balancePercentage _profitSubTitle">
-                                <span>Working Capital</span>
-                                <span id="workingCapital" class="fontSemiBold money"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <table class="_balanceSheetTable">
-                        <thead>
-                        <tr>
-                            <th class="_profitTitle"></th>
-                            <th colspan="3" class="_profitTitle">Assets</th>
-                            <th class="_profitTitle"></th>
-                        </tr>
-                        </thead>
-                        <tbody id="listTableAssets" class="enableTableOdd"></tbody>
-                        <tfoot>
-                        <tr>
-                            <td></td>
-                            <td>Total Assets</td>
-                            <td colspan="3" id="assetsFooter">
-                                <span class="percent">100 %</span>
-                                <span class="money"></span>
-                            </td>
-                        </tr>
-                        </tfoot>
-                    </table>
-                </div>
-            </div>
-            <div class="col l-6">
-                <div class="_balanceSheetTableWrap">
-                    <table class="_balanceSheetTable">
-                        <thead>
-                        <tr>
-                            <th class="_profitTitle"></th>
-                            <th colspan="3" class="_profitTitle">Current Liabilities</th>
-                            <th class="_profitTitle"></th>
-                        </tr>
-                        </thead>
-                        <tbody id="listTableLiabilities" class="enableTableOdd"></tbody>
-                        <tfoot>
-                        <tr>
-                            <td>Total Current Liabilities</td>
-                            <td colspan="4" id="liabilitiesFooter">
-                                <span class="percent"></span>
-                                <span class="money"></span>
-                            </td>
-                        </tr>
-                        </tfoot>
-                    </table>
-                </div>
-                <div class="_balanceSheetTableWrap">
-                    <table class="_balanceSheetTable">
-                        <thead>
-                        <tr>
-                            <th class="_profitTitle"></th>
-                            <th colspan="3" class="_profitTitle">Equity</th>
-                            <th class="_profitTitle"></th>
-                        </tr>
-                        <tr id="captionEquity">
-                            <th colspan="2" >Expand</th>
-                            <th>Account</th>
-                            <th>Date</th>
-                            <th class="countable" data-id="debit">Amount</th>
-                        </tr>
-                        </thead>
-                        <tbody id="listTableEquity" class="enableTableOdd"></tbody>
-                        <tfoot>
-                        <tr>
-                            <td>Total Equity</td>
-                            <td colspan="4" id="equityFooter">
-                                <span class="percent"></span>
-                                <span class="money"></span>
-                            </td>
-                        </tr>
-                        </tfoot>
-                    </table>
-                </div>
-                <div class="_totalBalanceTableWrap">
-                    <table class="_balanceSheetTable">
-                        <colgroup>
-                            <col width="20%">
-                            <col width="20%">
-                        </colgroup>
-                        <thead>
-                        </thead>
-                        <tbody id="total">
-                        <tr>
-                            <td>Total Liabilities and Equity</td>
-                            <td class="text-right" id="totalSumm">
-                                <span class="percent">100 %</span>
-                                <span class="money"></span>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+    <div id="container">
+        <div class="_balanceSheetTableWrap">
+            <!--<div class="container-fluid">-->
+                <!--<div class="row">-->
+                    <!--<div class="col m-3">-->
+                        <!--<div class="_balancePercentage _profitSubTitle">-->
+                            <!--<span>Current Ratio</span>-->
+                            <!--<span id="currentRatio" class="fontSemiBold"></span>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="col m-3">-->
+                        <!--<div class="_balancePercentage _profitSubTitle">-->
+                            <!--<span>Quick Ratio</span>-->
+                            <!--<span id="quickRatio" class="fontSemiBold">0,29</span>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="col m-3">-->
+                        <!--<div class="_balancePercentage _profitSubTitle">-->
+                            <!--<span>Cash Ratio</span>-->
+                            <!--<span id="cashRatio" class="fontSemiBold">0,05</span>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="col m-3">-->
+                        <!--<div class="_balancePercentage _profitSubTitle">-->
+                            <!--<span>Working Capital</span>-->
+                            <!--<span id="workingCapital" class="fontSemiBold money"></span>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+
+            <table class="_balanceSheetTable">
+                <tbody id="listTableCurrentAssets" class="enableTableOdd"></tbody>
+                <tfoot>
+                <tr class="">
+                    <td></td>
+                    <td>Total Current Assets</td>
+                    <td colspan="3" id="currentAssetsFooter">
+                        <!--<span class="percent">100 %</span>-->
+                        <span class="money"></span>
+                    </td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div class="_balanceSheetTableWrap">
+            <table class="_balanceSheetTable">
+                <tbody id="listTableFixedAssets" class="enableTableOdd"></tbody>
+                <tfoot>
+                <tr class="">
+                    <td></td>
+                    <td>Total Fixed Assets</td>
+                    <td colspan="3" id="fixedAssetsFooter">
+                        <!--<span class="percent">100 %</span>-->
+                        <span class="money"></span>
+                    </td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div class="_totalBalanceTableWrap">
+            <table class="_balanceSheetTable">
+                <colgroup>
+                    <col width="20%">
+                    <col width="20%">
+                </colgroup>
+                <thead class="_profitSubTitle"></thead>
+                <tbody id="totalAssets">
+                <tr class="fontSemiBold _profitSubTitleTop _dbBorder">
+                    <td>Total Assets</td>
+                    <td class="text-right fontSemiBold" id="totalAssetsSumm">
+                        <!--<span class="percent">100 %</span>-->
+                        <span class="money"></span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="_balanceSheetTableWrap">
+            <table class="_balanceSheetTable">
+                <tbody id="listTableLiabilities" class="enableTableOdd"></tbody>
+                <tfoot>
+                <tr class="_dbBorder">
+                    <td></td>
+                    <td>Total Liabilities</td>
+                    <td colspan="3" id="liabilitiesFooter">
+                        <!--<span class="percent"></span>-->
+                        <span class="money"></span>
+                    </td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div class="_balanceSheetTableWrap">
+            <table class="_balanceSheetTable">
+                <tbody>
+                <tr class="">
+                    <td colspan="4">Current Earnings</td>
+                    <td class="text-right fontSemiBold" id="currentEarningsFooter">
+                        <!--<span class="percent">100 %</span>-->
+                        <span class="money"></span>
+                    </td>
+                </tr>
+                </tbody>
+                <tbody id="listTableEquity" class="enableTableOdd"></tbody>
+                <tfoot>
+                <tr>
+                    <td></td>
+                    <td>Total Equity</td>
+                    <td colspan="3" id="equityFooter">
+                        <!--<span class="percent"></span>-->
+                        <span class="money"></span>
+                    </td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div class="_totalBalanceTableWrap">
+            <table class="_balanceSheetTable">
+                <colgroup>
+                    <col width="20%">
+                    <col width="20%">
+                </colgroup>
+                <thead class="_profitSubTitle"></thead>
+                <tbody id="total">
+                <tr class="fontSemiBold _profitSubTitleTop _dbBorder">
+                    <td>Total Liabilities and Equity</td>
+                    <td class="text-right fontSemiBold" id="totalSumm">
+                        <!--<span class="percent">100 %</span>-->
+                        <span class="money"></span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

@@ -10,13 +10,17 @@ define([
     'common',
     'dataService',
     'constants',
-    'helpers'
-], function (Backbone, $, _, paginationTemplate, importForm, Pagination, SelectView, AttachView, common, dataService, CONSTANTS, helpers) {
+    'helpers',
+    'constants/guideTours',
+    'text!templates/guideTours/notificationTemplate.html',
+    'views/guideTours/guideNotificationView'
+], function (Backbone, $, _, paginationTemplate, importForm, Pagination, SelectView, AttachView, common, dataService, CONSTANTS, helpers, GUIDES, notifyTemplate, GuideNotify) {
     'use strict';
 
     var ListViewBase = Pagination.extend({
-        viewType  : 'list',
-        SelectView: SelectView,
+        viewType      : 'list',
+        SelectView    : SelectView,
+        notifyTemplate: _.template(notifyTemplate),
 
         events: {
             'click #previousPage, #nextPage, #firstShowPage, #lastShowPage': 'checkPage',
@@ -29,6 +33,8 @@ define([
         },
 
         initialize: function (options) {
+            var self = this;
+
             this.startTime = options.startTime;
             this.collection = options.collection || Backbone.Collection.extend();
             this.responseObj = {};
@@ -42,6 +48,14 @@ define([
 
             this.makeRender(options);
             this.render();
+
+            if (App.guide) {
+                if (App.notifyView) {
+                    App.notifyView.undelegateEvents();
+                    App.notifyView.stopListening();
+                }
+                App.notifyView = new GuideNotify({e: null, data: App.guide});
+            }
         },
 
         // to remove zombies was needed for event after recieveInvoice on projectInfo

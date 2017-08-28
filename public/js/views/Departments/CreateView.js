@@ -3,6 +3,7 @@ define([
     'jQuery',
     'Underscore',
     'text!templates/Departments/CreateTemplate.html',
+    'views/dialogViewBase',
     'views/selectView/selectView',
     'collections/Departments/DepartmentsCollection',
     'collections/Customers/AccountsDdCollection',
@@ -11,10 +12,10 @@ define([
     'custom',
     'populate',
     'constants'
-], function (Backbone, $, _, CreateTemplate, selectView, DepartmentsCollection, AccountsDdCollection, DepartmentsModel, common, Custom, populate, CONSTANTS) {
+], function (Backbone, $, _, CreateTemplate, DialogViewBase, selectView, DepartmentsCollection, AccountsDdCollection, DepartmentsModel, common, Custom, populate, CONSTANTS) {
     'use strict';
 
-    var CreateView = Backbone.View.extend({
+    var CreateView = /*Backbone.View*/DialogViewBase.extend({
         el         : '#content-holder',
         contentType: 'Departments',
         template   : _.template(CreateTemplate),
@@ -66,7 +67,7 @@ define([
             el.find('.userPagination .prevGroupList').remove();
 
             if (page > 1) {
-                el.find('.userPagination').prepend('<a class="prevUserList" href="javascript:;">« prev</a>');
+                el.find('.userPagination').prepend('<a class="prevUserList" href="javascript:;">« Prev</a>');
             }
             if (count === 0) {
                 s += '0-0 of 0';
@@ -79,7 +80,7 @@ define([
             }
 
             if (page < count / 20) {
-                el.find('.userPagination').append('<a class="nextUserList" href="javascript:;">next »</a>');
+                el.find('.userPagination').append('<a class="nextUserList" href="javascript:;">Next »</a>');
             }
             el.find('ul li').hide();
             for (i = (page - 1) * 20; i < 20 * page; i++) {
@@ -89,13 +90,13 @@ define([
         },
 
         nextUserList: function (e, page) {
-            $(e.target).closest('.left').find('ul').attr('data-page', parseInt($(e.target).closest('.left').find('ul').attr('data-page'), 10) + 1);
-            this.updateAssigneesPagination($(e.target).closest('.left'));
+            $(e.target).closest('.leftItem').find('ul').attr('data-page', parseInt($(e.target).closest('.leftItem').find('ul').attr('data-page'), 10) + 1);
+            this.updateAssigneesPagination($(e.target).closest('.leftItem'));
         },
 
         prevUserList: function (e, page) {
-            $(e.target).closest('.left').find('ul').attr('data-page', parseInt($(e.target).closest('.left').find('ul').attr('data-page'), 10) - 1);
-            this.updateAssigneesPagination($(e.target).closest('.left'));
+            $(e.target).closest('.leftItem').find('ul').attr('data-page', parseInt($(e.target).closest('.leftItem').find('ul').attr('data-page'), 10) - 1);
+            this.updateAssigneesPagination($(e.target).closest('.leftItem'));
         },
 
         chooseUser: function (e) {
@@ -120,10 +121,10 @@ define([
             var div;
 
             e.preventDefault();
-            div = $(e.target).parents('.left');
+            div = $(e.target).parents('.leftItem');
             $('#targetUsers').append($(e.target));
             this.updateAssigneesPagination(div);
-            div = $(e.target).parents('.left');
+            div = $(e.target).parents('.leftItem');
             this.updateAssigneesPagination(div);
         },
 
@@ -131,10 +132,10 @@ define([
             var div;
 
             e.preventDefault();
-            div = $(e.target).parents('.left');
+            div = $(e.target).parents('.leftItem');
             $('#sourceUsers').append($(e.target));
             this.updateAssigneesPagination(div);
-            div = $(e.target).parents('.left');
+            div = $(e.target).parents('.leftItem');
             this.updateAssigneesPagination(div);
         },
 
@@ -229,6 +230,7 @@ define([
                         class: 'btn blue',
                         click: function () {
                             self.saveItem();
+                            self.gaTrackingConfirmEvents();
                         }
                     },
                     {

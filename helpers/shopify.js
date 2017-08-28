@@ -10,7 +10,11 @@ var imageHelper = require('../helpers/imageHelper');
 var ratesRetriever = require('../helpers/ratesRetriever')();
 var RefundsHelper = require('../helpers/refunds');
 var Uploader = require('../services/fileStorage/index');
+var moment = require('../public/js/libs/moment/moment');
 var uploader = new Uploader();
+var logger = require('../helpers/logger');
+var WorkflowHandler = require('../handlers/workflow');
+var SyncLogsHelper = require('../helpers/syncLogs');
 
 module.exports = function (models, event) {
     var customerService = require('../services/customer')(models);
@@ -26,7 +30,6 @@ module.exports = function (models, event) {
     var OrderRowsService = require('../services/orderRows')(models);
     var productTypeService = require('../services/productType')(models);
     var productPriceService = require('../services/productPrice')(models);
-    var ChannelLinksService = require('../services/channelLinks')(models);
     var ImagesService = require('../services/images')(models);
     var ratesService = require('../services/rates')(models);
     var taxesService = require('../services/taxes')(models);
@@ -41,6 +44,11 @@ module.exports = function (models, event) {
     var channelLinksService = require('../services/channelLinks')(models);
     var organizationService = require('../services/organizationSetting')(models);
     var warehouseService = require('../services/warehouse')(models);
+    var invoiceService = require('../services/invoices')(models);
+    var syncLogsHelper = new SyncLogsHelper(models);
+    var logs;
+
+    var workflowHandler = new WorkflowHandler(models);
 
     var refundsHelper = new RefundsHelper(models);
 
@@ -156,7 +164,7 @@ module.exports = function (models, event) {
 
         async.eachLimit(imagesArray, 1, function (image, eCb) {
             if (!image.channel) {
-                uploader.readImage(image.imageSrc, function (err, base64Data) {
+                return uploader.readImage(image.imageSrc, function (err, base64Data) {
                     if (err) {
                         return eCb(err);
                     }
@@ -168,6 +176,19 @@ module.exports = function (models, event) {
                     eCb();
                 });
             }
+
+            imageHelper.get(image.imageSrc, function (err, base64Data) {
+                if (err) {
+                    return eCb(err);
+                }
+
+                if (imageHelper.cutPrefixFromBase64(base64Data).image) {
+                    resultArray.push({attachment: imageHelper.cutPrefixFromBase64(base64Data).image});
+                }
+
+                eCb();
+            });
+
         }, function (err) {
             if (err) {
                 return callback(err);
@@ -184,6 +205,10 @@ module.exports = function (models, event) {
         var checkIdentitySKU;
         var dbName = createOptions.dbName;
         var groupId = productObjArray[0].groupId;
+        var logsOptions = {
+            action  : 'imports',
+            category: 'products'
+        };
 
         var imageOpts = {
             dbName : dbName,
@@ -197,6 +222,10 @@ module.exports = function (models, event) {
         }
 
         imageCreator(imageArray, imageOpts, function (err) {
+            if (err) {
+                return eachCb();
+            }
+
             async.eachLimit(productObjArray, 1, function (productObjEach, secondEachCb) {
                 checkIdentitySKU = false;
                 options.body = _.extend({}, productObjEach);
@@ -210,17 +239,28 @@ module.exports = function (models, event) {
                     });
                 }
 
-                ChannelLinksService.findOne({
+                channelLinksService.findOne({
                     linkId : shopifyProductId + '|' + productObjEach.shopifyVariantId,
                     channel: channel
                 }, {dbName: dbName}, function (err, channelLinks) {
                     var unlinkedBody;
-
                     if (err) {
+                        logs = syncLogsHelper.addError(logs, logsOptions, {
+                            message: err.message
+                        });
+
                         return secondEachCb(err);
                     }
 
                     if (channelLinks) {
+                        /* logs = syncLogsHelper.addSuccess(logs, logsOptions, {
+                         entityId         : shopifyProductId,
+                         entityDescription: productObjEach.name,
+                         message          : 'Product ' + shopifyProductId + ' is updated',
+                         type             : CONSTANTS.SYNC_LOGS.TYPE.UPDATE
+                         });*/
+
+
                         return secondEachCb();
                     }
 
@@ -258,8 +298,18 @@ module.exports = function (models, event) {
                                 dbName: options.dbName
                             }, function (err) {
                                 if (err) {
+                                    logs = syncLogsHelper.addError(logs, logsOptions, {
+                                        message : err.message,
+                                        entityId: productObjEach.shopifyVariantId
+                                    });
+
                                     return secondEachCb(err);
                                 }
+
+                                logs = syncLogsHelper.addUnlink(logs, logsOptions, {
+                                    entityDescription: productObjEach.name,
+                                    entityId         : productObjEach.shopifyVariantId
+                                });
 
                                 secondEachCb();
                             });
@@ -276,9 +326,22 @@ module.exports = function (models, event) {
                         }, {
                             upsert: true,
                             dbName: options.dbName
-                        }, function (err) {
+                        }, function (err, result) {
                             if (err) {
+                                logs = syncLogsHelper.addError(logs, logsOptions, {
+                                    message          : err.message,
+                                    entityId         : productObjEach.shopifyVariantId,
+                                    entityDescription: productObjEach.name
+                                });
+
                                 return secondEachCb(err);
+                            }
+
+                            if (!result._id) {
+                                logs = syncLogsHelper.addConflict(logs, logsOptions, {
+                                    entityDescription: productObjEach.name,
+                                    entityId         : productObjEach.shopifyVariantId
+                                });
                             }
 
                             event.emit('showResolveConflict', {uId: createOptions.uId});
@@ -318,8 +381,20 @@ module.exports = function (models, event) {
                             function (wCb) {
                                 productService.createProduct(options, function (err, product) {
                                     if (err) {
+                                        logs = syncLogsHelper.addError(logs, logsOptions, {
+                                            message          : err.message,
+                                            entityId         : shopifyProductId + '|' + productObjEach.shopifyVariantId,
+                                            entityDescription: productObjEach.name
+                                        });
+
                                         return wCb(err);
                                     }
+
+                                    logs = syncLogsHelper.addSuccess(logs, logsOptions, {
+                                        entityId         : shopifyProductId + '|' + productObjEach.shopifyVariantId,
+                                        type             : CONSTANTS.SYNC_LOGS.TYPE.CREATE,
+                                        entityDescription: productObjEach.name
+                                    });
 
                                     wCb(null, product);
                                 });
@@ -345,7 +420,7 @@ module.exports = function (models, event) {
                                     dbName   : dbName
                                 };
 
-                                ChannelLinksService.create(channelLinksObj, function (err) {
+                                channelLinksService.create(channelLinksObj, function (err) {
                                     if (err) {
                                         return wCb(err);
                                     }
@@ -389,13 +464,17 @@ module.exports = function (models, event) {
         var fullRoute;
         var channel;
         var priceList;
+        var logsOptions = {
+            action  : 'imports',
+            category: 'products'
+        };
 
         if (typeof opts === 'function') {
             allCallback = opts;
             opts = {};
         }
 
-        channel = opts._id;
+        channel = opts._id || opts.channel;
         db = opts.dbName;
         accessToken = opts.token;
         baseUrl = opts.baseUrl;
@@ -408,6 +487,8 @@ module.exports = function (models, event) {
         if (!accessToken || !baseUrl || !route) {
             err = new Error('Invalid integration settings');
             err.status = 400;
+
+            logs = syncLogsHelper.addCriticalError(logs, logsOptions, {message: err.message});
 
             return allCallback(err);
         }
@@ -424,12 +505,22 @@ module.exports = function (models, event) {
                 }
             }, function (err, result) {
                 if (err) {
+
+                    logs = syncLogsHelper.addCriticalError(logs, logsOptions, {
+                        message: err.message
+                    });
+
                     return whCb(err);
                 }
 
-                if (!result || !result.body || result.body.errors) {
+                if (result && result.body && result.body.errors) {
                     console.error(result.body.errors);
                     helperForWhile = false;
+
+                    logs = syncLogsHelper.addCriticalError(logs, logsOptions, {
+                        message: result.body.errors
+                    });
+
                     return whCb();
                 }
 
@@ -665,6 +756,10 @@ module.exports = function (models, event) {
         var route;
         var fullRoute;
         var err;
+        var logsOptions = {
+            action  : 'exports',
+            category: 'inventory'
+        };
 
         if (typeof opts === 'function') {
             allCallback = opts;
@@ -683,12 +778,14 @@ module.exports = function (models, event) {
             err = new Error('Invalid integration settings');
             err.status = 400;
 
+            logs = syncLogsHelper.addCriticalError(logs, logsOptions, {message: err.message});
+
             return allCallback(err);
         }
 
         fullRoute = baseUrl + route;
 
-        ChannelLinksService.find({channel: channel}, {
+        channelLinksService.find({channel: channel}, {
             dbName: db
         }, function (err, channelLinks) {
             if (!channelLinks || !channelLinks.length) {
@@ -725,7 +822,7 @@ module.exports = function (models, event) {
                         }
                     };
 
-                    if (availabilityProduct.onHand) {
+                    if (availabilityProduct.onHand !== undefined && availabilityProduct.onHand !== null) {
                         model.product.variants[0].inventory_quantity = availabilityProduct.onHand;
                         model.product.variants[0].inventory_management = 'shopify';
                     }
@@ -736,15 +833,32 @@ module.exports = function (models, event) {
                         }
                     }, function (err, result) {
                         if (err) {
+                            logs = syncLogsHelper.addCriticalError(logs, logsOptions, {
+                                message : err.message,
+                                entityId: availabilityProduct._id
+                            });
+
                             return eachCb(err);
                         }
 
                         count++;
 
                         if (!result || !result.body || result.body.errors) {
+                            logs = syncLogsHelper.addCriticalError(logs, logsOptions, {
+                                message : result.body.errors,
+                                entityId: availabilityProduct._id
+                            });
+
                             console.error(result.body.errors);
                             return eachCb();
                         }
+
+                        logs = syncLogsHelper.addSuccess(logs, logsOptions, {
+                            type             : CONSTANTS.SYNC_LOGS.TYPE.UPDATE,
+                            entityId         : availabilityProduct._id,
+                            entityDescription: availabilityProduct.name,
+                            message          : 'Export ' + availabilityProduct._id + ' inventory is success'
+                        });
 
                         eachCb();
                     });
@@ -775,6 +889,10 @@ module.exports = function (models, event) {
         var channelLinks;
         var productPrices;
         var productObjectIds;
+        var logsOptions = {
+            action  : 'exports',
+            category: 'products'
+        };
 
         if (typeof opts === 'function') {
             allCallback = opts;
@@ -784,7 +902,7 @@ module.exports = function (models, event) {
         db = opts.dbName;
         accessToken = opts.token;
         baseUrl = opts.baseUrl;
-        channel = opts._id;
+        channel = opts.channel || opts._id;
         settings = opts.settings;
 
         if (settings.products) {
@@ -795,6 +913,9 @@ module.exports = function (models, event) {
         if (!accessToken || !baseUrl || !putRoute || !putVariantRoute) {
             error = new Error('Invalid integration settings');
             error.status = 400;
+
+            logs = syncLogsHelper.addCriticalError(logs, logsOptions, {message: error.message});
+            logger.error(error);
 
             return allCallback(error);
         }
@@ -825,7 +946,7 @@ module.exports = function (models, event) {
             function (productIds, wCb) {
                 productObjectIds = productIds.objectID();
 
-                ChannelLinksService.find({channel: channel, product: {$in: productObjectIds}}, {dbName: db})
+                channelLinksService.find({channel: channel, product: {$in: productObjectIds}}, {dbName: db})
                     .lean()
                     .exec(function (err, links) {
                         if (err) {
@@ -869,6 +990,8 @@ module.exports = function (models, event) {
             }
         ], function (err, products) {
             if (err) {
+                logs = syncLogsHelper.addError(logs, logsOptions, {message: err.message});
+
                 return allCallback(err);
             }
 
@@ -918,13 +1041,27 @@ module.exports = function (models, event) {
                     }
                 }, function (err, result) {
                     if (err) {
+                        logs = syncLogsHelper.addCriticalError(logs, logsOptions, {message: err.message});
+
                         return eCb(err);
                     }
 
                     if (!result || !result.body || result.body.errors) {
+
+                        logs = syncLogsHelper.addCriticalError(logs, logsOptions, {
+                            message: result.body.errors
+                        });
+
                         console.error(result.body.errors);
                         return eCb();
                     }
+
+                    logs = syncLogsHelper.addSuccess(logs, logsOptions, {
+                        entityId         : product._id,
+                        entityDescription: product.name,
+                        type             : CONSTANTS.SYNC_LOGS.TYPE.UPDATE,
+                        message          : 'Export ' + product._id + ' product is success'
+                    });
 
                     eCb();
                 });
@@ -933,7 +1070,7 @@ module.exports = function (models, event) {
                     return allCallback(err);
                 }
 
-                allCallback(null, message);
+                allCallback();
             });
 
         });
@@ -950,6 +1087,10 @@ module.exports = function (models, event) {
         var error;
         var route;
         var db;
+        var logsOptions = {
+            action  : 'imports',
+            category: 'customers'
+        };
 
         if (typeof opts === 'function') {
             allCallback = opts;
@@ -967,6 +1108,10 @@ module.exports = function (models, event) {
             error = new Error('Bad Request');
             error.status = 400;
 
+            logs = syncLogsHelper.addCriticalError(logs, logsOptions, {
+                message: error.message
+            });
+
             return allCallback(error);
         }
 
@@ -983,10 +1128,19 @@ module.exports = function (models, event) {
                 var newCustomer = {};
 
                 if (err) {
+                    logs = syncLogsHelper.addCriticalError(logs, logsOptions, {
+                        message: err.message
+                    });
+
                     return allCallback(err);
                 }
 
                 if (!result || !result.body || result.body.errors) {
+
+                    logs = syncLogsHelper.addCriticalError(logs, logsOptions, {
+                        message: result.body.errors
+                    });
+
                     console.error(result.body.errors);
                     return allCallback();
                 }
@@ -1060,16 +1214,42 @@ module.exports = function (models, event) {
                                 channel      : channel
                             }, newCustomer, {dbName: db}, function (err) {
                                 if (err) {
+                                    logs = syncLogsHelper.addError(logs, logsOptions, {
+                                        message          : err.message,
+                                        entityId         : customer.id,
+                                        entityDescription: customer.first_name + customer.last_name
+                                    });
+
                                     return eachCb(err);
                                 }
+
+                                logs = syncLogsHelper.addSuccess(logs, logsOptions, {
+                                    entityId         : customer.id,
+                                    entityDescription: customer.first_name + customer.last_name,
+                                    type             : CONSTANTS.SYNC_LOGS.TYPE.CREATE,
+                                    message          : 'Import ' + customer.id + ' customer is success'
+                                });
 
                                 eachCb();
                             });
                         } else {
                             customerService.create(newCustomer, function (err) {
                                 if (err) {
+                                    logs = syncLogsHelper.addError(logs, logsOptions, {
+                                        message          : err.message,
+                                        entityId         : customer.id,
+                                        entityDescription: customer.first_name + customer.last_name
+                                    });
+
                                     return eachCb(err);
                                 }
+
+                                logs = syncLogsHelper.addSuccess(logs, logsOptions, {
+                                    entityId         : customer.id,
+                                    entityDescription: customer.first_name + customer.last_name,
+                                    type             : CONSTANTS.SYNC_LOGS.TYPE.CREATE,
+                                    message          : 'Import ' + customer.id + ' customer is success'
+                                });
 
                                 eachCb();
                             });
@@ -1087,14 +1267,14 @@ module.exports = function (models, event) {
     }
 
     function getSalesOrders(opts, allCallback) {
-        var channel = opts._id;
+        var channel = opts._id || opts.channel;
         var workflowObj = {};
         var shopifyOrders;
-        var accessToken;
+        var dateOrderFrom;
         var nativeOrders;
+        var accessToken;
         var fullRoute;
         var warehouse;
-
         var location;
         var unlinked;
         var orderIds;
@@ -1104,12 +1284,17 @@ module.exports = function (models, event) {
         var err;
         var uId;
         var db;
+        var logsOptions = {
+            action  : 'imports',
+            category: 'orders'
+        };
 
         if (typeof opts === 'function') {
             allCallback = opts;
             opts = {};
         }
 
+        dateOrderFrom = opts.ordersDate || new Date(0);
         db = opts.dbName;
         accessToken = opts.token;
         baseUrl = opts.baseUrl;
@@ -1123,6 +1308,8 @@ module.exports = function (models, event) {
         if (!accessToken || !baseUrl || !route) {
             err = new Error('Invalid integration settings');
             err.status = 400;
+
+            logs = syncLogsHelper.addCriticalError(logs, logsOptions, {message: err.message});
 
             return allCallback(err);
         }
@@ -1209,7 +1396,6 @@ module.exports = function (models, event) {
                     });
                 });
 
-
             }
 
             async.series([
@@ -1249,6 +1435,7 @@ module.exports = function (models, event) {
                 function (sCb) {
                     var gateway = shopifyOrder.gateway;
                     var financialStatus = shopifyOrder.financial_status;
+                    var newPaymentMethod;
 
                     if (financialStatus === 'pending') {
                         return sCb();
@@ -1259,60 +1446,65 @@ module.exports = function (models, event) {
                             return sCb(err);
                         }
 
-                        if (!result && orderIds.indexOf(shopifyOrder.id) < 0) {
-                            orderBody.workflow = ObjectId(CONSTANTS.DEFAULT_UNLINKED_WORKFLOW_ID);
-                            orderBody.tempWorkflow = workflow;
+                        if (result) {
+                            orderBody.paymentMethod = result._id;
 
-                            if (orderBody.conflictTypes && orderBody.conflictTypes.length) {
-                                orderBody.conflictTypes.push({
-                                    type : 'paymentMethod',
-                                    value: {
-                                        name: shopifyOrder.gateway
-                                    }
-                                });
-                            } else {
-                                orderBody.conflictTypes = [{
-                                    type : 'paymentMethod',
-                                    value: {
-                                        name: shopifyOrder.gateway
-                                    }
-                                }];
-                            }
+                            paymentMethod = result;
+                            needPayments = true;
 
                             return sCb();
                         }
 
-                        orderBody.paymentMethod = result._id;
+                        organizationService.getBankAccount({dbName: db}, function (err, bankAccount) {
+                            if (err) {
+                                return sCb(err);
+                            }
 
-                        paymentMethod = result;
-                        needPayments = true;
+                            if (!bankAccount || !bankAccount.chartAccount || !bankAccount.currency) {
+                                err = new Error('Bank Account doesn`t exist');
+                                err.status = 400;
 
-                        sCb();
+                                return sCb(err);
+                            }
+
+                            newPaymentMethod = {
+                                name        : gateway,
+                                account     : gateway,
+                                chartAccount: bankAccount.chartAccount,
+                                currency    : bankAccount.currency
+                            };
+
+                            paymentMethodService.create({
+                                dbName: db,
+                                body  : newPaymentMethod
+                            }, function (err, createdPM) {
+                                if (err) {
+                                    return sCb(err);
+                                }
+
+                                if (!createdPM) {
+                                    err = new Error('Default payment method doesn`t created');
+                                    err.status = 400;
+
+                                    return sCb(err);
+                                }
+
+                                orderBody.paymentMethod = createdPM._id;
+                                paymentMethod = createdPM;
+
+                                sCb();
+                            });
+                        });
                     });
                 },
 
                 function (sCb) {
-                    if (!shopifyOrder.customer && orderIds.indexOf(shopifyOrder.id.toString()) < 0) {
+                    var notes;
 
-                        orderBody.workflow = ObjectId(CONSTANTS.DEFAULT_UNLINKED_WORKFLOW_ID);
-                        orderBody.tempWorkflow = workflow;
-
-                        if (orderBody.conflictTypes && orderBody.conflictTypes.length) {
-                            orderBody.conflictTypes.push({
-                                type: 'customer'
-                            });
-                        } else {
-                            orderBody.conflictTypes = [{
-                                type: 'customer'
-                            }];
-                        }
-                    }
-
-                    sCb();
-                },
-
-                function (sCb) {
                     if (orderIds.indexOf(shopifyOrder.id.toString()) > -1) {
+                        notes = orderBody.notes;
+
+                        delete orderBody.notes;
 
                         OrderService.findOneAndUpdate({
                             integrationId: shopifyOrder.id.toString(),
@@ -1321,8 +1513,46 @@ module.exports = function (models, event) {
                             dbName: db,
                             new   : true
                         }, function (err, newObject) {
+                            var newNotes;
+                            var note;
+                            var ind = 0;
+
                             if (err) {
+                                logs = syncLogsHelper.addError(logs, logsOptions, {
+                                    message : err.message,
+                                    entityId: shopifyOrder.id
+                                });
+
                                 return sCb(err);
+                            }
+
+                            if (orderBody.conflictTypes && orderBody.conflictTypes.length) {
+                                logs = syncLogsHelper.addUnlink(logs, logsOptions, {
+                                    entityId         : shopifyOrder.id,
+                                    entityDescription: shopifyOrder.name,
+                                    type             : CONSTANTS.SYNC_LOGS.TYPE.UPDATE,
+                                    message          : 'Import ' + orderBody.integrationId + ' order is success'
+                                });
+                            } else {
+                                logs = syncLogsHelper.addSuccess(logs, logsOptions, {
+                                    entityId         : shopifyOrder.id,
+                                    entityDescription: shopifyOrder.name,
+                                    type             : CONSTANTS.SYNC_LOGS.TYPE.UPDATE,
+                                    message          : 'Import ' + orderBody.integrationId + ' order is success'
+                                });
+                            }
+
+                            newNotes = newObject.notes;
+
+                            if (newNotes && newNotes.length && notes.length) {
+                                note = _.find(newNotes, function (el) {
+                                    return el.note === notes[0].note;
+                                });
+
+                                ind = newNotes.indexOf(note);
+
+                            } else if (!newNotes.length && notes.length) {
+                                ind = -1;
                             }
 
                             unlinkedOrderId = newObject._id;
@@ -1344,19 +1574,51 @@ module.exports = function (models, event) {
                                     }
                                 });
 
-                                if (!resultRows.length) {
-                                    return sCb();
+                                if (notes.length && ind < 0) {
+                                    OrderService.findOneAndUpdate({
+                                        _id: newObject._id
+                                    }, {$push: {notes: notes[0]}}, {
+                                        dbName: db,
+                                        new   : true
+                                    }, function (err) {
+                                        if (err) {
+                                            return sCb();
+                                        }
+
+                                        if (!resultRows.length) {
+                                            return sCb();
+                                        }
+
+                                        products = products.map(function (product) {
+                                            var currentRow = _.findWhere(resultRows, {product: product._id});
+
+                                            if (currentRow) {
+                                                product.orderRowId = currentRow._id;
+
+                                                return product;
+                                            }
+                                        });
+
+                                        orderRowsBuilder(newObject, _.compact(products), sCb);
+                                    });
+                                } else {
+
+                                    if (!resultRows.length) {
+                                        return sCb();
+                                    }
+
+                                    products = products.map(function (product) {
+                                        var currentRow = _.findWhere(resultRows, {product: product._id});
+
+                                        if (currentRow) {
+                                            product.orderRowId = currentRow._id;
+
+                                            return product;
+                                        }
+                                    });
+
+                                    orderRowsBuilder(newObject, _.compact(products), sCb);
                                 }
-
-                                products = products.map(function (product) {
-                                    var currentRow = _.findWhere(resultRows, {product: product._id});
-
-                                    product.orderRowId = currentRow._id;
-
-                                    return product;
-                                });
-
-                                orderRowsBuilder(newObject, products, sCb);
                             });
                         });
                     } else {
@@ -1365,12 +1627,33 @@ module.exports = function (models, event) {
 
                         if (!orderBody.workflow) {
                             orderBody.workflow = workflow;
-                            orderBody.tempWorkflow = null;
+                            orderBody.tempWorkflow = workflow;
                         }
 
                         OrderService.create(orderBody, function (err, _order) {
                             if (err) {
+                                logs = syncLogsHelper.addError(logs, logsOptions, {
+                                    message : err.message,
+                                    entityId: orderBody.integrationId
+                                });
+
                                 return sCb(err);
+                            }
+
+                            if (orderBody.conflictTypes && orderBody.conflictTypes.length) {
+                                logs = syncLogsHelper.addUnlink(logs, logsOptions, {
+                                    entityId         : orderBody.integrationId,
+                                    entityDescription: shopifyOrder.name,
+                                    type             : CONSTANTS.SYNC_LOGS.TYPE.CREATE,
+                                    message          : 'Import ' + orderBody.integrationId + ' order is success'
+                                });
+                            } else {
+                                logs = syncLogsHelper.addSuccess(logs, logsOptions, {
+                                    entityId         : orderBody.integrationId,
+                                    entityDescription: shopifyOrder.name,
+                                    type             : CONSTANTS.SYNC_LOGS.TYPE.CREATE,
+                                    message          : 'Import ' + orderBody.integrationId + ' order is success'
+                                });
                             }
 
                             unlinkedOrderId = _order._id;
@@ -1386,6 +1669,10 @@ module.exports = function (models, event) {
                     var differenceProductIds;
                     var nativeIds;
                     var unlinkedIds = _.pluck(unlinked, 'fields.id');
+                    var logsOptions = {
+                        action  : 'imports',
+                        category: 'products'
+                    };
 
                     if (!hasUnlinkedProducts) {
                         return sCb();
@@ -1393,10 +1680,12 @@ module.exports = function (models, event) {
 
                     nativeIds = _.pluck(products, 'channelLinks.linkId');
                     nativeIds = nativeIds.map(function (el) {
-                        return parseInt(el.split('|')[1], 10);
+                        if (el) {
+                            return parseInt(el.split('|')[1], 10);
+                        }
                     });
 
-                    differenceProductIds = _.difference(shopifyIds, nativeIds);
+                    differenceProductIds = _.difference(shopifyIds, _.compact(nativeIds));
 
                     async.each(differenceProductIds, function (product, intCb) {
                         var unlinkedOrderRow;
@@ -1438,33 +1727,94 @@ module.exports = function (models, event) {
                             dbName: db
                         };
 
-                        ConflictService.findOneAndUpdate({
-                            entity     : 'Product',
-                            type       : 'unlinked',
-                            'fields.id': fields.variant_id
-                        }, {
-                            $set: {
-                                fields: data
+                        async.waterfall([
+                            function (wCb) {
+                                ConflictService.findOne({
+                                    entity     : 'Product',
+                                    type       : 'unlinked',
+                                    'fields.id': fields.variant_id
+                                }, {dbName: db}, function (err, result) {
+                                    if (err) {
+                                        return wCb(err);
+                                    }
+
+                                    wCb(null, result);
+                                });
+                            },
+
+                            function (result, wCb) {
+                                if (!wCb && typeof result) {
+                                    wCb = result;
+                                    result = null;
+                                }
+
+                                if (!result) {
+                                    return ConflictService.create({
+                                        fields: data,
+                                        entity: 'Product',
+                                        type  : 'unlinked',
+                                        dbName: db
+                                    }, function (err, createdProdConflict) {
+                                        if (err) {
+                                            return wCb(err);
+                                        }
+
+                                        wCb(null, createdProdConflict, true);
+                                    });
+                                }
+
+                                ConflictService.findOneAndUpdate({
+                                    entity     : 'Product',
+                                    type       : 'unlinked',
+                                    'fields.id': fields.variant_id
+                                }, {
+                                    $set: {
+                                        fields: data
+                                    }
+                                }, {
+                                    dbName: db,
+                                    new   : true
+                                }, function (err, updateProdConflict) {
+                                    if (err) {
+                                        return wCb(err);
+                                    }
+
+                                    wCb(null, updateProdConflict, false);
+                                });
+                            },
+
+                            function (prodConflictModel, isCreated, wCb) {
+                                orderRowData.product = prodConflictModel._id;
+
+                                ConflictService.create(unlinkedOrderRow, function (err) {
+                                    if (err) {
+                                        logs = syncLogsHelper.addError(logs, logsOptions, {
+                                            message          : err.message,
+                                            entityId         : fields.variant_id,
+                                            entityDescription: fields.name
+                                        });
+
+                                        return wCb(err);
+                                    }
+
+                                    if (isCreated) {
+                                        logs = syncLogsHelper.addUnlink(logs, logsOptions, {
+                                            entityId         : fields.variant_id,
+                                            entityDescription: fields.name
+                                        });
+                                    }
+
+                                    wCb();
+                                });
                             }
-                        }, {
-                            dbName: db,
-                            upsert: true,
-                            new   : true
-                        }, function (err, result) {
+                        ], function (err) {
                             if (err) {
                                 return intCb(err);
                             }
 
-                            orderRowData.product = result._id || result.upserted[0]._id;
-
-                            ConflictService.create(unlinkedOrderRow, function (err) {
-                                if (err) {
-                                    return intCb(err);
-                                }
-
-                                intCb();
-                            });
+                            intCb();
                         });
+
                     }, function (err) {
                         if (err) {
                             return sCb(err);
@@ -1552,12 +1902,117 @@ module.exports = function (models, event) {
             });
         }
 
+        function invoiceUpdater(invoice, payment, waterfallCallback) {
+            var sourceInvoice = invoice;
+            var sourceOrder = invoice.order;
+            var totalToPay = sourceInvoice && sourceInvoice.paymentInfo ? sourceInvoice.paymentInfo.balance : 0;
+            var paid = payment.paidAmount;
+            var paymentCurrency = payment.currency._id;
+            var invoiceCurrency = sourceInvoice.currency && sourceInvoice.currency._id;
+            var isNotFullPaid;
+            var wId;
+            var paymentDate = new Date(payment.date);
+            var invoiceType = sourceInvoice && sourceInvoice._type;
+            var payments = [];
+            var rate = payment.currency && payment.currency.rate;
+            var request = {
+                query: {
+                    source      : 'purchase',
+                    targetSource: 'invoice'
+                },
+
+                session: {
+                    lastDb: db
+                }
+            };
+            if (!paymentCurrency) {
+                paymentCurrency = invoiceCurrency;
+            }
+
+            if (paymentDate > sourceInvoice.paymentDate) {
+                sourceInvoice.paymentDate = paymentDate;
+            }
+
+            sourceInvoice.removable = false;
+
+            sourceInvoice.payments = sourceInvoice.payments || [];
+
+            paid = paid / rate;
+
+            if (paymentDate === 'Invalid Date') {
+                paymentDate = new Date();
+            }
+
+            if (invoiceType === 'wTrackInvoice' || invoiceType === 'expensesInvoice' || invoiceType === 'dividendInvoice') {
+                wId = 'Sales Invoice';
+            } else if (invoiceType === 'Proforma') {
+                wId = 'Proforma';
+                request.query = {};
+            } else {
+                wId = 'Purchase Invoice';
+            }
+
+            request.query.wId = wId;
+
+            totalToPay = parseInt(totalToPay, 10);
+            paid = parseInt(paid, 10);
+
+            isNotFullPaid = paid < totalToPay;
+
+            if (isNotFullPaid || sourceOrder) {
+                request.query.status = 'In Progress';
+                request.query.order = 1;
+            } else {
+                request.query.status = 'Done';
+                request.query.order = 1;
+            }
+
+            workflowHandler.getFirstForConvert(request, function (err, workflow) {
+                if (err) {
+                    return waterfallCallback(err);
+                }
+
+                sourceInvoice.payments.push(payment._id);
+
+                sourceInvoice.workflow = workflow._id;
+                sourceInvoice.paymentInfo.balance = totalToPay - paid;
+
+                sourceInvoice.paymentDate = new Date(paymentDate); // Because we have it in post.schema
+
+                invoiceService.findByIdAndUpdate(invoice._id, sourceInvoice, {
+                    new   : true,
+                    dbName: db
+                }, function (err, resultInvoice) {
+
+                    if (err) {
+                        return waterfallCallback(err);
+                    }
+
+                    ratesService.getPrevious({
+                        id    : moment(paymentDate).format('YYYY-MM-DD'),
+                        dbName: db
+                    }, function (err, prevRates) {
+                        if (err) {
+                            return waterfallCallback(err);
+                        }
+
+                        resultInvoice = resultInvoice.toJSON();
+
+                        resultInvoice.rates = prevRates && prevRates.rates ? prevRates.rates : {};
+                        resultInvoice.base = prevRates && prevRates.base ? prevRates.base : 'USD';
+
+                        waterfallCallback(null, resultInvoice, payment);
+                    });
+                });
+            });
+        }
+
         function createPaymentsForOrder(baseUrl, shopifyOrder, resultOpts, callback) {
             var url = baseUrl + '/admin/orders/' + shopifyOrder.id + '/transactions.json';
             var orderBody = (resultOpts.order && resultOpts.order.toJSON()) || {};
             var paymentMethod = (resultOpts.paymentMethod && resultOpts.paymentMethod.toJSON()) || {};
 
-            if (!orderBody.paymentMethod) {
+            if (!orderBody || !orderBody.paymentMethod) {
                 return callback();
             }
 
@@ -1586,82 +2041,122 @@ module.exports = function (models, event) {
                     var paymentDate;
                     var paymentObj;
 
-                    if (payment.kind === 'authorization' || payment.kind === 'void' || payment.kind === 'refund' || payment.status === 'failure') {
+                    if (payment.kind === 'authorization' || payment.kind === 'void' || payment.kind === 'refund' || payment.status === 'failure' || payment.status === 'pending') {
                         return eCb();
                     }
 
-                    paymentDate = new Date(payment.created_at);
-
-                    paymentObj = {
-                        paidAmount   : payment.amount,
-                        currency     : orderBody.currency,
-                        date         : paymentDate,
-                        paymentMethod: paymentMethod,
-                        supplier     : orderBody.supplier,
-                        order        : orderBody._id,
-                        channel      : channel,
-                        integrationId: '' + payment.id,
-                        bankAccount  : paymentMethod.chartAccount,
-                        forSale      : true,
-                        createdBy    : {
-                            user: uId,
-                            date: paymentDate
-                        },
-
-                        editedBy: {
-                            user: uId,
-                            date: paymentDate
-                        }
-                    };
-
-                    paymentService.findOne(query, {dbName: db}, function (err, result) {
+                    invoiceService.findOne({sourceDocument: orderBody._id}, {dbName: db}, function (err, resultInvoice) {
                         if (err) {
-                            return eCb(err);
+                            return callback(err);
                         }
 
-                        if (result) {
-                            paymentObj.paidAmount = paymentObj.paidAmount * 100;
+                        paymentDate = new Date(payment.created_at);
 
-                            paymentService.findByIdAndUpdate(result._id, paymentObj, {
-                                new   : true,
-                                dbName: db
-                            }, function (err, payment) {
-                                if (err) {
-                                    return eCb(err);
-                                }
+                        paymentObj = {
+                            paidAmount   : payment.amount,
+                            currency     : orderBody.currency,
+                            date         : paymentDate,
+                            paymentMethod: paymentMethod,
+                            supplier     : orderBody.supplier,
+                            channel      : channel,
+                            integrationId: '' + payment.id,
+                            bankAccount  : paymentMethod.chartAccount,
+                            forSale      : true,
+                            createdBy    : {
+                                user: uId,
+                                date: paymentDate
+                            },
 
-                                journalEntryService.formBodyForPrepaymentEntries({
-                                    payment: payment,
-                                    dbName : db
-                                }, function (err) {
+                            editedBy: {
+                                user: uId,
+                                date: paymentDate
+                            }
+                        };
+
+                        if (resultInvoice) {
+                            paymentObj.invoice = resultInvoice._id;
+                        } else {
+                            paymentObj.order = orderBody._id;
+                        }
+
+                        paymentService.findOne(query, {dbName: db}, function (err, result) {
+                            if (err) {
+                                return eCb(err);
+                            }
+
+                            if (result) {
+                                paymentObj.paidAmount = paymentObj.paidAmount * 100;
+
+                                paymentService.findByIdAndUpdate(result._id, paymentObj, {
+                                    new   : true,
+                                    dbName: db
+                                }, function (err, payment) {
                                     if (err) {
-                                        return eCb();
+                                        return eCb(err);
                                     }
 
-                                    eCb();
+                                    journalEntryService.formBodyForPrepaymentEntries({
+                                        payment: payment,
+                                        dbName : db
+                                    }, function (err) {
+                                        if (err) {
+                                            return eCb();
+                                        }
+
+                                        eCb();
+                                    });
                                 });
-                            });
-                        } else {
-                            paymentObj.dbName = db;
+                            } else {
+                                paymentObj.dbName = db;
 
-                            paymentService.create(paymentObj, function (err, payment) {
-                                if (err) {
-                                    return eCb(err);
-                                }
+                                async.waterfall([
+                                    function (wCb) {
+                                        paymentService.create(paymentObj, function (err, resultPayment) {
+                                            if (err) {
+                                                return wCb(err);
+                                            }
 
-                                journalEntryService.formBodyForPrepaymentEntries({
-                                    payment: payment,
-                                    dbName : db
-                                }, function (err) {
+                                            wCb(null, resultPayment);
+                                        });
+                                    },
+
+                                    function (resultPayment, wCb) {
+                                        if (!resultInvoice) {
+                                            return wCb(null, resultPayment);
+                                        }
+
+                                        invoiceUpdater(resultInvoice.toJSON(), resultPayment && resultPayment.toJSON(), function (err) {
+                                            if (err) {
+                                                return wCb(err);
+                                            }
+
+                                            wCb(null, resultPayment);
+                                        });
+                                    },
+
+                                    function (resultPayment, wCb) {
+                                        journalEntryService.formBodyForPrepaymentEntries({
+                                            payment: resultPayment,
+                                            dbName : db
+                                        }, function (err) {
+                                            if (err) {
+                                                return wCb(err);
+                                            }
+
+                                            wCb();
+                                        });
+                                    }
+                                ], function (err) {
                                     if (err) {
                                         return eCb(err);
                                     }
 
                                     eCb();
                                 });
-                            });
-                        }
+                            }
+                        });
                     });
+
                 }, function (err) {
                     if (err) {
                         return callback(err);
@@ -1720,7 +2215,7 @@ module.exports = function (models, event) {
             var statusObj;
             var date;
 
-            if (!fulfillments || !fulfillments.length) {
+            if (!createdOrder || !fulfillments || !fulfillments.length) {
                 return callback();
             }
 
@@ -1771,7 +2266,7 @@ module.exports = function (models, event) {
                                     return eCb(err);
                                 }
 
-                                OrderService.findByIdAndUpdate(createdOrder._id, {$set: {shippingMethod: shippingMethod._id}}, {dbName: db}, function (err) {
+                                OrderService.findByIdAndUpdate(createdOrder._id, {$set: {shippingMethod: shippingMethod}}, {dbName: db}, function (err) {
                                     if (err) {
                                         return callback(err);
                                     }
@@ -1907,7 +2402,7 @@ module.exports = function (models, event) {
             var shopifyShippings;
             var price;
 
-            if (!shopifyOrder.shipping_lines || !shopifyOrder.shipping_lines.length) {
+            if (!order || !shopifyOrder.shipping_lines || !shopifyOrder.shipping_lines.length) {
                 return callback();
             }
 
@@ -2013,6 +2508,10 @@ module.exports = function (models, event) {
             var refundsUrl = baseUrl + '/admin/orders/' + shopifyOrder.id + '/refunds.json';
             var order = resultOpts.order;
             var shopifyRefunds;
+
+            if (!order) {
+                return callback()
+            }
 
             requestHelper.getData(refundsUrl, {
                 headers: {
@@ -2201,7 +2700,7 @@ module.exports = function (models, event) {
         }
 
         function getImportData(pCb) {
-            requestHelper.getData(fullRoute, {
+            requestHelper.getData(fullRoute + '?updated_at_min=' + dateOrderFrom, {
                 headers: {
                     Authorization: accessToken
                 }
@@ -2291,7 +2790,7 @@ module.exports = function (models, event) {
         }
 
         function getWarehouse(pCb) {
-            IntegrationService.findOne({user: uId}, {dbName: db, warehouseSettings: 1}, function (err, result) {
+            IntegrationService.findOne({_id: channel}, {dbName: db, warehouseSettings: 1}, function (err, result) {
                 if (err) {
                     return pCb(err);
                 }
@@ -2337,7 +2836,7 @@ module.exports = function (models, event) {
                 nativeOrders = data.orders;
                 customers = data.customers || [];
                 warehouse = data.warehouse;
-                workflows = data.workflows;
+                workflows = data.workflows || [];
                 unlinked = data.unlinked;
             }
 
@@ -2357,6 +2856,10 @@ module.exports = function (models, event) {
                 var currency;
                 var rates;
                 var base;
+
+                /*if ((new Date(orderDate) > new Date(dateOrderFrom))) {
+                    return eCb();
+                }*/
 
                 orderBody = {
                     warehouse    : warehouse,
@@ -2379,8 +2882,21 @@ module.exports = function (models, event) {
                     },
 
                     orderDate   : orderDate,
-                    creationDate: orderDate
+                    creationDate: orderDate,
+
+                    notes: []
                 };
+
+                if (shopifyOrder.note) {
+                    orderBody.notes.push({
+                        date: new Date(),
+                        note: shopifyOrder.note,
+                        user: {
+                            _id  : uId,
+                            login: 'admin'
+                        }
+                    });
+                }
 
                 if (shopifyOrder.customer && shopifyOrder.customer.id) {
                     customer = customers.find(function (el) {
@@ -2388,6 +2904,8 @@ module.exports = function (models, event) {
                     });
 
                     orderBody.supplier = customer && customer._id;
+                } else {
+                    orderBody.supplier = CONSTANTS.DEFAULT_SHOPIFY_CUSTOMER;
                 }
 
                 ratesService.getById({dbName: db, id: orderDate}, function (err, ratesObject) {
@@ -2432,6 +2950,13 @@ module.exports = function (models, event) {
         var channelName = opts.channelName;
         var channelId = opts._id;
         var error;
+        var uId = opts.userId;
+
+        logs = syncLogsHelper.initialize({
+            dbName : opts.dbName,
+            channel: opts.channel,
+            user   : uId
+        });
 
         if (!opts.baseUrl || !opts.token) {
             error = new Error('Invalid integration settings');
@@ -2476,6 +3001,11 @@ module.exports = function (models, event) {
                 });
             }
         ], function (err, result) {
+            syncLogsHelper.create({
+                logs  : logs,
+                dbName: opts.dbName
+            });
+
             if (err) {
                 return callback(err);
             }
@@ -2488,6 +3018,14 @@ module.exports = function (models, event) {
     }
 
     function syncChannel(opts, callback) {
+        var uId = opts.userId;
+
+        logs = syncLogsHelper.initialize({
+            dbName : opts.dbName,
+            channel: opts.channel,
+            user   : uId
+        });
+
         async.series([
             function (sCb) {
                 exportsProducts(opts, function (err) {
@@ -2544,9 +3082,56 @@ module.exports = function (models, event) {
                 });
             }
         ], function (err) {
+            syncLogsHelper.create({
+                logs  : logs,
+                dbName: opts.dbName
+            });
+
             if (err) {
                 return callback(err);
             }
+
+            console.log('Shopify -> synchronization is complete!');
+
+            callback();
+        });
+    }
+
+    function getOnlyProducts(opts, callback) {
+        var dbName = opts.dbName;
+        var user = opts.user;
+        var channel = opts._id;
+
+        logs = syncLogsHelper.initialize({
+            dbName : dbName,
+            channel: channel,
+            user   : user
+        });
+
+        async.series([
+            function (sCb) {
+                getProducts(opts, function (err) {
+                    if (err) {
+                        return sCb(err);
+                    }
+
+
+                    console.log('Shopify -> Products imported');
+                    sCb();
+                });
+            }], function (err) {
+            if (err) {
+                return callback(err);
+            }
+
+            syncLogsHelper.create({
+                logs  : logs,
+                dbName: opts.dbName
+            });
+
+            console.log('Shopify -> import products is complete!');
+
+            event.emit('getAllDone', {uId: user, dbName: dbName});
 
             callback();
         });
@@ -2676,7 +3261,6 @@ module.exports = function (models, event) {
             },
 
             function (wCb) {
-
                 productService.find({
                     groupId: nativeProduct.groupId
                 }, {
@@ -2694,7 +3278,7 @@ module.exports = function (models, event) {
             function (products, wCb) {
                 var ids = _.pluck(products, '_id');
 
-                ChannelLinksService.find({
+                channelLinksService.find({
                     product: {$in: ids},
                     channel: channel
                 }, {
@@ -2735,14 +3319,17 @@ module.exports = function (models, event) {
                     },
 
                     function (channelLinks, wCb) {
+                        var prodId;
+
                         if (!wCb && typeof channelLinks === 'function') {
                             wCb = channelLinks;
-
                             return wCb();
                         }
 
+                        prodId = channelLinks.product || nativeProduct._id;
+
                         productService.getProductsWithVariants({
-                            query : {_id: channelLinks.product},
+                            query : {_id: prodId},
                             dbName: dbName
                         }, function (err, resultProduct) {
                             var firstVariant;
@@ -2896,10 +3483,11 @@ module.exports = function (models, event) {
         exportsProducts    : exportsProducts,
         getCustomers       : getCustomers,
         getSalesOrders     : getSalesOrders,
+        getOnlyProducts    : getOnlyProducts,
         getAll             : getAll,
         syncChannel        : syncChannel,
         publishProduct     : publishProduct,
         unpublishProduct   : unpublishProduct,
         publishFulfillments: publishFulfillments
     };
-}
+};

@@ -14,7 +14,7 @@ module.exports = function (models, event) {
     var moduleId = MODULES.INTEGRATION;
     var accessStackMiddleWare = require('../helpers/access')(moduleId, models);
 
-    //router.use(authStackMiddleware);
+    // router.use(authStackMiddleware);
     // router.use(accessStackMiddleWare);
 
     // manage conflicts
@@ -23,6 +23,7 @@ module.exports = function (models, event) {
     router.get('/countOfConflictsAndImported', handler.countOfConflictsAndImported);
     router.get('/unlinkedProducts', handler.getUnlinkedProducts);
     router.get('/sync', handler.syncAll);
+
     // router.get('/all/:type', handler.getAll);
 
     router.post('/conflicts', handler.saveConflictData);

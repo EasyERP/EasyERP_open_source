@@ -653,7 +653,7 @@ define([
             groupsId = [];
             usersId = [];
 
-            $thisEl.find('dd').find('.homeAddress').each(function (index, addressLine) {
+            $thisEl.find('.homeAddress').each(function (index, addressLine) {
                 var $el = $thisEl.find(addressLine);
                 homeAddress[$el.attr('name')] = $.trim($el.val()) || $el.attr('data-id');
             });
@@ -666,7 +666,7 @@ define([
             weeklyScheduler = $jobTrs.find('#weeklySchedulerDd').last().attr('data-id');
             event = $jobTrs.last().attr('data-content');
             jobType = $.trim($jobTrs.last().find('#jobTypeDd').text());
-            date = $.trim($jobTrs.last().find('td').eq(2).text());
+            date = $.trim($jobTrs.last().find('.date').text());
             date = date ? helpers.setTimeToDate(new Date(date)) : helpers.setTimeToDate(new Date());
 
             $.each($jobTrs, function (index, $tr) {
@@ -751,8 +751,7 @@ define([
                     owner: $thisEl.find('#allUsersSelect').attr('data-id') || null,
                     users: usersId,
                     group: groupsId
-                }
-                ,
+                },
 
                 whoCanRW: whoCanRW,
                 hire    : hireArray,
@@ -907,7 +906,10 @@ define([
                     save: {
                         text : 'Save',
                         class: 'btn blue',
-                        click: self.saveItem
+                        click: function () {
+                            self.saveItem();
+                            self.gaTrackingEditConfirm();
+                        }
                     }
                 }
             };

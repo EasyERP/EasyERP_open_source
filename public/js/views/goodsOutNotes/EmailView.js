@@ -80,6 +80,7 @@ define([
                 autoOpen   : true,
                 dialogClass: 'email-dialog',
                 title      : 'Email Goods Note',
+                width      : '500',
                 buttons    : [
                     {
                         id   : 'send-email-dialog',

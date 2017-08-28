@@ -73,7 +73,6 @@ input[type="radio"]._circleRadioRadiance {
   padding: 10px 0 10px 10px;
   margin-left: -10px;
   line-height: $circleSize_1;
-  overflow: hidden;
 }
 
 .radioContainer {
@@ -119,4 +118,18 @@ input[type="radio"]._circleRadioRadiance {
     padding-top: 0;
   }
   margin-bottom: 10px;
+}
+
+._circleRadioGroup {
+  display: flex;
+  margin-bottom: 20px;
+
+  ._circleRadioRadianceWrap {
+    margin-right: 20px;
+    padding-top: 0;
+
+    label {
+      cursor: pointer;
+    }
+  }
 }

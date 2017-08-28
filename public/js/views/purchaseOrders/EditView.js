@@ -156,7 +156,7 @@ define([
                         if (err) {
                             App.render({
                                 type   : 'error',
-                                message: 'Can\'t receive invoice'
+                                message: 'Can\'t create invoice'
                             });
                         } else {
                             Backbone.history.navigate(redirectUrl, {trigger: true});

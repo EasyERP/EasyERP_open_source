@@ -21,7 +21,7 @@ define([
 
             var text;
 
-            this.element.find('.totalPaid').each(function () {
+            this.element.find('.totalPaid span').each(function () {
                 text = $(this).text();
                 text = text.replace(' ', '');
 

@@ -195,6 +195,8 @@ var Categories = function (models, event) {
 
             parentId = result.parent;
 
+            console.log(data.isAllUpdate);
+
             if (!data.isAllUpdate) {
                 AccountsCategory.findById(_id).populate('parent', 'name').exec(function (err, result) {
                     if (err) {

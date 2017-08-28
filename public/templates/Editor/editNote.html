@@ -9,27 +9,16 @@
     </div>
     <textarea class="noteText" id="noteArea"><%=note.note%></textarea>
     <div>
-
-
-
-
         <div class="editNoteBtnBlock clearfix">
             <% if (note.attachment){%>
-
             <div class="noteType attachContainer">
                 <div>
                     <a href="download/<%= note.attachment.shortPas%>" id="<%= note.attachment._id%>"><%= note.attachment.name  %></a>
                 </div>
             </div>
             <%}%>
-
-
             <a href="javascript:;" data-id="<%=note._id%>" class=" btn blue saveNote">Save</a>
-
             <a href="javascript:;" data-id="<%=note._id%>" class=" btn cancelNote">Cancel</a>
-
-
         </div>
     </div>
 </div>
-

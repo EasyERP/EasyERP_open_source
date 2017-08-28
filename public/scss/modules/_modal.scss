@@ -222,17 +222,17 @@
     filter: Alpha(Opacity=0);
   }
 
-  &.task-edit-dialog {
-    .ui-dialog-buttonpane {
-      margin-left: 24px;
-      margin-right: 24px;
-
-      button {
-        margin-top: 15px;
-        margin-bottom: 15px;
-      }
-    }
-  }
+  //&.task-edit-dialog {
+  //  .ui-dialog-buttonpane {
+  //    margin-left: 24px;
+  //    margin-right: 24px;
+  //
+  //    button {
+  //      margin-top: 15px;
+  //      margin-bottom: 15px;
+  //    }
+  //  }
+  //}
 }
 
 .ui-helper-clearfix {

@@ -71,23 +71,25 @@
     </div>-->
     <div class="_formWrap _enlargedItemMargin">
         <div class="_formBlock _equal">
-            <div class="_animateInputBox">
+            <div class="_animateInputBox _withInfo">
                 <input type="text"
                        class="_animate "
                        id="paymentMethodName"
                        value="<%=model.name%>"
                        required/>
                 <label class="_animate">Name</label>
+                <span class="tips icon-info" data-id="paymentMethodName"></span>
             </div>
-            <div class="_animateInputBox">
+            <div class="_animateInputBox _withInfo">
                 <input type="text"
                        class="_animate "
                        id="account"
                        value="<%=model.account%>"
                        required/>
                 <label class="_animate">IBAN</label>
+                <span class="tips icon-info" data-id="account"></span>
             </div>
-            <div class="_animateSelectBox">
+            <div class="_animateSelectBox _withInfo">
                 <span class="_selectTitle">Chart of Account</span>
                 <div class="_newSelectListWrap">
                     <a id="chartAccount"
@@ -97,8 +99,9 @@
                         <%=model.chartAccount ? model.chartAccount.name : 'Select'%>
                     </a>
                 </div>
+                <span class="tips icon-info" data-id="chartAccount"></span>
             </div>
-            <div class="_animateSelectBox">
+            <div class="_animateSelectBox _withInfo">
                 <span class="_selectTitle">Currency</span>
                 <div class="_newSelectListWrap">
                     <a id="currency"
@@ -107,40 +110,45 @@
                        data-id="<%=model.currency%>"><%=model.currency%>
                     </a>
                 </div>
+                <span class="tips icon-info" data-id="currency"></span>
             </div>
         </div>
         <div class="_formBlock _equal">
-            <div class="_animateInputBox">
+            <div class="_animateInputBox _withInfo">
                 <input type="text"
                        class="_animate "
                        id="bankName"
                        value="<%=model.bank%>"
                        required/>
                 <label class="_animate">Short Bank Name</label>
+                <span class="tips icon-info" data-id="bankName"></span>
             </div>
-            <div class="_animateInputBox">
+            <div class="_animateInputBox _withInfo">
                 <input type="text"
                        class="_animate"
                        id="address"
                        value="<%=model.address%>"
                        required/>
                 <label class="_animate">Bank Address</label>
+                <span class="tips icon-info" data-id="address"></span>
             </div>
-            <div class="_animateInputBox">
+            <div class="_animateInputBox _withInfo">
                 <input type="text"
                        class="_animate "
                        id="owner"
                        value="<%=model.owner%>"
                        required/>
                 <label class="_animate">Owner</label>
+                <span class="tips icon-info" data-id="owner"></span>
             </div>
-            <div class="_animateInputBox">
+            <div class="_animateInputBox _withInfo">
                 <input type="text"
                        class="_animate "
                        id="swiftCode"
                        value="<%=model.swiftCode%>"
                        required/>
                 <label class="_animate">SWIFT Code</label>
+                <span class="tips icon-info" data-id="swiftCode"></span>
             </div>
         </div>
     </div>

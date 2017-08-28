@@ -8,8 +8,9 @@ define([
     'views/Employees/list/ListItemView',
     'collections/Employees/filterCollection',
     'models/EmployeesModel',
-    'common'
-], function ($, _, ListViewBase, listTemplate, CreateView, EditView, ListItemView, contentCollection, CurrentModel, common) {
+    'common',
+    'views/guideTours/guideNotificationView'
+], function ($, _, ListViewBase, listTemplate, CreateView, EditView, ListItemView, contentCollection, CurrentModel, common, GuideNotify) {
     'use strict';
     var EmployeesListView = ListViewBase.extend({
         CreateView       : CreateView,
@@ -72,6 +73,15 @@ define([
                 page       : this.page,
                 itemsNumber: this.collection.namberToShow
             }).render());
+
+            if (App.guide) {
+                if (App.notifyView) {
+                    App.notifyView.undelegateEvents();
+                    App.notifyView.stopListening();
+                }
+                App.notifyView = new GuideNotify({e: null, data: App.guide});
+            }
+
         }
 
     });

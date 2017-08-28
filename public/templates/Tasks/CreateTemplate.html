@@ -12,15 +12,21 @@
                            maxlength="32"/>
                     <label class="_animate">Summary</label>
                 </div>
-                <div class="_animateTextareaBox">
+                <div class="_animateTextareaBox counterWrap">
+                    <label for="description" class="_animate">Add task description</label>
+
                         <textarea id="description"
                                   name="description"
                                   class="_animate taskDescriptionCreate"
                                   required
                                   maxlength="500"
-                                  placeholder="Add a task, max 500 symbols."
+
                         ></textarea>
-                    <label for="description" class="_animate">Add task description</label>
+
+                    <div class="counter-wrap">
+                        <span class="counter-label">Characters left:</span>
+                        <span class="counter-value" id="counterValue">500</span>
+                    </div>
                 </div>
                 <div class="_animateSelectBox">
                     <span class="_selectTitle">Project</span>

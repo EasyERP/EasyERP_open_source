@@ -3,7 +3,7 @@
         <h4 class="_dialogMainTitle">Add New Order</h4>
         <div class="_formWrap">
             <div class="_formBlock _equal">
-                <div class="_animateSelectBox">
+                <div class="_animateSelectBox _withInfo">
                     <span class="_selectTitle">Status</span>
                     <div class="_newSelectListWrap">
                         <a id="workflowsDd"
@@ -11,25 +11,27 @@
                            href="javascript:;">Select status
                         </a>
                     </div>
+                    <span class="tips icon-info" data-id="workflowsDd"></span>
                 </div>
-                <div class="_animateSelectBox">
+                <div class="_animateSelectBox _withInfo">
                     <span class="_selectTitle">Supplier</span>
                     <div class="_newSelectListWrap">
                         <a id="customerDd" class="current-selected" href="javascript:;">Select supplier</a>
                     </div>
+                    <span class="tips icon-info" data-id="customerDd"></span>
                 </div>
-                <div class="_animateSelectBox">
+                <div class="_animateSelectBox _withInfo">
                     <span class="_selectTitle">Bank Account</span>
                     <div class="_newSelectListWrap">
                         <a id="paymentMethod"
                            class="current-selected"
                            href="javascript:;">Select bank account</a>
-
                     </div>
+                    <span class="tips icon-info" data-id="paymentMethod"></span>
                 </div>
             </div>
             <div class="_formBlock _equal">
-                <div class="_animateInputBox">
+                <div class="_animateInputBox _withInfo">
                     <span class="_staticLabel">Order Date</span>
                     <input type="text"
                            name="orderDate"
@@ -39,16 +41,18 @@
                            readonly
                            value=""
                            maxlength="48"/>
+                    <span class="tips icon-info" data-id="orderDate"></span>
                 </div>
-                <div class="_animateInputBox">
+                <div class="_animateInputBox _withInfo">
                     <span class="_staticLabel">Payment Due</span>
                     <input type="text"
                            class="_animate "
                            id="expectDate"
                            required
                            readonly/>
+                    <span class="tips icon-info" data-id="expectDate"></span>
                 </div>
-                <div class="_animateSelectBox">
+                <div class="_animateSelectBox _withInfo">
                     <span class="_selectTitle">Cost List</span>
                     <div class="_newSelectListWrap">
                         <a id="priceList"
@@ -57,10 +61,11 @@
                            href="javascript:;">
                         </a>
                     </div>
+                    <span class="tips icon-info" data-id="priceList"></span>
                 </div>
             </div>
             <div class="_formBlock _equal">
-                <div class="_animateSelectBox">
+                <div class="_animateSelectBox _withInfo">
                     <span class="_selectTitle">Warehouse</span>
                     <div class="_newSelectListWrap">
                         <a id="warehouseDd"
@@ -69,8 +74,9 @@
                            href="javascript:;">
                         </a>
                     </div>
+                    <span class="tips icon-info" data-id="warehouseDd"></span>
                 </div>
-                <div class="_animateSelectBox">
+                <div class="_animateSelectBox _withInfo">
                     <span class="_selectTitle">Currency</span>
                     <div class="_newSelectListWrap">
                         <a id="currencyDd"
@@ -78,8 +84,9 @@
                            href="javascript:;">Select currency
                         </a>
                     </div>
+                    <span class="tips icon-info" data-id="currencyDd"></span>
                 </div>
-                <div class="_animateSelectBox">
+                <div class="_animateSelectBox _withInfo">
                     <span class="_selectTitle">Assigned To</span>
                     <div class="_newSelectListWrap">
                         <a id="assignedTo"
@@ -87,6 +94,7 @@
                            href="javascript:;">Select assignee
                         </a>
                     </div>
+                    <span class="tips icon-info" data-id="assignedTo"></span>
                 </div>
             </div>
         </div>

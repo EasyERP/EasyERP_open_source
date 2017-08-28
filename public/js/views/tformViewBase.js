@@ -4,10 +4,12 @@ define([
     'Underscore',
     'views/listViewBase',
     'views/Filter/filterView',
+    'views/confirmDialogBase',
     'common',
     'constants',
-    'dataService'
-], function (Backbone, $, _, BaseView, FilterView, common, CONSTANTS, dataService) {
+    'dataService',
+    'async'
+], function (Backbone, $, _, BaseView, FilterView, ConfirmView, common, CONSTANTS, dataService, async) {
     'use strict';
 
     var TFormBaseView = BaseView.extend({
@@ -23,7 +25,8 @@ define([
             'click .compactView:not(.checkbox)'              : 'goToForm',
             'click .closeBtn'                                : 'returnToList',
             'click #sortBy'                                  : 'openSortDrop',
-            'click #editButton, .editButton, #selectCustomer': 'editItem'
+            'click #editButton, .editButton, #selectCustomer': 'editItem',
+            'click #toggleList'                              : 'toggleItemList'
         },
 
         initialize: function (options) {
@@ -269,7 +272,12 @@ define([
             }
         },
 
-        deleteItems: function () {
+        toggleItemList: function (e) {
+            var $wrap = $(e.target).closest('.listContentWrap');
+            $wrap.toggleClass('closed');
+        },
+
+        deleteItems: function (confirmDelete) {
             var self = this;
             var $thisEl = this.$el;
             var $table = $thisEl.find('#listTable');
@@ -283,6 +291,8 @@ define([
             var collIds;
             var diffIds;
             var needId;
+            var dontConfirmContentTypes = ['Persons', 'Opportunities', 'order', 'invoice', 'Projects', 'Tasks', 'jobs', 'Employees', 'Applications', 'JobPositions', 'ChartOfAccount', 'journal', 'bonusType', 'Products', 'goodsOutNotes', 'productCategories', 'currency'];
+            var answerConfirm = true;
 
             if (!edited.length) { // ToDo refactor
                 this.changed = false;
@@ -290,12 +300,6 @@ define([
 
             if (this.changed) {
                 return this.cancelChanges();
-            }
-
-            answer = confirm('Really DELETE items ?!');
-
-            if (answer === false) {
-                return false;
             }
 
             $checkedInputs = $table.find('input:checked');
@@ -308,43 +312,62 @@ define([
 
             ids = _.compact(ids);
 
-            dataService.deleteData(url, {contentType: this.contentType, ids: ids}, function (err) {
-                if (err) {
+            if (!confirmDelete && dontConfirmContentTypes.indexOf(this.contentType) < 0) {
+                answerConfirm = confirm('Do you really want to DELETE this items?!');
+            }
 
-                    if (err.responseJSON && err.responseJSON.error) {
-                        return App.render({
-                            type   : 'error',
-                            message: err.responseJSON.error
+            if (answerConfirm) {
+                dataService.deleteData(url, {
+                    contentType  : this.contentType,
+                    ids          : ids,
+                    confirmDelete: confirmDelete
+                }, function (err, response) {
+                    if (err) {
+                        if (err.responseJSON && err.responseJSON.error) {
+                            return App.render({
+                                type   : 'error',
+                                message: err.responseJSON.error
+                            });
+                        }
+
+                    }
+
+                    if (!confirmDelete && $table && response && response.ids) {
+                        response.ids.forEach(function (id) {
+                            $table.find('[data-id="' + id + '"]').addClass('red');
+                        });
+
+                        return new ConfirmView({
+                            message : 'Red items have related documents. They won\'t be deleted, ok ?!',
+                            callback: function () {
+                                self.deleteItems(true);
+                            }
                         });
                     }
 
-                    App.render({
-                        type   : 'error',
-                        message: 'Can\'t remove items'
-                    });
-                }
+                    self.getPage({
+                        success: function () {
+                            if (ids.indexOf(self.selectedId) !== -1) {
+                                collectionObj = self.collection.toJSON();
+                                collIds = _.pluck(collectionObj, '_id');
 
-                self.getPage({
-                    success: function () {
-                        if (ids.indexOf(self.selectedId) !== -1) {
-                            collectionObj = self.collection.toJSON();
-                            collIds = _.pluck(collectionObj, '_id');
+                                diffIds = _.difference(collIds, ids);
+                                needId = diffIds[0];
 
-                            diffIds = _.difference(collIds, ids);
-                            needId = diffIds[0];
+                                self.selectedId = needId;
 
-                            self.selectedId = needId;
-
-                            if (collectionObj.length) {
-                                self.renderFormView(needId);
-                            } else {
-                                self.filter = null;
-                                self.returnToList();
+                                if (collectionObj.length) {
+                                    self.renderFormView(needId);
+                                } else {
+                                    self.filter = null;
+                                    self.returnToList();
+                                }
                             }
                         }
-                    }
+                    });
+
                 });
-            });
+            }
         },
 
         render: function () {

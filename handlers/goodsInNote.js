@@ -5,14 +5,10 @@ var GoodsInNotes = function (models, event) {
 
     var GoodsInNotesHelper = require('../helpers/refunds');
     var GoodsInSchema = mongoose.Schemas.GoodsInNote;
-    var stockReturnsSchema = mongoose.Schemas.stockReturns;
-    var OrderRowsSchema = mongoose.Schemas.OrderRow;
     var AvailabilityHelper = require('../helpers/availability')(models);
     var AvailabilityService = require('../services/productAvailability')(models);
     var JournalEntryService = require('../services/journalEntry')(models);
-
-    var goodsNoteService = require('../services/goodsOutNotes')(models);
-    var orderRowsService = require('../services/orderRows')(models);
+    var OrderService = require('../services/order')(models);
 
     var goodsInNotesHelper = new GoodsInNotesHelper(models);
 
@@ -22,18 +18,17 @@ var GoodsInNotes = function (models, event) {
     var journalEntry = new JournalEntryHandler(models);
     var path = require('path');
 
-    this.create = function (req, res, next) {
-        var GoodsInNote = models.get(req.session.lastDb, 'GoodsInNote', GoodsInSchema);
-        var body = req.body;
-        var user = req.session.uId;
-        var dbName = req.session.lastDb;
+    function createHelper(body, options, cb) {
+        var dbName = options.dbName;
+        var GoodsInNote = models.get(dbName, 'GoodsInNote', GoodsInSchema);
+        var user = options.uId;
         var goodsInNote;
 
         if (body.status && body.status.received) {
             if (!body.status) {
                 body.status = {};
             }
-            
+
             body.status.receivedOn = body.date ? new Date(body.date) : new Date();
             body.status.receivedById = user;
         }
@@ -42,12 +37,12 @@ var GoodsInNotes = function (models, event) {
 
         goodsInNote.createdBy.user = user;
 
-        goodsInNote.save(function (err, result) {
+        goodsInNote.save(function (err, goodsIn) {
             if (err) {
-                return next(err);
+                return cb(err);
             }
 
-            GoodsInNote.findById(result._id).populate('order', 'shippingMethod shippingExpenses').exec(function (err, result) {
+            GoodsInNote.findById(goodsIn._id).populate('order', 'shippingMethod shippingExpenses').exec(function (err, result) {
                 if (err) {
                     return next(err);
                 }
@@ -59,16 +54,46 @@ var GoodsInNotes = function (models, event) {
                 }, function (err) {
 
                     if (err) {
-                        return next(err);
+                        return cb(err);
                     }
 
                     if (result && result.order) {
-                        event.emit('recalculateStatus', req, result.order._id, next);
+
+                        OrderService.setInProgressStatus({
+                            dbName: dbName,
+                            query : {_id: result.order._id}
+                        }, function (err) {
+                            if (err) {
+                                return cb(err);
+                            }
+
+                            // event.emit('recalculateStatus', req, result.order._id, next);
+
+                        });
                     }
 
-                    res.status(200).send(result);
+                    cb(null, goodsIn);
                 });
             });
+        });
+    }
+
+    this.createHelper = createHelper;
+
+    this.create = function (req, res, next) {
+        var body = req.body;
+        var dbName = req.session.lastDb;
+        var uId = req.session.uId;
+        var options = {
+            dbName: dbName,
+            uId   : uId
+        };
+
+        createHelper(body, options, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+            event.emit('recalculateStatus', req, result.order._id, next);
         });
     };
 
@@ -107,17 +132,22 @@ var GoodsInNotes = function (models, event) {
         var req = options.req;
         var GoodsInNote = models.get(req.session.lastDb, 'GoodsInNote', GoodsInSchema);
         var ids = options.ids || [];
+        var isManufacturing = req.isManufacturing;
+        var orderType = 'order';
+
+        if (isManufacturing) {
+            orderType = 'manufacturingOrder';
+        }
 
         async.each(ids, function (id, cb) {
-            GoodsInNote.findOne(id).populate('order').exec(function (err, goodsNote) {
+            GoodsInNote.findOne(id).populate(orderType).exec(function (err, goodsNote) {
                 var options;
 
                 if (err) {
                     return cb(err);
                 }
 
-                if (goodsNote && goodsNote.order) {
-                    event.emit('recalculateStatus', req, goodsNote.order, next);
+                if (goodsNote && goodsNote[orderType]) {
 
                     async.each(goodsNote.orderRows, function (goodsOrderRow, callback) {
 
@@ -149,6 +179,8 @@ var GoodsInNotes = function (models, event) {
                         if (err) {
                             return cb(err);
                         }
+
+                        event.emit('recalculateStatus', req, goodsNote[orderType]._id, next);
 
                         cb();
                     });

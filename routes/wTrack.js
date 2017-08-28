@@ -9,6 +9,11 @@ module.exports = function (event, models) {
     var handler = new WTrackHandler(event, models);
     var moduleId = MODULES.WTRACK;
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
+    var accessDeleteStackMiddleware = require('../helpers/checkDelete');
+
+    function accessDeleteStackMiddlewareFunction(req, res, next) {
+        accessDeleteStackMiddleware(req, res, next, models, 'wTrack', event);
+    }
 
     router.use(authStackMiddleware); // added generall check on auth
 
@@ -290,7 +295,7 @@ module.exports = function (event, models) {
          "success":true
      }
      */
-    router.delete('/', accessStackMiddleware, handler.bulkRemove);
+    router.delete('/', accessStackMiddleware, accessDeleteStackMiddlewareFunction, handler.bulkRemove);
 
     return router;
 };

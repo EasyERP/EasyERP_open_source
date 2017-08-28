@@ -1,10 +1,16 @@
 <div class="_editAllocateAll">
     <%if (!notEditable && forSales) {%>
-    <span class="btn slim" id="selectShippingMethod">Add Shipping Method</span>
-    <span class="btn slim" id="resetPrices">Reset Prices</span>
+    <div class="_tipsWrap">
+        <span class="btn slim" id="selectShippingMethod">Add Shipping Method</span>
+        <span class="tips icon-info" data-id="selectShippingMethod"></span>
+    </div>
+    <div class="_tipsWrap">
+        <span class="btn slim" id="resetPrices">Reset Prices</span>
+        <span class="tips icon-info" data-id="resetPrices"></span>
+    </div>
     <%}%>
 </div>
-<table class="list _projectTableLeftAlign tableFixed _invoiceTable forSCU">
+<table class="_productTable">
     <colgroup>
         <%if (writeOff) {%>
         <col width="15%">
@@ -21,25 +27,22 @@
         <col width="80px">
         <col width="30px">
         <% } else { %>
-        <col width="80px">
+        <col width="160px">
         <col width="180px">
-        <col width="120px">
-        <col width="120px">
-        <col width="120px">
-        <col width="140px">
-        <col width="120px">
-        <col width="120px">
+        <col width="180px">
+        <col width="160px">
+        <col width="80px">
+        <col width="80px">
+        <col width="80px">
+        <col width="80px">
         <col width="30px">
         <% } %>
     </colgroup>
     <thead>
-    <tr class="productListItemsColumns _deleteHeader">
+    <tr class="_deleteHeader">
         <%if (!expense){%>
-
-        <th data-sort="Product">SKU</th>
-
+        <th class="text-left" data-sort="Product">SKU</th>
         <%}%>
-
         <th data-sort="description">Info</th>
         <th data-sort="account">Account</th>
         <th>Tax Code</th>
@@ -47,26 +50,21 @@
         <th data-sort="unitPrice">Unit Price</th>
         <th data-sort="taxes">Taxes</th>
         <th data-sort="subtotal">Subtotal</th>
-        <th class=""></th>
+        <th class="deleteCell"></th>
     </tr>
     </thead>
     <tbody id="productList">
-    <tr></tr>
     <tr>
         <%if (!expense){%>
-        <td colspan="<%=writeOff ? 4 : 8%>" class="addProductItem">
-            <a href="javascript:;">Add an item</a>
+        <td colspan="<%=writeOff ? 4 : 8%>" class="addProductItem text-left">
+            <a href="javascript:;" class="btn blue slim">Add an item</a>
         </td>
         <%} else {%>
-        <td colspan="7" class="addProductItem">
-            <a href="javascript:;">Add an item</a>
+        <td colspan="7" class="addProductItem text-left">
+            <a href="javascript:;" class="btn blue slim">Add an item</a>
         </td>
         <%}%>
-
     </tr>
     </tbody>
 </table>
-<div class="clearfix"></div>
-<div id="totalAmountContainer" class="_totalAmountContainer _createPopup">
-
-</div>
+<div id="totalAmountContainer" class="_totalAmountContainer _createPopup"></div>

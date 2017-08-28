@@ -3,12 +3,13 @@ define([
     'jQuery',
     'Underscore',
     'views/purchaseOrders/form/FormView',
-    'text!templates/purchaseOrders/form/EditTemplate.html',
-    'text!templates/purchaseOrders/form/ViewTemplate.html',
+    'text!templates/order/baseForm/baseFormEditTemplate.html',
+    'text!templates/order/baseForm/baseFormViewTemplate.html',
     'models/goodsInNotesModel',
     'views/Products/orderRows/ProductItems',
     'views/goodsInNotes/CreateView',
     'views/Payment/CreateView',
+    'views/guideTours/guideNotificationView',
     'common',
     'custom',
     'dataService',
@@ -16,7 +17,24 @@ define([
     'constants',
     'helpers',
     'services/showJournalEntries'
-], function (Backbone, $, _, ParentView, EditTemplate, ViewTemplate, GoodsInNote, ProductItemView, CreateView, PaymentCreateView, common, Custom, dataService, populate, CONSTANTS, helpers, journalService) {
+], function (Backbone,
+             $,
+             _,
+             ParentView,
+             EditTemplate,
+             ViewTemplate,
+             GoodsInNote,
+             ProductItemView,
+             CreateView,
+             PaymentCreateView,
+             GuideNotify,
+             common,
+             Custom,
+             dataService,
+             populate,
+             CONSTANTS,
+             helpers,
+             journalService) {
 
     var EditView = ParentView.extend({
         contentType: 'purchaseOrders',
@@ -145,6 +163,11 @@ define([
             var $targetElement = $(e.target).closest('a');
             var symbol;
             var currency;
+          var warehouse;
+          var account;
+          var table = this.$el.find('#productItemsHolder');
+          var trs = table.find('tr.productItem');
+          var accountObj;
 
             if ($target.closest('a').attr('id') === 'currencyDd') {
                 currency = _.findWhere(this.responseObj['#currencyDd'], {_id: $target.attr('id')});
@@ -155,6 +178,40 @@ define([
                 this.$el.find('.currencySymbol').text(symbol);
             } else if ($target.closest('a').attr('id') === 'workflowsDd' && $(e.target).attr('data-status') === 'cancelled') {
                 this.cancelOrder(e);
+            } else if ($target.closest('a').attr('id') === 'warehouseDd') {
+              warehouse = _.findWhere(this.responseObj['#warehouseDd'], {_id: $target.attr('id')});
+              account = warehouse ? warehouse.account : null;
+              accountObj = _.findWhere(this.responseObj['#account'], {_id: account});
+
+              if (accountObj && accountObj._id) {
+                trs.each(function () {
+                  var self = this;
+
+                  $(this).find('.accountDd').text(accountObj.name).attr('data-id', accountObj._id);
+
+                  if ($(this).find('.productsDd').attr('data-id')) {
+                    dataService.getData('/products/productAvalaible', {
+                      product  : $(this).find('.productsDd').attr('data-id'),
+                      warehouse: warehouse._id
+                    }, function (data) {
+                      var itemsStock = data.onHand ? 'green' : 'red';
+                      var fullfilledHolder = $(self).next().find('.fullfilledHolder');
+
+                      fullfilledHolder.removeClass('green red');
+
+                      fullfilledHolder.addClass(itemsStock);
+                      $(self).attr('data-hand', data.onHand);
+                      fullfilledHolder.find('.fullfilledInfo').html('<div><span>' + (data.inStock || 0) + ' in Stock, ' + (data.onHand || 0) + ' on Hand </span></div>');
+                    });
+                  }
+
+                });
+              } else {
+                return App.render({
+                  type   : 'error',
+                  message: 'There is no account in this warehouse, please go to Settings and set it.'
+                });
+              }
             }
 
             $targetElement.text($(e.target).text()).attr('data-id', id);
@@ -164,7 +221,7 @@ define([
 
         saveOrder: function (e) {
             e.preventDefault();
-
+            this.gaTrackingEditConfirm();
             this.saveItem();
         },
 
@@ -205,7 +262,7 @@ define([
                         if (err) {
                             App.render({
                                 type   : 'error',
-                                message: 'Can\'t receive invoice'
+                                message: 'Can\'t create invoice'
                             });
                         } else {
                             Backbone.history.navigate(redirectUrl, {trigger: true});
@@ -296,6 +353,7 @@ define([
             shippingId = thisEl.find('#shippingDd').attr('data-id');
             shippingAccount = thisEl.find('#shippingRow').find('.accountDd').attr('data-id');
             shippingAmount = helpers.spaceReplacer(thisEl.find('#shippingRow').find('[data-name="price"] input').val()) || helpers.spaceReplacer(thisEl.find('#shippingRow').find('[data-name="price"] span:not(.currencySymbol)').text());
+            shippingAmount = shippingAmount || 0;
 
             shippingAmount = parseFloat(shippingAmount) * 100;
 
@@ -439,7 +497,6 @@ define([
                         } else {
                             callBack();
                         }
-
                     },
 
                     error: function (model, xhr) {
@@ -500,10 +557,11 @@ define([
             }
 
             formString = this.template({
-                model   : this.currentModel.toJSON(),
-                visible : this.visible,
-                onlyView: this.onlyView,
-                forSales: this.forSales
+                model      : this.currentModel.toJSON(),
+                visible    : this.visible,
+                onlyView   : this.onlyView,
+                forSales   : this.forSales,
+                notEditable: this.notEditable
             });
 
             $thisEl.html(formString);
@@ -524,8 +582,9 @@ define([
                     status: {$ne: 'Done'}
                 }, 'name', this);
                 populate.get('#paymentMethod', '/paymentMethod', {}, 'name', this, false, true, null);
-                populate.get('#account', '/chartOfAccount/getForDd', {category: 'ACCOUNTS_CURRENT_LIABILITIES'}, 'name', this, true, true);
+                populate.get('#account', '/chartOfAccount/getForDd', {}, 'name', this, true, true);
                 populate.get('#taxCode', '/taxSettings/getForDd', {}, 'name', this, true, true);
+                populate.get('#warehouseDd', 'warehouse/getForDd', {}, 'name', this, true, true);
 
                 this.$el.find('#expectedDate').datepicker({
                     dateFormat : 'd M, yy',
@@ -582,6 +641,14 @@ define([
             productItemContainer.append(
                 self.ProductItemView.render().el
             );
+
+            if (App.guide) {
+                if (App.notifyView) {
+                    App.notifyView.undelegateEvents();
+                    App.notifyView.stopListening();
+                }
+                App.notifyView = new GuideNotify({e: null, data: App.guide});
+            }
 
             return this;
         }

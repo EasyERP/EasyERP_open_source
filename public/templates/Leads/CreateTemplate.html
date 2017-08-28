@@ -10,15 +10,16 @@
             <div class="dialog-tabs-item active">
                 <div class="_formWrap _enlargedItemMargin">
                     <div class="_formBlock">
-                        <div class="_animateInputBox">
+                        <div class="_animateInputBox _withInfo">
                             <input type="text"
                                    class="_animate "
                                    id="name"
                                    required
                                    maxlength="48"/>
                             <label class="_animate">Subject</label>
+                            <span class="tips icon-info" data-id="name"></span>
                         </div>
-                        <div class="_animateSelectBox">
+                        <div class="_animateSelectBox _withInfo">
                             <span class="_selectTitle">Source</span>
                             <div class="_newSelectListWrap">
                                 <a id="sourceDd"
@@ -26,8 +27,9 @@
                                    href="javascript:;">Select source
                                 </a>
                             </div>
+                            <span class="tips icon-info" data-id="sourceDd"></span>
                         </div>
-                        <div class="_animateSelectBox">
+                        <div class="_animateSelectBox _withInfo">
                             <span class="_selectTitle">Assigned to</span>
                             <div class="_newSelectListWrap">
                                 <a id="salesPerson"
@@ -35,8 +37,9 @@
                                    href="javascript:;">Select assignee
                                 </a>
                             </div>
+                            <span class="tips icon-info" data-id="salesPerson"></span>
                         </div>
-                        <div class="_animateSelectBox">
+                        <div class="_animateSelectBox _withInfo">
                             <span class="_selectTitle">Stage</span>
                             <div class="_newSelectListWrap">
                                 <a id="workflowsDd"
@@ -44,8 +47,9 @@
                                    href="javascript:;">Select stage
                                 </a>
                             </div>
+                            <span class="tips icon-info" data-id="workflowsDd"></span>
                         </div>
-                        <div class="_animateSelectBox">
+                        <div class="_animateSelectBox _withInfo">
                             <span class="_selectTitle">Priority</span>
                             <div class="_newSelectListWrap">
                                 <a id="priorityDd"
@@ -53,8 +57,9 @@
                                    href="javascript:;">Select priority
                                 </a>
                             </div>
+                            <span class="tips icon-info" data-id="priorityDd"></span>
                         </div>
-                        <div class="_animateInputBox">
+                        <div class="_animateInputBox _withInfo">
                             <span class="_staticLabel">Close Date</span>
                             <input class="_animate extrainfo"
                                    type="text"
@@ -62,6 +67,7 @@
                                    placeholder="Close Date"
                                    id="expectedClosingDate"
                                    readonly="">
+                            <span class="tips icon-info" data-id="expectedClosingDate"></span>
                         </div>
                     </div>
                 </div>
@@ -103,7 +109,7 @@
                             <label class="_animate">Job Position</label>
                         </div>
                         <div class="_animateInputBox">
-                            <span class="_staticLabel">Date of Birthday</span>
+                            <span class="_staticLabel">Date of Birth</span>
                             <input class="_animate extrainfo"
                                    type="text"
                                    name="Date of Birth"
@@ -217,14 +223,18 @@
                 </div>
             </div>
             <div class="_formWrap">
-                <div class="_formBlock">
-                    <div class="_animateTextareaBox">
+                <div class="_formBlock counterWrap">
+                    <div class="_animateTextareaBox counterEl">
                         <textarea id="internalNotes"
                                   class="_animate internal_Notes"
                                   required
                                   maxlength="2500" ></textarea>
                         <label for="internalNotes" class="_animate">Internal Notes</label>
                         <span class="attach_file icon-attach"></span>
+                        <div class="counter-wrap">
+                            <span class="counter-label">Characters left:</span>
+                            <span class="counter-value" id="counterValue">2500</span>
+                        </div>
                     </div>
                     <div class="attach-container"></div>
                 </div>

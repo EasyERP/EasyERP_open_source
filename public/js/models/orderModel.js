@@ -60,9 +60,7 @@ define([
                 total = model.paymentInfo.total || 0;
                 unTaxed = model.paymentInfo.unTaxed || 0;
                 taxes = model.paymentInfo.taxes || 0;
-
-                model.paymentBalance = total - (model.paymentsPaid || 0);
-
+                
                 total = (total / 100).toFixed(decimalPlace);
                 unTaxed = (unTaxed / 100).toFixed(decimalPlace);
                 taxes = (taxes / 100).toFixed(decimalPlace);
@@ -127,11 +125,11 @@ define([
                         note.status.shippedOn = note.status.pickedOn ? moment(new Date(note.status.pickedOn)).format('DD MMM, YYYY') : '';
 
                     }
-                    if (!note.name && note.history && (note.history.changedField === 'Creation Date')) {
+                   /* if (!note.name && note.history && (note.history.changedField === 'Creation Date')) {
                         model.notes.splice(index, 1);
                         model.notes.unshift(note);
                         return;
-                    }
+                    }*/
                     return note;
                 });
 
@@ -139,18 +137,18 @@ define([
 
             if (model.notes) {
                 _.map(model.notes, function (note, index) {
-                    note.date = moment(new Date(note.date)).format('DD MMM, YYYY, H:mm:ss');
+                    note.date = moment(new Date(note.date));
 
                     if (note.history && (['Expected Date', 'Order Date', 'Creation Date'].indexOf(note.history.changedField) !== -1)) {
                         note.history.changedValue = note.history.changedValue ? moment(new Date(note.history.changedValue)).format('DD MMM, YYYY') : '';
                         note.history.newValue = note.history.newValue ? moment(new Date(note.history.newValue)).format('DD MMM, YYYY') : '';
                         note.history.prevValue = note.history.prevValue ? moment(new Date(note.history.prevValue)).format('DD MMM, YYYY') : '';
                     }
-                    if (!note.name && note.history && (note.history.changedField === 'Creation Date')) {
+                    /*if (!note.name && note.history && (note.history.changedField === 'Creation Date')) {
                         model.notes.splice(index, 1);
                         model.notes.unshift(note);
                         return;
-                    }
+                    }*/
                     return note;
                 });
 

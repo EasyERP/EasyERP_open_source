@@ -12,7 +12,8 @@ define([
     'common',
     'constants',
     'dataService',
-    'views/selectView/selectView'
+    'views/selectView/selectView',
+    'helpers/ga'
 ], function (Backbone,
              $,
              _,
@@ -26,7 +27,8 @@ define([
              common,
              CONSTANTS,
              dataService,
-             SelectView) {
+             SelectView,
+             ga) {
     'use strict';
 
     var personTasksView = Backbone.View.extend({
@@ -36,6 +38,7 @@ define([
 
             App.currentPerson = options.model.get('id');
 
+            this.makeAsBilling = false;
             this.mId = CONSTANTS.MID[this.contentType];
             this.formModel = options.model;
             this.formModel.urlRoot = '/Persons';
@@ -66,7 +69,7 @@ define([
             'mouseleave .avatar'                               : 'hideEdit',
             'click #tabList a'                                 : 'switchTab',
             'keyup .editable'                                  : 'setChangeValueToModel',
-            'change .checkbox'                                 : 'setChangeValueToModel',
+            'change [type="checkbox"]'                         : 'setChangeValueToModel',
             'click #cancelBtn'                                 : 'cancelChanges',
             'click #saveBtn'                                   : 'saveChanges',
             'click .current-selected:not(.jobs)'               : 'showNewSelect',
@@ -81,12 +84,49 @@ define([
             }
         },
 
+        makeSameAsBilling: function (e) {
+            var $thisEl = this.$el;
+            var $target = $(e.target);
+            /*var billingStreet = this.$el.find('#billingStreet');
+             var billingCity = this.$el.find('#billingCity');
+             var billingState = this.$el.find('#billingState');
+             var billingZip = this.$el.find('#billingZip');
+             var billingCountry = this.$el.find('#billingCountry');*/
+            var shippingStreet = $thisEl.find('#shippingStreet');
+            var shippingCity = $thisEl.find('#shippingCity');
+            var shippingState = $thisEl.find('#shippingState');
+            var shippingZip = $thisEl.find('#shippingZip');
+            var shippingCountry = $thisEl.find('#shippingCountry');
+
+            if ($target.is(':checked') === true) {
+                shippingCity.prop('disabled', true);
+                shippingStreet.prop('disabled', true);
+                shippingState.prop('disabled', true);
+                shippingZip.prop('disabled', true);
+                shippingCountry.prop('disabled', true);
+
+                this.makeAsBilling = true;
+            } else {
+                shippingCity.prop('disabled', false);
+                shippingStreet.prop('disabled', false);
+                shippingState.prop('disabled', false);
+                shippingZip.prop('disabled', false);
+                shippingCountry.prop('disabled', false);
+
+                this.makeAsBilling = false;
+            }
+        },
+
         setChangeValueToModel: function (e) {
             var $target = $(e.target);
-            var property = $target.attr('data-id').replace('_', '.');
+            var id = $target.attr('data-id');
+            var property = id.replace('_', '.');
             var value = $target.val();
             var checked = $target.prop('checked');
-            var newProperty;
+
+            if (property === 'makeSameAsBilling') {
+                return this.makeSameAsBilling(e);
+            }
 
             $target.closest('.propertyFormList').addClass('active');
 
@@ -94,17 +134,8 @@ define([
                 value = value.replace('linkedin', '[]');
             }
 
-            /*if (property === 'social.LI' || property === 'social.FB') {
-                newProperty = property.slice(-2, property.length);
-
-                if (!this.modelChanged.social) {
-                    this.modelChanged.social = {};
-                }
-
-                this.modelChanged.social[newProperty] = value;
-            } else */if (property === 'salesPurchases.isSupplier' || property === 'salesPurchases.isCustomer') {
+            if (property === 'salesPurchases.isSupplier' || property === 'salesPurchases.isCustomer') {
                 this.modelChanged[property] = checked;
-
             } else {
                 this.modelChanged[property] = value;
             }
@@ -123,12 +154,16 @@ define([
         saveChanges: function (e) {
             e.preventDefault();
             this.saveModel(this.modelChanged);
+
+            ga && ga.trackingEditConfirm();
         },
 
         cancelChanges: function (e) {
             e.preventDefault();
             this.modelChanged = {};
             this.renderAbout(true);
+
+            ga && ga.trackingEditCancel();
         },
 
         showNewSelect: function (e) {
@@ -176,18 +211,30 @@ define([
             var $thisEl = this.$el;
             var self = this;
             var changedAttributesForEvent = ['name.first', 'name.last', 'email', 'phones.phone', 'address.country'];
-            var changedListAttr = _.intersection(Object.keys(changedAttrs), changedAttributesForEvent);
+            var keys = Object.keys(changedAttrs);
+            var changedListAttr = _.intersection(keys, changedAttributesForEvent);
             var sendEvent = !!(changedListAttr.length);
+            var newValue;
+            var i;
 
             if (changedAttrs.social && !Object.keys(changedAttrs.social).length) {
                 delete changedAttrs.social;
+            }
+
+            if (this.makeAsBilling) {
+                for (i = 0; i < keys.length; i++) {
+                    if (keys[i].indexOf('address') >= 0) {
+                        newValue = keys[i].replace('address', 'shippingAddress');
+                        changedAttrs[newValue] = changedAttrs[keys[i]];
+                    }
+                }
             }
 
             this.formModel.save(changedAttrs, {
                 wait   : true,
                 patch  : true,
                 success: function () {
-                    if (type === 'formProperty') {
+                    if ((type === 'formProperty') || (self.makeAsBilling)) {
                         Backbone.history.fragment = '';
                         Backbone.history.navigate(window.location.hash, {trigger: true});
                     } else {

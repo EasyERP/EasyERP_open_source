@@ -1,326 +1,312 @@
 <div class="form-holder">
-    <%var classNamePayment = model.workflow && model.workflow.status !== 'Done' ? 'activeItem' : 'passiveItem';%>
-    <%var classNameRefund = model.paymentInfo && model.paymentInfo.total - model.paymentInfo.balance ? 'activeItem' : 'passiveItem';%>
+    <%var classNamePayment = model.workflow && model.workflow.status !== 'Done' ?
+    'activeItem' :
+    'passiveItem';%>
+    <%var classNameRefund = model.paymentInfo && model.paymentInfo.total - model.paymentInfo.balance ?
+    'activeItem' :
+    'passiveItem';%>
 
     <form method="post" action="" class="form" id="invoiceForm">
-        <fieldset>
-            <% if(!isPaid || !model.approved){%>
-            <span class="btn blue btnSave saveBtn">Save</span>
-            <%}%>
-            <div class="inner">
-                <%if (!dialog) {%>
-                <ul class="right _btnsBlockFixed">
-                    <%if (model.approved) {%>
-                    <button id="viewJournalEntries" class="btn slim" title="Journal Entries">
-                        <span class="icon-edit-list2"></span>
-                    </button>
-                    <%}%>
-                    <%if(model.workflow && model.workflow.status !== 'Cancelled'){%>
-                    <%if(model.workflow.status === 'New'){%>
-                    <%if(model.approved){%>
-                            <%if(!model.emailed){%>
-                            <button class="btn slim sendEmail">
-                                <span>Send email</span>
-                            </button>
-                            <%} else {%>
-                            <button class="btn slim sendEmail">
-                                <span>Resend email</span>
-                            </button>
-                            <%}%>
-                    <button class="btn slim cancelInvoice" title="Cancel Invoice">
-                        <span>Cancel Invoice</span>
-                    </button>
-                    <li class="right fullfillOrderWrap">
-                        <a class="btn slim fullfillOrder" href="javascript:;">
-                            <span>Payments</span>
-                        </a>
-                        <ul>
-                            <li class="<%=classNamePayment%>">
-                                <a class="newPayment" href="javascript:;"><span class="fontBold">Create payment</span></a>
-                            </li>
-                            <li class="<%=classNameRefund%>">
-                                <a class="refund" href="javascript:;"><span class="fontBold">Refund</span></a>
-                            </li>
-                        </ul>
-                    </li>
-                    <%} else {%>
-                    <%if(isFinancial){%>
-                    <button class="btn slim sendEmail">
-                        <span>Send email</span>
-                    </button>
-                    <%} else {%>
-                    <span>Draft</span>
-                    <%}%>
-                    <%}%>
-                    <%} else {%>
-                    <%if(model.approved){%>
-                    <li class="right fullfillOrderWrap">
-                        <a class="btn slim fullfillOrder" href="javascript:;">
-                            <span>Payments</span>
-                        </a>
-                        <ul>
-                            <li class="<%=classNamePayment%>">
-                                <a class="newPayment" href="javascript:;"><span class="fontBold">Create payment</span></a>
-                            </li>
-                            <li class="<%=classNameRefund%>">
-                                <a class="refund" href="javascript:;"><span class="fontBold">Refund</span></a>
-                            </li>
-                        </ul>
-                    </li>
-                    <%} else {%>
-                    <%if(isFinancial){%>
-                    <button class="btn slim sendEmail">
-                        <span>Send email</span>
-                    </button>
-                    <%} else {%>
-                    <span>Draft</span>
-                    <%}%>
-                    <%}%>
-                    <%}%>
-                    <%} else {%>
-                    <button class="btn slim borderRed setDraft">
-                        <span>Set Draft</span>
-                    </button>
-                    <%}%>
-                </ul>
+        <% if(!isPaid || !model.approved){%>
+        <span class="btn blue btnSave saveBtn">Save</span>
+        <%}%>
+        <div class="inner">
+            <ul class="right _btnsBlockFixed">
+                <%if (model.approved) {%>
+                <button id="viewJournalEntries"
+                        class="btn slim"
+                        title="Journal Entries">
+                    <span class="icon-edit-list2"></span>
+                </button>
                 <%}%>
-
-                <div class="clearfix"></div>
-                <div class="dialog-tabs-items mainTabs">
-                    <div class="dialog-tabs-item mainTabs active">
-                        <%if (dialog){%>
-                        <%if(model.workflow.status !== 'Done'){%>
-                        <%if(model.approved){%>
-                        <%if(!model.emailed){%>
-                        <button class="btn slim sendEmail">
-                            <span>Send email</span>
-                        </button>
-                        <%} else {%>
-                        <button class="btn slim sendEmail">
-                            <span>Resend email</span>
-                        </button>
-                        <%}%>
-
-                        <%if(isFinancial){%>
-                        <li class="right fullfillOrderWrap">
-                            <a class="btn slim fullfillOrder" href="javascript:;">
-                                <span>Payments</span>
+                <%if(model.workflow && model.workflow.status !== 'Cancelled'){%>
+                <%if(model.workflow.status === 'New'){%>
+                <%if(model.approved){%>
+                <%if(!model.emailed){%>
+                <button class="btn slim sendEmail">
+                    <span>Send email</span>
+                </button>
+                <%} else {%>
+                <button class="btn slim sendEmail">
+                    <span>Resend email</span>
+                </button>
+                <%}%>
+                <button class="btn slim cancelInvoice"
+                        title="Cancel Invoice">
+                    <span>Cancel Invoice</span>
+                </button>
+                <li class="right fullfillOrderWrap icon-arrow-down2">
+                    <a class="btn slim fullfillOrder"
+                       href="javascript:;">
+                        <span>Payments</span>
+                    </a>
+                    <ul>
+                        <li class="<%=classNamePayment%>">
+                            <a class="newPayment"
+                               href="javascript:;">
+                                <span class="fontBold">Create payment</span>
                             </a>
-                            <ul>
-                                <li class="<%=classNamePayment%>">
-                                    <a class="newPayment" href="javascript:;"><span class="fontBold">Create payment</span></a>
-                                </li>
-                                <li class="<%=classNameRefund%>">
-                                    <a class="refund" href="javascript:;"><span class="fontBold">Refund</span></a>
-                                </li>
-                            </ul>
                         </li>
-                        <%}%>
-                        <%} else {%>
-                        <button class="btn slim approve" title="Approve">
-                            <span>Approve</span>
-                        </button>
-                        <%}%>
-                        <%}%>
-                        <%}%>
+                        <li class="<%=classNameRefund%>">
+                            <a class="refund"
+                               href="javascript:;">
+                                <span class="fontBold">Refund</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <%} else {%>
+                <%if(isFinancial){%>
+                <button class="btn slim sendEmail">
+                    <span>Send email</span>
+                </button>
+                <%} else {%>
+                <span>Draft</span>
+                <%}%>
+                <%}%>
+                <%} else {%>
+                <%if(model.approved){%>
+                <li class="right fullfillOrderWrap icon-arrow-down2">
+                    <a class="btn slim fullfillOrder" href="javascript:;">
+                        <span>Payments</span>
+                    </a>
+                    <ul>
+                        <li class="<%=classNamePayment%>">
+                            <a class="newPayment" href="javascript:;">
+                                <span class="fontBold">Create payment</span></a>
+                        </li>
+                        <li class="<%=classNameRefund%>">
+                            <a class="refund" href="javascript:;">
+                                <span class="fontBold">Refund</span></a>
+                        </li>
+                    </ul>
+                </li>
+                <%} else {%>
+                <%if(isFinancial){%>
+                <button class="btn slim sendEmail">
+                    <span>Send email</span>
+                </button>
+                <%} else {%>
+                <span>Draft</span>
+                <%}%>
+                <%}%>
+                <%}%>
+                <%} else {%>
+                <button class="btn slim borderRed setDraft">
+                    <span>Set Draft</span>
+                </button>
+                <%}%>
+            </ul>
 
-                        <%if(!isPaid || paidAndNotApproved){%>
-                        <div class="half-block left">
-                            <dl class="opp-info">
+            <div class="dialog-tabs-items mainTabs">
+                <div class="dialog-tabs-item mainTabs active">
 
-                                <dt><label for="supplier"><%=(forSales) ? 'Customer' : 'Supplier'%></label></dt>
-                                <dd>
-                                    <span id="supplier" data-id="<%=model.supplier ? model.supplier._id : ''%>">
-                                        <%=(model.supplier && model.supplier.name) ? model.supplier.name.first + ' ' + model.supplier.name.last : ""%>
+                    <%if(!isPaid || paidAndNotApproved){%>
+                    <div class="half-block left">
+                        <dl class="opp-info">
+                            <dt>
+                                <label for="supplier"><%=(forSales) ? 'Customer' : 'Supplier'%></label>
+                            </dt>
+                            <dd>
+                                <span id="supplier"
+                                      data-id="<%= model.supplier ?
+                                                   model.supplier._id :
+                                                   ''%>"><%= (model.supplier && model.supplier.name) ?
+                                                              model.supplier.name.first + ' ' + model.supplier.name.last :
+                                                              ""%>
                                     </span>
-                                </dd>
-                                <dt><label for="source_document">Order Number</label></dt>
-                                <dd>
-                                    <%var reference = '#easyErp/order/tform/' + model.sourceDocument._id;%>
-                                    <span type="text" id="source_document">#<a href="<%=reference%>"><%=(model.sourceDocument) ? model.sourceDocument.name : ''%></a></span>
-                                </dd>
+                            </dd>
+                            <dt><label for="source_document">Order Number</label></dt>
+                            <dd>
+                                <%var reference = '#easyErp/order/tform/' + model.sourceDocument._id;%>
+                                <span type="text"
+                                      id="source_document">#<a href="<%=reference%>"><%=(model.sourceDocument) ? model.sourceDocument.name : ''%></a></span>
+                            </dd>
+                            <dt><label for="supplier_invoice_num">Invoice Number</label></dt>
+                            <dd><input type="text" id="supplier_invoice_num"
+                                       class="_inputBordered"
+                                       value="<%=(model.name) ? model.name : ''%>"
+                                       placeholder="Supplier Invoice Number"
+                                       maxlength="32"/>
+                            </dd>
+                            <dt><label for="journal">Journal</label></dt>
+                            <dd class="_newSelectListWrap">
+                                <%if (!model.approved) {%>
+                                <a id="journal"
+                                   class="current-selected"
+                                   href="javascript:;"
+                                   data-id="<%= model.journal && model.journal._id ?
+                                   model.journal._id :
+                                   ''%>"><%= model.journal && model.journal._id ?
+                                             model.journal.name :
+                                             'Select'%></a>
+                                <%} else {%>
+                                <span id="journal"><%= model.journal && model.journal._id ? model.journal.name : 'Select'%></span>
+                                <%}%>
+                            </dd>
 
-                                <dt><label for="supplier_invoice_num">Invoice Number</label></dt>
+                            <dt><label for="paymentMethod">Bank Account</label></dt>
+                            <dd class="">
+                                <%if (!model.approved) {%>
+                                <a id="paymentMethod"
+                                   class="current-selected"
+                                   href="javascript:;"
+                                   data-id="<%=model.paymentMethod && model.paymentMethod._id ? model.paymentMethod._id : null%>"><%=model.paymentMethod && model.paymentMethod._id ?model.paymentMethod.name : 'Select'%></a>
+                                <%} else {%>
+                                <span id="paymentMethod" data-id="<%=model.paymentMethod && model.paymentMethod._id ? model.paymentMethod._id : null%>"><%=model.paymentMethod && model.paymentMethod._id ? model.paymentMethod.name : 'None'%></span>
+                                <%}%>
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="inline-row  left">
+                        <dl class="opp-info">
+                            <div class="left">
+                                <dt><label for="invoice_date">Invoice Date </label></dt>
                                 <dd>
-                                    <input type="text" id="supplier_invoice_num" class="_inputBordered"
-                                           value="<%=(model.name) ? model.name : ''%>"
-                                           placeholder="Supplier Invoice Number" maxlength="32"/>
+                                    <input type="text"
+                                           class="date _inputBordered"
+                                           id="invoice_date"
+                                           value="<%=(model.invoiceDate) ?
+                                           model.invoiceDate :
+                                           ''%>" maxlength="32"
+                                           placeholder="Invoice Date"
+                                           readonly/>
                                 </dd>
-                                <dt><label for="journal">Journal</label></dt>
+                            </div>
+                            <div class="left">
+                                <dt><label for="paymentTerm">Payment Terms</label></dt>
                                 <dd class="_newSelectListWrap">
                                     <%if (!model.approved) {%>
-                                    <a id="journal" class="current-selected"
-                                       href="javascript:;"
-                                       data-id="<%= model.journal && model.journal._id ? model.journal._id : ''%>"><%=
-                                        model.journal && model.journal._id ? model.journal.name : 'Select'%></a>
+                                    <a id="paymentTerm" class="current-selected" href="javascript:;">
+                                        <% if (model.paymentTerms) { %>
+                                        <%=model.paymentTerms.name || 'Select'%>
+                                        <% } else { %>
+                                        <%=model.paymentTerms || 'Select'%>
+                                        <% } %>
+                                    </a>
                                     <%} else {%>
-                                    <span id="journal"><%= model.journal && model.journal._id ? model.journal.name : 'Select'%></span>
-                                    <%}%>
-
-                                </dd>
-                                <dt><label for="paymentMethod">Bank Account</label></dt>
-                                <dd class="">
-                                    <%if (!model.approved) {%>
-                                    <a id="paymentMethod" class="current-selected"
-                                       href="javascript:;"  data-id="<%=model.paymentMethod && model.paymentMethod._id ? model.paymentMethod._id : null%>"><%=model.paymentMethod && model.paymentMethod._id ?model.paymentMethod.name : 'Select'%></a>
-                                    <%} else {%>
-                                    <span id="paymentMethod" data-id="<%=model.paymentMethod && model.paymentMethod._id ? model.paymentMethod._id : null%>"><%=model.paymentMethod && model.paymentMethod._id ? model.paymentMethod.name : 'None'%></span>
-                                    <%}%>
-                                </dd>
-                            </dl>
-                        </div>
-                        <div class="clearfix"></div>
-                        <div class="inline-row  left">
-                            <dl class="opp-info">
-                                <div class="left">
-                                    <dt><label for="invoice_date">Invoice Date </label></dt>
-                                    <dd>
-                                        <input type="text" class="date _inputBordered" id="invoice_date"
-                                               value="<%=(model.invoiceDate) ? model.invoiceDate : ''%>" maxlength="32"
-                                               placeholder="Invoice Date" readonly/>
-                                    </dd>
-                                </div>
-                                <div class="left">
-                                    <dt><label for="paymentTerm">Payment Terms</label></dt>
-                                    <dd class="_newSelectListWrap">
-                                        <%if (!model.approved) {%>
-                                        <a id="paymentTerm" class="current-selected" href="javascript:;">
-                                            <% if (model.paymentTerms) { %>
-                                            <%=model.paymentTerms.name || 'Select'%>
-                                            <% } else { %>
-                                            <%=model.paymentTerms || 'Select'%>
-                                            <% } %>
-                                        </a>
-                                        <%} else {%>
-                                        <span id="paymentTerm">
+                                    <span id="paymentTerm">
                                             <% if (model.paymentTerms) { %>
                                             <%=model.paymentTerms.name || 'Select'%>
                                             <% } else { %>
                                             <%=model.paymentTerms || 'Select'%>
                                             <% } %>
                                         </span>
-                                        <%}%>
+                                    <%}%>
 
 
-                                    </dd>
-                                </div>
-                                <div class="left">
-                                    <dt><label for="due_date">Due Date </label></dt>
-                                    <dd>
-                                        <input type="text" class="date _inputBordered
+                                </dd>
+                            </div>
+                            <div class="left">
+                                <dt><label for="due_date">Due Date </label></dt>
+                                <dd>
+                                    <input type="text" class="date _inputBordered
                                 <% if (!model.dueDate) {%>
                                 errorContent"
-                                        <% } else { %>
-                                        "
-                                        <% } %>
-                                        id="due_date" value="<%=(model.dueDate) ? model.dueDate : ''%>" maxlength="32"
-                                        placeholder="Due Date" readonly />
-                                    </dd>
-                                </div>
-                                <div class="left">
-                                    <dt><label for="currencyDd">Currency</label></dt>
-                                    <dd>
-                                        <span id="currencyDd"
-                                              data-id="<%= model.currency && model.currency._id ? model.currency._id._id : null%>">
-                                            <%= model.currency && model.currency._id ? model.currency._id.name : ''%>
+                                    <% } else { %>
+                                    "
+                                    <% } %>
+                                    id="due_date" value="<%=(model.dueDate) ? model.dueDate : ''%>" maxlength="32"
+                                    placeholder="Due Date" readonly />
+                                </dd>
+                            </div>
+                            <div class="left">
+                                <dt><label for="currencyDd">Currency</label></dt>
+                                <dd>
+                                    <span id="currencyDd"
+                                          data-id="<%= model.currency && model.currency._id ? model.currency._id._id : null%>">
+                                            <%= model.currency && model.currency._id ?
+                                        model.currency._id.name :
+                                        ''%>
                                         </span>
-                                    </dd>
-                                </div>
-                            </dl>
-                        </div>
-                        <%} else {%>
-                        <div class="half-block left">
-                            <dl class="opp-info">
-
-                                <dt><label for="supplier"><%=(forSales) ? 'Customer' : 'Supplier'%></label></dt>
-                                <dd>
-                                    <span id="supplier" data-id="<%=(model.supplier)?model.supplier._id:''%>"
-                                          href="javascript:;"><%=(model.supplier && model.supplier.name)?model.supplier.name.first + ' ' + model.supplier.name.last:""%></span>
                                 </dd>
+                            </div>
+                        </dl>
+                    </div>
+                    <%} else {%>
+                    <div class="half-block left">
+                        <dl class="opp-info">
 
-                                <dt><label for="source_document">Order Number</label></dt>
-                                <dd>
-                                    <%var reference = '#easyErp/order/tform/' + model.sourceDocument._id;%>
-                                    <span type="text" id="source_document">#<a href="<%=reference%>"><%=(model.sourceDocument) ? model.sourceDocument.name : ''%></a></span>
-                                </dd>
+                            <dt><label for="supplier"><%=(forSales) ? 'Customer' : 'Supplier'%></label></dt>
+                            <dd>
+                                <span id="supplier"
+                                      data-id="<%=(model.supplier)?model.supplier._id:''%>"
+                                      href="javascript:;"><%=(model.supplier && model.supplier.name)?
+                                        model.supplier.name.first + ' ' + model.supplier.name.last:
+                                        ""%></span>
+                            </dd>
 
-                                <dt><label for="supplier_invoice_num">Invoice Number</label></dt>
-                                <dd>
+                            <dt><label for="source_document">Order Number</label></dt>
+                            <dd>
+                                <%var reference = '#easyErp/order/tform/' + model.sourceDocument._id;%>
+                                <span id="source_document">#<a href="<%=reference%>"><%=(model.sourceDocument) ? model.sourceDocument.name : ''%></a></span>
+                            </dd>
+
+                            <dt><label for="supplier_invoice_num">Invoice Number</label></dt>
+                            <dd>
                                     <span type="text"
                                           id="supplier_invoice_num"><%=(model.name) ? model.name : ''%></span>
-                                </dd>
+                            </dd>
 
-
-                                <dt><label for="paymentMethod">Bank Account</label></dt>
-                                <dd class="">
-                                    <%if (!model.approved) {%>
-                                    <a id="paymentMethod" class="current-selected"
-                                       href="javascript:;"  data-id="<%=model.paymentMethod && model.paymentMethod._id ? model.paymentMethod._id : null%>"><%=model.paymentMethod && model.paymentMethod._id ?model.paymentMethod.name : 'Select'%></a>
-                                    <%} else {%>
-                                    <span id="paymentMethod" data-id="<%=model.paymentMethod && model.paymentMethod._id ? model.paymentMethod._id : null%>"><%=model.paymentMethod && model.paymentMethod._id ? model.paymentMethod.name : 'None'%></span>
-                                    <%}%>
+                            <dt><label for="paymentMethod">Bank Account</label></dt>
+                            <dd class="">
+                                <%if (!model.approved) {%>
+                                <a id="paymentMethod"
+                                   class="current-selected"
+                                   href="javascript:;"
+                                   data-id="<%=model.paymentMethod && model.paymentMethod._id ? model.paymentMethod._id : null%>"><%=model.paymentMethod && model.paymentMethod._id ?model.paymentMethod.name : 'Select'%></a>
+                                <%} else {%>
+                                <span id="paymentMethod" data-id="<%=model.paymentMethod && model.paymentMethod._id ? model.paymentMethod._id : null%>"><%=model.paymentMethod && model.paymentMethod._id ? model.paymentMethod.name : 'None'%></span>
+                                <%}%>
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="inline-row  left">
+                        <dl class="opp-info">
+                            <div class="left">
+                                <dt><label for="inv_date">Invoice Date </label></dt>
+                                <dd>
+                                    <span id="inv_date"><%=(model.invoiceDate) ? model.invoiceDate : ''%></span>
                                 </dd>
-                            </dl>
-                        </div>
-                        <div class="clearfix"></div>
-                        <div class="inline-row  left">
-                            <dl class="opp-info">
-                                <div class="left">
-                                    <dt><label for="inv_date">Invoice Date </label></dt>
-                                    <dd>
-                                        <span id="inv_date"><%=(model.invoiceDate) ? model.invoiceDate : ''%></span>
-                                    </dd>
-                                </div>
-                                <div class="left">
-                                    <dt><label for="paymentTerm">Payment Terms</label></dt>
-                                    <dd>
+                            </div>
+                            <div class="left">
+                                <dt><label for="paymentTerm">Payment Terms</label></dt>
+                                <dd>
                                     <span id="paymentTerm" href="javascript:;"><% if (model.paymentTerms) { %>
                                         <%=model.paymentTerms.name || 'Select'%>
                                         <% } else { %>
                                          Custom
                                         <% } %>
                                     </span>
-                                    </dd>
-                                </div>
-                                <div class="left">
-                                    <dt><label for="d_date">Due Date </label></dt>
-                                    <dd>
-                                        <span id="d_date"><%=(model.dueDate) ? model.dueDate : ''%></span>
-                                    </dd>
-                                </div>
+                                </dd>
+                            </div>
+                            <div class="left">
+                                <dt><label for="d_date">Due Date </label></dt>
+                                <dd>
+                                    <span id="d_date"><%=(model.dueDate) ? model.dueDate : ''%></span>
+                                </dd>
+                            </div>
 
-                                <div class="left">
-                                    <dt><label for="currencyDd">Currency</label></dt>
-                                    <dd>
-                                        <span id="currencyDd"
-                                              data-id="<%= model.currency && model.currency._id ? model.currency._id : null%>">
+                            <div class="left">
+                                <dt><label for="currencyDd">Currency</label></dt>
+                                <dd>
+                                    <span id="currencyDd"
+                                          data-id="<%= model.currency && model.currency._id ? model.currency._id : null%>">
                                             <%= model.currency && model.currency._id ? model.currency._id.name : ''%>
                                         </span>
-                                    </dd>
-
-                                </div>
-                            </dl>
-                        </div>
-                        <%}%>
-
-                        <div class="clearfix"></div>
-                        <div class="clearfix"></div>
-                        <div class="dialog-tabs-item childTabs active">
-                            <%if(!isWtrack) {%>
-                            <div id="invoiceItemsHolder">
-
+                                </dd>
                             </div>
-                            <div class="clearfix"></div>
-                            <%} %>
-                        </div>
-
-                        <div class="dialog-tabs-item childTabs">
-
-                        </div>
+                        </dl>
                     </div>
+                    <%}%>
+                    <div class="dialog-tabs-item childTabs active">
+                        <%if(!isWtrack) {%>
+                        <div id="invoiceItemsHolder"></div>
+                        <%} %>
+                    </div>
+                    <div class="dialog-tabs-item childTabs"></div>
                 </div>
-                <div class="clearfix"></div>
             </div>
-        </fieldset>
+        </div>
     </form>
 </div>

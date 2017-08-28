@@ -8,8 +8,6 @@ var Employee = function (event, models) {
     var EmployeeSchema = mongoose.Schemas.Employee;
     var ProjectSchema = mongoose.Schemas.Project;
     var DepartmentSchema = mongoose.Schemas.Department;
-    var nationalitySchema = mongoose.Schemas.nationality;
-    var LanguageSchema = mongoose.Schemas.language;
     var SourceSchema = mongoose.Schemas.source;
     var birthdaysSchema = mongoose.Schemas.birthday;
     var TransferSchema = mongoose.Schemas.Transfer;
@@ -44,7 +42,7 @@ var Employee = function (event, models) {
 
     var UserService = require('../services/user')(models);
     var EmployeeService = require('../services/employee')(models);
-    var SettingsService = require('../services/settings')(models);
+    var SettingsService = require('../services/settings')(models, event);
     var SessionService = require('../services/session')(models);
 
     var lookupForEmployeeArray = CONSTANTS.LOOKUP_FOR_EMPLOYEE_ARRAY;
@@ -335,6 +333,13 @@ var Employee = function (event, models) {
         var project;
         var projectSecond;
         var projectAfterRoot;
+        var quickSearch = data.quickSearch;
+        var regExp = new RegExp(quickSearch, 'ig');
+        var matchObject = {};
+
+        if (quickSearch) {
+            matchObject.fullName = {$regex: regExp};
+        }
 
         if (filter && typeof filter === 'object') {
             optionsObject = filterMapper.mapFilter(filter, {
@@ -377,6 +382,9 @@ var Employee = function (event, models) {
                             'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]},
                             'editedBy.user' : {$arrayElemAt: ['$editedBy.user', 0]},
                             name            : 1,
+                            fullName        : {
+                                $concat: ['$name.first', ' ', '$name.last']
+                            },
                             'editedBy.date' : 1,
                             'createdBy.date': 1,
                             dateBirth       : 1,
@@ -490,6 +498,9 @@ var Employee = function (event, models) {
                             'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]},
                             'editedBy.user' : {$arrayElemAt: ['$editedBy.user', 0]},
                             department      : {$arrayElemAt: ['$department', 0]},
+                            fullName        : {
+                                $concat: ['$name.first', ' ', '$name.last']
+                            },
                             name            : 1,
                             'editedBy.date' : 1,
                             'createdBy.date': 1,
@@ -607,6 +618,8 @@ var Employee = function (event, models) {
                 }
             }, {
                 $project: project
+            }, {
+                $match: matchObject
             }, {
                 $project: projectSecond
             }, {
@@ -938,6 +951,21 @@ var Employee = function (event, models) {
             if (res && res.status) {
                 res.status(200).send(result);
             }
+        });
+    }
+
+    function checkNameUniq(req, model, modelSchema, callback) {
+        var Model = models.get(req.session.lastDb, model, modelSchema);
+        var response;
+
+        Model.findOne({name: req.body.name}).exec(function (err, doc) {
+            if (err) {
+                return callback(err);
+            }
+
+            doc ? response = false : response = true;
+
+            return callback(null, response);
         });
     }
 
@@ -2617,30 +2645,6 @@ var Employee = function (event, models) {
             res.send(data);
         });
 
-    };
-
-    this.getNationality = function (req, res, next) {
-        var Nationality = models.get(req.session.lastDb, 'nationality', nationalitySchema);
-
-        Nationality.find({}).exec(function (err, result) {
-            if (err) {
-                return next(err);
-            }
-
-            res.status(200).send({data: result});
-        });
-    };
-
-    this.getLanguages = function (req, res, next) {
-        var Languages = models.get(req.session.lastDb, 'languages', LanguageSchema);
-
-        Languages.find({}).exec(function (err, result) {
-            if (err) {
-                return next(err);
-            }
-
-            res.status(200).send({data: result});
-        });
     };
 
     this.getSources = function (req, res, next) {

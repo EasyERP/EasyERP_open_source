@@ -25,13 +25,13 @@
                     <%var classNameRefund = model.prepayment && model.prepayment.sum ? 'activeItem' : 'passiveItem';%>
 
                     <%if(model.workflow && model.workflow.status !== 'Done'){%>
-                <li class="right fullfillOrderWrap">
+                <li class="right fullfillOrderWrap icon-arrow-down2">
                     <a class="btn slim fullfillOrder" href="javascript:;">
                         <span>Payments</span>
                     </a>
                     <ul>
                         <li class="<%=classNamePayment%>">
-                            <a class="prepay"><span class="fontBold">Create prepayment</span></a>
+                            <a class="prepay"><span class="fontBold">Make payment</span></a>
                         </li>
                         <li class="<%=classNameRefund%>">
                             <a class="refund"><span class="fontBold">Refund</span></a>
@@ -41,7 +41,7 @@
                     <%}%>
                     <%if(model.workflow && model.workflow.status !== 'Done'){%>
                     <button class="editButton btn slim" title="Go To Edit">
-                        <span>Go to Edit to Receive Invoice</span>
+                        <span>Create Invoice</span>
                     </button>
                     <%}%>
                 </li>

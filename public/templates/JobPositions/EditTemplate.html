@@ -48,12 +48,16 @@
                                    href="javascript:;"><%=(model.workflow)?model.workflow.name:'Undefinded'%></a>
                             </div>
                         </div>
-                        <div class="_animateTextareaBox">
+                        <div class="_animateTextareaBox counterWrap">
                             <textarea maxlength="1000"
                                       class="_animate"
                                       id="requirements"
                                       required></textarea>
                             <label for="requirements" class="_animate"><%=model.requirements%></label>
+                            <div class="counter-wrap">
+                                <span class="counter-label">Remainder:</span>
+                                <span class="counter-value" id="counterValue">1000</span>
+                            </div>
                         </div>
                     </div>
                 </div>

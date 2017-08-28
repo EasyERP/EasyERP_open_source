@@ -112,11 +112,11 @@ define([
                             note.history.newValue = note.history.newValue ? moment(new Date(note.history.newValue)).format('DD MMM, YYYY') : '';
                             note.history.prevValue = note.history.prevValue ? moment(new Date(note.history.prevValue)).format('DD MMM, YYYY') : '';
                         }
-                        if (!note.name && note.history && (note.history.changedField === 'Creation Date')) {
+                       /* if (!note.name && note.history && (note.history.changedField === 'Creation Date')) {
                             response.notes.splice(index, 1);
                             response.notes.unshift(note);
                             return;
-                        }
+                        }*/
                         return note;
                     });
 

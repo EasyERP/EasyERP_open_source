@@ -103,7 +103,7 @@ var MonthHours = function (event, models) {
 
     this.getList = function (req, res, next) {
         var MonthHoursModel = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
-        var sort = req.query.sort || {};
+        var sort = req.query.sort || {year: '-1', month: '-1'};
         var paginationObject = pageHelper(req.query);
         var limit = paginationObject.limit;
         var skip = paginationObject.skip;

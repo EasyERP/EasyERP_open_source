@@ -2,7 +2,7 @@
     <div class="_dialogMainTitle">Create Tax</div>
     <div class="_formWrap">
         <div class="_formBlock _equal">
-            <div class="_animateInputBox">
+            <div class="_animateInputBox _withInfo">
                 <input type="text"
                        class="_animate "
                        id="code"
@@ -10,16 +10,18 @@
                        required
                        maxlength="3"/>
                 <label class="_animate">Code</label>
+                <span class="tips icon-info" data-id="code"></span>
             </div>
-            <div class="_animateInputBox">
+            <div class="_animateInputBox _withInfo">
                 <input type="text"
                        class="_animate "
                        id="name"
                        required
                        maxlength="16"/>
                 <label class="_animate">Name</label>
+                <span class="tips icon-info" data-id="name"></span>
             </div>
-            <div class="_animateInputBox _taxRateSelect">
+            <div class="_animateInputBox _taxRateSelect _withInfo">
                 <input type="text"
                        class="_animate forNum"
                        id="rate"
@@ -28,8 +30,9 @@
                        maxlength="5"/>
                 <label class="_animate">Rate</label>
                 <span class="_persentItem">%</span>
+                <span class="tips icon-info" data-id="rate"></span>
             </div>
-            <div class="_animateSelectBox">
+            <div class="_animateSelectBox _withInfo">
                 <span class="_selectTitle">Country</span>
                 <div class="_newSelectListWrap">
                     <a id="country"
@@ -37,6 +40,7 @@
                        href="javascript:;">Select country
                     </a>
                 </div>
+                <span class="tips icon-info" data-id="country"></span>
             </div>
             <div class="_formRow" id="budgeted">
                 <label class="_animatedCheckbox">
@@ -50,7 +54,7 @@
         </div>
         <div class="_formBlock _equal">
             <div>
-                <span>Tax codes (eg "T" or "N") are used across EasyErp for sales, products and accounting.
+                <span>Tax codes (eg "T" or "N") are used across EasyERP for sales, products and accounting.
                     Please, enter Rate in range from 0.01% up to 100%.
                 </span>
             </div>

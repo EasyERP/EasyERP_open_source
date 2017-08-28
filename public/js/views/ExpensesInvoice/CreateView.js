@@ -19,13 +19,14 @@ define([
 
     var CreateView = ParentView.extend({
         el         : '#content-holder',
-        contentType: 'Invoices',
+        contentType: 'expensesInvoice',
         template   : _.template(CreateTemplate),
 
         initialize: function () {
             _.bindAll(this, 'saveItem', 'render');
             this.model = new InvoiceModel();
             this.responseObj = {};
+            this.account = null;
             this.render();
         },
 
@@ -34,12 +35,15 @@ define([
         },
 
         chooseOption: function (e) {
-            var $target = $(e.target);
+            var $target = $(e.target).closest('li');
             var holder = $target.parents('ul').closest('.current-selected');
             var symbol;
             var currency;
+            var expensesCategory;
+            var category;
+            var accountObj;
 
-            if ($target.closest('a').attr('id') === 'currencyDd') {
+            if (holder.attr('id') === 'currencyDd') {
                 currency = _.findWhere(this.responseObj['#currencyDd'], {_id: $target.attr('id')});
                 symbol = currency ? currency.currency : '$';
                 $target.closest('dd').find('.current-selected').attr('data-symbol', symbol);
@@ -48,6 +52,24 @@ define([
             }
 
             holder.text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
+
+            if (holder.attr('id') === 'categories') {
+                category = $target.attr('id');
+
+                expensesCategory = _.findWhere(this.responseObj['#categories'], {_id: category});
+
+                this.account = expensesCategory && expensesCategory.account ? expensesCategory.account : null;
+
+                accountObj = _.findWhere(this.responseObj['#accountDd'], {_id: this.account});
+
+                accountObj = accountObj || {_id: null, name: ''};
+
+                this.$el.find('#productList tr').each(function () {
+                    $(this).find('.accountDd').text(accountObj.name).attr('data-id', accountObj._id);
+                });
+
+            }
+
             $(e.target).closest('td').removeClass('errorContent');
         },
 
@@ -59,7 +81,7 @@ define([
             var self = this;
             var mid = 97;
             var $currentEl = this.$el;
-            var selectedProducts = $currentEl.find('.productItem');
+            var selectedProducts = $currentEl.find('.item');
             var products = [];
             var selectedLength = selectedProducts.length;
             var targetEl;
@@ -73,6 +95,7 @@ define([
             var supplier = $currentEl.find('#supplier').attr('data-id');
             var invoiceDate = $currentEl.find('#invoice_date').val();
             var dueDate = $currentEl.find('#due_date').val();
+            var expensesCategory = $currentEl.find('#categories').attr('data-id') || null;
             var account;
             var usersId = [];
             var groupsId = [];
@@ -129,7 +152,7 @@ define([
                     description = targetEl.find('.productDescr').val();
                     subTotal = helpers.spaceReplacer(targetEl.find('.subtotal .sum').text());
                     subTotal = parseFloat(subTotal) * 100;
-                    account = targetEl.find('.current-selected.accountDd').attr('data-id');
+                    account = targetEl.find('.accountDd').attr('data-id');
                     taxCode = targetEl.find('.current-selected.taxCode').attr('data-id') || null;
 
                     if (!price) {
@@ -149,7 +172,14 @@ define([
                     if (!account) {
                         return App.render({
                             type   : 'error',
-                            message: 'Account can\'t be empty'
+                            message: 'Account can\'t be empty. Please, choose Expenses Category with account'
+                        });
+                    }
+
+                    if (!description) {
+                        return App.render({
+                            type   : 'error',
+                            message: 'Expense info can\'t be empty'
                         });
                     }
 
@@ -166,20 +196,23 @@ define([
                         }]
                     });
                 }
+            } else {
+                return App.render({type: 'error', message: 'Expenses can\'t be empty'});
             }
 
             whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
             data = {
-                forSales             : false,
-                supplier             : supplier,
-                supplierInvoiceNumber: name,
-                invoiceDate          : invoiceDate,
-                dueDate              : dueDate,
-                journal              : null,
-                products             : products,
-                paymentInfo          : payments,
-                currency             : currency,
-                groups               : {
+                forSales        : false,
+                supplier        : supplier,
+                name            : name,
+                invoiceDate     : invoiceDate,
+                dueDate         : dueDate,
+                journal         : null,
+                expensesCategory: expensesCategory,
+                products        : products,
+                paymentInfo     : payments,
+                currency        : currency,
+                groups          : {
                     owner: this.$el.find('#allUsersSelect').attr('data-id') || null,
                     users: usersId,
                     group: groupsId
@@ -238,7 +271,7 @@ define([
         },
 
         render: function () {
-            var formString = this.template();
+            var formString = this.template({model: this.model});
             var self = this;
             var paymentContainer;
             var today = new Date();
@@ -257,11 +290,14 @@ define([
                         text : 'Create',
                         click: function () {
                             self.saveItem();
+                            self.gaTrackingConfirmEvents();
                         }
                     }, {
                         text : 'Cancel',
                         class: 'btn',
-                        click: self.hideDialog
+                        click: function () {
+                            self.hideDialog();
+                        }
                     }]
             });
 
@@ -275,7 +311,8 @@ define([
 
             populate.get('#currencyDd', '/currency/getForDd', {}, 'name', this, true);
             populate.get('#taxCode', '/taxSettings/getForDd', {}, 'name', this, true, true);
-            populate.get('#accountDd', '/chartOfAccount/getForDd', {}, 'name', this, true, true);
+            populate.getParrentCategory('#categories', '/expensesCategories/getAll', {}, this, true, true);
+            populate.get('#accountDd', '/chartOfAccount/getForDd', {category: 'ACCOUNTS_EXPENSES'}, 'name', this, true, true);
 
             populate.get2name('#supplier', '/supplier', {}, this, false, true);
             populate.fetchWorkflow({wId: 'Purchase Invoice'}, function (response) {
@@ -287,7 +324,10 @@ define([
             this.$el.find('#invoice_date').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
-                changeYear : true
+                changeYear : true,
+                onSelect   : function (date) {
+                    self.$el.find('#due_date').datepicker('option', 'minDate', new Date(date));
+                }
             }).datepicker('setDate', today);
 
             today.setDate(today.getDate() + 14);
@@ -296,6 +336,7 @@ define([
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
+                minDate    : new Date(),
                 onSelect   : function () {
                     var targetInput = $(this);
                     targetInput.removeClass('errorContent');

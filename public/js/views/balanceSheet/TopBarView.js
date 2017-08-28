@@ -63,7 +63,7 @@ define([
                 self.trigger('changeDateRange', self.dateFilterView.dateArray);
             });
 
-            this.dateFilterView.checkElement('custom', [null, endDate]);
+            this.dateFilterView.checkElement('custom', [startDate, endDate]);
 
             return this;
         }

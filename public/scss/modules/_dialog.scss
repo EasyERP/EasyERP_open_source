@@ -236,6 +236,8 @@ ul.chart-tabs {
       display: block;
     }
 
+
+
   }
 }
 
@@ -443,6 +445,7 @@ ul.chart-tabs {
 
     &._forOverview {
       border-bottom: 1px solid #d7d7d7;
+      height: 40px;
     }
 
     &._btnsBlockFixed,

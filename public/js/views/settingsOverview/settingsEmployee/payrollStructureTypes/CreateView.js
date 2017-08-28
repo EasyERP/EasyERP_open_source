@@ -8,8 +8,9 @@ define([
     'views/settingsOverview/settingsEmployee/payrollStructureTypes/structureElement/CreateView',
     'text!templates/settingsOverview/settingsEmployee/payrollStructureTypes/componentTemplate.html',
     'populate',
-    'dataService'
-], function ($, _, Backbone, Parent, CreateTemplate, PayrollStructureTypesModel, StructureElementView, componentTemplate, populate, dataService) {
+    'dataService',
+    'helpers/ga'
+], function ($, _, Backbone, Parent, CreateTemplate, PayrollStructureTypesModel, StructureElementView, componentTemplate, populate, dataService, ga) {
 
     var CreateView = Parent.extend({
         el               : '#content-holder',
@@ -341,12 +342,14 @@ define([
                         class: 'btn blue',
                         click: function () {
                             self.saveItem();
+                            ga && ga.trackingEditConfirm(self.contentType);
                         }
                     }, {
                         text : 'Cancel',
                         class: 'btn',
                         click: function () {
                             self.hideDialog();
+                            ga && ga.trackingEditCancel(self.contentType);
                         }
                     }]
 

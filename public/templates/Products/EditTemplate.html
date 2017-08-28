@@ -13,10 +13,10 @@
             <li><a class="active" href="javascript:;">Product Info</a></li>
             <li id="picturesTab"><a href="javascript:;">Images</a></li>
             <li><a href="javascript:;">Stock/Inventory</a></li>
-            <li><a href="javascript:;">Prices</a></li>
+            <li><a href="javascript:;">Price Lists</a></li>
             <li><a href="javascript:;">Sales Channel</a></li>
             <% if (!product.isVariant) { %>
-            <li><a href="javascript:;">Create Variants</a></li>
+            <li ><a id="createVariant" href="javascript:;">Create Variants</a></li>
             <% } else { %>
             <li><a href="javascript:;">Edit Variants</a></li>
             <% } %>
@@ -162,9 +162,7 @@
                 <div id="variantsTable" class="_variantsTableWrap clearfix"></div>
             </div>
             <div class="dialog-tabs-item mainTabs">
-                <div class="_sliderWrap">
-                    <div id="sliderBlock" class="_productSlider"></div>
-                </div>
+                <div class="_sliderWrap" id="sliderBlock"></div>
             </div>
             <div class="dialog-tabs-item mainTabs">
                 <div class="_formWrap _enlargedItemMargin">
@@ -363,7 +361,7 @@
                 <div class="half-block left">
                     <div class="searchContainer">
                         <span>Name | SKU</span>
-                        <input type="text" id="searchProducts"/>
+                        <input type="text" id="searchProducts" class="_searchInput"/>
                         <button id="searchBtnEdit">Search</button>
                         <ul id='productsForBundle'></ul>
                     </div>

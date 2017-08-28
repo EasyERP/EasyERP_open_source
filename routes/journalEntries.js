@@ -3,8 +3,9 @@ var router = express.Router();
 var JournalEntryHandler = require('../handlers/journalEntry');
 var PaymentsHandler = require('../handlers/payment');
 var EmployeesHandler = require('../handlers/employee');
-var InvoicesHandler = require('../handlers/invoice');
+var InvoicesHandler = require('../handlers/invoices');
 var JobsHandler = require('../handlers/jobs');
+var OrderHandler = require('../handlers/order');
 var authStackMiddleware = require('../helpers/checkAuth');
 var MODULES = require('../constants/modules');
 
@@ -14,6 +15,7 @@ module.exports = function (models, event) {
     var invoicesHandler = new InvoicesHandler(models, event);
     var employeesHandler = new EmployeesHandler(event, models);
     var paymentsHandler = new PaymentsHandler(models, event);
+    var orderHandler = new OrderHandler(models, event);
     var moduleId = MODULES.JOURNALENTRY;
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
@@ -34,6 +36,7 @@ module.exports = function (models, event) {
          "date": "2014-07-13T21:00:00.000Z"
      }
      * */
+
     router.get('/getReconcileDate', _journalEntryHandler.getReconcileDate);
     router.get('/getForReport', _journalEntryHandler.getForReport);
     router.get('/getAsyncData', _journalEntryHandler.getAsyncData);
@@ -72,6 +75,7 @@ module.exports = function (models, event) {
      * */
 
     router.get('/getAsyncDataForGL', _journalEntryHandler.getAsyncDataForGL);
+    router.get('/getAsyncForBalanceSheet', _journalEntryHandler.getAsyncForBalanceSheet);
 
     /**
      *@api {get} /journalEntries/getAsyncCloseMonth Request AsyncCloseMonth
@@ -119,6 +123,7 @@ module.exports = function (models, event) {
          ]
      }
      * */
+
     router.get('/getAsyncCloseMonth', _journalEntryHandler.getAsyncCloseMonth);
 
     /**
@@ -258,6 +263,7 @@ module.exports = function (models, event) {
          ]
      }
      * */
+
     router.get('/getBalanceSheet', _journalEntryHandler.getBalanceSheet);
 
     /**
@@ -289,6 +295,7 @@ module.exports = function (models, event) {
      ...
      ]
      * */
+
     router.get('/getCloseMonth', _journalEntryHandler.getCloseMonth);
 
     /**
@@ -330,6 +337,7 @@ module.exports = function (models, event) {
          "dividends": 0
      }
      * */
+
     router.get('/getProfitAndLoss', _journalEntryHandler.getProfitAndLoss);
 
     /**
@@ -409,6 +417,7 @@ module.exports = function (models, event) {
          ]
      }
      * */
+
     router.get('/getCashFlow', _journalEntryHandler.getCashFlow);
     router.get('/getPayrollForReport', _journalEntryHandler.getPayrollForReport);
 
@@ -457,6 +466,7 @@ module.exports = function (models, event) {
          ]
      }
      * */
+
     router.get('/getInventoryReport', _journalEntryHandler.getInventoryReport);
 
     /**
@@ -489,6 +499,8 @@ module.exports = function (models, event) {
     router.get('/invoices', invoicesHandler.getInvoiceById);
     router.get('/payments', paymentsHandler.getById);
     router.get('/employees', employeesHandler.getForJournalSource);
+    router.get('/order', orderHandler.getById);
+    router.get('/taxReport', _journalEntryHandler.taxReport);
 
     /**
      *@api {get} /journalEntries/ Request JournalEntries
@@ -631,9 +643,10 @@ module.exports = function (models, event) {
      }
      *
      * */
+
     router.get('/', _journalEntryHandler.getForView);
 
-   // router.post('/', _journalEntryHandler.create);
+    // router.post('/', _journalEntryHandler.create);
 
     /**
      *@api {post} /journalEntries/reconcile/ Request for creating Reconcile
@@ -654,6 +667,7 @@ module.exports = function (models, event) {
          "success":true
      }
      * */
+
     router.post('/reconcile', _journalEntryHandler.reconcile);
     router.post('/createManual', _journalEntryHandler.createManual);
     router.post('/closeDay', _journalEntryHandler.closeDay);

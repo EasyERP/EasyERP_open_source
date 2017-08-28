@@ -105,7 +105,7 @@ var FilterMapper = function () {
                 filterType = !!filterObject.type ? filterObject.type : filterConstantsByName.type || 'ObjectId';
                 filterBackend = filterConstantsByName.backend || filterObject.key || filterObject.backend;
 
-                if ((contentType === 'goodsOutNotes' || contentType === 'stockTransactions') && filterBackend === 'status') {
+                if ((contentType === 'GoodsOutNote' || contentType === 'stockTransactions') && filterBackend === 'status') {
                     filterValues.forEach(function (el) {
                         filterResObject[filterBackend + '.' + el] = true;
                     });

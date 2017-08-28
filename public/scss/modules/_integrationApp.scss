@@ -1,26 +1,3 @@
-/*Apps Header*/
-/*thease pseudo #top-bar styles need attach to #top-bar styles because equels with them*/
-._appsTitleWrap {
-  display: flex;
-  flex-shrink: 0;
-  align-items: center;
-  height: 40px;
-  min-width: 910px;
-  padding: 0 10px;
-  border-bottom: 1px solid #283038;
-  clear: both;
-  background: #364150;
-
-  .header {
-    flex-grow: 1;
-    h3 {
-      color: #fff;
-      font-family: 'OpenSans Regular', sans-serif, Verdana;
-    }
-  }
-}
-
-/*Progress Bar wrapper*/
 ._progressbarWrap {
   padding: 20px;
 
@@ -51,11 +28,11 @@
       .bar._progressBar {
         width: 0;
       }
-
     }
 
     .btnsBlock {
-      margin: 10px 0px;
+      margin: 10px 0;
+
       button {
         background-color: #f2f2f2;
         border: 1px solid #d8dde6;
@@ -69,7 +46,7 @@
           color: red;
         }
 
-        +button {
+        + button {
           margin-left: 15px;
         }
       }
@@ -83,139 +60,88 @@
 
 /*Apps Wrapper*/
 ._appsWrap {
-  display: table;
-  width: 100%;
-  min-width: 910px;
-  min-height: calc(100vh - 80px);
-  padding: 10px 20px 20px 20px;
-  background-color: #E4E7E9;
-  .app {
-    width: 100%;
-    height: 130px;
-    border: 2px solid #d8dde6;
-    border-radius: 4px;
-    margin-top: 15px;
-    padding: 15px 20px;
-    padding-left: 7px;
-    float: left;
-    background-color: #fff;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  height: calc(100vh - #{$topbarHeight + $subTopbar});
+  padding: 20px;
+  background-color: #ecf1f5;
+  overflow: auto;
+}
 
-    .mainContent {
-      display: flex;
-      align-items: center;
+._appItem {
+  width: 400px;
+  height: 370px;
+  padding: 30px;
+  margin: 7px;
+  border-radius: 5px;
+  background-color: #fff;
+
+  ._channelInfoWrap {
+    display: flex;
+    margin-bottom: 20px;
+
+    .channelImg {
+      margin-right: 20px;
+    }
+  }
+
+  ._syncInfoWrap {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+
+    ._channelName {
+      color: #2e2e2e;
       font-size: 16px;
+      font-family: "OpenSans SemiBold", Arial, Helvetica, sans-serif;
+      margin-right: 10px;
+    }
+  }
+}
 
-      [data-content="channelInfo"] {
-        width: 220px;
-        margin-left: 5px;
-        h3 {
-          margin-bottom: 10px;
-          line-height: initial;
-          font-family: $bold-font-family;
-          font-size: 24px;
-          line-height: 24px;
-        }
-        p {
-          font-size: 14px;
-          color: #89929B;
-          line-height: 24px;
-          b{
-            display: block;
-          }
-        }
-      }
+._channelStatus {
+  display: flex;
+}
 
-      [data-content="connectingStatus"]{
-        display: flex;
-        flex-grow: 1;
-        margin-left: 20px;
-        min-width: 200px;
-      }
+
+._channelStatus {
+  ._statusItem {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    text-align: center;
+
+    .channelRowHeader {
+      font-size: 14px;
+      color: #2e2e2e;
     }
 
-    [data-content="channelStat"] {
-      width: calc(100% - 370px);
-      display: flex;
-      flex-grow: 1;
-      align-items: center;
-      justify-content: flex-end;
-      > div {
-        display: inline-block;
-        vertical-align: top;
-        text-align: center;
-        color: #89929B;
-        font-family: $semibold-font-family;
-        + div {
-          margin-left: 45px;
-          &:not(.settingsContainer) {
-            padding: 10px;
-            border: 2px solid transparent;
-            border-radius: 15px;
-            background: transparent;
-            transition: all 0.05s ease-in-out;
-            &:hover {
-              border: 2px solid #7eadcc;
-              background: #f6f6f6;
-            }
-          }
-        }
-        .channelRowValue {
-          > span {
-            color: #000;
-            font-family:$bold-font-family;
-            font-size: 20px;
-          }
-        }
-      }
-      [data-content="settings"] {
-        .count {
-          cursor: pointer;
-          display: block;
-          line-height: 1;
-          transform-origin: 50% 45%;
-          transform: rotate(0);
-          transition: transform .7s linear;
+    .channelRowValue {
+      margin-top: auto;
+    }
+  }
 
-          &:before {
-            font-size: 35px;
-            line-height: 26px;
-            color: #828B95;
-            position: relative;
-          }
+  ._showLogWrap {
+    flex-grow: 1;
+    align-self: flex-end;
+  }
+}
 
-          &:hover{
-            transform: rotate(360deg);
-          }
-        }
-      }
+._channelInfoWrap {
+  ._channelName {
+    margin-bottom: 10px;
+    color: #2e2e2e;
+    font-size: 16px;
+    font-family: $semibold-font-family;
+  }
 
-      .connection {
-        color: white !important;
-        display: inline-block;
-        border: 1px solid transparent;
-        padding: 5px;
-        line-height: 1;
-        font-size: 14px !important;
-        text-transform: uppercase;
+  ._syncInfo {
+    color: #666;
+    font-size: 13px;
 
-        &.success {
-          background: #28cc28;
-          &:before {
-            font-family: 'erp-icons';
-            content: '\f05d';
-          }
-        }
-
-        &.error {
-          background: #ff1810;
-          color: white !important;
-
-          &:before {
-            font-family: 'erp-icons';
-            content: '\f057';
-          }
-        }
-      }
+    b {
+      color: #2e2e2e;
     }
   }
 }
@@ -227,18 +153,25 @@
   }
 }
 
-.miniApp {
-  width: 160px;
-  height: 50px;
-  margin: 5px 10px;
-  padding: 5px;
-  float: left;
-  img {
-    width: 150px;
-    height: 40px;
-  }
-  &:hover {
-    background: #e3e3e3;
+._channelContainer {
+  display: flex;
+
+  ._channelitem {
+    flex-grow: 1;
+    width: 100px;
+    height: 60px;
+    padding: 5px;
+    text-align: center;
+    cursor: pointer;
+
+    &:hover {
+      background: #e3e3e3;
+    }
+
+    img {
+      width: auto;
+      height: 100%;
+    }
   }
 }
 
@@ -267,9 +200,52 @@
 ._appsWrap .app,
 ._channelNameContainer {
   .channelImg {
+    flex-shrink: 0;
     display: inline-block;
-    width: 95px;
-    height: 95px;
+    width: 70px;
+    height: 70px;
+  }
+}
+
+._appsWrap .app {
+  .channelImg {
+
+    &.magento,
+    &.shopify,
+    &.etsy {
+      width: 70px;
+      background-size: cover;
+    }
+
+    &.magento {
+      height: 81px;
+      background-position: -5px 0;
+    }
+
+    &.shopify {
+      height: 77px;
+      background-position: -3px 0px;
+    }
+
+    &.etsy {
+      height: 65px;
+      background-position: 0 -4px;
+    }
+  }
+}
+
+._channelNameContainer {
+  .channelImg {
+
+    &.shopify,
+    &.magento,
+    &.etsy {
+      background-position: center center;
+    }
+  }
+
+  ._animateInputBox {
+    margin: 0;
   }
 }
 
@@ -301,14 +277,117 @@
   height: 40px;
 
   &.magento {
-    background: url('../images/magento.svg') center center no-repeat;
+    background: url('../images/magento.svg') no-repeat;
   }
 
   &.shopify {
-    background: url('../images/shopify.svg') center center no-repeat;
+    background: url('../images/shopify.svg') no-repeat;
   }
 
   &.etsy {
-    background: url('../images/etsy.svg') center center no-repeat;
+    background: url('../images/etsy.svg') no-repeat;
+  }
+
+  &.woo {
+    background: url('../images/wooLogo.svg') center center no-repeat;
+  }
+}
+
+td {
+  .channelImg {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+._switcher {
+  display: flex;
+  width: 46px;
+  height: 20px;
+  padding: 1px;
+  border-radius: 11px;
+  background-color: #c1c1c1;
+  cursor: pointer;
+
+  &:after {
+    content: '';
+    width: 18px;
+    height: 18px;
+    background-color: #fff;
+    border-radius: 50%;
+  }
+}
+
+.success {
+  ._switcher {
+    background-color: #7eadcc;
+
+    &:after {
+      margin-left: auto;
+    }
+  }
+}
+
+.appActionBar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+
+  ._switcherWrap {
+    display: flex;
+    align-items: center;
+
+    &:after {
+      content: 'Disconnected';
+      margin-left: 10px;
+      font: {
+        size: 14px;
+      }
+      color: #2e2e2e;
+      line-height: 1;
+    }
+  }
+
+  ._settingsBtn {
+    display: flex;
+    height: 20px;
+    margin-left: auto;
+    font-size: 20px;
+    color: #2e2e2e;
+    cursor: pointer;
+    transition: transform 250ms ease;
+
+    &:hover {
+      transform: rotate(45deg);
+    }
+  }
+}
+
+._switcherWrap {
+  &.success {
+    &:after {
+      content: 'Connected';
+    }
+  }
+}
+
+//conflicted & unlinked products
+
+.conflictUnlinkProducts {
+  display: flex;
+
+  .conflictedWrap, .unlinkedWrap {
+    flex-grow: 1;
+    padding-top: 15px;
+  }
+
+  h3 {
+    padding: 0 20px;
+  }
+
+  .top-bar {
+    display: block;
+    padding: 0 20px;
+    border-bottom: 0;
   }
 }

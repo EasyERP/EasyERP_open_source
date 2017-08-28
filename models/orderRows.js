@@ -9,21 +9,22 @@ module.exports = (function () {
     };
 
     var OrderRowSchema = mongoose.Schema({
-        product      : {type: ObjectId, ref: 'Product', default: null},
-        order        : {type: ObjectId, ref: 'Order', default: null},
-        warehouse    : {type: ObjectId, ref: 'warehouse', default: null},
-        quantity     : {type: Number, default: 0},
-        taxes        : [taxes],
-        description  : String,
-        unitPrice    : {type: Number, default: 0},
-        costPrice    : {type: Number, default: 0},
-        subTotal     : {type: Number, default: 0},
-        nominalCode  : {type: Number, default: 0},
-        creationDate : {type: Date, default: Date.now},
-        debitAccount : {type: ObjectId, ref: 'chartOfAccount', default: null},
-        creditAccount: {type: ObjectId, ref: 'chartOfAccount', default: null},
-        channel      : {type: ObjectId, ref: 'integrations', default: null},
-        integrationId: String
+        product                      : {type: ObjectId, ref: 'Product', default: null},
+        order                        : {type: ObjectId, ref: 'Order', default: null},
+        warehouse                    : {type: ObjectId, ref: 'warehouse', default: null},
+        quantity                     : {type: Number, default: 0},
+        taxes                        : [taxes],
+        description                  : String,
+        unitPrice                    : {type: Number, default: 0},
+        costPrice                    : {type: Number, default: 0},
+        subTotal                     : {type: Number, default: 0},
+        nominalCode                  : {type: Number, default: 0},
+        creationDate                 : {type: Date, default: Date.now},
+        debitAccount                 : {type: ObjectId, ref: 'chartOfAccount', default: null},
+        creditAccount                : {type: ObjectId, ref: 'chartOfAccount', default: null},
+        channel                      : {type: ObjectId, ref: 'integrations', default: null},
+        integrationId                : String,
+        isFromManufacturingForReceive: {type: Boolean, default: false}
     }, {collection: 'orderRows'});
 
     mongoose.model('orderRows', OrderRowSchema);

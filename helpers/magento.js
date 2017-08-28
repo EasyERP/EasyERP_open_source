@@ -9,6 +9,7 @@ var CONSTANTS = require('../constants/mainConstants');
 var imageHelper = require('../helpers/imageHelper');
 var ratesRetriever = require('../helpers/ratesRetriever')();
 var RefundsHelper = require('../helpers/refunds');
+var SyncLogsHelper = require('../helpers/syncLogs');
 var Uploader = require('../services/fileStorage/index');
 var uploader = new Uploader();
 
@@ -38,8 +39,12 @@ module.exports = function (models, event) {
     var ProductAvailabilityService = require('../services/productAvailability')(models);
     var imagesService = require('../services/images')(models);
     var organizationService = require('../services/organizationSetting')(models);
-
+    var InvoiceHandler = require('../handlers/invoices');
+    var invoiceHandler = new InvoiceHandler(models, event);
     var refundsHelper = new RefundsHelper(models);
+    var syncLogsHelper = new SyncLogsHelper(models);
+
+    var logs;
 
     function statusBuilder(status, workflowObj) {
         switch (status) {
@@ -213,6 +218,10 @@ module.exports = function (models, event) {
                         },
 
                         function (wCb) {
+                            if (!product.media_gallery_entries || !product.media_gallery_entries.length) {
+                                return wCb(null, null);
+                            }
+
                             var imageUrl = createOpts.baseUrl + '/pub/media/catalog/product' + product.media_gallery_entries[0].file;
 
                             imageHelper.get(imageUrl, function (err, base64Data) {
@@ -228,6 +237,7 @@ module.exports = function (models, event) {
                             var categoryNativeIds;
 
                             if (!categoryExtIds || !categoryExtIds.length) {
+                                categoryExtIds = [];
                                 categoryNativeIds = ['564591f9624e48551dfe3b23'];
                             }
 
@@ -249,6 +259,11 @@ module.exports = function (models, event) {
                             });
                         }
                     ], function (err, categoryNativeIds, base64Data) {
+                        var opts = {
+                            action  : 'imports',
+                            category: 'products'
+                        };
+
                         if (err) {
                             return cb(err);
                         }
@@ -273,8 +288,18 @@ module.exports = function (models, event) {
                             dbName: db
                         }, function (err) {
                             if (err) {
+                                logs = syncLogsHelper.addError(logs, opts, {
+                                    message : err.message,
+                                    entityId: product.id
+                                });
+
                                 return cb(err);
                             }
+
+                            logs = syncLogsHelper.addUnlink(logs, opts, {
+                                entityDescription: product.name,
+                                entityId         : product.id
+                            });
 
                             cb(null, true);
                         });
@@ -297,9 +322,29 @@ module.exports = function (models, event) {
                     }, {
                         upsert: true,
                         dbName: db
-                    }, function (err) {
+                    }, function (err, result) {
                         if (err) {
+                            logs = syncLogsHelper.addError(logs, {
+                                action  : 'imports',
+                                category: 'products'
+                            }, {
+                                entityId         : resProduct.magentoId,
+                                entityDescription: resProduct.name,
+                                message          : err.message
+                            });
+
                             return cb(err);
+                        }
+
+                        if (result.__v && result.__v === 0) {
+                            logs = syncLogsHelper.addConflict(logs, {
+                                action  : 'imports',
+                                category: 'products'
+                            }, {
+                                entityId         : resProduct.magentoId,
+                                entityDescription: resProduct.name,
+                                message          : 'Import ' + resProduct.magentoId + ' products is fail'
+                            });
                         }
 
                         event.emit('showResolveConflict', {uId: createOpts.userId});
@@ -321,6 +366,10 @@ module.exports = function (models, event) {
         var channel = createOpts.channel;
         var priceList = createOpts.priceList;
         var baseUrl = createOpts.baseUrl;
+        var logsOptions = {
+            action  : 'imports',
+            category: 'products'
+        };
 
         async.waterfall([
             function (wCb) {
@@ -427,8 +476,20 @@ module.exports = function (models, event) {
 
                 productService.createProduct(options, function (err, product) {
                     if (err) {
+                        logs = syncLogsHelper.addError(logs, logsOptions, {
+                            message          : err.message,
+                            entityDescription: magentoProduct.name,
+                            entityId         : magentoProduct.id
+                        });
+
                         return wCb(err);
                     }
+
+                    logs = syncLogsHelper.addSuccess(logs, logsOptions, {
+                        entityId         : magentoProduct.id,
+                        entityDescription: magentoProduct.name,
+                        type             : CONSTANTS.SYNC_LOGS.TYPE.CREATE
+                    });
 
                     wCb(null, imagesArray, categoryNativeIds, product, false, true);
                 });
@@ -525,6 +586,10 @@ module.exports = function (models, event) {
                     return wCb();
                 }
 
+                if (!categoryNativeIds || !categoryNativeIds.length) {
+                    return wCb();
+                }
+
                 productCategoryService.findAndUpdate({_id: {$in: categoryNativeIds}}, {$inc: {productsCount: 1}}, {
                     multi : true,
                     dbName: dbName
@@ -576,7 +641,8 @@ module.exports = function (models, event) {
         var db = opts.dbName;
         var baseUrl = opts.baseUrl;
         var uId = opts.user;
-        var channel = opts._id;
+        var dateOrderFrom = opts.ordersDate || new Date(0);
+        var channel = opts._id || opts.channel;
         var settings = opts.settings;
         var route = settings.orders && settings.orders.get;
         var workflowObj = {};
@@ -589,10 +655,20 @@ module.exports = function (models, event) {
         var paymentMethod;
         var warehouse;
         var location;
+        var logsOptions;
+
+        // set logs options for categories
+        logsOptions = {
+            action  : 'imports',
+            category: 'orders'
+        };
 
         if (!opts.token || !baseUrl || !route) {
             err = new Error('Invalid integration settings');
             err.status = 400;
+
+            // TODO: write critical error logs for categories
+            logs = syncLogsHelper.addCriticalError(logs, logsOptions, {message: err.message});
 
             return allCallback(err);
         }
@@ -600,8 +676,13 @@ module.exports = function (models, event) {
         warehouse = opts.warehouseSettings && opts.warehouseSettings.warehouse;
         location = opts.warehouseSettings && opts.warehouseSettings.location;
 
-        //fullRoute = baseUrl + route;
-        fullRoute = 'http://magento-easyerp.test.thinkmobiles.com/rest/V1/orders?searchCriteria[filter_groups][0][filters][0][field]=entity_id& searchCriteria[filter_groups][0][filters][0][value]=162&searchCriteria[filter_groups][0][filters][0][condition_type]=eq'
+        console.log(opts.warehouseSettings);
+
+        fullRoute = baseUrl + route;
+
+        console.log('fullRoute', fullRoute);
+        console.log('accessToken', accessToken);
+        //fullRoute = 'http://magento-test.easyerp.com/rest/V1/orders?searchCriteria[filter_groups][0][filters][0][field]=entity_id& searchCriteria[filter_groups][0][filters][0][value]=1&searchCriteria[filter_groups][0][filters][0][condition_type]=eq'
 
         function createOrUpdateOrder(orderBody, magentoOrder, warehouse, eCb) {
             var productMagentoIds = _.pluck(magentoOrder.items, 'product_id');
@@ -687,6 +768,11 @@ module.exports = function (models, event) {
                             var items;
 
                             if (err) {
+                                // TODO: write critical error logs
+                                logs = syncLogsHelper.addCriticalError(logs, logsOptions, {
+                                    message: err.message
+                                });
+
                                 return eCb(err);
                             }
 
@@ -708,6 +794,11 @@ module.exports = function (models, event) {
                                 var taxes;
 
                                 if (err) {
+                                    // TODO: write critical error logs
+                                    logs = syncLogsHelper.addCriticalError(logs, logsOptions, {
+                                        message: err.message
+                                    });
+
                                     return eCb(err);
                                 }
 
@@ -781,6 +872,7 @@ module.exports = function (models, event) {
 
                 function (sCb) {
                     var payment = magentoOrder.payment;
+                    var newPaymentMethod;
                     var method;
 
                     if (!payment.base_amount_paid) {
@@ -794,72 +886,97 @@ module.exports = function (models, event) {
                             return sCb(err);
                         }
 
-                        if (!result && magentoIds.indexOf(magentoOrder.entity_id) < 0) {
-                            orderBody.workflow = ObjectId(CONSTANTS.DEFAULT_UNLINKED_WORKFLOW_ID);
-                            orderBody.tempWorkflow = workflow;
-
-                            if (orderBody.conflictTypes && orderBody.conflictTypes.length) {
-                                orderBody.conflictTypes.push({
-                                    type : 'paymentMethod',
-                                    value: {
-                                        name: method
-                                    }
-                                });
-                            } else {
-                                orderBody.conflictTypes = [{
-                                    type : 'paymentMethod',
-                                    value: {
-                                        name: method
-                                    }
-                                }];
-                            }
+                        if (result) {
+                            orderBody.paymentMethod = result._id;
+                            paymentMethod = result;
 
                             return sCb();
                         }
 
-                        orderBody.paymentMethod = result._id;
+                        organizationService.getBankAccount({dbName: db}, function (err, bankAccount) {
+                            if (err) {
+                                return sCb(err);
+                            }
 
-                        paymentMethod = result;
+                            if (!bankAccount || !bankAccount.chartAccount || !bankAccount.currency) {
+                                err = new Error('Bank Account doesn`t exist');
+                                err.status = 400;
 
-                        sCb();
+                                return sCb(err);
+                            }
+
+                            newPaymentMethod = {
+                                name        : method,
+                                account     : method,
+                                chartAccount: bankAccount.chartAccount,
+                                currency    : bankAccount.currency
+                            };
+
+                            paymentMethodService.create({
+                                dbName: db,
+                                body  : newPaymentMethod
+                            }, function (err, createdPM) {
+                                if (err) {
+                                    return sCb(err);
+                                }
+
+                                if (!createdPM) {
+                                    err = new Error('Default payment method doesn`t created');
+                                    err.status = 400;
+
+                                    return sCb(err);
+                                }
+
+                                orderBody.paymentMethod = createdPM._id;
+                                paymentMethod = createdPM;
+
+                                sCb();
+                            });
+                        });
                     });
                 },
 
                 function (sCb) {
-                    if (!magentoOrder.customer_id && magentoIds.indexOf(magentoOrder.entity_id.toString()) < 0) {
-
-                        orderBody.workflow = ObjectId(CONSTANTS.DEFAULT_UNLINKED_WORKFLOW_ID);
-                        orderBody.tempWorkflow = workflow;
-
-                        if (orderBody.conflictTypes && orderBody.conflictTypes.length) {
-                            orderBody.conflictTypes.push({
-                                type: 'customer'
-                            });
-                        } else {
-                            orderBody.conflictTypes = [{
-                                type: 'customer'
-                            }];
-                        }
-                    }
-
-                    sCb();
-                },
-
-                function (sCb) {
                     var findResult = magentoIds.indexOf(magentoOrder.entity_id.toString());
+                    var magentoOrderId = magentoOrder.entity_id && magentoOrder.entity_id.toString();
 
                     if ((magentoIds && magentoIds.length) && findResult >= 0) {
 
                         OrderService.findOneAndUpdate({
-                            integrationId: magentoOrder.entity_id.toString(),
+                            integrationId: magentoOrderId,
                             channel      : channel
                         }, {$set: orderBody}, {
                             dbName: db,
                             new   : true
                         }, function (err, newObject) {
                             if (err) {
+                                // TODO: write error logs
+                                logs = syncLogsHelper.addError(logs, logsOptions, {
+                                    message: err.message
+                                });
+
                                 return sCb(err);
                             }
+
+                            if (!newObject) {
+                                return sCb();
+                            }
+
+                            if (orderBody.conflictTypes && orderBody.conflictTypes.length) {
+                                logs = syncLogsHelper.addUnlink(logs, logsOptions, {
+                                    entityId: magentoOrderId,
+                                    message : 'Order ' + magentoOrderId + ' is updated',
+                                    type    : CONSTANTS.SYNC_LOGS.TYPE.UPDATE
+                                });
+                            } else {
+                                // TODO: write success logs
+                                logs = syncLogsHelper.addSuccess(logs, logsOptions, {
+                                    entityId: magentoOrderId,
+                                    message : 'Order ' + magentoOrderId + ' is updated',
+                                    type    : CONSTANTS.SYNC_LOGS.TYPE.UPDATE
+                                });
+                            }
+
                             unlinkedOrderId = newObject._id;
 
                             newOrder = newObject;
@@ -884,12 +1001,13 @@ module.exports = function (models, event) {
                                 products = products.map(function (product) {
                                     var currentRow = _.findWhere(resultRows, {product: product._id});
 
-                                    product.orderRowId = currentRow._id;
-
-                                    return product;
+                                    if (currentRow) {
+                                        product.orderRowId = currentRow._id;
+                                        return product;
+                                    }
                                 });
 
-                                orderRowsBuilder(newObject, products, sCb);
+                                orderRowsBuilder(newObject, _.compact(products), sCb);
                             });
                         });
                     } else {
@@ -902,13 +1020,32 @@ module.exports = function (models, event) {
 
                         if (!orderBody.workflow) {
                             orderBody.workflow = workflow;
-                            orderBody.tempWorkflow = null;
+                            orderBody.tempWorkflow = workflow;
                         }
 
                         OrderService.create(orderBody, function (err, _order) {
                             if (err) {
+                                // TODO: write error logs
+                                logs = syncLogsHelper.addError(logs, logsOptions, {
+                                    message: err.message
+                                });
+
                                 return eCb(err);
 
+                            }
+
+                            if (orderBody.conflictTypes && orderBody.conflictTypes.length) {
+                                logs = syncLogsHelper.addUnlink(logs, logsOptions, {
+                                    entityId: magentoOrderId,
+                                    message : 'Order ' + magentoOrderId + ' is created',
+                                    type    : CONSTANTS.SYNC_LOGS.TYPE.CREATE
+                                });
+                            } else {
+                                logs = syncLogsHelper.addSuccess(logs, logsOptions, {
+                                    entityId: magentoOrderId,
+                                    message : 'Order ' + magentoOrderId + ' is created',
+                                    type    : CONSTANTS.SYNC_LOGS.TYPE.CREATE
+                                });
                             }
 
                             unlinkedOrderId = _order._id;
@@ -924,17 +1061,23 @@ module.exports = function (models, event) {
                     var differenceProductIds;
                     var nativeIds;
                     var unlinkedIds = _.pluck(unlinked, 'fields.id');
+                    var logsOptions = {
+                        action  : 'imports',
+                        category: 'products'
+                    };
 
-                    if (!hasUnlinkedProducts) {
+                    if (!hasUnlinkedProducts || !unlinkedOrderId) {
                         return sCb();
                     }
 
                     nativeIds = _.pluck(products, 'channelLinks.linkId');
                     nativeIds = nativeIds.map(function (nativeId) {
-                        return parseInt(nativeId.split('|')[0], 10);
+                        if (nativeId) {
+                            return parseInt(nativeId.split('|')[0], 10);
+                        }
                     });
 
-                    differenceProductIds = _.difference(productMagentoIds, nativeIds);
+                    differenceProductIds = _.difference(productMagentoIds, _.compact(nativeIds));
 
                     async.each(differenceProductIds, function (product, intCb) {
                         var unlinkedOrderRow;
@@ -975,32 +1118,92 @@ module.exports = function (models, event) {
                             dbName: db
                         };
 
-                        ConflictService.findOneAndUpdate({
-                            entity     : 'Product',
-                            type       : 'unlinked',
-                            'fields.id': fields.product_id
-                        }, {
-                            $set: {
-                                fields: data
+                        async.waterfall([
+                            function (wCb) {
+                                ConflictService.findOne({
+                                    entity     : 'Product',
+                                    type       : 'unlinked',
+                                    'fields.id': fields.product_id
+                                }, {dbName: db}, function (err, result) {
+                                    if (err) {
+                                        return wCb(err);
+                                    }
+
+                                    wCb(null, result);
+                                });
+                            },
+
+                            function (result, wCb) {
+                                if (!wCb && typeof result) {
+                                    wCb = result;
+                                    result = null;
+                                }
+
+                                if (!result) {
+                                    return ConflictService.create({
+                                        fields: data,
+                                        entity: 'Product',
+                                        type  : 'unlinked',
+                                        dbName: db
+                                    }, function (err, createdProdConflict) {
+                                        if (err) {
+                                            return wCb(err);
+                                        }
+
+                                        wCb(null, createdProdConflict, true);
+                                    });
+                                }
+
+                                ConflictService.findOneAndUpdate({
+                                    entity     : 'Product',
+                                    type       : 'unlinked',
+                                    'fields.id': fields.variant_id
+                                }, {
+                                    $set: {
+                                        fields: data
+                                    }
+                                }, {
+                                    dbName: db,
+                                    new   : true
+                                }, function (err, updateProdConflict) {
+                                    if (err) {
+                                        return wCb(err);
+                                    }
+
+                                    wCb(null, updateProdConflict, false);
+                                });
+                            },
+
+                            function (prodConflictModel, isCreated, wCb) {
+                                orderRowData.product = prodConflictModel._id;
+
+                                ConflictService.create(unlinkedOrderRow, function (err) {
+                                    if (err) {
+                                        logs = syncLogsHelper.addError(logs, logsOptions, {
+                                            message          : err.message,
+                                            entityId         : product.id,
+                                            entityDescription: product.name
+                                        });
+
+                                        return wCb(err);
+                                    }
+
+                                    if (isCreated) {
+                                        logs = syncLogsHelper.addUnlink(logs, logsOptions, {
+                                            entityId         : product.id,
+                                            entityDescription: product.name
+                                        });
+                                    }
+
+                                    wCb();
+                                });
                             }
-                        }, {
-                            dbName: db,
-                            upsert: true,
-                            new   : true
-                        }, function (err, result) {
+                        ], function (err) {
                             if (err) {
                                 return intCb(err);
                             }
 
-                            orderRowData.product = result._id || result.upserted[0]._id;
-
-                            ConflictService.create(unlinkedOrderRow, function (err) {
-                                if (err) {
-                                    return intCb(err);
-                                }
-
-                                intCb();
-                            });
+                            intCb();
                         });
                     }, function (err) {
                         if (err) {
@@ -1110,7 +1313,7 @@ module.exports = function (models, event) {
                 var currentInvoice;
                 var query = {
                     channel      : ObjectId(channel),
-                    integrationId: '' + magentoPayment.entity_id
+                    integrationId: 'payment_' + magentoPayment.entity_id
                 };
 
                 if (err) {
@@ -1133,7 +1336,7 @@ module.exports = function (models, event) {
                     supplier     : orderBody.supplier,
                     order        : orderBody._id,
                     channel      : channel,
-                    integrationId: '' + magentoPayment.entity_id,
+                    integrationId: 'payment_' + magentoPayment.entity_id,
                     bankAccount  : paymentMethod.chartAccount,
                     forSale      : true,
                     createdBy    : {
@@ -1248,6 +1451,10 @@ module.exports = function (models, event) {
             magentoShippings = magentoOrder.extension_attributes.shipping_assignments[0];
             shippingTotalInfo = magentoShippings.shipping && magentoShippings.shipping.total;
 
+            if (!order) {
+                return callback();
+            }
+
             shippingRowData = {
                 order      : order._id,
                 quantity   : 1,
@@ -1313,6 +1520,10 @@ module.exports = function (models, event) {
             var magentoShippings = magentoOrder.extension_attributes.shipping_assignments[0];
             var shipmentMethod = magentoShippings.shipping && magentoShippings.shipping.method;
 
+            if (!createdOrder) {
+                return callback();
+            }
+
             requestHelper.getData(shipmentUrl, {
                 headers: {
                     Authorization: accessToken
@@ -1377,118 +1588,124 @@ module.exports = function (models, event) {
                                         return eCb(err);
                                     }
 
-                                    fulfillmentLines.forEach(function (lineItem) {
-                                        var currentNativeRow;
-                                        var rowObj;
-
-                                        if (lineItem.order_item_id) {
-
-                                            currentNativeRow = _.findWhere(resultRows, {integrationId: lineItem.order_item_id.toString()});
-
-                                            if (currentNativeRow) {
-
-                                                rowObj = {
-                                                    orderRowId: currentNativeRow._id,
-                                                    product   : currentNativeRow.product,
-                                                    cost      : 0,
-                                                    quantity  : lineItem.qty
-                                                };
-
-                                                goodsOutNotesLines.push(rowObj);
-
-                                                productIdsForAvailability.push(currentNativeRow.product);
-                                            }
-                                        }
-                                    });
-
-                                    ProductAvailabilityService.getAvailabilityForProducts({
-                                        product  : {$in: productIdsForAvailability},
-                                        warehouse: ObjectId(warehouse)
-                                    }, {dbName: db}, function (err, productsAvailability) {
+                                    OrderService.findByIdAndUpdate(createdOrder._id, {$set: {shippingMethod: shippingMethod}}, {dbName: db}, function (err) {
                                         if (err) {
                                             return eCb(err);
                                         }
 
-                                        if (!productsAvailability || !productsAvailability.length) {
-                                            return callback();
-                                        }
+                                        fulfillmentLines.forEach(function (lineItem) {
+                                            var currentNativeRow;
+                                            var rowObj;
 
-                                        goodsOutNotesLines.forEach(function (item) {
-                                            var currentAvailability = _.findWhere(productsAvailability, {_id: item.product});
+                                            if (lineItem.order_item_id) {
 
-                                            if (!currentAvailability || currentAvailability.onHand < item.quantity) {
-                                                needGoodsOutNote = false;
+                                                currentNativeRow = _.findWhere(resultRows, {integrationId: lineItem.order_item_id.toString()});
+
+                                                if (currentNativeRow) {
+
+                                                    rowObj = {
+                                                        orderRowId: currentNativeRow._id,
+                                                        product   : currentNativeRow.product,
+                                                        cost      : 0,
+                                                        quantity  : lineItem.qty
+                                                    };
+
+                                                    goodsOutNotesLines.push(rowObj);
+
+                                                    productIdsForAvailability.push(currentNativeRow.product);
+                                                }
                                             }
                                         });
 
-                                        if (!needGoodsOutNote) {
-                                            return callback();
-                                        }
-
-                                        goodsOutNoteObj = {
-                                            order    : createdOrder._id,
-                                            createdBy: {
-                                                user: uId,
-                                                date: date
-                                            },
-                                            updatedBy: {
-                                                user: uId,
-                                                date: date
-                                            },
-
-                                            orderRows     : goodsOutNotesLines,
-                                            warehouse     : warehouse,
-                                            location      : location,
-                                            dbName        : db,
-                                            status        : statusObj,
-                                            shippingMethod: shippingMethod,
-                                            name          : createdOrder.name,
-                                            channel       : channel,
-                                            integrationId : fulfillment.entity_id.toString()
-                                        };
-
-                                        goodsOutNoteService.create(goodsOutNoteObj, function (err, result) {
+                                        ProductAvailabilityService.getAvailabilityForProducts({
+                                            product  : {$in: productIdsForAvailability},
+                                            warehouse: ObjectId(warehouse)
+                                        }, {dbName: db}, function (err, productsAvailability) {
                                             if (err) {
                                                 return eCb(err);
                                             }
 
-                                            if (!result) {
-                                                return eCb();
+                                            if (!productsAvailability || !productsAvailability.length) {
+                                                return callback();
                                             }
 
-                                            AvailabilityHelper.updateAvailableProducts({
-                                                dbName: db,
-                                                doc   : result.toJSON()
-                                            }, function (err, rows) {
+                                            goodsOutNotesLines.forEach(function (item) {
+                                                var currentAvailability = _.findWhere(productsAvailability, {_id: item.product});
+
+                                                if (!currentAvailability || currentAvailability.onHand < item.quantity) {
+                                                    needGoodsOutNote = false;
+                                                }
+                                            });
+
+                                            if (!needGoodsOutNote) {
+                                                return callback();
+                                            }
+
+                                            goodsOutNoteObj = {
+                                                order    : createdOrder._id,
+                                                createdBy: {
+                                                    user: uId,
+                                                    date: date
+                                                },
+                                                updatedBy: {
+                                                    user: uId,
+                                                    date: date
+                                                },
+
+                                                orderRows     : goodsOutNotesLines,
+                                                warehouse     : warehouse,
+                                                location      : location,
+                                                dbName        : db,
+                                                status        : statusObj,
+                                                shippingMethod: shippingMethod,
+                                                name          : createdOrder.name,
+                                                channel       : channel,
+                                                integrationId : fulfillment.entity_id.toString()
+                                            };
+
+                                            goodsOutNoteService.create(goodsOutNoteObj, function (err, result) {
                                                 if (err) {
                                                     return eCb(err);
                                                 }
 
-                                                goodsOutNoteService.findByIdAndUpdate({orderRows: rows}, {
-                                                    new   : true,
+                                                if (!result) {
+                                                    return eCb();
+                                                }
+
+                                                AvailabilityHelper.updateAvailableProducts({
                                                     dbName: db,
-                                                    id    : result._id
-                                                }, function (err, result) {
+                                                    doc   : result.toJSON()
+                                                }, function (err, rows) {
                                                     if (err) {
                                                         return eCb(err);
                                                     }
 
-                                                    if (!statusObj.shipped) {
-                                                        return eCb();
-                                                    }
-
-                                                    AvailabilityHelper.deliverProducts({
-                                                        dbName      : db,
-                                                        uId         : uId,
-                                                        goodsOutNote: result.toJSON()
-                                                    }, function (err) {
+                                                    goodsOutNoteService.findByIdAndUpdate({orderRows: rows}, {
+                                                        new   : true,
+                                                        dbName: db,
+                                                        id    : result._id
+                                                    }, function (err, result) {
                                                         if (err) {
                                                             return eCb(err);
                                                         }
 
-                                                        event.emit('recalculateStatus', db, createdOrder._id, eCb);
+                                                        if (!statusObj.shipped) {
+                                                            return eCb();
+                                                        }
 
-                                                        eCb();
+                                                        AvailabilityHelper.deliverProducts({
+                                                            dbName      : db,
+                                                            uId         : uId,
+                                                            goodsOutNote: result.toJSON()
+                                                        }, function (err) {
+                                                            if (err) {
+                                                                return eCb(err);
+                                                            }
+
+                                                            event.emit('recalculateStatus', db, createdOrder._id, eCb);
+
+                                                            eCb();
+                                                        });
                                                     });
                                                 });
                                             });
@@ -1510,8 +1727,12 @@ module.exports = function (models, event) {
         function createRefunds(magentoOrder, resultOpts, callback) {
             var refundUrl = baseUrl + '/rest/V1/creditmemos?searchCriteria[filter_groups][0][filters][0][field]=order_id& searchCriteria[filter_groups][0][filters][0][value]=' + magentoOrder.entity_id + '&searchCriteria[filter_groups][0][filters][0][condition_type]=eq'
             var order = resultOpts.order;
-            var magentoRefunds;
             var parentPaymentId = magentoOrder.payment && magentoOrder.payment.entity_id;
+            var magentoRefunds;
+
+            if (!order) {
+                return callback();
+            }
 
             requestHelper.getData(refundUrl, {
                 headers: {
@@ -1609,7 +1830,7 @@ module.exports = function (models, event) {
                     var magentoTransactionId = magentoRefund.entity_id;
 
                     paymentService.findOne({
-                        integrationId: magentoTransactionId.toString(),
+                        integrationId: 'refund_' + magentoTransactionId.toString(),
                         channel      : channel
                     }, {dbName: db}, function (err, resultRefund) {
                         if (err) {
@@ -1621,7 +1842,7 @@ module.exports = function (models, event) {
                         }
 
                         paymentService.findOne({
-                            integrationId: parentPaymentId.toString(),
+                            integrationId: 'payment_' + parentPaymentId.toString(),
                             channel      : channel
                         }, {dbName: db})
                             .lean()
@@ -1654,7 +1875,7 @@ module.exports = function (models, event) {
                                     order        : resultPayment.order,
                                     refund       : true,
                                     channel      : channel,
-                                    integrationId: magentoTransactionId.toString()
+                                    integrationId: 'refund_' + magentoTransactionId
                                 };
 
                                 refundsHelper.createPaymentReturn({
@@ -1696,6 +1917,11 @@ module.exports = function (models, event) {
                 }
             }, function (err, importData) {
                 if (err) {
+                    // TODO: write critical error logs for invoice
+                    logs = syncLogsHelper.addCriticalError(logs, logsOptions, {
+                        message: err.message
+                    });
+
                     return pCb(err);
                 }
 
@@ -1760,7 +1986,7 @@ module.exports = function (models, event) {
         }
 
         function getWarehouse(pCb) {
-            IntegrationService.findOne({user: uId}, {dbName: db, warehouseSettings: 1}, function (err, result) {
+            IntegrationService.findOne({_id: channel}, {dbName: db, warehouseSettings: 1}, function (err, result) {
                 if (err) {
                     return pCb(err);
                 }
@@ -1832,6 +2058,10 @@ module.exports = function (models, event) {
                 var rates;
                 var base;
 
+                if ((new Date(magentoOrder.created_at) < new Date(dateOrderFrom))) {
+                    return eCb();
+                }
+
                 orderBody = {
                     warehouse       : warehouse,
                     integrationId   : magentoOrder.entity_id,
@@ -1861,6 +2091,8 @@ module.exports = function (models, event) {
                     });
 
                     orderBody.supplier = customer && customer._id;
+                } else {
+                    orderBody.supplier = CONSTANTS.DEFAULT_MAGENTO_CUSTOMER;
                 }
 
                 ratesService.getById({dbName: db, id: orderDate}, function (err, ratesObject) {
@@ -1904,7 +2136,7 @@ module.exports = function (models, event) {
         var db = opts.dbName;
         var accessToken = 'Bearer ' + opts.token;
         var baseUrl = opts.baseUrl;
-        var channel = opts._id;
+        var channel = opts._id || opts.channel;
         var uId = opts.userId;
         var internalIds = [];
         var settings = opts.settings;
@@ -1912,10 +2144,20 @@ module.exports = function (models, event) {
         var fullRoute;
         var invoices;
         var err;
+        var logsOptions;
+
+        // TODO: set logs options for invoice
+        logsOptions = {
+            action  : 'imports',
+            category: 'invoice'
+        };
 
         if (!opts.token || !baseUrl || !route) {
             err = new Error('Invalid integration settings');
             err.status = 400;
+
+            // TODO: write critical error logs for invoice
+            logs = syncLogsHelper.addCriticalError(logs, logsOptions, {message: err.message});
 
             return allCallback(err);
         }
@@ -1931,10 +2173,20 @@ module.exports = function (models, event) {
             var newInvoice = {};
 
             if (err) {
+                // TODO: write critical error logs for invoice
+                logs = syncLogsHelper.addCriticalError(logs, logsOptions, {
+                    message: err.message
+                });
+
                 return allCallback(err);
             }
 
             if (result.body && result.body.message) {
+                // TODO: write error logs for invoice
+                logs = syncLogsHelper.addError(logs, logsOptions, {
+                    message: result.body.message
+                });
+
                 return allCallback(null);
             }
 
@@ -2012,10 +2264,13 @@ module.exports = function (models, event) {
                             paymentInfo: {
                                 total   : invoice.base_grand_total * 100,
                                 discount: invoice.discount_amount * 100,
-                                taxes   : invoice.tax_amount * 100
+                                taxes   : invoice.tax_amount * 100,
+                                unTaxed : (invoice.base_grand_total - invoice.tax_amount) * 100
+
                             },
 
                             dbName   : db,
+                            approved : true,
                             channel  : ObjectId(channel),
                             createdBy: {
                                 user: uId,
@@ -2025,58 +2280,160 @@ module.exports = function (models, event) {
                             editedBy: {
                                 user: uId,
                                 date: invoiceDate
-                            }
+                            },
+
+                            journal: '565ef6ba270f53d02ee71d65'
                         };
 
-                        if (invoice && invoice.state && invoice.state === 2) {
-                            newInvoice.workflow = ObjectId('55647d982e4aa3804a765ecb');
-                            newInvoice.paymentInfo.balance = 0;
-                            newInvoice.approved = true;
-                            newInvoice.paymentDate = invoiceDate;
-                        } else {
-                            newInvoice.workflow = ObjectId('55647d932e4aa3804a765ec9');
-                            newInvoice.paymentInfo.balance = invoice.base_grand_total * 100;
-                        }
+                        paymentService.find({order: order._id}, {dbName: db}, function (err, payments) {
+                            var invoicePaidSum = 0;
+                            var total = newInvoice.paymentInfo.total;
+                            var balance;
 
-                        if (internalIds.indexOf(invoice.entity_id.toString()) >= 0) {
-                            delete newInvoice.dbName;
+                            if (err) {
+                                return eachCb(err);
+                            }
 
-                            InvoiceService.findAndUpdate({integrationId: invoice.entity_id}, newInvoice, {dbName: db}, function (err) {
-                                if (err) {
-                                    return eachCb(err);
+                            payments.forEach(function (paym) {
+                                if (paym.refund) {
+                                    invoicePaidSum -= paym.paidAmount;
+                                } else {
+                                    invoicePaidSum += paym.paidAmount;
                                 }
-
-                                eachCb();
                             });
-                        } else {
-                            InvoiceService.create(newInvoice, function (err, newInvoice) {
-                                if (err) {
-                                    return eachCb(err);
-                                }
 
-                                if (order.workflow.toString() === '55647b932e4aa3804a765ec9') {
-                                    updateOrderObj = {
-                                        tempWorkflow: '55647b962e4aa3804a765ec6'
-                                    };
+                            balance = total - invoicePaidSum;
 
-                                    delete updateOrderObj.workflow;
-                                }
+                            if (!balance) {
+                                newInvoice.workflow = ObjectId('55647d982e4aa3804a765ecb');
+                                newInvoice.paymentInfo.balance = 0;
+                                newInvoice.paymentDate = invoiceDate;
+                            } else {
+                                newInvoice.workflow = balance === newInvoice.paymentInfo.total ? ObjectId('55647d932e4aa3804a765ec9') : ObjectId("55647d952e4aa3804a765eca");
+                                newInvoice.paymentInfo.balance = balance;
+                            }
 
-                                OrderService.findByIdAndUpdate(order._id, {$set: updateOrderObj}, {
-                                    dbName: db,
-                                    new   : true
-                                }, function (err) {
+                            if (internalIds.indexOf(invoice.entity_id.toString()) >= 0) {
+                                delete newInvoice.dbName;
+
+                                InvoiceService.findAndUpdate({integrationId: invoice.entity_id}, newInvoice, {dbName: db}, function (err) {
                                     if (err) {
+                                        // TODO: write error logs for invoice
+                                        logs = syncLogsHelper.addError(logs, logsOptions, {
+                                            entityId: invoice.entity_id,
+                                            message : err.message
+                                        });
+
                                         return eachCb(err);
                                     }
 
-                                    paymentService.findAndUpdate({order: order._id}, {$set: {invoice: newInvoice._id}}, {
+                                    // TODO: write success logs for invoice
+                                    logs = syncLogsHelper.addSuccess(logs, logsOptions, {
+                                        entityId: invoice.entity_id,
+                                        message : 'Invoice ' + invoice.entity_id + ' update',
+                                        type    : CONSTANTS.SYNC_LOGS.TYPE.UPDATE
+                                    });
+
+                                    if (order.workflow.toString() === '55647b932e4aa3804a765ec9') {
+                                        updateOrderObj = {
+                                            tempWorkflow: '55647b962e4aa3804a765ec6'
+                                        };
+
+                                        delete updateOrderObj.workflow;
+                                    }
+
+                                    OrderService.findByIdAndUpdate(order._id, {$set: updateOrderObj}, {
                                         dbName: db,
-                                        multi : true
-                                    }, eachCb);
+                                        new   : true
+                                    }, function (err) {
+                                        if (err) {
+                                            return eachCb(err);
+                                        }
+
+                                        paymentService.findAndUpdate({order: order._id}, {$set: {invoice: newInvoice._id}}, {
+                                            dbName: db,
+                                            multi : true
+                                        }, eachCb);
+                                    });
                                 });
-                            });
-                        }
+                            } else {
+                                InvoiceService.create(newInvoice, function (err, newInvoice) {
+                                    if (err) {
+                                        // TODO: write error logs for invoice
+                                        logs = syncLogsHelper.addError(logs, logsOptions, {
+                                            entityId: invoice.entity_id,
+                                            message : err.message
+                                        });
+
+                                        return eachCb(err);
+                                    }
+
+                                    // TODO: write success logs for invoice
+                                    logs = syncLogsHelper.addSuccess(logs, logsOptions, {
+                                        entityId: invoice.integrationId,
+                                        message : 'Invoice ' + invoice.entity_id + ' create',
+                                        type    : CONSTANTS.SYNC_LOGS.TYPE.CREATE
+                                    });
+
+                                    if (!newInvoice.approved) {
+                                        if (order.workflow.toString() === '55647b932e4aa3804a765ec9') {
+                                            updateOrderObj = {
+                                                tempWorkflow: '55647b962e4aa3804a765ec6'
+                                            };
+
+                                            delete updateOrderObj.workflow;
+                                        }
+
+                                        return OrderService.findByIdAndUpdate(order._id, {$set: updateOrderObj}, {
+                                            dbName: db,
+                                            new   : true
+                                        }, function (err) {
+                                            if (err) {
+                                                return eachCb(err);
+                                            }
+
+                                            paymentService.findAndUpdate({order: order._id}, {$set: {invoice: newInvoice._id}}, {
+                                                dbName: db,
+                                                multi : true
+                                            }, eachCb);
+                                        });
+                                    }
+
+                                    invoiceHandler.approveSyncedInvoice({
+                                        dbName     : db,
+                                        invoiceId  : newInvoice._id,
+                                        invoiceDate: newInvoice.invoiceDate
+                                    }, function (err, result) {
+                                        if (err) {
+                                            return eachCb(err);
+                                        }
+
+                                        if (order.workflow.toString() === '55647b932e4aa3804a765ec9') {
+                                            updateOrderObj = {
+                                                tempWorkflow: '55647b962e4aa3804a765ec6'
+                                            };
+
+                                            delete updateOrderObj.workflow;
+                                        }
+
+                                        OrderService.findByIdAndUpdate(order._id, {$set: updateOrderObj}, {
+                                            dbName: db,
+                                            new   : true
+                                        }, function (err) {
+                                            if (err) {
+                                                return eachCb(err);
+                                            }
+
+                                            paymentService.findAndUpdate({order: order._id}, {$set: {invoice: newInvoice._id}}, {
+                                                dbName: db,
+                                                multi : true
+                                            }, eachCb);
+                                        });
+                                    });
+                                });
+                            }
+
+                        });
                     });
                 }, function (err) {
                     if (err) {
@@ -2094,16 +2451,26 @@ module.exports = function (models, event) {
         var db = opts.dbName;
         var accessToken = 'Bearer ' + opts.token;
         var baseUrl = opts.baseUrl;
-        var channel = opts._id;
+        var channel = opts._id || opts.channel;
         var settings = opts.settings;
         var route = settings.customers && settings.customers.get;
         var customers;
         var err;
         var fullRoute;
+        var logsOptions;
+
+        // TODO: set logs options for categories
+        logsOptions = {
+            action  : 'imports',
+            category: 'customers'
+        };
 
         if (!opts.token || !baseUrl || !route) {
             err = new Error('Invalid integration settings');
             err.status = 400;
+
+            // TODO: write critical error logs for categories
+            logs = syncLogsHelper.addCriticalError(logs, logsOptions, {message: err.message});
 
             return allCallback(err);
         }
@@ -2120,11 +2487,21 @@ module.exports = function (models, event) {
                 var newCustomer = {};
 
                 if (err) {
+                    // TODO: write critical error logs for categories
+                    logs = syncLogsHelper.addCriticalError(logs, logsOptions, {
+                        message: err.message
+                    });
+
                     return allCallback(err);
                 }
 
                 if (result.body && result.body.message) {
                     console.error(result.body.message);
+                    // TODO: write error logs for categories
+                    logs = syncLogsHelper.addError(logs, logsOptions, {
+                        message: result.body.message
+                    });
+
                     return allCallback();
                 }
 
@@ -2197,16 +2574,46 @@ module.exports = function (models, event) {
                                 channel      : channel
                             }, newCustomer, {dbName: db}, function (err) {
                                 if (err) {
+                                    // TODO: write error logs for categories
+                                    logs = syncLogsHelper.addError(logs, logsOptions, {
+                                        entityId         : customer.id,
+                                        entityDescription: customer.name,
+                                        message          : err.message
+                                    });
+
                                     return eachCb(err);
                                 }
+
+                                // TODO: write success logs for categories
+                                logs = syncLogsHelper.addSuccess(logs, logsOptions, {
+                                    entityId         : customer.id,
+                                    entityDescription: newCustomer.name.first + ' ' + newCustomer.name.last,
+                                    message          : 'Customer ' + customer.id + ' updated',
+                                    type             : CONSTANTS.SYNC_LOGS.TYPE.UPDATE
+                                });
 
                                 eachCb();
                             });
                         } else {
                             customerService.create(newCustomer, function (err) {
                                 if (err) {
+                                    // TODO: write error logs for categories
+                                    logs = syncLogsHelper.addError(logs, logsOptions, {
+                                        entityId         : newCustomer.id,
+                                        entityDescription: newCustomer.name,
+                                        message          : err.message
+                                    });
+
                                     return eachCb(err);
                                 }
+
+                                // TODO: write success logs for categories
+                                logs = syncLogsHelper.addSuccess(logs, logsOptions, {
+                                    entityId         : newCustomer.id,
+                                    entityDescription: newCustomer.name.first + ' ' + newCustomer.name.last,
+                                    message          : 'Customer ' + newCustomer.id + ' created',
+                                    type             : CONSTANTS.SYNC_LOGS.TYPE.CREATE
+                                });
 
                                 eachCb();
                             });
@@ -2224,12 +2631,28 @@ module.exports = function (models, event) {
             });
     }
 
-    function createPriceList(priceList, productId, shopifyPrice, db, cb) {
+    function imageCreator(image, db, id, main, cb) {
+        ImagesService.create({
+            main    : main,
+            imageSrc: image,
+            product : id,
+            dbName  : db
+        }, function (err, result) {
+            if (err) {
+                return cb(err);
+            }
+
+            cb(null, result);
+        });
+    }
+
+    function createPriceList(priceList, productId, magentoPrice, db, cb) {
         var newPriceList = {
-            product   : productId,
+            product: productId,
+
             prices    : [{
                 count: 1,
-                price: shopifyPrice
+                price: magentoPrice
             }, {
                 count: 0,
                 price: 0
@@ -2258,21 +2681,6 @@ module.exports = function (models, event) {
             });
     }
 
-    function imageCreator(image, db, id, main, cb) {
-        ImagesService.create({
-            main    : main,
-            imageSrc: image,
-            product : id,
-            dbName  : db
-        }, function (err, result) {
-            if (err) {
-                return cb(err);
-            }
-
-            cb(null, result);
-        });
-    }
-
     function getProducts(opts, allCallback) {
         var db = opts.dbName;
         var accessToken = 'Bearer ' + opts.token;
@@ -2282,7 +2690,7 @@ module.exports = function (models, event) {
         var createOpts = {
             dbName   : db,
             userId   : uId,
-            channel  : opts._id,
+            channel  : opts._id || opts.channel,
             priceList: opts.priceList,
             baseUrl  : opts.baseUrl
         };
@@ -2294,6 +2702,10 @@ module.exports = function (models, event) {
         var getRoute;
         var fullGetBySKURoute;
         var fullGetRoute;
+        var logsOptions = {
+            action  : 'imports',
+            category: 'products'
+        };
 
         if (settings.products) {
             getRoute = settings.products.get || null;
@@ -2303,6 +2715,8 @@ module.exports = function (models, event) {
         if (!opts.token || !baseUrl || !getRoute || !getBySKURoute) {
             err = new Error('Invalid integration settings');
             err.status = 400;
+
+            logs = syncLogsHelper.addCriticalError(logs, logsOptions, {message: err.message});
 
             return allCallback(err);
         }
@@ -2321,6 +2735,9 @@ module.exports = function (models, event) {
 
             if (result.body && result.body.message) {
                 console.error(result.body.message);
+
+                logs = syncLogsHelper.addCriticalError(logs, logsOptions, {message: result.body.message});
+
                 return allCallback();
             }
 
@@ -2336,6 +2753,8 @@ module.exports = function (models, event) {
                         var magentoProduct;
 
                         if (err) {
+                            logs = syncLogsHelper.addError(logs, logsOptions, {message: err.message});
+
                             return eachCb(err);
                         }
 
@@ -2343,6 +2762,11 @@ module.exports = function (models, event) {
 
                         createProduct(createOpts, magentoProduct, function (err, isUpdate, createdProduct) {
                             if (err) {
+                                logs = syncLogsHelper.addError(logs, logsOptions, {
+                                    message : err.message,
+                                    entityId: magentoProduct.id
+                                });
+
                                 return eachCb(err);
                             }
 
@@ -2367,15 +2791,25 @@ module.exports = function (models, event) {
         var db = opts.dbName;
         var accessToken = 'Bearer ' + opts.token;
         var baseUrl = opts.baseUrl;
-        var channel = opts._id;
+        var channel = opts._id || opts.channel;
         var settings = opts.settings;
         var route = settings.categories && settings.categories.get;
+        var logsOptions;
         var fullRoute;
         var err;
+
+        // set logs options for categories
+        logsOptions = {
+            action  : 'imports',
+            category: 'categories'
+        };
 
         if (!opts.token || !baseUrl || !route) {
             err = new Error('Invalid integration settings');
             err.status = 400;
+
+            // write critical error logs for products
+            logs = syncLogsHelper.addCriticalError(logs, logsOptions, {message: err.message});
 
             return allCallback(err);
         }
@@ -2413,6 +2847,11 @@ module.exports = function (models, event) {
             var categoriesArray = [];
 
             if (err) {
+                // write critical error logs for categories
+                logs = syncLogsHelper.addCriticalError(logs, logsOptions, {
+                    message: err.message
+                });
+
                 return allCallback(err);
             }
 
@@ -2420,6 +2859,12 @@ module.exports = function (models, event) {
 
             if (result && result.message) {
                 console.error(result.message);
+
+                // write error logs for categories
+                logs = syncLogsHelper.addError(logs, logsOptions, {
+                    message: result.message
+                });
+
                 return allCallback();
             }
 
@@ -2429,6 +2874,10 @@ module.exports = function (models, event) {
                         var categoryIds = [];
 
                         if (err) {
+                            // write critical error logs for categories
+                            logs = syncLogsHelper.addError(logs, logsOptions, {
+                                message: err.message
+                            });
                             return wCb(err);
                         }
 
@@ -2458,41 +2907,81 @@ module.exports = function (models, event) {
                                 }
 
                                 if (!result) {
-                                    err = new Error('Internal Error');
-                                    err.status = 400;
+                                    newItem = {
+                                        bankExpensesAccount: null,
+                                        creditAccount      : null,
+                                        debitAccount       : null,
+                                        fullName           : 'Default Category/' + item.name,
+                                        name               : item.name,
+                                        nestingLevel       : item.level,
+                                        otherIncome        : null,
+                                        otherLoss          : null,
+                                        parent             : CONSTANTS.DEFAULT_PRODUCT_CATEGORY_ID,
+                                        sequence           : 0,
+                                        taxesAccount       : null,
+                                        integrationId      : item.integrationId,
+                                        dbName             : db
+                                    };
 
-                                    return eCb(err);
+                                } else {
+                                    newItem = {
+                                        bankExpensesAccount: null,
+                                        creditAccount      : null,
+                                        debitAccount       : null,
+                                        fullName           : result.fullName + '/' + item.name,
+                                        name               : item.name,
+                                        nestingLevel       : item.level,
+                                        otherIncome        : null,
+                                        otherLoss          : null,
+                                        parent             : result._id,
+                                        sequence           : 0,
+                                        taxesAccount       : null,
+                                        integrationId      : item.integrationId,
+                                        dbName             : db
+                                    };
                                 }
-
-                                newItem = {
-                                    bankExpensesAccount: null,
-                                    creditAccount      : null,
-                                    debitAccount       : null,
-                                    fullName           : result.fullName + '/' + item.name,
-                                    name               : item.name,
-                                    nestingLevel       : item.level,
-                                    otherIncome        : null,
-                                    otherLoss          : null,
-                                    parent             : result._id,
-                                    sequence           : 0,
-                                    taxesAccount       : null,
-                                    integrationId      : item.integrationId,
-                                    dbName             : db
-                                };
 
                                 if (categoryIds.indexOf(item.integrationId.toString()) === -1) {
                                     productCategoryService.create(newItem, function (err) {
                                         if (err) {
+                                            // write error logs for categories
+                                            logs = syncLogsHelper.addError(logs, logsOptions, {
+                                                entityId         : item.integrationId,
+                                                entityDescription: newItem.name,
+                                                message          : result.body.message
+                                            });
+
                                             return eCb(err);
                                         }
+
+                                        // write success logs for categories
+                                        logs = syncLogsHelper.addSuccess(logs, logsOptions, {
+                                            entityId         : item.integrationId,
+                                            entityDescription: newItem.name,
+                                            type             : CONSTANTS.SYNC_LOGS.TYPE.CREATE
+                                        });
 
                                         eCb();
                                     });
                                 } else {
                                     productCategoryService.findAndUpdate({integrationId: item.integrationId}, newItem, {dbName: db}, function (err) {
                                         if (err) {
+                                            // write error logs for categories
+                                            logs = syncLogsHelper.addError(logs, logsOptions, {
+                                                entityId         : item.integrationId,
+                                                entityDescription: newItem.name,
+                                                message          : result.body.message
+                                            });
+
                                             return eCb(err);
                                         }
+
+                                        // write success logs for categories
+                                        logs = syncLogsHelper.addSuccess(logs, logsOptions, {
+                                            entityId         : item.integrationId,
+                                            entityDescription: newItem.name,
+                                            type             : CONSTANTS.SYNC_LOGS.TYPE.UPDATE
+                                        });
 
                                         eCb();
                                     });
@@ -2518,16 +3007,44 @@ module.exports = function (models, event) {
                             if (item && item.integrationId && categoryIds.indexOf(item.integrationId.toString()) === -1) {
                                 productCategoryService.create(newItem, function (err) {
                                     if (err) {
+                                        // write error logs for categories
+                                        logs = syncLogsHelper.addError(logs, logsOptions, {
+                                            entityId         : item.integrationId,
+                                            entityDescription: newItem.name,
+                                            message          : err.message
+                                        });
+
                                         return eCb(err);
                                     }
+
+                                    // write success logs for categories
+                                    logs = syncLogsHelper.addSuccess(logs, logsOptions, {
+                                        entityId         : item.integrationId,
+                                        entityDescription: newItem.name,
+                                        type             : CONSTANTS.SYNC_LOGS.TYPE.CREATE
+                                    });
 
                                     eCb();
                                 });
                             } else {
                                 productCategoryService.findAndUpdate({integrationId: item.integrationId}, newItem, {dbName: db}, function (err) {
                                     if (err) {
+                                        // write error logs for categories
+                                        logs = syncLogsHelper.addError(logs, logsOptions, {
+                                            entityId         : item.integrationId,
+                                            entityDescription: newItem.name,
+                                            message          : err.message
+                                        });
+
                                         return eCb(err);
                                     }
+
+                                    // write success logs for categories
+                                    logs = syncLogsHelper.addSuccess(logs, logsOptions, {
+                                        entityId         : item.integrationId,
+                                        entityDescription: newItem.name,
+                                        type             : CONSTANTS.SYNC_LOGS.TYPE.UPDATE
+                                    });
 
                                     eCb();
                                 });
@@ -2638,13 +3155,23 @@ module.exports = function (models, event) {
         var message = '';
         var settings = opts.settings;
         var route = settings.products && settings.products.create;
-        var channel = opts._id;
+        var channel = opts._id || opts.channel;
+        var logsOptions;
         var fullRoute;
         var error;
+
+        // set logs options for categories
+        logsOptions = {
+            action  : 'exports',
+            category: 'inventory'
+        };
 
         if (!baseUrl || !accessToken || !route) {
             error = new Error('Bad Request');
             error.status = 400;
+
+            // write critical error logs for products
+            logs = syncLogsHelper.addCriticalError(logs, logsOptions, {message: error.message});
 
             return allCallback(error);
         }
@@ -2681,7 +3208,7 @@ module.exports = function (models, event) {
                         }
                     };
 
-                    if (availabilityProduct.onHand) {
+                    if (availabilityProduct.onHand !== undefined && availabilityProduct.onHand !== null) {
                         model.product.extension_attributes = {
                             stock_item: {
                                 qty: availabilityProduct.onHand
@@ -2695,16 +3222,33 @@ module.exports = function (models, event) {
                         }
                     }, function (err, result) {
                         if (err) {
+                            // write critical error logs for categories
+                            logs = syncLogsHelper.addCriticalError(logs, logsOptions, {
+                                entityId: availabilityProduct._id,
+                                message : err.message
+                            });
+
                             return eachCb(err);
                         }
 
                         if (result && result.body && result.body.message) {
                             console.error(result.body.message);
                             message += result.body.message + '\n';
+
+                            logs = syncLogsHelper.addError(logs, logsOptions, {
+                                entityId: availabilityProduct._id,
+                                message : result.body.message
+                            });
                         }
 
                         if (result && result.body && result.body.product && result.body.product.id) {
                             message += result.body.product.id + ' ID is updated\n';
+
+                            logs = syncLogsHelper.addSuccess(logs, logsOptions, {
+                                entityId: availabilityProduct._id,
+                                message : message,
+                                type    : CONSTANTS.SYNC_LOGS.TYPE.UPDATE
+                            });
                         }
 
                         eachCb();
@@ -2730,14 +3274,24 @@ module.exports = function (models, event) {
         var route = settings.products && settings.products.create;
         var fullRoute;
         var error;
-        var channel = opts._id;
+        var channel = opts._id || opts.channel;
         var channelLinks;
         var productPrices;
         var productObjectIds;
+        var logsOptions;
+
+        // set logs options for categories
+        logsOptions = {
+            action  : 'exports',
+            category: 'products'
+        };
 
         if (!baseUrl || !accessToken || !route) {
             error = new Error('Bad Request');
             error.status = 400;
+
+            // write critical error logs for products
+            logs = syncLogsHelper.addCriticalError(logs, logsOptions, {message: error.message});
 
             return allCallback(error);
         }
@@ -2818,6 +3372,9 @@ module.exports = function (models, event) {
             }
         ], function (err, products) {
             if (err) {
+                // write critical error logs for categories
+                logs = syncLogsHelper.addCriticalError(logs, logsOptions, {message: error.message});
+
                 return allCallback(err);
             }
 
@@ -2867,12 +3424,31 @@ module.exports = function (models, event) {
                         }
                     }, function (err, result) {
                         if (err) {
+                            // write critical error logs for categories
+                            logs = syncLogsHelper.addCriticalError(logs, logsOptions, {
+                                entityDescription: model.product.name,
+                                message          : err.message
+                            });
+
                             return eCb(err);
                         }
 
                         if (result && result.body && result.body.message) {
+                            // write error logs for categories
+                            logs = syncLogsHelper.addError(logs, logsOptions, {
+                                entityDescription: model.product.name,
+                                message          : result.body.message
+                            });
                             console.error(result.body.message);
+
+                            return eCb();
                         }
+
+                        // write success logs for categories
+                        logs = syncLogsHelper.addSuccess(logs, logsOptions, {
+                            entityDescription: model.product.name,
+                            type             : CONSTANTS.SYNC_LOGS.TYPE.UPDATE
+                        });
 
                         eCb();
                     });
@@ -2888,6 +3464,12 @@ module.exports = function (models, event) {
                         var magentoMedia;
 
                         if (err) {
+                            // write critical error logs for categories
+                            logs = syncLogsHelper.addCriticalError(logs, logsOptions, {
+                                entityDescription: model.product.name,
+                                message          : err.message
+                            });
+
                             return eCb(err);
                         }
 
@@ -2906,12 +3488,30 @@ module.exports = function (models, event) {
                                 }
                             }, function (err, result) {
                                 if (err) {
+                                    // write critical error logs for categories
+                                    logs = syncLogsHelper.addCriticalError(logs, logsOptions, {
+                                        entityDescription: model.product.name,
+                                        message          : err.message
+                                    });
+
                                     return eCb(err);
                                 }
 
                                 if (result && result.body && result.body.message) {
+                                    // write error logs for categories
+                                    logs = syncLogsHelper.addError(logs, logsOptions, {
+                                        entityDescription: model.product.name,
+                                        message          : result.body.message
+                                    });
                                     console.error(result.body.message);
                                 }
+
+                                // write success logs for categories
+                                logs = syncLogsHelper.addSuccess(logs, logsOptions, {
+                                    entityDescription: model.product.name,
+                                    message          : 'Export ' + model.product.name + ' product is success.',
+                                    type             : CONSTANTS.SYNC_LOGS.TYPE.UPDATE
+                                });
 
                                 eCb();
                             });
@@ -2934,7 +3534,7 @@ module.exports = function (models, event) {
         var db = opts.dbName;
         var accessToken = 'Bearer ' + opts.token;
         var baseUrl = opts.baseUrl;
-        var channel = opts._id;
+        var channel = opts._id || opts.channel;
         var model = {};
         var settings = opts.settings;
         var route = settings.invoices && settings.invoices.create;
@@ -3128,11 +3728,21 @@ module.exports = function (models, event) {
         var settings = opts.settings;
         var route = settings && settings.categories && settings.categories.create;
         var fullRoute;
+        var logsOptions;
         var error;
+
+        // set logs options for categories
+        logsOptions = {
+            action  : 'exports',
+            category: 'categories'
+        };
 
         if (!baseUrl || !accessToken || !route) {
             error = new Error('Bad Request');
             error.status = 400;
+
+            // write critical error logs for categories
+            logs = syncLogsHelper.addCriticalError(logs, logsOptions, {message: error.message});
 
             return allCallback(error);
         }
@@ -3157,7 +3767,19 @@ module.exports = function (models, event) {
                 }
 
                 productCategoryService.find({_id: category.parent}, {dbName: db}, function (err, parent) {
-                    var model = {
+                    var model;
+
+                    if (!category.integrationId && !category.externalId) {
+                        // write error logs for categories
+                        logs = syncLogsHelper.addError(logs, logsOptions, {
+                            message : 'Export ' + category.name + ' category is failed.',
+                            entityId: category.id
+                        });
+
+                        return eCb();
+                    }
+
+                    model = {
                         category: {
                             id             : category.integrationId || category.externalId || 0,
                             parent_id      : parent.integrationId || parent.externalId || 0,
@@ -3178,8 +3800,22 @@ module.exports = function (models, event) {
                             }
                         }, function (err) {
                             if (err) {
+                                // write error logs for categories
+                                logs = syncLogsHelper.addCriticalError(logs, logsOptions, {
+                                    message : err.message || 'Export ' + model.category.name + ' category is failed.',
+                                    entityId: model.category.id
+                                });
+
                                 return eCb(err);
                             }
+
+                            // write success logs for categories
+                            logs = syncLogsHelper.addSuccess(logs, logsOptions, {
+                                entityId         : model.category.id,
+                                entityDescription: model.category.name,
+                                message          : 'Export ' + model.category.name + ' category is success.',
+                                type             : CONSTANTS.SYNC_LOGS.TYPE.CREATE
+                            });
 
                             eCb();
                         });
@@ -3195,6 +3831,14 @@ module.exports = function (models, event) {
     }
 
     function syncChannel(opts, callback) {
+        var uId = opts.userId;
+
+        logs = syncLogsHelper.initialize({
+            dbName : opts.dbName,
+            channel: opts._id,
+            user   : uId
+        });
+
         async.series([
             function (sCb) {
                 exportCategories(opts, function (err) {
@@ -3285,6 +3929,12 @@ module.exports = function (models, event) {
             }
 
         ], function (err) {
+            // TODO: log create / add channel date
+            syncLogsHelper.create({
+                logs  : logs,
+                dbName: opts.dbName
+            });
+
             if (err) {
                 return callback(err);
             }
@@ -3295,12 +3945,68 @@ module.exports = function (models, event) {
         });
     }
 
+    function getOnlyProducts(opts, callback) {
+        var dbName = opts.dbName;
+        var channel = opts._id;
+        var user = opts.user;
+
+        logs = syncLogsHelper.initialize({
+            dbName : dbName,
+            channel: channel,
+            user   : user
+        });
+
+        async.series([
+            function (sCb) {
+                getCategories(opts, function (err) {
+                    if (err) {
+                        return sCb(err);
+                    }
+
+                    console.log('Magento -> Categories synced');
+                    sCb();
+                });
+            },
+
+            function (sCb) {
+                getProducts(opts, function (err) {
+                    if (err) {
+                        return sCb(err);
+                    }
+
+                    console.log('Magento -> Products synced');
+                    sCb();
+                });
+            }], function (err) {
+            if (err) {
+                return callback(err);
+            }
+
+            syncLogsHelper.create({
+                logs  : logs,
+                dbName: opts.dbName
+            });
+
+            console.log('Magento -> import products is complete!');
+
+            event.emit('getAllDone', {uId: user, dbName: dbName});
+
+            callback();
+        });
+    }
+
     function getAll(opts, callback) {
-        var uId = opts.userId;
+        var uId = opts.user;
         var dbName = opts.dbName;
         var channelName = opts.channelName;
-        var channelId = opts._id;
+        var channelId = opts._id || opts.channel;
         var error;
+
+        logs = syncLogsHelper.initialize({
+            dbName : opts.dbName,
+            channel: channelId,
+            user   : uId
+        });
 
         if (!opts.baseUrl || !opts.token) {
             error = new Error('Invalid integration settings');
@@ -3367,6 +4073,12 @@ module.exports = function (models, event) {
                 });
             }
         ], function (err, result) {
+            // TODO: log create / add channel date
+            syncLogsHelper.create({
+                logs  : logs,
+                dbName: opts.dbName
+            });
+
             if (err) {
                 return callback(err);
             }
@@ -3611,6 +4323,7 @@ module.exports = function (models, event) {
         getInvoices        : getInvoices,
         getCustomers       : getCustomers,
         getProducts        : getProducts,
+        getOnlyProducts    : getOnlyProducts,
         getCategories      : getCategories,
         exportCustomers    : exportCustomers,
         exportProducts     : exportProducts,

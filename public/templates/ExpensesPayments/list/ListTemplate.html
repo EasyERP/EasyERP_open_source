@@ -8,7 +8,8 @@
     </td>
     <td><%=payment.name%></td>
     <td><%=payment.invoice.name%></td>
-    <td class="totalPaid <%=currencyClass(payment.currency._id)%>"><%=(payment.paidAmount) ? currencySplitter(payment.paidAmount.toString()) : '0.00'%></td>
+    <td class="totalPaid"><%=payment.currency.symbol%> <span><%=(payment.paidAmount) ? currencySplitter(payment.paidAmount.toString()) : '0.00'%></span>
+    </td>
     <td><%=payment.date%></td>
 </tr>
 <% }) %>

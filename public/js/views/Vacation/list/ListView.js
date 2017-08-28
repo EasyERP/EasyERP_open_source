@@ -15,8 +15,9 @@ define([
     'dataService',
     'constants',
     'async',
-    'moment'
-], function (Backbone, $, _, listTemplate, cancelEdit, listTotal, SelectView, CreateView, ListItemView, VacationModel, vacationCollection, EditCollection, common, dataService, CONSTANTS, async, moment) {
+    'moment',
+    'views/guideTours/guideNotificationView'
+], function (Backbone, $, _, listTemplate, cancelEdit, listTotal, SelectView, CreateView, ListItemView, VacationModel, vacationCollection, EditCollection, common, dataService, CONSTANTS, async, moment, GuideNotify) {
     'use strict';
 
     var VacationListView = Backbone.View.extend({
@@ -415,6 +416,7 @@ define([
         renderTable: function (collection) {
             var self = this;
             var itemView;
+            var listTotalEl;
 
             collection.forEach(function (document) {
                 document = self.getVacDaysCount(document);
@@ -426,6 +428,11 @@ define([
                 collection: collection
             });
             this.$el.append(itemView.render());
+
+            listTotalEl = this.$el.find('#listTotal');
+
+            listTotalEl.html('');
+            listTotalEl.append(_.template(listTotal, {array: this.getTotal(collection)}));
         },
 
         renderdSubHeader: function ($currentEl) {
@@ -715,11 +722,6 @@ define([
 
             this.renderTable(collection);
 
-            listTotalEl = this.$el.find('#listTotal');
-
-            listTotalEl.html('');
-            listTotalEl.append(_.template(listTotal, {array: this.getTotal(collection)}));
-
             this.filterEmployeesForDD(this);
             this.vacationTypeForDD(this);
             this.monthForDD(this);
@@ -732,6 +734,14 @@ define([
             }, 10);
 
             $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
+
+            if (App.guide) {
+                if (App.notifyView) {
+                    App.notifyView.undelegateEvents();
+                    App.notifyView.stopListening();
+                }
+                App.notifyView = new GuideNotify({e: null, data: App.guide});
+            }
         },
 
         /* renderContent: function () {
@@ -780,16 +790,10 @@ define([
         showMoreContent: function (newModels) {
             var holder = this.$el;
             var collection = newModels.toJSON();
-            var listTotalEl;
 
             this.editCollection = new EditCollection(collection);
 
             this.renderTable(collection);
-
-            listTotalEl = holder.find('#listTotal');
-
-            listTotalEl.html('');
-            listTotalEl.append(_.template(listTotal, {array: this.getTotal(collection)}));
 
             this.filterEmployeesForDD(this);
             this.hideSaveCancelBtns();

@@ -219,5 +219,98 @@ module.exports = function (models) {
                     cb(null, shipping);
                 });
         };
+
+        this.getBankAccount = function (options, cb) {
+            var OrgSettings;
+            var dbName;
+            var err;
+
+            if (typeof options === 'function') {
+                cb = options;
+                options = {};
+            }
+
+            if (typeof cb !== 'function') {
+                cb = function () {
+                };
+            }
+
+            dbName = options.dbName;
+
+            if (!dbName) {
+                err = new Error('Invalid input parameters');
+                err.status = 400;
+
+                return cb(err);
+            }
+
+            OrgSettings = models.get(dbName, 'orgSettings', OrgSettingsSchema);
+            OrgSettings
+                .findOne()
+                .populate('bankAccount')
+                .exec(function (err, result) {
+
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    if (!result || !result.bankAccount) {
+                        err = new Error('Organisation settings not exists');
+                        err.status = 400;
+
+                        return cb(err);
+                    }
+
+                    result = result.toJSON();
+
+                    cb(null, result.bankAccount);
+                });
+        };
+
+        this.getWorkInProgress = function (options, cb) {
+            var OrgSettings;
+            var dbName;
+            var err;
+
+            if (typeof options === 'function') {
+                cb = options;
+                options = {};
+            }
+
+            if (typeof cb !== 'function') {
+                cb = function () {
+                };
+            }
+
+            dbName = options.dbName;
+
+            if (!dbName) {
+                err = new Error('Invalid input parameters');
+                err.status = 400;
+
+                return cb(err);
+            }
+
+            OrgSettings = models.get(dbName, 'orgSettings', OrgSettingsSchema);
+            OrgSettings
+                .findOne()
+                .exec(function (err, result) {
+
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    if (!result) {
+                        err = new Error('Organisation settings not exists');
+                        err.status = 400;
+
+                        return cb(err);
+                    }
+
+                    result = result.toJSON();
+
+                    cb(null, result.workInProgress || null);
+                });
+        };
     };
 };

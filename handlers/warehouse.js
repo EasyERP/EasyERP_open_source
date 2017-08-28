@@ -77,6 +77,10 @@ var Module = function (models) {
                 locations: {$addToSet: '$root.locations'},
                 zones    : {$first: '$root.zones'}
             }
+        }, {
+            $sort: {
+                main: -1
+            }
         }], function (err, result) {
             if (err) {
                 return next(err);
@@ -148,7 +152,7 @@ var Module = function (models) {
 
         query
             .find({}, {name: 1, account: 1})
-            .find('main')
+            .sort({main: -1})
             .exec(function (err, result) {
                 if (err) {
                     return next(err);
@@ -183,8 +187,7 @@ var Module = function (models) {
             return res.status(200).send({data: []});
         }
 
-        Model
-            .find(findObject, {name: 1})
+        Model.find(findObject, {name: 1})
             .exec(function (err, result) {
                 if (err) {
                     return next(err);
@@ -304,27 +307,37 @@ var Module = function (models) {
         }
 
         function createWarehouse(wCb) {
-            item = new Model(body);
-
-            item.save(function (err, result) {
+            Model.find({name: body.name}, function (err, result) {
                 if (err) {
                     return wCb(err);
                 }
 
-                Model.update({_id: {$nin: [result._id]}}, {$set: {main: false}}, {multi: true}, function (err, result) {
+                if (result && result.length) {
+                    return res.status(400).send({error: 'Warehouse should be unique'});
+                }
 
-                });
+                item = new Model(body);
 
-                req.query = {_id: result._id};
-
-                locationBody.warehouse = result._id;
-
-                createLocation(LocationModel, locationBody, uId, function (err) {
+                item.save(function (err, result) {
                     if (err) {
                         return wCb(err);
                     }
 
-                    wCb();
+                    Model.update({_id: {$nin: [result._id]}}, {$set: {main: false}}, {multi: true}, function (err, result) {
+
+                    });
+
+                    req.query = {_id: result._id};
+
+                    locationBody.warehouse = result._id;
+
+                    createLocation(LocationModel, locationBody, uId, function (err) {
+                        if (err) {
+                            return wCb(err);
+                        }
+
+                        wCb();
+                    });
                 });
             });
         }

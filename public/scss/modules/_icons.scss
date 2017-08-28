@@ -18,14 +18,14 @@
   @extend .fullsize;
 
   &:before {
-    content:'\72';
+    content: '\72';
   }
 
   &.project {
     font-size: 15px !important;
 
     &:before {
-      content:'\f0c9';
+      content: '\f0c9';
     }
   }
 }
@@ -51,4 +51,11 @@
   line-height: 20px;
   font-size: 10px;
   text-align: center;
+}
+
+//todo refactor icon
+.icon-manufacturing {
+  height: 38px;
+  width: 39px;
+  background: url("../images/svg_icons/manufacture.svg") no-repeat center;
 }

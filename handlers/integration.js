@@ -9,7 +9,7 @@ var Module = function (models, event) {
     var ConflictService = require('../services/conflict')(models);
     var IntegrationService = require('../services/integration')(models);
     var productService = require('../services/products')(models);
-    var SettingsService = require('../services/settings')(models);
+    var SettingsService = require('../services/settings')(models, event);
     var _getHelper = require('../helpers/integrationHelperRetriever')(models, event);
     var getHelper = _getHelper.getHelper;
     var getVersion = _getHelper.getVersion;
@@ -107,20 +107,24 @@ var Module = function (models, event) {
                 var linkId;
 
                 if (!channelType) {
-                    return wCb(null, conflictProductId);
+                    return wCb(null, product._id);
                 }
 
                 switch (channelType) {
                     case 'etsy': {
-                        linkId = conflictProductId;
+                        linkId = product.fields.listing_id;
+                        break;
+                    }
+                    case 'woo': {
+                        linkId = product.fields.wooId + '|' + product.fields.wooVariantId;
                         break;
                     }
                     case 'shopify': {
-                        linkId = conflictProductId + '|' + product.fields.shopifyVariantId;
+                        linkId = product.fields.shopifyId + '|' + product.fields.shopifyVariantId;
                         break;
                     }
                     default: {
-                        linkId = conflictProductId + '|' + product.fields.info.SKU;
+                        linkId = product.fields.magentoId + '|' + product.fields.info.SKU;
                     }
                 }
 
@@ -202,7 +206,75 @@ var Module = function (models, event) {
                         return wCb(err);
                     }
 
-                    wCb(null);
+                    wCb(null, oldProduct._id, magentoProduct);
+                });
+            },
+
+            function (updatedProductId, product, wCb) {
+                var channelType;
+                var priceList;
+
+                IntegrationService.findOne({
+                    _id: channel
+                }, {
+                    dbName: dbName
+                }, function (err, integration) {
+                    if (err) {
+                        return wCb(err);
+                    }
+
+                    if (!integration) {
+                        wCb(null, updatedProductId, product);
+                    }
+
+                    channelType = integration.type;
+                    priceList = integration.priceList;
+
+                    wCb(null, updatedProductId, product, channelType, priceList);
+                });
+            },
+
+            function (createdProductId, product, channelType, priceList, wCb) {
+                var conflictProductId = product._id;
+                var channelLinksObj;
+                var linkId;
+
+                if (!channelType) {
+                    return wCb();
+                }
+
+                switch (channelType) {
+                    case 'etsy': {
+                        linkId = conflictProductId;
+                        break;
+                    }
+                    case 'woo': {
+                        linkId = product.fields.wooId + '|' + product.fields.wooVariantId;
+                        break;
+                    }
+                    case 'shopify': {
+                        linkId = product.fields.shopifyId + '|' + product.fields.shopifyVariantId;
+                        break;
+                    }
+                    default: {
+                        linkId = product.fields.magentoId + '|' + product.fields.info.SKU;
+                    }
+                }
+
+                channelLinksObj = {
+                    product  : createdProductId,
+                    linkId   : linkId,
+                    channel  : channel,
+                    priceList: priceList,
+                    dbName   : dbName
+                };
+
+                ChannelLinksService.create(channelLinksObj, function (err) {
+                    if (err) {
+                        return wCb(err);
+                    }
+
+                    wCb();
                 });
             },
 
@@ -235,7 +307,7 @@ var Module = function (models, event) {
     function saveConflictedProduct(dbName, conflict, callback) {
         var action = conflict.action || 'duplicate';
         var sku = conflict.sku;
-        var channel = ObjectId(conflict.channel);
+        var channel = ObjectId(conflict.channel.toString());
 
         if (action === 'skip') {
             skipConflictProduct(channel, dbName, sku, callback);
@@ -250,12 +322,15 @@ var Module = function (models, event) {
         var db = opts.dbName;
         var conflictProducts = [];
         var sortObject = opts.sortObject;
+        var channel = opts.channel;
 
         async.waterfall([
             function (wCb) {
                 var skus;
 
-                ConflictService.getConflicts(db, function (err, conflicts) {
+                ConflictService.getConflicts({
+                    'fields.channel': ObjectId(channel.channel)
+                }, db, function (err, conflicts) {
                     if (err) {
                         return wCb(err);
                     }
@@ -291,8 +366,8 @@ var Module = function (models, event) {
                     }
 
                     conflictProducts = conflictItems.concat(products);
-
                     conflictProducts = _.groupBy(conflictProducts, 'info.SKU');
+
                     wCb();
                 });
             }
@@ -309,7 +384,7 @@ var Module = function (models, event) {
         var conflicts = opts.conflicts;
         var dbName = opts.dbName;
 
-        async.each(conflicts, function (conflict, eachCb) {
+        async.eachLimit(conflicts, 1, function (conflict, eachCb) {
             saveConflictedProduct(dbName, conflict, function (err) {
                 if (err) {
                     return eachCb(err);
@@ -375,7 +450,7 @@ var Module = function (models, event) {
             getChannels: function (pCb) {
                 IntegrationService.find({
                     dbName   : dbName,
-                    connected: {$ne: false}
+                    connected: true
                 }, {dbName: dbName}, function (err, channels) {
                     if (err) {
                         return pCb(err);
@@ -410,7 +485,7 @@ var Module = function (models, event) {
             }
 
             if (!channels || !channels.length) {
-                error = new Error('There is no channels to synchronize');
+                error = new Error('There are no connected channels. Please, connect required channel(s) to start synchronization process');
                 error.status = 404;
 
                 return callback(error);
@@ -427,14 +502,31 @@ var Module = function (models, event) {
                 var version = getVersion(channel.type);
 
                 settings = {
-                    channelName: channel.channelName,
-                    type       : channel.type,
-                    dbName     : dbName,
-                    userId     : userId,
-                    channel    : channel._id,
-                    baseUrl    : channel.baseUrl,
-                    token      : channel.token,
-                    settings   : urlSettings.apps[channel.type][version]
+                    _id                 : channel._id,
+                    version             : channel.version,
+                    connected           : channel.connected,
+                    warehouseSettings   : channel.warehouseSettings,
+                    bankAccount         : channel.bankAccount,
+                    priceList           : channel.priceList,
+                    consumerSecret      : channel.consumerSecret,
+                    consumerKey         : channel.consumerKey,
+                    secret              : channel.secret,
+                    token               : channel.token,
+                    active              : channel.active,
+                    updateShippingMethod: channel.updateShippingMethod,
+                    updateShippingStatus: channel.updateShippingStatus,
+                    shippingMethod      : channel.shippingMethod,
+                    baseUrl             : channel.baseUrl,
+                    password            : channel.password,
+                    username            : channel.username,
+                    user                : channel.user,
+                    type                : channel.type,
+                    dbName              : channel.dbName,
+                    channelName         : channel.channelName,
+                    ordersDate          : channel.ordersDate,
+                    userId              : userId,
+                    channel             : channel._id,
+                    settings            : urlSettings.apps[channel.type][version]
                 };
 
                 channelsSettings.push(settings);
@@ -446,16 +538,21 @@ var Module = function (models, event) {
 
     this.getConflictsData = function (req, res, next) {
         var type = req.params.type || CONSTANTS.INTEGRATION.MAGENTO;
+        var query = req.query;
+        var sortObject = query.sortObject || {};
+        var filterObj = query.filter;
         var token = req.session[type] && req.session[type].token;
         var baseUrl = req.session[type] && req.session[type].baseUrl;
         var dbName = req.session.lastDb;
         var userId = req.session.uId;
+        var channel = JSON.parse(filterObj);
         var opts = {
             token     : token,
             baseUrl   : baseUrl,
             dbName    : dbName,
             userId    : userId,
-            sortObject: req.query
+            sortObject: sortObject,
+            channel   : channel
         };
 
         getDataForManageConflicts(opts, function (err, result) {
@@ -487,44 +584,26 @@ var Module = function (models, event) {
                 return next(err);
             }
 
-            res.status(200).send(result);
+            integrationStatsHelper(dbName, function (err, stats) {
+                if (err) {
+                    return next(err);
+                }
+
+                event.emit('recollectedStats', {dbName: dbName, stats: stats});
+                redisClient.writeToStorage('syncStats', dbName, JSON.stringify(stats));
+
+                res.status(200).send(result);
+            });
         });
     };
-
-    /* this.getAll = function (req, res, next) {
-     var query = req.query;
-     var type = req.params.type;
-     var dbName = req.session.lastDb;
-     var userId = req.session.uId;
-     var channelName = query && query.channelName;
-     var opts = {
-     channelName: channelName,
-     dbName     : dbName,
-     userId     : userId,
-     query      : query,
-     type       : type
-     };
-     var redisKey = channelName + '|' + dbName;
-     var data;
-     var err;
-
-     if (!type) {
-     err = new Error('Bad Request');
-     err.status = 400;
-
-     return next(err);
-     }
-
-     data = JSON.stringify(opts);
-     res.status(200).send({success: 'Add to queue'});
-
-     redisClient.hSetNXToStorage('syncGetAll', redisKey, data);
-     }; */
 
     this.syncAll = function (req, res, next) {
         var userId = req.session.uId;
         var dbName = req.session.lastDb;
         var error;
+        /*var consumers = require('../helpers/rmConsummers')(dbName, event, models);
+
+         global.rm.loadSubscribers(consumers);*/
 
         getSettingsForAllChannel(userId, dbName, function (err, settings) {
             if (err) {
@@ -539,10 +618,11 @@ var Module = function (models, event) {
             }
 
             async.each(settings, function (setting, eCb) {
-                var redisKey = setting.type + '|' + setting.channelName;
+                var redisKey = setting._id; // setting.type + '|' + setting.channelName;
                 var redisValue = JSON.stringify(setting);
 
                 redisClient.hSetNXToStorage('sync', redisKey, redisValue);
+                redisClient.hSetNXToStorage('integration', redisKey, redisValue);
 
                 eCb();
             }, function (err) {
@@ -571,6 +651,8 @@ var Module = function (models, event) {
 
             return next(error);
         }
+
+        filter = JSON.parse(filter);
 
         channel = filter.channel;
 
@@ -624,6 +706,7 @@ var Module = function (models, event) {
                 channelLinksObj.linkId = fields.id + '|' + (fields.nativeSKU || fields.sku);
                 break;
             case 'shopify' :
+            case 'woo' :
                 channelLinksObj.linkId = fields.mainId + '|' + fields.id;
                 break;
             case 'etsy' :
@@ -729,8 +812,8 @@ var Module = function (models, event) {
             var orderRow = {
                 product  : id,
                 warehouse: warehouseId,
-                subTotal : fields.quantity * price * 100,
-                unitPrice: price * 100,
+                subTotal : fields.quantity * price,
+                unitPrice: price,
                 order    : fields.order,
                 quantity : fields.quantity
             };
@@ -1127,7 +1210,11 @@ var Module = function (models, event) {
                         return wCb(err);
                     }
 
-                    channel = order.channel;
+                    if (!order) {
+                        channel = id;
+                    } else {
+                        channel = order.channel;
+                    }
 
                     wCb();
                 });
@@ -1139,9 +1226,9 @@ var Module = function (models, event) {
                         return wCb(err);
                     }
 
-                    warehouse = channelObj.warehouseSettings.warehouse;
-                    priceList = channelObj.priceList;
-                    channelType = channelObj.type;
+                    warehouse = channelObj && channelObj.warehouseSettings ? channelObj.warehouseSettings.warehouse : null;
+                    priceList = channelObj && channelObj.priceList || null;
+                    channelType = channelObj && channelObj.type || null;
 
                     wCb();
                 });

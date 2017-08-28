@@ -2,9 +2,11 @@ var async = require('async');
 var redisStore = require('./redisClient');
 var logger = require('./logger');
 var _ = require('lodash');
+var mongoose = require('mongoose');
+var CONSTANTS = require('../constants/mainConstants');
 
-module.exports = function (rm, model) {
-    var _getHelper = require('./integrationHelperRetriever')(model);
+module.exports = function (rm, model, event) {
+    var _getHelper = require('./integrationHelperRetriever')(model, event);
     var getVersion = _getHelper.getVersion;
 
     function getToSync(req, res) {
@@ -46,8 +48,10 @@ module.exports = function (rm, model) {
     }
 
     function syncAll(req, res) {
+        console.log('syncAll');
         redisStore.sIsMember('nodeInProgress', 'syncing', function (err, isMember) {
             if (isMember) {
+                console.log('Is Member: ' + isMember);
                 return;
             }
 
@@ -70,21 +74,29 @@ module.exports = function (rm, model) {
                         }
 
                         if (!items) {
+                          console.log(isMember);
                             return parallelCb();
                         }
 
-                        values = Object.keys(items);
+                      console.log('readSyncData');
+
+                      values = Object.keys(items);
+
+                        console.log('values: ' + values);
 
                         async.each(values, function (key, eCb) {
+                            console.log('line 97', key);
                             var connection;
                             var version;
                             var redisKey;
+                            var message;
                             var dbName;
                             var result;
                             var error;
                             var type;
                             var opts;
                             var db;
+                            var dbConnection;
 
                             opts = JSON.parse(items[key]);
                             redisKey = opts._id;
@@ -97,50 +109,111 @@ module.exports = function (rm, model) {
                                 return eCb();
                             }
 
-                            connection = model.connection(dbName);
-                            db = connection.db;
-                            db.collection('settings').findOne({
-                                name: 'integration',
-                                apps: {$exists: true}
-                            }, function (err, setting) {
-                                var message;
-
-                                if (err) {
-                                    return eCb(err);
-                                }
-
-                                version = getVersion(type);
-
-                                if (!setting || !setting.apps || !setting.apps[type] || !setting.apps[type][version]) {
-                                    error = new Error('Invalid url settings');
-                                    error.status = 404;
-
-                                    return eCb(error);
-                                }
-
-                                result = setting.apps[type][version];
-
-                                message = _.assign(opts, {
-                                    userId  : opts.user,
-                                    settings: result
-                                });
-
-                                // push settings to rm Queue
-                                redisStore.sIsMember('syncInProgress', dbName + '_' + redisKey, function (err, replay) {
-                                    if (replay) {
-                                        return redisStore.removeFromStorage('sync', key);
-                                    }
-                                    rm.publishMessage('sync', message, 'sync.forDataBase.' + dbName, function (err) {
-                                        if (err) {
-                                            console.log(err);
-                                        }
-                                    });
-                                    redisStore.removeFromStorage('sync', key);
-                                });
-
-                                eCb();
-                                // redisStore.removeFromStorage('sync', key);
+                            message = _.assign(opts, {
+                                userId: opts.user
                             });
+
+                            connection = model.connection(dbName);
+
+                            if (!connection) {
+                                dbConnection = mongoose.createConnection('localhost', dbName, {
+                                  db    : {native_parser: true},
+                                  user  : dbName,
+                                  pass  : dbName
+                                });//{ server: { poolSize: 2 } }
+                                dbConnection.once('open', function () {
+                                    db = dbConnection.db;
+                                    db.collection('settings').findOne({
+                                        name: 'integration',
+                                        apps: {$exists: true}
+                                    }, function (err, setting) {
+                                        if (err) {
+                                            return eCb(err);
+                                        }
+
+                                        version = getVersion(type);
+
+                                        if (!setting || !setting.apps || !setting.apps[type] || !setting.apps[type][version]) {
+                                            error = new Error('Invalid url settings');
+                                            error.status = 404;
+
+                                            return eCb(error);
+                                        }
+
+                                        result = setting.apps[type][version];
+
+                                        message = _.assign(opts, {
+                                            userId  : opts.user,
+                                            settings: result
+                                        });
+
+                                        // push settings to rm Queue
+                                        redisStore.sIsMember('syncInProgress', dbName + '_' + redisKey, function (err, replay) {
+                                            if (replay) {
+                                                return redisStore.removeFromStorage('sync', key);
+                                            }
+                                            rm.publishMessage('sync', message, 'sync.forDataBase.' + dbName, function (err) {
+                                                if (err) {
+                                                    console.log(err);
+                                                }
+                                            });
+                                            redisStore.removeFromStorage('sync', key);
+                                        });
+
+                                        eCb();
+                                        // redisStore.removeFromStorage('sync', key);
+                                    });
+                                });
+                                dbConnection.on('error', function (error) {
+                                    dbConnection.close();
+                                    eCb();
+                                });
+                            } else {
+                                db = connection.db;
+                                db.collection('settings').findOne({
+                                    name: 'integration',
+                                    apps: {$exists: true}
+                                }, function (err, setting) {
+                                    if (err) {
+                                        return eCb(err);
+                                    }
+
+                                    version = getVersion(type);
+
+                                    if (!setting || !setting.apps || !setting.apps[type] || !setting.apps[type][version]) {
+                                        error = new Error('Invalid url settings');
+                                        error.status = 404;
+
+                                        return eCb(error);
+                                    }
+
+                                    result = setting.apps[type][version];
+
+                                    message = _.assign(opts, {
+                                        userId  : opts.user,
+                                        settings: result
+                                    });
+
+                                    // push settings to rm Queue
+                                    redisStore.sIsMember('syncInProgress', dbName + '_' + redisKey, function (err, replay) {
+                                        if (replay) {
+                                            console.log('removed 192', replay);
+                                            return redisStore.removeFromStorage('sync', key);
+                                        }
+                                        rm.publishMessage('sync', message, 'sync.forDataBase.' + dbName, function (err) {
+                                            if (err) {
+                                                console.log(err);
+                                            }
+                                        });
+                                        console.log('removed 199');
+                                        redisStore.removeFromStorage('sync', key);
+                                    });
+
+                                    eCb();
+                                    // redisStore.removeFromStorage('sync', key);
+                                });
+                            }
+
                         }, function (err) {
                             if (err) {
                                 return parallelCb(err);
@@ -163,7 +236,9 @@ module.exports = function (rm, model) {
                             return parallelCb();
                         }
 
-                        values = Object.keys(items);
+                      console.log('readGetAllData');
+
+                      values = Object.keys(items);
 
                         async.each(values, function (key, eCb) {
                             var dbName;
@@ -177,6 +252,7 @@ module.exports = function (rm, model) {
                                 }
                             });
 
+                            console.log('Remover from SyncGetAll', dbName);
                             redisStore.removeFromStorage('syncGetAll', key);
                             redisStore.hSetNXToStorage('integration', key, items[key]);
 
@@ -193,7 +269,7 @@ module.exports = function (rm, model) {
 
                 async.parallel([readSyncData, readGetAllData], function (err) {
                     if (err) {
-                        logger.error(err);
+                        return logger.error(err);
                     }
 
                     redisStore.sMove('nodeInProgress', 'syncing');

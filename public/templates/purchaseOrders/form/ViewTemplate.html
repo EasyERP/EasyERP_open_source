@@ -1,5 +1,5 @@
 <div class="form-holder">
-    <form method="post" action="" id="createPersonsForm" class="form">
+    <form method="post" action="" id="createPersonsForm">
         <fieldset>
             <div class="inner">
                 <ul class="_statusOrderBlock" data-class="">
@@ -17,7 +17,7 @@
                     <%var classNameFulfill = fulfillStatus !== 'ALL' ? 'activeItem' : 'passiveItem';%>
                     <%var classNameCancel = fulfillStatus !== 'NOT' ? 'activeItem' : 'passiveItem';%>
 
-                    <li class="right fullfillOrderWrap">
+                    <li class="right fullfillOrderWrap icon-arrow-down2">
                         <a class="btn slim fullfillOrder" href="javascript:;">
                             <span>Order Actions</span>
                         </a>
@@ -56,7 +56,6 @@
                     </li>
                 </ul>
                 <%}%>
-                <div class="clearfix"></div>
                 <div class="dialog-tabs-items mainTabs">
                     <div class="dialog-tabs-item mainTabs active">
                         <div class="topInputHolder">
@@ -68,20 +67,37 @@
                                         <span id="supplierDd" data-id="<%=model.supplier._id%>"><%=model.supplier.name.first+ ' ' + model.supplier.name.last%></span>
                                         <%}%>
                                     </dd>
+
                                     <dt><label for="assignedTo">Assigned To</label></dt>
                                     <dd>
                                         <span id="assignedTo"
-                                              data-id="<%=model.salesPerson ? model.salesPerson._id : ''%>"><%=model.salesPerson && model.salesPerson.name ? model.salesPerson.name.first +' ' + model.salesPerson.name.last : 'None'%></span>
+                                              data-id="<%=model.salesPerson ?
+                                              model.salesPerson._id :
+                                              ''%>"><%=model.salesPerson && model.salesPerson.name ?
+                                            model.salesPerson.name.first +' ' + model.salesPerson.name.last :
+                                            'None'%></span>
                                     </dd>
 
                                     <dt><label for="expectedDate">Payment Due</label></dt>
                                     <dd>
-                                        <input id="expectedDate" class="_inputBordered" value="<%=model.expectedDate%>"
+                                        <input id="expectedDate"
+                                               class="_inputBordered"
+                                               value="<%=model.expectedDate%>"
                                                readonly/>
+                                    </dd>
+                                    <dt><label for="paymentMethod">Bank Account</label></dt>
+                                    <dd>
+                                        <span id="paymentMethod"
+                                              data-id="<%=model.paymentMethod && model.paymentMethod._id ?
+                                              model.paymentMethod._id : null%>"><%=model.paymentMethod && model.paymentMethod._id ?
+                                            model.paymentMethod.name :
+                                            'None'%></span>
                                     </dd>
                                     <dt><label>Order Date</label></dt>
                                     <dd>
-                                        <input id="orderDate" class="_inputBordered" value="<%=model.orderDate%>"
+                                        <input id="orderDate"
+                                               class="_inputBordered"
+                                               value="<%=model.orderDate%>"
                                                readonly/>
                                     </dd>
 

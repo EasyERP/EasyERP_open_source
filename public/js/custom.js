@@ -5,8 +5,10 @@ define([
     'common',
     'constants',
     'dataService',
-    'moment'
-], function (Backbone, _, $, common, CONTENT_TYPES, dataService, moment) {
+    'moment',
+    'helpers/ga',
+    'constants/googleAnalytics'
+], function (Backbone, _, $, common, CONTENT_TYPES, dataService, moment, ga, GA) {
     'use strict';
 
     var Store = function () {
@@ -15,7 +17,7 @@ define([
         };
         this.find = function (name) {
             var store = localStorage.getItem(name);
-            return (store && JSON.parse(store)) || null;
+            return (store && store !== 'undefined' && JSON.parse(store)) || null;
         };
         this.remove = function (name) {
             localStorage.removeItem(name);
@@ -27,7 +29,7 @@ define([
 
     var runApplication = function (success) {
         var location = window.location.hash;
-        var regExp = /password|home/;
+        var regExp = /password|home|ir_hash/;
         var url;
 
         if (!Backbone.History.started) {
@@ -121,6 +123,11 @@ define([
         App.ownContentType = true;
 
         Backbone.history.navigate(url, {trigger: true});
+
+        ga && ga.event({
+            eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+            eventLabel   : GA.EVENT_LABEL.SETTED_VIEW_TYPE + ' "' + viewType + '"'
+        });
     };
 
     var getCurrentVT = function (option) {
@@ -197,12 +204,17 @@ define([
                     case CONTENT_TYPES.CASHTRANSFER:
                     case CONTENT_TYPES.REPORTSDASHBOARD:
                     case CONTENT_TYPES.CONTRACTJOBS:
-                    case CONTENT_TYPES.CUSTOMDASHBOARD:
                     case CONTENT_TYPES.PROJECTSDASHBOARD:
                     case CONTENT_TYPES.MANUALENTRY:
                     case CONTENT_TYPES.PURCHASEORDERS:
                     case CONTENT_TYPES.PURCHASEINVOICES:
+                    case CONTENT_TYPES.TAXREPORT:
+                    case CONTENT_TYPES.WAREHOUSEMOVEMENTS:
                     case CONTENT_TYPES.STOCKRETURNS:
+                    case CONTENT_TYPES.MANUFACTURINGORDERS:
+                    case CONTENT_TYPES.BILLOFMATERIALS:
+                    case CONTENT_TYPES.WORKCENTERS:
+                    case CONTENT_TYPES.ROUTINGS:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:
@@ -286,12 +298,17 @@ define([
                     case CONTENT_TYPES.CASHTRANSFER:
                     case CONTENT_TYPES.REPORTSDASHBOARD:
                     case CONTENT_TYPES.CONTRACTJOBS:
-                    case CONTENT_TYPES.CUSTOMDASHBOARD:
                     case CONTENT_TYPES.PROJECTSDASHBOARD:
                     case CONTENT_TYPES.MANUALENTRY:
                     case CONTENT_TYPES.PURCHASEORDERS:
                     case CONTENT_TYPES.PURCHASEINVOICES:
+                    case CONTENT_TYPES.TAXREPORT:
+                    case CONTENT_TYPES.WAREHOUSEMOVEMENTS:
                     case CONTENT_TYPES.STOCKRETURNS:
+                    case CONTENT_TYPES.BILLOFMATERIALS:
+                    case CONTENT_TYPES.WORKCENTERS:
+                    case CONTENT_TYPES.ROUTING:
+                    case CONTENT_TYPES.MANUFACTURINGORDERS:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.DEALTASKS:
@@ -329,7 +346,6 @@ define([
             viewType = 'thumbnails';
             App.currentViewType = viewType;
         }
-
         return viewType;
     };
 
@@ -580,6 +596,6 @@ define([
         getWeeks                : getWeeks,
         getFiltersValues        : getFiltersValues,
         getDefSavedFilterForCT  : getDefSavedFilterForCT,
-        getSavedFilterForCT     : getSavedFilterForCT
+        getSavedFilterForCT     : getSavedFilterForCT,
     };
 });

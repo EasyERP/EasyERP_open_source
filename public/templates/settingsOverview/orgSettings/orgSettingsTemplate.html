@@ -29,7 +29,7 @@
                     <label class="_orgName">Organization Name</label>
                 </div>
                 <div class="col m-8 inputBox">
-                    <div class="_animateInputBox">
+                    <div class="_animateInputBox _withInfo">
                         <input type="text"
                                class="_animate editable"
                                id="name"
@@ -37,6 +37,7 @@
                                autofocus
                                required/>
                         <label class="_animate">Organization Name</label>
+                        <span class="tips icon-info" data-id="name"></span>
                     </div>
                 </div>
             </div>
@@ -45,7 +46,7 @@
                     <label class="_orgName">Industry</label>
                 </div>
                 <div class="col m-8 inputBox">
-                    <div class="_animateSelectBox">
+                    <div class="_animateSelectBox _withInfo">
                         <span class="_selectTitle">Industry</span>
                         <div class="_newSelectListWrap">
                             <a class="address current-selected"
@@ -53,6 +54,7 @@
                                data-id="<%=model.industry ? model.industry._id : ''%>"><%=model.industry ? model.industry.name :
                                 'Select'%></a>
                         </div>
+                        <span class="tips icon-info" data-id="industry"></span>
                     </div>
                 </div>
             </div>
@@ -189,7 +191,7 @@
                             <div class="col s-12 m-6 l-6">
                                 <div class="_circleRadioRadianceWrap">
                                     <label for="defaultEmailEnable" class="_forRadio">
-                                        Send emails from <b>'easyerp no-replay@easyerp.com'</b></label>
+                                        Send messages using  <b>'easyerp no-replay@easyerp.com'</b></label>
                                     <input id="defaultEmailEnable" name="choosedType" maxlength="4" type="radio"
                                            class="_circleRadioRadiance onlyNumber" <%=model.defaultEmail ? 'checked' : ''%>/>
                                     <label for="defaultEmailEnable" class="_circleRadioRadianceLabel"></label>
@@ -198,7 +200,7 @@
                             <div class="col s-12 m-6 l-6">
                                 <div class="_circleRadioRadianceWrap">
                                     <label for="defaultEmailDisable" class="_forRadio">
-                                        Send mails using organization email addresses</label>
+                                        Send messages using organization email addresses</label>
                                     <input id="defaultEmailDisable" name="choosedType" maxlength="4" type="radio"
                                            class="_circleRadioRadiance onlyNumber" <%=model.defaultEmail ? '' : 'checked'%>/>
                                     <label for="defaultEmailDisable" class="_circleRadioRadianceLabel"></label>
@@ -231,7 +233,7 @@
                     </label>
                 </div>
                 <div class="col m-4 inputBox _newSelectListWrap">
-                    <div class="_animateSelectBox">
+                    <div class="_animateSelectBox _withInfo">
                         <span class="_selectTitle">Currency</span>
                         <div class="_newSelectListWrap">
                             <a id="currency"
@@ -241,6 +243,7 @@
                                href="javascript:;">
                                 <%=model.currency ? model.currency.name : 'Select currency'%></a>
                         </div>
+                        <span class="tips icon-info" data-id="currency"></span>
                     </div>
                 </div>
             </div>
@@ -251,7 +254,7 @@
                     </label>
                 </div>
                 <div class="col m-4 inputBox">
-                    <div class="_animateInputBox">
+                    <div class="_animateInputBox _withInfo">
                         <span class="_staticLabel">Date</span>
                         <input class="_animate extrainfo"
                                type="text"
@@ -260,6 +263,7 @@
                                id="startDate"
                                value="<%=model.startDate%>"
                                readonly="">
+                        <span class="tips icon-info" data-id="startDate"></span>
                     </div>
                 </div>
             </div>

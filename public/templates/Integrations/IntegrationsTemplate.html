@@ -1,83 +1,128 @@
-<div class="_appsTitleWrap">
-    <div class="header">
-        <h3>Apps</h3>
-    </div>
-    <div class="btnHolder">
+<div class="top-bar _appsTitleWrap">
+    <h3>Apps</h3>
+    <div class="btnsBlock right">
         <% if (items && items.length) { %>
-        <span class="btn action actionSync" data-action="sync">Sync</span>
+        <span class="btn blue slim action actionSync" data-action="sync">Sync</span>
         <% } %>
-        <span class="btn <%= !showUnlinkedBtn ? 'hidden' : ''%>" id="unlinkedOrders">
+        <span class="btn blue slim _unlinkedOrders <%= !showUnlinkedBtn ? 'hidden' : ''%>" id="unlinkedOrders">
         <a href="#easyErp/integrationUnlinkedOrders/list">Unlinked Orders</a>
         </span>
-        <span class="btn hidden resConflicts">Resolve Conflicts</span>
-        <span class="btn action actionAddNew" data-action="add">Add Channel</span>
+        <!--<span class="btn blue slim hidden resConflicts">Resolve Conflicts</span>-->
+        <span class="btn blue slim action actionAddNew" data-action="add">Add Channel</span>
     </div>
 </div>
+
 <div class="_appsWrap">
     <% if (items && items.length) {
     items.forEach(function(item){
     var stats = item && item.stats;
     %>
-    <div class="app" data-content="<%= item.type %>" data-id="<%= item._id %>">
-        <div class="mainContent">
+    <div class="app _appItem"
+         data-content="<%= item.type %>"
+         data-id="<%= item._id %>">
+
+        <div class="appActionBar">
+            <div data-content="connectingStatus">
+                <%if (item.connected){%>
+                <div class="switcherWrap _switcherWrap success">
+                    <div class="connectionSwitcher _switcher"></div>
+                </div>
+                <%} else {%>
+                <div class="switcherWrap _switcherWrap">
+                    <div class="connectionSwitcher _switcher"></div>
+                </div>
+                <%}%>
+            </div>
+
+            <div data-content="settings"
+                 class="settingsContainer _settingsBtn">
+                <span class="count icon-settings"></span>
+            </div>
+        </div>
+        <div class="_channelInfoWrap">
             <div class="channelImg <%= item.type %>"
                  data-content="channelImage">
             </div>
             <div data-content="channelInfo">
-                <h3><%= item.channelName || ''%></h3>
-                <p>Sync inventory and orders from <b><%= (item.type || '').toUpperCase()%></b></p>
+                <h3 class="_channelName"><%= item.channelName || ''%></h3>
+                <p class="_syncInfo">Sync inventory and orders from <b><%= (item.type === 'woo' ? 'WooCommerce' :
+                    item.type || '').toUpperCase()%></b></p>
             </div>
-            <div data-content="channelStat">
-                <div data-content="connectingStatus">
-                    <%if (item.connected){%>
-                    <div class="disconnect">
-                        <span class="connection success btn slim">CONNECTED</span>
-                    </div>
-                    <%} else {%>
-                    <div class="disconnect">
-                        <span class="connection blue btn slim">DISCONNECTED</span>
-                    </div>
-                    <%}%>
+        </div>
+        <div class="_syncInfoWrap">
+            <h3 class="_channelName">Last sync: </h3>
+            <span class="_syncInfo"><%= item.lastSync || '--, -- --:-- '%></span>
+        </div>
+        <div class="_channelStatus" data-content="channelStat">
+            <div data-content="list"
+                 class="_statusItem goListProducts <%= !stats.products.imported ? 'emptyValue' : '' %>">
+                <div class="channelRowHeader">
+                    <span>Listing</span>
                 </div>
-                <div data-content="list">
-                    <div class="channelRowHeader">
-                        <span>LISTING</span>
-                    </div>
-                    <div class="channelRowValue">
-                        <span><%= stats && stats.products && stats.products.imported ? stats.products.imported.count : '-' %></span>
-                    </div>
+                <div class="channelRowValue">
+                    <span><%= stats && stats.products && stats.products.imported ? stats.products.imported.count : '-' %></span>
                 </div>
-                <div data-content="order">
-                    <div class="channelRowHeader">
-                        <span>ORDERS</span>
-                    </div>
-                    <div class="channelRowValue">
-                        <span><%= stats && stats.products && stats.orders.imported ? stats.orders.imported.count : '-' %></span>
-                    </div>
+            </div>
+            <div class="_statusItem" data-content="order">
+                <div class="channelRowHeader goToOrders">
+                    <span>Orders</span>
                 </div>
-
-                <div class="goUnlinkedProducts <%=stats && stats.products && stats.products.conflicted && stats.products.conflicted.count ? '' : 'disable'%>">
-                    <div class="channelRowHeader">
-                        <span>CONFLICTED PRODUCTS</span>
-                    </div>
-                    <div class="channelRowValue">
-                        <span><%= stats && stats.products && stats.products.conflicted ? stats.products.conflicted.count : '-' %></span>
-                    </div>
+                <div class="channelRowValue">
+                    <span><%= stats && stats.products && stats.orders.imported ? stats.orders.imported.count : '-' %></span>
                 </div>
-                <div class="goUnlinkedOrders <%= stats && stats.orders && stats.orders.unlinked && stats.orders.unlinked.count ? '' : 'disable' %>">
-                    <div class="channelRowHeader">
-                        <span>UNLINKED ORDERS</span>
-                    </div>
-                    <div class="channelRowValue">
-                        <span><%= stats && stats.orders && stats.orders.unlinked ? stats.orders.unlinked.count : '-' %></span>
-                    </div>
+            </div>
+            <div class="_statusItem goUnlinkedProducts <%=stats && stats.products && stats.products.conflicted && stats.products.conflicted.count ? '' : 'disable'%>">
+                <div class="channelRowHeader">
+                    <span>Conflicted Products</span>
                 </div>
-                <div data-content="settings" class="settingsContainer">
-                    <span class="count icon-settings"></span>
+                <div class="channelRowValue">
+                    <span><%= stats && stats.products && stats.products.conflicted ? stats.products.conflicted.count : '-' %></span>
+                </div>
+            </div>
+            <div class="_statusItem goUnlinkedOrders <%= stats && stats.orders && stats.orders.unlinked && stats.orders.unlinked.count ? '' : 'disable' %>">
+                <div class="channelRowHeader">
+                    <span>Unlinked Orders</span>
+                </div>
+                <div class="channelRowValue">
+                    <span><%= stats && stats.orders && stats.orders.unlinked ? stats.orders.unlinked.count : '-' %></span>
                 </div>
             </div>
         </div>
-        <div data-content="channelHistory"></div>
+        <%if(item.sync && item.sync._id){%>
+        <%var status = item.sync.status === 1 ? 'Success' : item.sync.status === 2 ? 'Warning' : 'Critical';%>
+
+        <div class="_channelStatus" data-content="logStat">
+            <div class="_statusItem">
+                <div class="channelRowHeader">
+                    <span>Status</span>
+                </div>
+                <div class="channelRowValue">
+                    <span class="syncStatus<%=status%>"><%= status %></span>
+                </div>
+            </div>
+            <div class="_statusItem">
+                <div class="channelRowHeader">
+                    <span>Errors</span>
+                </div>
+                <div class="channelRowValue">
+                    <span><%= item.sync.errorsCount %></span>
+                </div>
+            </div>
+            <div class="_statusItem">
+                <div class="channelRowHeader">
+                    <span>Critical Errors</span>
+                </div>
+                <div class="channelRowValue">
+                    <span><%= item.sync.criticalErrorsCount %></span>
+                </div>
+            </div>
+            <div class="_showLogWrap align-right">
+                <a href="#easyErp/integrations/syncLog/<%=item._id%>" class="btn showLog">View Log</a>
+            </div>
+        </div>
+        <%}else { %>
+        Not sync log yet
+        <% }%>
     </div>
     <% });
     } else { %>

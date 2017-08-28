@@ -23,10 +23,10 @@ define([
         },
 
         initialize: function (options) {
-            var datesArray;
             var $thisEl = this.$el;
             var type = options.type;
             var self = this;
+            var datesArray;
 
             $('#top-bar').hide();
 

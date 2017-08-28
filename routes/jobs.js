@@ -4,11 +4,17 @@ var jobsHandler = require('../handlers/jobs');
 
 module.exports = function (models, event) {
     var handler = new jobsHandler(models, event);
+    var accessDeleteStackMiddleware = require('../helpers/checkDelete');
+
+    function accessDeleteStackMiddlewareFunction(req, res, next) {
+        accessDeleteStackMiddleware(req, res, next, models, 'jobs', event);
+    }
 
     router.get('/', handler.getData);
     router.get('/getForOverview', handler.getForOverview);
     router.get('/getForProjectsDashboard', handler.getForProjectsDashboard);
     router.get('/getAsyncData', handler.getAsyncData);
+
 
     /**
      *@api {get} /jobs/getForDD/ Request Jobs for dropDown
@@ -152,7 +158,7 @@ module.exports = function (models, event) {
     router.post('/', handler.create);
     router.post('/update', handler.update);
 
-    router.delete('/:_id', handler.remove);
+    router.delete('/:_id', accessDeleteStackMiddlewareFunction, handler.remove);
 
     return router;
 };

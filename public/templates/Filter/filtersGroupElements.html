@@ -1,12 +1,15 @@
 <% collection.forEach(function (element) {
-    var status = element.status;
-    var classStatus = status ? 'checkedValue' : '';
+var status = element.status;
+var classStatus = status ? 'checkedValue' : '';
 var classFired;
 
-    if (element.isEmployee === false) {
-        classFired = !status ? 'fired' : '';
-    }
+if (element.isEmployee === false) {
+classFired = !status ? 'fired' : '';
+}
 
 %>
-<li class="<%= classFired %> <%= classStatus %>" data-value="<%= element._id %>"><%= element.name %></li>
+<li class="<%= classFired %> <%= classStatus %>" data-value="<%= element._id %>">
+    <span class="icon icon-checked2"></span>
+    <%= element.name %>
+</li>
 <% }); %>

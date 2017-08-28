@@ -13,8 +13,12 @@
                         <div class="half-block left projectNote">
                             <div class="inner">
                                 <div class="textarea-wrapper">
-                                    <textarea type="text" class="projectDescriptionEdit" name="description"
+                                    <textarea type="text" class="projectDescriptionEdit _withCounter" name="description"
                                               placeholder="Add a Description..." id="description" maxlength="500"><%=model.description%></textarea>
+                                    <div class="counter-wrap">
+                                        <span class="counter-label">Characters left:</span>
+                                        <span class="counter-value" id="counterValue"><%= 500 - model.description.length %></span>
+                                    </div>
                                 </div>
                             </div>
                             <div class="clearfix"></div>

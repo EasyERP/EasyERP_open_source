@@ -25,6 +25,57 @@ define([
         return filterString;
     }
 
+    function mappingReportFields(typeData, field, moment) {
+        var result = field;
+        var date;
+
+        if (field && field !== '&nbsp') {
+            switch (typeData) {
+                case 'Finance' : {
+                    result = '$ ' + currencySplitter((field).toFixed(2));
+                    break;
+                }
+                case 'Double' : {
+                    result = field.toFixed(2);
+                    break;
+                }
+                case 'Percent' : {
+                    result = field.toFixed(2) + '%';
+                    break;
+                }
+                case 'Date' : {
+                    date = moment(new Date(field)).format('DD MMM, YYYY');
+
+                    if (date === 'Invalid date') {
+                        break;
+                    }
+
+                    result = moment(new Date(field)).format('DD MMM, YYYY');
+                    break;
+                }
+                case 'Channel' : {
+                    if (field !== 'shopify' && field !== 'etsy' && field !== 'magento') {
+                        break;
+                    }
+                    result = '<div class="channelImg ' + (field || '') + '"></div>';
+                    break;
+                }
+                case 'Image' : {
+                    result = '<img src="' + field + '" alt="Avatar" class="iconEmployee">';
+                    break;
+                }
+                case 'Address': {
+                    result = '<div>' + addressMaker(field) + '</div>';
+                }
+                default: {
+                    break;
+                }
+            }
+        }
+
+        return result;
+    }
+
     function minFromDates(arrayOfDates) {
         arrayOfDates = _.map(arrayOfDates, function (date) {
             return new Date(date).valueOf();
@@ -117,13 +168,14 @@ define([
     }
 
     return {
-        minFromDates    : minFromDates,
-        currencySplitter: currencySplitter,
-        currencyClass   : currencyClass,
-        weekSplitter    : weekSplitter,
-        spaceReplacer   : spaceReplacer,
-        setTimeToDate   : setTimeToDate,
-        makeFilterString: makeFilterString,
-        addressMaker    : addressMaker
+        minFromDates       : minFromDates,
+        currencySplitter   : currencySplitter,
+        currencyClass      : currencyClass,
+        weekSplitter       : weekSplitter,
+        spaceReplacer      : spaceReplacer,
+        setTimeToDate      : setTimeToDate,
+        makeFilterString   : makeFilterString,
+        addressMaker       : addressMaker,
+        mappingReportFields: mappingReportFields
     };
 });

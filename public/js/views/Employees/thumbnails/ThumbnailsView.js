@@ -10,6 +10,7 @@
     'models/EmployeesModel',
     'common',
     'constants'
+
 ], function ($, _, thumbnailsItemTemplate, BaseView, EditView, CreateView, FilterView, dataService, CurrentModel, common, CONSTANTS) {
     'use strict';
 
@@ -48,16 +49,6 @@
             common.getImages(ids, '/employees/getEmployeesImages');
         },
 
-        render: function () {
-            var $currentEl = this.$el;
-
-            $currentEl
-                .find('#thumbnailContent')
-                .append(this.template({collection: this.collection.toJSON()}));
-
-            return this;
-        },
-
         gotoEditForm: function (e) {
             var className;
             var id;
@@ -92,6 +83,17 @@
                     }
                 });
             }
+
+        },
+
+        render: function () {
+            var $currentEl = this.$el;
+
+            $currentEl
+                .find('#thumbnailContent')
+                .append(this.template({collection: this.collection.toJSON()}));
+
+            return this;
         }
     });
 

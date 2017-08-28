@@ -64,13 +64,13 @@ var GoodsInNotes = function (models) {
                             var updateObject;
 
                             var query = goodsNote.order.project ? {
-                                    product  : goodsOrderRow.product,
-                                    warehouse: goodsOrderRow.warehouse
-                                } : {
-                                    'goodsOutNotes.goodsNoteId': goodsOrderRow.goodsOutNote,
-                                    product                    : goodsOrderRow.product,
-                                    warehouse                  : goodsOrderRow.warehouse
-                                };
+                                product  : goodsOrderRow.product,
+                                warehouse: goodsOrderRow.warehouse
+                            } : {
+                                'goodsOutNotes.goodsNoteId': goodsOrderRow.goodsOutNote,
+                                product                    : goodsOrderRow.product,
+                                warehouse                  : goodsOrderRow.warehouse
+                            };
 
                             if (goodsOrderRow.goodsInNote) {
                                 query = {
@@ -164,7 +164,8 @@ var GoodsInNotes = function (models) {
                                 goodsNoteService.update(updateObject, {
                                     query    : queryObj,
                                     dbName   : dbName,
-                                    updateQty: goodsOrderRow.quantity
+                                    updateQty: goodsOrderRow.quantity,
+                                    purchase : goodsOrderRow.goodsInNote
                                 }, function (err, result) {
                                     var cost;
                                     var orderRowId;
@@ -483,6 +484,11 @@ var GoodsInNotes = function (models) {
         orderRowArray = options.orderRowArray;
         warehouse = options.warehouse;
         db = options.db;
+
+        console.log('orderId', orderId);
+        console.log('orderRowArray', orderRowArray);
+        console.log('warehouse', warehouse);
+        console.log('db', db);
 
         if (!orderId || !orderRowArray || !warehouse || !db) {
             error = new Error('Invalid data');

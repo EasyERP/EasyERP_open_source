@@ -417,6 +417,8 @@ var Filters = function (models) {
 
             result = result.length ? result[0] : {};
 
+            result.filterInfo = FILTER_CONSTANTS.Employees;
+
             res.status(200).send(result);
         });
     };
@@ -561,7 +563,6 @@ var Filters = function (models) {
 
             result = result.length ? result[0] : {};
             result.filterInfo = FILTER_CONSTANTS.DealTasks;
-
 
             res.status(200).send(result);
         });
@@ -897,6 +898,7 @@ var Filters = function (models) {
             }
 
             result = result.length ? result[0] : {};
+            result.filterInfo = FILTER_CONSTANTS.Applications;
 
             res.status(200).send(result);
         });
@@ -1235,7 +1237,7 @@ var Filters = function (models) {
             }
 
             result = result.length ? result[0] : {};
-            //result.filterInfo = FILTER_CONSTANTS.purchaseInvoices;
+            result.filterInfo = FILTER_CONSTANTS.purchaseInvoices;
 
             res.status(200).send(result);
         });
@@ -1394,7 +1396,6 @@ var Filters = function (models) {
 
             result = result.length ? result[0] : {};
             //result.filterInfo = FILTER_CONSTANTS.purchaseInvoices;
-
 
             res.status(200).send(result);
         });
@@ -1697,10 +1698,10 @@ var Filters = function (models) {
             result.refund = [
                 {
                     name: 'Payment',
-                    _id : 'true'
+                    _id : 'false'
                 }, {
                     name: 'Refund',
-                    _id : 'false'
+                    _id : 'true'
                 }];
 
             result.filterInfo = FILTER_CONSTANTS.customerPayments;
@@ -1828,14 +1829,14 @@ var Filters = function (models) {
 
             result.refund = [
                 {
-                    name: 'true',
-                    _id : 'true'
-                }, {
-                    name: 'false',
+                    name: 'Payment',
                     _id : 'false'
+                }, {
+                    name: 'Refund',
+                    _id : 'true'
                 }];
 
-            //result.filterInfo = FILTER_CONSTANTS.purchasePayments;
+            result.filterInfo = FILTER_CONSTANTS.purchasePayments;
 
             res.status(200).send(result);
         });
@@ -2030,6 +2031,8 @@ var Filters = function (models) {
                     _id : 'false'
                 }
             ];
+
+            result.filterInfo = FILTER_CONSTANTS.Products;
 
             res.status(200).send(result);
         });
@@ -2381,7 +2384,7 @@ var Filters = function (models) {
             }
         }, {
             $group: {
-                _id     : null,
+                _id: null,
 
                 name: {
                     $addToSet: {
@@ -2817,6 +2820,7 @@ var Filters = function (models) {
             }
 
             result = result.length ? result[0] : {};
+            result.filterInfo = FILTER_CONSTANTS.purchaseOrders;
 
             res.status(200).send(result);
         });
@@ -4238,11 +4242,11 @@ var Filters = function (models) {
             }
         }, {
             $project: {
-                journal: {$arrayElemAt: ['$journal', 0]},
-                account: {$arrayElemAt: ['$account', 0]},
-                name   : '$sourceDocument.name',
-                debit  : '$debit',
-                credit : '$credit',
+                journal  : {$arrayElemAt: ['$journal', 0]},
+                account  : {$arrayElemAt: ['$account', 0]},
+                name     : '$sourceDocument.name',
+                debit    : '$debit',
+                credit   : '$credit',
                 timestamp: 1
             }
         }, {
@@ -4286,7 +4290,7 @@ var Filters = function (models) {
 
                 timestamp: {
                     $addToSet: {
-                        _id: '$timestamp',
+                        _id : '$timestamp',
                         name: {$concat: ['JE_', '$timestamp']}
                     }
                 }
@@ -4305,6 +4309,9 @@ var Filters = function (models) {
             }
 
             result = result.length ? result[0] : {};
+
+            result.debit = result.debit || [];
+            result.credit = result.credit || [];
 
             newArray = result.debit.concat(result.credit);
 
@@ -4561,7 +4568,12 @@ var Filters = function (models) {
             }, {
                 name: 'Shipped',
                 _id : 'shipped'
+            }, {
+                name: 'Received',
+                _id : 'received'
             }];
+
+            result.filterInfo = FILTER_CONSTANTS.goodsOutNotes;
 
             res.status(200).send(result);
         });
@@ -4652,6 +4664,8 @@ var Filters = function (models) {
                 name: 'Received',
                 _id : 'received'
             }];
+
+            result.filterInfo = FILTER_CONSTANTS.stockTransactions;
 
             res.status(200).send(result);
         });
@@ -4857,6 +4871,93 @@ var Filters = function (models) {
 
     };
 
+    this.getBillOfMaterialsFilters = function (req, res, next) {
+        var lastDB = req.session.lastDb;
+        var billOfMaterialsSchema = mongoose.Schemas.billOfMaterialSchema;
+        var Model = models.get(lastDB, 'billOfMaterials', billOfMaterialsSchema);
+        var pipelines = [
+            {
+                $lookup: {
+                    from        : 'Products',
+                    localField  : 'product',
+                    foreignField: '_id',
+                    as          : 'product'
+                }
+            },
+            {
+                $lookup: {
+                    from        : 'routing',
+                    localField  : 'routing',
+                    foreignField: '_id',
+                    as          : 'routing'
+                }
+            },
+            {
+                $project: {
+                    product    : {$arrayElemAt: ['$product', 0]},
+                    routing    : {$arrayElemAt: ['$routing', 0]},
+                    quantity   : 1,
+                    description: 1,
+                    name       : 1
+                }
+            },
+            {
+                $group: {
+                    _id    : null,
+                    name   : {
+                        $addToSet: {
+                            _id : '$name',
+                            name: '$name'
+                        }
+                    },
+                    product: {
+                        $addToSet: {
+                            _id : '$product._id',
+                            name: '$product.name'
+                        }
+                    },
+
+                    routing: {
+                        $addToSet: {
+                            _id : '$routing._id',
+                            name: '$routing.name'
+                        }
+                    },
+
+                    quantity: {
+                        $addToSet: {
+                            _id : '$quantity',
+                            name: '$quantity'
+                        }
+                    },
+
+                    description: {
+                        $addToSet: {
+                            _id : '$description',
+                            name: '$description'
+                        }
+                    }
+                }
+            }
+        ];
+        var aggregation;
+
+        aggregation = Model.aggregate(pipelines);
+
+        aggregation.options = {
+            allowDiskUse: true
+        };
+
+        aggregation.exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            result = result.length ? result[0] : {};
+
+            res.status(200).send(result);
+        });
+    };
 };
 
 module.exports = Filters;

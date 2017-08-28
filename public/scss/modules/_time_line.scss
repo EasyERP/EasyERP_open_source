@@ -7,12 +7,12 @@
   .noteContainer {
     position: relative;
     padding-left: 50px;
-    margin-top: 12px;
+    margin-top: 20px;
 
     &:before {
       content: '';
       position: absolute;
-      top: 0;
+      top: -10px;
       left: 25px;
       width: 1px;
       height: calc(100% + 32px);
@@ -23,7 +23,7 @@
       //margin-top: 12px;
 
       &:before {
-        top: -12px;
+        top: -20px;
       }
     }
 

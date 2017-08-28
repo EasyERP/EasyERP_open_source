@@ -41,7 +41,10 @@ var Module = function (models) {
                     as          : 'currencies'
                 }
             }, {
-                $unwind: '$currencies'
+                $unwind: {
+                    path: '$currencies',
+                  preserveNullAndEmptyArrays: true
+                }
             }, {
                 $project: {
                     total         : 1,

@@ -7,7 +7,9 @@ define([
     'views/settingsOverview/settingsEmployee/payrollStructureTypes/CreateView',
     'views/settingsOverview/settingsEmployee/payrollStructureTypes/EditView',
     'collections/payrollStructure/filterCollection',
-    'models/PayrollStructureTypesModel'
+    'models/PayrollStructureTypesModel',
+    'helpers/ga',
+    'constants/googleAnalytics'
 ], function ($,
              _,
              Backbone,
@@ -16,7 +18,9 @@ define([
              CreateView,
              EditView,
              ContentCollection,
-             CurrentModel) {
+             CurrentModel,
+             ga,
+             GA) {
     var PayrollStructureTypesListView = listViewBase.extend({
         // el               : '#structureType',
         CreateView       : CreateView,
@@ -48,6 +52,10 @@ define([
 
         create: function (e) {
             e.preventDefault();
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.CREATE_PAYROLL_STRUCTURE
+            });
 
             return new CreateView({collection: this.collection, eventChannel: this.eventChannel});
         },
@@ -66,6 +74,11 @@ define([
             e.preventDefault();
             e.stopPropagation();
 
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.DELETE_PAYROLL_STRUCTURE
+            });
+
             if (confirm('Are you sure you want to DELETE this Payroll Structure?')) {
                 model = self.collection.get(modelId);
                 model.destroy({
@@ -82,7 +95,10 @@ define([
             var model = new CurrentModel({validate: false});
 
             e.preventDefault();
-
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.EDIT_PAYROLL_STRUCTURE
+            });
             model.urlRoot = '/payrollStructureTypes/' + modelId;
             model.fetch({
                 success: function (response) {

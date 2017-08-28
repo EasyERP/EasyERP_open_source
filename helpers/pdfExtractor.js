@@ -16,7 +16,8 @@ function post(req, res, next) {
         body.file +
         '</body></html>';
     var options = {
-        format: 'A4'
+        format     : 'A4',
+        orientation: 'landscape'
     };
 
 
@@ -26,7 +27,7 @@ function post(req, res, next) {
             return next(err);
         }
 
-        res.send(200, {name: name, path : file ? file.filename : ''});
+        res.send(200, {name: name, path: file ? file.filename : ''});
     });
 };
 

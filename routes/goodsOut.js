@@ -10,6 +10,11 @@ module.exports = function (models, event) {
     /*   var accessStackMiddleWare = require('../helpers/access')(moduleId, models);*/
 
     /*router.use(authStackMiddleware);*/
+    var accessDeleteStackMiddleware = require('../helpers/checkDelete');
+
+    function accessDeleteStackMiddlewareFunction(req, res, next) {
+        accessDeleteStackMiddleware(req, res, next, models, 'goodsOutNote', event);
+    }
     router.get('/', handler.getForView);
     router.get('/:id', handler.getForView);
 
@@ -19,7 +24,7 @@ module.exports = function (models, event) {
     router.post('/sendEmail', handler.sendEmail);
 
     /* router.delete('/:id',  handler.remove);*/
-    router.delete('/', handler.bulkRemove);
+    router.delete('/', accessDeleteStackMiddlewareFunction, handler.bulkRemove);
 
     return router;
 };

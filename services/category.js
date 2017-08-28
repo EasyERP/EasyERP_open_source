@@ -3,6 +3,7 @@
 var mongoose = require('mongoose');
 
 var CategorySchema = mongoose.Schemas.ProductCategory;
+var populateWrapper = require('../helpers/callbackWrapper').populate;
 var validator = require('validator');
 var _ = require('lodash');
 
@@ -248,17 +249,13 @@ module.exports = function (models) {
 
         this.find = function (query, options, callback) {
             var CategoryModel;
+            var _query;
             var dbName;
             var err;
 
             if (typeof options === 'function') {
                 callback = options;
                 options = {};
-            }
-
-            if (typeof callback !== 'function') {
-                callback = function () {
-                };
             }
 
             dbName = options.dbName;
@@ -268,11 +265,21 @@ module.exports = function (models) {
                 err = new Error('Invalid input parameters');
                 err.status = 400;
 
+                if (typeof callback !== 'function') {
+                    return populateWrapper(err);
+                }
+
                 return callback(err);
             }
 
             CategoryModel = models.get(dbName, 'ProductCategory', CategorySchema);
-            CategoryModel.find(query, options, function (err, result) {
+            _query = CategoryModel.find(query, options);
+
+            if (typeof callback !== 'function') {
+                return _query;
+            }
+
+            _query.exec(function (err, result) {
                 if (err) {
                     return callback(err);
                 }

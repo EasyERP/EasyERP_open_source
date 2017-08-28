@@ -1,3 +1,5 @@
+'use strict';
+
 var mongoose = require('mongoose');
 var async = require('async');
 var _ = require('lodash');
@@ -30,13 +32,16 @@ var Categories = function (models, event) {
 
     };
 
-    function getById(req, res, next) {
-        var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
-        var id = req.query.id || req.params.id;
+    function getCategoryById(options, callback) {
+        var lastDb = options.lastDb;
+        var ProductCategory = models.get(lastDb, 'ProductCategory', CategorySchema);
+        var id = options.id;
 
-        if (id && id.length < 24) {
+        /*
+        if (id && id.length < 24) { //TODO: to be discussed
             return res.status(400).send();
         }
+        */
 
         ProductCategory
             .findById(id)
@@ -49,19 +54,88 @@ var Categories = function (models, event) {
             .populate('otherLoss', 'name')
             .exec(function (err, category) {
                 if (err) {
-                    return next(err);
+                    return callback(err);
                 }
-                res.status(200).send(category);
+
+                callback(null, category);
             });
+    }
+
+    function getById(req, res, next) {
+        var id = req.query.id || req.params.id;
+        var lastDb = req.session.lastDb;
+        var options = {
+            id    : id,
+            lastDb: lastDb
+        };
+
+        if (id && id.length < 24) {
+            return res.status(400).send();
+        }
+
+        getCategoryById(options, function (err, category) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(category);
+        });
+    }
+
+    function getCategories(options, req, res, next, cb) {
+        var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
+        var isChild = options.isChild || false;
+        var parentId = options.parentId || '';
+        var forParent = options.forParent;
+        var matchObj = {};
+        var pipeLine = [];
+
+        if (isChild) {
+            matchObj = {parent: objectId(parentId)};
+        } else if (forParent) {
+            matchObj = {parent: null};
+        } else {
+            matchObj = {};
+        }
+        pipeLine = [{
+            $match: matchObj
+        }];
+        if (isChild) {
+            pipeLine.push({
+                $lookup: {
+                    from        : 'ProductCategories',
+                    localField  : '_id',
+                    foreignField: 'parent',
+                    as          : 'ch'
+                }
+            });
+        }
+        ProductCategory.aggregate(pipeLine, function (err, response) {
+            if (err) {
+                return next(err);
+            }
+
+            return cb(err, response);
+        });
     }
 
     this.getForDd = function (req, res, next) {
         var Product = models.get(req.session.lastDb, 'Product', ProductsSchema);
         var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
+        var parentId = req.query.parentId;
+        var isChild = req.query.isChild || false;
+        var forParent = req.query.forParent;
+        var options = {};
 
         if (req.query.id || req.params.id) {
             return getById(req, res, next);
         }
+
+        options = {
+            parentId : parentId,
+            isChild  : isChild,
+            forParent: forParent
+        };
 
         Product.aggregate([{
             $project: {
@@ -82,33 +156,23 @@ var Categories = function (models, event) {
                 return next(err);
             }
 
-            ProductCategory
-                .find()
-                .sort({
-                    /*fullName: 1,*/
-                    nestingLevel: 1,
-                    sequence    : 1
-                })
-                .populate('parent')
-                .lean()
-                .exec(function (err, categories) {
-                    if (err) {
-                        return next(err);
-                    }
+            getCategories(options, req, res, next, function (err, categories) {
+                if (err) {
+                    return next(err);
+                }
 
-                    categories = categories.map(function (el) {
-                        var count = _.find(categoriesCount, function (catCount) {
-                            return catCount && catCount._id ? catCount._id.toString() === el._id.toString() : null;
-                        });
-
-                        el.productsCount = count ? count.count : 0;
-
-                        return el;
+                categories = categories.map(function (el) {
+                    var count = _.find(categoriesCount, function (catCount) {
+                        return catCount && catCount._id ? catCount._id.toString() === el._id.toString() : null;
                     });
-                    res.status(200).send({data: categories});
-                });
-        });
 
+                    el.productsCount = count ? count.count : 0;
+
+                    return el;
+                });
+                res.status(200).send({data: categories});
+            });
+        });
     };
 
     this.getById = function (req, res, next) {
@@ -167,10 +231,10 @@ var Categories = function (models, event) {
     }
 
     this.create = function (req, res, next) {
-        var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
+        var lastDb = req.session.lastDb;
+        var ProductCategory = models.get(lastDb, 'ProductCategory', CategorySchema);
         var body = req.body;
         var parentId = body.parent;
-        var category;
 
         if (!Object.keys(body).length) {
             return res.status(400).send();
@@ -183,31 +247,61 @@ var Categories = function (models, event) {
             user: req.session.uId
         };
 
-        category = new ProductCategory(body);
+        async.waterfall([
 
-        category.save(function (err, category) {
-            var newModelId;
+            // create the new category:
+            function (cb) {
+                var categoryModel = new ProductCategory(body);
+
+                categoryModel.save(function (err, category) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    cb(null, category);
+                });
+            },
+
+            // update the parent category (if need):
+            function (category, cb) {
+                var newModelId;
+
+                if (!body.parent) { // do not update the parent
+                    return cb(null, category);
+                }
+
+                newModelId = category._id;
+                updateParentsCategory(req, newModelId, parentId, 'add', function (err) { // TODO: do not use req !!!
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    cb(null, category);
+                });
+            },
+
+            // retrieve the created category:
+            function (category, cb) {
+                var _options = {
+                    lastDb: lastDb,
+                    id    : category._id
+                };
+
+                getCategoryById(_options, function (err, createdCategory) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    cb(null, createdCategory);
+                });
+            }
+
+        ], function (err, category) {
             if (err) {
                 return next(err);
             }
 
-            newModelId = category._id;
-            req.query.id = newModelId;
-
-            if (!body.parent) {
-                return getById(req, res, next);
-                //res.status(200).send(category);
-                return;
-            }
-
-            updateParentsCategory(req, newModelId, parentId, 'add', function () {
-                if (err) {
-                    return next(err);
-                }
-
-                return getById(req, res, next);
-                //res.status(200).send(category);
-            });
+            res.status(201).send(category);
         });
     };
 
@@ -516,23 +610,51 @@ var Categories = function (models, event) {
     this.remove = function (req, res, next) {
         var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
         var _id = req.param('id');
-        var parentId;
 
-        ProductCategory.findOneAndRemove({_id: _id}, function (err, result) {
+        async.waterfall([
+
+            // remove the model:
+            function (cb) {
+
+                ProductCategory.findOneAndRemove({_id: _id}, function (err, category) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    cb(null, category);
+                });
+            },
+
+            // update the parent:
+            function (category, cb) {
+                var parentId = category.parent;
+
+                updateParentsCategory(req, _id, parentId, 'remove', function (err) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    cb(null, category);
+                });
+            },
+
+            // remove the sub categories:
+            function (category, cb) {
+                ProductCategory.remove({parent: _id}, function (err) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    cb(null, category);
+                });
+            }
+
+        ], function (err, result) {
             if (err) {
                 return next(err);
             }
 
-            parentId = result.parent;
-
-            updateParentsCategory(req, _id, parentId, 'remove', function () {
-                if (err) {
-                    return next(err);
-                }
-
-                res.status(200).send(result);
-            });
-
+            res.status(200).send(result);
         });
     };
 

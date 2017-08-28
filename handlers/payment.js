@@ -85,6 +85,8 @@ var Module = function (models, event) {
         var expenses = options ? !!options.expenses : false;
         var dividend = options ? !!options.dividend : false;
         var purchasePayments = options ? !!options.purchasePayments : false;
+        var quickSearch = data.quickSearch;
+        var matchObject = {};
         var Payment = returnModel(req, options);
         var supplier = 'Customers';
         var paymentMethod = 'PaymentMethod';
@@ -101,6 +103,7 @@ var Module = function (models, event) {
         var filterMapper = new FilterMapper();
         var aggregate;
         var aggregatePurchase = false;
+        var regExp = new RegExp(quickSearch, 'ig');
 
         if (req.query.sort) {
             key = Object.keys(req.query.sort)[0];
@@ -143,6 +146,10 @@ var Module = function (models, event) {
         if (purchasePayments) {
             optionsObject.$and.push({_type: {$in: ['purchasePayments', 'prepayment']}});
             aggregatePurchase = true;
+        }
+
+        if (quickSearch) {
+            matchObject['assignedName'] = {$regex: regExp};
         }
 
         departmentSearcher = function (waterfallCallback) {
@@ -302,6 +309,7 @@ var Module = function (models, event) {
                             'invoice.workflow'   : {$arrayElemAt: ['$invoice.workflow', 0]},
                             salesmanager         : {$ifNull: ['$invoice.salesPerson', '$order.salesPerson']},
                             bankExpenses         : 1,
+                            name                 : 1,
                             bankAccount          : 1,
                             forSale              : 1,
                             differenceAmount     : 1,
@@ -354,6 +362,7 @@ var Module = function (models, event) {
                             salesPerson            : {$arrayElemAt: ['$salesPerson', 0]},
                             'bankExpenses.account' : {$arrayElemAt: ['$bankExpenses.account', 0]},
                             'bankExpenses.amount'  : 1,
+                            name                   : 1,
                             order                  : 1,
                             forSale                : 1,
                             refund                 : 1,
@@ -404,6 +413,9 @@ var Module = function (models, event) {
                     }, {
                         $project: {
                             'assigned.name'   : '$assigned.name',
+                            assignedName      : {
+                                $concat: ['$assigned.name.first', ' ', '$assigned.name.last']
+                            },
                             'assigned._id'    : '$assigned._id',
                             supplier          : 1,
                             currency          : 1,
@@ -436,6 +448,8 @@ var Module = function (models, event) {
                                 }
                             }
                         }
+                    }, {
+                        $match: matchObject
                     }, {
                         $group: {
                             _id  : null,
@@ -696,6 +710,9 @@ var Module = function (models, event) {
                             'invoice.invoiceDate' : 1,
                             'invoice.workflow'    : 1,
                             'assigned.name'       : '$assigned.name',
+                            assignedName          : {
+                                $concat: ['$assigned.name.first', ' ', '$assigned.name.last']
+                            },
                             'assigned._id'        : '$assigned._id',
                             bankExpenses          : 1,
                             order                 : 1,
@@ -722,6 +739,8 @@ var Module = function (models, event) {
                                 }
                             }
                         }
+                    }, {
+                        $match: matchObject
                     }, {
                         $group: {
                             _id  : null,
@@ -1217,9 +1236,9 @@ var Module = function (models, event) {
             }
 
             res.status(200).send(result && result.length ? {
-                sum          : result[0].sum || 0,
-                sumInCurrency: result[0].sumInCurrency || 0
-            } : {});
+                    sum          : result[0].sum || 0,
+                    sumInCurrency: result[0].sumInCurrency || 0
+                } : {});
         });
     };
 
@@ -2487,7 +2506,7 @@ var Module = function (models, event) {
         var fx = {};
         var paymentCurrency;
 
-        async.each(ids, function (id, cb) {
+        async.eachLimit(ids, 1, function (id, cb) {
             Payment.findByIdAndRemove(id, function (err, removed) {
                 if (err) {
                     return next(err);

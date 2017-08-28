@@ -58,7 +58,8 @@ define([
             var self = this;
             var $target = $(e.target);
             var id = $target.closest('li').attr('data-id');
-            var userId = App.currentUser.relatedEmployee ? App.currentUser.relatedEmployee._id : null;
+            // var userId = App.currentUser.relatedEmployee ? App.currentUser.relatedEmployee._id : null;
+            var userId = App.currentUser.relatedEmployee ? App.currentUser.relatedEmployee._id : App.currentUser._id;
             var status;
             var unfollow = false;
 
@@ -115,7 +116,7 @@ define([
                 if (response.data) {
                     self.model.set('followers', response.data);
 
-                    var userId = App.currentUser.relatedEmployee ? App.currentUser.relatedEmployee._id : null;
+                    var userId = App.currentUser ? App.currentUser._id : null;
 
                     status = _.find(response.data, function (el) {
                         return el.followerId === userId;
@@ -147,18 +148,15 @@ define([
             var classEvent = $.trim($target.text());
             var _id;
 
-            if (!App.currentUser.relatedEmployee) {
-                return App.render({type: 'error', message: 'Please, choose related Employee to your user, please'});
-            }
-
             if (classEvent === 'Follow') {
                 App.startPreload();
 
                 dataService.postData('/followers/', {
-                    followerId    : App.currentUser.relatedEmployee._id,
+                    followerId    : App.currentUser._id,
                     contentId     : this.model.id,
                     collectionName: this.collectionName,
-                    contentName   : this.model.toJSON().name
+                    contentName   : this.model.toJSON().name,
+                    isUser        : true
                 }, function (err, response) {
                     App.stopPreload();
                     self.hideNewSelect();
@@ -183,7 +181,7 @@ define([
                 App.startPreload();
 
                 _id = _.find(this.model.toJSON().followers, function (el) {
-                    return el.followerId === App.currentUser.relatedEmployee._id;
+                    return el.followerId === App.currentUser._id;
                 });
 
                 dataService.deleteData('/followers/', {
@@ -223,7 +221,7 @@ define([
         render: function () {
             var self = this;
             var followers = this.model.toJSON().followers;
-            var userId = App.currentUser.relatedEmployee ? App.currentUser.relatedEmployee._id : null;
+            var userId = App.currentUser._id /*App.currentUser.relatedEmployee ? App.currentUser.relatedEmployee._id : null*/ ;
             var status;
 
             status = _.find(followers, function (el) {

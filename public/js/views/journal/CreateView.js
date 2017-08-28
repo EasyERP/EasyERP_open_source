@@ -11,6 +11,7 @@ define([
 
     var CreateView = ParentView.extend({
         el         : '#content-holder',
+        contentType: 'journal',
         template   : _.template(CreateTemplate),
         responseObj: {},
 
@@ -125,6 +126,7 @@ define([
                         text : 'Create',
                         click: function () {
                             self.saveItem();
+                            self.gaTrackingConfirmEvents();
                         }
                     }, {
                         text : 'Cancel',

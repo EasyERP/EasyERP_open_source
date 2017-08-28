@@ -1,25 +1,90 @@
-<ul class="bxslider">
-    <% images.forEach(function (item) { %>
-    <li id="<%= item._id %>">
-        <img src="<%= item.imageSrc %>" alt="notFound">
-        <div class="imageButtonsBlock" data-imageId="<%= item._id %>">
-            <div class="mainImage icon-checkImage"></div>
-            <div class="deleteImage icon-deleteImage"></div>
-            <div class="attachImage icon-addImage"></div>
+<div class="_productSliderWrap productSliderWrap">
+    <div class="productSlider _productSlider">
+        <div class="productSlide bgSlide _productSlide"></div>
+        <div class="productSlide activeSlide _productSlide"
+             style="background-image: url('<%= images && images.length ? images[0].imageSrc : '' %>')"
+             data-id="<%= images && images.length ? images[0]._id : '' %>"></div>
+        <div class="controls _controls">
+            <div id="prevSlide" class="prevSlide">
+                <span class="icon-arrow-left2"></span>
+            </div>
+            <div id="nextSlide" class="nextSlide">
+                <span class="icon-arrow-right2"></span>
+            </div>
         </div>
-    </li>
-    <% }); %>
-</ul>
-<input id="inputAttach" type="file">
+    </div>
+
+    <div class="_uploadProductView uploadProductView">
+
+        <div class="_uploadWrap">
+
+            <div class="currentSlideActions _sliderBtns">
+                <span class="mainImage btn blue slim">Set as main</span>
+                <span class="deleteImage btn blue slim">Delete image</span>
+            </div>
+
+            <div class="_uploadFieldWrap">
+                <div class="_uploadField importContainer">
+                    <span class="icon-upload"></span>
+                    <span class="_uploadDescription">Drag files to upload<span></span></span>
+                </div>
+            </div>
+
+            <div class="btn blue uploadBtn">
+                <input type="file" id="inputAttach" multiple>
+                <label for="inputAttach">Find in files</label>
+            </div>
+
+            <div class="_filesInfo">
+                <div>each image max 2MB</div>
+                <div>(.png .gif .jpg .jpeg)</div>
+            </div>
+
+        </div>
+
+        <div class="_uploadAnimationView">
+            <div class="_circleEl">
+                <span class="file-icon"></span>
+                <div class="_progressWrap">
+                    <div class="_progressLine" id="progressLine"></div>
+                </div>
+            </div>
+
+            <span class="_fileName" id="fileName"></span>
+
+            <span class="_uploadedFiles">Uploaded <span id="numOfUploaded">1</span> from <span id="numOfFiles">1</span></span>
+        </div>
+
+    </div>
+</div>
+
 <canvas id="avatar">
     <input type="file" value="Edit" id="File1">
 </canvas>
-<div id="bx-pager" class="_productSliderThumbnails">
+
+<div id="sliderThumbnails" class="_productSliderThumbnails">
     <% var i = 0; %>
     <% images.forEach(function (thumb) { %>
-    <a data-slide-index="<%= i %>" href="">
-        <img src="<%= thumb.imageSrc %>" alt="notFound">
-    </a>
+    <div class="slideThumbnail _slideThumbnail"
+         data-id="<%= thumb._id %>"
+         data-slide-index="<%= i %>"
+         style="background-image: url('<%= thumb.imageSrc %>')">
+
+        <div class="mainImage _setMainImage">
+            <span class="icon-star2 _full"></span>
+            <span class="icon-star _hollow"></span>
+
+            <div class="_tooltip _fullWidth">
+                <div>Make</div>
+                <div>Primary</div>
+            </div>
+        </div>
+
+        <div class="deleteImage _deleteImage">
+            <span class="icon-close3"></span>
+        </div>
+
+    </div>
     <% i = i + 1; %>
     <% }); %>
 </div>

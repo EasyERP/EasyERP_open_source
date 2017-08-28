@@ -97,13 +97,17 @@
                                    required
                                    readonly/>
                         </div>
-                        <div class="_animateTextareaBox">
+                        <div class="_animateTextareaBox counterWrap">
                             <textarea class="_animate projectDescriptionCreate"
                                       name="description"
                                       id="description"
                                       required
                                       maxlength="500"></textarea>
                             <label for="description" class="_animate">Project description</label>
+                            <div class="counter-wrap">
+                                <span class="counter-label">Characters left:</span>
+                                <span class="counter-value" id="counterValue">500</span>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -122,17 +122,6 @@
         color: #fff;
       }
 
-      &.checkedValue {
-        &:before {
-          content: "\e90b";
-          position: absolute;
-          top: 4px;
-          left: 6px;
-          font-family: $icon-font;
-          color: $mainText-color;
-        }
-      }
-
       &:hover,
       &.checkedValue {
         background-color: #fff;
@@ -148,9 +137,27 @@
       > li {
         font-family: $semibold-font-family;
         word-break: break-word;
-        
+
         &:hover {
           background-color: #f3f3f3;
+        }
+
+        &.checkedValue {
+          position: relative;
+
+          > .icon {
+            opacity: 1;
+            visibility: visible;
+          }
+        }
+
+        > .icon {
+          position: absolute;
+          top: 5px;
+          left: 7px;
+          font-size: 12px;
+          opacity: 0;
+          visibility: hidden;
         }
       }
     }
@@ -241,33 +248,53 @@
 }
 
 ._filterDropDownWrap {
-  position: relative;
-  height: 26px;
-  width: 195px;
-  float: left;
   margin-left: 15px;
 
   > ul {
-    position: absolute;
+    position: relative;
     z-index: 3;
-    width: 100%;
     background-color: #fff;
+
+    &.dateFilter {
+      z-index: 1005;
+    }
 
     > li {
 
       &:first-child {
-        text-align: right;
+        padding: 0 5px;
         color: #333;
-        cursor: pointer;
+        text-align: right;
+        white-space: nowrap;
         line-height: 26px;
+        cursor: pointer;
       }
     }
+  }
+
+  ._filterDropDownBody {
+    position: absolute;
+    background-color: #fff;
+    min-width: 185px;
   }
 
   li {
     position: relative;
     display: block;
     line-height: 25px;
+  }
+}
+
+.top-bar {
+
+  ._filterDropDownWrap {
+
+    > ul {
+
+      &.dateFilter {
+        z-index: 3;
+      }
+    }
   }
 }
 
@@ -291,12 +318,19 @@
       position: relative;
       font-family: $semibold-font-family;
 
-      &:before {
-        font-family: $icon-font;
-        position: absolute;
-        left: 6px;
-        content: "\e90b";
+      > .icon {
+        opacity: 1;
+        visibility: visible;
       }
+    }
+
+    > .icon {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 10px;
+      opacity: 0;
+      visibility: hidden;
     }
   }
 
@@ -365,6 +399,21 @@
 ._modalList,
 ._newSelectListWrap {
   position: relative;
+
+  ._selectPlaceholder {
+    color: #999;
+  }
+}
+
+._newSelectListWrap {
+
+  &._listPositionRight {
+
+    .newSelectList {
+      left: auto;
+      right: 0;
+    }
+  }
 }
 
 .newSelectList {
@@ -379,6 +428,14 @@
   0 1px 18px 0 rgba(0,0,0,0.12),
   0 3px 5px -1px rgba(0,0,0,0.3);
   z-index: 100;
+
+  &.stage {
+    left: 0;
+  }
+
+  &.taskPriority {
+    left: -15px;
+  }
 
   li {
     width: 100%;
@@ -442,18 +499,17 @@
   &.taskPriority {
     left: -15px;
   }
+
+  .empty {
+    display: inline-block;
+    padding: 10px;
+  }
 }
 
 .dropBtn {
   &.icon-list5 {
     &:hover {
       text-decoration: none !important;
-    }
-    &:before {
-      font-size: 16px;
-      line-height: 24px;
-      display: block;
-      text-align: center;
     }
   }
 }
@@ -586,7 +642,7 @@
   > ul {
     display: none;
     position: absolute;
-    top: 28px;
+    top: 100%;
     left: 0;
     background-color: #ffffff;
     border: 1px solid #bebebe;
@@ -617,8 +673,9 @@
       &.sortDn {
         .sortArrow {
           color: #fff;
+
           &:before {
-            content: "\e923";
+            content: "\e944";
           }
         }
       }
@@ -626,8 +683,9 @@
       &.sortUp {
         .sortArrow {
           color: #fff;
+
           &:before {
-            content: "\e921";
+            content: "\e943";
           }
         }
       }
@@ -692,5 +750,142 @@
     top: 100%;
     left: 0;
     margin: 0;
+  }
+}
+
+._statusOrderBlock {
+  .fullfillOrderWrap {
+    margin-left: 3px;
+  }
+}
+
+.fullfillOrderWrap {
+  position: relative;
+  width: 285px;
+  margin: 0 3px;
+
+  &:before,
+  .fullfillOrder,
+  .fullfillOrder span,
+  > ul {
+    transition: all 150ms ease-in-out 150ms;
+  }
+
+  &:before {
+    position: absolute;
+    top: 5px;
+    right: 9px;
+    color: #4d5a75;
+    font-size: 16px;
+  }
+
+  .btn {
+    float: right;
+    width: 100%;
+  }
+
+  > ul {
+    visibility: hidden;
+    opacity: 0;
+
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 10;
+
+    width: 100%;
+    background-color: #eaeaea;
+    box-shadow: 0 1px 1px 0 rgba(0,0,0,0.1);
+
+    transform: translateY(20px);
+
+    li {
+      background-color: #f2f2f2;
+      border: {
+        width: 0 1px 0 1px;
+        style: solid;
+        color: #eaeaea;
+      }
+
+      &:hover {
+        a {
+          text-decoration: none;
+        }
+      }
+
+      a {
+        display: block;
+        border-left: 2px solid transparent;
+        padding: 10px;
+        cursor: pointer;
+
+        span {
+          display: block;
+          color: #508bbd;
+          line-height: 1.5;
+
+          &.help {
+            color: #777;
+            font-style: italic;
+            line-height: 1.3;
+          }
+        }
+      }
+
+      &.passiveItem {
+        cursor: not-allowed;
+
+        a {
+          cursor: not-allowed;
+        }
+
+        span,
+        span.help {
+          color: #b4bcc8;
+        }
+      }
+
+      &.activeItem {
+
+        &:hover {
+          background-color: #ddd;
+          border: 0;
+          border-left: 1px solid #7eadcc;
+          border-right: 1px solid #ddd;
+
+          a {
+            border-left-color: #7eadcc;
+          }
+        }
+      }
+
+      + li {
+        margin-top: 1px;
+        border-top: 0;
+      }
+    }
+  }
+
+  &:hover {
+
+    &:before {
+      transform: rotate(180deg);
+      color: #fff;
+    }
+
+    .fullfillOrder {
+      background-color: #7eadcc;
+      border-color: #7eadcc;
+      color: #fff;
+    }
+
+    ul {
+      visibility: visible;
+      opacity: 1;
+      transform: none;
+      box-shadow: 0 6px 10px 0 rgba(0,0,0,0.14),
+      0 1px 18px 0 rgba(0,0,0,0.12),
+      0 3px 5px -1px rgba(0,0,0,0.3);
+    }
   }
 }

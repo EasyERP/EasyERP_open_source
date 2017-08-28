@@ -141,7 +141,8 @@ define([
 
             yAxis = d3.svg.axis()
                 .scale(y)
-                .orient('left');
+                .orient('left')
+                .tickFormat(d3.format('s'));
 
             svg = d3.select('.salesChannelLine ._dashLineItem').append('svg')
                 .attr('width', width)
@@ -157,7 +158,7 @@ define([
                 });
             });
 
-            data = data.sort(function (a, b) {
+           /* data = data.sort(function (a, b) {
                 return d3.descending(a.frequency, b.frequency);
             })
                 .map(function (d) {
@@ -165,7 +166,7 @@ define([
                         frequency: d.frequency,
                         letter   : d.letter
                     };
-                });
+                });*/
 
             data.forEach(function (d) {
                 d.frequency = +d.frequency;
@@ -234,9 +235,10 @@ define([
                     return height - y(d.frequency);
                 })
                 .attr('fill', function (d) {
-                    var colorAlp = ((d.frequency / (max + min)) + 0.45).toFixed(2);
+                    var colorAlp = 1; // ((d.frequency / (max + min)) + 0.45).toFixed(2);
                     return 'rgba(' + color + colorAlp + ')';
-                })
+                });
+            
             /*.on('mouseover', function (d) {
              var xPosition = this.x.baseVal.value + this.width.baseVal.value / 2 + 45;
              var yPosition = this.height.baseVal.value + 110;

@@ -14,6 +14,7 @@ module.exports = function (mainDb, dbsNames) {
     var dbsObject = mainDb.dbsObject;
     var MemoryStore = require('connect-mongo')(session);
     var sessionConfig = require('./config/session')(mainDb, MemoryStore);
+    var crypto = require('crypto');
 
     var allowCrossDomain = function (req, res, next) {
         var browser = req.headers['user-agent'];
@@ -21,6 +22,17 @@ module.exports = function (mainDb, dbsNames) {
         if (/Trident|Edge/.test(browser)) {
             res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
         }
+
+        res.header('Access-Control-Allow-Credentials', true);
+        res.header('Access-Control-Allow-Origin', req.headers.origin);
+        res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+        res.header('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, X-HTTP-Method-Override, uid, hash, mid');
+
+        if (req.session && !req.session.host) {
+            req.session.host = req.headers.host;
+            req.session.baseUrl = req.baseURI;
+        }
+
         next();
 
     };
@@ -45,9 +57,26 @@ module.exports = function (mainDb, dbsNames) {
     global.appRoot = path.resolve(__dirname);
     // app.use(compression());
     app.use(logger('dev'));
-    app.use(bodyParser.json({strict: false, inflate: true, limit: 1024 * 1024 * 200}));
+    app.use(bodyParser.json({
+        strict : false,
+        inflate: true,
+        limit  : 1024 * 1024 * 200,
+        verify : function (req, res, buf) {
+            var shopHMAC = req.get('x-shopify-hmac-sha256');
+
+            if (!shopHMAC) {
+                return;
+            }
+
+            if (req.get('x-kotn-webhook-verified')) {
+                throw new Error('Unexpected webhook verified header');
+            }
+
+            req.buf = buf;
+        }
+    }));
     app.use(bodyParser.urlencoded({extended: false, limit: 1024 * 1024 * 200}));
-    app.use(cookieParser('CRMkey'));
+    app.use(cookieParser('PaaS'));
     app.use('/developer/apidocs', express.static(__dirname + '/apidoc'));
 
     // todo uncomment it in production

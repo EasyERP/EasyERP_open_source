@@ -34,7 +34,7 @@ define([
             this.productTypesCollection = new ProductTypesCollection();
             this.productOptionsCollection = new ProductOptionsCollection();
             this.shippingMethodCollection = new ShippingMethodCollection();
-            this.productCategoriesCollection = new ProductCategoriesCollection();
+            this.productCategoriesCollection = new ProductCategoriesCollection({forParent: false});
 
             this.watehouseCollection.bind('reset', this.renderWarehouse, this);
             this.priceListsCollection.bind('reset', this.renderPriceLists, this);

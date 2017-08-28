@@ -89,10 +89,6 @@
 
 .productForm {
   .form {
-    + .btn,
-    .btn {
-      margin-top: 20px;
-    }
 
     input + .btn {
       margin-top: 0;
@@ -153,9 +149,9 @@
       }
     }
 
-    .dialog-tabs-item{
-      padding-top: 10px;
-    }
+    //.dialog-tabs-item{
+    //  padding-top: 10px;
+    //}
 
     ._stockBlock {
       margin-top: 10px;
@@ -278,268 +274,7 @@
   min-height: auto;
 }
 
-._goodOutWrap {
-  border: 1px solid #cdcdcd;
-  border-radius: 5px;
-  margin-bottom: 10px;
-  color: #444;
-  background: #f5f5f5;
-
-  .topPanel {
-    padding: 5px 10px;
-    background-color: #ddd;
-
-    dl {
-      display: flex;
-      float: left;
-
-      dd, dt {
-        width: auto;
-        height: 33px;
-        line-height: 33px;
-        margin-top: 0;
-      }
-
-      dd {
-        margin: 0px 15px 0px 0px;
-      }
-    }
-  }
-
-  ._invoiceTable {
-    tbody tr:last-child{
-      border-bottom: none;
-    }
-
-    th, td {
-      border-right: 1px dotted #ccc;
-      padding: 10px;
-
-      &:last-child {
-        border-right: none;
-      }
-    }
-
-    th.done {
-      > span {
-        color: #00db30;
-        .edited:before {
-          content: "\e909";
-          font-family: 'erp-icons';
-        }
-      }
-    }
-
-    th.undone {
-      > span {
-        color: #e55253;
-        .edited:before {
-          content: "\e908";
-          font-family: 'erp-icons';
-        }
-      }
-    }
-
-    .edited {
-      &:before{
-        margin: 0 5px;
-      }
-    }
-  }
-}
-
-._statusOrders {
-
-  > h3 {
-    height: 26px;
-    line-height: 26px;
-    padding: 0 5px;
-    margin-bottom: 0;
-    background-color: #e7e6e4;
-    font: {
-      size: 14px;
-      family: $semibold-font-family;
-    }
-    color: #364150;
-  }
-
-  ._workflowsDd {
-    display: inline-block;
-    height: 26px;
-    padding: 0 10px;
-    margin-right: 10px;
-    border: 1px solid gray;
-    line-height: 24px;
-  }
-  ._viewEntries {
-    display: inline-block;
-    height: 26px;
-    padding: 0 10px;
-    line-height: 24px;
-    text-align: center;
-  }
-}
-
-._statusOrderList {
-  .right {
-    .btn {
-      margin-right: 15px;
-      margin-bottom: 5px;
-    }
-  }
-  ._invoiced {
-    height: 26px;
-    line-height: 26px;
-    padding: 0 8px;
-    margin-top: 10px;
-    margin-bottom: 0;
-    background-color: #7eadcc;
-    font-size: 14px;
-    font-family: $semibold-font-family;
-    color: #fff;
-
-    > a {
-      color: inherit;
-    }
-  }
-}
-
-._tableOrderList,
-._tableChartList {
-  > .stripedList {
-    min-width: 1000px;
-
-    ._statusOrders {
-      span {
-        margin: 0;
-
-        &._notDid:before {
-          top: -2px;
-        }
-      }
-    }
-  }
-}
-
-.fullfillOrderWrap {
-  position: relative;
-  width: 285px;
-  margin:0 3px;
-  z-index: 10;
-  //display: inline-block;
-
-  .btn {
-    width: 100%;
-    float: right;
-
-    &:after {
-      position: absolute;
-      content: "\e918";
-      right: 7px;
-      top: 7px;
-      height: 18px;
-      font-family: $iconFont;
-      color: #4d5a75;
-      line-height: 1;
-      font-size: 8px;
-      padding: 3px;
-    }
-  }
-
-  ul{
-    width: 285px;
-    //padding-bottom: 20px;
-    border-radius: 5px;
-    border: 1px solid #c8c8d3;
-    top: 25px;
-    position: absolute;
-    z-index: 1;
-    background-color: #f2f2f2;
-    left: 0;
-    visibility: hidden;
-    opacity: 0;
-    transition: visibility 0s, opacity 0.3s linear;
-  }
-
-  &:hover{
-    .fullfillOrder {
-      background-color: #f2f2f2 !important;
-
-      + ul{
-        visibility: visible;
-        opacity: 1;
-
-        li {
-          padding: 20px 10px;
-          cursor: pointer;
-
-          &.passiveItem {
-            //background-color: #808080;
-            cursor: not-allowed;
-
-            a {
-              cursor: not-allowed;
-            }
-
-            span, span.help {
-              color: #b4bcc8;
-            }
-          }
-
-
-
-          &.activeItem {
-            //background-color: #7eadcc;
-            //color: #fff;
-
-            &:hover {
-              background-color: #ddd;
-            }
-          }
-
-          &:hover {
-            a {
-              background-color: #ddd;
-            }
-          }
-
-          &:nth-child(n+2){
-            border-top: 1px solid #a1a1a1;
-          }
-
-          a {
-            height: auto;
-            line-height: 1.5;
-            text-align: left;
-            text-decoration: none;
-
-            span {
-              display: block;
-              color: #508bbd;
-
-              &.help {
-                color: #777;
-                font-style: italic;
-              }
-            }
-          }
-
-        }
-      }
-    }
-  }
-}
-
 /*07.10.16*/
-._editAllocateAll {
-  float: right;
-
-  > .btn {
-    margin: 6px 1px;
-    background-color: #F9F8F8;
-  }
-}
-
 ._priceListWrap {
   ._listModal {
     margin-bottom: 5px;
@@ -591,16 +326,15 @@
           width: 100%;
 
           input {
-            width: 60px;
-            //margin: 0 15px 0 55px;
+            width: 50px;
           }
+
           > div:nth-child(2) {
             flex-grow: 2;
             align-self: center;
           }
           .removeLocation {
             position: relative;
-
             top: -2px;
             margin: 0 -19px 0 5px;
           }
@@ -615,10 +349,9 @@
 ._invoiceTable {
   ._newSelectListWrap {
     white-space: initial;
-    word-break: break-all;
+    word-break: break-word;
   }
 }
-
 
 ._invoiceTable {
   tbody {
@@ -670,39 +403,39 @@
   }
 }
 
-
-//._warehouseWrap._integrationForm,
-.ui-dialog ._integrationForm{
-  ._warehouseForm {
-    width: 700px;
-    padding: 0;
-    background-color: #fff;
-  }
-  ._listModal {
-    padding: 10px 20px;
-    font-size: 14px;
-    &:last-child {
-      margin-bottom: 0;
-    }
-    ._modalLabel {
-      line-height: 26px;
-    }
-    ._inputContainer {
-      display: flex;
-      align-items: center;
-      ._modalSelect {
-        input[type='checkbox'] {
-          height: auto;
-          min-height: auto;
-        }
-      }
-    }
-    input, a {
-      //line-height: 35px !important;
-      font-size: 14px;
-    }
-  }
-}
+//
+////._warehouseWrap._integrationForm,
+//.ui-dialog ._integrationForm{
+//  ._warehouseForm {
+//    width: 700px;
+//    padding: 0;
+//    background-color: #fff;
+//  }
+//  ._listModal {
+//    padding: 10px 20px;
+//    font-size: 14px;
+//    &:last-child {
+//      margin-bottom: 0;
+//    }
+//    ._modalLabel {
+//      line-height: 26px;
+//    }
+//    ._inputContainer {
+//      display: flex;
+//      align-items: center;
+//      ._modalSelect {
+//        input[type='checkbox'] {
+//          height: auto;
+//          min-height: auto;
+//        }
+//      }
+//    }
+//    input, a {
+//      //line-height: 35px !important;
+//      font-size: 14px;
+//    }
+//  }
+//}
 
 
 
@@ -718,7 +451,7 @@
   .stripedList {
     .choseDateRange.dropDownDateRange {
       &:before {
-        content: "\e91e";
+        content: '\e944';
         position: absolute;
         top: 0;
         right: 3px;
@@ -728,7 +461,7 @@
       }
       &.open{
         &:before {
-          content: "\e920";
+          content: '\e943';
         }
       }
     }
@@ -744,6 +477,7 @@
 }
 
 ._createEditVariantsWrap {
+  // prevent global styles
   ._editAllBlock {
     display: flex;
     align-items: center;
@@ -751,6 +485,45 @@
     input {
       margin: 0 5px;
     }
+  }
+}
+
+.createVariantsTabs {
+  // prevent global styles
+  ._editAllBlock {
+    display: flex;
+    align-items: center;
+    align-items: center;
+  }
+}
+
+._editAllBlock {
+  // prevent global styles
+  .description {
+    margin-right: 10px;
+  }
+
+  ._editAllInput,
+  ._editAllBtn {
+    height: 24px;
+  }
+
+  ._editAllInput {
+    
+    &:valid {
+      border-right: 0;
+      border-color: #7eadcc;
+
+      + ._editAllBtn {
+        background-color: #7eadcc;
+        color: #fff;
+      }
+    }
+  }
+
+  ._editAllBtn {
+    padding: 0 10px;
+    background-color: #c8c8d3;
   }
 }
 
@@ -898,6 +671,12 @@
       background-image: url(../images/erp_icons-07.svg);
     }
   }
+
+  &:nth-child(9){
+    ._overviewImg {
+      background-image: url(../images/erp_icons-06.svg);
+    }
+  }
 }
 
 ._overviewPanel {
@@ -933,16 +712,37 @@
   align-items: center;
   flex-wrap: nowrap;
   padding: 0 10px;
-  font-size: 16px;
-  height: 41px;
+  height: $breadcrunmbsHeight;
   background-color: #f3f3f3;
 
   + .form-holder {
     padding: 0;
+    height: calc(100% - #{$breadcrunmbsHeight});
+
+    .dialog-tabs-items {
+      height: calc(100% - 40px);
+      overflow: auto;
+    }
+  }
+
+  > a,
+  ._breadcrunmbItem {
+    @include rem('font-size', 16px);
   }
 
   > a {
-    color: #666;
+    padding: 2px 0;
+    color: #5292bd;
+    font-family: $semibold-font-family;
+    border-bottom: 2px solid #7eadcc;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  ._breadcrunmbsTitle {
+    margin-right: 10px;
   }
 
   ._breadcrunmbItem {

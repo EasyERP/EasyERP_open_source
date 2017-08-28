@@ -3,31 +3,37 @@
         <h4 class="_dialogMainTitle">Add New Transfer</h4>
         <div class="_formWrap">
             <div class="_formBlock _equal">
-                <div class="_animateSelectBox">
+                <div class="_animateSelectBox _withInfo">
                     <span class="_selectTitle">From</span>
                     <div class="_newSelectListWrap">
                         <a href="javascript:;"
                            class="current-selected"
                            id="warehouseFrom">Select</a>
                     </div>
+                    <span class="tips icon-info" data-id="warehouseFrom"></span>
                 </div>
-                <div class="_animateSelectBox">
+                <div class="_animateSelectBox _withInfo">
                     <span class="_selectTitle">To</span>
                     <div class="_newSelectListWrap">
                         <a href="javascript:;"
                            class="current-selected"
                            id="warehouseTo">Select</a>
                     </div>
+                    <span class="tips icon-info" data-id="warehouseTo"></span>
                 </div>
             </div>
             <div class="_formBlock _equal">
-                <div class="_animateTextareaBox">
+                <div class="_animateTextareaBox counterWrap">
                         <textarea id="description"
                                   class="_animate internal_Notes"
                                   required
                                   maxlength="2500"></textarea>
                     <label for="description" class="_animate">Description</label>
                     <span class="attach_file icon-attach"></span>
+                    <div class="counter-wrap">
+                        <span class="counter-label">Characters left:</span>
+                        <span class="counter-value" id="counterValue">2500</span>
+                    </div>
                 </div>
                 <div class="attach-container"></div>
             </div>

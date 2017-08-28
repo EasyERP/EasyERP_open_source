@@ -5,10 +5,10 @@
     data-sequence="<%=product.sequence%>">
 
     <span class="content <%=selected%>">
-        <span class="text">
+      <span class="<%if(hasChild){%> text2 <%}else{%> text <%}%>">
             <span class="_contentValue"><%=product.name%></span>
             <span class="_contentCount">(<%= product.productsCount%>)</span>
-        </span>
+      </span>
         <span class="action-btn">
             <span class="editCategory icon-note" title="Edit"></span>
             <%if (canDelete) {%>
@@ -16,4 +16,5 @@
             <%}%>
         </span>
     </span>
+    <%if(hasChild){%><a class="expand icon-folder3" href="javascript:;"></a><%}%>
 </li>

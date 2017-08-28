@@ -1,19 +1,21 @@
-<div id="channelNameContainer" class="_integrationForm _channelNameContainer" data-type="<%= type || ''%>">
-    <div class="mainContent">
-        <div class="channelImg <%= type || ''%>"
-             data-content="channelImage"
-             id="channelImgContainer">
+<div class="_newForm _integrationForm _channelNameContainer" id="channelNameContainer" data-type="<%= type || ''%>">
+    <h4 class="_dialogMainTitle">Create Channel</h4>
+    <div class="_formWrap _enlargedItemMargin mainContent">
+        <div class="_formBlock">
+            <div class="channelImg <%= type || ''%>"
+                 data-content="channelImage"
+                 id="channelImgContainer">
+            </div>
         </div>
-        <div data-content="channelInfo" class="_listModal">
-            <div class="_modalList">
-                <div class="_modalLabel">
-                    <label for="channelName">Channel Name</label>
-                </div>
-                <div class="_modalSelect">
-                    <input type="text" id="channelName" placeholder="Channel Name">
-                </div>
+        <div class="_formBlock _equal">
+            <div class="_animateInputBox" data-content="channelInfo">
+                <input type="text"
+                       class="_animate"
+                       id="channelName"
+                       maxlength="30"
+                       required>
+                <label for="channelName" class="_animate">Channel Name</label>
             </div>
         </div>
     </div>
-    <div class="clearfix"></div>
 </div>

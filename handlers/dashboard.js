@@ -506,6 +506,8 @@ var wTrack = function (models) {
                                 }
                             }
                             ], function (err, employees) {
+                                console.log(err, employees);
+
                                 if (err) {
                                     return parallelCb(err);
                                 }

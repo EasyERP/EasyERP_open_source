@@ -2,6 +2,7 @@
 var mongoose = require('mongoose');
 var ProductTypeSchema = mongoose.Schemas.productTypes;
 var _ = require('lodash');
+var ObjectId = mongoose.Types.ObjectId;
 
 module.exports = function (models) {
     return new function () {
@@ -148,6 +149,16 @@ module.exports = function (models) {
                 err.status = 400;
 
                 return callback(err);
+            }
+
+            if (!body || !Object.keys(body).length) {
+                body = {
+                    "_id"         : ObjectId('58453a4afc8d676a511283d0'),
+                    "name"        : "Default",
+                    "creationDate": "2016-12-05T09:58:34.407Z",
+                    "options"     : [],
+                    "__v"         : 0
+                };
             }
 
             ProductType = models.get(dbName, 'productTypes', ProductTypeSchema);

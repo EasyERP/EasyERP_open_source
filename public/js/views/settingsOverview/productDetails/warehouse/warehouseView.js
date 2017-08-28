@@ -4,8 +4,10 @@ define([
     'jQuery',
     'text!templates/settingsOverview/productDetails/warehouse/ListTemplate.html',
     'views/settingsOverview/productDetails/warehouse/EditView',
-    'views/settingsOverview/productDetails/warehouse/CreateView'
-], function (Backbone, _, $, PaymentMethodList, EditView, CreateView) {
+    'views/settingsOverview/productDetails/warehouse/CreateView',
+    'helpers/ga',
+    'constants/googleAnalytics'
+], function (Backbone, _, $, PaymentMethodList, EditView, CreateView, ga, GA) {
     'use strict';
 
     var ContentView = Backbone.View.extend({
@@ -36,6 +38,11 @@ define([
             var answer = confirm('Really DELETE items ?!');
 
             e.preventDefault();
+
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.DELETE_WAREHOUSE
+            });
 
             if (answer === true && model) {
 
@@ -69,6 +76,11 @@ define([
 
             e.preventDefault();
 
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.EDIT_WAREHOUSE
+            });
+
             if (model) {
                 return new EditView({model: model, collection: this.collection});
             }
@@ -76,6 +88,10 @@ define([
 
         createWarehouse: function (e) {
             e.preventDefault();
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.CREATE_WAREHOUSE
+            });
 
             return new CreateView({collection: this.collection});
         },

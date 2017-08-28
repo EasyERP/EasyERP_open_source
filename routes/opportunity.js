@@ -12,6 +12,11 @@ module.exports = function (models, event) {
     var handler = new OpportunityHandler(models, event);
     var moduleId = MODULES.OPPORTUNITIES;
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
+    var accessDeleteStackMiddleware = require('../helpers/checkDelete');
+
+    function accessDeleteStackMiddlewareFunction(req, res, next) {
+        accessDeleteStackMiddleware(req, res, next, models, 'opportunities');
+    }
 
     /**
      *@api {get} /opportunities/ Request Opportunities
@@ -1197,7 +1202,7 @@ HTTP/1.1 200 OK
     "success":true
 }
      */
-    router.delete('/', authStackMiddleware, accessStackMiddleware, handler.bulkRemove);
+    router.delete('/', authStackMiddleware, accessStackMiddleware, accessDeleteStackMiddlewareFunction, handler.bulkRemove);
 
     return router;
 };

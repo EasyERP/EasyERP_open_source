@@ -1,13 +1,15 @@
 // Filename: app.js
 define([
+    'Backbone',
     'jQuery',
     'router',
     'communication',
     'custom',
     'socket.io',
     'helpers/eventsBinder',
-    'services/applyDefaults'
-], function ($, Router, Communication, Custom, io, eventsBinder, defaults) {
+    'services/applyDefaults',
+    'helpers/ga'
+], function (Backbone,$, Router, Communication, Custom, io, eventsBinder, defaults, ga) {
     var initialize = function () {
         'use strict';
         var appRouter = new Router();
@@ -26,6 +28,8 @@ define([
             App.preloaderShowFlag = false;
             $('#loading').hide();
         };
+
+        ga && ga.create();
 
         eventsBinder.subscribeWindow();
         defaults.applyDefaults();

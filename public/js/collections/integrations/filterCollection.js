@@ -5,7 +5,13 @@ define(['Backbone',
         model: Model,
         url  : '/channels',
 
-        initialize: function () {
+        initialize: function (options) {
+            options = options || {};
+            var type = options.type;
+
+            if (type) {
+                this.url += '/' + type;
+            }
 
             this.fetch({
                 reset: true,

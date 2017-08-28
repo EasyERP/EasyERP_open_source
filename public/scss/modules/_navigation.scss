@@ -81,19 +81,21 @@
 
 .sideMenu {
   position: fixed;
-  bottom: 0;
-  left: 0;
   z-index: 200;
-  width: auto;
   height: calc(100% - 40px);
   background-color: $bg-submenu;
   font-family: $light-font-family;
-  max-width: 200px;
+  width: 200px;
+  margin-top: $sideMenuTopMargin;
   float: left;
   margin-right: -100%;
 
   nav {
     width: 200px;
+
+    .menuList {
+      width: 200px;
+    }
 
     ul {
       @extend .clearfix;
@@ -108,6 +110,7 @@
         text-align: left;
       }
     }
+
     > ul {
       > li {
         border-top: 1px solid #3d4957;
@@ -179,6 +182,11 @@
       .icon-Sales:before {
         content: "\e043";
       }
+
+      .icon-dashboards:before {
+        content: "\e94b";
+      }
+
       .icon-Project:before {
         content: "\e02d";
       }
@@ -195,7 +203,7 @@
         content: "\e04e";
       }
       .icon-Expenses:before {
-        content: "\e92f";
+        content: "\e930";
         font-size: 20px;
       }
       .icon-Inventory:before {
@@ -257,6 +265,14 @@
         line-height: 40px;
         color: $submenu-arrow;
         transition: all 0.3s;
+      }
+
+      &.single {
+
+        &.active:before,
+        &:before {
+          content: '';
+        }
       }
 
       &.opened {
@@ -402,9 +418,17 @@
   }
 }
 
-.sideMenu nav .root .icons {
-  clear: both;
+.sideMenu nav .root {
+
+  //&.green {
+  //  background: $bg-main-menu-green;
+  //}
+  
+  .icons {
+    clear: both;
+  }
 }
+
 
 .preventActions {
   + .content_wrapper {

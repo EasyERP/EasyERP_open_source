@@ -1373,6 +1373,10 @@ define([
                 self.renderProformRevenue();
                // $('#top-bar-createBtn').remove();
                 $('#top-bar-deleteBtn').remove();
+
+                if (!$('._jobsItem').length) {
+                    $('#createOrder').hide();
+                }
             });
 
             $('ul.export').hide();
@@ -1415,6 +1419,8 @@ define([
                 changeYear : true,
                 minDate    : (self.formModel.StartDate) ? self.formModel.StartDate : 0
             });
+
+
 
             return this;
 

@@ -157,7 +157,7 @@ define([
             page = parseInt(list.attr('data-page'), 10);
 
             if (page > 1) {
-                el.find('.userPagination').prepend('<a class="prevUserList" href="javascript:;">« prev</a>');
+                el.find('.userPagination').prepend('<a class="prevUserList" href="javascript:;">« Prev</a>');
             }
 
             if (count === 0) {
@@ -171,7 +171,7 @@ define([
             }
 
             if (page < count / 20) {
-                el.find('.userPagination').append('<a class="nextUserList" href="javascript:;">next »</a>');
+                el.find('.userPagination').append('<a class="nextUserList" href="javascript:;">Next »</a>');
             }
             el.find('ul li').hide();
             for (i = (page - 1) * 20; i < 20 * page; i++) {

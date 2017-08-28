@@ -10,6 +10,11 @@ module.exports = function (models, event) {
     var handler = new InvoiceHandler(models, event);
     var moduleId = MODULES.INVOICE;
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
+    var accessDeleteStackMiddleware = require('../helpers/checkDelete');
+
+    function accessDeleteStackMiddlewareFunction(req, res, next) {
+        accessDeleteStackMiddleware(req, res, next, models, 'invoice', event);
+    }
 
     router.use(authStackMiddleware);
 
@@ -911,7 +916,7 @@ module.exports = function (models, event) {
         handler.removeInvoice(req, res, id);
     });
 
-    router.delete('/', accessStackMiddleware, handler.bulkRemove);
+    router.delete('/', accessStackMiddleware, accessDeleteStackMiddlewareFunction, handler.bulkRemove);
 
     return router;
 };

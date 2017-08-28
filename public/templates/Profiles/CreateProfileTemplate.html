@@ -3,7 +3,7 @@
         <h4 class="_dialogMainTitle">Create new profile</h4>
         <div class="_formWrap _enlargedItemMargin">
             <div class="_formBlock">
-                <div class="_animateInputBox">
+                <div class="_animateInputBox _withInfo">
                     <input type="text"
                            class="_animate"
                            id="profileName"
@@ -11,16 +11,18 @@
                            autofocus
                            maxlength="12"/>
                     <label class="_animate">Profile Name</label>
+                    <span class="tips icon-info" data-id="profileName"></span>
                 </div>
-                <div class="_animateInputBox">
+                <div class="_animateInputBox _withInfo">
                     <input type="text"
                            class="_animate"
                            id="profileDescription"
                            required
                            maxlength="32"/>
                     <label class="_animate">Description</label>
+                    <span class="tips icon-info" data-id="profileDescription"></span>
                 </div>
-                <div class="_animateSelectBox">
+                <div class="_animateSelectBox _withInfo">
                     <span class="_selectTitle">Base Profile: </span>
                     <div class="_newSelectListWrap">
                         <a id="profilesDd"
@@ -28,6 +30,7 @@
                            href="javascript:;">Select assigner
                         </a>
                     </div>
+                    <span class="tips icon-info" data-id="profilesDd"></span>
                 </div>
                 <div class="_formRow">
                     <div class="_circleRadioRadianceWrap">
@@ -40,6 +43,7 @@
                         <label for="baseProfile" class="_circleRadioRadianceLabel"></label>
                     </div>
                     <label for="baseProfile">Use base profile and edit privileges</label>
+                    <span class="tips icon-info" data-id="baseProfile"></span>
                 </div>
                 <div class="_formRow">
                     <div class="_circleRadioRadianceWrap">
@@ -51,6 +55,7 @@
                         <label for="newProfile" class="_circleRadioRadianceLabel"></label>
                     </div>
                     <label for="newProfile">Create new profile from scratch</label>
+                    <span class="tips icon-info" data-id="newProfile"></span>
                 </div>
             </div>
         </div>

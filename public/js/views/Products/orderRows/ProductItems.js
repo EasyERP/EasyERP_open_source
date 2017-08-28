@@ -85,6 +85,7 @@ define([
             this.responseObj = {};
             this.taxesRate = 0;
             this.availableVisible = true;
+            this.productsCount = 0;
 
             if (options) {
                 this.parentModel = options.parentModel;
@@ -125,6 +126,8 @@ define([
                 this.quotations = false;
             }
 
+            this.account = options.account;
+
             this.expense = options.expense;
 
             this.notPayed = options.notPayed;
@@ -137,6 +140,8 @@ define([
                 variants: 1
             };
             this.responseObj = options.responseObj || {};
+
+            delete options.responseObj;
 
             products = new ProductCollection(options);
             products.bind('reset', function () {
@@ -254,6 +259,12 @@ define([
             tr.remove();
             trNext.remove();
 
+            this.productsCount--;
+
+            if (this.productsCount === 1) {
+                this.$el.find('.info').first().find('.removeProduct').remove();
+            }
+
             this.deletedProducts.push(productId);
         },
 
@@ -269,7 +280,7 @@ define([
             if ($(e.target).closest('input').hasClass('quantity')) {
                 return keyValidator(e);
             }
-            
+
             return keyValidator(e, true);
         },
 
@@ -333,6 +344,7 @@ define([
             var account;
             var accountObj;
             var defaultTax;
+            var expensesCategory;
 
             e.preventDefault();
             e.stopPropagation();
@@ -350,7 +362,8 @@ define([
                         curSymbol : curSymbol,
                         writeOff  : self.writeOff,
                         quotations: self.quotations,
-                        project   : self.project
+                        project   : self.project,
+                        account   : self.account
                     }));
                 } else {
 
@@ -364,29 +377,30 @@ define([
                         curSymbol : curSymbol,
                         writeOff  : self.writeOff,
                         quotations: self.quotations,
-                        project   : self.project
+                        project   : self.project,
+                        account   : self.account
                     }));
                 }
 
                 warehouse = _.findWhere(this.responseObj['#warehouseDd'], {_id: $('#warehouseDd').attr('data-id')});
+                expensesCategory = _.findWhere(this.responseObj['#categories'], {_id: $('#categories').attr('data-id')});
                 defaultTax = _.findWhere(this.responseObj['#taxCode'], {type: true});
-                account = warehouse ? warehouse.account : null;
-                accountObj = _.findWhere(this.responseObj['#account'], {_id: account});
+                account = warehouse ? warehouse.account : expensesCategory && expensesCategory.account ? expensesCategory.account : null;
+                accountObj = _.findWhere(this.responseObj['#accountDd'], {_id: this.account || account});
 
                 if (accountObj && accountObj._id) {
-                    this.$el.find('.productItem').each(function () {
+                    this.$el.find('.productItem ').each(function () {
                         $(this).find('.accountDd').text(accountObj.name).attr('data-id', accountObj._id);
                     });
                 }
 
                 if (defaultTax && defaultTax._id) {
-                    $parrent.find('tr.productItem').last().find('.current-selected.taxCode').text(defaultTax.name).attr('data-id', defaultTax._id).attr('data-tax', defaultTax.level);
+                    $parrent.find('tr.productItem ').last().find('.current-selected.taxCode').text(defaultTax.name).attr('data-id', defaultTax._id).attr('data-tax', defaultTax.level);
                 }
 
                 this.removeEditableCass($parrent.find('tr').last());
 
             }
-
 
             $('.newSelectList').remove();
 
@@ -465,7 +479,7 @@ define([
             var self = this;
             var $target = $(e.target).closest('li');
             var $parrent = $target.parents('td');
-            var $trEl = $target.parents('tr.productItem');
+            var $trEl = $target.parents('tr.item') && $target.parents('tr.item').length ? $target.parents('tr.item') : $target.parents('tr.productItem');
             var $infoTr = $trEl.next();
             var $SKU = $target.find('b');
             var $variants = $target.find('span.variants');
@@ -500,6 +514,10 @@ define([
 
             if (_id === 'createJob') {
                 return self.generateJob();
+            }
+
+            if (!this.expense && !warehouse) {
+                return App.render({type: 'error', message: 'Please, choose Warehouse first'});
             }
 
             if ($SKU.length) {
@@ -847,7 +865,7 @@ define([
 
             this.$dialogContainer = $('#dialogContainer').html() ? $('#dialogContainer') : $('#formContent');
 
-            populate.get('#accountDd', '/chartOfAccount/getForDd', {}, 'name', this, true, true);
+            populate.get('#accountDd', '/chartOfAccount/getForDd', {}, 'name', this, true, true, this.account || null);
             populate.get('#shippingDd', '/shippingMethod/getForDd', {}, 'name', this, false, true);
 
             if (model) {
@@ -866,6 +884,9 @@ define([
                 }));
 
                 if (products) {
+
+                    this.productsCount = products.length;
+
                     productsContainer = $thisEl.find('#productList');
                     productsContainer.append(_.template(ItemsEditList, {
                         products        : products,

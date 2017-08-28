@@ -106,6 +106,7 @@ define([
                         class: 'btn blue',
                         click: function () {
                             self.saveItem();
+                            self.gaTrackingConfirmEvents();
                         }
                     },
 
@@ -113,7 +114,8 @@ define([
                         text : 'Cancel',
                         class: 'btn',
                         click: function () {
-                            $(this).dialog().remove();
+                            //$(this).dialog().remove();
+                            self.hideDialog();
                         }
                     }]
 

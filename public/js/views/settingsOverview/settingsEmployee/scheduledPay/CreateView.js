@@ -3,8 +3,9 @@ define([
     'Underscore',
     'Backbone',
     'text!templates/settingsOverview/settingsEmployee/scheduledPay/CreateTemplate.html',
-    'models/ScheduledPayModel'
-], function ($, _, Backbone, CreateTemplate, ScheduledPayModel) {
+    'models/ScheduledPayModel',
+    'helpers/ga'
+], function ($, _, Backbone, CreateTemplate, ScheduledPayModel, ga) {
 
     var CreateView = Backbone.View.extend({
         el         : '#content-holder',
@@ -97,6 +98,7 @@ define([
                         text : 'Create',
                         click: function () {
                             self.saveItem();
+                            ga && ga.trackingEditConfirm(self.contentType);
                         }
                     },
 
@@ -105,6 +107,8 @@ define([
                         class: 'btn',
                         click: function () {
                             self.hideDialog();
+                            ga && ga.trackingEditCancel(self.contentType);
+
                         }
                     }]
 

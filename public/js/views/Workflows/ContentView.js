@@ -7,8 +7,10 @@ define([
     'collections/RelatedStatuses/RelatedStatusesCollection',
     'custom',
     'models/WorkflowsModel',
-    'constants'
-], function (Backbone, $, _, ListTemplate, ListItemView, RelatedStatusesCollection, Custom, WorkflowsModel, CONSTANTS) {
+    'constants',
+    'helpers/ga',
+    'constants/googleAnalytics'
+], function (Backbone, $, _, ListTemplate, ListItemView, RelatedStatusesCollection, Custom, WorkflowsModel, CONSTANTS, ga, GA) {
     'use strict';
 
     var ContentView = Backbone.View.extend({
@@ -21,7 +23,7 @@ define([
             this.collection = options.collection;
             this.collection.bind('reset', _.bind(this.render, this));
 
-          //  this.render();
+            //  this.render();
         },
 
         events: {
@@ -58,6 +60,8 @@ define([
             };
 
             e.preventDefault();
+
+            ga && ga.trackingEditConfirm(name);
 
             $thisEl.find('#addNewStatus').show();
             this.collection.url = CONSTANTS.URLS.WORKFLOWS;
@@ -299,6 +303,12 @@ define([
             var text;
 
             e.preventDefault();
+
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.CREATE_STATUS_BTN
+            });
+
             $thisEl.find('span').removeClass('hidden');
             $thisEl.find('.name input, select, a:contains("Cancel"), a:contains("Save")').remove();
             $thisEl.find('.edit').removeClass('hidden');
@@ -319,6 +329,11 @@ define([
         },
         cancelStatus: function (e) {
             e.preventDefault();
+
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.CANCEL_CREATING
+            });
 
             $('.addnew, .SaveCancel').remove();
             $('#addNewStatus').show();
@@ -342,6 +357,11 @@ define([
             var status = $('#statusesDd option:selected').val();
 
             e.preventDefault();
+
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.CONFIRM_CREATING
+            });
 
             workflowsModel.save({
                 wId     : wId.trim(),

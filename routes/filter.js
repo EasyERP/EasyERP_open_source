@@ -1645,5 +1645,7 @@ module.exports = function (models) {
 
     router.get('/ChartOfAccount', handler.getChartOfAccountFilters);
 
+    router.get('/billOfMaterials',handler.getBillOfMaterialsFilters);
+
     return router;
 };

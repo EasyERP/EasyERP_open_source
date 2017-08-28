@@ -11,6 +11,7 @@
                 if (element._id !== 'line') { %>
                 <li class="filterValues checked"
                     data-id="<%= element._id %>">
+                    <span class="icon icon-checked2"></span>
                     <%= !onlyCustom ? element.name : '' %>
                     <% if (element._id === 'custom') { %>
                         <li id="<%= contentType %>CustomDateBlock" class="customTime <%= onlyCustom ? '' : 'hidden' %>">

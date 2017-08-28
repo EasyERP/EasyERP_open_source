@@ -9,6 +9,7 @@ button.red, a.red {
   &:hover {
     background-color: $tilte-color;
     color: #fff;
+
   }
 }
 
@@ -35,7 +36,7 @@ button.red, a.red {
 
 .filterButton {
   background-color: #FFF;
-  border: 1px solid #7f7f80;//$thin-border #ABABAB;
+  border: 1px solid #7f7f80; //$thin-border #ABABAB;
   position: absolute;
   right: 118px;
   margin-top: -26px;
@@ -61,7 +62,7 @@ button.red, a.red {
 
   .arrow {
     float: right;
-    border-left: 1px solid #7f7f80;//$thin-border #ababab;
+    border-left: 1px solid #7f7f80; //$thin-border #ababab;
     height: 24px;
     width: 24px;
     font-family: $icon-font;
@@ -146,14 +147,34 @@ button.red, a.red {
   line-height: 30px;
   min-width: 70px;
 
+  &.disabled {
+    opacity: 0.5;
+    cursor: default !important;
+
+    &:hover {
+      background-color: inherit;
+    }
+  }
+
   &.icon-plus {
     &:before {
-      //content: "\e912";
-      //font-family: $icon-font;
       margin-right: 6px;
     }
   }
 
+  &.icon-plane {
+    //display: flex;
+    //align-items: center;
+    height: 28px;
+    padding: 0 10px 0 8px;
+    font-family: $semibold-font-family;
+
+    &:before {
+      float: left;
+      margin-right: 8px;
+      font-size: 16px;
+    }
+  }
 
   &.icon-download {
     &:before {
@@ -178,7 +199,7 @@ button.red, a.red {
 
   &.slim {
     height: 26px;
-    line-height: 24px ;
+    line-height: 24px;
   }
 
   &.green {
@@ -311,41 +332,77 @@ button.red, a.red {
     min-width: 80px;
   }
 
+  &.uploadBtn {
+    padding: 0;
+
+    &.slim {
+      label {
+        height: 24px;
+      }
+    }
+
+    label {
+      display: inline-block;
+      width: 100%;
+      height: 30px;
+      cursor: pointer;
+    }
+
+    input[type="file"] {
+      opacity: 0;
+    }
+  }
+  
+  &._unlinkedOrders {
+    a {
+      color: $white;
+    }
+  }
+
   span, a {
     padding: 0 !important;
     color: $black;
   }
 }
 
-#createBtnHolder{
-  .export{
+.exportBtn {
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  max-height: 39px;
+  width: 38px;
+  background-color: transparent;
+  color: #69a1c5;
+  @include rem('font-size', 28px);
+
+  &:hover {
+    background-color: #7eadcc;
+    color: #fff;
+  }
+}
+
+#createBtnHolder {
+  .export {
     float: left;
     display: flex;
 
-     li .btn{
-       margin-right: 10px;
-     }
+    li .btn {
+      margin-right: 10px;
+    }
 
-     li:last-child .btn{
-       margin-right: 0;
-     }
+    li:last-child .btn {
+      margin-right: 0;
+    }
   }
 }
 
 .btnsBlock {
+  display: flex;
+  height: 100%;
+  align-items: center;
 
-  &:after {
-    content: '';
-    display: table;
-    clear: both;
-  }
-  > * {
-    float: left;
+  .btn {
     margin-right: 10px;
-
-    &:last-child {
-      margin-right: 0;
-    }
   }
 }
 
@@ -368,13 +425,28 @@ button.red, a.red {
   }
 }
 
-.backToSettings{
+._openViewBtn {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  font-size: 16px;
+  line-height: 30px;
+  text-align: center;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #7eadcc;
+    color: #fff;
+  }
+}
+
+.backToSettings {
   position: absolute;
   right: 12px;
   top: 6px;
 }
 
-.closePayrollList{
+.closePayrollList {
   float: right;
   right: 55px;
 }
@@ -423,6 +495,7 @@ button.red, a.red {
 
 #createBtnHolder.btnsBlock {
   float: left;
+  margin-left: 5px;
 
   &._underTabs {
     .btn {
@@ -439,11 +512,11 @@ button.red, a.red {
     font-size: 11px;
     font-family: $base-font-family;
     color: $formColum-main-subText-color !important;
-    border: 1px solid #7f7f80;//$thin-border $border-color-main !important;
+    border: 1px solid #7f7f80; //$thin-border $border-color-main !important;
     padding: 5px 15px;
 
     &:hover {
-      border: 1px solid #7f7f80;//$thin-border $bg-main-menu-selected !important;
+      border: 1px solid #7f7f80; //$thin-border $bg-main-menu-selected !important;
       color: $formColum-main-subText-color !important;
     }
   }
@@ -474,7 +547,7 @@ button.red, a.red {
     position: absolute;
     z-index: 10;
     bottom: 32px;
-    left: 0;
+    right: 0;
     padding: 5px;
     background-color: #fff;
     border-radius: 2px;
@@ -501,10 +574,11 @@ button.red, a.red {
       0 1px 5px 0 rgba(0, 0, 0, 0.12),
       0 3px 1px -2px rgba(0, 0, 0, 0.2);
     }
+
     &:after {
       content: '';
       position: absolute;
-      left: 7px;
+      right: 8px;
       bottom: -4px;
       z-index: -1;
       width: 8px;
@@ -553,6 +627,19 @@ button.red, a.red {
   }
 }
 
+._acountingTableWrap {
+  ._loadRates,
+  ._createRates {
+    margin-top: 10px;
+    margin-left: 0;
+  }
+
+  ._filterDropDownWrap + ._createRates {
+    margin-top: 5px;
+    margin-left: 10px;
+  }
+}
+
 ._statusOrders {
   line-height: 30px;
 
@@ -572,8 +659,9 @@ button.red, a.red {
     text-align: center;
     border-radius: 50%;
 
-    &._allocationed  {
+    &._allocationed {
       color: #fff !important;
+      font-size: 15px;
     }
 
     &.icon-checked2 {
@@ -583,11 +671,11 @@ button.red, a.red {
     &._fullfilled,
     &._shipped {
       background-color: transparent !important;
-      font-size: 15px;
+      font-size: 12px;
     }
 
     &._shipped {
-      font-size: 18px;
+      font-size: 12px;
     }
 
     &._notDid {
@@ -612,28 +700,27 @@ button.red, a.red {
   }
 }
 
-._acountingTableWrap {
-  ._loadRates, ._createRates {
-    margin-top: 10px;
-    margin-left: 0px;
-  }
-}
-
 .removeChannelWrap {
   margin: 0 auto;
   text-align: center;
 
+  span {
+    display: block;
+    padding-top: 20px;
+  }
+
   .btn {
-    margin-top: 28px;
+    margin: 28px 0 20px;
   }
 }
 
-.next-navigation-search .next-input--stylized{
+.next-navigation-search .next-input--stylized {
   border-radius: 3px;
 }
 
 .scaleButtons {
-  &.active, &:hover {
+  &.active,
+  &:hover {
     border-color: #3e88b9;
     background-color: #3e88b9;
   }
@@ -642,7 +729,6 @@ button.red, a.red {
     margin-right: 6px;
   }
 }
-
 
 ._convertToOpportunityWrap {
   width: calc(100% - 42px);

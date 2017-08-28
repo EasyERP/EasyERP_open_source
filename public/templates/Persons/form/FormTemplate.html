@@ -18,68 +18,68 @@
                             <input class="_animate editable"
                                    data-id="name_first"
                                    value="<%=name.first%>"
-                                   required/>
+                                   required />
                             <label class="_animate">First Name</label>
                         </div>
                         <div class="_animateInputBox">
                             <input class="_animate editable"
                                    data-id="name_last"
                                    value="<%=name.last%>"
-                                   required/>
+                                   required />
                             <label class="_animate">Last Name</label>
                         </div>
                         <div class="_animateInputBox">
                             <input class="_animate editable"
                                    data-id="jobPosition"
                                    value="<%=jobPosition%>"
-                                   required/>
+                                   required />
                             <label class="_animate">Job Position</label>
                         </div>
                         <div class="_animateInputBox">
                             <input class="_animate editable"
                                    data-id="email"
                                    value="<%=email%>"
-                                   required/>
+                                   required />
                             <label class="_animate">Email</label>
                         </div>
                         <div class="_animateInputBox">
                             <input class="_animate editable _socialContact"
                                    data-id="skype"
                                    value="<%=skype%>"
-                                   required/>
+                                   required />
                             <label class="_animate">Skype</label>
                         </div>
                         <div class="_animateInputBox">
                             <input class="_animate editable _socialContact"
                                    data-id="social_LI"
                                    value="<%=social.LI%>"
-                                   required/>
+                                   required />
                             <label class="_animate">LinkedIn</label>
                         </div>
                         <div class="_animateInputBox">
                             <input class="_animate editable _socialContact"
                                    data-id="social_FB"
                                    value="<%=social.FB%>"
-                                   required/>
+                                   required />
                             <label class="_animate">Facebook</label>
                         </div>
                         <div class="_animateInputBox">
                             <input class="_animate editable"
                                    data-id="phones_phone"
                                    value="<%=phones.phone%>"
-                                   required/>
+                                   required />
                             <label class="_animate">Phone</label>
                         </div>
                         <div class="_animateInputBox">
                             <input class="_animate editable"
                                    data-id="phones_mobile"
                                    value="<%=phones.mobile%>"
-                                   required/>
+                                   required />
                             <label class="_animate">Mobile</label>
                         </div>
                         <div class="_animateInputBox">
                             <span class="_staticLabel">Date of Birth</span>
-                            <div  class="inputBox">
+                            <div class="inputBox">
                                 <input class="_animate extrainfo"
                                        type="text"
                                        name="Date of Birth"
@@ -97,39 +97,50 @@
                             <div class="clearfix"></div>
                         </div>
 
+                        <div class="_formRow _tipsWrap">
+                            <label class="_animatedCheckbox">
+                                <input type="checkbox" id="makeSame" data-id="makeSameAsBilling">
+                                <span></span>
+                            </label>
+                            <label for="makeSame">Make the same as Billing</label>
+                        </div>
                         <div class="separateBlock">Billing Address</div>
 
                         <div class="_animateInputBox">
                             <input class="_animate editable"
                                    data-id="address_street"
                                    value="<%=address.street%>"
-                                   required/>
+                                   id="billingStreet"
+                                   required />
                             <label class="_animate">Street</label>
                         </div>
                         <div class="_animateInputBox">
                             <input class="_animate editable"
                                    data-id="address_city"
                                    value="<%=address.city%>"
-                                   required/>
+                                   id="billingCity"
+                                   required />
                             <label class="_animate">City</label>
                         </div>
                         <div class="_animateInputBox">
                             <input class="_animate editable"
                                    data-id="address_state"
                                    value="<%=address.state%>"
-                                   required/>
+                                   id="billingState"
+                                   required />
                             <label class="_animate">State</label>
                         </div>
                         <div class="_animateInputBox">
                             <input class="_animate editable"
                                    data-id="address_zip"
                                    value="<%=address.zip%>"
-                                   required/>
+                                   id="billingZIP"
+                                   required />
                             <label class="_animate">Zip</label>
                         </div>
                         <div class="_animateSelectBox">
                             <span class="_selectTitle">Country</span>
-                            <div  class="inputBox _newSelectListWrap">
+                            <div class="inputBox _newSelectListWrap">
                                 <a class="current-selected"
                                    href="javascript:;"
                                    data-id="address_country"
@@ -144,37 +155,41 @@
                             <input class="_animate editable"
                                    data-id="shippingAddress_name"
                                    value="<%=shippingAddress.name%>"
-                                   required/>
+                                   required />
                             <label class="_animate">Full Name</label>
                         </div>
                         <div class="_animateInputBox">
                             <input class="_animate editable"
+                                   id="shippingStreet"
                                    data-id="shippingAddress_street"
                                    value="<%=shippingAddress.street%>"
-                                   required/>
+                                   required />
                             <label class="_animate">Street</label>
                         </div>
                         <div class="_animateInputBox">
                             <input class="_animate editable"
+                                   id="shippingCity"
                                    data-id="shippingAddress_city"
-                                   value="<%=shippingAddress.city%>" required/>
+                                   value="<%=shippingAddress.city%>" required />
                             <label class="_animate">City</label>
                         </div>
                         <div class="_animateInputBox">
                             <input class="_animate editable"
+                                   id="shippingState"
                                    data-id="shippingAddress_state"
-                                   value="<%=shippingAddress.state%>" required/>
+                                   value="<%=shippingAddress.state%>" required />
                             <label class="_animate">State</label>
                         </div>
                         <div class="_animateInputBox">
                             <input class="_animate editable"
+                                   id="shippingZip"
                                    data-id="shippingAddress_zip"
-                                   value="<%=shippingAddress.zip%>" required/>
+                                   value="<%=shippingAddress.zip%>" required />
                             <label class="_animate">Zip</label>
                         </div>
                         <div class="_animateSelectBox">
                             <label class="_selectTitle">Country</label>
-                            <div  class="inputBox _newSelectListWrap">
+                            <div class="inputBox _newSelectListWrap">
                                 <a class="current-selected"
                                    href="javascript:;"
                                    id="shippingCountry"
@@ -184,6 +199,7 @@
                                 </a>
                             </div>
                         </div>
+
                         <div id="salesPurchases-container"></div>
                     </div>
                     <div class="cropImages form" style="display:none;">
@@ -192,10 +208,10 @@
 
                             <div class="clearfix"></div>
                         </div>
-                        <br/>
+                        <br />
 
                         <div class="image_input" style="float: left;margin-right: 20px;"></div>
-                        <img class="image_output"/>
+                        <img class="image_output" />
 
                         <div class="clearfix"></div>
                     </div>

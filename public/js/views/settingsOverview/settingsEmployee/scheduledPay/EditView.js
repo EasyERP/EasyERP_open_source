@@ -95,6 +95,7 @@ define([
                     text : 'Save',
                     click: function () {
                         self.saveItem();
+                        self.gaTrackingEditConfirm();
                     }
                 }, {
                     text : 'Cancel',

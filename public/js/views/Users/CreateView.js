@@ -7,10 +7,12 @@ define([
     'common',
     'populate',
     'Validation',
-    'views/selectView/selectView'
-], function (Backbone, $, _, CreateTemplate, UsersModel, common, populate, Validation, SelectView) {
+    'views/selectView/selectView',
+    'views/dialogViewBase',
+    'helpers/ga'
+], function (Backbone, $, _, CreateTemplate, UsersModel, common, populate, Validation, SelectView, DialogViewBase, ga) {
 
-    var UsersCreateView = Backbone.View.extend({
+    var UsersCreateView = /*Backbone.View*/DialogViewBase.extend({
         el         : '#content-holder',
         contentType: 'Users',
         template   : _.template(CreateTemplate),
@@ -152,7 +154,10 @@ define([
                     save: {
                         text : 'Create',
                         class: 'btn blue',
-                        click: self.saveItem
+                        click: function () {
+                            self.saveItem();
+                            self.gaTrackingConfirmEvents();
+                        }
                     },
 
                     cancel: {
@@ -160,6 +165,7 @@ define([
                         class: 'btn',
                         click: function () {
                             self.hideDialog();
+                            ga && ga.trackingEditCancel();
                         }
                     }
                 }

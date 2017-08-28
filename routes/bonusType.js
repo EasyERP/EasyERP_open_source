@@ -4,10 +4,15 @@ var router = express.Router();
 var authStackMiddleware = require('../helpers/checkAuth');
 var MODULES = require('../constants/modules');
 
-module.exports = function (models) {
+module.exports = function (models, event) {
     var handler = new BonusTypeHandler(models);
     var moduleId = MODULES.BONUSTYPE;
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
+    var accessDeleteStackMiddleware = require('../helpers/checkDelete');
+
+    function accessDeleteStackMiddlewareFunction(req, res, next) {
+        accessDeleteStackMiddleware(req, res, next, models, 'bonusType', event);
+    }
 
     router.use(authStackMiddleware);
 
@@ -167,7 +172,7 @@ HTTP/1.1 200 OK
      "n":2
 }
      */
-    router.delete('/', accessStackMiddleware, handler.bulkRemove);
+    router.delete('/', accessStackMiddleware, accessDeleteStackMiddlewareFunction, handler.bulkRemove);
 
     return router;
 };

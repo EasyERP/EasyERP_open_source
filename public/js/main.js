@@ -36,7 +36,10 @@ require.config({
         socketio       : '/socket.io/socket.io.js',
         backstratch    : './libs/jquery-backstretch/jquery.backstretch.min',
         wickedpicker   : './libs/wickedpicker/dist/wickedpicker.min',
-        bxSlider       : './libs/bxslider-4/dist/jquery.bxslider.min'
+        bxSlider       : './libs/bxslider-4/dist/jquery.bxslider.min',
+        dragtable      : './libs/dragtable/jquery.dragtable',
+        gapi           : '//apis.google.com/js/platform'
+        //inbound_rocket : './libs/inboundrocket-tracking.min'
     },
 
     shim: {
@@ -58,6 +61,12 @@ require.config({
         backstratch    : ['jQuery'],
         wickedpicker   : ['jQuery'],
         bxSlider       : ['jQuery'],
+        gapi           : {
+            exports: 'gapi'
+        },
+
+        dragtable: ['jQuery', 'jqueryui'],
+        // inbound_rocket: ['jQuery'],
 
         d3: {
             exports: 'd3'
@@ -72,7 +81,7 @@ require.config({
             exports: 'dateFormat'
         },
 
-        app: ['Backbone', 'jqueryui', 'ajaxForm', 'imageCrop', 'd3', 'backstratch', 'topojson', 'wickedpicker', 'malihuScrollBar', 'bxSlider']
+        app: ['Backbone', 'jqueryui', 'ajaxForm', 'imageCrop', 'd3', 'backstratch', 'topojson', 'wickedpicker', 'malihuScrollBar', 'bxSlider', 'dragtable', 'gapi' /*'inbound_rocket'*/]
     }
 });
 
@@ -87,7 +96,7 @@ require(['Backbone', 'jQuery', 'app'], function (Backbone, $, app) {
         container.append(renderEl);
 
         if (messageClass === 'error') {
-            FlurryAgent.logError('Error', text);
+            // FlurryAgent.logError('Error', text);
         }
 
         container.find('div.animate').delay(10).animate({
@@ -104,6 +113,13 @@ require(['Backbone', 'jQuery', 'app'], function (Backbone, $, app) {
             });
         });
     };
+
+    gapi.load('auth', function () {
+        /*auth2 = gapi.auth2.init({
+         client_id: '34449104416-ks7ifq1re2kgoapmeklqvoc6s19tv8tn.apps.googleusercontent.com',
+         scope    : 'profile'
+         });*/
+    });
 
     app.initialize();
 });

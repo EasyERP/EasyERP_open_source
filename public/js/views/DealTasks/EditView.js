@@ -13,20 +13,7 @@
     'constants',
     'moment',
     'helpers/keyValidator'
-], function (Backbone,
-             _,
-             $,
-             ParentView,
-             EditTemplate,
-             showSelectTemplate,
-             NoteView,
-             CategoryView,
-             common,
-             populate,
-             custom,
-             CONSTANTS,
-             moment,
-             keyValidator) {
+], function (Backbone, _, $, ParentView, EditTemplate, showSelectTemplate, NoteView, CategoryView, common, populate, custom, CONSTANTS, moment, keyValidator) {
 
     var EditView = ParentView.extend({
         contentType: 'DealTasks',
@@ -34,11 +21,11 @@
         responseObj: {},
 
         events: {
-            'keypress .time'           : 'keypress',
-            'click #projectTopName'    : 'useProjectFilter',
-            'click .removeSelect'      : 'removeSelect',
-            'keyup .time'              : 'validateInput',
-            'change .time'   : 'changeInput',
+            'keypress .time'       : 'keypress',
+            'click #projectTopName': 'useProjectFilter',
+            'click .removeSelect'  : 'removeSelect',
+            'keyup .time'          : 'validateInput',
+            'change .time'         : 'changeInput'
         },
 
         initialize: function (options) {
@@ -54,7 +41,7 @@
             return keyValidator(e);
         },
 
-        changeInput : function(e) {
+        changeInput: function (e) {
             var $target = $(e.target);
 
             e.preventDefault();
@@ -64,7 +51,7 @@
             }
         },
 
-        validateInput : function(e) {
+        validateInput: function (e) {
             var $target = $(e.target);
             var maxVal = ($target.attr('id') === 'dueDateHours') ? 23 : 59;
 
@@ -104,16 +91,16 @@
 
         chooseOption: function (e) {
             var $target = $(e.target);
-            var $div =  $target.closest('div.selectType');
+            var $div = $target.closest('div.selectType');
+            var $img = $div.find('.dataImg');
 
-            if ($div.length){
-
-                $div.append(_.template(showSelectTemplate, {id : $target.attr('id'), name : $target.text(), imageSrc:  $target.attr('data-img')}));
-                $div.find('a').hide();
+            if ($div.length) {
+                $img.attr('src', $target.attr('data-img'));
+                $div.attr('id', $target.attr('id'));
+                $div.find('.current-selected').html($target.text());
             } else {
                 $target.parents('.dataField').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
             }
-
         },
 
         saveItem: function (event) {
@@ -127,9 +114,9 @@
             var currentWorkflow;
             var currentAssigned;
             var modelJSON = this.currentModel.toJSON();
-            var deal = this.$el.find('#dealItem .showSelect').attr('data-id');
-            var company = this.$el.find('#companyItem .showSelect').attr('data-id');
-            var contact = this.$el.find('#contactItem .showSelect').attr('data-id');
+            var deal = this.$el.find('#dealItem .selectType').attr('data-id');
+            var company = this.$el.find('#companyItem .selectType').attr('data-id');
+            var contact = this.$el.find('#contactItem .selectType').attr('data-id');
             var time = moment($.trim(this.$el.find('#timepickerOne').wickedpicker('time')).split(' '), 'hh:mm:ss A');
             var description = $.trim(this.$el.find('#description').val());
             var dueDate = $.trim(this.$el.find('#dueDate').val());
@@ -189,7 +176,6 @@
                 data.assignedTo = assignedTo;
             }
 
-
             this.currentModel.set(data);
 
             if (this.currentModel.changed.company) {
@@ -201,8 +187,6 @@
             if (this.currentModel.changed.deal) {
                 data.dealDate = new Date();
             }
-
-
 
             this.currentModel.save(this.currentModel.changed, {
                 patch  : true,
@@ -227,7 +211,8 @@
             notDiv.append(
                 new CategoryView({
                     model      : this.currentModel,
-                    contentType: 'DealTasks'
+                    contentType: 'DealTasks',
+                    el         : '#categoryHolder'
                 }).render().el
             );
         },
@@ -279,12 +264,13 @@
                     }
                 });
             }
+
         },
 
         render: function () {
             var formString = this.template({
-                model: this.currentModel.toJSON(),
-                moment : moment
+                model : this.currentModel.toJSON(),
+                moment: moment
             });
             var dueDate = this.currentModel.get('dueDate');
             var time = moment(dueDate).format('H:mm:ss');
@@ -293,13 +279,16 @@
 
             this.$el = $(formString).dialog({
                 dialogClass: 'edit-dialog task-dialog task-edit-dialog',
-                width      : 600,
+                width      : 800,
                 title      : this.currentModel.toJSON().description,
                 buttons    : {
                     save: {
                         text : 'Save',
                         class: 'btn blue',
-                        click: self.saveItem
+                        click: function (e) {
+                            self.saveItem(e);
+                            self.gaTrackingEditConfirm();
+                        }
                     },
 
                     cancel: {
@@ -310,7 +299,10 @@
                     delete: {
                         text : 'Delete',
                         class: 'btn',
-                        click: self.deleteItem
+                        click: function (e) {
+                            self.deleteItem(e);
+                            self.gaTrackingDelete();
+                        }
                     }
                 }
             });
@@ -328,16 +320,16 @@
 
             populate.getWorkflow('#workflowsDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'DealTasks'}, 'name', this);
             populate.get2name('#assignedToDd', CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this);
-            populate.get('#contactDd', CONSTANTS.URLS.COMPANIES, {type: 'Person'},'fullName', this, false);
-            populate.get('#companyDd', CONSTANTS.URLS.COMPANIES, {type: 'Company'},'fullName', this, false);
-            populate.get('#dealDd', 'opportunities/getForDd', {},  'name', this, false);
+            populate.get('#contactDd', CONSTANTS.URLS.COMPANIES, {type: 'Person'}, 'fullName', this, false);
+            populate.get('#companyDd', CONSTANTS.URLS.COMPANIES, {type: 'Company'}, 'fullName', this, false);
+            populate.get('#dealDd', 'opportunities/getForDd', {}, 'name', this, false);
 
             this.delegateEvents(this.events);
 
             this.$el.find('#dueDate').datepicker({dateFormat: 'd M, yy', minDate: new Date()});
             this.$el.find('#timepickerOne').wickedpicker({
-                now : time,
-                showSeconds: true, //Whether or not to show seconds,
+                now            : time,
+                showSeconds    : true, //Whether or not to show seconds,
                 secondsInterval: 1, //Change interval for seconds, defaults to 1,
                 minutesInterval: 1
             });

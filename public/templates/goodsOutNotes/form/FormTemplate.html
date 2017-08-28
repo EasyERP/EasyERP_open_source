@@ -1,96 +1,120 @@
-<div class="form-holder">
-    <form method="post" action="" class="form" id="goodsNote">
-        <fieldset>
-            <div class="inner">
-                <div class="_goodOutWrap">
-                    <div class="topPanel">
-                        <h2>Goods-out note <span><%var name = model.name.split('*');%> <span id="name">#<a class="blue"
-                                                                                                           href="<%='/#easyErp/order/tform/'+ model.order._id %>"><%=name[0]%></a>*<%=name[1]%></span></span>
-                        </h2>
-                        <dl class="opp-info">
-                            <dt class="fontBold"><label>Tracking ref:</label></dt>
-                            <dd class="_newSelectListWrap">
-                                <span href="javascript:;"><%=model.reference || '___'%></span>
-                            </dd>
-                            <dt class="fontBold"><label>Shipping method:</label></dt>
-                            <dd class="_newSelectListWrap">
-                        <span id="name"
-                              href="javascript:;"><%=model.shippingMethod ? model.shippingMethod.name : '___'%></span>
-                            </dd>
-                            <dt class="fontBold"><label>Date:</label></dt>
-                            <dd class="_newSelectListWrap">
-                                <%if (model.status.shipped) {%>
-                                <span id="date"><%=model.date || ''%></span>
-                                <%} else {%>
-                                <input id="date" class="_inputBordered " readonly/>
+<%var goodsOut = model._type === 'GoodsOutNote';%>
+
+<div class="form-holder _goodOutHolder">
+    <form method="post" action="" id="goodsNote">
+        <div class="_goodOutWrap">
+            <div class="_goodOutHeader">
+
+                <div class="_titleWrap">
+                    <h2 class="_goodOutTitle"><%=goodsOut ? 'Delivery-out note' : 'Delivery-In note'%>
+                        <span><%var name = model.name.split('*');%>
+                            <%var order = model.order || model.manufacturingOrder%>
+                        <span id="name">#<a class="_noteNum" href="<%='/#easyErp/' + (goodsOut && model.order ? 'order' : model.manufacturingOrder ? 'manufacturingOrders' : 'purchaseOrders') + '/tform/'+ order._id %>"><%=name[0]%></a>*<%=name[1]%></span>
+                    </span>
+                    </h2>
+
+                    <div>
+                        <div class="_stepItem <%= printed ? 'done' : 'undone'%>">
+                            <div class="_actionBody">
+                                <%if(!goodsOut){%>
+                                <button
+                                        title="This will mark the Delivery-out note as printed. You'll need to 'unprint' it in order to print again, to prevent multiple copies in the warehouse."
+                                        id="printPdf"
+                                        class="btn blue slim changeStatus icon-printer"
+                                        data-id="printed">Print
+                                </button>
                                 <%}%>
-                            </dd>
-                        </dl>
-                        <div class="right">
-                            <button id="printPdf" class="btn ">
-                                <span class="icon-print">Print</span>
-                            </button>
-                            <button class="btn sendEmail">
-                                <span>Send email</span>
-                            </button>
+                                <button class="btn blue slim icon-plane sendEmail"> Send email</button>
+                            </div>
                         </div>
-                        <div class="clearfix"></div>
                     </div>
-                    <table class="list _projectTableLeftAlign tableFixed _invoiceTable">
-                        <colgroup>
-                            <col width="25%">
-                            <col width="25%">
-                            <col width="25%">
-                            <col width="25%">
-                        </colgroup>
-                        <thead>
-                        <tr class="productListItemsColumns _deleteHeader">
-                            <%var printed = model.status && model.status.printed%>
-                            <%var picked = model.status && model.status.picked%>
-                            <%var packed = model.status && model.status.packed%>
-                            <%var shipped = model.status && model.status.shipped%>
-
-                            <th class="<%= printed ? 'done' : 'undone'%>"
-                                title="This will mark the goods-out note as printed. You'll need to 'unprint' it in order to print again, to prevent multiple copies in the warehouse.">
-                                Print <span class="right"><span class="edited "><%= printed ?  model.status.printedOn : '' %></span></span>
-                            </th>
-                            <th class="<%=picked ? 'done' : 'undone'%>"
-                                title="If you are batch-picking, the goods-out note will be marked as picked at that time. You can manually set as 'picked' here too.">
-                                Pick <span class="right"><span class="edited "><%= picked ?  model.status.pickedOn : '' %></span></span>
-                            </th>
-                            <th class="<%=packed ? 'done' : 'undone'%>"
-                                title="Add a tracking reference shipping method, weight and number of boxes when you mark the goods out note as packed.">
-                                Pack <span class="right"><span class="edited "><%= packed ?  model.status.packedOn : '' %></span></span>
-                            </th>
-                            <th class="<%=shipped ? 'done' : 'undone'%>"
-                                title="Shipping a goods-out note will remove the items from stock and if you're using Cost of Sales accounting will also create the Cost of Sale entries for the sale.">
-                                Ship <span class="right"><span class="edited "><%= shipped ?  model.status.shippedOn : '' %></span></span>
-                            </th>
-                        </tr>
-                        </thead>
-                        <tbody>
-
-                        <tr class="<%=shipped ? 'hidden' : ''%>">
-                            <td><a id="printPdf" class="btn changeStatus <%=printed ? 'done' : ''%>" href="javascript:;"
-                                   data-id="printed"><%=printed ? 'Unprint' : 'Print'%></a></td>
-                            <td><a class="btn changeStatus <%=picked ? 'done' : ''%>" href="javascript:;"
-                                   data-id="picked"><%=picked ? 'Unpick' : 'Pick'%></a></td>
-                            <td><a id="packBtn" class="btn <%=packed ? 'done changeStatus' : ''%>" href="javascript:;"
-                                   data-id="packed"><%=packed ? 'Unpack' : 'Pack'%></a></td>
-                            <td><a class="btn changeStatus <%=shipped ? 'done' : ''%>" href="javascript:;"
-                                   data-id="shipped"><%=shipped ? 'Unship' : 'Ship'%></a></td>
-
-                        </tr>
-                        </tbody>
-                    </table>
                 </div>
-                <!--<div class="clearfix"></div>-->
 
-                <div id="templateDiv">
-
-                </div>
-                <div class="clearfix"></div>
+                <ul class="_infoList">
+                    <li class="_listItem">
+                        <div class="_key">Tracking ref:</div>
+                        <div class="_value"><%=model.reference || ' _ _ _'%></div>
+                    </li>
+                    <li class="_listItem">
+                        <div class="_key">Shipping method:</div>
+                        <div class="_value" id="name"><%=model.shippingMethod ? model.shippingMethod.name : ' _ _ _'%>
+                        </div>
+                    </li>
+                    <li class="_listItem">
+                        <div class="_key">Date:</div>
+                        <%if (model.status.shipped) {%>
+                        <div class="_value _fixDate" id="date"><%=model.date || ''%></div>
+                        <%} else {%>
+                        <div class="_value _goodsDateInput">
+                            <input id="date" readonly/>
+                            <label for="date">
+                                <span class="icon-calendar"></span>
+                            </label>
+                        </div>
+                        <%}%>
+                    </li>
+                </ul>
             </div>
-        </fieldset>
+
+            <!--<h3 class="_flowTitle">Shipping flow</h3>-->
+
+            <%if(goodsOut){%>
+            <ul class="_shippingSteps _deleteHeader">
+                <%var printed = model.status && model.status.printed%>
+                <%var picked = model.status && model.status.picked%>
+                <%var packed = model.status && model.status.packed%>
+                <%var shipped = model.status && model.status.shipped%>
+
+                <li class="_stepItem <%= printed ? 'done' : 'undone'%>"
+                    title="This will mark the Delivery-out note as printed. You'll need to 'unprint' it in order to print again, to prevent multiple copies in the warehouse.">
+                    <span class="_itemIcon icon-printer"></span>
+                    <div class="_actionBody">
+                        <span class="_actionTitle">Print Delivery Note</span>
+                        <span class="edited "><%= printed ?  model.status.printedOn : '' %></span>
+                        <a id="printPdf"
+                           class="btn blue slim changeStatus"
+                           href="javascript:;"
+                           data-id="printed">Print</a>
+                    </div>
+                </li>
+                <li class="_stepItem <%=picked ? 'done' : 'undone'%>"
+                    title="If you are batch-picking, the Delivery-out note will be marked as picked at that time. You can manually set as 'picked' here too.">
+                    <span class="_itemIcon icon-checkedList"></span>
+                    <div class="_actionBody">
+                        <span class="_actionTitle">Pick Delivery Note</span>
+                        <span class="edited "><%= picked ?  model.status.pickedOn : '' %></span>
+                        <a class="btn blue slim changeStatus <%=picked ? 'done' : ''%> <%=shipped ? 'hidden' : ''%>"
+                           href="javascript:;"
+                           data-id="picked"><%=picked ? 'Unpick' : 'Pick'%></a>
+                    </div>
+                </li>
+                <li class="_stepItem <%=packed ? 'done' : 'undone'%>"
+                    title="Add a tracking reference shipping method, weight and number of boxes when you mark the Delivery out note as packed.">
+                    <span class="_itemIcon icon-package"></span>
+                    <div class="_actionBody">
+                        <span class="_actionTitle">Pack Delivery Note</span>
+                        <span class="edited "><%= packed ?  model.status.packedOn : '' %></span>
+                        <a id="packBtn"
+                           class="btn blue slim <%=packed ? 'done changeStatus' : ''%> <%=shipped ? 'hidden' : ''%>"
+                           href="javascript:;"
+                           data-id="packed"><%=packed ? 'Unpack' : 'Pack'%></a>
+                    </div>
+                </li>
+                <li class="_stepItem <%=shipped ? 'done' : 'undone'%>"
+                    title="Shipping a Delivery-out note will remove the items from stock and if you're using Cost of Sales accounting will also create the Cost of Sale entries for the sale.">
+                    <span class="_itemIcon icon-truck"></span>
+                    <div class="_actionBody">
+                        <span class="_actionTitle">Ship Delivery Note</span>
+                        <span class="edited "><%= shipped ?  model.status.shippedOn : '' %></span>
+                        <a class="btn blue slim changeStatus <%=shipped ? 'done' : ''%> <%=shipped ? 'hidden' : ''%>"
+                           href="javascript:;"
+                           data-id="shipped"><%=shipped ? 'Unship' : 'Ship'%></a>
+                    </div>
+                </li>
+            </ul>
+            <%}%>
+
+        </div>
+        <div id="templateDiv"></div>
     </form>
 </div>

@@ -105,6 +105,11 @@ var Module = function (models, event) {
                     }
 
                     invoice.notes = invoice.notes.concat(notes, payments);
+                    invoice.notes = _.map(invoice.notes, function (el) {
+                        el.date = new Date(el.date);
+
+                        return el;
+                    });
                     invoice.notes = _.sortBy(invoice.notes, 'date');
                     cb(null, invoice);
                 });
@@ -277,6 +282,7 @@ var Module = function (models, event) {
             invoice = new Invoice(order);
 
             invoice.invoiceDate = order.orderDate;
+            invoice.dueDate = order.expectedDate;
 
             if (prepayments && prepayments.sum) {
                 /* prepayments.paymentInfo.forEach(function (payment) {
@@ -923,10 +929,9 @@ var Module = function (models, event) {
                     account: invoice.discount
                 });
             }
-
         }
 
-        if (invoice.sourceDocument && invoice.sourceDocument.shippingExpenses.amount) {
+        /*if (invoice.sourceDocument && invoice.sourceDocument.shippingExpenses.amount) {
             if (invoice.forSales) {
                 journalEntryBody.accountsItems.push({
                     credit : invoice.sourceDocument.shippingExpenses.amount,
@@ -940,7 +945,7 @@ var Module = function (models, event) {
                     account: invoice.shipping
                 });
             }
-        }
+        }*/
 
         if (invoice.prepayment && invoice.forSales) {
             cb = _.after(2, waterfallCb);
@@ -976,6 +981,25 @@ var Module = function (models, event) {
     }
 
     this.approve = function (req, res, next) {
+        approve(req, res, next);
+    };
+
+    this.approveSyncedInvoice = function (options, cb) {
+        var req = {};
+
+        req.session = {
+            lastDb: options.dbName
+        };
+
+        req.body = {
+            invoiceId  : options.invoiceId,
+            invoiceDate: options.invoiceDate
+        };
+
+        approve(req, null, null, cb)
+    };
+
+    function approve(req, res, next, cb) {
         var dbIndex = req.session.lastDb;
         var Prepayments = models.get(dbIndex, 'prepayment', PrepaymentSchema);
         var id = req.body.invoiceId;
@@ -1112,13 +1136,19 @@ var Module = function (models, event) {
         waterfallTasks = [updateInvoice, addHistory, findPrepayments, getTaxAccount, getDiscountAccount, getShippingAccount, createJournalEntry];
 
         async.waterfall(waterfallTasks, function (err, result) {
-            if (err) {
+            if (err && next) {
                 return next(err);
+            } else if (err && cb) {
+                return cb(err);
             }
 
-            res.status(200).send(result);
+            if (res) {
+                return res.status(200).send(result);
+            }
+
+            cb(null, result);
         });
-    };
+    }
 
     this.getForView = function (req, res, next) {
         var db = req.session.lastDb;
@@ -1126,6 +1156,7 @@ var Module = function (models, event) {
         var accessRollSearcher;
         var Invoice;
         var query = req.query;
+        var quickSearch = query.quickSearch;
         var forSales = query.forSales;
         var filter = query.filter || {};
         var optionsObject = {};
@@ -1136,14 +1167,20 @@ var Module = function (models, event) {
         var limit = paginationObject.limit;
         var skip = paginationObject.skip;
         var keys;
+        var matchObject = {};
         var keysLength;
         var i;
         var aggregation;
         var forPurchase = false;
         var pastDue = filter.pastDue;
         var moduleId;
+        var regExp = new RegExp(quickSearch, 'ig');
 
         if (contentType === 'ExpensesInvoice') {
+            req.query.sort = req.query.sort || {
+                    invoiceDate: '-1'
+                };
+
             Invoice = models.get(db, 'expensesInvoice', ExpensesInvoiceSchema);
         } else if (contentType === 'DividendInvoice') {
             Invoice = models.get(db, 'dividendInvoice', DividendInvoiceSchema);
@@ -1172,6 +1209,12 @@ var Module = function (models, event) {
         accessRollSearcher = function (cb) {
             accessRoll(req, Invoice, cb);
         };
+
+        if (quickSearch) {
+            matchObject['supplier.name'] = {
+                $regex: regExp
+            }
+        }
 
         contentSearcher = function (invoicesIds, waterfallCallback) {
             var salesManagerMatch = {
@@ -1273,26 +1316,34 @@ var Module = function (models, event) {
                     as          : 'project'
                 }
             }, {
+                $lookup: {
+                    from        : 'expensesCategories',
+                    localField  : 'expensesCategory',
+                    foreignField: '_id',
+                    as          : 'expensesCategory'
+                }
+            }, {
                 $project: {
-                    workflow       : {$arrayElemAt: ['$workflow', 0]},
-                    supplier       : {$arrayElemAt: ['$supplier', 0]},
-                    journal        : {$arrayElemAt: ['$journal', 0]},
-                    project        : {$arrayElemAt: ['$project', 0]},
-                    expense        : 1,
-                    forSales       : 1,
-                    'currency._id' : {$arrayElemAt: ['$currency._id', 0]},
-                    'currency.rate': '$currency.rate',
-                    paymentInfo    : 1,
-                    invoiceDate    : 1,
-                    name           : 1,
-                    paymentDate    : 1,
-                    dueDate        : 1,
-                    approved       : 1,
-                    _type          : 1,
-                    salesPerson    : 1,
-                    payments       : 1,
-                    'editedBy.date': 1,
-                    paid           : {$divide: [{$subtract: ['$paymentInfo.total', '$paymentInfo.balance']}, 100]}
+                    workflow        : {$arrayElemAt: ['$workflow', 0]},
+                    supplier        : {$arrayElemAt: ['$supplier', 0]},
+                    journal         : {$arrayElemAt: ['$journal', 0]},
+                    project         : {$arrayElemAt: ['$project', 0]},
+                    expense         : 1,
+                    forSales        : 1,
+                    'currency._id'  : {$arrayElemAt: ['$currency._id', 0]},
+                    'currency.rate' : '$currency.rate',
+                    paymentInfo     : 1,
+                    invoiceDate     : 1,
+                    name            : 1,
+                    paymentDate     : 1,
+                    dueDate         : 1,
+                    expensesCategory: 1,
+                    approved        : 1,
+                    _type           : 1,
+                    salesPerson     : 1,
+                    payments        : 1,
+                    'editedBy.date' : 1,
+                    paid            : {$divide: [{$subtract: ['$paymentInfo.total', '$paymentInfo.balance']}, 100]}
                 }
             }, {
                 $project: {
@@ -1308,6 +1359,7 @@ var Module = function (models, event) {
                     expense          : 1,
                     forSales         : 1,
                     currency         : 1,
+                    expensesCategory : 1,
                     paymentInfo      : 1,
                     invoiceDate      : 1,
                     name             : 1,
@@ -1320,6 +1372,8 @@ var Module = function (models, event) {
                     paid             : 1
                 }
             }, {
+                $match: matchObject
+            }, {
                 $lookup: {
                     from        : 'Employees',
                     localField  : 'salesPerson',
@@ -1328,30 +1382,28 @@ var Module = function (models, event) {
                 }
             }, {
                 $project: {
-                    salesPerson: {$arrayElemAt: ['$salesPerson', 0]},
-                    workflow   : 1,
-                    supplier   : 1,
-                    expense    : 1,
-                    forSales   : 1,
-                    currency   : 1,
-                    paymentInfo: 1,
-                    invoiceDate: 1,
-                    name       : 1,
-                    paymentDate: 1,
-                    dueDate    : 1,
-                    approved   : 1,
-                    _type      : 1,
-                    journal    : 1,
-                    paid       : 1,
-                    editedBy   : 1,
-                    project    : 1,
-                    removable  : {
+                    salesPerson     : {$arrayElemAt: ['$salesPerson', 0]},
+                    workflow        : 1,
+                    supplier        : 1,
+                    expense         : 1,
+                    forSales        : 1,
+                    currency        : 1,
+                    paymentInfo     : 1,
+                    invoiceDate     : 1,
+                    name            : 1,
+                    expensesCategory: 1,
+                    paymentDate     : 1,
+                    dueDate         : 1,
+                    approved        : 1,
+                    _type           : 1,
+                    journal         : 1,
+                    paid            : 1,
+                    editedBy        : 1,
+                    project         : 1,
+                    removable       : {
                         $cond: {
                             if: {
-                                $or: [
-                                    {$eq: ['$paymentInfo.balance', '$paymentInfo.total']},
-                                    {$eq: ['$payments', []]}
-                                ]
+                              $eq: ['$paymentInfo.balance', '$paymentInfo.total']
                             },
 
                             then: true,
@@ -1389,10 +1441,10 @@ var Module = function (models, event) {
                     removable         : '$root.removable',
                     paid              : '$root.paid',
                     editedBy          : '$root.editedBy',
+                    expensesCategory  : '$root.expensesCategory',
                     total             : 1
                 }
-            }
-            ];
+            }];
 
             aggregation.push({
                 $sort: sort
@@ -1452,7 +1504,7 @@ var Module = function (models, event) {
 
         Invoice = models.get(req.session.lastDb, 'Invoices', InvoiceSchema);
 
-        if (contentType === 'expensesInvoice') {
+        if (contentType === 'ExpensesInvoice') {
             Invoice = models.get(req.session.lastDb, 'expensesInvoice', ExpensesInvoiceSchema);
         }
 
@@ -1472,7 +1524,7 @@ var Module = function (models, event) {
         contentIdsSearcher = function (deps, waterfallCallback) {
             var arrOfObjectId = deps.objectID();
 
-            models.get(req.session.lastDb, 'Invoice', InvoiceSchema).aggregate(
+            Invoice.aggregate(
                 {
                     $match: {
                         $and: [
@@ -1520,6 +1572,10 @@ var Module = function (models, event) {
 
             query
                 .populate('currency._id')
+                .populate('expensesCategory', '_id account')
+                .populate('products.debitAccount', '_id name')
+                .populate('products.creditAccount', '_id name')
+                .populate('products.taxes.taxCode', 'fullName rate')
                 .populate('journal', '_id name')
                 .populate('payments', '_id name date paymentRef paidAmount createdBy currency')
                 .populate('paymentTerms', '_id name count')
@@ -1527,8 +1583,8 @@ var Module = function (models, event) {
                 .populate('project', '_id paymentMethod')
                 .populate('sourceDocument', '_id name orderDate shippingMethod shippingExpenses')
                 .populate('workflow', '_id name status')
-                .populate('supplier', '_id name fullName address');
-
+                .populate('supplier', '_id name fullName address')
+                .sort({'notes.date': -1});
             query.exec(function (err, result) {
                 if (err) {
                     return waterfallCallback(err);
@@ -1818,7 +1874,6 @@ var Module = function (models, event) {
                 .populate('warehouse', 'name')
                 .populate('debitAccount', 'name')
                 .populate('creditAccount', 'name')
-                .populate('taxes.taxCode', 'fullName')
                 .exec(function (err, docs) {
                     if (err) {
                         waterfallCallback(err);
@@ -1917,13 +1972,11 @@ var Module = function (models, event) {
     };
 
     this.bulkRemove = function (req, res, next) {
-        var db = req.session.lastDb;
-        var Model = models.get(db, 'Invoice', InvoiceSchema);
         var body = req.body || {ids: []};
         var ids = body.ids;
 
         async.each(ids, function (id, cb) {
-            removeInvoice(req, null, id, next, Model, cb);
+            removeInvoice(req, null, id, next, cb);
         }, function (err, result) {
             if (err) {
                 return next(err);
@@ -1933,7 +1986,7 @@ var Module = function (models, event) {
         });
     };
 
-    function removeInvoice(req, res, id, next, Model, callback) {
+    function removeInvoice(req, res, id, next, callback) {
         var db = req.session.lastDb;
         var Order = models.get(db, 'Order', OrderSchema);
         var Model = models.get(db, 'Invoice', InvoiceSchema);
@@ -1945,11 +1998,11 @@ var Module = function (models, event) {
         var orderId;
         var orderUpdateQuery = {
             $set: {
-                workflow: CONSTANTS.ORDERNEW,
+                workflow: CONSTANTS.ORDERINPROGRESS,
                 editedBy: editedBy
             }
         };
-        if (id.length < 24) {
+        if (!id || id.length < 24) {
             return res ? res.status(400).send() : callback();
         }
 
@@ -2051,10 +2104,7 @@ var Module = function (models, event) {
     }
 
     this.removeInvoice = function (req, res, id, next) {
-        var db = req.session.lastDb;
-        var Model = models.get(db, 'Invoice', InvoiceSchema);
-
-        removeInvoice(req, res, id, Model, next);
+        removeInvoice(req, res, id, next);
     };
 
     this.getFilterValues = function (req, res, next) {
@@ -2426,7 +2476,7 @@ var Module = function (models, event) {
     };
 
     this.getStats = function (req, res, next) {
-        var sortObj = {'paymentInfo.balance': -1};
+        var sortObj = {'invoiceDate': -1};
         var now = new Date();
         var sortValueInt;
         var keys;
@@ -2719,6 +2769,11 @@ var Module = function (models, event) {
             $match: match
         }, {
             $project: {
+                paymentInfo    : 1,
+                'currency.rate': {$ifNull: [1, '$currency.rate']}
+            }
+        }, {
+            $project: {
                 sum: {$divide: ['$paymentInfo.total', '$currency.rate']}
             }
         }, {
@@ -2729,7 +2784,7 @@ var Module = function (models, event) {
             }
         }, {
             $project: {
-                total: {$divide: ['$ototal', 100]},
+                total: {$divide: ['$total', 100]},
                 count: 1
             }
         }], function (err, result) {
@@ -2770,6 +2825,12 @@ var Module = function (models, event) {
             }
         }, {
             $project: {
+                paymentInfo    : 1,
+                workflow       : 1,
+                'currency.rate': {$ifNull: [1, '$currency.rate']}
+            }
+        }, {
+            $project: {
                 sum     : {$divide: ['$paymentInfo.total', '$currency.rate']},
                 workflow: {$arrayElemAt: ['$workflow', 0]}
             }
@@ -2785,6 +2846,12 @@ var Module = function (models, event) {
                 total: {$divide: ['$total', 100]},
                 name : 1,
                 count: 1
+            }
+        }, {
+            $match: {
+                total: {
+                    $gt: 0
+                }
             }
         }], function (err, result) {
             if (err) {
@@ -2903,13 +2970,19 @@ var Module = function (models, event) {
                 }
             }, {
                 $project: {
-                    sum        : {$divide: ['$paymentInfo.total', '$currency.rate']},
+                    sum        : {$divide: [{$divide: ['$paymentInfo.total', '$currency.rate']}, 100]},
                     salesPerson: {$cond: [{$eq: ['$sales', null]}, 'Not Assigned', {$concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']}]}
                 }
             }, {
                 $group: {
                     _id: '$salesPerson',
                     sum: {$sum: '$sum'}
+                }
+            }, {
+                $match: {
+                    sum: {
+                        $gt: 0
+                    }
                 }
             }], function (err, result) {
                 if (err) {
@@ -2957,13 +3030,26 @@ var Module = function (models, event) {
                 }
             }, {
                 $project: {
-                    sum        : {$divide: ['$paymentInfo.total', '$currency.rate']},
+                    paymentInfo    : 1,
+                    sales          : 1,
+                    salesPerson    : 1,
+                    'currency.rate': {$ifNull: [1, '$currency.rate']}
+                }
+            }, {
+                $project: {
+                    sum        : {$divide: [{$divide: ['$paymentInfo.total', '$currency.rate']}, 100]},
                     salesPerson: {$cond: [{$eq: ['$sales', null]}, 'Not Assigned', {$concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']}]}
                 }
             }, {
                 $group: {
                     _id: '$salesPerson',
                     sum: {$sum: '$sum'}
+                }
+            }, {
+                $match: {
+                    sum: {
+                        $gt: 0
+                    }
                 }
             }], function (err, result) {
                 if (err) {
@@ -3012,19 +3098,24 @@ var Module = function (models, event) {
             }
         }, {
             $project: {
-                paymentInfo: 1,
-                currency   : 1,
-                supplier   : {$arrayElemAt: ['$supplier', 0]}
+                paymentInfo    : 1,
+                'currency.rate': {$ifNull: [1, '$currency.rate']},
+                supplier       : {$arrayElemAt: ['$supplier', 0]}
             }
         }, {
             $project: {
-                sum    : {$divide: ['$paymentInfo.total', '$currency.rate']},
+                sum    : {$divide: [{$divide: ['$paymentInfo.total', '$currency.rate']}, 100]},
                 country: '$supplier.address.country'
             }
         }, {
             $group: {
                 _id: '$country',
                 sum: {$sum: '$sum'}
+            }
+        }, {
+            $match: {
+                sum: {$gt: 0},
+                _id: {$ne: null}
             }
         }], function (err, result) {
             if (err) {
@@ -3071,13 +3162,13 @@ var Module = function (models, event) {
             }
         }, {
             $project: {
-                paymentInfo: 1,
-                currency   : 1,
-                supplier   : {$arrayElemAt: ['$supplier', 0]}
+                paymentInfo    : 1,
+                'currency.rate': {$ifNull: [1, 'currency.rate']},
+                supplier       : {$arrayElemAt: ['$supplier', 0]}
             }
         }, {
             $project: {
-                sum     : {$divide: ['$paymentInfo.total', '$currency.rate']},
+                sum     : {$divide: [{$divide: ['$paymentInfo.total', '$currency.rate']}, 100]},
                 supplier: {$concat: ['$supplier.name.first', ' ', '$supplier.name.last']}
             }
         }, {
@@ -3085,73 +3176,21 @@ var Module = function (models, event) {
                 _id: '$supplier',
                 sum: {$sum: '$sum'}
             }
+        }, {
+            $match: {
+                sum: {
+                    $gt: 0
+                },
+                _id: {
+                    $ne: null
+                }
+            }
         }], function (err, result) {
             if (err) {
                 return next(err);
             }
 
             res.status(200).send(result);
-        });
-    };
-
-    this.getSalesByCountry = function (req, res, next) {
-        var Invoice = models.get(req.session.lastDb, invoiceCT, InvoiceSchema);
-        var filter = req.query.filter || {};
-        filter._type = {
-            value: [invoiceCT]
-        };
-
-        Invoice.aggregate([
-            {
-                $match: {
-                    $and: [
-                        {
-                            forSales: true
-                        },
-                        filterMapper.mapFilter(filter, {contentType: invoiceCT})
-                    ]
-                }
-            },
-            {
-                $lookup: {
-                    from        : 'Customers',
-                    localField  : 'supplier',
-                    foreignField: '_id',
-                    as          : 'supplier'
-                }
-            },
-            {
-                $lookup: {
-                    from        : 'journalentries',
-                    localField  : '_id',
-                    foreignField: 'sourceDocument._id',
-                    as          : 'journalEntries'
-                }
-            },
-            {
-                $match: {
-                    journalEntries: {$exists: true, $not: {$size: 0}}
-                }
-            },
-            {
-                $project: {
-                    supplier: {$arrayElemAt: ['$supplier', 0]},
-                    pays    : {$sum: '$journalEntries.debit'}
-                }
-            },
-            {
-                $group: {
-                    _id : '$supplier.address.country',
-                    pays: {$sum: '$pays'}
-
-                }
-            }
-        ], function (err, result) {
-            if (err) {
-                return next(err);
-            }
-
-            res.status(200).send({data: result});
         });
     };
 

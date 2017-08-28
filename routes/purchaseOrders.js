@@ -350,8 +350,6 @@ module.exports = function (models, event) {
      */
     router.get('/:id', handler.getById);
 
-    router.get('/getFilterValues', handler.getFilterValues);
-
     router.post('/', handler.create);
 
     router.patch('/:id', handler.putchModel);

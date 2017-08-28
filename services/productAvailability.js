@@ -476,14 +476,16 @@ module.exports = function (models) {
         };
 
         this.getList = function (options, callback) {
-            var Availability;
-            var dbName;
-            var err;
-
-            var obj = options.match;
+            var obj = options.match || {};
             var sort = options.sort;
             var skip = options.skip;
             var limit = options.limit;
+            var finalProject = options.finalProject;
+
+            var Availability;
+            var pipeLine;
+            var dbName;
+            var err;
 
             if (typeof options === 'function') {
                 callback = options;
@@ -505,8 +507,7 @@ module.exports = function (models) {
                 return callback(err);
             }
 
-            Availability = models.get(dbName, 'productsAvailability', AvailabilitySchema);
-            Availability.aggregate([
+            pipeLine = [
                 {
                     $match: {isJob: false}
                 },
@@ -679,15 +680,21 @@ module.exports = function (models) {
                         allocated  : '$root.allocated',
                         onHand     : '$root.onHand'
                     }
-                },
-                {
-                    $sort: sort
-                }, {
-                    $skip: skip
-                }, {
-                    $limit: limit
                 }
-            ], function (err, result) {
+            ];
+
+            if (finalProject) {
+                pipeLine.push({$project: finalProject});
+            }
+
+            if (sort) {
+                pipeLine.push({
+                    $sort: sort
+                });
+            }
+
+            Availability = models.get(dbName, 'productsAvailability', AvailabilitySchema);
+            Availability.aggregate(pipeLine, function (err, result) {
                 if (err) {
                     return callback(err);
                 }

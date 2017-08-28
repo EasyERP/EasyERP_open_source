@@ -7,17 +7,14 @@ define([
     'views/Filter/filterView',
     'views/journalEntry/ViewSource',
     'collections/profitAndLoss/filterCollection',
-    'models/InvoiceModel',
-    'models/jobsModel',
-    'models/EmployeesModel',
-    'models/PaymentModel',
     'constants',
+    'views/guideTours/guideNotificationView',
     'dataService',
     'helpers',
     'custom',
     'async',
     'common'
-], function ($, _, listViewBase, listTemplate, ListItemView, FilterView, View, reportCollection, InvoiceModel, JobsModel, EmployeesModel, PaymentModel, CONSTANTS, dataService, helpers, custom, async, common) {
+], function ($, _, listViewBase, listTemplate, ListItemView, FilterView, View, reportCollection, CONSTANTS, GuideNotify, dataService, helpers, custom, async, common) {
     'use strict';
 
     var ListView = listViewBase.extend({
@@ -33,15 +30,10 @@ define([
         yearElement       : null,
         FilterView        : FilterView,
         responseObj       : {},
-        JobsModel         : JobsModel,
-        InvoiceModel      : InvoiceModel,
-        PaymentModel      : PaymentModel,
-        EmployeesModel    : EmployeesModel,
 
         events: {
-            'click .mainTr'                                    : 'showHidden',
-            'click .newSelectList li:not(.miniStylePagination)': 'viewSourceDocument',
-            'click .current-selected'                          : 'showNewSelect'
+            'click .mainTr': 'showHidden',
+            'click .source': 'viewSourceDocument'
         },
 
         initialize: function (options) {
@@ -94,13 +86,11 @@ define([
         },
 
         viewSourceDocument: function (e) {
-            var $target = $(e.target);
-            var id = $target.attr('id');
-            var closestSpan = $target.closest('.current-selected');
+            var $target = $(e.target).closest('.source');
+            var closestSpan = $target.find('.current-selected');
             var dataId = closestSpan.attr('data-id');
             var dataName = closestSpan.attr('data-name');
             var dataEmployee = closestSpan.attr('data-employee');
-            var model;
             var data;
 
             App.startPreload();
@@ -109,94 +99,7 @@ define([
                 this.selectView.remove();
             }
 
-            switch (dataName) {
-                case 'wTrack':
-                    model = new this.JobsModel();
-                    data = {
-                        employee: dataEmployee,
-                        _id     : dataId
-                    };
-
-                    model.urlRoot = '/journalEntries/jobs';
-                    break;
-                case 'expensesInvoice':
-                case 'dividendInvoice':
-                case 'Invoice':
-                    model = new this.InvoiceModel();
-                    data = {
-                        _id: dataId
-                    };
-
-                    model.urlRoot = '/journalEntries/invoices';
-
-                    break;
-                case 'Proforma':
-                    model = new this.InvoiceModel();
-                    data = {
-                        _id     : dataId,
-                        proforma: true
-                    };
-
-                    model.urlRoot = '/journalEntries/invoices';
-
-                    break;
-                case 'jobs':
-                    model = new this.JobsModel();
-                    data = {
-                        _id: dataId
-                    };
-
-                    model.urlRoot = '/journalEntries/jobs';
-
-                    break;
-                case 'Payment':
-                    model = new this.PaymentModel();
-                    data = {
-                        _id: dataId
-                    };
-
-                    model.urlRoot = '/journalEntries/payments';
-
-                    break;
-                case 'Employees':
-                    model = new this.EmployeesModel();
-                    data = {
-                        _id: dataId
-                    };
-
-                    model.urlRoot = '/journalEntries/employees';
-
-                    break;
-
-                // skip default;
-            }
-
-            if (model) {
-                model.fetch({
-                    data   : data,
-                    success: function (model) {
-                        new View({model: model, type: dataName, employee: dataEmployee});
-
-                        App.stopPreload();
-                    },
-
-                    error: function () {
-                        App.stopPreload();
-
-                        App.render({
-                            type   : 'error',
-                            message: 'Please refresh browser'
-                        });
-                    }
-                });
-            } else {
-                App.stopPreload();
-
-                App.render({
-                    type   : 'notify',
-                    message: 'No Source Document is required'
-                });
-            }
+            return new View({type: dataName, employee: dataEmployee, dataId: dataId});
         },
 
         showHidden: function (e) {
@@ -231,7 +134,7 @@ define([
                     var journalEntries = result.journalEntries;
                     var mainTr = body.find('[data-id="' + asyncId + '"]');
                     journalEntries.forEach(function (entry) {
-                        mainTr.after("<tr data-main='" + asyncId + "' class='hidden childRow'><td></td><td class='leftBorderNone source'><span id='source' class='current-selected icon-caret-down' data-id='" + entry.sourceDocument._id + "' data-name='" + entry.sourceDocument.model + "' data-employee='" + entry.sourceDocument.employee + "'>" + entry.sourceDocument.name + '</span></td><td>' + common.utcDateToLocaleFullDateTime(entry._id) + "</td><td class='money textRight'>" + (entry.debit ? helpers.currencySplitter((entry.debit / 100).toFixed(2)) : helpers.currencySplitter((entry.credit / 100).toFixed(2))) + '</td></tr>');
+                        mainTr.after("<tr data-main='" + asyncId + "' class='hidden childRow'><td></td><td class='leftBorderNone source'><span class='current-selected' data-id='" + entry.sourceDocument._id + "' data-name='" + entry.sourceDocument.model + "' data-employee='" + entry.sourceDocument.employee + "'>" + entry.sourceDocument.name + '</span></td><td>' + common.utcDateToLocaleFullDateTime(entry._id) + "</td><td class='money textRight'>" + (entry.debit ? helpers.currencySplitter((entry.debit / 100).toFixed(2)) : helpers.currencySplitter((entry.credit / 100).toFixed(2))) + '</td></tr>');
                     });
                 });
 
@@ -369,7 +272,6 @@ define([
             this.$el.find('#listTableTaxes').html('');
             this.$el.find('#listTableDividends').html('');
 
-
             itemView = new ListItemView({
                 collection      : collection,
                 currencySplitter: helpers.currencySplitter
@@ -380,6 +282,14 @@ define([
             App.filtersObject.filter = this.filter;
 
             this.asyncRenderInfo(asyncKeys);
+
+            if (App.guide) {
+                if (App.notifyView) {
+                    App.notifyView.undelegateEvents();
+                    App.notifyView.stopListening();
+                }
+                App.notifyView = new GuideNotify({e: null, data: App.guide});
+            }
 
             return this;
         }

@@ -91,12 +91,22 @@ var Module = function (models, event) {
     function getTasksForKanban(req, res, next) {
         var startTime = new Date();
         var data = req.query || {};
+        var quickSearch = data.quickSearch || '';
         var filter = data.filter;
         var optionsObject = {};
         var responseData = {};
         var addObj = {};
-
+        var matchObject = {};
+        var regExp;
+        var limit;
+        var pipeline;
+        var worflowObj = data.workflowId ? {workflow: objectId(data.workflowId)} : {};
         var query;
+
+        if (quickSearch) {
+            regExp = new RegExp(quickSearch, 'ig');
+            matchObject.description = {$regex: regExp};
+        }
 
         responseData.workflowId = data.workflowId;
 
@@ -104,38 +114,135 @@ var Module = function (models, event) {
             addObj._id = objectId(data.parrentContentId);
         }
 
-        query = models.get(req.session.lastDb, dealTasksCT, tasksSchema).where('workflow', objectId(data.workflowId));
+        query = models.get(req.session.lastDb, dealTasksCT, tasksSchema);
 
         if (filter) {
             optionsObject.$and = [];
             optionsObject.$and.push(filterMapper.mapFilter(filter, {contentType: dealTasksCT}));
         }
 
-        query.find(optionsObject)
-            .populate('assignedTo', 'name')
-            .populate('category')
-            .populate('company', 'name imageSrc')
-            .populate('contact', 'name imageSrc')
-            .populate('assignedTo', 'name')
-            .populate('workflow', 'name sequence status')
-            .populate('deal', 'name isOpportunitie')
-            .sort({sequence: -1})
-            .limit(req.session.kanbanSettings.tasks.countPerPage)
-            .exec(function (err, result) {
-                var localRemaining = 0;
-
-                if (err) {
-                    return next(err);
+        limit = req.session.kanbanSettings.tasks.countPerPage;
+        pipeline = [
+            {
+                $match: worflowObj
+            },
+            {
+                $match: optionsObject
+            }, {
+                $match: matchObject
+            }, {
+                $lookup: {
+                    from        : 'Employees',
+                    localField  : 'assignedTo',
+                    foreignField: '_id',
+                    as          : 'assignedTo'
                 }
+            },
+            {
+                $lookup: {
+                    from        : 'tags',
+                    localField  : 'category',
+                    foreignField: '_id',
+                    as          : 'category'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Customers',
+                    localField  : 'company',
+                    foreignField: '_id',
+                    as          : 'company'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Customers',
+                    localField  : 'contact',
+                    foreignField: '_id',
+                    as          : 'contact'
+                }
+            }, {
+                $lookup: {
+                    from        : 'workflows',
+                    localField  : 'workflow',
+                    foreignField: '_id',
+                    as          : 'workflow'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Opportunities',
+                    localField  : 'deal',
+                    foreignField: '_id',
+                    as          : 'deal'
+                }
+            }, {
+                $project: {
+                    taskCount  : 1,
+                    dealDate   : 1,
+                    description: 1,
+                    sequence   : 1,
+                    companyDate: 1,
+                    contactDate: 1,
+                    dueDate    : 1,
+                    type       : 1,
+                    notes      : 1,
+                    attachments: 1,
+                    editedBy   : 1,
+                    assignedTo : {$arrayElemAt: ['$assignedTo', 0]},
+                    category   : {$arrayElemAt: ['$category', 0]},
+                    company    : {$arrayElemAt: ['$company', 0]},
+                    contact    : {$arrayElemAt: ['$contact', 0]},
+                    workflow   : {$arrayElemAt: ['$workflow', 0]},
+                    deal       : {$arrayElemAt: ['$deal', 0]}
+                }
+            }, {
+                $project: {
+                    taskCount            : 1,
+                    dealDate             : 1,
+                    description          : 1,
+                    sequence             : 1,
+                    companyDate          : 1,
+                    contactDate          : 1,
+                    dueDate              : 1,
+                    type                 : 1,
+                    notes                : 1,
+                    attachments          : 1,
+                    editedBy             : 1,
+                    assignedTo           : 1,
+                    category             : 1,
+                    'company.name'       : '$company.name',
+                    'company.imageSrc'   : '$company.imageSrc',
+                    'contact.imageSrc'   : '$contact.imageSrc',
+                    'contact.name'       : '$contact.name',
+                    'workflow.name'      : '$workflow.name',
+                    'workflow.sequence'  : '$workflow.sequence',
+                    'workflow.status'    : '$workflow.status',
+                    'deal.name'          : '$deal.name',
+                    'deal.isOpportunitie': '$deal.isOpportunitie'
+                }
+            },
+            {
+                $sort: {
+                    sequence: -1
+                }
+            }, {
+                $limit: limit
+            }
+        ];
 
-                result.forEach(function (value) {
-                    localRemaining = localRemaining + value.remaining;
-                });
-                responseData.data = result;
-                responseData.total = result.length;
-                responseData.time = (new Date() - startTime);
-                res.send(responseData);
+        query.aggregate(pipeline, function (err, result) {
+            var localRemaining = 0;
+
+            if (err) {
+                return next(err);
+            }
+
+            result.forEach(function (value) {
+                localRemaining = localRemaining + value.remaining;
             });
+            responseData.data = result;
+            responseData.total = result.length;
+            responseData.time = (new Date() - startTime);
+            res.send(responseData);
+        });
 
     }
 
@@ -166,11 +273,20 @@ var Module = function (models, event) {
     function getTasksForList(req, res, next) {
         var data = req.query || {};
         var filter = data.filter;
+        var quickSearch = data.quickSearch;
+
         var limit = parseInt(data.count, 10);
         var skip = (parseInt(data.page || 1, 10) - 1) * limit;
         var Task = models.get(req.session.lastDb, dealTasksCT, tasksSchema);
         var addObj = {};
         var obj = {};
+
+        var regExp = new RegExp(quickSearch, 'ig');
+        var matchObject = {};
+
+        if (quickSearch) {
+            matchObject.description = {$regex: regExp};
+        }
 
         var keys;
         var sort;
@@ -192,121 +308,123 @@ var Module = function (models, event) {
             sort = {'dueDate': -1};
         }
 
-        Task
-            .aggregate([{
-                $match: obj
+        Task.aggregate([{
+            $match: obj
+        },
+            {
+                $lookup: {
+                    from        : 'Employees',
+                    localField  : 'assignedTo',
+                    foreignField: '_id',
+                    as          : 'assignedTo'
+                }
             },
-                {
-                    $lookup: {
-                        from        : 'Employees',
-                        localField  : 'assignedTo',
-                        foreignField: '_id',
-                        as          : 'assignedTo'
-                    }
-                },
-                {
-                    $lookup: {
-                        from        : 'Customers',
-                        localField  : 'contact',
-                        foreignField: '_id',
-                        as          : 'contact'
-                    }
-                },
-                {
-                    $lookup: {
-                        from        : 'Customers',
-                        localField  : 'company',
-                        foreignField: '_id',
-                        as          : 'company'
-                    }
-                },
-                {
-                    $lookup: {
-                        from        : 'Opportunities',
-                        localField  : 'deal',
-                        foreignField: '_id',
-                        as          : 'deal'
-                    }
-                },
-                {
-                    $lookup: {
-                        from        : 'workflows',
-                        localField  : 'workflow',
-                        foreignField: '_id',
-                        as          : 'workflow'
-                    }
-                },
-                {
-                    $lookup: {
-                        from        : 'tags',
-                        localField  : 'category',
-                        foreignField: '_id',
-                        as          : 'category'
-                    }
-                },
-                {
-                    $project: {
-                        _id        : 1,
-                        workflow   : {$arrayElemAt: ['$workflow', 0]},
-                        category   : {$arrayElemAt: ['$category', 0]},
-                        assignedTo : {$arrayElemAt: ['$assignedTo', 0]},
-                        description: 1,
-                        deal       : {$arrayElemAt: ['$deal', 0]},
-                        contact    : {$arrayElemAt: ['$contact', 0]},
-                        company    : {$arrayElemAt: ['$company', 0]},
-                        dueDate    : 1,
-                        sequence   : 1,
-                        taskCount  : 1
-                    }
-                },
-                {
-                    $group: {
-                        _id  : null,
-                        total: {$sum: 1},
-                        root : {$push: '$$ROOT'}
-                    }
-                },
-                {
-                    $unwind: '$root'
-                },
-                {
-                    $project: {
-                        _id        : '$root._id',
-                        workflow   : '$root.workflow',
-                        category   : '$root.category',
-                        assignedTo : '$root.assignedTo',
-                        description: '$root.description',
-                        dueDate    : '$root.dueDate',
-                        taskCount  : '$root.taskCount',
-                        company    : '$root.company',
-                        contact    : '$root.contact',
-                        deal       : '$root.deal',
-                        total      : 1
-                    }
-                },
-                {
-                    $sort: sort
-                },
-                {
-                    $skip: skip
-                },
-                {
-                    $limit: limit
+            {
+                $lookup: {
+                    from        : 'Customers',
+                    localField  : 'contact',
+                    foreignField: '_id',
+                    as          : 'contact'
                 }
-            ], function (err, result) {
-                var count;
-                var response = {};
-
-                if (err) {
-                    return next(err);
+            },
+            {
+                $lookup: {
+                    from        : 'Customers',
+                    localField  : 'company',
+                    foreignField: '_id',
+                    as          : 'company'
                 }
+            },
+            {
+                $lookup: {
+                    from        : 'Opportunities',
+                    localField  : 'deal',
+                    foreignField: '_id',
+                    as          : 'deal'
+                }
+            },
+            {
+                $lookup: {
+                    from        : 'workflows',
+                    localField  : 'workflow',
+                    foreignField: '_id',
+                    as          : 'workflow'
+                }
+            },
+            {
+                $lookup: {
+                    from        : 'tags',
+                    localField  : 'category',
+                    foreignField: '_id',
+                    as          : 'category'
+                }
+            },
+            {
+                $match: matchObject
+            },
+            {
+                $project: {
+                    _id        : 1,
+                    workflow   : {$arrayElemAt: ['$workflow', 0]},
+                    category   : {$arrayElemAt: ['$category', 0]},
+                    assignedTo : {$arrayElemAt: ['$assignedTo', 0]},
+                    description: 1,
+                    deal       : {$arrayElemAt: ['$deal', 0]},
+                    contact    : {$arrayElemAt: ['$contact', 0]},
+                    company    : {$arrayElemAt: ['$company', 0]},
+                    dueDate    : 1,
+                    sequence   : 1,
+                    taskCount  : 1
+                }
+            },
+            {
+                $group: {
+                    _id  : null,
+                    total: {$sum: 1},
+                    root : {$push: '$$ROOT'}
+                }
+            },
+            {
+                $unwind: '$root'
+            },
+            {
+                $project: {
+                    _id        : '$root._id',
+                    workflow   : '$root.workflow',
+                    category   : '$root.category',
+                    assignedTo : '$root.assignedTo',
+                    description: '$root.description',
+                    dueDate    : '$root.dueDate',
+                    taskCount  : '$root.taskCount',
+                    company    : '$root.company',
+                    contact    : '$root.contact',
+                    deal       : '$root.deal',
+                    total      : 1
+                }
+            },
+            {
+                $sort: sort
+            },
+            {
+                $skip: skip
+            },
+            {
+                $limit: limit
+            }
+        ], function (err, result) {
+            var count;
+            var response = {};
 
-                count = result[0] && result[0].total ? result[0].total : 0;
+            if (err) {
+                return next(err);
+            }
 
-                response.total = count;
-                response.data = result;
-                res.status(200).send(response);
-            });
+            count = result[0] && result[0].total ? result[0].total : 0;
+
+            response.total = count;
+            response.data = result;
+            res.status(200).send(response);
+        });
 
     }
 

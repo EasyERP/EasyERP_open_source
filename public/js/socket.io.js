@@ -271,6 +271,15 @@ define([
         }
     }
 
+    function showInfoDelete(options) {
+        if (App && App.currentUser && App.currentUser._id === options.uId) {
+            App.render({
+                type   : 'notify',
+                message: options.message
+            });
+        }
+    }
+
     socket.on('recollectVacationDash', _.debounce(fetchData, 1000));
     socket.on('fetchJobsCollection', _.debounce(fetchJobs, 1000));
     socket.on('fetchInvoiceCollection', _.debounce(fetchInvoice, 1000));
@@ -286,6 +295,7 @@ define([
     socket.on('getAllDone', notifyAboutGetAllIntegration);
     socket.on('recollectedStats', rerenderStats);
     socket.on('showResolveConflict', showResolveConflict);
+    socket.on('showInfoDelete', showInfoDelete);
 
     App.socket = socket;
 });

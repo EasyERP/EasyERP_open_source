@@ -4,11 +4,16 @@ var jobPositionHandler = require('../handlers/jobPosition');
 var authStackMiddleware = require('../helpers/checkAuth');
 var MODULES = require('../constants/modules');
 
-module.exports = function (models) {
+module.exports = function (models, event) {
     'use strict';
     var handler = new jobPositionHandler(models);
     var moduleId = MODULES.JOBPOSITIONS;
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
+    var accessDeleteStackMiddleware = require('../helpers/checkDelete');
+
+    function accessDeleteStackMiddlewareFunction(req, res, next) {
+        accessDeleteStackMiddleware(req, res, next, models, 'jobPosition', event);
+    }
 
     router.use(authStackMiddleware);
 
@@ -345,7 +350,7 @@ HTTP/1.1 200 OK
 }
      *
      * */
-    router.delete('/', accessStackMiddleware, handler.bulkRemove);
+    router.delete('/', accessStackMiddleware, accessDeleteStackMiddlewareFunction, handler.bulkRemove);
 
     return router;
 };

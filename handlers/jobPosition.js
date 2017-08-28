@@ -134,25 +134,21 @@ var Module = function (models) {
     function getFilterJobPositions(req, res, next) {
         var JobPosition = models.get(req.session.lastDb, 'JobPosition', jobPositionSchema);
         var Employee = models.get(req.session.lastDb, 'Employees', employeeSchema);
-        var sort = req.query.sort || {};
+        var sort = req.query.sort || {'createdBy.date': -1};
         var data = req.query;
         var parallelTasks;
         var paginationObject = pageHelper(data);
-        var limit = paginationObject.limit;
-        var skip = paginationObject.skip;
+        var limit = parseInt(paginationObject.limit, 10);
+        var skip = parseInt(paginationObject.skip, 10);
         var getCount;
         var getData;
-        var i;
-        var keysSort;
-        var key;
+
+        Object.keys(sort).forEach(function (key) {
+            sort[key] = parseInt(sort[key], 10)
+        });
 
         getCount = function (pCb) {
             JobPosition
-                .find({})
-                .populate('createdBy.user')
-                .populate('editedBy.user')
-                .populate('department', '_id name')
-                .populate('workflow', 'name _id status')
                 .count(function (err, result) {
                     if (err) {
                         return pCb(err);
@@ -163,53 +159,90 @@ var Module = function (models) {
         };
 
         getData = function (pCb) {
-            JobPosition
-                .find({})
-                .populate('createdBy.user')
-                .populate('editedBy.user')
-                .populate('department', '_id name')
-                .populate('workflow', 'name _id status')
-                .sort(sort)
-                .skip(skip)
-                .limit(limit)
-                .lean()
-                .exec(function (err, result) {
-                    if (err) {
-                        return pCb(err);
-                    }
-                    async.each(result, function (jp, cb) {
-                        Employee.find({jobPosition: jp._id}).count(function (err, count) {
-                            if (err) {
-                                return cb(err);
-                            }
 
-                            jp.numberOfEmployees = count;
-                            jp.totalForecastedEmployees = count + jp.expectedRecruitment;
-                            cb();
-                        });
-                    }, function (err) {
-                        if (err) {
-                            return pCb(err);
-                        }
-                        function compareSort(personA, personB) {
-                            if (sort[key] === '1') {
-                                return personA[key] - personB[key];
-                            }
-                            return personB[key] - personA[key];
-                        }
+            JobPosition.aggregate([{
+                $lookup: {
+                    from        : 'Users',
+                    localField  : 'createdBy.user',
+                    foreignField: '_id',
+                    as          : 'createdBy.user'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Users',
+                    localField  : 'editedBy.user',
+                    foreignField: '_id',
+                    as          : 'editedBy.user'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Department',
+                    localField  : 'department',
+                    foreignField: '_id',
+                    as          : 'department'
+                }
+            }, {
+                $lookup: {
+                    from        : 'workflows',
+                    localField  : 'workflow',
+                    foreignField: '_id',
+                    as          : 'workflow'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Employees',
+                    localField  : '_id',
+                    foreignField: 'jobPosition',
+                    as          : 'count'
+                }
+            }, {
+                $project: {
+                    workflow                : {$arrayElemAt: ['$workflow', 0]},
+                    department              : {$arrayElemAt: ['$department', 0]},
+                    'editedBy.user'         : {$arrayElemAt: ['$editedBy.user', 0]},
+                    'createdBy.user'        : {$arrayElemAt: ['$createdBy.user', 0]},
+                    'createdBy.date'        : 1,
+                    'editedBy.date'         : 1,
+                    expectedRecruitment     : 1,
+                    name                    : 1,
+                    numberOfEmployees       : {$size: '$count'},
+                    totalForecastedEmployees: {$add: ['$expectedRecruitment', {$size: '$count'}]}
+                }
+            }, {
+                $project: {
+                    workflow: {
+                        _id   : '$workflow._id',
+                        name  : '$workflow.name',
+                        status: '$workflow.status'
+                    },
 
-                        keysSort = Object.keys(sort);
+                    department: {
+                        _id : '$department._id',
+                        name: '$department.name'
+                    },
 
-                        for (i = keysSort.length - 1; i >= 0; i--) {
-                            key = keysSort[i];
-                            if (result.length && typeof result[0][key] === 'number') {
-                                result.sort(compareSort);
-                            }
-                        }
+                    'editedBy.date'         : 1,
+                    'editedBy.user.login'   : 1,
+                    'createdBy.date'        : 1,
+                    'createdBy.user.login'  : 1,
+                    name                    : 1,
+                    expectedRecruitment     : 1,
+                    numberOfEmployees       : 1,
+                    totalForecastedEmployees: 1
+                }
+            }, {
+                $sort: sort
+            }, {
+                $skip: skip
+            }, {
+                $limit: limit
+            }], function (err, result) {
+                if (err) {
+                    return pCb(err);
+                }
 
-                        pCb(null, result);
-                    });
-                });
+                pCb(null, result);
+            });
         };
 
         parallelTasks = [getCount, getData];

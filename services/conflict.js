@@ -6,7 +6,7 @@ var _ = require('lodash');
 var populateWrapper = require('../helpers/callbackWrapper').populate;
 
 module.exports = function (models) {
-    return new function () {
+    var ConflictService = function () {
         this.create = function (options, callback) {
             var dbName;
             var MatchModel;
@@ -35,12 +35,12 @@ module.exports = function (models) {
 
             MatchModel = models.get(dbName, 'matchMagento', MatchSchema);
             match = new MatchModel(options);
-            match.save(function (err, customer) {
+            match.save(function (err, conflict) {
                 if (err) {
                     return callback(err);
                 }
 
-                callback(null, customer);
+                callback(null, conflict);
             });
         };
 
@@ -396,7 +396,7 @@ module.exports = function (models) {
             });
         };
 
-        this.getConflicts = function (dbName, callback) {
+        this.getConflicts = function (query, dbName, callback) {
             var Model;
 
             if (typeof callback !== 'function') {
@@ -407,6 +407,8 @@ module.exports = function (models) {
             Model = models.get(dbName, 'matchMagento', MatchSchema);
             Model.aggregate([
                 {
+                    $match: query
+                }, {
                     $match: {
                         entity: 'Product',
                         type  : {$exists: false}
@@ -488,4 +490,6 @@ module.exports = function (models) {
             });
         };
     };
+
+    return new ConflictService();
 };

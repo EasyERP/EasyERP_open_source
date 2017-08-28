@@ -9,6 +9,7 @@ module.exports = function (models) {
     router.post('/', handler.createCharts);
     router.patch('/:id', handler.update);
     router.delete('/', handler.deleteCharts);
+    router.delete('/:id', handler.deleteCharts);
 
     return router;
 };

@@ -9,6 +9,8 @@ var Products = function (models, event) {
     var DepartmentSchema = mongoose.Schemas.Department;
     var ProductTypesSchema = mongoose.Schemas.productTypes;
     var AvailabilitySchema = mongoose.Schemas.productsAvailability;
+    // var GoodsInNoteSchema = mongoose.Schemas.GoodsInNote;
+    // var GoodsOutNoteSchema = mongoose.Schemas.GoodsOutNote;
 
     var objectId = mongoose.Types.ObjectId;
     var rewriteAccess = require('../helpers/rewriteAccess');
@@ -21,6 +23,8 @@ var Products = function (models, event) {
     var pageHelper = require('../helpers/pageHelper');
     var Integration = require('../helpers/requestMagento.js')();
     var FilterMapper = require('../helpers/filterMapper');
+    var integrationStatsHelper = require('../helpers/integrationStatsComposer')(models);
+
     var filterMapper = new FilterMapper();
 
     var RESPONSES = require('../constants/responses');
@@ -37,10 +41,12 @@ var Products = function (models, event) {
     var ProductCategoryService = require('../services/productCategory')(models);
     var ProductPriceService = require('../services/productPrice')(models);
     var ChannelLinksService = require('../services/channelLinks')(models);
-    var SettingsService = require('../services/settings')(models);
+    var SettingsService = require('../services/settings')(models, event);
     var IntegrationsService = require('../services/integration')(models);
     var OrderRowsService = require('../services/orderRows')(models);
     var AvailabilityService = require('../services/productAvailability')(models);
+    var GoodsOutNoteService = require('../services/goodsOutNotes')(models);
+    var GoodsInNoteService = require('../services/goodsInNotes')(models);
     var imageHelper = require('../helpers/imageHelper');
 
     var getHelper = _getHelper.getHelper;
@@ -192,7 +198,7 @@ var Products = function (models, event) {
             }
 
             if (result && (result[0] || result[1] && result[1].length)) {
-                err = new Error('this product already exists in warehouse or order');
+                err = new Error('This product already exists in warehouse or order');
                 return callback(err);
             }
 
@@ -416,6 +422,9 @@ var Products = function (models, event) {
         var mid = req.query.contentType === 'salesProduct' ? 65 : 58;
         var Product;
         var query = req.query || {};
+        var quickSearch = query.quickSearch;
+        var matchObject = {};
+        var regExp;
         var filter = query.filter;
         var contentType = query.contentType;
         var optionsObject = {$and: []};
@@ -461,7 +470,7 @@ var Products = function (models, event) {
             if (action === 'unpublish' || action === 'unlink') {
                 channelLinksMatch[filter.channelLinks.key] = {$in: channelObjectIds};
             } else if (action === 'publish') {
-                channelLinksMatch[filter.channelLinks.key] = {$nin: channelObjectIds};
+                channelLinksMatch['channelLinks.channel'] = {$nin: channelObjectIds};
             }
 
             delete  filter.channelLinks;
@@ -475,6 +484,11 @@ var Products = function (models, event) {
         accessRollSearcher = function (cb) {
             accessRoll(req, Product, cb);
         };
+
+        if (quickSearch) {
+            regExp = new RegExp(quickSearch, 'ig');
+            matchObject.name = {$regex: regExp};
+        }
 
         contentSearcher = function (productsIds, waterfallCallback) {
             var aggregation;
@@ -654,6 +668,8 @@ var Products = function (models, event) {
                     }
                 }];
                 matchAggregationArray = [{
+                    $match: matchObject
+                }, {
                     $match: optionsObject
                 }, {
                     $group: {
@@ -717,7 +733,7 @@ var Products = function (models, event) {
                 }, {
                     $unwind: {
                         path                      : '$products.image',
-                        preserveNullAndEmptyArrays: true,
+                        preserveNullAndEmptyArrays: true
                     }
                 }, {
                     $group: {
@@ -882,6 +898,8 @@ var Products = function (models, event) {
 
                 if (groupId) {
                     matchAggregationArray = [{
+                        $match: matchObject
+                    }, {
                         $match: {
                             groupId: groupId
                         }
@@ -1370,8 +1388,6 @@ var Products = function (models, event) {
                     return waterfallCallback(err);
                 }
 
-                console.dir(result);
-
                 if (result.length) {
                     waterfallCallback(null, result[0]);
                 } else {
@@ -1519,45 +1535,54 @@ var Products = function (models, event) {
                     warehouse: warehouse
                 }
             }, {
-                $project: {
-                    onHand   : 1,
-                    allocated: {
-                        $sum: '$orderRows.quantity'
-                    },
-
-                    fulfilled: {
-                        $sum: '$goodsOutNotes.quantity'
-                    },
-
-                    cost: 1
+                $unwind: {
+                    path                      : '$goodsOutNotes',
+                    preserveNullAndEmptyArrays: true
+                }
+            }, {
+                $lookup: {
+                    from        : 'GoodsNote',
+                    localField  : 'goodsOutNotes.goodsNoteId',
+                    foreignField: '_id',
+                    as          : 'goodsOutNotes.goodsNoteId'
                 }
             }, {
                 $project: {
-                    onHand   : 1,
-                    allocated: 1,
-                    inStock  : {
-                        $add: ['$onHand', '$allocated', '$fulfilled']
-                    },
-
-                    cost: 1
+                    cost       : 1,
+                    onHand     : 1,
+                    goodsNoteId: {$arrayElemAt: ['$goodsOutNotes.goodsNoteId', 0]},
+                    quantity   : '$goodsOutNotes.quantity'
                 }
             }, {
                 $group: {
-                    _id: '$warehouse',
-
-                    inStock: {
-                        $sum: '$inStock'
-                    },
-
-                    onHand: {
-                        $sum: '$onHand'
-                    },
-
-                    cost: {
-                        $first: '$cost'
-                    }
+                    _id     : '$goodsNoteId.status.shipped',
+                    cost    : {$first: '$cost'},
+                    onHand  : {$sum: '$onHand'},
+                    quantity: {$sum: '$quantity'}
                 }
-            }], waterfallCallback);
+            }], function (err, availability) {
+                var availObj = {
+                    inStock: 0
+                };
+
+                if (err) {
+                    return waterfallCallback(err);
+                }
+
+                availability.forEach(function (el) {
+                    availObj.cost = el.product;
+                    availObj.onHand = el.onHand;
+                    availObj.allocated = el.allocated;
+
+                    if (!el._id) {
+                        availObj.inStock += el.quantity;
+                    }
+                });
+
+                availObj.inStock += availObj.onHand;
+
+                waterfallCallback(null, [availObj]);
+            });
         };
 
         waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
@@ -1567,7 +1592,7 @@ var Products = function (models, event) {
                 return next(err);
             }
 
-            res.status(200).send(result ? result[0] : null);
+            res.status(200).send(result[0]);
         });
     }
 
@@ -2084,6 +2109,7 @@ var Products = function (models, event) {
 
     this.bulkRemove = function (req, res, next) {
         var body = req.body || {ids: []};
+        var db = req.session.lastDb;
         var ids = body.ids;
 
         async.each(ids, function (id, eachCb) {
@@ -2096,10 +2122,19 @@ var Products = function (models, event) {
             });
         }, function (err) {
             if (err) {
-                return res.status(400).send(err);
+                return next(err);
             }
 
-            res.status(200).send({success: 'Removed success'});
+            integrationStatsHelper(db, function (err, stats) {
+                if (err) {
+                    return next(err);
+                }
+
+                event.emit('recollectedStats', {dbName: db, stats: stats});
+                redis.writeToStorage('syncStats', db, JSON.stringify(stats));
+
+                res.status(200).send({success: 'Removed success'});
+            });
         });
     };
 
@@ -2153,6 +2188,46 @@ var Products = function (models, event) {
     this.getProductsAvailable = function (req, res, next) {
 
         getProductsAvailable(req, res, next);
+    };
+
+    this.getProductsNames = function (req, res, next) {
+        var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
+
+        Product.aggregate([
+            {
+                $match: {}
+            },
+            {
+                $project: {
+                    name: 1
+                }
+            }
+        ]).exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+            res.status(200).send({data: result});
+        });
+    };
+
+    this.getProductsDimension = function (req, res, next) {
+        var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
+
+        Product.aggregate([
+            {
+                $match: {}
+            },
+            {
+                $project: {
+                    dimension: '$inventory.size.dimension'
+                }
+            }
+        ]).exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+            res.status(200).send({data: result});
+        });
     };
 
     this.totalCollectionLength = function (req, res, next) {
@@ -2454,6 +2529,10 @@ var Products = function (models, event) {
                         return eCb(err);
                     }
 
+                    if (!internalId) {
+                        return eCb();
+                    }
+
                     channelLinksObj.linkId = internalId.toString();
 
                     ChannelLinksService.create(channelLinksObj, function (err) {
@@ -2662,6 +2741,99 @@ var Products = function (models, event) {
             res.status(200).send({data: result});
         });
     };
+
+    this.getForManufacturing = function (req, res, next) {
+        var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
+
+        Product.find({}).exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({data: result});
+        });
+    };
+
+    // this.getProductsAvailability = function (req, res, next) {
+    //     var body = req.body;
+    //     var startDate = body.startDate ? new Date(body.startDate) : new Date();
+    //     var endDate = body.endDate ? new Date(body.endDate) : new Date();
+    //
+    //     var options = {
+    //         startDate: startDate,
+    //         endDate  : endDate,
+    //         dbName   : req.session.lastDb
+    //     };
+    //
+    //     async.parallel({
+    //             openingBalance: function (cb) {
+    //                 GoodsInNoteService.getBeforeStartDate(options, cb);
+    //             }
+    //         }, {
+    //             inwards: function (cb) {
+    //                 GoodsInNoteService.getBetwenDates(options, cb);
+    //             }
+    //         }, {
+    //             outwards: function (cb) {
+    //                 GoodsOutNoteService.getBetwenDates(options, cb);
+    //             }
+    //         },
+    //         function (err, result) {
+    //             if (err) {
+    //                 return next(err);
+    //             }
+    //
+    //             getDifference(result, function (newResult) {
+    //                 res.status(200).send(newResult);
+    //             });
+    //         }
+    //     )
+    // };
+    //
+    // function getDifference(result, callback) {
+    //     var openingBalance = [];
+    //     var wards = result.inwards.concat(result.outwards).concat(result.openingBalance);
+    //     var ids = {};
+    //
+    //     wards.forEach(function (item) {
+    //         if (!ids[item._id.toString()]) {
+    //             ids[item._id.toString()] = true;
+    //         }
+    //     });
+    //
+    //     ids = Object.keys(ids);
+    //
+    //     ids.forEach(function (id) {
+    //         var obj = {
+    //             openingQuantity : 0,
+    //             inwardsQuantity : 0,
+    //             outwardsQuantity: 0
+    //         };
+    //         var buff = _.where(wards, function (el) {
+    //             return el._id.toString() === id;
+    //         });
+    //
+    //         buff.forEach(function (itm) {
+    //             obj.name = itm.name;
+    //             obj.info = item.info;
+    //
+    //             if (itm.openingQuantity) {
+    //                 obj.openingQuantity += itm.openingQuantity;
+    //             }
+    //             if (itm.inwardsQuantity) {
+    //                 obj.inwardsQuantity += itm.inwardsQuantity;
+    //             }
+    //             if (itm.outwardsQuantity) {
+    //                 obj.outwardsQuantity += itm.outwardsQuantity;
+    //             }
+    //         });
+    //
+    //         obj.balance = (obj.openingQuantity + obj.inwardsQuantity) - obj.outwardsQuantity;
+    //         openingBalance.push(obj);
+    //     });
+    //
+    //     callback(openingBalance);
+    // }
 };
 
 module.exports = Products;

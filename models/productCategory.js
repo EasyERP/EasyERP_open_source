@@ -18,10 +18,11 @@
             date: {type: Date, default: Date.now}
         },
 
+        channel            : {type: ObjectId, ref: 'integrations', default: null},
+        integrationId      : {type: String, default: ''},
         nestingLevel       : {type: Number, default: 0},
         sequence           : {type: Number, default: 0},
         main               : {type: Boolean, default: false},
-        integrationId      : {type: String, default: ''},
         taxesAccount       : {type: ObjectId, ref: 'chartOfAccount', default: null},
         debitAccount       : {type: ObjectId, ref: 'chartOfAccount', default: null},
         creditAccount      : {type: ObjectId, ref: 'chartOfAccount', default: null},

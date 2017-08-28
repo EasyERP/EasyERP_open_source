@@ -7,10 +7,13 @@ define([
     'models/Category',
     'views/settingsOverview/productDetails/productCategories/CreateView',
     'views/settingsOverview/productDetails/productCategories/EditView',
+    'collections/Products/ProductCategories',
     'helpers/eventsBinder',
     'dataService',
-    'constants'
-], function (Backbone, $, _, ContentTemplate, ItemTemplate, CurrentModel, CreateCategoryView, EditCategoryView, ProductsCollection, ThumbnailsView, eventsBinder, dataService, CONSTANTS) {
+    'constants',
+    'helpers/ga',
+    'constants/googleAnalytics'
+], function (Backbone, $, _, ContentTemplate, ItemTemplate, CurrentModel, CreateCategoryView, EditCategoryView, CategoryCollection, eventsBinder, dataService, CONSTANTS, ga, GA) {
     var ProductsView = Backbone.View.extend({
         el               : '#productCategoriesTab',
         thumbnailsView   : null,
@@ -19,7 +22,7 @@ define([
 
         events: {
             'click .expand'           : 'expandHideItem',
-            'click .item > .content'  : 'selectCategory',
+            // 'click .item > .content'  : 'selectCategory',
             'click .editCategory'     : 'editItem',
             'click .deleteCategory'   : 'deleteItem',
             'click .addProduct'       : 'addProduct',
@@ -79,6 +82,11 @@ define([
             var $selectedEl = $groupList.find('.selected').length ? $groupList.find('.selected').closest('li') : $groupList.find('li').first();
             var categoryId = $selectedEl.attr('data-id');
 
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.CREATE_PRODUCT_CATEGORIES
+            });
+
             return new CreateCategoryView({
                 _id       : categoryId,
                 collection: this.collection
@@ -88,39 +96,16 @@ define([
         expandHideItem: function (e) {
             var $target = $(e.target);
             var $ulEl = $target.closest('li').find('ul');
+            var parentId = $target.closest('li').attr('data-id');
 
             if ($target.hasClass('disclosed')) {
-                $ulEl.addClass('hidden');
-                $ulEl.closest('li').find('.expand').removeClass('disclosed icon-folder-open3').addClass('icon-folder3');
+                $ulEl.remove();
+                $target.closest('li').find('.expand').removeClass('disclosed icon-folder-open3').addClass('icon-folder3');
             } else {
-                $ulEl.first().removeClass('hidden');
-                $ulEl.closest('li').find('.expand').first().removeClass('icon-folder3').addClass('disclosed icon-folder-open3');
+                this.trigger('renderChildren', {parentId: parentId});
+
+                $target.removeClass('icon-folder3').addClass('disclosed icon-folder-open3');
             }
-        },
-
-        renderFilteredContent: function (categoryId) {
-            var self = this;
-            var categoryUrl = '/category/' + categoryId;
-            var ids;
-
-            dataService.getData(categoryUrl, {}, function (category) {
-
-                ids = category.child;
-                ids.push(categoryId);
-
-                if (!App.filtersObject.filter) {
-                    App.filtersObject.filter = {};
-                }
-
-                App.filtersObject.filter.productCategory = {
-                    key  : 'info.categories',
-                    value: ids,
-                    type : this.filterType || null
-                };
-
-                self.thumbnailsView.showFilteredPage(App.filtersObject.filter);
-                self.thumbnailsView.filterView.showFilterIcons(self.filter);
-            }, this);
         },
 
         editItem: function (e) {
@@ -141,6 +126,10 @@ define([
                     });
                 }
             });
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.EDIT_PRODUCT_CATEGORIES
+            });
 
             return false;
         },
@@ -151,6 +140,11 @@ define([
             var answer = confirm('Really DELETE items ?!');
 
             e.preventDefault();
+
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.DELETE_PRODUCT_CATEGORIES
+            });
 
             if (answer === true) {
                 myModel.destroy({
@@ -178,6 +172,7 @@ define([
 
         renderItem: function (product, className, selected) {
             var canDelete = true;
+            var hasChild = false;
 
             if (product.child && product.child.length) {
                 canDelete = false;
@@ -187,10 +182,15 @@ define([
                 }
             }
 
+            if (product.ch && product.ch.length) {
+                hasChild = true;
+            }
+
             return this.itemTemplate({
                 className: className,
                 selected : selected,
                 product  : product,
+                hasChild : hasChild,
                 canDelete: canDelete
             });
         },
@@ -198,10 +198,10 @@ define([
         renderFoldersTree: function (products) {
             var self = this;
             var $thisEl = this.$el;
-            var par;
-            var selected = '';
             var selectedMain = '';
+            var selected = '';
             var currentCategory;
+            var par;
 
             if (App.filtersObject.filter && App.filtersObject.filter.productCategory && App.filtersObject.filter.productCategory.value.length) {
                 currentCategory = App.filtersObject.filter.productCategory.value[App.filtersObject.filter.productCategory.value.length - 1];
@@ -219,98 +219,111 @@ define([
                     }
                 }
 
-                if (!product.parent) {
-                    $thisEl.find('.groupList').append(self.renderItem(product, 'child', selectedMain));
-                } else {
-                    par = $thisEl.find("[data-id='" + product.parent._id + "']").removeClass('child').addClass('parent');
-
-                    if (!par.find('.expand').length) {
-                        par.append('<a class="expand disclosed icon-folder-open3" href="javascript:;"></a>');
-                    }
-
-                    if (par.find('ul').length === 0) {
-                        par.append('<ul></ul>');
-                    }
-
-                    par.find('ul').first().append(self.renderItem(product, 'child', selected));
-                }
-
+                $thisEl.find('.groupList').append(self.renderItem(product, 'parent', selectedMain));
+                $thisEl.find('li.item').append('<a class="expand icon-folder3" href="javascript:;"></a>');
             });
 
-            $('.groupList .item .content').droppable({
-                accept   : '.product',
-                tolerance: 'pointer',
-                drop     : function (event, ui) {
-                    var $droppable = $(this).closest('li');
-                    var $draggable = ui.draggable;
-                    var productId = $draggable.attr('id');
-                    var categoryId = $droppable.data('id');
-                    var changed;
-                    var currentModel = self.productCollection.get(productId);
+            this.on('renderChildren', renderChildren, this);
 
-                    if (!currentModel) {
-                        currentModel = new CurrentModel({validate: false});
+            function renderChildren(opts) {
+                var parentId = opts.parentId;
+                var categories;
 
-                        currentModel.urlRoot = CONSTANTS.URLS.PRODUCT;
+                this.childrenCollection = new CategoryCollection({
+                    isChild  : true,
+                    parentId : parentId,
+                    forParent: true
+                }, {reset: true});
 
-                        currentModel.fetch({
-                            data   : {id: productId, viewType: 'form'},
-                            success: function (response) {
-                                currentModel.set({
-                                    'info.category': categoryId
-                                });
+                this.childrenCollection.on('reset', function () {
+                    categories = self.childrenCollection.toJSON();
 
-                                changed = currentModel.changed;
+                    categories.forEach(function (category) {
+                        par = $thisEl.find("[data-id='" + category.parent + "']");
 
-                                currentModel.save(changed, {
-                                    patch  : true,
-                                    wait   : true,
-                                    success: function () {
-                                        self.renderFilteredContent(categoryId);
-                                    }
-                                });
+                        if (par.find('ul').length === 0) {
+                            par.append('<ul></ul>');
+                        }
 
-                                $(this).addClass('selected');
-                            },
+                        par.find('ul').first().append(self.renderItem(category, 'child', selected));
+                    });
+                });
+            }
 
-                            error: function () {
-                                App.render({
-                                    type   : 'error',
-                                    message: 'Please refresh browser'
-                                });
-                            }
-                        });
-                    } else {
-                        currentModel.set({
-                            'info.category': categoryId
-                        });
+            /*  $('.groupList .item .content').droppable({
+             accept   : '.product',
+             tolerance: 'pointer',
+             drop     : function (event, ui) {
+             var $droppable = $(this).closest('li');
+             var $draggable = ui.draggable;
+             var productId = $draggable.attr('id');
+             var categoryId = $droppable.data('id');
+             var changed;
+             var currentModel = self.productCollection.get(productId);
 
-                        changed = currentModel.changed;
+             if (!currentModel) {
+             currentModel = new CurrentModel({validate: false});
 
-                        currentModel.save(changed, {
-                            patch  : true,
-                            wait   : true,
-                            success: function () {
-                                self.renderFilteredContent(categoryId);
-                            }
-                        });
+             currentModel.urlRoot = CONSTANTS.URLS.PRODUCT;
 
-                        $(this).addClass('selected');
-                    }
-                },
+             currentModel.fetch({
+             data   : {id: productId, viewType: 'form'},
+             success: function (response) {
+             currentModel.set({
+             'info.category': categoryId
+             });
 
-                over: function () {
-                    var $droppableEl = $(this);
-                    var $groupList = self.$el;
+             changed = currentModel.changed;
 
-                    $groupList.find('.selected').removeClass('selected');
-                    $droppableEl.addClass('selected');
-                },
+             currentModel.save(changed, {
+             patch  : true,
+             wait   : true,
+             success: function () {
+             self.renderFilteredContent(categoryId);
+             }
+             });
 
-                out: function () {
-                    $(this).removeClass('selected');
-                }
-            });
+             $(this).addClass('selected');
+             },
+
+             error: function () {
+             App.render({
+             type   : 'error',
+             message: 'Please refresh browser'
+             });
+             }
+             });
+             } else {
+             currentModel.set({
+             'info.category': categoryId
+             });
+
+             changed = currentModel.changed;
+
+             currentModel.save(changed, {
+             patch  : true,
+             wait   : true,
+             success: function () {
+             self.renderFilteredContent(categoryId);
+             }
+             });
+
+             $(this).addClass('selected');
+             }
+             },
+
+             over: function () {
+             var $droppableEl = $(this);
+             var $groupList = self.$el;
+
+             $groupList.find('.selected').removeClass('selected');
+             $droppableEl.addClass('selected');
+             },
+
+             out: function () {
+             $(this).removeClass('selected');
+             }
+             });*/
         },
 
         render: function () {

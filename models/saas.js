@@ -14,7 +14,27 @@ module.exports = (function () {
             registrationDate: {type: Date, default: Date.now},
             pass            : {type: String, default: ''},
             user            : {type: String, default: ''},
-            forgotToken     : {type: String, default: ''}
+            forgotToken     : {type: String, default: ''},
+            mobilePhone: {type: String, default: ''},
+            contactName     : {
+                first: {type: String, default: ''},
+                last : {type: String, default: ''}
+            },
+
+            facebook: {
+                userId     : {type: String, default: ''},
+                accessToken: {type: String, default: ''}
+            },
+
+            linkedin: {
+                userId    : {type: String, default: ''},
+                country   : {type: String, default: ''},
+                profileUrl: {type: String, default: ''}
+            },
+
+            credentials: {
+                verify_token: {type: String, default: ''}
+            }
         }]
     }, {collection: 'SaasDbs'});
 

@@ -452,6 +452,11 @@ var Module = function (models, event) {
 
                 if (customer && customer.notes) {
                     customer.notes = customer.notes.concat(results[0], results[1]);
+                    customer.notes = _.map(customer.notes, function (el) {
+                        el.date = new Date(el.date);
+
+                        return el;
+                    });
                     customer.notes = _.sortBy(customer.notes, 'date');
                 }
 
@@ -709,6 +714,7 @@ var Module = function (models, event) {
     function getFilterCustomers(req, res, next) {
         var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
         var data = req.query;
+        var quickSearch = data.quickSearch;
         var contentType = data.contentType;
         var viewType = data.viewType;
         var optionsObject = {};
@@ -726,6 +732,16 @@ var Module = function (models, event) {
         var countQuery;
         var getData;
         var getTotal;
+        var quickArray;
+        var regExpArray = [];
+
+        if (quickSearch) {
+            quickArray = quickSearch.split(' ');
+
+            quickArray.forEach(function (str) {
+                regExpArray.push(new RegExp(str, 'ig'));
+            });
+        }
 
         if (filter && typeof filter === 'object') {
             optionsObject = filterMapper.mapFilter(filter, {contentType: contentType});
@@ -770,6 +786,17 @@ var Module = function (models, event) {
 
             queryObject.$and.push({_id: {$in: ids}});
 
+            if (quickSearch) {
+                queryObject.$or = [
+                    {
+                        'name.first': {$in: regExpArray}
+                    },
+                    {
+                        'name.last': {$in: regExpArray}
+                    }
+                ];
+            }
+
             function queryBuilder(contentType, viewType) {
                 var query = Model.find(queryObject);
 
@@ -778,16 +805,14 @@ var Module = function (models, event) {
                         switch (viewType) {
                             case ('list'):
                                 query.sort(sort);
-                                query
-                                    .select('_id createdBy magentoId editedBy salesPurchases address.country email name fullName phones.phone')
+                                query.select('_id createdBy magentoId editedBy salesPurchases address.country email name fullName phones.phone')
                                     .populate('createdBy.user', 'login')
                                     .populate('channel', 'channelName')
                                     .populate('editedBy.user', 'login');
                                 break;
                             case ('thumbnails'):
                                 query.sort(sort);
-                                query
-                                    .select('_id name email magentoId address.country salesPurchases fullName company')
+                                query.select('_id name email magentoId address.country salesPurchases fullName company')
                                     .populate('company', '_id name')
                                     .populate('channel', 'channelName');
                                 break;
@@ -798,8 +823,7 @@ var Module = function (models, event) {
                         switch (viewType) {
                             case ('list'):
                                 query.sort(sort);
-                                query
-                                    .select('_id editedBy createdBy salesPurchases name fullName email phones.phone phones.mobile address.country')
+                                query.select('_id editedBy createdBy salesPurchases name fullName email phones.phone phones.mobile address.country')
                                     .populate('salesPurchases.salesPerson', '_id name')
                                     .populate('salesPurchases.salesTeam', '_id name')
                                     .populate('channel', 'channelName')
@@ -808,8 +832,7 @@ var Module = function (models, event) {
                                 break;
                             case ('thumbnails'):
                                 query.sort(sort);
-                                query
-                                    .select('_id name fullName company address.country salesPurchases')
+                                query.select('_id name fullName company address.country salesPurchases')
                                     .populate('channel', 'channelName')
                                     .populate('company', '_id name address');
                                 break;
@@ -820,16 +843,14 @@ var Module = function (models, event) {
                         switch (viewType) {
                             case ('list'):
                                 query.sort(sort);
-                                query
-                                    .populate('salesPurchases.salesPerson', '_id name')
+                                query.populate('salesPurchases.salesPerson', '_id name')
                                     .populate('salesPurchases.salesTeam', '_id name')
                                     .populate('createdBy.user')
                                     .populate('editedBy.user');
                                 break;
                             case ('thumbnails'):
                                 query.sort(sort);
-                                query
-                                    .select('_id name fullName company')
+                                query.select('_id name fullName company')
                                     .populate('company', '_id name address');
 
                                 break;

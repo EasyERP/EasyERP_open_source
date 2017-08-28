@@ -35,7 +35,8 @@ define([
             'click div:not(input.endDateInput) input:not(#selectInput)'               : 'hideSelects',
             'click #showBtn'                                                          : productCategoriesService.showCategories,
             'change .productCategory'                                                 : productCategoriesService.changeCategory,
-            'click .deleteTag '                                                       : productCategoriesService.deleteCategory
+            'click .deleteTag '                                                       : productCategoriesService.deleteCategory,
+            'click'                                                                   : 'hideAllDropdowns'
         },
 
         hideSelects: function (e) {
@@ -582,17 +583,17 @@ define([
                             Backbone.history.navigate(window.location.hash, {trigger: true});
 
                             /*App.projectInfo = App.projectInfo || {};
-                            App.projectInfo.currentTab = 'timesheet';
+                             App.projectInfo.currentTab = 'timesheet';
 
-                            tabs = $('.chart-tabs');
-                            activeTab = tabs.find('.active');
+                             tabs = $('.chart-tabs');
+                             activeTab = tabs.find('.active');
 
-                            activeTab.removeClass('active');
-                            tabs.find('#' + App.projectInfo.currentTab + 'Tab').addClass('active');
+                             activeTab.removeClass('active');
+                             tabs.find('#' + App.projectInfo.currentTab + 'Tab').addClass('active');
 
-                            dialogHolder = $('.dialog-tabs-items');
-                            dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
-                            dialogHolder.find('#' + App.projectInfo.currentTab).closest('.dialog-tabs-item').addClass('active');*/
+                             dialogHolder = $('.dialog-tabs-items');
+                             dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
+                             dialogHolder.find('#' + App.projectInfo.currentTab).closest('.dialog-tabs-item').addClass('active');*/
 
                         },
 
@@ -717,6 +718,11 @@ define([
         hideNewSelect: function () {
             $(".newSelectList:not('.generateTypeUl')").remove();
             $('.generateTypeUl').hide();
+        },
+
+        hideAllDropdowns: function () {
+            this.hideNewSelect();
+            this.$('#variantsCategoriesBlock').removeClass('open');
         },
 
         render: function () {

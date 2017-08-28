@@ -1,14 +1,16 @@
-<% paymentCollection.forEach(function(element, index) {%>
+<% paymentCollection.forEach(function(element, index) {
+console.log('element', element);
+%>
 <tr data-id="<%=element._id%>">
     <td class="notForm centerCell">
         <label class="_customCHeckbox">
-            <input type="checkbox" value="<%=element._id%>" class="checkbox"/>
-           <!-- <% if (element.order && element.order.project) { %>
+            <input type="checkbox" value="<%=element._id%>"
+            <% if (element.order && element.order.project) { %>
             class="checkbox"
             <% } else {%>
             class="checkbox notRemovable" disabled='disabled'
             <% } %>
-            />-->
+            />
             <span></span>
         </label>
     </td>
@@ -18,18 +20,27 @@
     <td><%=element.workflow ? element.workflow.name : ''%></td>
     <td><%=element.customer ? element.customer.name : ''%></td>
     <td><%=element.warehouse ? element.warehouse.name : '' %></td>
-    <td class="centerCell _statusOrders"><span
+    <td><%=element.createdBy ? element.createdBy.date : ''%></td>
+
+    <% if(element.status.hasOwnProperty('received')){%>
+    <td class="centerCell _statusOrders" colspan="4"> Received: <span
+            class="<%=element.status &&  element.status.received ? 'icon-checked2 green transparented' : 'icon-close3 red transparented'%>"></span>
+    </td>
+    <%}else{%>
+    <td class="centerCell _statusOrders"> Printed: <span
             class="<%=element.status &&  element.status.printedOn ? 'icon-checked2 green transparented' : 'icon-close3 red transparented'%>"></span>
     </td>
-    <td class="centerCell _statusOrders"><span
+    <td class="centerCell _statusOrders">Picked:<span
             class="<%=element.status &&  element.status.pickedOn ? 'icon-checked2 green transparented' : 'icon-close3 red transparented'%>"></span>
     </td>
-    <td class="centerCell _statusOrders"><span
+    <td class="centerCell _statusOrders">Packed:<span
             class="<%=element.status &&  element.status.packedOn ? 'icon-checked2 green transparented' : 'icon-close3 red transparented'%>"></span>
     </td>
-    <td class="centerCell _statusOrders"><span
+    <td class="centerCell _statusOrders">Shipped:<span
             class="<%=element.status &&  element.status.shippedOn ? 'icon-checked2 green transparented' : 'icon-close3 red transparented'%>"></span>
     </td>
+
+    <%}%>
 
 </tr>
 <%})%>

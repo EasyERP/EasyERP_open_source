@@ -51,14 +51,14 @@ define([
             }));
         },
 
-        activateTabs: function (e) {
+       /* activateTabs: function (e) {
             var $thisEl = this.$el;
             var scaleButtons = $thisEl.find('.changeInfo');
             var scaleTabs = $thisEl.find('.scaleTabs');
             var $target;
             var attr;
 
-            scaleTabs.hide();
+            // scaleTabs.hide();
             scaleButtons.removeClass('active');
 
             if (!e) {
@@ -75,7 +75,7 @@ define([
             }
 
             $thisEl.find('.productTabs').show();
-        },
+        },*/
 
         changeDateRange: function (dateArray) {
             var self = this;
@@ -89,7 +89,7 @@ define([
                 self.collection.set(resp.data);
 
                 self.renderChart();
-                self.activateTabs();
+                // self.activateTabs();
                 self.showMoreContent();
             });
         },
@@ -124,11 +124,11 @@ define([
 
             max = Math.ceil(d3.max(array, function (d) {
                         return d.total;
-                    }) / 1000) * 1000;
+                    }) / 100) * 100;
 
             $wrapper = $('#content-holder');
             margin = {top: 20, right: $wrapper.width() / 2, bottom: 30, left: 130};
-            width = ($wrapper.width() - margin.right) / 2.1;
+            width = ($wrapper.width() - margin.right) / 1.5;
             height = array.length * 30;
             rect = height / (array.length);
 
@@ -142,7 +142,8 @@ define([
 
             xAxis = d3.svg.axis()
                 .scale(xScale)
-                .orient('bottom');
+                .orient('bottom')
+                .tickFormat(d3.format('s'));
 
             yAxis = d3.svg.axis()
                 .scale(yScale)
@@ -160,7 +161,7 @@ define([
                     'height': height + margin.top + margin.bottom
                 })
                 .append('g')
-                .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+                .attr('transform', 'translate(' + (margin.left + 150) + ',' + margin.top + ')');
 
             chart.selectAll('rect')
                 .data(array)
@@ -236,8 +237,8 @@ define([
                     }) / 10) * 10;
 
             $wrapper = $('#content-holder');
-            margin = {top: 20, right: 160, bottom: 30, left: 130};
-            width = ($wrapper.width() - margin.right) / 2.1;
+            margin = {top: 20, right: $wrapper.width() / 2, bottom: 30, left: 130};
+            width = ($wrapper.width() - margin.right) / 1.5;
             height = array.length * 30;
             rect = height / (array.length);
 
@@ -251,7 +252,8 @@ define([
 
             xAxis = d3.svg.axis()
                 .scale(xScale)
-                .orient('bottom');
+                .orient('bottom')
+                .tickFormat(d3.format('s'));
 
             yAxis = d3.svg.axis()
                 .scale(yScale)
@@ -269,7 +271,7 @@ define([
                     'height': height + margin.top + margin.bottom
                 })
                 .append('g')
-                .attr('transform', 'translate(' + (margin.left + 300 ) + ',' + margin.top + ')');
+                .attr('transform', 'translate(' + (margin.left + 150 ) + ',' + margin.top + ')');
 
             chart.selectAll('rect')
                 .data(array)
@@ -332,8 +334,8 @@ define([
             }));
 
             this.renderChart();
-            this.activateTabs();
-            $thisEl.find('.scaleButtons').hide();
+           // this.activateTabs();
+           // $thisEl.find('.scaleButtons').hide();
 
             this.dateFilterView = new DateFilterView({
                 contentType: 'reports',

@@ -28,10 +28,10 @@
                             <div class="_billingBlock">
                                 <div class="_billingTitle">Bill to</div>
                                 <div class="_billingCustomerName"><%=(model.order && model.order.supplier )? model.order.supplier.name.first + ' ' + model.order.supplier.name.last:""%></div>
-                                <div ><%=(model.order && model.order.address )? model.order.supplier.address.street :""%></div>
-                                <div ><%=(model.order && model.order.supplier )? model.order.supplier.address.city :""%></div>
-                                <div ><%=(model.order && model.order.supplier )? model.order.supplier.address.state :""%></div>
-                                <div ><%=(model.order && model.order.supplier )? model.order.supplier.address.country :""%></div>
+                                <div class="_billingTitle"><%=(model.order && model.order.address )? model.order.supplier.address.street :""%></div>
+                                <div class="_billingTitle"><%=(model.order && model.order.supplier )? model.order.supplier.address.city :""%></div>
+                                <div class="_billingTitle"><%=(model.order && model.order.supplier )? model.order.supplier.address.state :""%></div>
+                                <div class="_billingTitle"><%=(model.order && model.order.supplier )? model.order.supplier.address.country :""%></div>
                             </div>
                         </td>
                     </tr>

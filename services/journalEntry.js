@@ -363,7 +363,7 @@ module.exports = function (models) {
                 account : creditAccount
             }, {
                 credit : 0,
-                debit  : differenceAmount - payment.bankExpenses.amount,
+                debit  : differenceAmount - (payment.bankExpenses && payment.bankExpenses.amount) || 0,
                 debitFC: payment.paidAmount,
                 account: debitAccount
             });

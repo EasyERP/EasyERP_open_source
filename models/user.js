@@ -42,12 +42,36 @@ module.exports = (function () {
         },
 
         login: {type: String, default: '', required: true, unique: true},
-        email: {type: String, default: '', required: true, unique: true},
-        pass : {type: String, default: '', required: true},
+        email: {type: String, default: '', unique: true},
+        pass : {type: String, default: ''},
+
+        mobilePhone: {type: String, default: ''},
+        website    : {type: String, default: ''},
+        company    : {type: String, default: ''},
+
+        contactName: {
+            first: {type: String, default: ''},
+            last : {type: String, default: ''}
+        },
+
+        facebook: {
+            userId: {type: String, default: ''}
+        },
+
+        google: {
+            userId: {type: String, default: ''}
+        },
+
+        linkedin: {
+            userId    : {type: String, default: ''},
+            country   : {type: String, default: ''},
+            profileUrl: {type: String, default: ''}
+        },
 
         credentials: {
             refresh_token: {type: String, default: ''},
-            access_token : {type: String, default: ''}
+            access_token : {type: String, default: ''},
+            verify_token : {type: String, default: ''}
         },
 
         profile   : {type: Number, ref: 'Profile', required: true},
@@ -77,6 +101,11 @@ module.exports = (function () {
                 contentType: {type: String, default: null}
             }
         ],
+
+        favorite: {
+            reports   : [{type: ObjectId, ref: 'CustomReport', default: null}],
+            dashboards: [{type: ObjectId, ref: 'CustomDashboard', default: null}]
+        },
 
         ID             : Number,
         relatedEmployee: {type: ObjectId, ref: 'Employees', default: null},

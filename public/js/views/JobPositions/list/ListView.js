@@ -10,8 +10,9 @@ define([
     'models/JobPositionsModel',
     'views/JobPositions/EditView',
     'common',
-    'text!templates/stages.html'
-], function (Backbone, $, _, listViewBase, listTemplate, CreateView, ListItemView, contentCollection, CurrentModel, EditView, common, stagesTamplate) {
+    'text!templates/stages.html',
+    'views/guideTours/guideNotificationView'
+], function (Backbone, $, _, listViewBase, listTemplate, CreateView, ListItemView, contentCollection, CurrentModel, EditView, common, stagesTamplate, GuideNotify) {
     'use strict';
 
     var JobPositionsListView = listViewBase.extend({
@@ -115,6 +116,13 @@ define([
                 itemView.trigger('incomingStages', stages);
             });
 
+            if (App.guide) {
+                if (App.notifyView) {
+                    App.notifyView.undelegateEvents();
+                    App.notifyView.stopListening();
+                }
+                App.notifyView = new GuideNotify({e: null, data: App.guide});
+            }
             // this.renderPagination($currentEl, this);
             // $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         },

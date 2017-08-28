@@ -1,199 +1,248 @@
-<div class="_warehouseWrap _integrationForm">
-    <div id="channelNameContainer" class="_listModal">
-        <div class="channelImg"
-             data-content="channelImage"
-             id="channelImgContainer">
-        </div>
-        <div data-content="channelInfo">
-            <div class="_modalLabel">
-                <label>Channel Name</label>
-            </div>
-            <div class="_modalSelect">
-                <input id="channelName"
-                       type="text"
+<div class="_newForm">
+    <h4 class="_dialogMainTitle"><%= dialogTitle %></h4>
+    <div class="_formWrap _enlargedItemMargin">
+        <div class="_formBlock" id="channelNameContainer">
+            <div class="_animateInputBox _withInfo">
+                <input type="text"
+                       class="_animate"
+                       id="channelName"
                        placeholder="Channel Name"
                        value="<%= channelName %>"
-                       maxlength="30"
-                >
+                       maxlength="30">
+                <label class="_animate">Channel Name</label>
+                <span class="tips icon-info" data-id="channelName"></span>
             </div>
+
         </div>
-
-    </div>
-
-    <div id="channelInfoContainer">
-
-        <div class="_listModal">
-            <h3 id="settingsName"><span class="channelType"><%= type.toUpperCase()%></span></h3>
+        <div class="_formBlock" id="channelInfoContainer">
+            <h3 class="_sectionTitle" id="settingsName"><%= type === 'woo' ? 'WooCommerce' : type.toUpperCase()%></h3>
             <% if (type !== 'etsy'){
                 var placeHolder = 'http://mymagento.com';
                 var apiPlaceHolder = 'apiuser';
                 var apiNameLabel = 'User Name';
+                var passwordPlaceHolder = 'apipassword';
+                var passwordNameLabel = 'API Password';
 
                 if (type === 'shopify') {
                     placeHolder = 'http://testshopify.myshopify.com';
                     apiPlaceHolder = 'apikey';
                     apiNameLabel = 'API key';
+                    passwordPlaceHolder = 'apisecret';
+                    passwordNameLabel = 'API secret';
+                }
+
+                if (type === 'woo') {
+                    placeHolder = 'http://example.com';
+                    apiPlaceHolder = 'consumer_key';
+                    apiNameLabel = 'Consumer key';
+                    passwordPlaceHolder = 'consumer_secret';
+                    passwordNameLabel = 'Consumer secret';
                 }
             %>
-            <div class="_modalList">
-                <div class="_modalLabel">
-                    <label>Base URL</label>
-                </div>
-                <div class="_modalSelect">
-                    <input id="baseURL"
-                           type="text"
-                           placeholder= "Example: <%= placeHolder%>"
-                           value="<%= credentials && credentials.baseUrl%>"
-                    >
-                </div>
+            <div class="_animateInputBox">
+                <input type="text"
+                       class="_animate"
+                       id="baseURL"
+                       placeholder="Example: <%= placeHolder%>"
+                       value="<%= credentials && credentials.baseUrl%>"
+                       required>
+                <label class="_animate">Base URL</label>
             </div>
-
-            <div class="_modalList">
-                <div class="_modalLabel">
-                    <label><%= apiNameLabel%></label>
-                </div>
-                <div class="_modalSelect">
-                    <input id="apiuser"
-                           type="text"
-                           placeholder="Example: <%= apiPlaceHolder%>"
-                           value="<%= credentials && credentials.username%>"
-                    >
-                </div>
+            <div class="_animateInputBox">
+                <input type="text"
+                       class="_animate"
+                       id="apiuser"
+                       placeholder="Example: <%= apiPlaceHolder%>"
+                       value="<%= credentials && credentials.username%>"
+                       required>
+                <label class="_animate"><%= apiNameLabel%></label>
             </div>
-            <div class="_modalList">
-                <div class="_modalLabel">
-                    <label>Password</label>
-                </div>
-                <div class="_modalSelect">
-                    <input id="apipassword"
-                           type="password"
-                           placeholder="Example: apipassword"
-                    >
-                </div>
+            <div class="_animateInputBox">
+                <input type="password"
+                       class="_animate"
+                       id="apipassword"
+                       placeholder="Example:  <%= passwordPlaceHolder %>"
+                       required>
+                <label class="_animate"><%= passwordNameLabel %></label>
             </div>
+            <%if (type === 'woo') {%>
+            <div class="_animateInputBox">
+                <input type="text"
+                       class="_animate"
+                       id="apipassword"
+                       placeholder="Example: 2.6.14"
+                       required>
+                <label class="_animate">Version</label>
+            </div>
+            <%}%>
+            <%if (type === 'shopify') {%>
+            <div class="_animateInputBox">
+                <input type="text"
+                       class="_animate"
+                       id="sharedSecret"
+                       placeholder="Example: sharedsecret"
+                       required>
+                <label class="_animate">SHARED SECRET</label>
+            </div>
+            <%}%>
             <% } else {%>
-            <div class="_modalList">
-                <div class="_modalLabel">
-                    <label>Shop Name</label>
-                </div>
-                <div class="_modalSelect">
-                    <input id="apishop"
-                           type="text"
-                           placeholder="Example: etsyStore"
-                           value="<%= credentials && credentials.username%>"
-                    >
-                </div>
+            <div class="_animateInputBox _withInfo">
+                <input type="text"
+                       class="_animate"
+                       id="apishop"
+                       placeholder="Example: etsyStore"
+                       value="<%= credentials && credentials.username%>"
+                       required>
+                <label class="_animate">Shop Name</label>
+                <span class="tips icon-info" data-id="apishop"></span>
             </div>
-            <div class="_modalList">
-                <div class="_modalLabel">
-                    <label>KEYSTRING</label>
-                </div>
-                <div class="_modalSelect">
-                    <input id="apiuser"
-                           type="text"
-                           placeholder="Example: keystring"
-                           value="<%= credentials && credentials.username%>"
-                    >
-                </div>
+            <div class="_animateInputBox _withInfo">
+                <input type="text"
+                       class="_animate"
+                       id="apiuser"
+                       placeholder="Example: keystring"
+                       value="<%= credentials && credentials.username%>"
+                       required>
+                <label class="_animate">KEYSTRING</label>
+                <span class="tips icon-info" data-id="apiuser"></span>
             </div>
-            <div class="_modalList">
-                <div class="_modalLabel">
-                    <label>SHARED SECRET</label>
-                </div>
-                <div class="_modalSelect">
-                    <input id="apipassword"
-                           type="password"
-                           placeholder="Example: shared secret"
-                    >
-                </div>
+            <div class="_animateInputBox _withInfo">
+                <input type="password"
+                       class="_animate"
+                       id="apipassword"
+                       placeholder="Example: shared secret"
+                       required>
+                <label class="_animate">SHARED SECRET</label>
+                <span class="tips icon-info" data-id="apipassword"></span>
             </div>
             <% }%>
 
-            <div class="clearfix"></div>
-        </div>
-
-
-        <dl class="_listModal">
-            <h3 id="channelWarehouse">FOR IMPORT FROM <span class="channelType"><%= type.toUpperCase()%></span> USE:
+            <h3 class="_sectionTitle" id="channelWarehouse">FOR IMPORT FROM <span class="channelType"><%= type === 'woo' ? 'WooCommerce' : type.toUpperCase()%></span> USE:
             </h3>
-            <div class="_modalList">
-                <dt class="_modalLabel">
-                    <label>Warehouse</label>
-                </dt>
-                <dd class="_modalSelect">
-                    <a id="warehouse"
+
+            <div class="_animateSelectBox _withInfo">
+                <span class="_selectTitle">Warehouse</span>
+                <div class="_newSelectListWrap">
+                    <a href="javascript:;"
                        class="current-selected"
-                       href="javascript:;"
-                       data-id="<%= (credentials && credentials.warehouseSettings && credentials.warehouseSettings.warehouse && credentials.warehouseSettings.warehouse._id) || ''%>">
-                        <%= (credentials && credentials.warehouseSettings && credentials.warehouseSettings.warehouse &&
-                        credentials.warehouseSettings.warehouse.name) || 'Select'%>
+                       id="warehouse"
+                       data-id="<%= (credentials &&
+                                     credentials.warehouseSettings &&
+                                     credentials.warehouseSettings.warehouse &&
+                                     credentials.warehouseSettings.warehouse._id) || ''%>">
+                        <%= (credentials &&
+                             credentials.warehouseSettings &&
+                             credentials.warehouseSettings.warehouse &&
+                             credentials.warehouseSettings.warehouse.name) || 'Select Warehouse'%>
                     </a>
-                </dd>
+                </div>
+                <span class="tips icon-info" data-id="warehouse"></span>
             </div>
-            <div class="_modalList">
-                <dt class="_modalLabel">
-                    <label>Location</label>
-                </dt>
-                <dd class="_modalSelect">
-                    <a id="location"
-                       class="current-selected <%= (credentials && credentials.warehouseSettings && credentials.warehouseSettings.location && credentials.warehouseSettings.location.id) ? '' : 'jobs'%> "
-                       href="javascript:;"
-                       data-id="<%= (credentials && credentials.warehouseSettings && credentials.warehouseSettings.location && credentials.warehouseSettings.location._id) || ''%>">
-                        <%= (credentials && credentials.warehouseSettings && credentials.warehouseSettings.location &&
-                        credentials.warehouseSettings.location.name) || 'Select'%>
+
+            <div class="_animateSelectBox _withInfo">
+                <span class="_selectTitle">Location</span>
+                <div class="_newSelectListWrap">
+                    <a href="javascript:;"
+                       class="current-selected <%= (credentials &&
+                                                    credentials.warehouseSettings &&
+                                                    credentials.warehouseSettings.location &&
+                                                    credentials.warehouseSettings.location.id) ? '' : 'jobs'%> "
+                       id="location"
+                       data-id="<%= (credentials &&
+                                     credentials.warehouseSettings &&
+                                     credentials.warehouseSettings.location &&
+                                     credentials.warehouseSettings.location._id) || ''%>">
+                        <%= (credentials &&
+                             credentials.warehouseSettings &&
+                             credentials.warehouseSettings.location &&
+                             credentials.warehouseSettings.location.name) || 'Select Location'%>
                     </a>
-                </dd>
+                </div>
+                <span class="tips icon-info" data-id="location"></span>
             </div>
-            <div class="_modalList">
-                <dt class="_modalLabel">
-                    <label>Price List</label>
-                </dt>
-                <dd class="_modalSelect">
-                    <a id="priceList"
+            <div class="_animateSelectBox _withInfo">
+                <span class="_selectTitle">Price List</span>
+                <div class="_newSelectListWrap">
+                    <a href="javascript:;"
+                       class="current-selected <%= (credentials &&
+                                                    credentials.priceList &&
+                                                    credentials.priceList.id) ? '' : 'jobs'%> "
+                       id="priceList"
                        title="Add price list from existed or create own price list for this sales channel. For CORRECT work your sales channel's currency must be equal to erp base currency"
-                       class="current-selected <%= (credentials && credentials.priceList && credentials.priceList.id) ? '' : 'jobs'%> "
-                       href="javascript:;"
-                       data-id="<%= (credentials && credentials.priceList && credentials.priceList._id) || ''%>">
-                        <%= (credentials && credentials.priceList && credentials.priceList.name) || 'Select'%>
+                       data-id="<%= (credentials &&
+                                     credentials.priceList &&
+                                     credentials.priceList._id) || ''%>">
+                        <%= (credentials &&
+                             credentials.priceList &&
+                             credentials.priceList.name) || 'Select Price List'%>
                     </a>
-                </dd>
+                </div>
+                <span class="tips icon-info" data-id="priceList"></span>
             </div>
+
             <% if (type === 'etsy')  {%>
-            <div class="_modalList">
-                <dt class="_modalLabel">
-                    <label>Bank Account</label>
-                </dt>
-                <dd class="_modalSelect">
-                    <a id="bankAccount"
+            <div class="_animateSelectBox _withInfo">
+                <span class="_selectTitle">Bank Account</span>
+
+                <div class="_newSelectListWrap">
+                    <a href="javascript:;"
                        class="current-selected"
-                       href="javascript:;"
-                       data-id="<%= (credentials && credentials.bankAccount && credentials.bankAccount._id) || ''%>">
-                        <%= (credentials && credentials.bankAccount && credentials.bankAccount.name) || 'Select'%>
+                       id="bankAccount"
+                       data-id="<%= (credentials &&
+                                     credentials.bankAccount &&
+                                     credentials.bankAccount._id) || ''%>">
+                        <%= (credentials &&
+                             credentials.bankAccount &&
+                             credentials.bankAccount.name) || 'Select'%>
                     </a>
-                </dd>
+                </div>
+                <span class="tips icon-info" data-id="bankAccount"></span>
             </div>
-            <div class="_modalList">
-                <dt class="_modalLabel">
-                    <label class="_customCHeckbox">
-                        <input id="shippingStatus"
-                               type="checkbox" <%= (credentials && credentials.updateShippingStatus ? 'checked' : '')%>
-                        </input>
-                        <span>Update shipping status on Etsy</span>
+
+            <div class="_formRow">
+                <div class="_tipsWrap">
+                    <label class="_animatedCheckbox">
+                        <input type="checkbox"
+                               id="shippingStatus" <%= (credentials &&
+                                                        credentials.updateShippingStatus ? 'checked' : '')%> >
+                        <span></span>
                     </label>
-                    <!--<label>Update shipping status on Etsy</label>-->
-                </dt>
-                <dt class="_modalLabel">
-                    <label class="_customCHeckbox">
-                        <input id="shippingMethod"
-                               type="checkbox"  <%= (credentials && credentials.updateShippingMethod ? 'checked' : '') %>
-                        </input>
-                        <span>Update shipping method on Etsy</span>
+                    <label for="shippingStatus">Update shipping status on Etsy</label>
+                    <span class="tips icon-info" data-id="shippingStatus"></span>
+                </div>
+            </div>
+
+            <div class="_formRow">
+                <div class="_tipsWrap">
+                    <label class="_animatedCheckbox">
+                        <input type="checkbox"
+                               id="shippingMethod" <%= (credentials &&
+                                                        credentials.updateShippingMethod ? 'checked' : '') %> >
+                        <span></span>
                     </label>
-                    <label></label>
-                </dt>
+                    <label for="shippingMethod">Update shipping method on Etsy</label>
+                    <span class="tips icon-info" data-id="shippingMethod"></span>
+                </div>
             </div>
             <%}%>
-        </dl>
+
+            <% if (isCreate) { %>
+            <div class="_formRow">
+                <div class="_tipsWrap">
+                    <label class="_animatedCheckbox">
+                        <input type="checkbox"
+                               id="automatingGetProducts" checked>
+                        <span></span>
+                    </label>
+                    <label for="shippingMethod">Get Products after creating channel</label>
+                </div>
+            </div>
+            <% } %>
+        </div>
+        <% if (!isCreate) { %>
+        <div>
+            <span class="btn blue slim action syncProducts" data-action="syncProducts">Import Products</span>
+        </div>
+        <%}%>
     </div>
-    <div class="clearfix"></div>
 </div>

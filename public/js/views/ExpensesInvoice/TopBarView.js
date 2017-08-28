@@ -2,8 +2,9 @@ define([
     'Underscore',
     'views/topBarViewBase',
     'text!templates/ExpensesInvoice/TopBarTemplate.html',
+    'custom',
     'constants'
-], function (_, BaseView, ContentTopBarTemplate, CONSTANTS) {
+], function (_, BaseView, ContentTopBarTemplate, Custom, CONSTANTS) {
     var TopBarView = BaseView.extend({
         el           : '#top-bar',
         contentType  : CONSTANTS.EXPENSESINVOICE,

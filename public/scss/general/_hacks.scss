@@ -78,3 +78,15 @@
     padding-bottom: 0;
   }
 }
+
+._formWrap {
+  &.mainContent {
+    flex-wrap: nowrap;
+    padding-bottom: 5px;
+  }
+
+  &._thin {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}

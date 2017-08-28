@@ -58,10 +58,46 @@
       }
     }
   }
+
+  ._categoryHolder {
+    position: relative;
+
+    ._innerHolder {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      min-height: 26px;
+      margin-bottom: 18px;
+      border-bottom: 1px solid #c8c8d3;
+    }
+
+    .tagsLabel {
+      position: absolute;
+      top: -16px;
+      left: 0;
+      color: #7eadcc;
+      font-size: 10px;
+      user-select: none;
+    }
+
+    .editTags {
+      padding: 4px;
+      margin: 4px 0;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+  }
+}
+
+._chartDialogTitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 //start correction
 ._newForm {
+  // prevent global styles
   &._employeeEdit {
     .withEndContract {
       margin-top: 10px;
@@ -109,6 +145,27 @@
       &:last-child {
         padding-bottom: 1rem;
       }
+    }
+  }
+
+  &._chartOpenView {
+    ._dialogMainTitle {
+      @include rem('font-size', 22px);
+    }
+  }
+
+  &._dealTaskForm {
+    ._formWrap {
+      padding: 3.3rem .75rem 1.5rem;
+    }
+  }
+
+  &.workCenterEdit,
+  &.workCenterCreate,
+  &.routingCreate,
+  &.routingEdit {
+    ._formWrap {
+      padding-top: 0;
     }
   }
 }
@@ -205,6 +262,13 @@
     flex-grow: 1;
   }
 
+  ._sectionTitle {
+    margin-bottom: 20px;
+    font-family: $semibold-font-family;
+    color: #7eadcc;
+    @include rem('font-size', 16px);
+  }
+
   ._titleBlueBorder {
     padding-top: 0;
     margin: 0 14px 20px 14px;
@@ -298,5 +362,19 @@
     margin: 5px 0;
     border: 1px solid #7eadcc;
     overflow: hidden;
+  }
+}
+
+._createCustomDashboard {
+
+  ._filterDropDownWrap {
+    float: none;
+    width: 200px;
+    margin-left: auto;
+    z-index: 1005;
+
+    ._filterDropDownBody {
+      right: 0;
+    }
   }
 }

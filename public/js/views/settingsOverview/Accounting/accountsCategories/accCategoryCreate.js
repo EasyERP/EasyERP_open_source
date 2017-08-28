@@ -21,7 +21,6 @@ define([
 
         initialize: function (options) {
             _.bindAll(this, 'saveItem', 'render');
-
             this.collection = options.collection;
             this.model = new Model();
             this.responseObj = {};
@@ -66,6 +65,13 @@ define([
                 fullName = res[0].fullName + ' / ' + categoryName;
             } else {
                 fullName = categoryName;
+            }
+
+            if (!categoryName) {
+                return App.render({
+                    type   : 'error',
+                    message: 'Please, enter the name'
+                });
             }
 
             this.model.save({

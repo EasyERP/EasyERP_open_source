@@ -5,6 +5,7 @@ module.exports = function (app, mainDb) {
     var event = require('../helpers/eventstHandler')(app, mainDb);
     var RESPONSES = require('../constants/responses');
     var CONSTANTS = require('../constants/mainConstants');
+    var _ = require('../public/js/libs/underscore-min.map.1.6.0.js');
     var fs = require('fs');
     var dbsNames = app.get('dbsNames');
     var dbsObject = mainDb.dbsObject;
@@ -28,10 +29,12 @@ module.exports = function (app, mainDb) {
     var deliverToTermRouter = require('./deliverTo')(models);
     var workflowRouter = require('./workflow')(models, event);
     var paymentRouter = require('./payment')(models, event);
-    var paymentMethodRouter = require('./paymentMethod')(models);
+    var paymentMethodRouter = require('./paymentMethod')(models, event);
     var periodRouter = require('./period')(models);
     var projectRouter = require('./project')(models, event);
     var employeeRouter = require('./employee')(event, models);
+    var nationalityRouter = require('./nationality')(event, models);
+    var languageRouter = require('./language')(event, models);
     var applicationRouter = require('./application')(event, models);
     var projectMemberRouter = require('./projectMember')(models, event);
     var departmentRouter = require('./department')(models, event);
@@ -39,12 +42,12 @@ module.exports = function (app, mainDb) {
     var wTrackRouter = require('./wTrack')(event, models);
     var opportunityRouter = require('./opportunity')(models, event);
     var leadsRouter = require('./leads')(models, event);
-    var jobPositionRouter = require('./jobPosition')(models);
+    var jobPositionRouter = require('./jobPosition')(models, event);
     var holidayRouter = require('./holiday')(event, models);
     var modulesRouter = require('./modules')(models);
     var monthHoursRouter = require('./monthHours')(event, models);
     var vacationRouter = require('./vacation')(event, models);
-    var bonusTypeRouter = require('./bonusType')(models);
+    var bonusTypeRouter = require('./bonusType')(models, event);
     var dashboardRouter = require('./dashboard')(models);
     var expensesInvoiceRouter = require('./expensesInvoice')(models, event);
     var dividendInvoiceRouter = require('./dividendInvoice')(models, event);
@@ -56,6 +59,9 @@ module.exports = function (app, mainDb) {
     var purchaseOrdersRouter = require('./purchaseOrders')(models, event);
     var ratesRouter = require('./rates')(models, event);
     var shippingMethodRouter = require('./shippingMethod')(models, event);
+    var workCentresRouter = require('./workCentres')(models, event);
+    var routingRouter = require('./routing')(models, event);
+    var manufacturingOrderRouter = require('./manufacturingOrder')(models, event);
 
     var personsRouter = require('./person')(models, event);
     var capacityRouter = require('./capacity')(models);
@@ -64,12 +70,13 @@ module.exports = function (app, mainDb) {
     var paymentTypeRouter = require('./paymentType')(models);
     var payrollExprnsesRouter = require('./payrollExprnses')(models);
     var jobsRouter = require('./jobs')(models, event);
-    var chartOfAccountRouter = require('./chartOfAccount')(models);
+    var chartOfAccountRouter = require('./chartOfAccount')(models, event);
     var currencyRouter = require('./currency')(models);
     var prPositionRouter = require('./projectPosition')(models);
     var journalRouter = require('./journals')(models, event);
     var salaryReportRouter = require('./salaryReport')(models);
-    var userRouter = require('./user')(event, models);
+    var saasRouter = require('./saas')(mainDb, models, event);
+    var userRouter = require('./user')(event, models, mainDb);
     var campaignRouter = require('./campaign')(models);
     var orgSettingsRouter = require('./orgSettings')(models);
     var degreesRouter = require('./degrees')(models);
@@ -98,17 +105,26 @@ module.exports = function (app, mainDb) {
     var reportsRouter = require('./reports')(models, event);
     var imagesRouter = require('./images')(models, event);
     var stockReturnsRouter = require('./stockReturns')(models, event);
+    var expensesCategoriesRouter = require('./expensesCategories')(models, event);
+    var customReportRouter = require('./customReports')(models);
+    var demoDataRouter = require('./demoData')(mainDb, models, event);
+    var webHooksRouter = require('./webHooks')(models);
+    var syncLogsRouter = require('./syncLogs')(models);
+    var billOfMaterials = require('./billOfMaterials')(models);
 
     var customChartRouter = require('./customChart')(models);
-    var customDashboardRouter = require('./customDashboard')(models);
+    var customDashboardRouter = require('./dashboards')(models);
     var logger = require('../helpers/logger');
+    var tracker = require('../helpers/tracker.js');
+    var geoip = require('geoip-lite');
+    var subdomainParser = require('../helpers/subdomain.js');
     var exportToPdf = require('../helpers/pdfExtractor');
     var async = require('async');
     var redisStore = require('../helpers/redisClient');
-
-    var tracker = require('../helpers/tracker.js');
     var MagentoConnector = require('../helpers/magentoConnector.js');
     var geoip = require('geoip-lite');
+    var apiKey = 'a548ba44867cc5ffa30217683ce466f6';
+    var getResponse = new require('getresponse-nodejs-api')(apiKey);
 
     var magento = new MagentoConnector(models);
 
@@ -154,17 +170,23 @@ module.exports = function (app, mainDb) {
     var RM;
     var rm;
 
-    if (!process.env.NODE_APP_INSTANCE) {
+    if (!parseInt(process.env.NODE_APP_INSTANCE, 10)) {
         brokerType = 'polymorph';
     }
+
+    console.log('brokerType', brokerType);
+    console.log('NODE_APP_INSTANCE', process.env.NODE_APP_INSTANCE);
 
     RM = require('../helpers/rm')(dbsNames, event, models);
     rm = new RM({
         brokerType: brokerType
     });
 
-    rm.connect(rmOptions);
-    syncHelper = require('../helpers/sync')(rm, models);
+    // rm.connect(rmOptions);
+
+    global.rm = rm;
+
+    syncHelper = require('../helpers/sync')(rm, models, event);
 
     console.log('\x1b[32m%s\x1b[0m', '=====================================================');
     console.log('\x1b[32m%s\x1b[0m', '           Server start in ' + brokerType + ' mode');
@@ -215,10 +237,13 @@ module.exports = function (app, mainDb) {
     app.use('/wTrack', wTrackRouter);
     app.use('/projects', projectRouter);
     app.use('/employees', employeeRouter);
+    app.use('/nationality', nationalityRouter);
+    app.use('/language', languageRouter);
     app.use('/applications', applicationRouter);
     app.use('/departments', departmentRouter);
     app.use('/revenue', revenueRouter);
     app.use('/salaryReport', salaryReportRouter);
+    app.use('/saas', saasRouter);
     app.use('/opportunities', opportunityRouter);
     app.use('/leads', leadsRouter);
     app.use('/jobPositions', jobPositionRouter);
@@ -259,7 +284,7 @@ module.exports = function (app, mainDb) {
     app.use('/projectsDashboard', projectsDashboardRouter);
     app.use('/followers', followersRouter);
     app.use('/customChart', customChartRouter);
-    app.use('/customDashboard', customDashboardRouter);
+    app.use('/dashboards', customDashboardRouter);
     app.use('/accountTypes', accountTypesRouter);
     app.use('/warehouse', warehouseRouter);
     app.use('/accountsCategories', accountsCategoriesRouter);
@@ -273,7 +298,16 @@ module.exports = function (app, mainDb) {
     app.use('/shippingMethod', shippingMethodRouter);
     app.use('/image', imagesRouter);
     app.use('/stockReturns', stockReturnsRouter);
+    app.use('/expensesCategories', expensesCategoriesRouter);
+    //app.use('/customReports', customReportRouter);
+    app.use('/clearDemoData', demoDataRouter);
+    app.use('/syncLogs', syncLogsRouter);
+    app.use('/manufacturingOrders', manufacturingOrderRouter);
+    app.use('/workCentre', workCentresRouter);
+    app.use('/routing', routingRouter);
+    app.use('/billOfMaterials', billOfMaterials);
 
+    app.use('/webhooks', webHooksRouter);
 
     // <editor-fold desc="Integration">
     app.use('/integration', integrationRouter);
@@ -391,6 +425,14 @@ module.exports = function (app, mainDb) {
                 if (err) {
                     return next(err);
                 }
+
+                /* getResponse.getCampaignByName('erp_saas_signup',function (r) {
+
+                 getResponse.sendNewsletter(Object.keys(r.data.result)[0], null, null, 'Hello', 'Hello world!', 'this is plain', '<h1>This is html</h1>',
+                 ['openrate'], null, 'liliya.mykhailova@thinkmobiles.com', function (r) {
+                 console.log(JSON.stringify(r));
+                 });
+                 });*/
             });
 
         }
@@ -420,38 +462,55 @@ module.exports = function (app, mainDb) {
     app.get('/callback', magento.getOAuthAccessToken);
 
     app.get('/sync', syncHelper.syncAll);
+
     app.get('/addToSync', syncHelper.getToSync);
 
     app.post('/track', function (req, res) {
-        var RegExp = /production|test_demo/;
-        var body = req.body;
-        var ip = req.headers ? req.headers['x-real-ip'] : req.ip;
-        var geo = geoip.lookup(ip);
+            var RegExp = /production|test_demo/;
+            var body = req.body;
+            var ip = req.headers ? req.headers['x-real-ip'] : req.ip;
+            var geo = geoip.lookup(ip);
+            var sendLetter = false;
 
-        function mapper(body) {
-            body.ip = ip;
-            body.country = (!body.country && geo) ? geo.country : '';
-            body.city = (!body.city && geo) ? geo.city : '';
-            body.region = (!body.region && geo) ? geo.region : '';
+            function mapper(body) {
+                body.ip = ip;
+                body.country = (!body.country && geo) ? geo.country : '';
+                body.city = (!body.city && geo) ? geo.city : '';
+                body.region = (!body.region && geo) ? geo.region : '';
 
-            body.registrType = process.env.SERVER_TYPE;
-            body.server = process.env.SERVER_PLATFORM;
+                body.registrType = process.env.SERVER_TYPE;
+                body.server = process.env.SERVER_PLATFORM;
+
+                if (body.name === 'close' || body.name === 'sessionEnd') {
+                    sendLetter = true;
+                }
+            }
+
+            ip = ip || '127.0.0.1';
+
+            if (body instanceof Array) {
+                body.map(mapper);
+            } else {
+                mapper(body);
+            }
+
+            res.status(200).send();
+
+            if (!RegExp.test(process.env.SERVER_TYPE)) {
+
+                /* if (sendLetter) {
+                 getResponse.getCampaignByName('erp_saas_signup', function (r) {
+
+                 getResponse.sendNewsletter(Object.keys(r.data.result)[0], null, null, 'Hello', 'Hello world!', 'this is plain', '<h1>This is html</h1>',
+                 ['openrate'], null, 'liliya.mykhailova@thinkmobiles.com', function (r) {
+                 console.log(JSON.stringify(r));
+                 });
+                 });
+                 }*/
+                tracker.track(body);
+            }
         }
-
-        ip = ip || '127.0.0.1';
-
-        if (body instanceof Array) {
-            body.map(mapper);
-        } else {
-            mapper(body);
-        }
-
-        res.status(200).send();
-
-        if (!RegExp.test(process.env.SERVER_TYPE)) {
-            tracker.track(body);
-        }
-    });
+    );
 
     app.get('/stopserver', function () {
         process.exit(1);

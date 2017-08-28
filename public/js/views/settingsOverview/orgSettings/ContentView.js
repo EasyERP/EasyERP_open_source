@@ -132,32 +132,6 @@ define([
 
             this.$el.html(formString);
 
-            /* this.$el = $(formString).dialog({
-             autoOpen     : true,
-             resizable    : true,
-             dialogClass  : 'edit-dialog',
-             title        : 'Edit Person',
-             width        : '900px',
-             position     : {within: $('#wrapper')},
-             buttons      : [{
-             id   : 'create-orgSettings-dialog',
-             class: 'btn blue',
-             text : 'Save',
-
-             click: function () {
-             self.saveItem();
-             }
-             }, {
-             text : 'Cancel',
-             class: 'btn',
-
-             click: function () {
-             self.hideDialog();
-             }
-             }]
-
-             });
-             */
             populate.get('#currency', '/currency/getForDd', {}, 'name', this, true);
             populate.get('#contact', '/users/forDd', {}, 'login', this);
             populate.get('#industry', '/industry', {}, 'name', this);
@@ -165,8 +139,6 @@ define([
             dataService.getData('/countries/getForDD', {}, function (countries) {
                 self.responseObj['#country'] = countries.data;
             });
-
-            // this.delegateEvents(this.events);
 
             this.renderStartDateSetting();
 

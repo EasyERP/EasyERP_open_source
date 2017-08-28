@@ -4,6 +4,7 @@ module.exports = function (models, event) {
     var magentoHelper = require('./magento')(models, event);
     var shopifyHelper = require('./shopify')(models, event);
     var etsyHelper = require('./etsy')(models, event);
+    var wooHelper = require('./wooCommerce')(models, event);
 
     function getHelper(type) {
         var helper;
@@ -12,6 +13,8 @@ module.exports = function (models, event) {
             helper = magentoHelper;
         } else if (type === CONSTANTS.INTEGRATION.ETSY) {
             helper = etsyHelper;
+        } else if (type === CONSTANTS.INTEGRATION.WOO) {
+            helper = wooHelper;
         } else {
             helper = shopifyHelper;
         }

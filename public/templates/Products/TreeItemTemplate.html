@@ -3,8 +3,9 @@
     data-fullname="<%=product.fullName%>"
     data-level="<%=product.nestingLevel%>"
     data-sequence="<%=product.sequence%>">
+
     <span class="content <%=selected%>">
-        <span class="text">
+        <span class="<%if(hasChild){%> text2 <%}else{%> text <%}%>">
             <span class="_contentValue"><%=product.name%></span>
             <span class="_contentCount">(<%= product.productsCount%>)</span>
         </span>
@@ -15,4 +16,7 @@
             <%}%>
         </span>
     </span>
+    <%if(hasChild) {%>
+    <a class="expand icon-folder3" href="javascript:;"></a>
+    <%}%>
 </li>

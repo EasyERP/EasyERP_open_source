@@ -27,6 +27,7 @@ body {
   font-size: 12px;
   height: 100%;
   cursor: default;
+  -webkit-print-color-adjust: exact;
 }
 
 html {
@@ -272,6 +273,7 @@ textarea {
   overflow: auto;
   vertical-align: top;
   resize: none;
+  font-family: $base-font-family;
 }
 
 a {

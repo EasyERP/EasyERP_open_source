@@ -27,6 +27,9 @@ var Module = function (models) {
             .populate('payableTax')
             .populate('carriedTax')
             .populate('discount')
+            .populate('bankAccount')
+            .populate('paymentTerms')
+            .populate('workInProgress')
 
             .exec(function (err, settings) {
                 if (err) {

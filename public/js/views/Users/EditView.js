@@ -10,8 +10,9 @@
     'Validation',
     'constants',
     'mixins/changePassword',
-    'views/selectView/selectView'
-], function (Backbone, _, $, EditTemplate, ChangePassTempl, UsersModel, common, populate, Validation, CONSTANTS, changePasswordMixIn, SelectView) {
+    'views/selectView/selectView',
+    'helpers/ga'
+], function (Backbone, _, $, EditTemplate, ChangePassTempl, UsersModel, common, populate, Validation, CONSTANTS, changePasswordMixIn, SelectView, ga) {
     var EditView = Backbone.View.extend({
         el             : '#content-holder',
         contentType    : 'Users',
@@ -213,7 +214,10 @@
                     save: {
                         text : 'Save',
                         class: 'btn blue',
-                        click: self.saveItem
+                        click: function () {
+                            self.saveItem();
+                            ga && ga.trackingEditConfirm();
+                        }
                     },
 
                     cancel: {
@@ -221,6 +225,7 @@
                         class: 'btn',
                         click: function () {
                             self.hideDialog();
+                            ga && ga.trackingEditCancel();
                         }
                     }
                 }

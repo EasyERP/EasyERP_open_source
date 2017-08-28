@@ -575,6 +575,18 @@
                 callback(response);
             });
     };
+    var getTotalOrdersForSingle = function (filter, forSales, callback) {
+        dataService.getData('/order/getTotalForDashboard', {filter: filter, forSales: forSales},
+            function (response) {
+                callback(response);
+            });
+    };
+     var getByStatusForSingle = function (filter, forSales, total, callback) {
+        dataService.getData('/order/getByStatus', {filter: filter, forSales: forSales, total: total},
+            function (response) {
+                callback(response);
+            });
+    };
     var getOrders = function (filter, forSales, callback) {
         dataService.getData('/order/', {
             filter     : filter,
@@ -730,19 +742,19 @@
             var selectLength = Math.abs(response.data.length - ids.length);
             if (selectLength >= 20) {
                 if (page == 1) {
-                    selectList.after("<div class='userPagination'><span class='text'>" + ((20 * (page - 1)) + 1) + "-" + (20 * page) + " of " + (20 * (page - 1) + selectLength) + "</span><a class='nextGroupList' href='javascript:;'>next »</a></div>");
-                    targetList.after("<div class='userPagination  targetPagination'><span class='text'>" + ((20 * (page - 1)) + 1) + "-" + (20 * page) + " of " + (20 * (page - 1) + ids.length) + "</span><a class='nextGroupList' href='javascript:;'>next »</a></div>");
+                    selectList.after("<div class='userPagination'><span class='text'>" + ((20 * (page - 1)) + 1) + "-" + (20 * page) + " of " + (20 * (page - 1) + selectLength) + "</span><a class='nextGroupList' href='javascript:;'>Next »</a></div>");
+                    targetList.after("<div class='userPagination  targetPagination'><span class='text'>" + ((20 * (page - 1)) + 1) + "-" + (20 * page) + " of " + (20 * (page - 1) + ids.length) + "</span><a class='nextGroupList' href='javascript:;'>Next »</a></div>");
                 } else {
-                    selectList.after("<div class='userPagination'><a class='prevGroupList' href='javascript:;'>« prev</a><span class='text'>" + ((20 * (page - 1)) + 1) + "-" + (20 * page) + " of " + (20 * (page - 1) + selectLength) + "</span><a class='nextGroupList' href='javascript:;'>next »</a></div>");
-                    targetList.after("<div class='userPagination targetPagination'><a class='prevGroupList' href='javascript:;'>« prev</a><span class='text'>" + ((20 * (page - 1)) + 1) + "-" + (20 * page) + " of " + (20 * (page - 1) + ids.length) + "</span><a class='nextGroupList' href='javascript:;'>next »</a></div>");
+                    selectList.after("<div class='userPagination'><a class='prevGroupList' href='javascript:;'>« Prev</a><span class='text'>" + ((20 * (page - 1)) + 1) + "-" + (20 * page) + " of " + (20 * (page - 1) + selectLength) + "</span><a class='nextGroupList' href='javascript:;'>Next »</a></div>");
+                    targetList.after("<div class='userPagination targetPagination'><a class='prevGroupList' href='javascript:;'>« Prev</a><span class='text'>" + ((20 * (page - 1)) + 1) + "-" + (20 * page) + " of " + (20 * (page - 1) + ids.length) + "</span><a class='nextGroupList' href='javascript:;'>Next »</a></div>");
                 }
             } else {
                 if (page == 1) {
                     selectList.after("<div class='userPagination'><span class='text'>" + ((20 * (page - 1)) + 1) + "-" + (20 * (page - 1) + selectLength) + " of " + (20 * (page - 1) + selectLength) + "</span></div>");
                     targetList.after("<div class='userPagination targetPagination'><span class='text'>" + ((20 * (page - 1)) + 1) + "-" + (20 * (page - 1) + ids.length) + " of " + (20 * (page - 1) + ids.length) + "</span></div>");
                 } else {
-                    selectList.after("<div class='userPagination'><a class='prevGroupList' href='javascript:;'>« prev</a><span class='text'>" + ((20 * (page - 1)) + 1) + "-" + (20 * (page - 1) + selectLength) + " of " + (20 * (page - 1) + selectLength) + "</span></div>");
-                    targetList.after("<div class='userPagination targetPagination'><a class='prevGroupList' href='javascript:;'>« prev</a><span class='text'>" + ((20 * (page - 1)) + 1) + "-" + (20 * (page - 1) + ids.length) + " of " + (20 * (page - 1) + ids.length) + "</span></div>");
+                    selectList.after("<div class='userPagination'><a class='prevGroupList' href='javascript:;'>« Prev</a><span class='text'>" + ((20 * (page - 1)) + 1) + "-" + (20 * (page - 1) + selectLength) + " of " + (20 * (page - 1) + selectLength) + "</span></div>");
+                    targetList.after("<div class='userPagination targetPagination'><a class='prevGroupList' href='javascript:;'>« Prev</a><span class='text'>" + ((20 * (page - 1)) + 1) + "-" + (20 * (page - 1) + ids.length) + " of " + (20 * (page - 1) + ids.length) + "</span></div>");
                 }
             }
             selectList.attr("data-page", 1);
@@ -1069,9 +1081,9 @@
             selectLength = Math.abs(response.data.length - ids.length);
 
             if (response.data.length >= 20) {
-                selectList.after("<div class='userPagination'><span class='text'>1-20 of " + (selectLength) + "</span><a class='nextUserList' href='javascript:;'>next »</a></div>");
+                selectList.after("<div class='userPagination'><span class='text'>1-20 of " + (selectLength) + "</span><a class='nextUserList' href='javascript:;'>Next »</a></div>");
                 if (ids.length > 20) {
-                    targetList.after("<div class='userPagination targetPagination'><span class='text'>1-" + ids.length + " of " + (ids.length) + "</span><a class='nextUserList' href='javascript:;'>next »</a></div>");
+                    targetList.after("<div class='userPagination targetPagination'><span class='text'>1-" + ids.length + " of " + (ids.length) + "</span><a class='nextUserList' href='javascript:;'>Next »</a></div>");
                 } else {
                     targetList.after("<div class='userPagination targetPagination'><span class='text'> 1-" + ids.length + " of " + ids.length + "</span></div>");
                 }
@@ -1360,6 +1372,8 @@
         getInvoices                       : getInvoices,
         getInvoiceByWorkflows             : getInvoiceByWorkflows,
         getOrdersByWorkflows              : getOrdersByWorkflows,
+        getTotalOrdersForSingle           : getTotalOrdersForSingle,
+        getByStatusForSingle           : getByStatusForSingle,
         canvasDrawing                     : canvasDrawing
     }
 });

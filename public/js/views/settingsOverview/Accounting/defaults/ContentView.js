@@ -58,7 +58,14 @@ define([
                 this.model.set('shipping', $target.attr('id'));
             } else if (closestA.attr('id') === 'discount') {
                 this.model.set('discount', $target.attr('id'));
+            } else if (closestA.attr('id') === 'bankAccount') {
+                this.model.set('bankAccount', $target.attr('id'));
+            } else if (closestA.attr('id') === 'paymentTerm') {
+                this.model.set('paymentTerms', $target.attr('id'));
+            } else if (closestA.attr('id') === 'workInProgress') {
+                this.model.set('workInProgress', $target.attr('id'));
             }
+
         },
 
         render: function () {
@@ -76,6 +83,19 @@ define([
                 self.responseObj['#carriedTax'] = data;
                 self.responseObj['#shipping'] = data;
                 self.responseObj['#discount'] = data;
+                self.responseObj['#workInProgress'] = data;
+            });
+
+            dataService.getData('/paymentMethod', {}, function (resp) {
+                var data = resp.data || [];
+
+                self.responseObj['#bankAccount'] = data;
+            });
+
+            dataService.getData('/paymentTerm', {}, function (resp) {
+                var data = resp.data || [];
+
+                self.responseObj['#paymentTerm'] = data;
             });
 
             return this;

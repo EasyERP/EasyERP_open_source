@@ -1,4 +1,4 @@
-<% orderCollection.forEach(function(order, index){ %>
+<% salesOrdersCollection.forEach(function(order, index){ %>
     <tr class="centerCell" data-id="<%=order._id%>"
         <% if (order.workflow && order.workflow.status !== 'New') { %>
             class="notEditable"

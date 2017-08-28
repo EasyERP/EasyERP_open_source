@@ -53,6 +53,10 @@
     nav {
       width: auto !important;
 
+      .menuList {
+        width: auto;
+      }
+
       > ul {
         height: auto;
       }
@@ -68,6 +72,20 @@
 
     .root {
       position: relative;
+
+      &.opened {
+        height: 40px !important;
+
+        .subMenuList {
+          display: none;
+        }
+
+        &:hover {
+          .subMenuList {
+            display: block;
+          }
+        }
+      }
 
       ul {
         display: none;
@@ -103,7 +121,8 @@
       }
 
       &:hover {
-        > ul {
+
+        .subMenuList {
           display: block;
 
           li {
@@ -115,34 +134,20 @@
         }
       }
 
-      &.opened {
-        height: 40px !important;
-
-        > ul {
-          display: none;
-        }
-
-        &:hover {
-          > ul {
-            display: block;
-          }
-        }
-      }
-
       &.active {
-        > ul {
-            li {
-              &:first-child {
-                background-color: #7eadcc;//@submenu-opened;
-                a {
-                  color:#fff;// @submenu-active-text-color;
-                }
+        .subMenuList {
+          li {
+            &:first-child {
+              background-color: #7eadcc;//@submenu-opened;
+              a {
+                color:#fff;// @submenu-active-text-color;
               }
             }
           }
         }
       }
     }
+  }
 
   //.content_wrapper {
   //  width: calc(100% - 40px);

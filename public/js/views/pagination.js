@@ -3,6 +3,7 @@ define([
     'jQuery',
     'Underscore',
     'views/Filter/filterView',
+    'views/confirmDialogBase',
     'text!templates/Alpabet/AphabeticTemplate.html', // added alphabeticalRender
     'constants',
     'constants/filters',
@@ -10,10 +11,10 @@ define([
     'async',
     'dataService',
     'helpers',
-    'custom'
-], function (Backbone, $, _, FilterView,
-             aphabeticTemplate, CONSTANTS, FILTERS,
-             common, async, dataService, helpers, custom) {
+    'custom',
+    'helpers/ga',
+    'constants/googleAnalytics'
+], function (Backbone, $, _, FilterView, ConfirmView, aphabeticTemplate, CONSTANTS, FILTERS, common, async, dataService, helpers, custom, ga, GA) {
     var View = Backbone.View.extend({
         el        : '#content-holder',
         filter    : null,
@@ -166,7 +167,7 @@ define([
                 $copyButton.show();
                 $createButton.hide();
 
-                if (typeof(this.hidePublish) === 'function') {  
+                if (typeof(this.hidePublish) === 'function') {
                     this.hidePublish();
                 }
 
@@ -214,7 +215,7 @@ define([
         goSort: function (e) {
             var $targetEl;
             var newRows = this.$el.find('#false').length ? this.$el.find('#false') : this.$el.find('.false');
-            var filter = this.filter || {};
+            var filter = this.filter || App.filtersObject.filter;
             var target$;
             var currentParrentSortClass;
             var sortClass;
@@ -283,11 +284,17 @@ define([
             if (this.viewType) {
                 data.viewType = this.viewType;
             }
+
             if (this.parrentContentId) {
                 data.parrentContentId = this.parrentContentId;
             }
+
             if (this.contentType) {
                 data.contentType = this.contentType;
+
+                if (this.contentType === 'reports') {
+                    data.modelId = this.modelId;
+                }
             }
 
             data.page = 1;
@@ -326,7 +333,7 @@ define([
             }
 
             if (!$el.closest('#variantsCategoriesBlock').length) {
-                $el.find('._categoriesList').hide();
+                $el.find('#variantsCategoriesBlock').removeClass('open');
             }
 
             if (typeof(this.setChangedValueToModel) === 'function' && $el.tagName !== 'SELECT') { // added for SetChangesToModel in ListView
@@ -502,6 +509,11 @@ define([
                 viewType   : this.viewType,
                 contentType: this.contentType
             });
+
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.FILTER_BY_LETTER + ' "' + selectedLetter + '"'
+            });
         },
 
         togglePagesList: function (e) {
@@ -509,6 +521,11 @@ define([
             e.stopPropagation();
 
             $targetEl.toggleClass('open');
+
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.TOGGLE_PAGE_LIST
+            });
         },
 
         renderAlphabeticalFilter: function () { // added from listViewBase
@@ -542,11 +559,13 @@ define([
             var $targetEl = $(e.target);
             var $inputPage = this.$el.find('#currentShowPage');
             var page = $targetEl.text();
+            var eventLabel = GA.EVENT_LABEL.PAGE_LIST;
 
             this.startTime = new Date();
 
             if (!page) {
                 page = $inputPage.val() || 1;
+                eventLabel = GA.EVENT_LABEL.PAGE_INPUT;
             }
 
             e.preventDefault();
@@ -564,6 +583,11 @@ define([
                 viewType   : this.viewType,
                 contentType: this.contentType,
                 sort       : this.sort
+            });
+
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : eventLabel
             });
         },
 
@@ -584,6 +608,11 @@ define([
 
             this.collection.getNextPage(options);
             this.changeLocationHash(page, count, filter);
+
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.NEXT_PAGE
+            });
         },
 
         previousPage: function (options) {
@@ -603,6 +632,11 @@ define([
 
             this.collection.getPreviousPage(options);
             this.changeLocationHash(page, count, filter);
+
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.PREV_PAGE
+            });
         },
 
         firstPage: function (options) {
@@ -620,6 +654,11 @@ define([
 
             collection.getFirstPage(options);
             this.changeLocationHash(1, count, filter);
+
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.FIRST_PAGE
+            });
         },
 
         showFilteredPage: function (filter) {
@@ -655,6 +694,11 @@ define([
 
             this.collection.getLastPage(options);
             this.changeLocationHash(collection.lastPage, count, filter);
+
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.LAST_PAGE
+            });
         },
 
         getPage: function (options) {
@@ -721,6 +765,11 @@ define([
             });
 
             this.changeLocationHash(1, itemsNumber, filter);
+
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : itemsNumber + ' ' + GA.EVENT_LABEL.PER_PAGE
+            });
         },
 
         createItem: function () {
@@ -759,7 +808,7 @@ define([
             return new EditView({collection: this.collection});
         },
 
-        deleteItems: function () {
+        deleteItems: function (confirmDelete) {
             var self = this;
             var $thisEl = this.$el;
             var $table = $thisEl.find('#listTable');
@@ -769,6 +818,8 @@ define([
             var ids = [];
             var answer;
             var edited = this.edited || $thisEl.find('tr.false, #false');
+            var dontConfirmContentTypes = ['Persons', 'Opportunities', 'order', 'invoice', 'Projects', 'Tasks', 'jobs', 'Employees', 'Applications', 'JobPositions', 'ChartOfAccount', 'journal', 'bonusType', 'Products', 'goodsOutNotes', 'productCategories', 'currency'];
+            var answerConfirm = true;
 
             if (!edited.length) { // ToDo refactor
                 this.changed = false;
@@ -776,12 +827,6 @@ define([
 
             if (this.changed) {
                 return this.cancelChanges();
-            }
-
-            answer = confirm('Really DELETE items ?!');
-
-            if (answer === false) {
-                return false;
             }
 
             $checkedInputs = $table.find('input:checked');
@@ -794,16 +839,43 @@ define([
 
             ids = _.compact(ids);
 
-            dataService.deleteData(url, {contentType: this.contentType, ids: ids}, function (err, response) {
-                if (err) {
-                    return App.render({
-                        type   : 'error',
-                        message: 'Can\'t remove items'
-                    });
-                }
+            if (!confirmDelete && dontConfirmContentTypes.indexOf(this.contentType) < 0) {
+                answerConfirm = confirm('Do you really want to DELETE this items?!');
+            }
 
-                self.getPage();
-            });
+            if (answerConfirm) {
+                dataService.deleteData(url, {
+                    contentType  : this.contentType,
+                    ids          : ids,
+                    confirmDelete: confirmDelete
+                }, function (err, response) {
+                    if (err) {
+
+                        if (err.responseJSON && err.responseJSON.error) {
+                            return App.render({
+                                type   : 'error',
+                                message: err.responseJSON.error
+                            });
+                        }
+                    }
+
+                    if (!confirmDelete && $table && response && response.ids) {
+                        response.ids.forEach(function (id) {
+                            $table.find('[data-id="' + id + '"]').addClass('red');
+                        });
+
+                        return new ConfirmView({
+                            message : 'Red items have related documents. They won\'t be deleted, ok ?!',
+                            callback: function () {
+                                self.deleteItems(true);
+                            }
+                        });
+                    }
+
+                    self.getPage();
+                });
+            }
+
         },
 
         cancelChanges: function () {

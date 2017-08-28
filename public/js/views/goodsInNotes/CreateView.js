@@ -10,8 +10,9 @@ define([
     'populate',
     'constants',
     'helpers/keyValidator',
-    'helpers'
-], function (Backbone, $, _, ParentView, CreateTemplate, ProductItems, GoodsModel, common, populate, CONSTANTS, keyValidator, helpers) {
+    'helpers',
+    'views/guideTours/guideNotificationView'
+], function (Backbone, $, _, ParentView, CreateTemplate, ProductItems, GoodsModel, common, populate, CONSTANTS, keyValidator, helpers, GuideNotify) {
 
     var CreateView = ParentView.extend({
         el         : '#content-holder',
@@ -24,6 +25,14 @@ define([
             this.render();
             this.responseObj = {};
             this.changedQuantity = _.debounce(this.changedQuantity, 250);
+
+            if (App.guide) {
+                if (App.notifyView) {
+                    App.notifyView.undelegateEvents();
+                    App.notifyView.stopListening();
+                }
+                App.notifyView = new GuideNotify({e: null, data: App.guide});
+            }
         },
 
         events: {
@@ -49,7 +58,7 @@ define([
             var ordered = parseFloat($parent.find('#ordered').val());
             var received = parseFloat($parent.find('#received').val());
             var $div = $targetEl.closest('.receiveLocation');
-            var lengthLocations = this.responseObj['#locationDd'] ? this.responseObj['#locationDd'].length : 0;
+            var lengthLocations = this.responseObj['.locationDd'] ? this.responseObj['.locationDd'].length : 0;
             var $siblingDivs = $div.siblings();
             var prevQuantity = 0;
             var diff = ordered - received;
@@ -124,7 +133,7 @@ define([
 
                 targetEl.find('.receiveLocation').each(function () {
                     var quantityLocation = parseFloat($(this).find('.quantity').val()) || 0;
-                    var location = $(this).find('#locationDd').attr('data-id');
+                    var location = $(this).find('.locationDd').attr('data-id');
                     if (location && quantityLocation) {
                         locationsReceived.push({
                             location: location,
@@ -207,7 +216,7 @@ define([
 
             this.$el = $(formString).dialog({
                 dialogClass: 'edit-dialog',
-                width      : 1050,
+                width      : 750,
                 position   : {
                     at: "top+35%"
                 },
@@ -215,6 +224,7 @@ define([
                 title  : 'Create Task',
                 buttons: {
                     save: {
+                        id   : 'goodsInNotesSaveBtn',
                         text : 'Create',
                         class: 'btn blue',
                         click: self.saveItem
@@ -236,14 +246,14 @@ define([
                 maxDate    : new Date()
             }).datepicker('setDate', new Date());
 
-            populate.get('#warehouseDd', 'warehouse/getForDD', {}, 'name', this, false);
-
-            populate.get('#locationDd', 'warehouse/location/getForDd', {warehouse: warehouse}, 'name', this);
+            populate.get('#warehouseDd', 'warehouse/getForDD', {}, 'name', this, true, false, null);
             populate.get('#shippingMethods', '/shippingMethod/getForDd', {}, 'name', this, false, false, shippingMethod);
 
+            populate.get('.locationDd', 'warehouse/location/getForDd', {warehouse: warehouse}, 'name', this, true, false, null);
             this.delegateEvents(this.events);
 
             this.$el.find('#productItemsHolder').html(_.template(ProductItems, {products: orderModel.products}));
+
             return this;
         }
 

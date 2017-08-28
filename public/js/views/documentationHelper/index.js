@@ -41,8 +41,8 @@ define([
 
                 setTimeout(function () {
                     self.openChat();
-                }, 45000);
-            }, 2000);
+                }, 10000);
+            }, 10000);
         },
 
         searchAction: function (value) {

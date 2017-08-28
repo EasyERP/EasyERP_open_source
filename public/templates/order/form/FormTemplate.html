@@ -27,16 +27,16 @@
                     'passiveItem';%>
                     <%var classNameRefund = model.prepayment && model.prepayment.sum ? 'activeItem' : 'passiveItem';%>
                     <%if (model.workflow.status !== 'Done' && model.workflow.status !== 'Cancelled') {%>
-                <li class="right fullfillOrderWrap">
+                <li class="right fullfillOrderWrap icon-arrow-down2">
                     <a class="btn slim fullfillOrder" href="javascript:;">
                         <span>Payments</span>
                     </a>
                     <ul>
                         <li class="<%=classNamePayment%> prepay">
-                            <a <!--class="prepay"--><span class="fontBold">Create prepayment</span></a>
+                            <a> <!--class="prepay"--><span class="fontBold">Make payment</span></a>
                         </li>
                         <li class="<%=classNameRefund%> refund">
-                            <a <!--class="refund"--><span class="fontBold">Refund</span></a>
+                            <a> <!--class="refund"--><span class="fontBold">Refund</span></a>
                         </li>
                     </ul>
                 </li>
@@ -44,13 +44,13 @@
                 <%if(model.workflow && model.workflow.status !== 'Done'){%>
                 <%if(model.workflow && model.workflow.status !== 'Cancelled'){%>
                 <button class="btn slim editButton" title="Go To Edit">
-                    <span>Go to Edit to Receive Invoice</span>
+                    <span>Create Invoice</span>
                 </button>
                 <%}%>
                 <%}%>
                 <%} else {%>
                 <% var filter = {order: {key: 'fields.order', value: [model._id]}};%>
-                <% var href = '#easyErp/integrationUnlinkedProducts/list/filter=' +
+                <% var href = '#easyErp/unlinkedProducts/filter=' +
                 encodeURIComponent(JSON.stringify(filter)) + '?fromForm=true';%>
                 <%model.conflictTypes && model.conflictTypes.forEach(function (el){%>
                 <%if (el.type === 'product') {%>

@@ -12,7 +12,8 @@ define([
     'common',
     'constants',
     'dataService',
-    'views/selectView/selectView'
+    'views/selectView/selectView',
+    'helpers/ga'
 ], function (Backbone,
              $,
              _,
@@ -26,7 +27,8 @@ define([
              common,
              CONSTANTS,
              dataService,
-             SelectView) {
+             SelectView,
+             ga) {
     'use strict';
 
     var personTasksView = Backbone.View.extend({
@@ -68,7 +70,7 @@ define([
             'mouseleave .avatar'                               : 'hideEdit',
             'click #tabList a'                                 : 'switchTab',
             'keyup .editable'                                  : 'setChangeValueToModel',
-            'change .checkbox'                                 : 'setChangeValueToModel',
+            'click .checkbox'                                  : 'setChangeValueToModel',
             'click #cancelBtn'                                 : 'cancelChanges',
             'click #saveBtn'                                   : 'saveChanges',
             'click .current-selected:not(.jobs)'               : 'showNewSelect',
@@ -97,11 +99,11 @@ define([
 
                 /*newProperty = property.slice(-2, property.length);
 
-                if (!this.modelChanged.social) {
-                    this.modelChanged.social = {};
-                }
+                 if (!this.modelChanged.social) {
+                 this.modelChanged.social = {};
+                 }
 
-                this.modelChanged.social[newProperty] = value;*/
+                 this.modelChanged.social[newProperty] = value;*/
             } else if (property === 'salesPurchases.isSupplier' || property === 'salesPurchases.isCustomer') {
                 this.modelChanged[property] = checked;
 
@@ -123,12 +125,16 @@ define([
         saveChanges: function (e) {
             e.preventDefault();
             this.saveModel(this.modelChanged);
+
+            ga && ga.trackingEditConfirm();
         },
 
         cancelChanges: function (e) {
             e.preventDefault();
             this.modelChanged = {};
             this.renderAbout(true);
+
+            ga && ga.trackingEditCancel();
         },
 
         showNewSelect: function (e) {

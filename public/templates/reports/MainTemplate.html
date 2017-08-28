@@ -1,51 +1,114 @@
-<div class="_reports-card-wrap">
-    <div class="_reportCardContainer">
-        <div data-type="<%= salesReports.type %>" class="_reportCard">
-            <h3 class="_reportCardTitle mainSettings"
-                id="<%=salesReports._id%>"><%=salesReports.name%></h3>
-            <div class="_reportCardsWrap">
-                <%salesReports.data.forEach(function (el){%>
-                <div id="<%=el._id%>"
-                     data-type="<%= el.type %>"
-                     class="_overviewPanell mainSettings">
-                    <div class="_overviewTitle"><%=el.name%></div>
-                    <div class="_overviewDesc"><%=el.description%></div>
-                </div>
-                <% })%>
-            </div>
-        </div>
+<div class="_reportFilters" id="reportFilters">
+    <h3 class="_filterDescription">Choose report type</h3>
+    <div id="variantsCategoriesBlock" class="_filterBlock">
+        <ul id="productCategories" class="_categoriesList">
+            <% constants.forEach(function (item) { %>
+            <li class="_filterBlockItem">
+                <input data-value="<%= item %>"
+                       data-id="<%= item %>"
+                       id="<%= item %>"
+                       type="checkbox"
+                       class="productCategory _filterCheckbox">
+                <label for="<%= item %>"
+                       class="_filterLabel"><%= constantsTypesReport[item] %></label>
+            </li>
+            <% }); %>
+        </ul>
     </div>
+</div>
 
-    <div class="_reportCardContainer">
-        <div data-type="<%= inventoryReports.type %>" class="_reportCard">
-            <h3 class="_reportCardTitle mainSettings"
-                id="<%=inventoryReports._id%>"><%=inventoryReports.name%></h3>
-            <div class="_reportCardsWrap">
-                <%inventoryReports.data.forEach(function (el){%>
-                <div id="<%=el._id%>"
-                     data-type="<%= el.type %>"
-                     class="_overviewPanell mainSettings">
-                    <div class="_overviewTitle"><%=el.name%></div>
-                    <div class="_overviewDesc"><%=el.description%></div>
-                </div>
-                <% })%>
-            </div>
+<div class="_reportsWrap">
+    <div class="_reportsContent" id="parentEl">
+        <%var reportKeys = Object.keys(model);%>
+        <div class="reportsList _reportsTabsWrap">
+            <div class="_reportsTabTitle">Categories</div>
+            <ul class="_reportsTabList" id="tabList">
+                <li class="mainList _reportsTabItem" id="recent">Recent</li>
+                <li class="mainList _reportsTabItem" id="favorite">Favorites</li>
+                <li class="mainList _reportsTabItem" id="createdByMe">Created By Me</li>
+                <li class="mainList _reportsTabItem" id="private">Private</li>
+                <li class="mainList _reportsTabItem" id="public">Public</li>
+                <li class="mainList _reportsTabItem" id="all">All</li>
+            </ul>
         </div>
-    </div>
-
-    <div class="_reportCardContainer">
-        <div data-type="<%= salesReports.type %>" class="_reportCard">
-            <h3 class="_reportCardTitle mainSettings"
-                id="<%=stockInventory._id%>"><%=stockInventory.name%></h3>
-            <div class="_reportCardsWrap">
-                <%stockInventory.data.forEach(function (el){%>
-                <div id="<%=el._id%>"
-                     data-type="<%= el.type %>"
-                     class="_overviewPanell mainSettings">
-                    <div class="_overviewTitle"><%=el.name%></div>
-                    <div class="_overviewDesc"><%=el.description%></div>
+        <div class="_reportsView">
+            <div class="_reportsHeader">
+                <table class="stripedList">
+                    <colgroup>
+                        <col width="73px">
+                        <col width="15%">
+                        <col width="15%">
+                        <col width="15%">
+                        <col width="15%">
+                        <col width="19%">
+                        <col width="21%">
+                        <col width="105px">
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th>Favorite</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Access</th>
+                        <th>Edited by</th>
+                        <th>Type</th>
+                        <th>Date range</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="_reportsList">
+                <% reportKeys.forEach(function (key){%>
+                <%var el = model[key];%>
+                <% if (el) {%>
+                <div class="childBlock hidden"
+                     data-id="<%=key%>">
+                    <table class="stripedList">
+                        <colgroup>
+                            <col width="73px">
+                            <col width="15%">
+                            <col width="15%">
+                            <col width="15%">
+                            <col width="15%">
+                            <col width="19%">
+                            <col width="21%">
+                            <col width="105px">
+                        </colgroup>
+                        <tbody>
+                        <%el.forEach(function (elem){%>
+                        <tr class="mainSettings"
+                            id="<%=elem._id%>">
+                            <td class="centerCell">
+                                <%if (App.currentUser && App.currentUser.favorite && App.currentUser.favorite.reports &&
+                                App.currentUser.favorite.reports.indexOf(elem._id) >= 0) {%>
+                                <div class="icon-star2 _actionCircleBtn allreadyFav"></div>
+                                <%} else {%>
+                                <div class="icon-star _actionCircleBtn favoriteRow"></div>
+                                <%}%>
+                            </td>
+                            <td><%=elem.name%></td>
+                            <td><%=elem.description%></td>
+                            <td class="<%=!elem.publicAccess ? 'private' : ''%>"><%=elem.publicAccess ? 'Public' : 'Private'%></td>
+                            <td><%=elem.editedBy && elem.editedBy.user ? elem.editedBy.user.login : ''%></td>
+                            <td><%= constantsTypesReport[elem.reportType] %></td>
+                            <td> from <%=elem.dateRange && moment(elem.dateRange.from).format('DD MMM, YYYY')%> to
+                                <%=elem.dateRange && moment(elem.dateRange.to).format('DD MMM, YYYY')%>
+                            </td>
+                            <td>
+                                <div class="_tableActions">
+                                    <div title="Edit" class="icon-pencil _actionCircleBtn editRow"></div>
+                                    <div title="Copy" class="icon-copy _actionCircleBtn copyRow"></div>
+                                    <div title="Delete" class="icon-trash _actionCircleBtn deleteRow"></div>
+                                </div>
+                            </td>
+                        </tr>
+                        <%})%>
+                        </tbody>
+                    </table>
                 </div>
-                <% })%>
+                <%}%>
+                <%})%>
             </div>
         </div>
     </div>

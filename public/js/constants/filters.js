@@ -172,7 +172,7 @@
             },
 
             deal: {
-                displayName: 'Deal',
+                displayName: 'Opportunity',
                 backend    : 'deal'
             },
 
@@ -418,6 +418,19 @@
             array: ['name', 'customer', 'workflow', 'salesManager', 'projectManager']
         },
 
+        warehouseMovements: {
+            dateFilterArray: [
+                'thisMonth',
+                'thisFinYear',
+                'line',
+                'lastMonth',
+                'lastQuarter',
+                'lastFinYear',
+                'line',
+                'custom'
+            ]
+        },
+
         contractJobs: {
             dateFilterArray: [
                 'thisMonth',
@@ -622,7 +635,7 @@
             },
 
             salesPerson: {
-                displayName: 'Sales Person',
+                displayName: 'Salesperson',
                 backend    : 'salesPerson'
             },
 
@@ -722,7 +735,7 @@
             },
 
             refund: {
-                displayName: 'Refund',
+                displayName: 'Type',
                 backend    : 'refund',
                 type       : 'boolean'
             },
@@ -1045,7 +1058,15 @@
                 backend    : 'workflow._id'
             },
 
-            array: ['workflow', 'supplier']
+            date: {
+                type   : 'date',
+                backend: {
+                    key     : 'orderDate',
+                    operator: ['$gte', '$lte']
+                }
+            },
+
+            array: ['supplier', 'workflow']
         },
 
         order: {
@@ -1236,13 +1257,13 @@
             },
 
             debit: {
-                backend    : 'debit',
-                type       : 'integer'
+                backend: 'debit',
+                type   : 'integer'
             },
 
             credit: {
-                backend    : 'credit',
-                type       : 'integer'
+                backend: 'credit',
+                type   : 'integer'
             },
 
             account: {
@@ -1285,6 +1306,19 @@
         },
 
         customDashboardCharts: {
+            dateFilterArray: [
+                'thisMonth',
+                'thisFinYear',
+                'line',
+                'lastMonth',
+                'lastQuarter',
+                'lastFinYear',
+                'line',
+                'custom'
+            ]
+        },
+
+        customDashboard: {
             dateFilterArray: [
                 'thisMonth',
                 'thisFinYear',
@@ -1403,15 +1437,27 @@
 
         balanceSheet: {
             dateFilterArray: [
-                'endDate'
-               /* 'thisMonth',
+                'thisMonth',
                 'thisYear',
                 'line',
                 'lastMonth',
                 'lastQuarter',
                 'lastYear',
                 'line',
-                'custom'*/
+                'custom'
+            ]
+        },
+
+        taxReport: {
+            dateFilterArray: [
+                'thisMonth',
+                'thisYear',
+                'line',
+                'lastMonth',
+                'lastQuarter',
+                'lastYear',
+                'line',
+                'custom'
             ]
         },
 
@@ -1472,15 +1518,17 @@
         },
 
         stockTransactions: {
-            warehouse  : {
+            warehouse: {
                 displayName: 'From',
                 backend    : 'warehouse'
             },
+
             warehouseTo: {
                 displayName: 'To',
                 backend    : 'warehouseTo'
             },
-            status     : {
+
+            status: {
                 displayName: 'Status',
                 backend    : 'status',
                 type       : 'boolean'
@@ -1584,6 +1632,38 @@
                 backend    : 'payMethod.currency',
                 type       : 'string'
             }
+        },
+
+        billOfMaterials: {
+            product    : {
+                displayName: 'Product',
+                backend    : 'product',
+                type       : 'string'
+            },
+            name       : {
+                displayName: 'Name',
+                backend    : 'name',
+                type       : 'string'
+            },
+            routing    : {
+                displayName: 'Routing',
+                backend    : 'routing',
+                type       : 'string'
+            },
+            quantity   : {
+                displayName: 'Quantity',
+                backend    : 'quantity',
+                type       : 'integer'
+            },
+            description: {
+                displayName: 'Description',
+                backend    : 'description',
+                type       : 'string'
+            },
+
+            array: [
+                'product', 'name', 'routing', 'quantity', 'description'
+            ]
         }
     };
 

@@ -8,9 +8,11 @@ define([
     'text!templates/Integrations/GoToRemoveTemplate.html',
     'collections/integrations/filterCollection',
     'views/integrations/integrationSettings',
+    'views/guideTours/guideNotificationView',
     'dataService',
     'helpers/eventsBinder',
-    'constants'
+    'constants',
+    'tracker'
 ], function (Backbone,
              $,
              _,
@@ -20,9 +22,11 @@ define([
              goToRemoveTemplate,
              IntegrationCollection,
              IntegrationSettings,
+             GuideNotify,
              dataService,
              eventsBinder,
-             CONSTANTS) {
+             CONSTANTS,
+             tracker) {
     'use strict';
 
     var Integrations = Backbone.View.extend({
@@ -35,16 +39,20 @@ define([
         goToRemoveTemplate       : _.template(goToRemoveTemplate),
 
         events: {
-            'click .current-selected:not(.disabled)' : 'showNewSelect',
-            'click .resConflicts'                    : 'resolveConflicts',
-            'click .settingsContainer'               : 'onSettingsClick',
-            'click .btn.action'                      : 'onActionFire',
-            'click .goUnlinkedOrders:not(.disable)'  : 'goUnlinkedOrders',
-            'click .goUnlinkedProducts:not(.disable)': 'goUnlinkedProducts',
-            'click .disconnect'                      : 'disconnect'
+            'click .current-selected:not(.disabled)': 'showNewSelect',
+            'click .resConflicts'                   : 'resolveConflicts',
+            'click .settingsContainer'              : 'onSettingsClick',
+            'click .btn.action'                     : 'onActionFire',
+            'click .goListProducts:not(.disable)'   : 'goListProducts',
+            'click .goUnlinkedOrders:not(.disable)' : 'goUnlinkedOrders',
+            'click .goToOrders:not(.disable)'       : 'goToOrders',
+            'click .goUnlinkedProducts'             : 'goUnlinkedProducts',
+            'click .connectionSwitcher'             : 'disconnect'
         },
 
-        initialize: function () {
+        initialize: function (options) {
+            var type = options.type;
+
             _.bindAll(this, 'cancel', 'onContinue', 'showNameContent');
 
             this.eventsChannel = App.eventsChannel || _.extend({}, Backbone.Events);
@@ -56,9 +64,11 @@ define([
             this.listenTo(this.eventsChannel, 'resolveConflict', this.resolveConflicts);
 
             this.responseObj = {};
-            this.collection = new IntegrationCollection();
+            this.collection = new IntegrationCollection({type: type});
+            //this.collection.url += ('/' + type);
             this.listenTo(this.collection, 'reset', this.render);
             // this.render();
+
         },
 
         disconnect: function (e) {
@@ -66,6 +76,7 @@ define([
             var $target = $(e.target);
             var channelId = $target.closest('div.app').attr('data-id');
             var model = this.collection.get(channelId);
+            var jsonModel = model.toJSON();
             var connectedStatus = model.get('connected');
 
             App.startPreload();
@@ -73,24 +84,71 @@ define([
             if (connectedStatus) {
                 model.set('connected', false);
 
-                $target.closest('.connection').removeClass('success').addClass('blue');
-                $target.closest('.connection').text('DISCONNECTED');
+                tracker.track({
+                    date       : new Date(),
+                    eventType  : 'userFlow',
+                    name       : 'disconnectChannel',
+                    message    : 'disconnect channel',
+                    email      : App.currentUser.email,
+                    login      : App.currentUser.login,
+                    mobilePhone: App.currentUser.mobilePhone
+                });
+
+                $target.closest('.switcherWrap').removeClass('success');
             } else {
 
-                if (channelId === '58a3016677f606c49beaad66') {
+                if (jsonModel.type === 'etsy' && jsonModel.baseUrl === 'https://openapi.etsy.com/v2') {
                     App.stopPreload();
-                    
+
+                    tracker.track({
+                        date       : new Date(),
+                        eventType  : 'userFlow',
+                        name       : 'connectEtsy',
+                        message    : 'try connect Etsy',
+                        email      : App.currentUser.email,
+                        login      : App.currentUser.login,
+                        mobilePhone: App.currentUser.mobilePhone
+                    });
+
                     return App.render({
-                        type: 'notify',
+                        type   : 'notify',
                         message: 'Please, create your own ETSY Channel, Etsy doest\'t allow test accounts.'
                     });
                 }
+                /*else if (jsonModel.type === 'woo' && jsonModel.baseUrl === 'http://erp-woocommerce.test.thinkmobiles.com') {
+                 App.stopPreload();
+
+                 tracker.track({
+                 date     : new Date(),
+                 eventType: 'userFlow',
+                 name     : 'connectWoo',
+                 message  : 'try connect Woo',
+                 email    : App.currentUser.email,
+                 login    : App.currentUser.login
+                 });
+
+                 return App.render({
+                 type   : 'notify',
+                 message: 'WooCommerce integration is in development now.'
+                 });
+                 }*/
+
+                tracker.track({
+                    date       : new Date(),
+                    eventType  : 'userFlow',
+                    name       : 'connectChannel',
+                    message    : 'connect channel',
+                    email      : App.currentUser.email,
+                    login      : App.currentUser.login,
+                    mobilePhone: App.currentUser.mobilePhone
+                });
 
                 model.set('connected', true);
 
-                $target.closest('.connection').addClass('success');
-                $target.closest('.connection').text('Connected');
+                $target.closest('.switcherWrap').addClass('success');
             }
+
+            model.set('changeConnect', true);
 
             model.save(model.changed, {
                 patch: true,
@@ -108,7 +166,63 @@ define([
         },
 
         showResolveConflictBtn: function () {
+            tracker.track({
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'resolveConflicts',
+                message    : 'resolve conflicts',
+                email      : App.currentUser.email,
+                login      : App.currentUser.login,
+                mobilePhone: App.currentUser.mobilePhone
+            });
+
             this.$el.find('.resConflicts').removeClass('hidden');
+        },
+
+        goToOrders: function (e) {
+            var $target = $(e.target);
+            var hash = 'easyErp/order/list/filter=';
+            var channel = $target.closest('.app').attr('data-id');
+            var filter = {
+                channel: {
+                    key  : 'channel._id',
+                    value: [channel]
+                }
+            };
+            var href = hash + encodeURIComponent(JSON.stringify(filter));
+
+            tracker.track({
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'syncedOrders',
+                message    : 'synced orders',
+                email      : App.currentUser.email,
+                login      : App.currentUser.login,
+                mobilePhone: App.currentUser.mobilePhone
+            });
+
+            Backbone.history.fragment = '';
+            Backbone.history.navigate(href, {trigger: true});
+        },
+
+        goListProducts: function (e) {
+            var $target = $(e.target);
+            var hash = '#easyErp/Products/list/filter=';
+            var channel = $target.closest('.app').attr('data-id');
+
+            var filter = {
+                channelLinks: {
+                    key  : 'channelLinks.channel',
+                    value: [channel],
+                    type : 'unpublish'
+                },
+                toExpand    : true
+            };
+
+            var href = (hash + encodeURIComponent(JSON.stringify(filter)));
+
+            Backbone.history.fragment = '';
+            Backbone.history.navigate(href, {trigger: true});
         },
 
         goUnlinkedOrders: function (e) {
@@ -128,18 +242,39 @@ define([
             };
             var href = hash + encodeURIComponent(JSON.stringify(filter));
 
+            tracker.track({
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'unlinkedOrders',
+                message    : 'unlinked orders',
+                email      : App.currentUser.email,
+                login      : App.currentUser.login,
+                mobilePhone: App.currentUser.mobilePhone
+            });
+
             Backbone.history.fragment = '';
             Backbone.history.navigate(href, {trigger: true});
         },
 
         goUnlinkedProducts: function (e) {
             var $target = $(e.target);
-            var hash = 'easyErp/integrationUnlinkedProducts/list/filter=';
+            var hash = 'easyErp/unlinkedProducts/filter=';
             var channel = $target.closest('.app').attr('data-id');
             var filter = {
-                channel: channel
+                channel        : channel,
+                fromIntegration: true
             };
-            var href = hash + encodeURIComponent(JSON.stringify(filter)) + '?fromIntegration=true';
+            var href = hash + encodeURIComponent(JSON.stringify(filter));
+
+            tracker.track({
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'unlinkeProducts',
+                message    : 'unlinked products',
+                email      : App.currentUser.email,
+                login      : App.currentUser.login,
+                mobilePhone: App.currentUser.mobilePhone
+            });
 
             Backbone.history.fragment = '';
             Backbone.history.navigate(href, {trigger: true});
@@ -216,6 +351,9 @@ define([
             } else {
                 $el.find('#unlinkedOrders').addClass('hidden');
             }
+
+            Backbone.history.fragment = '';
+            Backbone.history.navigate(window.location.hash, {trigger: true});
         },
 
         updateProductsCount: function ($targetEl, elementData) {
@@ -243,22 +381,38 @@ define([
         updateConflictedProductsCount: function ($targetEl, elementData) {
             var $container;
             var $conflictedProductsContainer;
+            var $goUnlinkedProducts;
+            var count;
 
             if ($targetEl && elementData) {
+                count = elementData.count;
                 $container = $targetEl.find('[data-id="' + elementData._id + '"]');
-                $conflictedProductsContainer = $container.find('.goUnlinkedProducts .channelRowValue span');
-                $conflictedProductsContainer.text(elementData.count);
+                $goUnlinkedProducts = $container.find('.goUnlinkedProducts');
+                $conflictedProductsContainer = $goUnlinkedProducts.find('.channelRowValue span');
+                $conflictedProductsContainer.text(count);
+
+                if (count) {
+                    $goUnlinkedProducts.removeClass('disable');
+                }
             }
         },
 
         updateUnlinkedOrdersCount: function ($targetEl, elementData) {
             var $container;
             var $unlinkedOrdersContainer;
+            var $goUnlinkedOrders;
+            var count;
 
             if ($targetEl && elementData) {
+                count = elementData.count;
                 $container = $targetEl.find('[data-id="' + elementData._id + '"]');
-                $unlinkedOrdersContainer = $container.find('.goUnlinkedOrders .channelRowValue span');
-                $unlinkedOrdersContainer.text(elementData.count);
+                $goUnlinkedOrders = $container.find('.goUnlinkedOrders');
+                $unlinkedOrdersContainer = $goUnlinkedOrders.find('.channelRowValue span');
+                $unlinkedOrdersContainer.text(count);
+
+                if (count) {
+                    $goUnlinkedOrders.removeClass('disable');
+                }
             }
         },
 
@@ -268,7 +422,7 @@ define([
 
         showNameContent: function (e) {
             var $target = $(e.target);
-            var type = $target.closest('div.miniApp').attr('data-type');
+            var type = $target.closest('.miniApp').attr('data-type');
             var self = this;
             var dialogOptions = {
                 dialogClass: 'edit-dialog',
@@ -277,11 +431,13 @@ define([
                     continue: {
                         text : 'Continue',
                         class: 'btn blue',
+                        id   : 'continueBtn',
                         click: self.onContinue
                     },
 
                     cancel: {
                         text : 'Cancel',
+                        id   : 'cancelBtn',
                         class: 'btn',
                         click: self.cancel
                     }
@@ -291,6 +447,14 @@ define([
 
             this.$dialogEl.remove();
             this.$dialogEl = $(dialogContent).dialog(dialogOptions);
+
+            if (App.guide) {
+                if (App.notifyView) {
+                    App.notifyView.undelegateEvents();
+                    App.notifyView.stopListening();
+                }
+                App.notifyView = new GuideNotify({e: null, data: App.guide});
+            }
         },
 
         bindEventsToDialog: function () {
@@ -298,12 +462,28 @@ define([
         },
 
         resolveConflicts: function (e) {
+            var filter = {
+                channel        : this,
+                fromIntegration: true
+            };
+            var href = hash + encodeURIComponent(JSON.stringify(filter));
+
             if (e) {
                 e.preventDefault();
             }
 
+            tracker.track({
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'resolveConflicts',
+                message    : 'resolve conflicts',
+                email      : App.currentUser.email,
+                login      : App.currentUser.login,
+                mobilePhone: App.currentUser.mobilePhone
+            });
+
             Backbone.history.fragment = '';
-            Backbone.history.navigate('#easyErp/resolveConflicts', {trigger: true});
+            Backbone.history.navigate(href, {trigger: true});
         },
 
         showAddDialog: function (e) {
@@ -312,32 +492,67 @@ define([
 
             var dialogOptions = {
                 dialogClass: 'edit-dialog',
-                width      : 580,
+                width      : 900,
                 buttons    : {
                     cancel: {
                         text : 'Cancel',
+                        id   : 'cancelBtn',
                         class: 'btn',
                         click: self.cancel
                     }
                 }
             };
 
+            tracker.track({
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'createChannel',
+                message    : 'create channel',
+                email      : App.currentUser.email,
+                login      : App.currentUser.login,
+                mobilePhone: App.currentUser.mobilePhone
+            });
+
             this.$dialogEl = $(dialogContent).dialog(dialogOptions);
             this.bindEventsToDialog();
+
+            if (App.guide) {
+                if (App.notifyView) {
+                    App.notifyView.undelegateEvents();
+                    App.notifyView.stopListening();
+                }
+                App.notifyView = new GuideNotify({e: null, data: App.guide});
+            }
         },
 
         syncChannels: function (e) {
             // var $target = $(e.target);
             // var action = $target.attr('data-action');
 
-            dataService.getData('/integration/sync', null, function () {
-
+            tracker.track({
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'sync',
+                message    : 'sync channels',
+                email      : App.currentUser.email,
+                login      : App.currentUser.login,
+                mobilePhone: App.currentUser.mobilePhone
             });
 
-            App.render({
-                type   : 'notify',
-                message: 'Syncing has been added to the queue. You\'ll be notified after completion.'
+            dataService.getData('/integration/sync', null, function (resp) {
+                if (resp.error && resp.error.responseJSON) {
+                    return App.render({
+                        type   : 'error',
+                        message: resp.error.responseJSON.error
+                    });
+                }
+
+                App.render({
+                    type   : 'notify',
+                    message: 'Your request is in process.  Imported data will be available in a few minutes.'
+                });
             });
+
         },
 
         onSettingsClick: function (e) {
@@ -350,6 +565,16 @@ define([
             this.$dialog = new IntegrationSettings({
                 eventsChannel: this.eventsChannel,
                 model        : model
+            });
+
+            tracker.track({
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'channelSettings',
+                message    : 'channel settings',
+                email      : App.currentUser.email,
+                login      : App.currentUser.login,
+                mobilePhone: App.currentUser.mobilePhone
             });
 
             this.$dialogEl = this.$dialog.$el;
@@ -385,13 +610,23 @@ define([
             $topBar.empty();
             $thisEl.html(this.integrationsTemplate({items: items, showUnlinkedBtn: showUnlinkedBtn}));
 
-            dataService.getData('/integration/conflicts', {}, function (result) {
-                if (result && Object.keys(result).length) {
-                    $thisEl.find('.resConflicts').removeClass('hidden');
-                }
+            /* dataService.getData('/integration/conflicts', {}, function (result) {
+             if (result && Object.keys(result).length) {
+             $thisEl.find('.resConflicts').removeClass('hidden');
+             }
 
-                self.conflicts = result;
-            });
+             self.conflicts = result;
+             });*/
+
+            if (App.guide) {
+                if (App.notifyView) {
+                    App.notifyView.undelegateEvents();
+                    App.notifyView.stopListening();
+                }
+                App.notifyView = new GuideNotify({e: null, data: App.guide});
+            }
+
+            return this;
         }
     });
 

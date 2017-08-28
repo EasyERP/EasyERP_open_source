@@ -14,11 +14,11 @@
         <div><h4>
             <!-- <a class = "gotoForm title" href="#easyErp/Employees/form/<%=employee._id%>" title="<%=employee.name.first%> <%=employee.name.last%>">-->
             <span class="fullName"><%=employee.name.first%> <%=employee.name.last%></span>
-            <% if(employee.relatedUser) { %>
+            <!--<% if(employee.relatedUser) { %>
             <span class="relUser">(<%= employee.relatedUser.login %>)</span>
             <% } else { %>
             <span class="relUser"></span></h4>
-            <% } %><!--</a>-->
+            <% } %>--><!--</a>-->
         </div>
         <p class="jobPos"><%=(employee.jobPosition) ? employee.jobPosition.name : ''%></p>
 

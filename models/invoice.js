@@ -140,7 +140,9 @@ module.exports = (function () {
         }]
     });
 
-    var expensesInvoiceSchema = invoiceSchema.extend({});
+    var expensesInvoiceSchema = invoiceSchema.extend({
+        expensesCategory: {type: ObjectId, ref: 'expensesCategory', default: null}
+    });
 
     var dividendInvoiceSchema = invoiceSchema.extend({
         products: [{

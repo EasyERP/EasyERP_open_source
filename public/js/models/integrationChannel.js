@@ -3,8 +3,9 @@
 define([
     'Backbone',
     'Underscore',
-    'Validation'
-], function (Backbone, _, Validation) {
+    'Validation',
+    'moment'
+], function (Backbone, _, Validation, moment) {
     var Model = Backbone.Model.extend({
         idAttribute: '_id',
 
@@ -63,6 +64,10 @@ define([
                     responseData.stats.orders.imported = _.find(_stats.importedOrders, filterStats);
                     responseData.stats.orders.unlinked = _.find(_stats.unlinkedOrders, filterStats);
                 }
+            }
+
+            if (responseData && responseData.lastSync){
+                responseData.lastSync = moment(new Date(responseData.lastSync)).format('LLL');
             }
 
             return responseData;

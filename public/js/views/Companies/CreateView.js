@@ -6,11 +6,12 @@ define([
     'text!templates/Companies/CreateTemplate.html',
     'views/CustomersSuppliers/salesPurchases',
     'models/CompaniesModel',
+    'views/guideTours/guideNotificationView',
     'common',
     'custom',
     'constants',
     'populate'
-], function (Backbone, $, _, ParentView, CreateTemplate, SalesPurchasesView, CompanyModel, common, custom, CONSTANTS, populate) {
+], function (Backbone, $, _, ParentView, CreateTemplate, SalesPurchasesView, CompanyModel,GuideNotify, common, custom, CONSTANTS, populate) {
     'use strict';
     var CreateView = ParentView.extend({
         el         : '#content-holder',
@@ -201,12 +202,15 @@ define([
                         class: 'btn blue',
                         click: function () {
                             self.saveItem();
+                            self.gaTrackingConfirmEvents();
                         }
                     },
                     {
                         text : 'Cancel',
                         class: 'btn',
-                        click: self.hideDialog
+                        click: function () {
+                            self.hideDialog();
+                        }
                     }]
             });
 
@@ -236,6 +240,14 @@ define([
             });
 
             this.delegateEvents(this.events);
+
+            if (App.guide) {
+                if (App.notifyView) {
+                    App.notifyView.undelegateEvents();
+                    App.notifyView.stopListening();
+                }
+                App.notifyView = new GuideNotify({e: null, data: App.guide});
+            }
 
             return this;
         }

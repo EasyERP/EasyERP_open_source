@@ -1,37 +1,34 @@
-<div class="form-holder">
-    <form method="post" action="" class="form" id="stockCorrection">
-        <fieldset>
-            <div class="inner">
-
-                <div class="clearfix"></div>
-
-                <div class="topPanel">
-                    <h2>Goods-In for order <span id="name" >#<a class="blue" href="javascript:;"><%=model.name%></a></span></span></h2>
-                    <div class="clearfix"></div>
-                    <input id="date" class="_inputBordered " readonly/>
-
-                    <!--<div class="_dialogRow">Shipping method</div>
-                    <div class="_dialogRow wrapper"><a class="current-selected" id="shippingMethods" href="javascript:;">Select</a></div>
-                    <div class="_dialogRow">Shipping Cost</div>
-                    <div class="_dialogRow"><input id="shippingCost" value="<%=model && model.shippingExpenses ? (model.shippingExpenses.amount / 100).toFixed(2) : 0%>"></div>
--->
+<div class="form-holder _newForm">
+    <form method="post"
+          action=""
+          class="form"
+          id="stockCorrection">
+        <h4 class="_dialogMainTitle">Delivery-In for order<a class="blue" id="name"> #<%=model.name%></a></h4>
+        <div class="_formWrap">
+            <div class="_formBlock _equal">
+                <div class="_animateInputBox">
+                    <span class="_staticLabel">Delivery-in Note Date</span>
+                    <input id="date" class="_animate" readonly/>
                 </div>
-                <dt><label for="warehouseDd">Warehouse</label></dt>
-                <dd>
-                    <a id="warehouseDd" class="current-selected" href="javascript:;" data-id="<%=model.warehouse ? model.warehouse._id : ''%>"><%=model.warehouse ? model.warehouse.name : 'Select'%></a>
-                </dd>
-
-
-
-                <div class="clearfix"></div>
-
-                <div id="productItemsHolder" class="_SkuItemsHolder">
-
-                </div>
-                <div id="goodsHolder" class="_goodsHolder">
-                </div>
-                <div class="clearfix"></div>
             </div>
-        </fieldset>
+            <div class="_formBlock _equal">
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Warehouse</span>
+                    <div class="_newSelectListWrap">
+                        <a href="javascript:;"
+                           class="current-selected"
+                           id="warehouseDd"
+                           data-id="<%=model.warehouse ? model.warehouse._id : ''%>"><%= model.warehouse ? model.warehouse.name : 'Select Warehouse'%></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="_formWrap">
+            <div class="_formBlock">
+                <div id="productItemsHolder" class="_SkuItemsHolder"></div>
+                <div id="goodsHolder" class="_goodsHolder"></div>
+            </div>
+        </div>
     </form>
 </div>

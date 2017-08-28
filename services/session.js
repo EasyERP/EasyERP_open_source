@@ -25,7 +25,9 @@ module.exports = function (models) {
 
             connection = mongoose.createConnection(process.env.MAIN_DB_HOST, process.env.MAIN_DB_NAME, process.env.DB_PORT, {
                 db    : {native_parser: true},
-                server: {poolSize: 1}
+                server: {poolSize: 1},
+                user  : process.env.DB_USER,
+                pass  : process.env.DB_PASS
             });
 
             connection.on('error', function (err) {

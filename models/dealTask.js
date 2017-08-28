@@ -32,5 +32,6 @@ module.exports = (function () {
     }
 
     mongoose.model('DealTasks', tasksSchema);
+
     mongoose.Schemas.DealTasks = tasksSchema;
 })();

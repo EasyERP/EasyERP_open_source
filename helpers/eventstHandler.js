@@ -25,14 +25,17 @@ eventsHandler = function (app, mainDb) {
     var GoodsOutSchema = mongoose.Schemas.GoodsOutNote;
     var OrderRowsSchema = mongoose.Schemas.OrderRow;
     var AvailabilitySchema = mongoose.Schemas.productsAvailability;
+    var ManufacturingOrdersSchema = mongoose.Schemas.manufacturingOrder;
 
     var io = app.get('io');
     var redisStore = require('./redisClient');
     var isoWeekYearComposer = require('./isoWeekYearComposer');
     var moment = require('../public/js/libs/moment/moment');
-
+    var CONSTANTS = require('../constants/mainConstants');
     var JournalEntryHandler = require('../handlers/journalEntry');
     var journalEntry = new JournalEntryHandler(models);
+
+    var dataBaseManipulator = require('./dataBaseClonner')(mainDb, event, models);
 
     // binding for remove Workflow
     event.on('removeWorkflow', function (req, wId, id) {
@@ -177,17 +180,24 @@ eventsHandler = function (app, mainDb) {
         var dbName = req;
         var OrderRows;
         var Order;
+        var isManufacturing = req.isManufacturing;
 
         if (typeof req === 'object') {
             dbName = req.session.lastDb;
         }
 
         Order = models.get(dbName, 'Order', OrderSchema);
+
+        if (isManufacturing) {
+            Order = models.get(dbName, 'ManufacturingOrders', ManufacturingOrdersSchema);
+        }
+
         OrderRows = models.get(dbName, 'orderRows', OrderRowsSchema);
 
         OrderRows.find({
-            order  : orderId,
-            product: {$ne: null}
+            order                        : orderId,
+            product                      : {$ne: null},
+            isFromManufacturingForReceive: {$ne: true}
         })
             .populate('product', 'cost name sku info')
             .exec(function (err, docs) {
@@ -196,11 +206,19 @@ eventsHandler = function (app, mainDb) {
                 }
 
                 getAvailableForRows(req, docs, function (err, status) {
+                    var updateObj = {status: status};
                     if (err) {
                         return next(err);
                     }
 
-                    Order.findByIdAndUpdate(orderId, {status: status}, function (err, el) {
+                    if (isManufacturing && status && status.shipped !== 'NOT') {
+                        updateObj = {
+                            status  : status,
+                            workflow: CONSTANTS.ORDERDONE
+                        };
+                    }
+
+                    Order.findByIdAndUpdate(orderId, updateObj, function (err, el) {
                         if (err) {
                             return next(err);
                         }
@@ -518,6 +536,8 @@ eventsHandler = function (app, mainDb) {
         io.emit('sendMessage', options);
     });
 
+    event.on('closeConnection', dataBaseManipulator.closeConnection);
+
     event.on('savedCategories', function (options) {
         io.emit('savedCategories', options);
     });
@@ -552,6 +572,10 @@ eventsHandler = function (app, mainDb) {
 
     event.on('showResolveConflict', function (options) {
         io.emit('showResolveConflict', options);
+    });
+
+    event.on('showInfoDelete', function (options) {
+        io.emit('showInfoDelete', options);
     });
 
     return event;

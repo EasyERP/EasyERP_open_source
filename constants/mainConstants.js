@@ -7,6 +7,9 @@ module.exports = {
     DEFAULT_PRODUCT_TYPE_ID     : '58453a4afc8d676a511283d0',
     DEFAULT_PRODUCT_CATEGORY_ID : '564591f9624e48551dfe3b23',
     IN_PROGRESS_WORKFLOW_ID     : '57f4bcfe48c62c5c68690dbc',
+    DEFAULT_MAGENTO_CUSTOMER    : '5947958e9ac4e97f9876741f',
+    DEFAULT_SHOPIFY_CUSTOMER    : '594796a19ac4e97f98767420',
+    DEFAULT_WOO_CUSTOMER        : '5948c7fc08a35a053cbc36d8',
 
     PAYONEER    : '555cc981532aebbc4a8baf36',
     UKR_SIB_BANK: '555cc981532aebbc4a8baf37',
@@ -25,6 +28,7 @@ module.exports = {
     EXPENSESCAREGORY: '56459202624e48551dfe3b24',
 
     ORDERNEW         : '55647b932e4aa3804a765ec5',
+    ORDERINPROGRESS  : '5555bf276a3f01acae0b5562',
     ORDERDONE        : '55647b962e4aa3804a765ec6',
     PROJECTINPROGRESS: '528ce7f2f3f67bc40b000023',
     JOBSFINISHED     : '56337c675d49d8d6537832ea',
@@ -187,6 +191,7 @@ module.exports = {
     QADEPARTMENT    : '55b92ace21e4b7c40f000011',
     DESDEPARTMENT   : '55bb1f14cb76ca630b000006',
     BANNED_PROFIE   : 1387275504000,
+    ADMIN_PROFILE   : 1387275598000,
     COUNT_PER_PAGE  : 100,
 
     BANED_PROFILE: '1387275504000',
@@ -210,17 +215,21 @@ module.exports = {
     },
 
     INTEGRATION: {
-        MAGENTO                   : 'magento',
-        SHOPIFY                   : 'shopify',
-        ETSY                      : 'etsy',
-        V1                        : 'v1',
-        V2                        : 'v2',
-        ETSY_API_KEY              : 'fm6u199x6xo9mchmtaqtsc92',
-        ETSY_SHARED_SECRET        : '31km0x4eaq',
-        ETSY_BASE_URL             : 'https://openapi.etsy.com/v2',
-        ETSY_IMPORT_STATUS_PRODUCT: '/active',
-        //REMOTE_ADDRESS            : 'http://testdemo.easyerp.com/channels/auth_callback'
-        REMOTE_ADDRESS            : 'http://erp0.test.thinkmobiles.com/channels/auth_callback'
+        MAGENTO                    : 'magento',
+        SHOPIFY                    : 'shopify',
+        ETSY                       : 'etsy',
+        WOO                        : 'woo',
+        V1                         : 'v1',
+        V2                         : 'v2',
+        ETSY_API_KEY               : 'fm6u199x6xo9mchmtaqtsc92',
+        ETSY_SHARED_SECRET         : '31km0x4eaq',
+        ETSY_BASE_URL              : 'https://openapi.etsy.com/v2',
+        ETSY_IMPORT_STATUS_PRODUCT : '/active',
+        REMOTE_ADDRESS             : 'http://testdemo.easyerp.com/channels/auth_callback',
+        //REMOTE_ADDRESS            : 'http://erp0.test.thinkmobiles.com/channels/auth_callback',
+        WOO_IMAGES_REMOTE_URI      : 'http://testdemo.easyerp.com/',
+        WOO_WEBHOOK_REMOTE_URI     : 'http://testdemo.easyerp.com/webhooks/',
+        SHOPIFY_WEBHOOKS_REMOTE_URI: 'http:\/\/erp0.test.thinkmobiles.com\/webhooks\/shopify'
     },
 
     REDIS: {
@@ -349,5 +358,24 @@ module.exports = {
 
     ],
 
-    DEFAULT_IMAGE_URL: '/customImages/default.png'
+    DEFAULT_IMAGE_URL: '/customImages/default.png',
+
+    SYNC_LOGS: {
+        STATUS: {
+            SUCCESS : 1,
+            WARNING : 2,
+            CRITICAL: 3
+        },
+
+        SUCCESS_TYPE: {
+            SUCCESS : 1,
+            UNLINK  : 2,
+            CONFLICT: 3
+        },
+
+        TYPE: {
+            CREATE: 'create',
+            UPDATE: 'update'
+        }
+    }
 };

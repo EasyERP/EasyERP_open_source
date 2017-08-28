@@ -32,10 +32,10 @@ define([
             this.filter.forSales = {
                 key  : 'forSales',
                 type : 'boolean',
-                value: ['false']
+                value: ['true']
             };
             this.formUrl = 'easyErp/' + this.contentType + '/tform/';
-            this.forSales = false;
+            this.forSales = true;
             this.sort = options.sort;
             this.defaultItemsNumber = this.collection.namberToShow || 100;
             this.newCollection = options.newCollection;

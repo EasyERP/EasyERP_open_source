@@ -50,9 +50,18 @@ define([
             this.render();
         },
 
+        /* update: function (e){
+         e.stopPropagation();
+         e.preventDefault();
+
+         this.updateValues(arguments[1]);
+         },*/
+
         toggleDateRange: function (e) {
             var $curTarget = $(e.currentTarget).closest('.dateFilter');
             var $ul = $curTarget.find('.frameDetail');
+
+            e.preventDefault();
 
             $ul.toggleClass('hidden');
         },
@@ -68,10 +77,17 @@ define([
                 } else {
                     valueStart = this.$el.find('#startDate' + this.contentType).val();
                     valueEnd = this.$el.find('#endDate' + this.contentType).val();
+
+                    valuesObject.preventDefault();
+
                     this.toggleDateRange(valuesObject);
                 }
 
                 if (valueEnd || valueStart) {
+
+                    if (!valueStart){
+                        valueStart = moment(new Date(valueEnd)).startOf('month');
+                    }
                     this.startDateSpan.text(moment(valueStart).format('DD, MMM YYYY'));
                     this.endDateSpan.text(moment(valueEnd).format('DD, MMM YYYY'));
 
@@ -148,6 +164,7 @@ define([
         },
 
         bindDatePickers: function (dateArray) {
+            var self = this;
             var $startDateInput = this.$el.find('#startDate' + this.contentType);
             var $endDateInput = this.$el.find('#endDate' + this.contentType);
             var startDate = new Date(dateArray[0]).toDateString();
@@ -163,9 +180,9 @@ define([
                         changeMonth: true,
                         changeYear : true,
                         defaultDate: new Date(startDate),
-                      //  maxDate    : new Date(endDate),
-                      onSelect   : function () {
-                            // $endDateInput.datepicker('option', 'minDate', $(this).val());
+                        //  maxDate    : new Date(endDate),
+                        onSelect   : function () {
+                            self.$el.find('#endDate' + self.contentType).datepicker('option', 'minDate', $(this).val());
                             /* endDateValue = moment(new Date($(this).val())).endOf('month');
                              endDateValue = new Date(endDateValue);
                              $endDateInput.datepicker('setDate', endDateValue); */
@@ -182,7 +199,7 @@ define([
                         changeYear : true,
                         defaultDate: new Date(endDate),
                         onSelect   : function () {
-                          // $startDateInput.datepicker('option', 'maxDate', $(this).val());
+                            $startDateInput.datepicker('option', 'maxDate', $(this).val());
                         },
                         // minDate: new Date(startDate)
                     }).datepicker('setDate', new Date(endDate));

@@ -1,18 +1,57 @@
 var mongoose = require('mongoose');
 
-var Module = function (models) {
+var Module = function (models, event) {
     'use strict';
 
     var PaymentMethodSchema = mongoose.Schemas.PaymentMethod;
     var OrderService = require('../services/order')(models);
+    var redisClient = require('../helpers/redisClient');
+    var objectId = mongoose.Types.ObjectId;
+    var integrationStatsHelper = require('../helpers/integrationStatsComposer')(models);
 
     this.getForDd = function (req, res, next) {
         var PaymentMethod = models.get(req.session.lastDb, 'PaymentMethod', PaymentMethodSchema);
+        var pipelines = [
+            {
+                $lookup: {
+                    from        : 'chartOfAccount',
+                    localField  : 'chartAccount',
+                    foreignField: '_id',
+                    as          : 'chartAccount'
+                }
+            },
+            {
+                $lookup: {
+                    from        : 'orgSettings',
+                    localField  : '_id',
+                    foreignField: 'bankAccount',
+                    as          : 'defaultPaymentMethod'
+                }
+            },
+            {
+                $project: {
+                    _id                 : 1,
+                    name                : 1,
+                    account             : 1,
+                    chartAccount        : {$arrayElemAt: ['$chartAccount', 0]},
+                    currency            : 1,
+                    bank                : 1,
+                    owner               : 1,
+                    fullName            : 1,
+                    address             : 1,
+                    swiftCode           : 1,
+                    defaultPaymentMethod: {$size: '$defaultPaymentMethod'}
+                }
+            },
+            {
+                $sort: {
+                    defaultPaymentMethod: -1,
+                    _id                 : -1
+                }
+            }
+        ];
 
-        PaymentMethod
-            .find()
-            .sort({_id: -1})
-            .populate('chartAccount')
+        PaymentMethod.aggregate(pipelines)
             .exec(function (err, methods) {
                 if (err) {
                     return next(err);
@@ -20,6 +59,18 @@ var Module = function (models) {
 
                 res.status(200).send({data: methods});
             });
+
+        // PaymentMethod
+        //     .find()
+        //     .sort({_id: -1})
+        //     .populate('chartAccount')
+        //     .exec(function (err, methods) {
+        //         if (err) {
+        //             return next(err);
+        //         }
+        //
+        //         res.status(200).send({data: methods});
+        //     });
     };
 
     this.getForList = function (req, res, next) {
@@ -89,7 +140,16 @@ var Module = function (models) {
                             return next(err);
                         }
 
-                        res.status(200).send(method);
+                        integrationStatsHelper(dbName, function (err, stats) {
+                            if (err) {
+                                return next(err);
+                            }
+
+                            event.emit('recollectedStats', {dbName: dbName, stats: stats});
+                            redisClient.writeToStorage('syncStats', dbName, JSON.stringify(stats));
+
+                            res.status(200).send(method);
+                        });
                     });
                 } else {
                     res.status(200).send(method);

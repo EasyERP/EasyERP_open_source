@@ -927,7 +927,8 @@
               text-align: center;
               margin: 0 auto;
 
-              &.leave, &.working {
+              &.leave,
+              &.working {
                 background-color: #36384e;
               }
               &.vacation {
@@ -1330,3 +1331,4 @@ table {
     }
   }
 }
+

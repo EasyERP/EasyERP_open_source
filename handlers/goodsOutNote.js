@@ -2,6 +2,7 @@ var GoodsOutNotes = function (models, event) {
     'use strict';
 
     var mongoose = require('mongoose');
+    var objectId = mongoose.Types.ObjectId;
 
     var ProductSchema = mongoose.Schemas.Products;
     var GoodsOutSchema = mongoose.Schemas.GoodsOutNote;
@@ -14,13 +15,15 @@ var GoodsOutNotes = function (models, event) {
     var journalEntry = new JournalEntryHandler(models);
     var AvailabilityService = require('../services/productAvailability')(models);
     var JournalEntryService = require('../services/journalEntry')(models);
-    var OrderRowsService = require('../services/orderRows')(models);
-    var AvailabilityService = require('../services/productAvailability')(models);
+    var organizationSettingService = require('../services/organizationSetting')(models);
     var CONSTANTS = require('../constants/mainConstants');
     var orderService = require('../services/order')(models);
     var channelLinksService = require('../services/channelLinks')(models);
     var integrationService = require('../services/integration')(models);
     var goodsOutNotesService = require('../services/goodsOutNotes')(models);
+    var warehouseService = require('../services/warehouse')(models);
+    var GoodsInNotesHandler = require('../handlers/goodsInNote');
+    var goodsInNotesHandler = new GoodsInNotesHandler(models, event);
     var orderRowService = require('../services/orderRows')(models);
 
     var async = require('async');
@@ -43,6 +46,9 @@ var GoodsOutNotes = function (models, event) {
 
         var data = req.body;
         var id = req.params.id;
+        var dbName = req.session.lastDb;
+        var uId = req.session.uId;
+        var body;
 
         var keys = Object.keys(data);
 
@@ -56,29 +62,113 @@ var GoodsOutNotes = function (models, event) {
             }
         });
 
-        GoodsOutNote.findByIdAndUpdate(id, data, {new: true}).populate('order', 'shippingExpenses paymentMethod warehouse').exec(function (err, goodsOutNote) {
-            if (err) {
-                return next(err);
-            }
+        GoodsOutNote
+            .findByIdAndUpdate(id, data, {new: true})
+            .populate('order', 'shippingExpenses paymentMethod warehouse')
+            .populate('warehouse', 'account')
+            .populate('manufacturingOrder', '_id name quantity product')
+            .exec(function (err, goodsOutNote) {
+                if (err) {
+                    return next(err);
+                }
 
-            if (data['status.shipped']) {
-                AvailabilityHelper.deliverProducts({
-                    dbName      : req.session.lastDb,
-                    uId         : req.session.uId,
-                    goodsOutNote: goodsOutNote.toJSON()
-                }, function (err) {
-                    if (err) {
-                        return next(err);
-                    }
+                if (data['status.shipped'] && goodsOutNote.order && goodsOutNote.order._id) {
+                    AvailabilityHelper.deliverProducts({
+                        dbName      : dbName,
+                        uId         : uId,
+                        goodsOutNote: goodsOutNote.toJSON()
+                    }, function (err) {
+                        if (err) {
+                            return next(err);
+                        }
 
-                    event.emit('recalculateStatus', req, goodsOutNote.order._id, next);
+                        event.emit('recalculateStatus', req, goodsOutNote.order._id, next);
 
+                        res.status(200).send({status: goodsOutNote.status});
+                    });
+                } else if (data['status.shipped'] && goodsOutNote.manufacturingOrder && goodsOutNote.manufacturingOrder._id) {
+                    AvailabilityHelper.deliverProducts({
+                        dbName      : dbName,
+                        uId         : uId,
+                        goodsOutNote: goodsOutNote.toJSON()
+                    }, function (err) {
+                        var orderRow;
+                        var newRows;
+
+                        if (err) {
+                            return next(err);
+                        }
+
+                        newRows = [{
+                            product          : goodsOutNote.manufacturingOrder.product,
+                            quantity         : goodsOutNote.manufacturingOrder.quantity,
+                            cost             : 0,
+                            orderRowId       : null,
+                            locationsReceived: [{
+                                location: goodsOutNote.orderRows[0].locationsDeliver[0],
+                                quantity: goodsOutNote.manufacturingOrder.quantity,
+                                _id     : objectId()
+                            }]
+                        }];
+
+                        goodsOutNote.orderRows.forEach(function (el) {
+                            newRows[0].cost += el.cost;
+                        });
+
+                        orderRow = {
+                            dbName                       : dbName,
+                            description                  : '',
+                            channel                      : null,
+                            creditAccount                : null,
+                            debitAccount                 : null,
+                            creationDate                 : new Date(),
+                            nominalCode                  : 0,
+                            subTotal                     : newRows[0].cost,
+                            costPrice                    : 0,
+                            unitPrice                    : newRows[0].cost,
+                            taxes                        : [],
+                            quantity                     : goodsOutNote.manufacturingOrder.quantity,
+                            warehouse                    : goodsOutNote.warehouse._id,
+                            order                        : goodsOutNote.manufacturingOrder._id,
+                            product                      : goodsOutNote.manufacturingOrder.product,
+                            isFromManufacturingForReceive: true
+                        };
+
+                        orderRowService.create(orderRow, function (err, orderRow) {
+                            if (err) {
+                                return next(err);
+                            }
+
+                            newRows[0].orderRowId = orderRow._id;
+                            var name = goodsOutNote.manufacturingOrder.name.split('_');
+
+                            body = {
+                                status: {
+                                    received: true
+                                },
+
+                                orderRows         : newRows,
+                                manufacturingOrder: goodsOutNote.manufacturingOrder._id,
+                                warehouse         : goodsOutNote.warehouse._id,
+                                name              : name[0] + 'I_' + name[1]
+                            };
+
+                            goodsInNotesHandler.createHelper(body, {dbName: dbName, uId: uId}, function (err, result) {
+                                if (err) {
+                                    return next(err);
+                                }
+
+                                event.emit('recalculateStatus', req, result.manufacturingOrder, next);
+
+                                res.status(200).send({status: goodsOutNote.status});
+                            });
+                        });
+
+                    });
+                } else {
                     res.status(200).send({status: goodsOutNote.status});
-                });
-            } else {
-                res.status(200).send({status: goodsOutNote.status});
-            }
-        });
+                }
+            });
 
     }
 
@@ -190,6 +280,9 @@ var GoodsOutNotes = function (models, event) {
         var mid = req.query.contentType === 'salesProduct' ? 65 : 58;
 
         var query = req.query;
+        var quickSearch = query.quickSearch;
+        var matchObject = {};
+        var regExp;
         var optionsObject = {$and: []};
         var sort = {};
         var paginationObject = pageHelper(query);
@@ -200,7 +293,11 @@ var GoodsOutNotes = function (models, event) {
 
         var GoodsOutNote = models.get(req.session.lastDb, 'GoodsOutNote', GoodsOutSchema);
 
-        optionsObject.$and.push({_type: 'GoodsOutNote'});
+        optionsObject.$and.push({
+            $or: [
+                {_type: 'GoodsInNote'},
+                {_type: 'GoodsOutNote'}]
+        });
 
         if (query && query.sort) {
             key = Object.keys(query.sort)[0].toString();
@@ -211,7 +308,12 @@ var GoodsOutNotes = function (models, event) {
         }
 
         if (query.filter && typeof query.filter === 'object') {
-            optionsObject.$and.push(filterMapper.mapFilter(query.filter, query.contentType)); // caseFilter(query.filter);
+            optionsObject.$and.push(filterMapper.mapFilter(query.filter, {contentType: 'GoodsOutNote'})); // caseFilter(query.filter);
+        }
+
+        if (quickSearch) {
+            regExp = new RegExp(quickSearch, 'ig');
+            matchObject['customer.name'] = {$regex: regExp};
         }
 
         GoodsOutNote.aggregate([{
@@ -272,22 +374,25 @@ var GoodsOutNotes = function (models, event) {
             }
         }, {
             $project: {
-                name           : 1,
-                'order._id'    : 1,
-                'order.name'   : 1,
-                'order.project': 1,
-                status         : 1,
-                warehouse      : 1,
-                date           : 1,
-                'workflow._id' : 1,
-                'workflow.name': 1,
-                'customer._id' : 1,
-                'customer.name': {$concat: ['$customer.name.first', ' ', '$customer.name.last']},
-                _type          : 1,
-                createdBy      : 1
+                name             : 1,
+                'order._id'      : 1,
+                'order.name'     : 1,
+                'order.project'  : 1,
+                status           : 1,
+                warehouse        : 1,
+                date             : 1,
+                'workflow._id'   : 1,
+                'workflow.name'  : 1,
+                'workflow.status': 1,
+                'customer._id'   : 1,
+                'customer.name'  : {$concat: ['$customer.name.first', ' ', '$customer.name.last']},
+                _type            : 1,
+                createdBy        : 1
             }
         }, {
             $match: optionsObject
+        }, {
+            $match: matchObject
         }, {
             $group: {
                 _id  : null,
@@ -355,6 +460,7 @@ var GoodsOutNotes = function (models, event) {
             .populate('createdBy.user')
             .populate('editedBy.user')
             .populate('shippingMethod')
+            .populate('manufacturingOrder', '_id')
             .exec(function (err, result) {
 
                 if (err) {
@@ -440,11 +546,11 @@ var GoodsOutNotes = function (models, event) {
         var dbName = req.session.lastDb;
         var GoodsOutNote = models.get(dbName, 'GoodsOutNote', GoodsOutSchema);
         var body = req.body;
-
+        var isManufacturing = body.isManufacturing || false;
         var user = req.session.uId;
         var date = new Date();
         var isShipped = body['status.shipped'];
-        var orderId = body.order;
+        var orderId = body.order || body.manufacturingOrder;
         var resultGoodsOutNote;
         var mainResultObj;
         var goodsOutNote;
@@ -474,6 +580,8 @@ var GoodsOutNotes = function (models, event) {
         };
 
         body.dbName = dbName;
+
+        console.log('goodsOut', body);
 
         async.waterfall([
             function (wCb) {
@@ -534,7 +642,7 @@ var GoodsOutNotes = function (models, event) {
                     resultGoodsOutNote = result;
 
                     wCb(null, result);
-                }, 'order');
+                }, 'order warehouse manufacturingOrder');
             },
 
             function (result, wCb) {
@@ -548,8 +656,10 @@ var GoodsOutNotes = function (models, event) {
                     return wCb(error);
                 }
 
+                req.isManufacturing = isManufacturing;
+
                 if (!isShipped) {
-                    event.emit('recalculateStatus', req, result.order._id, next);
+                    event.emit('recalculateStatus', req, result.order ? result.order : result.manufacturingOrder, next);
                     mainResultObj = {
                         success: result
                     };
@@ -557,22 +667,137 @@ var GoodsOutNotes = function (models, event) {
                     return wCb();
                 }
 
-                AvailabilityHelper.deliverProducts({
-                    dbName      : dbName,
-                    uId         : user,
-                    goodsOutNote: result.toJSON()
-                }, function (err) {
-                    if (err) {
-                        return wCb(err);
-                    }
+                if (!isManufacturing) {
+                    AvailabilityHelper.deliverProducts({
+                        dbName      : dbName,
+                        uId         : user,
+                        goodsOutNote: result.toJSON()
+                    }, function (err) {
+                        if (err) {
+                            return wCb(err);
+                        }
 
-                    event.emit('recalculateStatus', req, nativeGoodsOutNote.order, next);
-                    mainResultObj = {
-                        status: nativeGoodsOutNote.status
-                    };
+                        event.emit('recalculateStatus', req, nativeGoodsOutNote.order || nativeGoodsOutNote.manufacturingOrder, next);
+                        mainResultObj = {
+                            status: nativeGoodsOutNote.status
+                        };
 
-                    wCb();
-                });
+                        wCb();
+                    });
+                } else {
+                    AvailabilityHelper.deliverProducts({
+                        dbName      : dbName,
+                        uId         : user,
+                        goodsOutNote: result.toJSON()
+                    }, function (err) {
+                        var orderRow;
+                        var newRows;
+
+                        if (err) {
+                            return next(err);
+                        }
+
+                        newRows = [{
+                            product          : result.manufacturingOrder.product,
+                            quantity         : result.manufacturingOrder.quantity,
+                            cost             : 0,
+                            orderRowId       : null,
+                            locationsReceived: [{
+                                location: null,
+                                quantity: result.manufacturingOrder.quantity,
+                                _id     : objectId()
+                            }]
+                        }];
+
+                        result.orderRows.forEach(function (el) {
+                            newRows[0].cost += el.cost;
+                        });
+
+                        orderRow = {
+                            dbName                       : dbName,
+                            description                  : '',
+                            channel                      : null,
+                            creditAccount                : null,
+                            debitAccount                 : null,
+                            creationDate                 : new Date(),
+                            nominalCode                  : 0,
+                            subTotal                     : newRows[0].cost,
+                            costPrice                    : 0,
+                            unitPrice                    : newRows[0].cost,
+                            taxes                        : [],
+                            quantity                     : result.manufacturingOrder.quantity,
+                            warehouse                    : result.manufacturingOrder.warehouseTo,
+                            order                        : result.manufacturingOrder._id,
+                            product                      : result.manufacturingOrder.product,
+                            isFromManufacturingForReceive: true
+                        };
+
+                        warehouseService.findOne({_id: result.manufacturingOrder.warehouseTo}, {dbName: dbName}, function (err, wh) {
+                            if (err) {
+                                return next(err);
+                            }
+
+                            orderRow.debitAccount = wh.account;
+
+                            organizationSettingService.getWorkInProgress({dbName: dbName}, function (err, workInProgress) {
+                                if (err) {
+                                    return next(err);
+                                }
+
+                                orderRow.creditAccount = workInProgress;
+
+                                orderRowService.create(orderRow, function (err, orderRow) {
+                                    if (err) {
+                                        return next(err);
+                                    }
+
+                                    newRows[0].orderRowId = orderRow._id;
+
+                                    warehouseService.findLocation({warehouse: orderRow.warehouse}, {dbName: dbName}, function (err, location) {
+                                        var name;
+                                        if (err) {
+                                            return next(err);
+                                        }
+
+                                        newRows[0].locationsReceived[0].location = location;
+                                        name = result.manufacturingOrder.name.split('_');
+
+                                        body = {
+                                            status: {
+                                                received: true
+                                            },
+
+                                            orderRows         : newRows,
+                                            manufacturingOrder: result.manufacturingOrder._id,
+                                            warehouse         : result.manufacturingOrder.warehouseTo,
+                                            name              : name[0] + 'I_' + name[1]
+                                        };
+
+                                        goodsInNotesHandler.createHelper(body, {
+                                            dbName: dbName,
+                                            uId   : user
+                                        }, function (err, result) {
+                                            if (err) {
+                                                return next(err);
+                                            }
+
+                                            event.emit('recalculateStatus', req, result.manufacturingOrder, next);
+
+                                            mainResultObj = {
+                                                status: nativeGoodsOutNote.status
+                                            };
+
+                                            wCb();
+                                        });
+                                    });
+
+                                });
+                            });
+                        });
+
+                    });
+                }
+
             },
 
             function (wCb) {
@@ -580,7 +805,8 @@ var GoodsOutNotes = function (models, event) {
                 var date;
 
                 orderService.findById(orderId, {
-                    dbName: dbName
+                    dbName            : dbName,
+                    manufacturingOrder: isManufacturing
                 }, function (err, resultOrder) {
                     if (err) {
                         return wCb(err);
@@ -682,6 +908,12 @@ var GoodsOutNotes = function (models, event) {
                 var integrationType;
                 var error;
 
+                if (typeof fulfillment === 'function') {
+                    wCb = fulfillment;
+
+                    return wCb();
+                }
+
                 integrationService.findOne({_id: channel}, {dbName: dbName})
                     .lean()
                     .exec(function (err, resultChannel) {
@@ -744,26 +976,32 @@ var GoodsOutNotes = function (models, event) {
         var GoodsOutNote = models.get(options.dbName, 'GoodsOutNote', GoodsOutSchema);
         var ids = options.ids || [];
         var req = options.req;
+        var isMO = options.isManufacturing || false;
+        var orderType = 'order';
+
+        if (isMO) {
+            orderType = 'manufacturingOrder';
+        }
 
         async.each(ids, function (id, cb) {
-            GoodsOutNote.findById(id).populate('order').exec(function (err, goodsNote) {
+            GoodsOutNote.findById(id).populate(orderType).exec(function (err, goodsNote) {
                 var options;
 
                 if (err) {
                     return cb(err);
                 }
 
-                if (goodsNote && goodsNote.order) {
+                if (goodsNote && goodsNote[orderType]) {
                     async.each(goodsNote.orderRows, function (goodsOrderRow, callback) {
 
-                        var query = goodsNote.order.project ? {
-                                product  : goodsOrderRow.product,
-                                warehouse: goodsNote.warehouse
-                            } : {
-                                'goodsOutNotes.goodsNoteId': goodsNote._id,
-                                product                    : goodsOrderRow.product,
-                                warehouse                  : goodsNote.warehouse
-                            };
+                        var query = goodsNote[orderType].project ? {
+                            product  : goodsOrderRow.product,
+                            warehouse: goodsNote.warehouse
+                        } : {
+                            'goodsOutNotes.goodsNoteId': goodsNote._id,
+                            product                    : goodsOrderRow.product,
+                            warehouse                  : goodsNote.warehouse
+                        };
 
                         AvailabilityService.updateByQuery({
                             dbName: req.session.lastDb,
@@ -800,7 +1038,9 @@ var GoodsOutNotes = function (models, event) {
                             return cb(err);
                         }
 
-                        event.emit('recalculateStatus', req, goodsNote.order, next);
+                        req.isManufacturing = isMO;
+
+                        event && event.emit('recalculateStatus', req, goodsNote[orderType]._id, next);
 
                         cb();
                     });

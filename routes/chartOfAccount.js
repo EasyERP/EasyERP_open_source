@@ -4,10 +4,15 @@ var ChartOfAccountHandler = require('../handlers/chartOfAccount');
 var authStackMiddleware = require('../helpers/checkAuth');
 var MODULES = require('../constants/modules');
 
-module.exports = function (models) {
+module.exports = function (models, event) {
     var handler = new ChartOfAccountHandler(models);
     var moduleId = MODULES.CHARTOFACCOUNT;
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
+    var accessDeleteStackMiddleware = require('../helpers/checkDelete');
+
+    function accessDeleteStackMiddlewareFunction(req, res, next) {
+        accessDeleteStackMiddleware(req, res, next, models, 'chartOfAccount', event);
+    }
 
     router.use(authStackMiddleware);
 
@@ -210,7 +215,7 @@ module.exports = function (models) {
          "n":5
      }
      */
-    router.delete('/', accessStackMiddleware, handler.bulkRemove);
+    router.delete('/', accessStackMiddleware, accessDeleteStackMiddlewareFunction, handler.bulkRemove);
 
     return router;
 };

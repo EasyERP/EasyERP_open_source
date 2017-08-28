@@ -10,16 +10,18 @@ define([
     'collections/accountsCategories/filterCollection',
     'collections/rates/filterCollection',
     'collections/taxSettings/filterCollection',
+    'collections/expensesCategories/filterCollection',
     'views/settingsOverview/Accounting/paymentMethod/paymentMethodView',
     'views/settingsOverview/Accounting/paymentTerms/paymentTermsView',
     'views/settingsOverview/Accounting/currency/currencyView',
     'views/settingsOverview/Accounting/accountsCategories/accCategoryView',
     'views/settingsOverview/Accounting/rates/indexView',
     'views/settingsOverview/Accounting/taxes/TaxListView',
+    'views/settingsOverview/Accounting/expensesCategories/expensesCategoryView',
     'views/settingsOverview/Accounting/defaults/ContentView',
     'async',
     'dataService'
-], function (Backbone, $, _, Parent, DashboardTemplate, PayMethodsCollection, CurrencyCollection, PaymentTermsCollection, AccountsCategoriesCollection, RatesCollection, TaxCollection, PaymentMethodView, PaymentTermsView, CurrencyView, AccCategoryView, RatesView, TaxView, DefaultsView, async, dataService) {
+], function (Backbone, $, _, Parent, DashboardTemplate, PayMethodsCollection, CurrencyCollection, PaymentTermsCollection, AccountsCategoriesCollection, RatesCollection, TaxCollection, ExpensesCategoryCollection, PaymentMethodView, PaymentTermsView, CurrencyView, AccCategoryView, RatesView, TaxView, ExpensesCategoryView, DefaultsView, async, dataService) {
     'use strict';
 
     var ContentView = Parent.extend({
@@ -38,6 +40,7 @@ define([
             this.currencyCollection = new CurrencyCollection();
             this.paymentTermsCollection = new PaymentTermsCollection();
             this.accountsCategoriesCollection = new AccountsCategoriesCollection();
+            this.expensesCategoriesCollection = new ExpensesCategoryCollection();
             this.ratesCollection = new RatesCollection();
             this.taxCollection = new TaxCollection();
 
@@ -45,6 +48,7 @@ define([
             this.payMethodsCollection.bind('reset', this.renderPaymentMethods, this);
             this.paymentTermsCollection.bind('reset', this.renderPaymentTerms, this);
             this.accountsCategoriesCollection.bind('reset', this.renderAccountsCategories, this);
+            this.expensesCategoriesCollection.bind('reset', this.renderExpensesCategories, this);
             this.ratesCollection.bind('reset', this.renderRates, this);
             this.taxCollection.bind('reset', this.renderTaxes, this);
 
@@ -95,6 +99,12 @@ define([
         renderAccountsCategories: function () {
             new AccCategoryView({
                 collection: this.accountsCategoriesCollection
+            }).render();
+        },
+
+        renderExpensesCategories: function () {
+            new ExpensesCategoryView({
+                collection: this.expensesCategoriesCollection
             }).render();
         },
 

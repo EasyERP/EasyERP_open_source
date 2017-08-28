@@ -11,8 +11,9 @@ define([
     'custom',
     'moment',
     'common',
-    'helpers'
-], function (Backbone, $, _, mainTemplate, hrDashboard, dataService, CONSTANTS, async, d3, custom, moment, common, helpers) {
+    'helpers',
+    'views/guideTours/guideNotificationView'
+], function (Backbone, $, _, mainTemplate, hrDashboard, dataService, CONSTANTS, async, d3, custom, moment, common, helpers, GuideNotify) {
     'use strict';
 
     var View = Backbone.View.extend({
@@ -498,7 +499,7 @@ define([
                     .style('float', 'left')
                     .style('margin', '10px')
                     .style('background-color', function (d) {
-                        return d.key === 'vacation' ? '#33F' : d.key === 'personal' ? '#32c5d2' : d.key === 'education' ? '#8E44AD' : '#FF3333';
+                        return d.key === 'Vacation' ? '#e55253' : d.key === 'Personal' ? '#f9a203' : d.key === 'Education' ? '#3e7f42' : '#3e88b9';
                     })
                     .style('color', 'white')
                     .style('padding-top', '35px')
@@ -518,6 +519,8 @@ define([
                     .text(function (d) {
                         return d.value;
                     });
+                
+
 
                 console.log(data);
 
@@ -626,11 +629,11 @@ define([
                     .rangeRoundBands([0, height], 0.3);
 
                 /*x = d3.scale.linear()
-                    .range([80, (width - 160) / 2]);
+                 .range([80, (width - 160) / 2]);
 
-                x2 = d3.scale.linear()
-                    .range([(width - 160) / 2, width + 80]);
-*/
+                 x2 = d3.scale.linear()
+                 .range([(width - 160) / 2, width + 80]);
+                 */
                 x = d3.scale.linear()
                     .range([0, width / 2]);
 
@@ -900,8 +903,8 @@ define([
                 chart.append('text')
                     .attr('class', 'y2 label')
                     .attr('text-anchor', 'end')
-                    .attr('y', height - 30)
-                    .attr('x', width + 30)
+                    .attr('y', height - 18)
+                    .attr('x', width + 72)
                     .attr('dy', '2em')
                     .text('Count');
             });
@@ -1029,8 +1032,8 @@ define([
                 chart.append('text')
                     .attr('class', 'y2 label')
                     .attr('text-anchor', 'end')
-                    .attr('y', height - 20)
-                    .attr('x', width + 60)
+                    .attr('y', height - 16)
+                    .attr('x', width + 80)
                     .attr('dy', '2em')
                     .text('Salary');
             });
@@ -1127,6 +1130,15 @@ define([
             self.renderSalaryByDepartmentChart();
             self.renderSalaryChart();
             $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+
+            if (App.guide) {
+                if (App.notifyView) {
+                    App.notifyView.undelegateEvents();
+                    App.notifyView.stopListening();
+                }
+                App.notifyView = new GuideNotify({e: null, data: App.guide});
+            }
+
             return this;
         }
     });

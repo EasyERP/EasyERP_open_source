@@ -26,12 +26,16 @@ module.exports = (function () {
         user        : {type: ObjectId, ref: 'Users', default: null},
         contactName : {type: String, default: ''},
 
-        salesTax   : {type: ObjectId, ref: 'chartOfAccount', default: null},
-        purchaseTax: {type: ObjectId, ref: 'chartOfAccount', default: null},
-        payableTax : {type: ObjectId, ref: 'chartOfAccount', default: null},
-        carriedTax : {type: ObjectId, ref: 'chartOfAccount', default: null},
-        shipping   : {type: ObjectId, ref: 'chartOfAccount', default: null},
-        discount   : {type: ObjectId, ref: 'chartOfAccount', default: null}
+        salesTax      : {type: ObjectId, ref: 'chartOfAccount', default: null},
+        purchaseTax   : {type: ObjectId, ref: 'chartOfAccount', default: null},
+        payableTax    : {type: ObjectId, ref: 'chartOfAccount', default: null},
+        carriedTax    : {type: ObjectId, ref: 'chartOfAccount', default: null},
+        shipping      : {type: ObjectId, ref: 'chartOfAccount', default: null},
+        discount      : {type: ObjectId, ref: 'chartOfAccount', default: null},
+        workInProgress: {type: ObjectId, ref: 'chartOfAccount', default: null},
+        bankAccount   : {type: ObjectId, ref: 'PaymentMethod', default: null},
+
+        paymentTerms: {type: ObjectId, ref: 'PaymentTerm', default: null}
     }, {collection: 'orgSettings'});
 
     mongoose.model('orgSettings', orgSettingsSchema);

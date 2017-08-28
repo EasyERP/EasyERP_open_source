@@ -4,8 +4,10 @@ define([
     'jQuery',
     'text!templates/settingsOverview/settingsEmployee/scheduledPay/ListTemplate.html',
     'views/settingsOverview/settingsEmployee/scheduledPay/EditView',
-    'views/settingsOverview/settingsEmployee/scheduledPay/CreateView'
-], function (Backbone, _, $, PaymentMethodList, EditView, CreateView) {
+    'views/settingsOverview/settingsEmployee/scheduledPay/CreateView',
+    'helpers/ga',
+    'constants/googleAnalytics'
+], function (Backbone, _, $, PaymentMethodList, EditView, CreateView, ga, GA) {
     'use strict';
 
     var ContentView = Backbone.View.extend({
@@ -36,6 +38,10 @@ define([
             var answer = confirm('Really DELETE items ?!');
 
             e.preventDefault();
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.DELETE_SCHEDULED_PAY
+            });
 
             if (answer === true && model) {
 
@@ -68,6 +74,10 @@ define([
             var model = this.collection.get(id);
 
             e.preventDefault();
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.EDIT_SCHEDULED_PAY
+            });
 
             if (model) {
                 return new EditView({
@@ -79,6 +89,11 @@ define([
 
         createWarehouse: function (e) {
             e.preventDefault();
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.CREATE_SCHEDULED_PAY
+            });
+
 
             return new CreateView({collection: this.collection});
         },

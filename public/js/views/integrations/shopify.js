@@ -149,7 +149,7 @@ define([
             });
 
             dataService.postData(url, {conflicts: data}, function (result) {
-                conflictBlock.html('<div id="conflictInformation">Conflict items is not found</div>');
+                conflictBlock.html('<div id="conflictInformation">Conflict items are not found</div>');
             });
         },
 

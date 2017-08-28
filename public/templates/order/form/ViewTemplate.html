@@ -3,162 +3,158 @@
           action=""
           id="createPersonsForm"
           class="form">
-        <fieldset>
-            <div class="inner">
-                <ul class="_statusOrderBlock" data-class="">
-                        <%var allocateStatus = model.status ? model.status.allocateStatus : 'NOT' %>
-                        <%var fulfillStatus = model.status ? model.status.fulfillStatus : 'NOT' %>
-                        <%var shippingStatus = model.status ? model.status.shippingStatus : 'NOT' %>
+        <div class="inner">
+            <ul class="_statusOrderBlock">
+                <%var allocateStatus = model.status ? model.status.allocateStatus : 'NOT' %>
+                <%var fulfillStatus = model.status ? model.status.fulfillStatus : 'NOT' %>
+                <%var shippingStatus = model.status ? model.status.shippingStatus : 'NOT' %>
 
-                    <li class="_statusIndicators">
-                        <span title="Allocated"
-                              class="_allocationed <%=allocateStatus === 'NOA' ? 'icon-checked yellow' : allocateStatus === 'ALL' ? 'icon-checked green' : '_notDid'%>"></span>
-                        <span title="Fulfilled"
-                              class="icon-box <%=fulfillStatus === 'NOA' ? 'yellow' : fulfillStatus === 'ALL' ? 'green' : 'red'%> _fullfilled"></span>
-                        <span title="Shipped"
-                              class="icon-cargo <%=shippingStatus === 'NOA' ? 'yellow' : shippingStatus === 'ALL' ? 'green' : 'red'%> _shipped"></span>
-                    </li>
-                    <li class="_statusActions">
+                <li class="_statusIndicators">
+                    <span title="Allocated"
+                          class="_allocationed <%=allocateStatus === 'NOA' ? 'icon-checked yellow' : allocateStatus === 'ALL' ? 'icon-checked green' : '_notDid'%>"></span>
+                    <span title="Fulfilled"
+                          class="icon-box <%=fulfillStatus === 'NOA' ? 'yellow' : fulfillStatus === 'ALL' ? 'green' : 'red'%> _fullfilled"></span>
+                    <span title="Shipped"
+                          class="icon-cargo <%=shippingStatus === 'NOA' ? 'yellow' : shippingStatus === 'ALL' ? 'green' : 'red'%> _shipped"></span>
+                </li>
+                <li class="_statusActions">
 
-                        <a id="workflowsDd" class="btn slim _workflowsDd "
-                           data-id="<%= model.workflow ? model.workflow._id : ''%>"
-                           href="javascript:;"><%= model.workflow ?
-                            model.workflow.name : ''%></a>
-                    </li>
-                    <%var classNameFulfill = fulfillStatus !== 'ALL' ? 'activeItem' : 'passiveItem';%>
-                    <%var classNameCancel = shippingStatus !== 'NOT' ? 'activeItem' : 'passiveItem';%>
+                    <a id="workflowsDd" class="btn slim _workflowsDd "
+                       data-id="<%= model.workflow ? model.workflow._id : ''%>"
+                       href="javascript:;"><%= model.workflow ?
+                        model.workflow.name : ''%></a>
+                </li>
+                <%var classNameFulfill = fulfillStatus !== 'ALL' ? 'activeItem' : 'passiveItem';%>
+                <%var classNameCancel = shippingStatus !== 'NOT' ? 'activeItem' : 'passiveItem';%>
 
-                    <li class="right fullfillOrderWrap">
-                        <a class="btn slim fullfillOrder" href="javascript:;">
-                            <span>Order Actions</span>
-                        </a>
-                        <ul>
-                            <li class="<%=classNameFulfill%>">
-                                <a id="fulfillAll"><span class="fontBold">Fulfill and ship later</span>
-                                    <span class="help">Create a goods-out note for all items to ship later</span>
-                                </a>
-                            </li>
-                            <li class="<%=classNameFulfill%>">
-                                <a id="fulfilAndShip"><span class="fontBold">Fulfill and mark as shipped</span>
-                                    <span class="help">Create and close a goods-out note for all items</span>
-                                    <span class="help">Shipment will be made today.</span>
-                                </a>
-                            </li>
-                            <li class="<%=classNameFulfill%>">
-                                <a id="splitFulfil"><span class="fontBold">Partial/Advanced fulfill</span>
-                                    <span class="help">Fulfil only part of the order, goods-out or drop-ship</span>
-                                </a>
-                            </li>
-                            <li class="<%=classNameCancel%>">
-                                <a id="salesReturn"><span class="fontBold">Sales return</span>
-                                    <span class="help">Return products (part or all) to warehouse</span>
-                                </a>
-                            </li>
-                            <li class="<%=classNameCancel%>">
-                                <a id="cancelOrder" class="cancelOrder"><span class="fontBold">Cancel</span>
-                                    <span class="help">Cancel Order and return all products to warehouse</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="right">
-                        <%if ((fulfillStatus !== 'NOT' && fulfillStatus !== 'NOA') || model.prepayment.sum) {%>
-                        <a title="Journal Entries" id="viewJournalEntries"
-                           class="icon-edit-list2  _viewEntries btn slim" href="javascript:;"></a>
-                        <%}%>
-                    </li>
-                </ul>
-                <span class="_orderNumber">#<%=model.name%></span>
-                <%if (model.invoice && model.invoice._id) {%>
-                <%var reference = '#easyErp/invoice/tform/' + model.invoice._id;%>
-                <ul class="_statusOrderList">
-                    <li class="left _statusOrders">
-                        <h3 class="_invoiced"><a href="<%=reference%>">#<%=model.invoice.name%></a></h3>
-                    </li>
-                </ul>
-                <%}%>
-                <div class="clearfix"></div>
-                <div class="dialog-tabs-items mainTabs">
-                    <div class="dialog-tabs-item mainTabs active">
-                        <div class="topInputHolder">
-                            <div class="half-block left">
-                                <dl class="opp-info">
-                                    <dt><label>Customer</label></dt>
-                                    <dd>
-                                        <%if(model.supplier){%>
-                                        <span id="supplierDd" data-id="<%=model.supplier._id%>"><%=model.supplier.name.first+ ' ' + model.supplier.name.last%></span>
-                                        <%}%>
-                                    </dd>
-                                    <dt><label for="assignedTo">Assigned To</label></dt>
-                                    <dd>
-                                        <span id="assignedTo"
-                                              data-id="<%=model.salesPerson ? model.salesPerson._id : ''%>"><%=model.salesPerson && model.salesPerson.name ? model.salesPerson.name.first +' ' + model.salesPerson.name.last : 'None'%></span>
-                                    </dd>
-
-                                    <dt><label for="expectedDate">Payment Due</label></dt>
-                                    <dd>
-                                        <input id="expectedDate" class="_inputBordered" value="<%=model.expectedDate%>"
-                                               readonly/>
-                                    </dd>
-                                    <dt><label for="paymentMethod">Bank Account</label></dt>
-                                    <dd class="">
-                                        <span id="paymentMethod" data-id="<%=model.paymentMethod && model.paymentMethod._id ? model.paymentMethod._id : null%>"><%=model.paymentMethod && model.paymentMethod._id ? model.paymentMethod.name : 'None'%></span>
-                                    </dd>
-                                    <dt><label>Order Date</label></dt>
-                                    <dd>
-                                        <input id="orderDate" class="_inputBordered" value="<%=model.orderDate%>"
-                                               readonly/>
-                                    </dd>
-                                </dl>
-                            </div>
-                            <div class="half-block right">
-                                <dl class="opp-info">
-                                    <% if(model.account && model.account._id) { %>
-                                    <dt><label for="account">COGS Account</label></dt>
-                                    <dd class="_newSelectListWrap">
-                                        <span id="account"
-                                              data-id="<%= model.account ? model.account._id : null%>"><%= model.account ?model.account.name :
-                                            'None'%></span>
-                                    </dd>
+                <li class="right fullfillOrderWrap icon-arrow-down2">
+                    <a class="btn slim fullfillOrder" href="javascript:;">
+                        <span>Order Actions</span>
+                    </a>
+                    <ul>
+                        <li class="<%=classNameFulfill%>">
+                            <a id="fulfillAll"><span class="fontBold">Fulfill and ship later</span>
+                                <span class="help">Create a Delivery-out note for all items to ship later</span>
+                            </a>
+                        </li>
+                        <li class="<%=classNameFulfill%>">
+                            <a id="fulfilAndShip"><span class="fontBold">Fulfill and mark as shipped</span>
+                                <span class="help">Create and close a Delivery-out note for all items</span>
+                                <span class="help">Shipment will be made today.</span>
+                            </a>
+                        </li>
+                        <li class="<%=classNameFulfill%>">
+                            <a id="splitFulfil"><span class="fontBold">Partial/Advanced fulfill</span>
+                                <span class="help">Fulfil only part of the order, Delivery-out or drop-ship</span>
+                            </a>
+                        </li>
+                        <li class="<%=classNameCancel%>">
+                            <a id="salesReturn"><span class="fontBold">Sales return</span>
+                                <span class="help">Return products (part or all) to warehouse</span>
+                            </a>
+                        </li>
+                        <li class="<%=classNameCancel%>">
+                            <a id="cancelOrder" class="cancelOrder"><span class="fontBold">Cancel</span>
+                                <span class="help">Cancel Order and return all products to warehouse</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="right">
+                    <%if ((fulfillStatus !== 'NOT' && fulfillStatus !== 'NOA') || model.prepayment.sum) {%>
+                    <a title="Journal Entries" id="viewJournalEntries"
+                       class="icon-edit-list2  _viewEntries btn slim" href="javascript:;"></a>
+                    <%}%>
+                </li>
+            </ul>
+            <span class="_orderNumber">#<%=model.name%></span>
+            <%if (model.invoice && model.invoice._id) {%>
+            <%var reference = '#easyErp/invoice/tform/' + model.invoice._id;%>
+            <ul class="_statusOrderList">
+                <li class="left _statusOrders">
+                    <h3 class="_invoiced"><a href="<%=reference%>">#<%=model.invoice.name%></a></h3>
+                </li>
+            </ul>
+            <%}%>
+            <div class="dialog-tabs-items mainTabs">
+                <div class="dialog-tabs-item mainTabs active">
+                    <div class="topInputHolder">
+                        <div class="half-block left">
+                            <dl class="opp-info">
+                                <dt><label>Customer</label></dt>
+                                <dd>
+                                    <%if(model.supplier){%>
+                                    <span id="supplierDd" data-id="<%=model.supplier._id%>"><%=model.supplier.name.first+ ' ' + model.supplier.name.last%></span>
                                     <%}%>
+                                </dd>
 
-                                    <dt><label for="priceList">Price List</label></dt>
-                                    <dd>
-                                        <span id="priceList" data-id="<%=model.priceList ? model.priceList._id : ''%>"><%=model.priceList ? model.priceList.name : 'None'%></span>
-                                    </dd>
+                                <dt><label for="assignedTo">Assigned To</label></dt>
+                                <dd>
+                                        <span id="assignedTo"
+                                              data-id="<%=model.salesPerson ?
+                                               model.salesPerson._id :
+                                               ''%>"><%=model.salesPerson && model.salesPerson.name ?
+                                            model.salesPerson.name.first +' ' + model.salesPerson.name.last :
+                                            'None'%></span>
+                                </dd>
 
-                                    <dt><label for="warehouseDd">Warehouse</label></dt>
-                                    <dd class="_modalSelect">
+                                <dt><label for="expectedDate">Payment Due</label></dt>
+                                <dd>
+                                    <input id="expectedDate"
+                                           class="_inputBordered"
+                                           value="<%=model.expectedDate%>"
+                                           readonly/>
+                                </dd>
+                                <dt><label for="paymentMethod">Bank Account</label></dt>
+                                <dd class="">
+                                        <span id="paymentMethod"
+                                              data-id="<%=model.paymentMethod && model.paymentMethod._id ?
+                                        model.paymentMethod._id : null%>"><%=model.paymentMethod && model.paymentMethod._id ?
+                                            model.paymentMethod.name :
+                                            'None'%></span>
+                                </dd>
+                                <dt><label>Order Date</label></dt>
+                                <dd>
+                                    <input id="orderDate" class="_inputBordered" value="<%=model.orderDate%>"
+                                           readonly/>
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="half-block right">
+                            <dl class="opp-info">
+                                <dt><label for="account">COGS Account</label></dt>
+                                <dd class="_newSelectListWrap">
+                                        <span id="account"
+                                              data-id="<%= model.account ? model.account._id : null%>"><%= model.account ?model.account.name :'None'%></span>
+                                </dd>
+
+                                <dt><label for="priceList">Price List</label></dt>
+                                <dd>
+                                    <span id="priceList" data-id="<%=model.priceList ? model.priceList._id : ''%>"><%=model.priceList ? model.priceList.name : 'None'%></span>
+                                </dd>
+
+                                <dt><label for="warehouseDd">Warehouse</label></dt>
+                                <dd class="_modalSelect">
                                 <span id="warehouseDd"
                                       data-id="<%=model.warehouse ? model.warehouse._id : ''%>"><%=model.warehouse ?
                                     model.warehouse.name : ''%></span>
-                                    </dd>
+                                </dd>
 
 
-                                    <dt><label for="currencyDd">Currency</label></dt>
-                                    <dd class="_newSelectListWrap">
+                                <dt><label for="currencyDd">Currency</label></dt>
+                                <dd class="_newSelectListWrap">
                                         <span id="currencyDd"
                                               data-id="<%= model.currency && model.currency._id ? model.currency._id._id : null%>"
-                                              data-symbol="<%= model.currency && model.currency._id ? model.currency._id.symbol : null%>"><%= model.currency && model.currency._id ?
+                                              data-symbol="<%= model.currency && model.currency._id ? model.currency._id.symbol : null%>">
+                                            <%= model.currency && model.currency._id ?
                                             model.currency._id.name : ''%></span>
-                                    </dd>
-                                </dl>
-                            </div>
-                            <div class="clearfix"></div>
-                        </div>
-                        <div class="clearfix"></div>
-
-                        <div class="clearfix"></div>
-                        <div id="productItemsHolder">
-
+                                </dd>
+                            </dl>
                         </div>
                     </div>
-                    <div class="clearfix"></div>
+                    <div id="productItemsHolder"></div>
                 </div>
-
             </div>
-            <div class="clearfix"></div>
-        </fieldset>
+        </div>
     </form>
-    <div class="clearfix"></div>
 </div>

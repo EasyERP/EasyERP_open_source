@@ -14,7 +14,7 @@ delimiter2 = '';
     <td><%=product.name%></td>
     <td><%=product.info.SKU%></td>
     <% if(!toExpand) { %>
-    <td>
+    <td class="variantGuideTours">
         <span><%=product.variantsCount ? product.variantsCount.count : 'this product has no variants'%></span>
     </td>
     <% } else { %>

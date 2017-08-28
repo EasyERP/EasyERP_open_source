@@ -3,7 +3,7 @@ define([
     'Underscore',
     'Backbone',
     'views/invoice/form/FormView',
-    'text!templates/invoice/form/EditTemplate.html',
+    'text!templates/invoice/baseForm/baseFormTemplate.html',
     'views/Notes/AttachView',
     'views/Notes/NoteView',
     'views/Products/orderRows/ProductItems',
@@ -102,6 +102,8 @@ define([
             var groupsId;
 
             var whoCanRW;
+
+            this.gaTrackingEditConfirm();
 
             total = parseFloat(total);
             balance = parseFloat(balance);
@@ -222,7 +224,7 @@ define([
 
         chooseOption: function (e) {
             var $target = $(e.target);
-            var holder = $target.parents('dd').find('.current-selected');
+            var holder = $target.closest('.current-selected');
             var $dueDate = this.$el.find('#due_date');
             var invoiceDate = this.$el.find('#invoice_date').val();
             holder.text($target.text()).attr('data-id', $target.attr('id')).attr('data-level', $target.attr('data-level'));
@@ -465,7 +467,7 @@ define([
                 self.$el.find('.newPayment').remove();
             }
 
-            invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
+            invoiceItemContainer = this.$el.find('#productItemsHolder');
 
             invoiceItemContainer.append(
                 new InvoiceItemView({

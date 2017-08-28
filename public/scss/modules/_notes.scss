@@ -181,7 +181,7 @@
     word-wrap: break-word;
   }
 
-  .addNote {
+  .addNote,  .addTask {
     margin-top: 6px;
     background-color: inherit;
 
@@ -222,6 +222,13 @@
       }
     }
 
+    .counter-wrap {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      padding: 3px 5px;
+    }
+
     .addTitle {
       display: none;
     }
@@ -253,14 +260,10 @@
 
     textarea {
       width: 100%;
-      padding: 2px 0 2px 3px;
+      padding: 10px 10px 15px;
       resize: none;
       box-sizing: border-box;
       @extend .defaultBorRad;
-
-      //&:focus {
-      //  box-shadow: 0 0 5px rgba(82, 168, 236, 0.5);
-      //}
 
       &.noteText {
         border-radius: 0 0 3px 3px;
@@ -342,6 +345,20 @@
     &:hover {
       color: #2a6496;
     }
+  }
+}
+
+.counter-wrap {
+  //prevent global style
+  .counter-label {
+    font-size: 10px;
+    color: #999;
+  }
+
+  .counter-value {
+    color: #6398bb;
+    font-family: $semibold-font-family;
+    font-size: 11px;
   }
 }
 
@@ -574,4 +591,7 @@
     padding: 0 0 10px;
     overflow: auto;
   }
+}
+._thisNotes{
+  height: 202px;
 }

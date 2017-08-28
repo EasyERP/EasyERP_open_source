@@ -48,6 +48,20 @@ table {
   }
 }
 
+td {
+  ._widthLimit {
+    //max-width: 200px;
+    white-space: nowrap;
+  }
+
+  ._staticInfo {
+    display: inline-block;
+    min-height: 26px;
+    padding: 5px;
+    font-size: 13px;
+  }
+}
+
 tr.redBorder {
   background-color: red !important;
 
@@ -76,7 +90,7 @@ tr.greyBorder {
   background-color: #e5d7e8;
 }
 
-td.checkboxRow {
+.checkboxRow {
   width: 40px;
   padding: 10px;
   vertical-align: middle;
@@ -86,8 +100,8 @@ td.checkboxRow {
     position: relative;
 
     .checkbox {
-      left: -7px;
-      margin-top: 3px;
+      left: 3px;
+      top: 3px;
       z-index: 1;
       cursor: pointer;
     }
@@ -119,13 +133,18 @@ td.editable {
         text-align: left;
       }
     }
+
     &.childTr {
       td {
         &:nth-child(n+2) {
           padding-left: 36px;
         }
+        &:nth-child(n+2) {
+          padding-right: 20px;
+        }
       }
     }
+
     &.subTr {
       td {
         &:nth-child(n+2) {
@@ -420,20 +439,19 @@ td.editable {
   padding-bottom: 100px;
 }
 
-._balanceSheetTableWrap {
-  + ._balanceSheetTableWrap,
-  + ._totalBalanceTableWrap {
-    padding-top: 20px;
-  }
+
+._balanceSheetTableWrap,
+._totalBalanceTableWrap {
+  padding-top: 20px;
 }
 
+
 ._balanceSheetTableWrap {
-  padding: 0 20px;
+  padding: 20px 20px 0;
   margin: 0 20px;
   background-color: #fff;
 
   ._balanceSheetTable {
-    table-layout: fixed;
 
     thead {
       tr {
@@ -474,8 +492,17 @@ td.editable {
           border-top: 0;
 
           td {
+            &:first-child {
+              text-align: right;
+              cursor: pointer;
+            }
+
             &:nth-child(n+2) {
               padding-left: 20px;
+            }
+
+            &:nth-child(n+3) {
+              padding-right: 36px;
             }
           }
         }
@@ -509,13 +536,18 @@ td.editable {
   td.source {
     cursor: default;
   }
+
+  td.expand {
+    width: 30px;
+  }
 }
 
 ._taxList {
+  display: flex;
+  flex-direction: column;
 
   > li {
-    line-height: 20px;
-    padding: 0 10px;
+    line-height: 24px;
   }
 }
 
@@ -540,4 +572,244 @@ td.editable {
   margin-bottom: 15px;
   color: #323a43;
   font-family: $semibold-font-family;
+}
+
+// drag table styles start
+.dragtable-sortable {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+
+  li {
+    margin: 0;
+    padding: 0;
+    float: left;
+    font-size: 1em;
+    background: white;
+
+
+    &:first-child {
+
+      th,
+      td {
+        border-left: 1px solid #CCC;
+      }
+    }
+  }
+
+  th,
+  td{
+    border-left: 0;
+  }
+}
+
+.ui-sortable-helper {
+  opacity: 0.7;
+  filter: alpha(opacity=70);
+}
+
+.ui-sortable-placeholder {
+  box-shadow: 4px 5px 4px #C6C6C6 inset;
+  border-bottom: 1px solid #CCCCCC;
+  border-top: 1px solid #CCCCCC;
+  visibility: visible !important;
+  background: #EFEFEF !important;
+
+  * {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+// drag table styles end
+#productItemsHolder {
+  margin-top: 13px;
+
+  ._editAllocateAll {
+    margin-top: -20px;
+    margin-bottom: 8px;
+  }
+}
+
+.jobsWescWrap {
+  textarea._animate {
+    height: 27px;
+    margin-top: 0;
+  }
+}
+
+.productItem.deleteRow {
+  .current-selected {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.fullfilledHolder {
+
+  .fullfilledInfo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+
+    span {
+      display: block;
+      padding: 0 8px;
+      text-align: center;
+      font-family: "OpenSans SemiBold", Arial, Helvetica, sans-serif;
+      color: #fff;
+    }
+
+    input:not([type="checkbox"]) {
+      width: 40px;
+      border: 0;
+      background-color: #fff;
+    }
+  }
+
+  &.red {
+    .fullfilledInfo {
+      background-color: #F44336;
+    }
+  }
+
+  &.green {
+    .fullfilledInfo {
+      background-color: #4caf50;
+    }
+  }
+}
+
+
+span.accountDd {
+  color: #666682;
+  line-height: 24px;
+}
+
+._productTable {
+  table-layout: fixed;
+
+  tr {
+    height: 26px;
+
+    &.info {
+      height: 0;
+    }
+  }
+
+  thead {
+    font-family: $semibold-font-family;
+    color: #3a424c;
+  }
+
+  tbody {
+
+    tr {
+      vertical-align: top;
+    }
+  }
+
+  td,
+  th {
+    padding: 6px;
+    text-align: right;
+
+    > * {
+      text-align: right;
+    }
+
+    &:first-child {
+      text-align: left;
+
+      > * {
+        text-align: left;
+      }
+    }
+  }
+
+  ._productInput,
+  ._productDescription {
+    border: 0;
+    border-bottom: 1px solid #7eadcc;
+    transition: box-shadow .2s ease-in-out;
+
+    &:focus {
+      box-shadow: 0 1px 0 0 #7eadcc;
+    }
+
+    &:disabled,
+    &[readonly] {
+      border-bottom-color: transparent;
+
+      &:focus {
+        box-shadow: none;
+      }
+    }
+  }
+
+  ._productInput {
+    height: 26px;
+  }
+
+  ._productDescription {
+    padding: 0 6px;
+    height: 100px;
+    text-align: left;
+
+    &:focus {
+      box-shadow: 0 1px 0 0 #7eadcc;
+    }
+
+    &:disabled,
+    &[readonly] {
+      background-color: #f9f8f8;
+    }
+  }
+  td {
+    ._animateSelectBox {
+      margin-bottom: 0;
+    }
+  }
+}
+
+._overviewOrderWrap {
+  display: flex;
+  flex-wrap: wrap;
+  overflow: auto;
+
+  ._overviewItem {
+    flex-grow: 1;
+    width: 30px;
+    min-width: 33%;
+    background: #f8f9fb;
+    border-bottom: 1px solid #d6d6d6;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+.revenueCountWrap {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 20px;
+
+  ._revenueItem {
+    width: 50%;
+
+    &:last-child {
+      text-align: right;
+    }
+  }
+}
+
+#listTotal {
+  color: #666666 !important;
+  font-family: "OpenSans SemiBold", Arial, Helvetica, sans-serif;
 }

@@ -16,6 +16,11 @@ module.exports = function (models, event) {
     var optionsTypesHandler = new ProductTypesHandler(models);
     var moduleId = MODULES.PRODUCT;
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
+    var accessDeleteStackMiddleware = require('../helpers/checkDelete');
+
+    function accessDeleteStackMiddlewareFunction(req, res, next) {
+        accessDeleteStackMiddleware(req, res, next, models, 'product', event);
+    }
 
     router.use(authStackMiddleware);
 
@@ -91,6 +96,9 @@ module.exports = function (models, event) {
     router.get('/getProductsTypeForDd', handler.getProductsTypeForDd);
     // router.get('/totalCollectionLength', handler.totalCollectionLength);
     router.get('/getProductsImages', handler.getProductsImages);
+
+    router.get('/getProductsNames', handler.getProductsNames);
+    router.get('/getProductDimension', handler.getProductsDimension);
     // router.get('/exportToXlsx', handler.exportToXlsx);
     // router.get('/exportToCsv', handler.exportToCsv);
 
@@ -139,7 +147,8 @@ module.exports = function (models, event) {
     router.patch('/:_id', handler.productsUpdateOnlySelectedFields);
 
     router.delete('/:_id', handler.removeProduct);
-    router.delete('/', handler.bulkRemove);
+    router.delete('/', accessDeleteStackMiddlewareFunction, handler.bulkRemove);
+
 
     return router;
 };

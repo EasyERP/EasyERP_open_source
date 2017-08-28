@@ -1,8 +1,8 @@
 <div class="form-holder _newForm">
-    <form method="post" action="" id="stockCorrection">
+    <form method="post" action="" class="_stockCorrectionForm" id="stockCorrection">
         <h4 class="_dialogMainTitle">Add Stock Correction</h4>
         <div class="_formWrap">
-            <div class="_formBlock">
+            <div class="_formBlock _equal">
 
                 <div class="_animateSelectBox">
                     <span class="_selectTitle">Warehouse</span>
@@ -21,13 +21,17 @@
                     </div>
                 </div>
             </div>
-            <div class="_formBlock">
-                <div class="_animateTextareaBox">
+            <div class="_formBlock _equal">
+                <div class="_animateTextareaBox counterWrap">
                         <textarea id="description"
                                   class="_animate internal_Notes"
                                   required
                                   maxlength="500" ></textarea>
                     <label for="description" class="_animate">Reason</label>
+                    <div class="counter-wrap">
+                        <span class="counter-label">Characters left:</span>
+                        <span class="counter-value" id="counterValue">500</span>
+                    </div>
                 </div>
             </div>
             <div class="_formBlock">

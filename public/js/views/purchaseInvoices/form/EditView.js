@@ -3,7 +3,7 @@ define([
     'Underscore',
     'Backbone',
     'views/dialogViewBase',
-    'text!templates/purchaseInvoices/form/EditTemplate.html',
+    'text!templates/invoice/baseForm/baseFormTemplate.html',
     'views/Notes/AttachView',
     'views/Notes/NoteView',
     'views/Products/orderRows/ProductItems',
@@ -113,6 +113,8 @@ define([
             var groupsId;
 
             var whoCanRW;
+
+            this.gaTrackingEditConfirm();
 
             total = parseFloat(total);
             balance = parseFloat(balance);
@@ -229,7 +231,7 @@ define([
 
         chooseOption: function (e) {
             var $target = $(e.target);
-            var holder = $target.parents('dd').find('.current-selected');
+            var holder = $target.closest('.current-selected');
             var $dueDate = this.$el.find('#due_date');
             var invoiceDate = this.$el.find('#invoice_date').val();
             holder.text($target.text()).attr('data-id', $target.attr('id')).attr('data-level', $target.attr('data-level'));
@@ -357,7 +359,7 @@ define([
             if (!model.paymentMethod && model.project && model.project.paymentMethod) {
                 populate.get('#paymentMethod', '/paymentMethod', {}, 'name', this, false, true, null, model.project.paymentMethod);
             } else {
-                populate.get('#paymentMethod', '/paymentMethod', {}, 'name', this, false, true, null, model.paymentMethod);
+                populate.get('#paymentMethod', '/paymentMethod', {}, 'name', this, false, true, null, model.paymentMethod._id || model.paymentMethod);
             }
 
             if (!model.paymentTerms && model.project && model.project.paymentTerms) {
@@ -418,7 +420,7 @@ define([
 
             this.delegateEvents(this.events);
 
-            invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
+            invoiceItemContainer = this.$el.find('#productItemsHolder');
 
             invoiceItemContainer.append(
                 new InvoiceItemView({

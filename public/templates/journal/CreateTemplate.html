@@ -3,37 +3,41 @@
         <h4 class="_dialogMainTitle">New jornal</h4>
         <div class="_formWrap">
             <div class="_formBlock">
-                <div class="_animateInputBox">
+                <div class="_animateInputBox _withInfo">
                     <input type="text"
                            class="_animate"
                            id="nameInput"
                            required
                            maxlength="25"/>
                     <label class="_animate">Journal Name</label>
+                    <span class="tips icon-info" data-id="nameInput"></span>
                 </div>
-                <div class="_animateSelectBox">
+                <div class="_animateSelectBox _withInfo">
                     <span class="_selectTitle">Transaction</span>
                     <div class="_newSelectListWrap">
                         <a id="typeDd"
                            class="current-selected"
                            href="javascript:;">Select transaction</a>
                     </div>
+                    <span class="tips icon-info" data-id="typeDd"></span>
                 </div>
-                <div class="_animateSelectBox">
+                <div class="_animateSelectBox _withInfo">
                     <span class="_selectTitle">Debit Account</span>
                     <div class="_newSelectListWrap">
                         <a id="debitDd"
                            class="current-selected"
                            href="javascript:;">Select debit account</a>
                     </div>
+                    <span class="tips icon-info" data-id="debitDd"></span>
                 </div>
-                <div class="_animateSelectBox">
+                <div class="_animateSelectBox _withInfo">
                     <span class="_selectTitle">Credit Account</span>
                     <div class="_newSelectListWrap">
                         <a id="creditDd"
                            class="current-selected"
                            href="javascript:;">Select credit account</a>
                     </div>
+                    <span class="tips icon-info" data-id="creditDd"></span>
                 </div>
             </div>
         </div>

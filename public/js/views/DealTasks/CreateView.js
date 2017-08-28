@@ -12,8 +12,10 @@ define([
     'views/Category/TagView',
     'constants',
     'moment',
-    'helpers/keyValidator'
-], function (Backbone, $, _, ParentView, CreateTemplate, showSelectTemplate, TaskModel, common, populate, AttachView, CategoryView, CONSTANTS, moment, keyValidator) {
+    'helpers/keyValidator',
+    'helpers/ga',
+    'constants/googleAnalytics'
+], function (Backbone, $, _, ParentView, CreateTemplate, showSelectTemplate, TaskModel, common, populate, AttachView, CategoryView, CONSTANTS, moment, keyValidator, ga, GA) {
 
     var CreateView = ParentView.extend({
         el         : '#content-holder',
@@ -22,7 +24,8 @@ define([
         responseObj: {},
 
         events: {
-            'click .removeSelect': 'removeSelect',
+            'click .removeSelect'       : 'removeSelect',
+            'click textarea.withCounter': 'checkCount'
         },
 
         initialize: function () {
@@ -42,11 +45,11 @@ define([
 
         saveItem: function () {
             var self = this;
-            var deal = this.$el.find('#dealItem .showSelect').attr('data-id');
+            var deal = this.$el.find('#dealItem .selectType').attr('data-id');
             var assignedTo = this.$el.find('#assignedToDd').attr('data-id');
-            var company = this.$el.find('#companyItem .showSelect').attr('data-id');
+            var company = this.$el.find('#companyItem .selectType').attr('data-id');
             var workflow = this.$el.find('#workflowsDd').attr('data-id');
-            var contact = this.$el.find('#contactItem .showSelect').attr('data-id');
+            var contact = this.$el.find('#contactItem .selectType').attr('data-id');
             var description = $.trim(this.$el.find('#description').val());
             var dueDate = $.trim(this.$el.find('#dueDate').val());
             var time = moment($.trim(this.$el.find('#timepickerOne').wickedpicker('time')).split(' '), 'hh:mm:ss A');
@@ -111,7 +114,8 @@ define([
             notDiv.append(
                 new CategoryView({
                     model      : this.model,
-                    contentType: 'DealTasks'
+                    contentType: 'DealTasks',
+                    el         : '#categoryHolder'
                 }).render().el
             );
         },
@@ -119,19 +123,15 @@ define([
         chooseOption: function (e) {
             var $target = $(e.target);
             var $div = $target.closest('div.selectType');
+            var $img = $div.find('.dataImg');
 
             if ($div.length) {
-
-                $div.append(_.template(showSelectTemplate, {
-                    id      : $target.attr('id'),
-                    name    : $target.text(),
-                    imageSrc: $target.attr('data-img')
-                }));
-                $div.find('a').hide();
+                $img.attr('src', $target.attr('data-img'));
+                $div.attr('id', $target.attr('id'));
+                $div.find('.current-selected').html($target.text());
             } else {
                 $target.parents('.dataField').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
             }
-
         },
 
         render: function () {
@@ -140,19 +140,25 @@ define([
 
             this.$el = $(formString).dialog({
                 dialogClass: 'edit-dialog task-edit-dialog',
-                width      : 600,
+                width      : 800,
                 title      : 'Create Task',
                 buttons    : {
                     save: {
                         text : 'Create',
                         class: 'btn blue',
-                        click: self.saveItem
+                        click: function () {
+                            self.saveItem();
+                            self.gaTrackingConfirmEvents();
+                        }
+
                     },
 
                     cancel: {
                         text : 'Cancel',
                         class: 'btn',
-                        click: self.hideDialog
+                        click: function () {
+                            self.hideDialog();
+                        }
                     }
                 }
             });

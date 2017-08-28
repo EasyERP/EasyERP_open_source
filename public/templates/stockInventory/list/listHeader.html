@@ -1,62 +1,85 @@
 <div id="searchContainer"></div>
-<div class="_tableWrap _tablePurchasePaymentsWrap">
-    <table class="list task-list stripedList">
-        <colgroup>
-            <col width="70px">
-            <col width="18%">
-            <col width="18%">
-            <col width="18%">
-            <col width="17%">
-            <col width="20%">
-            <col width="15%">
-            <col width="15%">
-            <col width="15%">
-            <col width="10%">
-            <col width="10%">
-            <col width="10%">
-            <col width="15%">
-            <col width="15%">
-            <col width="15%">
-            <col width="15%">
-            <col width="15%">
-
-
-        </colgroup>
+<div class="_stockDetailsTable">
+    <table class="stripedList">
         <thead>
         <tr>
-            <th class="centerCell">Move</th>
-            <th class="oe_sortable" data-sort="product.info.SKU">SKU<span class="arrow down"></span><span
-                    class="arrow up"></span></th>
-            <th class="oe_sortable" data-sort="product.name">Product Name<span class="arrow down"></span><span
-                    class="arrow up"></span></th>
-            <th >Options</th>
-            <th class="oe_sortable" data-sort="warehouse.name">Warehouse<span class="arrow down"></span><span
-                    class="arrow up"></span></th>
-            <th class="oe_sortable" data-sort="createdBy.date">Received Date<span class="arrow down"></span><span
-                    class="arrow up"></span></th>
-            <th class="oe_sortable" data-sort="order.name">PO ref<span class="arrow down"></span><span
-                    class="arrow up"></span></th>
-            <th class="oe_sortable" data-sort="location.groupingA">Aisle<span class="arrow down"></span><span
-                    class="arrow up"></span></th>
-            <th class="oe_sortable" data-sort="location.groupingB">Bay<span class="arrow down"></span><span
-                    class="arrow up"></span></th>
-            <th class="oe_sortable" data-sort="location.groupingC">Shelf<span class="arrow down"></span><span
-                    class="arrow up"></span></th>
-            <th class="oe_sortable" data-sort="location.groupingD">Bin<span class="arrow down"></span><span
-                    class="arrow up"></span></th>
-            <th class="oe_sortable" data-sort="inStock">In Stock<span class="arrow down"></span><span
-                    class="arrow up"></span></th>
-            <th class="oe_sortable" data-sort="lowStock">Low Stock<span class="arrow down"></span><span
-                    class="arrow up"></span></th>
-            <th class="oe_sortable" data-sort="allocated">Allocated<span class="arrow down"></span><span
-                    class="arrow up"></span></th>
-            <th class="oe_sortable" data-sort="onHand">On Hand<span class="arrow down"></span><span
-                    class="arrow up"></span></th>
-            <th class="oe_sortable" data-sort="cost">Unit cost<span class="arrow down"></span><span
-                    class="arrow up"></span></th>
-            <th class="oe_sortable" data-sort="value">Total cost<span class="arrow down"></span><span
-                    class="arrow up"></span></th>
-
+            <th class="_actionTitle">Move</th>
+            <th class="oe_sortable"
+                data-sort="product.info.SKU">SKU
+                <span class="arrow down"></span>
+                <span class="arrow up"></span>
+            </th>
+            <th class="oe_sortable"
+                data-sort="product.name">Product Name
+                <span class="arrow down"></span>
+                <span class="arrow up"></span>
+            </th>
+            <th>Options</th>
+            <th class="oe_sortable"
+                data-sort="warehouse.name">Warehouse
+                <span class="arrow down"></span>
+                <span class="arrow up"></span>
+            </th>
+            <th class="oe_sortable"
+                data-sort="createdBy.date">Received Date
+                <span class="arrow down"></span>
+                <span class="arrow up"></span>
+            </th>
+            <th class="oe_sortable"
+                data-sort="order.name">PO ref
+                <span class="arrow down"></span>
+                <span class="arrow up"></span>
+            </th>
+            <th class="oe_sortable"
+                data-sort="location.groupingA">Aisle
+                <span class="arrow down"></span>
+                <span class="arrow up"></span>
+            </th>
+            <th class="oe_sortable"
+                data-sort="location.groupingB">Bay
+                <span class="arrow down"></span>
+                <span class="arrow up"></span>
+            </th>
+            <th class="oe_sortable"
+                data-sort="location.groupingC">Shelf
+                <span class="arrow down"></span>
+                <span class="arrow up"></span>
+            </th>
+            <th class="oe_sortable"
+                data-sort="location.groupingD">Bin
+                <span class="arrow down"></span>
+                <span class="arrow up"></span>
+            </th>
+            <th class="oe_sortable"
+                data-sort="inStock">In Stock
+                <span class="arrow down"></span>
+                <span class="arrow up"></span>
+            </th>
+            <th class="oe_sortable"
+                data-sort="allocated">Allocated
+                <span class="arrow down"></span>
+                <span class="arrow up"></span>
+            </th>
+            <th class="oe_sortable"
+                data-sort="onHand">On Hand
+                <span class="arrow down"></span>
+                <span class="arrow up"></span>
+            </th>
+            <th class="oe_sortable"
+                data-sort="lowStock">Low Stock
+                <span class="arrow down"></span>
+                <span class="arrow up"></span>
+            </th>
+            <th class="oe_sortable"
+                data-sort="cost">Unit cost
+                <span class="arrow down"></span>
+                <span class="arrow up"></span>
+            </th>
+            <th class="oe_sortable"
+                data-sort="value">Total cost
+                <span class="arrow down"></span>
+                <span class="arrow up"></span>
+            </th>
         </thead>
         <tbody id="listTable" class="enableTableOdd"></tbody>
         <tfoot id="listTotal"></tfoot>

@@ -15,11 +15,11 @@
 
 
 #searchFilterContainer {
-  width: auto;
   height: 24px;
   border-radius: 3px;
-  overflow: hidden;
-  float: left;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
 }
 
 .ui-autocomplete {
@@ -112,7 +112,7 @@
 }
 
 .ui-autocomplete-input {
-  min-width: 50px;
+  min-width: 45px;
   height: 24px;
   margin: 0 5px;
   line-height: 24px;
@@ -162,7 +162,7 @@
   width: 280px;
   background-color: $bg-main;
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16),
-              0 2px 10px 0 rgba(0, 0, 0, 0.12);
+  0 2px 10px 0 rgba(0, 0, 0, 0.12);
 
   .filter-dialog-tabs {
     display: flex;
@@ -170,22 +170,33 @@
     border: 1px solid $border-color-main;
     border-bottom: 0;
 
-    li {
+    .filterTabs {
       width: 100%;
       border-radius: 0;
+      background: #f3f3f3;
+      color: #364150;
+      font-family: $semibold-font-family;
+      text-align: center;
+      line-height: 27px;
+      border-bottom: 1px solid #7f7f80;
+      cursor: pointer;
+      user-select: none;
+      @include rem('font-size', 13px);
+
+      &.active {
+        border-bottom-color: transparent;
+        background-color: #fff;
+        color: #4d8ab3;
+      }
 
       &:nth-child(2) {
-        border-left: 1px solid $border-color-main;
-      }
-
-      &.filterTabs {
-        text-align: center;
-        line-height: 27px;
-        color: $mainText-color;
-        cursor: pointer;
-        font-size: 13px;
+        border-left: 1px solid #7f7f80;
       }
     }
+  }
+
+  .drop-down-filter {
+    border-top: 0;
   }
 
   .filter-check-list {

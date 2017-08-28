@@ -20,12 +20,10 @@
     </td>
     <td>
         <ul>
-
             <% product.channels.forEach(function(channel){ %>
             <li>
-                <div class="channelImg <%= channel.type || ''%>" data-content="channelImage" title="<%= channel.name || ''%>"></div>
+                <div class="channelImg right <%= channel.type || ''%>" data-content="channelImage" title="<%= channel.name || ''%>"></div>
             </li>
-
             <% }); %>
         </ul>
     </td>

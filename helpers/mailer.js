@@ -7,7 +7,7 @@ module.exports = function () {
     var pathMod = require('path');
     var moment = require('../public/js/libs/moment/moment');
 
-    var baseOptions = {salesPerson: registerNewUser};
+    var baseOptions = {salesPerson: registerNewUserSaaS};
 
     var fs = require('fs');
 
@@ -21,7 +21,6 @@ module.exports = function () {
                     cb(err);
                 }
             } else {
-                console.log('Message sent: ' + response.message);
                 if (cb && (typeof cb === 'function')) {
                     cb(null, response);
                 }
@@ -147,11 +146,17 @@ module.exports = function () {
     };
 
     this.sendAddedFollower = function (mailOptions, cb) {
+        var collectionName = mailOptions.collectionName;
+        var contentId = mailOptions.contentId;
+        var toValidCollectionName = collectionName.substr(0, 1).toUpperCase() + collectionName.substr(1).toLowerCase();
+        var url = 'http://localhost:8089/#easyErp/' + toValidCollectionName + '/tform/' + contentId;
 
         var templateOptions = _.extend(baseOptions, {
-            employee      : mailOptions.employee.first + ' ' + mailOptions.employee.last,
+            employee      : mailOptions.employee,
             contentName   : mailOptions.contentName,
-            collectionName: mailOptions.collectionName
+            contentId     : contentId,
+            collectionName: collectionName,
+            url           : url
         });
 
         mailOptions.generateTextFromHTML = true;
@@ -161,6 +166,38 @@ module.exports = function () {
         mailOptions.html = _.template(fs.readFileSync('public/templates/mailer/addedFollower.html', encoding = 'utf8'), templateOptions);
 
         deliver(mailOptions, cb);
+    };
+
+    this.registeredNewUserWithToken = function (options, cb) {
+        var templateOptions = _.extend(baseOptions, {
+            name    : options.firstName + ' ' + options.lastName,
+            login   : options.login,
+            password: options.password,
+            email   : options.email,
+            country : options.countryInput,
+            city    : options.city,
+            host    : options.host,
+            link    : options.link
+        });
+
+        var mailOptions = {
+            from                : 'easyerp <no-replay@easyerp.com>',
+            to                  : 'sales@easyerp.com',
+            subject             : 'new user',
+            generateTextFromHTML: true,
+            html                : _.template(fs.readFileSync('public/templates/mailer/registeredNewUser.html', encoding = 'utf8'), templateOptions)
+        };
+
+        var mailOptionsUser = {
+            from                : 'easyerp <support@easyerp.com>',
+            to                  : templateOptions.email,
+            subject             : 'New registration',
+            generateTextFromHTML: true,
+            html                : _.template(fs.readFileSync('public/templates/mailer/newUser.html', encoding = 'utf8'), templateOptions)
+        };
+
+        deliver(mailOptionsUser, cb);
+        // deliver(mailOptions);
     };
 
     this.registeredNewUser = function (options, cb) {
@@ -184,7 +221,7 @@ module.exports = function () {
         var mailOptionsUser = {
             from                : 'easyerp <support@easyerp.com>',
             to                  : templateOptions.email,
-            subject             : 'New registration',
+            subject             : 'Welcome to EasyERP!',
             generateTextFromHTML: true,
             html                : _.template(fs.readFileSync('public/templates/mailer/newUser.html', encoding = 'utf8'), templateOptions)
         };

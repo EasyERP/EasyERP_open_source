@@ -9,8 +9,9 @@ define([
     'custom',
     'common',
     'constants',
-    'tracker'
-], function (Backbone, _, $, mainView, loginView, dataService, eventsBinder, custom, common, CONSTANTS, tracker) {
+    'tracker',
+    'helpers/ga'
+], function (Backbone, _, $, mainView, loginView, dataService, eventsBinder, custom, common, CONSTANTS, tracker, ga) {
     'use strict';
     var bindDefaultUIListeners = function () {
         $(document).on('keydown', '.ui-dialog', function (e) {
@@ -69,7 +70,8 @@ define([
             home                                                                                            : 'any',
             'easyErp/Products/thumbnails(/c=:countPerPage)(/filter=:filter)'                                : 'goToProduct',
             'easyErp/import/list(/p=:page)(/c=:countPerPage)'                                               : 'goToImport',
-            'login(?password=:password&dbId=:dbId&email=:email)'                                            : 'login',
+            'login(?password=:password&dbId=:dbId&email=:email)(?ir_hash=:ir_hash)'                         : 'login',
+            'easyErp/gatherInfo': 'goToGatherInfo',
             'easyErp/:contentType/kanban(/:parrentContentId)(/filter=:filter)'                              : 'goToKanban',
             'easyErp/:contentType/datelist(/c=:countPerPage)(/filter=:filter)'                              : 'goToDateList',
             'easyErp/:contentType/thumbnails(/c=:countPerPage)(/filter=:filter)'                            : 'goToThumbnails',
@@ -87,14 +89,16 @@ define([
             'easyErp/Accounts(/:type)'                                                                      : 'goToAccounts',
             'easyErp/productsSettings'                                                                      : 'goToProductSettings',
             'easyErp/settingsOverview'                                                                      : 'goToSettingsOverview',
-            'easyErp/reports'                                                                               : 'goToReports',
+            'easyErp/reports(/:modelId)'                                                                    : 'goToReports',
             //'easyErp/productsReports'                                                                       : 'goToProductsReports',
             'easyErp/inventoryReports'                                                                      : 'goToInventoryReports',
             'easyErp/salesReports'                                                                          : 'goToSalesReports',
-            'easyErp/integrations(/:type)'                                                                  : 'goToIntegrations',
+            'easyErp/integrations(/:type)(/syncLog/:id)'                                                    : 'goToIntegrations',
             'easyErp/resolveConflicts'                                                                      : 'resolveConflicts',
+            'easyErp/unlinkedProducts(/filter=:filter)(?fromIntegration=:fromIntegration)'                  : 'unlinkedProducts',
             'easyErp/Dashboard'                                                                             : 'goToDashboard',
             'easyErp/reportsDashboard'                                                                      : 'goToCustomDashboard',
+            'easyErp/dashboards'                                                                            : 'goToDashboards',
             'easyErp/purchaseDashboard'                                                                     : 'goToCustomPurchaseDashboard',
             'easyErp/payrollDashboard'                                                                      : 'goToPayrollDashboard',
             'easyErp/DashBoardVacation(/filter=:filter)'                                                    : 'dashBoardVacation',
@@ -102,8 +106,48 @@ define([
             'easyErp/HrDashboard'                                                                           : 'hrDashboard',
             'easyErp/projectDashboard'                                                                      : 'goToProjectDashboard',
             'easyErp/customDashboardCharts/:modelId'                                                        : 'goToCustomDashboard',
+            //'easyErp/warehouseMovements'                                                                    : 'goToWarehouseMovements',
+            // 'easyErp/billOfMaterials'                                                                       : 'goToBillOfMaterials',
             'easyErp/:contentType'                                                                          : 'getList',
             '*any'                                                                                          : 'any'
+        },
+
+        goToGatherInfo: function () {
+            var contentType = 'gatherInfo';
+            var self = this;
+
+            if (!this.isAuth) {
+                this.checkLogin(function (success) {
+                    if (success) {
+                        self.isAuth = true;
+                        renderGatherInfo(self);
+                    } else {
+                        self.redirectTo();
+                    }
+                });
+            } else {
+                renderGatherInfo(self);
+            }
+
+            function renderGatherInfo(context) {
+                var contentViewUrl = 'views/login/gatherInfoView';
+                var self = context;
+
+                function renderView() {
+                    return require([contentViewUrl], function (ContentView) {
+                        var contentView;
+
+                        contentView = new ContentView();
+                    });
+                }
+
+                if (context.mainView === null) {
+                    context.main(contentType);
+                    context.mainView.on('rendered', renderView);
+                } else {
+                    renderView();
+                }
+            }
         },
 
         initialize: function () {
@@ -117,6 +161,61 @@ define([
 
             bindDefaultUIListeners();
         },
+
+        // goToBillOfMaterials: function () {
+        //     var self = this;
+        //     var currentUser = App.currentUser || {};
+        //     var url = '#easyErp/billOfMaterials';
+        //     var urlView = 'views/billOfMaterials/list/ListView';
+        //
+        //     // tracker.track({
+        //     //     date       : new Date(),
+        //     //     eventType  : 'userFlow',
+        //     //     name       : 'integrations',
+        //     //     message    : 'integrations',
+        //     //     email      : currentUser.email,
+        //     //     login      : currentUser.login,
+        //     //     mobilePhone: currentUser.mobilePhone
+        //     // });
+        //
+        //     this.checkLogin(function (success) {
+        //         if (success) {
+        //             goBillOfMaterials(self, urlView, url);
+        //         } else {
+        //             self.redirectTo();
+        //         }
+        //     });
+        //
+        //     function goBillOfMaterials(context, urlView, url) {
+        //         var contentViewUrl = urlView;
+        //
+        //         function renderView() {
+        //             return require([contentViewUrl], function (contentView) {
+        //                 var contentview = new contentView();
+        //
+        //                 context.changeView(contentview);
+        //
+        //                 Backbone.history.navigate(url, {replace: true});
+        //
+        //             });
+        //         }
+        //
+        //         if (context.mainView === null) {
+        //             context.main('billOfMaterials');
+        //             context.mainView.on('rendered', renderView);
+        //         } else {
+        //             if (!type) {
+        //                 context.mainView.updateMenu('billOfMaterials');
+        //             } else {
+        //                 context.mainView.updateMenu('billOfMaterials/' + type);
+        //             }
+        //
+        //             renderView();
+        //         }
+        //     }
+        //
+        //     ga && ga.send(Backbone.history.fragment);
+        // },
 
         getOrgSettings: function () {
             dataService.getData('/organizationSettings', null, function (response) {
@@ -139,15 +238,16 @@ define([
             var contentType = 'DashBoardVacation';
             var _filter;
 
-            FlurryAgent.logEvent('DashBoard Vacation', {filter: filter});
+            // FlurryAgent.logEvent('DashBoard Vacation', {filter: filter});
 
             tracker.track({
-                date     : new Date(),
-                eventType: 'userFlow',
-                name     : 'DashBoard Vacation',
-                message  : 'DashBoard Vacation',
-                email    : currentUser.email,
-                login    : currentUser.login
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'DashBoard Vacation',
+                message    : 'DashBoard Vacation',
+                email      : currentUser.email,
+                login      : currentUser.login,
+                mobilePhone: currentUser.mobilePhone
             });
 
             _filter = filter || custom.retriveFromCash('DashVacation.filter');
@@ -210,15 +310,16 @@ define([
             var currentUser = App.currentUser || {};
             var contentType = CONSTANTS.INVOICECHARTS;
 
-            FlurryAgent.logEvent('Invoice Charts', {filter: filter});
+            // FlurryAgent.logEvent('Invoice Charts', {filter: filter});
 
             tracker.track({
-                date     : new Date(),
-                eventType: 'userFlow',
-                name     : 'Invoice Charts',
-                message  : 'Invoice Charts',
-                email    : currentUser.email,
-                login    : currentUser.login
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'Invoice Charts',
+                message    : 'Invoice Charts',
+                email      : currentUser.email,
+                login      : currentUser.login,
+                mobilePhone: currentUser.mobilePhone
             });
 
             if (filter) {
@@ -286,19 +387,26 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            contentType = contentType || 'reportsDashboard';
+            if (!contentType && (!modelId || modelId === '582bfabf5a43a4bc2524bf09')) {
+                contentType = 'reportsDashboard';
+            } else if (contentType) {
+                contentType = 'purchaseDashboard';
+            } else {
+                contentType = 'dashboards';
+            }
 
             modelId = modelId || '582bfabf5a43a4bc2524bf09';
 
-            FlurryAgent.logEvent(contentType);
+            // FlurryAgent.logEvent(contentType);
 
             tracker.track({
-                date     : new Date(),
-                eventType: 'userFlow',
-                name     : 'CustomDashboard',
-                message  : 'CustomDashboard',
-                email    : currentUser.email,
-                login    : currentUser.login
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'dashboards',
+                message    : 'dashboards',
+                email      : currentUser.email,
+                login      : currentUser.login,
+                mobilePhone: currentUser.mobilePhone
             });
 
             if (!this.isAuth) {
@@ -317,8 +425,8 @@ define([
             function renderDashboard(modelId, context) {
                 var self = context;
                 var startTime = new Date();
-                var topBarViewUrl = 'views/customDashboard/customDashboard/TopBarView';
-                var contentViewUrl = 'views/customDashboard/customDashboard/ContentView';
+                var topBarViewUrl = 'views/dashboards/customDashboard/TopBarView';
+                var contentViewUrl = 'views/dashboards/customDashboard/ContentView';
                 var contentModelUrl = 'models/CustomDashboardModel';
 
                 function renderView() {
@@ -369,21 +477,120 @@ define([
                     renderView();
                 }
             }
+
+            ga && ga.send(Backbone.history.fragment);
+        },
+
+        goToWarehouseMovements: function (modelId, contentType) {
+            var self = this;
+            var currentUser = App.currentUser || {};
+
+            if (!contentType && (!modelId || modelId === '594ba1ccbe4b4bb4258ca1bb')) {
+                contentType = 'warehouseMovements'
+            }
+
+            modelId = modelId || '594ba1ccbe4b4bb4258ca1bb';
+
+            // FlurryAgent.logEvent('Sales Reports');
+
+            tracker.track({
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'warehouseMovements',
+                message    : 'warehouseMovements',
+                email      : currentUser.email,
+                login      : currentUser.login,
+                mobilePhone: currentUser.mobilePhone
+            });
+
+            this.checkLogin(function (success) {
+                if (success) {
+                    goWarehouse(self);
+                } else {
+                    self.redirectTo();
+                }
+            });
+
+            function goWarehouse(context) {
+                var startTime = new Date();
+                var contentViewUrl = 'views/warehouseMovements/list/ListView';
+                var topBarViewUrl = 'views/warehouseMovements/TopBarView';
+                var collectionUrl = 'collections/reports/reportDataFilterCollection';
+
+                function renderView() {
+                    return require([collectionUrl, contentViewUrl, topBarViewUrl], function (Collection, ContentView, TopBarView) {
+                        var topBarView;
+                        var contentView;
+                        var collection = new Collection({
+                            viewType   : 'list',
+                            page       : 1,
+                            reset      : true,
+                            count      : 1000,
+                            contentType: contentType,
+                            showMore   : false,
+                            modelId    : modelId
+                        });
+
+                        collection.bind('reset', _.bind(createViews, self));
+
+                        custom.setCurrentVT('list');
+
+                        function createViews() {
+
+                            collection.unbind('reset');
+
+                            topBarView = new TopBarView({
+                                actionType    : 'Content',
+                                collection    : collection,
+                                specificReport: true
+                            });
+
+                            contentView = new ContentView({
+                                collection: collection,
+                                startTime : startTime,
+                                modelId   : modelId
+                            });
+
+                            eventsBinder.subscribeTopBarEvents(topBarView, contentView);
+                            eventsBinder.subscribeCollectionEvents(collection, contentView);
+
+                            collection.trigger('fetchFinished', {
+                                totalRecords: collection.totalRecords,
+                                currentPage : collection.currentPage,
+                                pageSize    : collection.pageSize
+                            });
+
+                            context.changeView(contentView);
+                            context.changeTopBarView(topBarView);
+                        }
+                    });
+                }
+
+                if (context.mainView === null) {
+                    context.main(contentType);
+                    context.mainView.on('rendered', renderView);
+                } else {
+                    context.mainView.updateMenu(contentType);
+                    renderView();
+                }
+
+            }
         },
 
         hrDashboard: function () {
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('HR Dashboard');
+            // FlurryAgent.logEvent('HR Dashboard');
 
             tracker.track({
-                date     : new Date(),
-                eventType: 'userFlow',
-                name     : 'HR Dashboard',
-                message  : 'HR Dashboard',
-                email    : currentUser.email,
-                login    : currentUser.login
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'HR Dashboard',
+                message    : 'HR Dashboard',
+                email      : currentUser.email,
+                login      : currentUser.login,
+                mobilePhone: currentUser.mobilePhone
             });
 
             if (!this.isAuth) {
@@ -424,6 +631,8 @@ define([
                 }
 
             }
+
+            ga && ga.send(Backbone.history.fragment);
         },
 
         redirectTo: function () {
@@ -439,15 +648,16 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Revenue', {filter: filter});
+            // FlurryAgent.logEvent('Revenue', {filter: filter});
 
             tracker.track({
-                date     : new Date(),
-                eventType: 'userFlow',
-                name     : 'Revenue',
-                message  : 'Revenue',
-                email    : currentUser.email,
-                login    : currentUser.login
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'Revenue',
+                message    : 'Revenue',
+                email      : currentUser.email,
+                login      : currentUser.login,
+                mobilePhone: currentUser.mobilePhone
             });
 
             if (filter) {
@@ -512,15 +722,16 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Settings Employee', {filter: filter});
+            // FlurryAgent.logEvent('Settings Employee', {filter: filter});
 
             tracker.track({
-                date     : new Date(),
-                eventType: 'userFlow',
-                name     : 'Settings Employee',
-                message  : 'Settings Employee',
-                email    : currentUser.email,
-                login    : currentUser.login
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'Settings Employee',
+                message    : 'Settings Employee',
+                email      : currentUser.email,
+                login      : currentUser.login,
+                mobilePhone: currentUser.mobilePhone
             });
 
             if (filter) {
@@ -573,21 +784,24 @@ define([
                 }
 
             }
+
+            ga && ga.send(Backbone.history.fragment);
         },
 
         hours: function () {
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Hours');
+            // FlurryAgent.logEvent('Hours');
 
             tracker.track({
-                date     : new Date(),
-                eventType: 'userFlow',
-                name     : 'Hours',
-                message  : 'Hours',
-                email    : currentUser.email,
-                login    : currentUser.login
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'Hours',
+                message    : 'Hours',
+                email      : currentUser.email,
+                login      : currentUser.login,
+                mobilePhone: currentUser.mobilePhone
             });
 
             if (!this.isAuth) {
@@ -629,15 +843,16 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Attendance');
+            // FlurryAgent.logEvent('Attendance');
 
             tracker.track({
-                date     : new Date(),
-                eventType: 'userFlow',
-                name     : 'Attendance',
-                message  : 'Attendance',
-                email    : currentUser.email,
-                login    : currentUser.login
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'Attendance',
+                message    : 'Attendance',
+                email      : currentUser.email,
+                login      : currentUser.login,
+                mobilePhone: currentUser.mobilePhone
             });
 
             this.checkLogin(function (success) {
@@ -671,21 +886,24 @@ define([
                 }
 
             }
+
+            ga && ga.send(Backbone.history.fragment);
         },
 
         goToImport: function (page, count) {
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Import', {page: page, count: count});
+            // FlurryAgent.logEvent('Import', {page: page, count: count});
 
             tracker.track({
-                date     : new Date(),
-                eventType: 'userFlow',
-                name     : 'Import',
-                message  : 'Import',
-                email    : currentUser.email,
-                login    : currentUser.login
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'Import',
+                message    : 'Import',
+                email      : currentUser.email,
+                login      : currentUser.login,
+                mobilePhone: currentUser.mobilePhone
             });
 
             this.checkLogin(function (success) {
@@ -731,15 +949,16 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Profiles');
+            // FlurryAgent.logEvent('Profiles');
 
             tracker.track({
-                date     : new Date(),
-                eventType: 'userFlow',
-                name     : 'Profiles',
-                message  : 'Profiles',
-                email    : currentUser.email,
-                login    : currentUser.login
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'Profiles',
+                message    : 'Profiles',
+                email      : currentUser.email,
+                login      : currentUser.login,
+                mobilePhone: currentUser.mobilePhone
             });
 
             this.checkLogin(function (success) {
@@ -790,6 +1009,49 @@ define([
                     }
                 });
             }
+
+            ga && ga.send(Backbone.history.fragment);
+        },
+
+        unlinkedProducts: function (filter) {
+            var self = this;
+
+            function goConflicts(context) {
+                var startTime = new Date();
+                var contentViewUrl = 'views/ConflictAndUnlinkedProducts/ContentView';
+                var topBarViewUrl = 'views/ConflictAndUnlinkedProducts/TopBarView';
+                var fromIntegration = filter.fromIntegration;
+                //var self = context;
+
+                delete filter.fromIntegration;
+
+                if (context.mainView === null) {
+                    context.main('resolveConflicts');
+                } else {
+                    context.mainView.updateMenu('resolveConflicts');
+                }
+
+                require([contentViewUrl, topBarViewUrl], function (ContentView, TopBarView) {
+                    var contentview = new ContentView({
+                        startTime      : startTime,
+                        filter         : filter,
+                        fromIntegration: fromIntegration
+                    });
+                    var topbarView = new TopBarView({actionType: 'Create'});
+
+                    self.changeView(contentview);
+                    self.changeTopBarView(topbarView);
+                });
+
+            }
+
+            this.checkLogin(function (success) {
+                if (success) {
+                    goConflicts(self);
+                } else {
+                    self.redirectTo();
+                }
+            });
         },
 
         resolveConflicts: function () {
@@ -797,15 +1059,16 @@ define([
             var currentUser = App.currentUser || {};
 
             tracker.track({
-                date     : new Date(),
-                eventType: 'userFlow',
-                name     : 'Resolve Conflicts',
-                message  : 'Resolve Conflicts',
-                email    : currentUser.email,
-                login    : currentUser.login
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'Resolve Conflicts',
+                message    : 'Resolve Conflicts',
+                email      : currentUser.email,
+                login      : currentUser.login,
+                mobilePhone: currentUser.mobilePhone
             });
 
-            FlurryAgent.logEvent('Resolve Conflicts');
+            // FlurryAgent.logEvent('Resolve Conflicts');
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -844,15 +1107,16 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Organization Profile');
+            // FlurryAgent.logEvent('Organization Profile');
 
             tracker.track({
-                date     : new Date(),
-                eventType: 'userFlow',
-                name     : 'Organization Profile',
-                message  : 'Organization Profile',
-                email    : currentUser.email,
-                login    : currentUser.login
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'Organization Profile',
+                message    : 'Organization Profile',
+                email      : currentUser.email,
+                login      : currentUser.login,
+                mobilePhone: currentUser.mobilePhone
             });
 
             function goOrgSettings(context) {
@@ -889,29 +1153,37 @@ define([
                     self.redirectTo();
                 }
             });
+
+            ga && ga.send(Backbone.history.fragment);
         },
 
-        goToIntegrations: function (type) {
+        goToIntegrations: function (type, id) {
             var self = this;
             var currentUser = App.currentUser || {};
             var url = '#easyErp/integrations';
             var urlView = 'views/integrations/integrations';
 
             if (type) {
-                urlView = 'views/integrations/' + type;
+                //urlView = 'views/integrations/' + type;
                 url = url + '/' + type;
             }
 
+            if (id) {
+                url = url + '/syncLog/' + id;
+                urlView = 'views/integrations/syncItemView';
+            }
+
             tracker.track({
-                date     : new Date(),
-                eventType: 'userFlow',
-                name     : 'integrations',
-                message  : 'integrations',
-                email    : currentUser.email,
-                login    : currentUser.login
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'integrations',
+                message    : 'integrations',
+                email      : currentUser.email,
+                login      : currentUser.login,
+                mobilePhone: currentUser.mobilePhone
             });
 
-            FlurryAgent.logEvent('Integrations');
+            // FlurryAgent.logEvent('Integrations');
 
             this.checkLogin(function (success) {
                 if (success) {
@@ -927,7 +1199,7 @@ define([
                 function renderView() {
                     return require([contentViewUrl], function (contentView) {
                         // custom.setCurrentVT('list');
-                        var contentview = new contentView();
+                        var contentview = new contentView({type: type, id: id});
 
                         context.changeView(contentview);
 
@@ -940,25 +1212,33 @@ define([
                     context.main('integrations');
                     context.mainView.on('rendered', renderView);
                 } else {
-                    context.mainView.updateMenu('integrations');
+                    if (!type) {
+                        context.mainView.updateMenu('integrations');
+                    } else {
+                        context.mainView.updateMenu('integrations/' + type);
+                    }
+
                     renderView();
                 }
             }
+
+            ga && ga.send(Backbone.history.fragment);
         },
 
         goToProductSettings: function () {
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Products Settings');
+            // FlurryAgent.logEvent('Products Settings');
 
             tracker.track({
-                date     : new Date(),
-                eventType: 'userFlow',
-                name     : 'Products Settings',
-                message  : 'productsSettings',
-                email    : currentUser.email,
-                login    : currentUser.login
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'Products Settings',
+                message    : 'productsSettings',
+                email      : currentUser.email,
+                login      : currentUser.login,
+                mobilePhone: currentUser.mobilePhone
             });
 
             this.checkLogin(function (success) {
@@ -1004,55 +1284,139 @@ define([
                 }
 
             }
+
+            ga && ga.send(Backbone.history.fragment);
         },
 
-        goToReports: function () {
+        goToDashboards: function () {
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Reports');
+            // FlurryAgent.logEvent('Reports');
 
             tracker.track({
-                date     : new Date(),
-                eventType: 'userFlow',
-                name     : 'reports',
-                message  : 'reports',
-                email    : currentUser.email,
-                login    : currentUser.login
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'dashboards',
+                message    : 'dashboards',
+                email      : currentUser.email,
+                login      : currentUser.login,
+                mobilePhone: currentUser.mobilePhone
             });
 
             this.checkLogin(function (success) {
                 if (success) {
-                    goWarehouse(self);
+                    goDashboard(self);
                 } else {
                     self.redirectTo();
                 }
             });
 
-            function goWarehouse(context) {
+            function goDashboard(context) {
                 var startTime = new Date();
-                var contentViewUrl = 'views/reports/indexView';
-                var topBarViewUrl = 'views/reports/TopBarView';
+                var contentViewUrl = 'views/dashboards/indexView';
+                var collectionUrl = context.buildCollectionRoute('dashboards');
+                var topBarViewUrl = 'views/dashboards/TopBarView';
 
                 function renderView() {
-                    return require([contentViewUrl, topBarViewUrl], function (ContentView, TopBarView) {
+                    return require([contentViewUrl, topBarViewUrl, collectionUrl], function (ContentView, TopBarView, Collection) {
                         var contentView;
                         var topBarView;
                         var url;
 
-                        custom.setCurrentVT('list');
+                        var collection = new Collection({reset: true});
 
-                        contentView = new ContentView({startTime: startTime});
-                        topBarView = new TopBarView({actionType: 'Content'});
+                        collection.bind('reset', _.bind(createViews, self));
 
-                        eventsBinder.subscribeTopBarEvents(topBarView, contentView);
+                        function createViews(collection) {
+                            contentView = new ContentView({startTime: startTime, collection: collection});
+                            topBarView = new TopBarView({actionType: 'Content'});
 
-                        context.changeView(contentView);
-                        context.changeTopBarView(topBarView);
+                            eventsBinder.subscribeTopBarEvents(topBarView, contentView);
 
-                        url = '#easyErp/reports';
+                            context.changeView(contentView);
+                            context.changeTopBarView(topBarView);
 
-                        Backbone.history.navigate(url, {replace: true});
+                            url = '#easyErp/dashboards';
+
+                            Backbone.history.navigate(url, {replace: true});
+                        }
+
+                    });
+                }
+
+                if (context.mainView === null) {
+                    context.main('dashboards');
+                    context.mainView.on('rendered', renderView);
+                } else {
+                    context.mainView.updateMenu('dashboards');
+                    renderView();
+                }
+
+            }
+
+            ga && ga.send(Backbone.history.fragment);
+        },
+
+        goToReports: function (modelId) {
+            var self = this;
+            var currentUser = App.currentUser || {};
+            var contentType = 'reports';
+            // FlurryAgent.logEvent('Reports');
+
+            tracker.track({
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'dashboards',
+                message    : 'dashboards',
+                email      : currentUser.email,
+                login      : currentUser.login,
+                mobilePhone: currentUser.mobilePhone
+            });
+
+            this.checkLogin(function (success) {
+                if (success) {
+                    if (!modelId) {
+                        goReports(self);
+                    } else {
+                        goCurrentReport(self, modelId);
+                    }
+                } else {
+                    self.redirectTo();
+                }
+            });
+
+            function goReports(context) {
+                var startTime = new Date();
+                var contentViewUrl = 'views/reports/indexView';
+                var collectionUrl = context.buildCollectionRoute('reports');
+                var topBarViewUrl = 'views/reports/TopBarView';
+
+                function renderView() {
+                    return require([contentViewUrl, topBarViewUrl, collectionUrl], function (ContentView, TopBarView, Collection) {
+                        var contentView;
+                        var topBarView;
+                        var url;
+
+                        var collection = new Collection({reset: true});
+
+                        collection.bind('reset', _.bind(createViews, self));
+
+                        function createViews(collection) {
+                            contentView = new ContentView({startTime: startTime, collection: collection});
+                            topBarView = new TopBarView({actionType: 'Content'});
+
+                            eventsBinder.subscribeTopBarEvents(topBarView, contentView);
+                            eventsBinder.subscribeCollectionEvents(collection, contentView);
+
+                            context.changeView(contentView);
+                            context.changeTopBarView(topBarView);
+
+                            url = '#easyErp/reports';
+
+                            Backbone.history.navigate(url, {replace: true});
+                        }
+
                     });
                 }
 
@@ -1065,21 +1429,88 @@ define([
                 }
 
             }
+
+            function goCurrentReport(context, modelId) {
+                var startTime = new Date();
+                var contentViewUrl = 'views/reports/list/ListView';
+                var topBarViewUrl = 'views/reports/TopBarView';
+                var collectionUrl = 'collections/reports/reportDataFilterCollection';
+
+                function renderView() {
+                    return require([collectionUrl, contentViewUrl, topBarViewUrl], function (Collection, ContentView, TopBarView) {
+                        var topBarView;
+                        var contentView;
+                        var collection = new Collection({
+                            viewType   : 'list',
+                            page       : 1,
+                            reset      : true,
+                            count      : 1000,
+                            contentType: contentType,
+                            showMore   : false,
+                            modelId    : modelId
+                        });
+
+                        collection.bind('reset', _.bind(createViews, self));
+
+                        custom.setCurrentVT('list');
+
+                        function createViews() {
+
+                            collection.unbind('reset');
+
+                            topBarView = new TopBarView({
+                                actionType    : 'Content',
+                                collection    : collection,
+                                specificReport: true
+                            });
+
+                            contentView = new ContentView({
+                                collection: collection,
+                                startTime : startTime,
+                                modelId   : modelId
+                            });
+
+                            eventsBinder.subscribeTopBarEvents(topBarView, contentView);
+                            eventsBinder.subscribeCollectionEvents(collection, contentView);
+
+                            collection.trigger('fetchFinished', {
+                                totalRecords: collection.totalRecords,
+                                currentPage : collection.currentPage,
+                                pageSize    : collection.pageSize
+                            });
+
+                            context.changeView(contentView);
+                            context.changeTopBarView(topBarView);
+                        }
+                    });
+                }
+
+                if (context.mainView === null) {
+                    context.main(contentType);
+                    context.mainView.on('rendered', renderView);
+                } else {
+                    context.mainView.updateMenu(contentType);
+                    renderView();
+                }
+            }
+
+            ga && ga.send(Backbone.history.fragment);
         },
 
         goToSalesReports: function () {
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Sales Reports');
+            // FlurryAgent.logEvent('Sales Reports');
 
             tracker.track({
-                date     : new Date(),
-                eventType: 'userFlow',
-                name     : 'salesReports',
-                message  : 'salesReports',
-                email    : currentUser.email,
-                login    : currentUser.login
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'salesReports',
+                message    : 'salesReports',
+                email      : currentUser.email,
+                login      : currentUser.login,
+                mobilePhone: currentUser.mobilePhone
             });
 
             this.checkLogin(function (success) {
@@ -1128,15 +1559,16 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Inventory Reports');
+            // FlurryAgent.logEvent('Inventory Reports');
 
             tracker.track({
-                date     : new Date(),
-                eventType: 'userFlow',
-                name     : 'inventoryReports',
-                message  : 'inventoryReports',
-                email    : currentUser.email,
-                login    : currentUser.login
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'inventoryReports',
+                message    : 'inventoryReports',
+                email      : currentUser.email,
+                login      : currentUser.login,
+                mobilePhone: currentUser.mobilePhone
             });
 
             this.checkLogin(function (success) {
@@ -1185,15 +1617,16 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Settings Overview');
+            // FlurryAgent.logEvent('Settings Overview');
 
             tracker.track({
-                date     : new Date(),
-                eventType: 'userFlow',
-                name     : 'settingsOverview',
-                message  : 'settingsOverview',
-                email    : currentUser.email,
-                login    : currentUser.login
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'settingsOverview',
+                message    : 'settingsOverview',
+                email      : currentUser.email,
+                login      : currentUser.login,
+                mobilePhone: currentUser.mobilePhone
             });
 
             this.checkLogin(function (success) {
@@ -1240,21 +1673,24 @@ define([
                 }
 
             }
+
+            ga && ga.send(Backbone.history.fragment);
         },
 
         goToAccounts: function (type) {
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Accounts');
+            // FlurryAgent.logEvent('Accounts');
 
             tracker.track({
-                date     : new Date(),
-                eventType: 'userFlow',
-                name     : 'Accounts',
-                message  : 'Accounts',
-                email    : currentUser.email,
-                login    : currentUser.login
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'Accounts',
+                message    : 'Accounts',
+                email      : currentUser.email,
+                login      : currentUser.login,
+                mobilePhone: currentUser.mobilePhone
             });
 
             this.checkLogin(function (success) {
@@ -1290,21 +1726,24 @@ define([
                 }
 
             }
+
+            ga && ga.send(Backbone.history.fragment);
         },
 
         goToProduct: function (countPerPage, filter) {
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Products');
+            // FlurryAgent.logEvent('Products');
 
             tracker.track({
-                date     : new Date(),
-                eventType: 'userFlow',
-                name     : 'Products',
-                message  : 'Products',
-                email    : currentUser.email,
-                login    : currentUser.login
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'Products',
+                message    : 'Products',
+                email      : currentUser.email,
+                login      : currentUser.login,
+                mobilePhone: currentUser.mobilePhone
             });
 
             this.checkLogin(function (success) {
@@ -1358,7 +1797,7 @@ define([
                 }
 
                 require([contentViewUrl, topBarViewUrl, collectionUrl], function (ContentView, TopBarView, ContentCollection) {
-                    var collection = new ContentCollection();
+                    var collection = new ContentCollection({forParent: true});
 
                     App.filtersObject.filter = filter;
 
@@ -1402,15 +1841,16 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('UserPage');
+            // FlurryAgent.logEvent('UserPage');
 
             tracker.track({
-                date     : new Date(),
-                eventType: 'userFlow',
-                name     : 'UserPage',
-                message  : 'UserPage',
-                email    : currentUser.email,
-                login    : currentUser.login
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'UserPage',
+                message    : 'UserPage',
+                email      : currentUser.email,
+                login      : currentUser.login,
+                mobilePhone: currentUser.mobilePhone
             });
 
             this.checkLogin(function (success) {
@@ -1451,15 +1891,16 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Payroll Dashboard');
+            // FlurryAgent.logEvent('Payroll Dashboard');
 
             tracker.track({
-                date     : new Date(),
-                eventType: 'userFlow',
-                name     : 'Payroll Dashboard',
-                message  : 'Payroll Dashboard',
-                email    : currentUser.email,
-                login    : currentUser.login
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'Payroll Dashboard',
+                message    : 'Payroll Dashboard',
+                email      : currentUser.email,
+                login      : currentUser.login,
+                mobilePhone: currentUser.mobilePhone
             });
 
             this.checkLogin(function (success) {
@@ -1501,15 +1942,16 @@ define([
             var currentUser = App.currentUser || {};
             var contentType = 'Dashboard';
 
-            FlurryAgent.logEvent('Dashboard');
+            // FlurryAgent.logEvent('Dashboard');
 
             tracker.track({
-                date     : new Date(),
-                eventType: 'userFlow',
-                name     : 'Dashboard',
-                message  : 'Dashboard',
-                email    : currentUser.email,
-                login    : currentUser.login
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'Dashboard',
+                message    : 'Dashboard',
+                email      : currentUser.email,
+                login      : currentUser.login,
+                mobilePhone: currentUser.mobilePhone
             });
 
             this.checkLogin(function (success) {
@@ -1555,15 +1997,16 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Project Dashboard');
+            // FlurryAgent.logEvent('Project Dashboard');
 
             tracker.track({
-                date     : new Date(),
-                eventType: 'userFlow',
-                name     : 'Project Dashboard',
-                message  : 'Project Dashboard',
-                email    : currentUser.email,
-                login    : currentUser.login
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'Project Dashboard',
+                message    : 'Project Dashboard',
+                email      : currentUser.email,
+                login      : currentUser.login,
+                mobilePhone: currentUser.mobilePhone
             });
 
             this.checkLogin(function (success) {
@@ -1602,15 +2045,16 @@ define([
             var self = this;
             var currentUser = App.currentUser || {};
 
-            FlurryAgent.logEvent('Workflows');
+            // FlurryAgent.logEvent('Workflows');
 
             tracker.track({
-                date     : new Date(),
-                eventType: 'userFlow',
-                name     : 'Workflows',
-                message  : 'Workflows',
-                email    : currentUser.email,
-                login    : currentUser.login
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'Workflows',
+                message    : 'Workflows',
+                email      : currentUser.email,
+                login      : currentUser.login,
+                mobilePhone: currentUser.mobilePhone
             });
 
             this.checkLogin(function (success) {
@@ -1667,6 +2111,8 @@ define([
                 }
 
             }
+
+            ga && ga.send(Backbone.history.fragment);
         },
 
         checkDatabase: function (db) {
@@ -1738,15 +2184,16 @@ define([
 
                     message = contentType + ' List';
 
-                    FlurryAgent.logEvent(message);
+                    // FlurryAgent.logEvent(message);
 
                     tracker.track({
-                        date     : new Date(),
-                        eventType: 'userFlow',
-                        name     : message,
-                        message  : message,
-                        email    : currentUser.email,
-                        login    : currentUser.login
+                        date       : new Date(),
+                        eventType  : 'userFlow',
+                        name       : message,
+                        message    : message,
+                        email      : currentUser.email,
+                        login      : currentUser.login,
+                        mobilePhone: currentUser.mobilePhone
                     });
 
                     return Backbone.history.navigate(url, {replace: true});
@@ -1754,15 +2201,16 @@ define([
 
                 message = contentType + ' List';
 
-                FlurryAgent.logEvent(message);
+                // FlurryAgent.logEvent(message);
 
                 tracker.track({
-                    date     : new Date(),
-                    eventType: 'userFlow',
-                    name     : message,
-                    message  : message,
-                    email    : currentUser.email,
-                    login    : currentUser.login
+                    date       : new Date(),
+                    eventType  : 'userFlow',
+                    name       : message,
+                    message    : message,
+                    email      : currentUser.email,
+                    login      : currentUser.login,
+                    mobilePhone: currentUser.mobilePhone
                 });
 
                 contentViewUrl = 'views/' + contentType + '/list/ListView';
@@ -1890,6 +2338,8 @@ define([
                 }
 
             }
+
+            ga && ga.send(Backbone.history.fragment);
         },
 
         goToDateList: function (contentType, countPerPage, filter) {
@@ -1900,7 +2350,7 @@ define([
                 filter = JSON.parse(filter);
             }
 
-            FlurryAgent.logEvent(contentType);
+            // FlurryAgent.logEvent(contentType);
 
             if (!this.isAuth) {
                 this.checkLogin(function (success) {
@@ -1961,6 +2411,8 @@ define([
 
                 });
             }
+
+            ga && ga.send(Backbone.history.fragment);
         },
 
         goToTForm: function (contentType, modelId, page, countPerPage, filter) {
@@ -2004,15 +2456,16 @@ define([
 
                 var message = contentType + ' TForm';
 
-                FlurryAgent.logEvent(message);
+                // FlurryAgent.logEvent(message);
 
                 tracker.track({
-                    date     : new Date(),
-                    eventType: 'userFlow',
-                    name     : message,
-                    message  : message,
-                    email    : currentUser.email,
-                    login    : currentUser.login
+                    date       : new Date(),
+                    eventType  : 'userFlow',
+                    name       : message,
+                    message    : message,
+                    email      : currentUser.email,
+                    login      : currentUser.login,
+                    mobilePhone: currentUser.mobilePhone
                 });
 
                 contentViewUrl = 'views/' + contentType + '/form/ContentView';
@@ -2171,15 +2624,16 @@ define([
 
                 message = contentType + ' Form';
 
-                FlurryAgent.logEvent(message);
+                // FlurryAgent.logEvent(message);
 
                 tracker.track({
-                    date     : new Date(),
-                    eventType: 'userFlow',
-                    name     : message,
-                    message  : message,
-                    email    : currentUser.email,
-                    login    : currentUser.login
+                    date       : new Date(),
+                    eventType  : 'userFlow',
+                    name       : message,
+                    message    : message,
+                    email      : currentUser.email,
+                    login      : currentUser.login,
+                    mobilePhone: currentUser.mobilePhone
                 });
 
                 if (context.mainView === null) {
@@ -2242,6 +2696,8 @@ define([
                     });
                 });
             }
+
+            ga && ga.send(Backbone.history.fragment);
         },
 
         goToKanban: function (contentType, parrentContentId, filter) {
@@ -2270,15 +2726,16 @@ define([
 
                 message = contentType + ' Kanban';
 
-                FlurryAgent.logEvent(message);
+                // FlurryAgent.logEvent(message);
 
                 tracker.track({
-                    date     : new Date(),
-                    eventType: 'userFlow',
-                    name     : message,
-                    message  : message,
-                    email    : currentUser.email,
-                    login    : currentUser.login
+                    date       : new Date(),
+                    eventType  : 'userFlow',
+                    name       : message,
+                    message    : message,
+                    email      : currentUser.email,
+                    login      : currentUser.login,
+                    mobilePhone: currentUser.mobilePhone
                 });
 
                 contentViewUrl = 'views/' + contentType + '/kanban/KanbanView';
@@ -2337,6 +2794,8 @@ define([
                 }
 
             }
+
+            ga && ga.send(Backbone.history.fragment);
         },
 
         goToThumbnails: function (contentType, countPerPage, filter) {
@@ -2394,15 +2853,16 @@ define([
 
                 message = contentType + ' Thumbnails';
 
-                FlurryAgent.logEvent(message);
+                // FlurryAgent.logEvent(message);
 
                 tracker.track({
-                    date     : new Date(),
-                    eventType: 'userFlow',
-                    name     : message,
-                    message  : message,
-                    email    : currentUser.email,
-                    login    : currentUser.login
+                    date       : new Date(),
+                    eventType  : 'userFlow',
+                    name       : message,
+                    message    : message,
+                    email      : currentUser.email,
+                    login      : currentUser.login,
+                    mobilePhone: currentUser.mobilePhone
                 });
 
                 if (!filter) {
@@ -2498,6 +2958,8 @@ define([
                 }
 
             }
+
+            ga && ga.send(Backbone.history.fragment);
         },
 
         testContent: function (contentType) {
@@ -2562,15 +3024,20 @@ define([
             this.changeWrapperView(this.mainView);
         },
 
-        login: function (password, dbId, email) {
+        login: function (password, dbId, email, ir_hash) {
             var url = '/getDBS';
             var self = this;
 
             dbId = dbId || '';
             email = email || '';
             password = password || '';
+            ir_hash = ir_hash || '';
 
-            FlurryAgent.logEvent('login');
+            if (ir_hash) {
+                App.ir_hash = ir_hash;
+            }
+
+            // FlurryAgent.logEvent('login');
 
             this.mainView = null;
 

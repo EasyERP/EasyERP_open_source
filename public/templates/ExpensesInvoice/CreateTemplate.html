@@ -1,9 +1,9 @@
 <div class="form-holder _newForm">
     <form method="post" id="invoiceForm">
-        <h4 class="_dialogMainTitle">Create expences</h4>
+        <h4 class="_dialogMainTitle">Create expenses</h4>
         <div class="_formWrap">
             <div class="_formBlock _equal">
-                <div class="_animateSelectBox">
+                <div class="_animateSelectBox _withInfo">
                     <span class="_selectTitle">Supplier</span>
                     <div class="_newSelectListWrap">
                         <a id="supplier"
@@ -11,8 +11,9 @@
                            data-id=""
                            href="javascript:;">Select Supplier</a>
                     </div>
+                    <span class="tips icon-info" data-id="supplier"></span>
                 </div>
-                <div class="_animateInputBox">
+                <div class="_animateInputBox _withInfo">
                     <input type="text"
                            id="supplier_invoice_num"
                            class="_animate"
@@ -20,6 +21,7 @@
                            maxlength="32"
                            required/>
                     <label for="supplier_invoice_num" class="_animate">Invoice Number</label>
+                    <span class="tips icon-info" data-id="supplier_invoice_num"></span>
                 </div>
             </div>
             <div class="_formBlock _equal">
@@ -51,6 +53,16 @@
                            href="javascript:;"
                            id="currencyDd"
                            data-id="">Select Currency</a>
+                    </div>
+                </div>
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Expenses Category</span>
+                    <div class="_newSelectListWrap">
+                        <a id="categories"
+                           class="current-selected"
+                           href="javascript:;">
+                            <%=model.parent ? model.parent.name : 'Select'%>
+                        </a>
                     </div>
                 </div>
             </div>

@@ -377,7 +377,7 @@ module.exports = (function () {
             paymentDate          : 'Payment Date',
             account              : 'Account',
             journal              : 'Journal',
-            'salesPerson.name'   : 'Sales Person Name',
+            'salesPerson.name'   : 'Salesperson Name',
             paymentTerms         : 'Payment Term',
             paymentInfo          : 'Payment Info',
             payments             : 'Payment',

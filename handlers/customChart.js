@@ -45,10 +45,9 @@ var Module = function (models) {
         var Dashboard = models.get(req.session.lastDb, 'CustomDashboard', CustomDashboardSchema);
         var data = req.body;
         var dashboardId = data.dashboard;
-        var description = data.dashboardDescription;
-        var name = data.dashboardName;
         var chartsIds = [];
         var i;
+        var modelId;
 
         async.waterfall([
                 function (waterfallCb) {
@@ -64,7 +63,6 @@ var Module = function (models) {
                     id = id.toString();
 
                     Chart.update({_id: id}, data, {upsert: true}, function (err, charts) {
-                        var modelId;
 
                         if (err) {
                             return waterfallCb(err);
@@ -84,23 +82,6 @@ var Module = function (models) {
                 },
 
                 function (waterfallCb) {
-
-                    Dashboard.findByIdAndUpdate(dashboardId, {
-                        $set: {
-                            name       : name,
-                            description: description
-                        }
-                    })
-                        .exec(function (error, dashboard) {
-                            if (error) {
-                                return next(error);
-                            }
-
-                            waterfallCb(null, dashboard);
-                        });
-                },
-
-                function (dashboard, waterfallCb) {
 
                     if (chartsIds.length) {
                         Dashboard.findByIdAndUpdate(dashboardId, {$push: {charts: {$each: chartsIds}}})
@@ -127,7 +108,7 @@ var Module = function (models) {
                     return next(error);
                 }
 
-                res.status(200).send(dashboard);
+                res.status(200).send({_id: modelId});
             }
         );
     };
@@ -135,7 +116,7 @@ var Module = function (models) {
     this.deleteCharts = function (req, res, next) {
         var Chart = models.get(req.session.lastDb, 'CustomChart', CustomChartSchema);
         var Dashboard = models.get(req.session.lastDb, 'CustomDashboard', CustomDashboardSchema);
-        var chartIds = Object.keys(req.body);
+        var chartIds = [req.params.id] || Object.keys(req.body);
 
         async.each(chartIds, function (id, cb) {
             if (id && id.length < 24) {
@@ -145,6 +126,10 @@ var Module = function (models) {
             Chart.findByIdAndRemove(id, function (err, chart) {
                 if (err) {
                     return next(err);
+                }
+
+                if (!chart) {
+                    return cb();
                 }
 
                 Dashboard.findByIdAndUpdate(chart.dashboard, {$pull: {charts: chart._id}}, function (error, dashboard) {
@@ -160,7 +145,7 @@ var Module = function (models) {
                 return next(err);
             }
 
-            res.status(200).send();
+            res.status(200).send({success: true});
         });
 
     };

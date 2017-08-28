@@ -12,7 +12,8 @@ define([
     'use strict';
 
     var EditView = Parent.extend({
-        template: _.template(template),
+        template   : _.template(template),
+        contentType: 'priceList',
 
         initialize: function (options) {
             options = options || {};

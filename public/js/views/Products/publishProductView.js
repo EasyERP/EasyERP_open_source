@@ -80,7 +80,7 @@ define([
                 $forShippingContent.removeClass('hidden');
 
                 channelName = $target.text().trim();
-                populate.get('#shippingTemps', 'integration/etsy/shippingTemplate', {channel: channelName}, 'name', this, false);
+                populate.get('#shippingTemps', 'integration/etsy/shippingTemplate', {channel: id}, 'name', this, false);
             }
 
             return false;
@@ -92,7 +92,7 @@ define([
 
             e.preventDefault();
 
-            populate.get('#shippingTemps', 'integration/etsy/shippingTemplate', {channel: channelName}, 'name', this, false);
+            populate.get('#shippingTemps', 'integration/etsy/shippingTemplate', {channel: id}, 'name', this, false);
 
             return false;
         },
@@ -256,8 +256,8 @@ define([
 
             this.$el = $(dialogContent).dialog(dialogOptions);
 
-            if (channel && channel.type === 'etsy' && channel.channelName) {
-                populate.get('#shippingTemps', 'integration/etsy/shippingTemplate', {channel: channel.channelName}, 'name', this, false);
+            if (channel && channel.type === 'etsy' && channel._id) {
+                populate.get('#shippingTemps', 'integration/etsy/shippingTemplate', {channel: channel._id}, 'name', this, false);
             }
 
             populate.get('#channel', 'channels/getForDD', {connected: true}, 'channelName', this, false);

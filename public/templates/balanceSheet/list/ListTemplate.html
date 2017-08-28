@@ -1,12 +1,14 @@
 <%for (var i = 0; i <= collection.length - 1; i++) {%>
 <%var item = collection[i];%>
 <%var value = item.debit - item.credit;%>
-<%if (item.group === 'liabilities' || item.group === 'equity'){value = Math.abs(value)}%>
-<tr data-id="<%=item.categoryId + item.group%>" data-level="1" class="mainTr">
+<%if (item.group === 'liabilities' || item.group === 'equity'){value = Math.abs(value); item.group = 'assets'}%>
+<tr data-id="<%=item.categoryId + item.group%>" data-level="1" class="mainTr _profitSubTitle countable">
     <td class="expand"><span class="icon-caret-right"></span></td>
     <td colspan="3"><%=item._id%></td>
-    <td><span class="percent"></span><span data-id="debit" data-value="<%=value%>"
-                                           class="money <%= parseInt((value / 100).toFixed(2), 10) < 0 ? 'redText' : '' %>"><%=currencySplitter((value / 100).toFixed(2))%></span>
+    <td><span class="percent"></span>
+        <span data-id="debit"
+              data-value="<%=value%>"
+              class="money <%= parseInt((value / 100).toFixed(2), 10) < 0 ? 'redText' : '' %>"><%=currencySplitter((value / 100).toFixed(2))%></span>
     </td>
 </tr>
 
@@ -16,9 +18,9 @@
     class="subTr hidden child<%=account.nestingLevel%>">
     <td class="expand"><span class="icon-caret-right"></span></td>
     <td><%=account.name%></td>
-    <td class="money" data-id="debit"><%=currencySplitter((account.debit / 100).toFixed(2))%>
+    <td class="money text-right" data-id="debit"><%=currencySplitter((account.debit / 100).toFixed(2))%>
     </td>
-    <td class="money" data-id="credit">
+    <td class="money text-right" data-id="credit">
         <%=currencySplitter((account.credit / 100).toFixed(2))%>
     </td>
     <td class="calcPercent">
@@ -26,7 +28,6 @@
         <span class="money <%= parseInt((account.debit - account.credit).toFixed(2), 10) < 0 ? 'redText' : '' %>">
         <%=currencySplitter(((account.debit - account.credit) / 100).toFixed(2))%>
             </span>
-    </td>
     </td>
 </tr>
 <%})%>

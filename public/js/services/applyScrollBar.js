@@ -1,9 +1,6 @@
 define(['jQuery', 'Underscore'], function ($, _) {
     var basicOptions = {
-        autoHideScrollbar: true,
-        /*scrollButtons    : {
-         enable: true
-         }*/
+
     };
 
     function scrollExecuter($el, options) {
@@ -11,12 +8,12 @@ define(['jQuery', 'Underscore'], function ($, _) {
         options = _.extend(basicOptions, options);
         $el = $el || $({});
 
-        if (typeof $el.mCustomScrollbar !== 'function') {
-            $el.mCustomScrollbar = function () {
+        if (typeof $el.nanoScroller !== 'function') {
+            $el.nanoScroller = function () {
             };
         }
 
-        $el.mCustomScrollbar(options);
+        $el.nanoScroller(options);
     }
 
     function applyTo(el, options) {

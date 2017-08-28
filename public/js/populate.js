@@ -11,9 +11,9 @@ define([
             var curEl = ($parentContainer) ? $parentContainer.find(id) : $thisEl.find(id);
 
             content.responseObj[id] = [];
-            /*if (canBeEmpty) {
+            if (canBeEmpty) {
              content.responseObj[id].push({_id: "", name: "Select"});
-             }*/
+             }
             content.responseObj[id] = content.responseObj[id].concat(_.map(response.data, function (item) {
                 return {
                     _id          : item._id,
@@ -48,7 +48,7 @@ define([
                 }
             }
 
-            if (parrrentContentId && typeof(parrrentContentId) === 'string'  && parrrentContentId.split('=').length === 2) {
+            if (parrrentContentId && typeof(parrrentContentId) === 'string' && parrrentContentId.split('=').length === 2) {
                 parrrentContentId = parrrentContentId.split('=')[1];
             }
 
@@ -63,7 +63,7 @@ define([
                     }
 
                     if (current[0].chartAccount) {
-                        $('#account').text(current[0].chartAccount.name).attr('data-id', current[0].chartAccount._id);
+                        content.$el.find('#account').text(current[0].chartAccount.name).attr('data-id', current[0].chartAccount._id);
                     }
 
                     curEl.text(current[0].name).attr('data-id', current[0]._id);
@@ -169,16 +169,22 @@ define([
             }
             content.responseObj[id] = content.responseObj[id].concat(_.map(response.data, function (item) {
                 return {
-                    _id     : item._id,
-                    name    : item.name,
-                    level   : item.nestingLevel,
-                    parent  : item.parent,
-                    fullName: item.fullName
+                    _id      : item._id,
+                    name     : item.name,
+                    level    : item.nestingLevel,
+                    parent   : item.parent,
+                    fullName : item.fullName,
+                    account  : item.account,
+                    classIcon: item.classIcon
                 };
             }));
 
             if (isCreate) {
                 $(id).text(content.responseObj[id][0].name).attr("data-id", content.responseObj[id][0]._id).attr("data-level", content.responseObj[id][0].level).attr("data-fullname", content.responseObj[id][0].fullName);
+
+                /*if (content.responseObj[id][0].classIcon) {
+                 $(id).prepend('<div style="display: inline-block" class="' + content.responseObj[id][0].classIcon + '"></div>');
+                 }*/
             }
 
             if (parrrentContentId) {
@@ -188,6 +194,10 @@ define([
 
                 if (current[0].level) {
                     $(id).attr('data-level', current[0].level);
+                }
+
+                if (current[0].classIcon) {
+                    $(id).addClass(current[0].classIcon);
                 }
 
                 if (current[0].fullName) {

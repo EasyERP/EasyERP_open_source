@@ -128,7 +128,7 @@
                         return note;
                     });
 
-                    response.notes.forEach(function(note, index) {
+                    /*response.notes.forEach(function(note, index) {
                         if (!note.name && note.history && (note.history.changedField === 'Creation Date')){
                             response.notes.splice(index, 1);
                             response.notes.unshift(note);
@@ -142,7 +142,7 @@
                             response.notes.push(note);
                             return;
                         }
-                    });
+                    });*/
                 }
 
                 if (response.attachments) {

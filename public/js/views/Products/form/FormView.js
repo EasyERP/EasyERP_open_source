@@ -19,6 +19,7 @@ define([
     'views/imageViewBase',
     'common',
     'custom',
+    'views/guideTours/guideNotificationView',
     'dataService',
     'populate',
     'constants',
@@ -26,7 +27,7 @@ define([
     'services/productCategories',
     'services/select',
     'helpers/keyValidator'
-], function (Backbone, _, $, ProductFormTemplate, PreviewVariantsTemplate, EditForPreviewVariantsTemplate, EditPreviewVariantsTemplate, EditingValuesTemplate, AddOptionsTemplate, SearchCollection, ProductModel, AttachView, SelectView, EditView, ParentView, VariantsArrayListView, PublishListView, ImagesViewBase, common, Custom, dataService, populate, CONSTANTS, async, productCategoriesService, select, keyValidator) {
+], function (Backbone, _, $, ProductFormTemplate, PreviewVariantsTemplate, EditForPreviewVariantsTemplate, EditPreviewVariantsTemplate, EditingValuesTemplate, AddOptionsTemplate, SearchCollection, ProductModel, AttachView, SelectView, EditView, ParentView, VariantsArrayListView, PublishListView, ImagesViewBase, common, Custom, GuideNotify, dataService, populate, CONSTANTS, async, productCategoriesService, select, keyValidator) {
     var FormProductView = ParentView.extend({
         el: '#content-holder',
 
@@ -178,6 +179,69 @@ define([
                 });
             }
         },
+
+        imageSave: function (options, _context) {
+            var context = _context || this;
+            var inputFile = context.$('#inputAttach');
+            var functionsArray = [];
+            var files;
+            var filesExt;
+
+
+            inputFile.prop('accept', 'image/*');
+            inputFile.on('change', function (e) {
+                e.preventDefault();
+
+                filesExt = ['jpg', 'gif', 'png', 'jpe', 'jfif', 'jpeg', 'bmp', 'JPEG', 'JPG', 'GIF', 'PNG', 'BMP']; //fix type file
+
+                files = inputFile[0].files;
+
+                _.each(files, function (file) {
+                    functionsArray.push(
+                        function (wCb) {
+                            var fileReader;
+                            var parts;
+
+                            parts = $(inputFile).val().split('.');
+
+                            if (filesExt.join().search(parts[parts.length - 1]) !== -1) {
+                                fileReader = new FileReader();
+
+                                fileReader.onload = function () {
+                                    var src = fileReader.result;
+
+                                    if (src) {
+                                        context.addImage({imageSrc: src});
+                                    }
+                                };
+
+                                inputFile.val('');
+
+                                if (file) {
+                                    fileReader.readAsDataURL(file);
+                                }
+
+                                wCb();
+                            } else {
+                                App.render({
+                                    type   : 'error',
+                                    message: 'Invalid file type!'
+                                });
+
+                                wCb();
+                            }
+                        }
+                    );
+                });
+
+                async.waterfall(functionsArray, function () {
+                    return;
+                });
+            });
+
+            context.$('#avatar').hide();
+        },
+
 
         saveSKUs: function (e) {
             var $thisEl = this.$el;
@@ -573,6 +637,7 @@ define([
                     Backbone.history.fragment = '';
                     Backbone.history.navigate(window.location.hash, {trigger: true});
                     self.hideDialog();
+                    self.gaTrackingEditConfirm();
                 },
 
                 error: function (model, xhr) {
@@ -839,6 +904,14 @@ define([
                     contentType: 'products',
                     parent     : self
                 });
+
+                if (App.guide) {
+                    if (App.notifyView) {
+                        App.notifyView.undelegateEvents();
+                        App.notifyView.stopListening();
+                    }
+                    App.notifyView = new GuideNotify({e: null, data: App.guide});
+                }
             }
 
             if (!self.allPriceLists || !self.changedProductType) {

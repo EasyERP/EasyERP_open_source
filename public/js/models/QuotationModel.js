@@ -104,18 +104,18 @@ define([
 
             if (model.notes) {
                 _.map(model.notes, function (note, index) {
-                    note.date = moment(note.date).format('DD MMM, YYYY, H:mm:ss');
+                    note.date = moment(new Date(note.date));
 
                     if (note.history && (['Expected Date', 'Order Date', 'Creation Date'].indexOf(note.history.changedField) !== -1)){
                         note.history.changedValue = note.history.changedValue ? moment(new Date(note.history.changedValue)).format('DD MMM, YYYY') : '';
                         note.history.newValue = note.history.newValue ? moment(new Date(note.history.newValue)).format('DD MMM, YYYY') : '';
                         note.history.prevValue = note.history.prevValue ? moment(new Date(note.history.prevValue)).format('DD MMM, YYYY') : '';
                     }
-                    if (!note.name && note.history && (note.history.changedField === 'Creation Date')){
+                   /* if (!note.name && note.history && (note.history.changedField === 'Creation Date')){
                         model.notes.splice(index, 1);
                         model.notes.unshift(note);
                         return;
-                    }
+                    }*/
                     return note;
                 });
 

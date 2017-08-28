@@ -114,6 +114,7 @@ define([
                 autoOpen   : true,
                 dialogClass: 'email-dialog',
                 title      : 'Email invoice',
+                width      : '500',
                 buttons    : [
                     {
                         id   : 'send-email-dialog',

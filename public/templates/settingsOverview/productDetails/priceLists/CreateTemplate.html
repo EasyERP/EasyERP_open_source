@@ -3,7 +3,7 @@
         <h4 class="_dialogMainTitle">New Price List</h4>
         <div class="_formWrap _enlargedItemMargin">
             <div class="_formBlock">
-                <div class="_animateInputBox">
+                <div class="_animateInputBox _withInfo">
                     <input type="text"
                            name="priceListName"
                            class="_animate "
@@ -12,8 +12,9 @@
                            autofocus
                            maxlength="32"/>
                     <label class="_animate">Price List Name</label>
+                    <span class="tips icon-info" data-id="priceListName"></span>
                 </div>
-                <div class="_animateInputBox">
+                <div class="_animateInputBox _withInfo">
                     <input type="text"
                            name="priceListCode"
                            class="_animate "
@@ -21,6 +22,7 @@
                            required
                            maxlength="32"/>
                     <label class="_animate">Price List Code</label>
+                    <span class="tips icon-info" data-id="priceListCode"></span>
                 </div>
                 <div class="_animateSelectBox">
                     <span class="_selectTitle">Currency</span>
@@ -37,27 +39,35 @@
                 <div class="container">
                     <div class="canReadAndWrite row">
                         <div class="_circleRadioRadianceWrap col m-6">
-                            <label for="yes" class="">Yes</label>
-                            <input type="radio"
-                                   name="question"
-                                   id="yes"
-                                   class="_circleRadioRadiance"
-                                   value="1">
-                            <label for="yes"
-                                   class="_circleRadioRadianceLabel">
-                            </label>
+                            <div class="_tipsWrap">
+                                <label for="yes" class="">Yes</label>
+                                <input type="radio"
+                                       name="question"
+                                       id="yes"
+                                       class="_circleRadioRadiance"
+                                       value="1">
+                                <label for="yes"
+                                       class="_circleRadioRadianceLabel">
+                                </label>
+                                <span class="tips icon-info"
+                                      data-id="yes"></span>
+                            </div>
                         </div>
                         <div class="_circleRadioRadianceWrap col m-6">
-                            <label for="no" class="">No</label>
-                            <input type="radio"
-                                   name="question"
-                                   id="no"
-                                   value="0"
-                                   class="_circleRadioRadiance"
-                                   checked="">
-                            <label for="no"
-                                   class="_circleRadioRadianceLabel">
-                            </label>
+                            <div class="_tipsWrap">
+                                <label for="no" class="">No</label>
+                                <input type="radio"
+                                       name="question"
+                                       id="no"
+                                       value="0"
+                                       class="_circleRadioRadiance"
+                                       checked="">
+                                <label for="no"
+                                       class="_circleRadioRadianceLabel">
+                                </label>
+                                <span class="tips icon-info"
+                                      data-id="no"></span>
+                            </div>
                         </div>
                     </div>
                 </div>

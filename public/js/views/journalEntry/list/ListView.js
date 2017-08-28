@@ -7,10 +7,6 @@ define([
     'views/journalEntry/list/ListItemView',
     'views/selectView/selectView',
     'views/journalEntry/ViewSource',
-    'models/InvoiceModel',
-    'models/jobsModel',
-    'models/EmployeesModel',
-    'models/PaymentModel',
     'collections/journalEntry/filterCollection',
     'constants',
     'helpers',
@@ -26,10 +22,6 @@ define([
              ListItemView,
              SelectView,
              View,
-             InvoiceModel,
-             JobsModel,
-             EmployeesModel,
-             PaymentModel,
              contentCollection,
              CONSTANTS,
              helpers,
@@ -49,13 +41,8 @@ define([
         exportToCsvUrl   : 'journalEntries/exportToCsv',
         hasPagination    : true,
         responseObj      : {},
-        JobsModel        : JobsModel,
-        InvoiceModel     : InvoiceModel,
-        PaymentModel     : PaymentModel,
-        EmployeesModel   : EmployeesModel,
 
         events: {
-            //'click .newSelectList li:not(.miniStylePagination)': 'viewSourceDocument',
             'click .source'       : 'viewSourceDocument',
             'click .clickToFilter': 'addFilter'
         },
@@ -128,17 +115,12 @@ define([
         },
 
         viewSourceDocument: function (e) {
-            var $target = $(e.target);
-            var id = $target.attr('id');
-            var closestSpan = $target.closest('.source').find('.current-selected');
+            var $target = $(e.target).closest('.source');
+            var closestSpan = $target.find('.current-selected');
             var dataId = closestSpan.attr('data-id');
             var dataName = closestSpan.attr('data-name');
             var dataEmployee = closestSpan.attr('data-employee');
-            var model;
             var data;
-            var url;
-
-            dataName = dataName.split('_')[0];
 
             App.startPreload();
 
@@ -146,100 +128,7 @@ define([
                 this.selectView.remove();
             }
 
-            switch (dataName) {
-                case 'wTrack':
-                    model = new this.JobsModel();
-                    data = {
-                        employee: dataEmployee,
-                        _id     : dataId
-                    };
-
-                    model.urlRoot = '/journalEntries/jobs';
-                    break;
-                case 'expensesInvoice':
-                case 'dividendInvoice':
-                case 'Invoice':
-                    model = new this.InvoiceModel();
-                    data = {
-                        _id: dataId
-                    };
-
-                    model.urlRoot = '/journalEntries/invoices';
-
-                    break;
-                case 'Proforma':
-                    model = new this.InvoiceModel();
-                    data = {
-                        _id     : dataId,
-                        proforma: true
-                    };
-
-                    model.urlRoot = '/journalEntries/invoices';
-
-                    break;
-                case 'jobs':
-                    model = new this.JobsModel();
-                    data = {
-                        _id: dataId
-                    };
-
-                    model.urlRoot = '/journalEntries/jobs';
-
-                    break;
-                case 'Payment':
-                    model = new this.PaymentModel();
-                    data = {
-                        _id: dataId
-                    };
-
-                    model.urlRoot = '/journalEntries/payments';
-
-                    break;
-                case 'Employees':
-                    model = new this.EmployeesModel();
-                    data = {
-                        _id: dataId
-                    };
-
-                    model.urlRoot = '/journalEntries/employees';
-
-                    break;
-                case 'goodsOutNote':
-                    url = '#easyErp/goodsOutNotes/tform/' + dataId;
-
-                    return Backbone.history.navigate(url, {trigger: true});
-                    break;
-                // skip default;
-            }
-
-            if (model) {
-                model.fetch({
-                    data   : data,
-                    wait   : true,
-                    success: function (model) {
-                        new View({model: model, type: dataName, employee: dataEmployee});
-
-                        App.stopPreload();
-                    },
-
-                    error: function () {
-                        App.stopPreload();
-
-                        App.render({
-                            type   : 'error',
-                            message: 'Please refresh browser'
-                        });
-                    }
-                });
-            } else {
-                App.stopPreload();
-
-                App.render({
-                    type   : 'notify',
-                    message: 'No Source Document is required'
-                });
-            }
-
+            return new View({type: dataName, employee: dataEmployee, dataId: dataId});
         },
 
         changeDateRange: function (dateArray) {
@@ -308,7 +197,7 @@ define([
 
                 $('#reconcileDate').text(common.utcDateToLocaleDate(result.date));
 
-                if (newDate.isSame(date, 'month') &&  newDate.isSame(date, 'year') && newDate.isSame(date, 'date')) {
+                if (newDate.isSame(date, 'month') && newDate.isSame(date, 'year') && newDate.isSame(date, 'date')) {
                     same = true;
                 }
 

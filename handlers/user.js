@@ -8,6 +8,7 @@ var User = function (event, models) {
     var userSchema = mongoose.Schemas.User;
     var savedFiltersSchema = mongoose.Schemas.savedFilters;
     var constants = require('../constants/responses');
+    var REQ_EXP_CONSTANTS = require('../constants/reqularExpressions');
     var mainConstants = require('../constants/mainConstants');
     var pageHelper = require('../helpers/pageHelper');
     var Mailer = require('../helpers/mailer');
@@ -21,8 +22,9 @@ var User = function (event, models) {
     var UserService = require('../services/user')(models);
     var EmployeeService = require('../services/employee')(models);
 
-    function checkIfUserLoginUnique(req, login, cb) {
-        models.get(req.session.lastDb, 'Users', userSchema).find({login: login}, function (error, doc) {
+    function checkIfUserLoginUnique(req, login, cb, db) {
+        var db = db || req.session.lastDb;
+        models.get(db, 'Users', userSchema).find({login: login}, function (error, doc) {
             if (error) {
                 return cb(error);
             }
@@ -36,6 +38,222 @@ var User = function (event, models) {
             }
         });
     }
+
+    function loginFacebook(configs, options, cb) {
+        var userId = configs.userId;
+        var dbId = configs.dbId;
+
+        UserService.findOne({
+                dbName: dbId,
+                query : {
+                    $or: [{
+                        'facebook.userId': userId
+                    }, {
+                        login: options.login
+                    }, {
+                        email: options.email
+                    }]
+                }
+            },
+            function (err, user) {
+                if (err) {
+                    return cb(err);
+                }
+
+                if (user) {
+                    return cb(null, user);
+                }
+
+                UserService.create({
+                    login            : options.login,
+                    email            : options.email,
+                    contactName      : options.contactName,
+                    'facebook.userId': userId,
+                    profile          : '1387275598000',
+                    dbName           : dbId,
+                    stopEmailing     : true
+                }, cb);
+            }
+        );
+    }
+
+    function loginGoogle(configs, options, cb) {
+        var userId = configs.userId;
+        var dbId = configs.dbId;
+
+        UserService.findOne({
+                dbName: dbId,
+                query : {
+                    $or: [{
+                        'google.userId': userId
+                    }, {
+                        login: options.login
+                    }, {
+                        email: options.email
+                    }]
+                }
+            },
+            function (err, user) {
+                if (err) {
+                    return cb(err);
+                }
+
+                if (user) {
+                    return cb(null, user);
+                }
+
+                UserService.create({
+                    login          : options.login,
+                    email          : options.email,
+                    contactName    : options.contactName,
+                    'google.userId': userId,
+                    profile        : '1387275598000',
+                    dbName         : dbId,
+                    stopEmailing   : true
+                }, cb);
+            }
+        );
+    }
+
+    function loginLinkedin(configs, options, cb) {
+        var userId = configs.userId;
+        var profileUrl = configs.profileUrl;
+        var dbId = configs.dbId;
+        var country = configs.country;
+
+        UserService.findOne({
+            dbName: dbId,
+            query : {
+                $or: [{
+                    'linkedin.userId': userId
+                }, {
+                    login: options.login
+                }, {
+                    email: options.email
+                }]
+            }
+        }, function (err, user) {
+            if (err) {
+                return cb(err);
+            }
+
+            if (user) {
+                return cb(null, user);
+            }
+
+            UserService.create({
+                login                : options.login,
+                email                : options.email,
+                contactName          : options.contactName,
+                'linkedin.userId'    : userId,
+                'linkenin.profileUrl': profileUrl,
+                'linkenin.country'   : country,
+                profile              : '1387275598000',
+                dbName               : dbId,
+                stopEmailing         : true
+            }, cb);
+        });
+    }
+
+    this.loginSocial = function (req, res, next) {
+        var body = req.body;
+        var userId = body.userId;
+        var flag = body.flag;
+        var dbId = body.dbId;
+        var email = body.email;
+        var login = body.login;
+        var session = req.session;
+        var first = body.first;
+        var last = body.last;
+        var UserModel = models.get(dbId, 'Users', userSchema);
+        var ip = req.heades ? req.headers['x-real-ip'] : req.ip;
+        var profileUrl;
+        var country;
+
+        function cb(err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            createSession({
+                session  : session,
+                _user    : result,
+                UserModel: UserModel,
+                data     : {
+                    login      : login,
+                    email      : email,
+                    dbId       : dbId,
+                    contactName: {
+                        first: first,
+                        last : last
+                    }
+                },
+                ip       : ip
+            }, function (err) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send();
+            });
+        }
+
+        switch (flag) {
+            case 'google': {
+                loginGoogle({
+                    userId: userId,
+                    dbId  : dbId
+                }, {
+                    login       : login,
+                    contactName : {
+                        first: first,
+                        last : last
+                    },
+                    email       : email,
+                    stopEmailing: false
+                }, cb);
+
+                break;
+            }
+            case 'facebook': {
+                loginFacebook({
+                    userId: userId,
+                    dbId  : dbId
+                }, {
+                    login       : login,
+                    contactName : {
+                        first: first,
+                        last : last
+                    },
+                    email       : email,
+                    stopEmailing: false
+                }, cb);
+
+                break;
+            }
+            case 'linkedin': {
+                profileUrl = body.profileUrl;
+                country = body.country;
+
+                loginLinkedin({
+                    userId    : userId,
+                    dbId      : dbId,
+                    profileUrl: profileUrl,
+                    country   : country
+                }, {
+                    login       : login,
+                    contactName : {
+                        first: first,
+                        last : last
+                    },
+                    email       : email,
+                    stopEmailing: false
+                }, cb);
+
+                break;
+            }
+        }
+    };
 
     function updateUser(req, res, next) {
         var data = req.body;
@@ -267,13 +485,93 @@ var User = function (event, models) {
      * @property {JSON} Object - Object with data for login (like in example)
      * @instance
      */
+
+    function createSession(options, cb) {
+        var session = options.session;
+        var _user = options._user;
+        var UserModel = options.UserModel;
+        var data = options.data;
+        var ip = options.ip;
+        var checkPass = options.checkPass;
+        var geo = geoip.lookup(ip);
+        var shaSum = crypto.createHash('sha256');
+        var lastAccess;
+        var err;
+
+        shaSum.update(data.pass || '');
+
+        if (err) {
+            return cb(err);
+        }
+
+        if (!_user || !_user._id || (checkPass && _user.pass !== shaSum.digest('hex'))) {
+            err = new Error(constants.INCORRECT);
+            err.status = 400;
+
+            tracker.track({
+                name       : 'production:login:error',
+                status     : 301,
+                registrType: process.env.SERVER_TYPE,
+                server     : process.env.SERVER_PLATFORM,
+                ip         : ip,
+                country    : (geo) ? geo.country : '',
+                city       : (geo) ? geo.city : '',
+                region     : geo ? geo.region : '',
+                email      : _user ? _user.email : '', // bug on keymetrics
+                login      : _user ? _user.login : '',
+                mobilePhone: _user ? _user.mobilePhone : '',
+                message    : err.message
+            });
+
+            return cb(err);
+        }
+
+        if (data.rememberMe === 'true') {
+            session.rememberMe = true;
+        } else {
+            delete session.rememberMe;
+            session.cookie.expires = false;
+        }
+
+        session.loggedIn = true;
+        session.uId = _user._id;
+        session.uName = _user.login;
+        session.lastDb = data.dbId;
+        session.profileId = _user.profile;
+        session.kanbanSettings = _user.kanbanSettings;
+
+        lastAccess = new Date();
+        session.lastAccess = lastAccess;
+
+        UserModel.findByIdAndUpdate(_user._id, {$set: {lastAccess: lastAccess}}, {new: true}, function (err, user) {
+            if (err) {
+                logger.error(err);
+            }
+        });
+
+        cb();
+
+        tracker.track({
+            name       : 'production:login:success',
+            status     : 301,
+            registrType: process.env.SERVER_TYPE,
+            server     : process.env.SERVER_PLATFORM,
+            ip         : ip,
+            country    : (geo) ? geo.country : '',
+            city       : (geo) ? geo.city : '',
+            region     : geo ? geo.region : '',
+            login      : _user.login,
+            email      : _user.email,
+            mobilePhone: _user ? _user.mobilePhone : '',
+            message    : 'loggedIn'
+        });
+    }
+
     this.login = function (req, res, next) {
         var data = req.body;
         var UserModel = models.get(data.dbId, 'Users', userSchema);
         var login = data.login || data.email;
-        // var ip = req.ip;
         var ip = req.headers ? req.headers['x-real-ip'] : req.ip;
-        var geo = geoip.lookup(ip);
         var err;
         var queryObject;
 
@@ -297,76 +595,21 @@ var User = function (event, models) {
                 profile       : 1,
                 email         : 1
             }, function (err, _user) {
-                var shaSum = crypto.createHash('sha256');
                 var session = req.session;
-                var lastAccess;
 
-                shaSum.update(data.pass);
-
-                if (err) {
-                    return next(err);
-                }
-
-                if (!_user || !_user._id || _user.pass !== shaSum.digest('hex')) {
-                    err = new Error(constants.BAD_REQUEST);
-                    err.status = 400;
-
-                    tracker.track({
-                        name         : 'production:login:error',
-                        status       : 301,
-                        registrType  : process.env.SERVER_TYPE,
-                        server       : process.env.SERVER_PLATFORM,
-                        ip           : ip,
-                        country      : (geo) ? geo.country : '',
-                        city         : (geo) ? geo.city : '',
-                        region       : geo ? geo.region : '',
-                        email        : _user ? _user.email : '', // bug on keymetrics
-                        login        : login,
-                        subDomainName: 'production',
-                        message      : err.message
-                    });
-
-                    return next(err);
-                }
-
-                if (data.rememberMe === 'true') {
-                    session.rememberMe = true;
-                } else {
-                    delete session.rememberMe;
-                    session.cookie.expires = false;
-                }
-
-                session.loggedIn = true;
-                session.uId = _user._id;
-                session.uName = _user.login;
-                session.lastDb = data.dbId;
-                session.profileId = _user.profile;
-                session.kanbanSettings = _user.kanbanSettings;
-
-                lastAccess = new Date();
-                session.lastAccess = lastAccess;
-
-                UserModel.findByIdAndUpdate(_user._id, {$set: {lastAccess: lastAccess}}, {new: true}, function (err, user) {
+                createSession({
+                    session  : session,
+                    _user    : _user,
+                    UserModel: UserModel,
+                    data     : data,
+                    ip       : ip,
+                    checkPass: true
+                }, function (err) {
                     if (err) {
-                        logger.error(err);
+                        return next(err);
                     }
-                });
 
-                res.send(200);
-
-                tracker.track({
-                    name         : 'production:login:success',
-                    status       : 301,
-                    registrType  : process.env.SERVER_TYPE,
-                    server       : process.env.SERVER_PLATFORM,
-                    ip           : ip,
-                    country      : (geo) ? geo.country : '',
-                    city         : (geo) ? geo.city : '',
-                    region       : geo ? geo.region : '',
-                    login        : login,
-                    email        : _user.email,
-                    subDomainName: 'production',
-                    message      : 'loggedIn'
+                    res.send(200);
                 });
             });
         } else {
@@ -408,7 +651,7 @@ var User = function (event, models) {
                 }
 
                 if (!_user || !_user._id || !_user.email) {
-                    err = new Error(constants.BAD_REQUEST);
+                    err = new Error(constants.NOT_REGISTERED);
                     err.status = 400;
 
                     return waterfallCb(err);
@@ -503,6 +746,8 @@ var User = function (event, models) {
         body = validator.parseUserBody(body);
         body.dbName = req.session.lastDb;
 
+        body.stopEmailing = true;
+
         UserService.create(body, function (err, user) {
             if (err) {
                 return next(err);
@@ -510,6 +755,75 @@ var User = function (event, models) {
 
             res.status(201).send({success: 'A new User crate success', id: user._id});
         });
+    };
+
+    this.verify = function (req, res, next) {
+        var query = req.query;
+        var token = query.token;
+        var userDbName = query.db;
+        var err;
+
+        UserService.findOneAndUpdate({'credentials.verify_token': token}, {$set: {'credentials.verify_token': ''}}, {dbName: userDbName}, function (err, result) {
+            if (err || (result && result.credentials && result.credentials.verify_token)) {
+                err = new Error('This token is not valid!');
+                err.status = 400;
+
+                return next(err);
+            }
+
+            res.redirect('/#login');
+        });
+    };
+
+    this.createWithVerify = function (req, res, next) {
+        var passReqExp = REQ_EXP_CONSTANTS.password;
+        var body = req.body;
+        var pass = body.pass;
+        var err;
+
+        /*if (!validator.validNewUserBody(body)) {
+         err = new Error('User did not pass validation');
+         err.status = 404;
+
+         return next(err);
+         }*/
+
+        if (!!body.email.match(pass)) {
+            return next(new Error(constants.IDENTICAL_EMAIL_AND_PASSWORD));
+        }
+
+        if (!passReqExp.test(pass)) {
+            return next(new Error(constants.WEAK_PASS));
+        }
+
+        body = validator.parseUserBody(body);
+        body.dbName = body.dbId;
+
+        checkIfUserLoginUnique(req, body.login, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            if (result) {
+                body.contactName = {
+                    first: body.first,
+                    last : body.last
+                };
+
+                UserService.createWithVerify(body, function (err, user) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    res.status(201).send({success: 'A new User create success', id: user._id});
+                });
+            } else {
+                err = new Error(constants.IS_ALREADY_USED);
+                err.status = 400;
+
+                next(err);
+            }
+        }, body.dbId);
     };
 
     this.putchModel = function (req, res, next) {
@@ -529,6 +843,11 @@ var User = function (event, models) {
 
         if (options && options.changePass) {
             shaSum = crypto.createHash('sha256');
+
+            if (!REQ_EXP_CONSTANTS.password.test(req.body.pass)) {
+                return next(new Error(constants.WEAK_PASS));
+            }
+
             shaSum.update(data.pass);
             data.pass = shaSum.digest('hex');
 
@@ -881,7 +1200,11 @@ var User = function (event, models) {
                 profile        : {$arrayElemAt: ['$profile', 0]},
                 relatedEmployee: {$arrayElemAt: ['$relatedEmployee', 0]},
                 savedFilters   : '$savedFilters',
-                imports        : '$imports'
+                imports        : '$imports',
+                mobilePhone    : '$mobilePhone',
+                favorite       : '$favorite',
+                website        : '$website',
+                company        : '$company'
             }
         });
 
@@ -894,6 +1217,10 @@ var User = function (event, models) {
                 kanbanSettings: '$kanbanSettings',
                 lastAccess    : '$lastAccess',
                 credentials   : '$credentials',
+                favorite      : '$favorite',
+                mobilePhone   : '$mobilePhone',
+                website       : '$website',
+                company       : '$company',
 
                 profile: {
                     _id          : '$profile._id',
@@ -924,7 +1251,7 @@ var User = function (event, models) {
             $lookup: {
                 from        : 'savedFilters',
                 localField  : 'savedFilters._id',
-                foreignField: "_id",
+                foreignField: '_id',
                 as          : 'savedFilters._id'
             }
         });
@@ -940,6 +1267,10 @@ var User = function (event, models) {
                 credentials    : '$credentials',
                 profile        : '$profile',
                 relatedEmployee: '$relatedEmployee',
+                favorite       : '$favorite',
+                mobilePhone    : '$mobilePhone',
+                website        : '$website',
+                company        : '$company',
                 savedFilters   : {
                     _id        : {$arrayElemAt: ['$savedFilters._id', 0]},
                     byDefault  : '$savedFilters.byDefault',
@@ -952,10 +1283,11 @@ var User = function (event, models) {
 
         pipeLine.push({
             $group: {
-                _id            : {
+                _id: {
                     _id        : '$_id',
                     contentType: '$savedFilters.contentType'
                 },
+
                 imageSrc       : {$first: '$imageSrc'},
                 login          : {$first: '$login'},
                 email          : {$first: '$email'},
@@ -964,6 +1296,10 @@ var User = function (event, models) {
                 credentials    : {$first: '$credentials'},
                 profile        : {$first: '$profile'},
                 relatedEmployee: {$first: '$relatedEmployee'},
+                mobilePhone    : {$first: '$mobilePhone'},
+                favorite       : {$first: '$favorite'},
+                website        : {$first: '$website'},
+                company        : {$first: '$company'},
                 savedFilters   : {
                     $addToSet: {
                         _id      : '$savedFilters._id._id',
@@ -988,6 +1324,10 @@ var User = function (event, models) {
                 credentials    : {$first: '$credentials'},
                 profile        : {$first: '$profile'},
                 relatedEmployee: {$first: '$relatedEmployee'},
+                mobilePhone    : {$first: '$mobilePhone'},
+                favorite       : {$first: '$favorite'},
+                website        : {$first: '$website'},
+                company        : {$first: '$company'},
                 savedFilters   : {
                     $addToSet: {
                         contentType: '$_id.contentType',

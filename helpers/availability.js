@@ -370,7 +370,7 @@ module.exports = function (models) {
             delete options.goodsInNote;
 
             async.each(goodsInNote.orderRows, function (elem, eachCb) {
-                var locations = elem.locationsReceived;
+                var locations = elem.locationsReceived || elem.locationsDeliver;
                 var batches = elem.batchesDeliver;
                 var cost = elem.cost * elem.quantity;
 
@@ -420,8 +420,8 @@ module.exports = function (models) {
                     } else {
                         locations.forEach(function (el) {
                             options.availabilities.push({
-                                location     : el.location,
-                                onHand       : el.quantity,
+                                location     : el.location || el,
+                                onHand       : el.quantity || elem.quantity,
                                 goodsInNote  : goodsInNote._id,
                                 warehouse    : warehouseTo,
                                 goodsOutNotes: [],
@@ -446,7 +446,7 @@ module.exports = function (models) {
 
                         date          : goodsInNote.status.receivedOn,
                         sourceDocument: {
-                            model: 'goodsOutNote',
+                            model: 'goodsInNote',
                             _id  : goodsInNote._id,
                             name : goodsInNote.name
                         },

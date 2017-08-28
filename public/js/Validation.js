@@ -7,7 +7,7 @@ define(
         var nameRegExp = /^[a-zA-Z]+[a-zA-Z-_\s]+$/;
         var groupsNameRegExp = /[a-zA-Z0-9]+[a-zA-Z0-9-,#@&*-_\s()\.\/\s]+$/;
         var loginRegExp = /[\w\.@]{4,100}$/;
-        var passRegExp = /^[\w\.@]{3,100}$/;
+        var passRegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,}/;
         var skypeRegExp = /^[\w\.\-@]{6,100}$/;
         var workflowRegExp = /^[a-zA-Z0-9\s]{2,100}$/;
         var invalidCharsRegExp = /[~<>\^\*₴]/;
@@ -129,8 +129,8 @@ define(
         };
 
         /*var validateLinkedinSocial = function (validatedString) {
-            return socialLinkedinRegExp.test(validatedString);
-        };*/
+         return socialLinkedinRegExp.test(validatedString);
+         };*/
 
         var hasInvalidChars = function (validatedString) {
             return invalidCharsRegExp.test(validatedString);
@@ -663,37 +663,49 @@ define(
         };
 
         var checkPasswordField = function (errorArray, required, fieldValue, fieldName) {
-            if (required) {
-                if (!fieldValue) {
-                    errorArray.push([fieldName, errorMessages.requiredMsg].join(' '));
-                    return;
-                }
-                if (hasInvalidChars(fieldValue)) {
-                    errorArray.push([fieldName, errorMessages.invalidCharsMsg].join(' '));
-                    return;
-                }
-                if (fieldValue.length < 3) {
-                    errorArray.push([fieldName, errorMessages.minLengthMsg(3)].join(' '));
-                    return;
-                }
-                if (!validatePass(fieldValue)) {
-                    errorArray.push([fieldName, errorMessages.invalidLoginMsg].join(' '));
-                }
-            } else {
-                if (fieldValue) {
-                    if (hasInvalidChars(fieldValue)) {
-                        errorArray.push([fieldName, errorMessages.invalidCharsMsg].join(' '));
-                        return;
-                    }
-                    if (fieldValue.length < 3) {
-                        errorArray.push([fieldName, errorMessages.minLengthMsg(3)].join(' '));
-                        return;
-                    }
-                    if (!validatePass(fieldValue)) {
-                        errorArray.push([fieldName, errorMessages.invalidLoginMsg].join(' '));
-                    }
-                }
+            var passReqExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,}/;
+            var WEAK_PASS_MESSAGE = 'Weak password. Password should be 8 symbols minimum and contain at least 1 upper case letter, 1 ' +
+                'lower case letter, 1 digit and one special symbol';
+
+            if (!fieldValue) {
+                // errorArray.push([fieldName, errorMessages.requiredMsg].join(' '));
+                errorArray[0] = [fieldName, errorMessages.requiredMsg].join(' ');
+                return;
             }
+
+            if (!passReqExp.test(fieldValue)) {
+                // errorArray.push([fieldName, WEAK_PASS_MESSAGE].join(' '));
+                errorArray[0] = [fieldName, WEAK_PASS_MESSAGE].join(' ');
+                return;
+            }
+
+            // if (hasInvalidChars(fieldValue)) {
+            //     errorArray.push([fieldName, errorMessages.invalidCharsMsg].join(' '));
+            //     return;
+            // }
+            // if (fieldValue.length < 3) {
+            //     errorArray.push([fieldName, errorMessages.minLengthMsg(3)].join(' '));
+            //     return;
+            // }
+            // if (!validatePass(fieldValue)) {
+            //     errorArray.push([fieldName, errorMessages.invalidLoginMsg].join(' '));
+            // }
+            // }
+            // else {
+            //     if (fieldValue) {
+            //         if (hasInvalidChars(fieldValue)) {
+            //             errorArray.push([fieldName, errorMessages.invalidCharsMsg].join(' '));
+            //             return;
+            //         }
+            //         if (fieldValue.length < 3) {
+            //             errorArray.push([fieldName, errorMessages.minLengthMsg(3)].join(' '));
+            //             return;
+            //         }
+            //         if (!validatePass(fieldValue)) {
+            //             errorArray.push([fieldName, errorMessages.invalidLoginMsg].join(' '));
+            //         }
+            //     }
+            // }
         };
 
         var comparePasswords = function (errorArray, password, confirmPass) {

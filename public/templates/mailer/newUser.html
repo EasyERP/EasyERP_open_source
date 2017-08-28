@@ -88,31 +88,15 @@
                                 <tr>
                                     <td style="padding: 30px 20px 0 20px;
                                                font-size: 16px;
-                                               border-collapse: collapse;">We appreciate a lot your
-                                        registering on the <a href="<%= host %>">EasyERP</a>.
+                                               border-collapse: collapse;">Thank you for registering on the <a href="<%= host %>">EasyERP</a> multichannel e-commerce management system.
                                     </td>
                                 </tr>
+                                <%if (link) {%>
                                 <tr>
                                     <td style="padding: 30px 20px 0 20px;
                                                font-size: 16px;
-                                               border-collapse: collapse;
-                                               line-height: 1.5;">
-                                        <a href="<%= host %>">EasyERP</a>
-                                        has been created to become the most affordable ERP system on the market.
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="padding: 30px 20px 0 20px;
-                                               font-size: 16px;
-                                               border-collapse: collapse;
-                                               line-height: 1.5;">Multiple additional modules of our ERP system  are being developed and tested.
-                                        These additional modules will soon become available for use.</td>
-                                </tr>
-                                <tr>
-                                    <td style="padding: 30px 20px 0 20px;
-                                               font-size: 16px;
-                                               border-collapse: collapse;">Please
-                                        <a href="<%= host %>#login?password=<%- password%>&dbId=production&email=<%- login%>"
+                                               border-collapse: collapse;">Please follow this
+                                        <a href="<%= link %>"
                                            style="display: inline-block;
                                                   height: 26px;
                                                   line-height: 26px;
@@ -123,41 +107,16 @@
                                                   border-radius: 3px;
                                                   min-width: 70px;
                                                   font-size: 14px;
-                                                  text-align: center;">Log In</a> and try to use it with credential:</td>
+                                                  text-align: center;">Email Verification Link</a> to complete the registration.</td>
                                 </tr>
+                                <%}%>
                                 <tr>
-                                    <td style="border-collapse: collapse;">
-                                        <table id="authTable"
-                                               style="margin: 30px auto 0;
-                                                      width: 62%;
-                                                      border-collapse: collapse;
-                                                      background-color: #fff;">
-                                            <tr>
-                                                <td style="border-collapse: collapse;
-                                                           border: solid 1px #2b3643;
-                                                           padding: 4px 8px;">Login:
-                                                </td>
-                                                <td class="specialColor"
-                                                    style="border-collapse: collapse;
-                                                           border: solid 1px #2b3643;
-                                                           padding: 4px 8px;
-                                                           color: #80ADCB;"><%-login%>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td style="border-collapse: collapse;
-                                                           border: solid 1px #2b3643;
-                                                           padding: 4px 8px;">
-                                                    <b>Password:</b>
-                                                </td>
-                                                <td class="specialColor"
-                                                    style="border-collapse: collapse;
-                                                           border: solid 1px #2b3643;
-                                                           padding: 4px 8px;
-                                                           color: #80ADCB;"><%- password %>
-                                                </td>
-                                            </tr>
-                                        </table>
+                                    <td style="padding: 30px 20px 0 20px;
+                                               font-size: 16px;
+                                               border-collapse: collapse;
+                                               line-height: 1.5;">
+                                        <a href="<%= host %>">EasyERP</a>
+                                        was created to drive your business to success and it is still being updated to keep you on the top. Feel free to visit our website at easyerp.com for fresh updates.
                                     </td>
                                 </tr>
                                 <tr>
@@ -168,52 +127,7 @@
                                 <tr>
                                     <td style="padding: 5px 20px 20px 20px;
                                                font-size: 14px;
-                                               border-collapse: collapse;"><%= salesPerson.name %>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="font-size: 10pt;
-                                               color: rgb(153, 153, 153);
-                                               border-collapse: collapse;
-                                               padding: 5px 20px 0;"><%= salesPerson.job %>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="color: #4083af;
-                                               border-collapse: collapse;
-                                               padding: 5px 20px 0;">ThinkMobiles Inc.
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="font-size: 10pt;
-                                               color: rgb(153, 153, 153);
-                                               border-collapse: collapse;
-                                               padding: 5px 20px 0;">Mobile development for IOS, Android, WP
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="font-size: 10pt;
-                                               color: #4083af;
-                                               border-collapse: collapse;
-                                               padding: 5px 20px 0;"><%= salesPerson.phone %>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <a href="http://www.thinkmobiles.com"
-                                           target="_blank"
-                                           style="font-size: 10pt;
-                                                  color: #4083af;
-                                                  border-collapse: collapse;
-                                                  padding: 5px 20px 0;">thinkmobiles.com</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="font-size: 10pt;
-                                               color: #4083af;
-                                               border-collapse: collapse;
-                                               padding: 5px 20px 20px;">skype: <%= salesPerson.skype %>
-                                    </td>
+                                               border-collapse: collapse;">EasyERP team.</td>
                                 </tr>
                             </table>
                         </td>

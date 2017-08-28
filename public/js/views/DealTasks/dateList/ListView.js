@@ -12,21 +12,21 @@ define([
     'views/Filter/filterView',
     'moment',
     'dataService'
-], function ( $, _, paginationTemplate, listTemplate, dateItemTemplate, activityTemplate, pagination, CreateView, EditView, CurrentModel, FilterView, moment, dataService) {
+], function ($, _, paginationTemplate, listTemplate, dateItemTemplate, activityTemplate, pagination, CreateView, EditView, CurrentModel, FilterView, moment, dataService) {
     var TasksListView = pagination.extend({
-        el           : '#content-holder',
-        viewType     : 'datelist',
-        CreateView   : CreateView,
-        listTemplate : listTemplate,
-        FilterView   : FilterView,
-        contentType  : 'DealTasks',
+        el          : '#content-holder',
+        viewType    : 'datelist',
+        CreateView  : CreateView,
+        listTemplate: listTemplate,
+        FilterView  : FilterView,
+        contentType : 'DealTasks',
 
         events: {
-            'click div.dateListItem'    : 'goToEditDialog',
-            'click .newSelectList li'   : 'chooseOption',
-            'click .showmoreDiv .showmore'   : 'showMore',
-            'click .showmoreDiv .hideList'   : 'hideList',
-            'mousedown ._customCHeckbox': 'checked'
+            'click .dateListBody'          : 'goToEditDialog',
+            'click .newSelectList li'      : 'chooseOption',
+            'click .showmoreDiv .showmore' : 'showMore',
+            'click .showmoreDiv .hideList' : 'hideList',
+            'click .dateListCheckboxWrap'  : 'checked'
         },
 
         initialize: function (options) {
@@ -66,24 +66,27 @@ define([
         },
 
         checked: function (e) {
-            var $target = $(e.target).parent('label');
-
+            var $target = $(e.target).closest('.dateListCheckboxWrap');
+            e.stopPropagation();
+            var $taskItem = $target.closest('.dateListItem');
+            var $checkboxWrap = $target.find('.checkboxWrap');
             var input = $target.find('input');
-            var id = $target.closest('.dateListItem').attr('data-id');
+            var id = $taskItem.attr('data-id');
             var workflow = input.val();
             var sequence = input.attr('data-sequence');
             var model = new CurrentModel({_id: id});
-
-            e.stopPropagation();
 
             if (input.prop('checked')) {
                 return false;
             }
 
+            $taskItem.addClass('completed');
+            $checkboxWrap.addClass('checked');
+
             model.save({
                 sequenceStart: sequence,
                 workflow     : '5783b351df8b918c31af24ab',
-                sequence     : -1,
+                sequence     : -1,  
                 workflowStart: workflow
             }, {
                 patch  : true, validate: false,
@@ -108,7 +111,6 @@ define([
             this.render();
         },
 
-
         render: function () {
             var collection = this.collection.toJSON()[0];
             var key;
@@ -118,14 +120,14 @@ define([
 
             this.$el.html(_.template(listTemplate));
 
-            dataService.getData('dealTasks/getActivity', {filter : this.filter}, function(response){
+            dataService.getData('dealTasks/getActivity', {filter: this.filter}, function (response) {
 
-                response = response.data.map(function(el){
+                response = response.data.map(function (el) {
                     el.date = el.date ? moment(el.date).format("HH:mm") : null;
                     return el;
                 });
 
-                self.$el.find('#activityHolder').html(_.template(activityTemplate, {response : response})) ;
+                self.$el.find('#activityHolder').html(_.template(activityTemplate, {response: response}));
             });
 
             for (key in collection) {

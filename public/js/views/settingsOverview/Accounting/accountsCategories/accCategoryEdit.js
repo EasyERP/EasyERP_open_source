@@ -57,7 +57,7 @@ define([
                 name        : categoryName,
                 parent      : parentCategory,
                 nestingLevel: ++nestingLevel,
-                isAllUpdate : nestingLevel !== this.currentModel.toJSON().nestingLevel,
+                isAllUpdate : true,
                 // sequence    : res.length,
                 fullName    : fullName
             }, {

@@ -188,7 +188,8 @@ define([
 
             yAxis = d3.svg.axis()
                 .scale(y)
-                .orient('left');
+                .orient('left')
+                .tickFormat(d3.format('s'));
 
             svg = d3.select('.salesMonthLine ._dashLineItem').append('svg')
                 .attr('width', width)
@@ -298,7 +299,7 @@ define([
                     return height - y(d.frequency);
                 })
                 .attr('fill', function (d) {
-                    var colorAlp = ((d.frequency / (max + min)) + 0.45).toFixed(2);
+                    var colorAlp = 1; // ((d.frequency / (max + min)) + 0.45).toFixed(2);
                     return 'rgba(' + color + colorAlp + ')';
                 });
             /*.on('mouseover', function (d) {

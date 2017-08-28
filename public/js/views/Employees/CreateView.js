@@ -7,9 +7,9 @@ define([
     'models/TransferModel',
     'common',
     'populate',
-  'views/Editor/NoteView',
-  'views/Editor/AttachView',
-  'views/Assignees/AssigneesView',
+    'views/Editor/NoteView',
+    'views/Editor/AttachView',
+    'views/Assignees/AssigneesView',
     'views/dialogViewBase',
     'services/employees',
     'constants',
@@ -310,23 +310,23 @@ define([
             usersId = [];
 
             /*if (internalNotes) {
-                note = {
-                    title: '',
-                    note : internalNotes
-                };
-                notes.push(note);
-            }*/
+             note = {
+             title: '',
+             note : internalNotes
+             };
+             notes.push(note);
+             }*/
 
             notes = this.model.get('notes');
 
-            $thisEl.find('dd').find('.homeAddress').each(function (index, addressLine) {
+            $thisEl.find('.homeAddress').each(function (index, addressLine) {
                 el = $thisEl.find(addressLine);
                 homeAddress[el.attr('name')] = $.trim(el.val()) || el.attr('data-id');
             });
 
             salary = parseInt(helpers.spaceReplacer($tr.find('[data-id="salary"] input').val()) || helpers.spaceReplacer($tr.find('[data-id="salary"]').text()), 10) || 0;
             manager = $tr.find('#projectManagerDD').attr('data-id') || null;
-            dateText = $.trim($tr.find('td').eq(2).text());
+            dateText = $.trim($tr.find('.date').text());
             date = dateText ? helpers.setTimeToDate(new Date(dateText)) : helpers.setTimeToDate(new Date());
             jobPosition = $tr.find('#jobPositionDd').attr('data-id');
             weeklyScheduler = $tr.find('#weeklySchedulerDd').attr('data-id');
@@ -484,7 +484,10 @@ define([
                         text : 'Create',
                         class: 'btn blue',
                         id   : 'createBtnDialog',
-                        click: self.saveItem
+                        click: function () {
+                            self.saveItem();
+                            self.gaTrackingConfirmEvents();
+                        }
                     },
 
                     cancel: {
@@ -503,28 +506,28 @@ define([
 
             this.model = new EmployeeModel();
 
-          this.editorView = new NoteView({
-            model      : this.model,
-            contentType: self.contentType,
-            onlyNote: true,
-            isCreate: true
-          });
+            this.editorView = new NoteView({
+                model      : this.model,
+                contentType: self.contentType,
+                onlyNote   : true,
+                isCreate   : true
+            });
 
-          $notDiv.append(
-            this.editorView.render().el
-          );
+            $notDiv.append(
+                this.editorView.render().el
+            );
 
-          this.attachView =  new AttachView({
-            model      : this.model,
-            contentType: self.contentType,
-            noteView   : this.editorView,
-            forDoc: true,
-            isCreate: true
-          });
+            this.attachView = new AttachView({
+                model      : this.model,
+                contentType: self.contentType,
+                noteView   : this.editorView,
+                forDoc     : true,
+                isCreate   : true
+            });
 
-          $thisEl.find('.attachments').append(
-            this.attachView.render().el
-          );
+            $thisEl.find('.attachments').append(
+                this.attachView.render().el
+            );
 
             $notDiv = this.$el.find('.assignees-container');
             $notDiv.append(

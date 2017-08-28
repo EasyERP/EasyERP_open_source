@@ -1,7 +1,10 @@
 module.exports = (function () {
     var mongoose = require('mongoose');
-    var nationalitySchema = mongoose.Schema({
-        _id: String
+    var Schema = mongoose.Schema;
+    var ObjectId = Schema.Types.ObjectId;
+
+    var nationalitySchema = Schema({
+        name: {type: String, required: true}
     }, {collection: 'nationality'});
 
     mongoose.model('nationality', nationalitySchema);

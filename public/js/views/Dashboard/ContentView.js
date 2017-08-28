@@ -17,9 +17,9 @@ define([
 
     var ContentView = Backbone.View.extend({
         contentType: 'Dashboard',
-        actionType : 'Content',
-        template   : _.template(DashboardTemplate),
-        el         : '#content-holder',
+        actionType: 'Content',
+        template: _.template(DashboardTemplate),
+        el: '#content-holder',
 
         initialize: function (options) {
             this.startTime = options.startTime;
@@ -27,19 +27,19 @@ define([
             this.startTime = new Date();
             this.buildTime = 0;
             this.dateRange = {
-                date                  : 30,
-                source                : 30,
-                opportunitie          : 30,
-                sale                  : 7,
+                date: 30,
+                source: 30,
+                opportunitie: 30,
+                sale: 7,
                 opportunitieConversion: 90,
-                winLost               : 30,
-                salesByCountry        : 30
+                winLost: 30,
+                salesByCountry: 30
             };
 
             this.dateItem = {
-                date       : 'D',
-                WonLost    : 'D',
-                Leads      : 'createdBy',
+                date: 'D',
+                WonLost: 'D',
+                Leads: 'createdBy',
                 LeadsByName: 'leadsBySales'
             };
 
@@ -53,8 +53,8 @@ define([
         },
 
         events: {
-            'click .choseDateItem .item'       : 'newItem',
-            'click .chart-tabs a'              : 'changeTab',
+            'click .choseDateItem .item': 'newItem',
+            'click .chart-tabs a': 'changeTab',
             'click .dropDownDateRangeContainer': 'toggleDateFilter'
         },
 
@@ -168,8 +168,8 @@ define([
 
                 self[viewName] = new DateFilterView({
                     contentType: contentType,
-                    type       : _opts[contentType].type,
-                    el         : self.$el.find('#' + contentType + 'DateFilter')
+                    type: _opts[contentType].type,
+                    el: self.$el.find('#' + contentType + 'DateFilter')
                 });
                 self[viewName].on('dateChecked', function () {
                     if (['LeadsBySale', 'LeadsBySource'].indexOf(contentType) === -1) {
@@ -197,42 +197,42 @@ define([
             var optionsForDateFilter = {
                 'LeadsBySale': {
                     defaultValue: 'thisMonth',
-                    type        : 'date'
+                    type: 'date'
                 },
 
                 'LeadsBySource': {
                     defaultValue: 'thisMonth',
-                    type        : 'date'
+                    type: 'date'
                 },
 
                 'OpportunitiesConversion': {
                     defaultValue: 'thirtyDays',
-                    type        : 'range'
+                    type: 'range'
                 },
 
                 'Opportunities': {
                     defaultValue: 'thirtyDays',
-                    type        : 'range'
+                    type: 'range'
                 },
 
                 'WonLost': {
                     defaultValue: 'thirtyDays',
-                    type        : 'range'
+                    type: 'range'
                 },
 
                 'SalesByCountry': {
                     defaultValue: 'thisMonth',
-                    type        : 'date'
+                    type: 'date'
                 },
 
                 'Leads': {
                     defaultValue: 'thisMonth',
-                    type        : 'date'
+                    type: 'date'
                 },
 
                 'LeadsByName': {
                     defaultValue: 'thisMonth',
-                    type        : 'date'
+                    type: 'date'
                 }
             };
 
@@ -240,16 +240,16 @@ define([
             this.endDate = (moment(this.startDate).endOf('month')).format('D MMM, YYYY');
 
             this.$el.html(this.template({
-                startDate             : this.startDate,
-                endDate               : this.endDate,
-                startDateLeads        : this.startDateLeads,
-                endDateLeads          : this.endDateLeads,
-                startDateLeadsByNames : this.startDateLeadsByName,
-                endDateLeadsByNames   : this.endDateLeadsByName,
-                startDateLeadsBySale  : this.startDateLeadsBySale,
-                endDateLeadsBySale    : this.endDateLeadsBySale,
+                startDate: this.startDate,
+                endDate: this.endDate,
+                startDateLeads: this.startDateLeads,
+                endDateLeads: this.endDateLeads,
+                startDateLeadsByNames: this.startDateLeadsByName,
+                endDateLeadsByNames: this.endDateLeadsByName,
+                startDateLeadsBySale: this.startDateLeadsBySale,
+                endDateLeadsBySale: this.endDateLeadsBySale,
                 startDateLeadsBySource: this.startDateLeadsBySource,
-                endDateLeadsBySource  : this.endDateLeadsBySource
+                endDateLeadsBySource: this.endDateLeadsBySource
             }));
 
             this.renderMap();
@@ -274,10 +274,10 @@ define([
             var chartClass = '.' + type + 'sChart';
             var self = this;
             var margin = {
-                top   : 50,
-                right : 50,
+                top: 50,
+                right: 50,
                 bottom: 80,
-                left  : 150
+                left: 150
             };
             var maxOpportunities;
             var uniqueNames;
@@ -300,6 +300,7 @@ define([
             }
 
             $(chartClass).empty();
+
 
             common.getLeadsForChart(type, filter, function (data) {
 
@@ -385,49 +386,49 @@ define([
 
                 gradient = d3.select('svg.chart.' + type + 'sChart').select('g').append('linearGradient')
                     .attr({
-                        'y1'           : 0,
-                        'y2'           : 0,
-                        'x1'           : 0,
-                        'x2'           : x(maxOpportunities),
-                        'id'           : 'gradientBarForOpportunities',
+                        'y1': 0,
+                        'y2': 0,
+                        'x1': 0,
+                        'x2': x(maxOpportunities),
+                        'id': 'gradientBarForOpportunities',
                         'gradientUnits': 'userSpaceOnUse'
                     });
 
                 gradient
                     .append('stop')
                     .attr({
-                        'offset'    : '0',
+                        'offset': '0',
                         'stop-color': '#98aac4'
                     });
 
                 gradient
                     .append('stop')
                     .attr({
-                        'offset'    : '0.8',
+                        'offset': '0.8',
                         'stop-color': '#6b456c'
                     });
 
                 gradient2 = d3.select('svg.chart.' + type + 'sChart').select('g').append('linearGradient')
                     .attr({
-                        'y1'           : 0,
-                        'y2'           : 0,
-                        'x1'           : 0,
-                        'x2'           : x(maxLeads),
-                        'id'           : 'gradientBarForTotalLeads',
+                        'y1': 0,
+                        'y2': 0,
+                        'x1': 0,
+                        'x2': x(maxLeads),
+                        'id': 'gradientBarForTotalLeads',
                         'gradientUnits': 'userSpaceOnUse'
                     });
 
                 gradient2
                     .append('stop')
                     .attr({
-                        'offset'    : '0',
+                        'offset': '0',
                         'stop-color': '#FFA17F'
                     });
 
                 gradient2
                     .append('stop')
                     .attr({
-                        'offset'    : '0.7',
+                        'offset': '0.7',
                         'stop-color': '#ACC7F2'
                     });
 
@@ -436,13 +437,13 @@ define([
                     .enter()
                     .append('rect')
                     .attr({
-                        'class' : 'bar2',
-                        'x'     : 0,
-                        'y'     : function (d) {
+                        'class': 'bar2',
+                        'x': 0,
+                        'y': function (d) {
                             return y(d.source);
                         },
                         'height': y.rangeBand(),
-                        'width' : function (d) {
+                        'width': function (d) {
                             return x(d.count);
                         }
                     })
@@ -454,13 +455,13 @@ define([
                     .enter()
                     .append('rect')
                     .attr({
-                        'class' : 'bar',
-                        'x'     : 0,
-                        'y'     : function (d) {
+                        'class': 'bar',
+                        'x': 0,
+                        'y': function (d) {
                             return y(d.source);
                         },
                         'height': y.rangeBand(),
-                        'width' : function (d) {
+                        'width': function (d) {
                             return x(d.count);
                         }
                     })
@@ -484,10 +485,10 @@ define([
             var chartClass = '.' + type + 'sChart';
             var self = this;
             var margin = {
-                top   : 50,
-                right : 50,
+                top: 50,
+                right: 50,
                 bottom: 80,
-                left  : 150
+                left: 150
             };
             var maxOpportunities;
             var uniqueNames;
@@ -587,49 +588,49 @@ define([
 
                 gradient = d3.select('svg.chart.' + type + 'sChart').select('g').append('linearGradient')
                     .attr({
-                        'y1'           : 0,
-                        'y2'           : 0,
-                        'x1'           : 0,
-                        'x2'           : x(maxOpportunities),
-                        'id'           : 'gradientBarForOpportunities',
+                        'y1': 0,
+                        'y2': 0,
+                        'x1': 0,
+                        'x2': x(maxOpportunities),
+                        'id': 'gradientBarForOpportunities',
                         'gradientUnits': 'userSpaceOnUse'
                     });
 
                 gradient
                     .append('stop')
                     .attr({
-                        'offset'    : '0',
+                        'offset': '0',
                         'stop-color': '#98aac4'
                     });
 
                 gradient
                     .append('stop')
                     .attr({
-                        'offset'    : '0.8',
+                        'offset': '0.8',
                         'stop-color': '#6b456c'
                     });
 
                 gradient2 = d3.select('svg.chart.' + type + 'sChart').select('g').append('linearGradient')
                     .attr({
-                        'y1'           : 0,
-                        'y2'           : 0,
-                        'x1'           : 0,
-                        'x2'           : x(maxLeads),
-                        'id'           : 'gradientBarForTotalLeads',
+                        'y1': 0,
+                        'y2': 0,
+                        'x1': 0,
+                        'x2': x(maxLeads),
+                        'id': 'gradientBarForTotalLeads',
                         'gradientUnits': 'userSpaceOnUse'
                     });
 
                 gradient2
                     .append('stop')
                     .attr({
-                        'offset'    : '0',
+                        'offset': '0',
                         'stop-color': '#FFA17F'
                     });
 
                 gradient2
                     .append('stop')
                     .attr({
-                        'offset'    : '0.7',
+                        'offset': '0.7',
                         'stop-color': '#ACC7F2'
                     });
 
@@ -638,13 +639,13 @@ define([
                     .enter()
                     .append('rect')
                     .attr({
-                        'class' : 'bar2',
-                        'x'     : 0,
-                        'y'     : function (d) {
+                        'class': 'bar2',
+                        'x': 0,
+                        'y': function (d) {
                             return y(d.source);
                         },
                         'height': y.rangeBand(),
-                        'width' : function (d) {
+                        'width': function (d) {
                             return x(d.count);
                         }
                     })
@@ -656,13 +657,13 @@ define([
                     .enter()
                     .append('rect')
                     .attr({
-                        'class' : 'bar',
-                        'x'     : 0,
-                        'y'     : function (d) {
+                        'class': 'bar',
+                        'x': 0,
+                        'y': function (d) {
                             return y(d.source);
                         },
                         'height': y.rangeBand(),
-                        'width' : function (d) {
+                        'width': function (d) {
                             return x(d.count);
                         }
                     })
@@ -724,10 +725,10 @@ define([
                 });
 
                 margin = {
-                    top   : 120,
-                    right : 10,
+                    top: 120,
+                    right: 10,
                     bottom: 80,
-                    left  : 150
+                    left: 150
                 };
 
                 width = $('#content-holder').width() / 2 - margin.left - margin.right - 120;
@@ -791,8 +792,8 @@ define([
                 tooltip1 = chart.append('text')
                     .attr({
                         class: 'infoLabel',
-                        x    : -20,
-                        y    : -100
+                        x: -20,
+                        y: -100
                     })
                     .style('display', 'none');
 
@@ -949,8 +950,8 @@ define([
                 tooltip2 = chart.append('text')
                     .attr({
                         class: 'infoLabel',
-                        x    : -20,
-                        y    : -100
+                        x: -20,
+                        y: -100
                     })
                     .style('display', 'none');
 
@@ -1153,18 +1154,18 @@ define([
                 }
 
                 labelsMap = {
-                    ySum  : 'Opportunities Expected Revenue Sum',
+                    ySum: 'Opportunities Expected Revenue Sum',
                     yCount: 'Opportunities Count',
-                    x     : 'Last Activity Days Ranges'
+                    x: 'Last Activity Days Ranges'
                 };
 
                 baseX = {
-                    '0-7'   : 0,
-                    '8-15'  : 0,
-                    '16-30' : 0,
-                    '31-60' : 0,
+                    '0-7': 0,
+                    '8-15': 0,
+                    '16-30': 0,
+                    '31-60': 0,
                     '61-120': 0,
-                    '>120'  : 0
+                    '>120': 0
                 };
 
                 keys = [
@@ -1177,32 +1178,32 @@ define([
                 ];
 
                 barsMap = {
-                    'New'             : 'bar8',
-                    'To estimate'     : 'bar9',
+                    'New': 'bar8',
+                    'To estimate': 'bar9',
                     'Discuss estimate': 'bar10',
-                    'Proposal'        : 'bar11',
-                    'PM approval'     : 'bar12',
-                    'In development'  : 'bar13',
-                    'Lost'            : 'bar14'
+                    'Proposal': 'bar11',
+                    'PM approval': 'bar12',
+                    'In development': 'bar13',
+                    'Lost': 'bar14'
                 };
 
                 colorMap = {
-                    'New'            : '#93648D', //violet
-                    'To estimate'    : '#4CC3D9', //blue
-                    'Done estimate'  : '#F1DD9E', //brown green
-                    'Send offer'     : '#7BC8A4', //green
-                    'PM approve'     : '#FFC65D', //yellow
+                    'New': '#93648D', //violet
+                    'To estimate': '#4CC3D9', //blue
+                    'Done estimate': '#F1DD9E', //brown green
+                    'Send offer': '#7BC8A4', //green
+                    'PM approve': '#FFC65D', //yellow
                     'Pre-development': '#5D4C46', //brown
-                    'In development' : '#EB6E44', //orange
-                    'Lost'           : '#93073E', //dark red
-                    'barStroke'      : '#2378ae'
+                    'In development': '#EB6E44', //orange
+                    'Lost': '#93073E', //dark red
+                    'barStroke': '#2378ae'
                 };
 
                 margin = {
-                    top   : 20,
-                    right : 50,
+                    top: 20,
+                    right: 50,
                     bottom: 100,
-                    left  : 140
+                    left: 140
                 };
 
                 workflowArr = ['New', 'To estimate', 'Done estimate',
@@ -1253,7 +1254,7 @@ define([
 
                 chart = d3.select('svg.opportunitieAgingSum')
                     .attr({
-                        'width' : outerWidth / 2,
+                        'width': outerWidth / 2,
                         'height': outerHeight
                     })
                     .append('g')
@@ -1273,11 +1274,11 @@ define([
                     .enter()
                     .append('line')
                     .attr({
-                        'class' : 'x',
-                        'x1'    : x,
-                        'x2'    : x,
-                        'y1'    : y,
-                        'y2'    : innerHeight,
+                        'class': 'x',
+                        'x1': x,
+                        'x2': x,
+                        'y1': y,
+                        'y2': innerHeight,
                         'stroke': '#ccc'
                     });
 
@@ -1298,8 +1299,8 @@ define([
 
                 tip = chart.append('text')
                     .attr({
-                        'class'      : 'tip',
-                        'font-size'  : '14',
+                        'class': 'tip',
+                        'font-size': '14',
                         'text-anchor': 'middle',
                         'font-weight': 'bolder'
                     });
@@ -1311,15 +1312,15 @@ define([
                         .enter()
                         .append('rect')
                         .attr({
-                            'class' : barsMap[dataEl.workflow],
-                            'x'     : function (d) {
+                            'class': barsMap[dataEl.workflow],
+                            'x': function (d) {
                                 baseX[d] += x(dataEl[d + '_Sum']);
                                 return baseX[d] - x(dataEl[d + '_Sum']);
                             },
-                            'y'     : function (d) {
+                            'y': function (d) {
                                 return y(d) + verticalBarSpacing;
                             },
-                            'width' : function (d) {
+                            'width': function (d) {
                                 var width = x(dataEl[d + '_Sum']);
 
                                 if (width > verticalBarSpacing) {
@@ -1329,7 +1330,7 @@ define([
                                 }
                             },
                             'height': y.rangeBand() - 2 * verticalBarSpacing,
-                            'fill'  : colorMap[dataEl.workflow]
+                            'fill': colorMap[dataEl.workflow]
                         })
                         .on('mouseover', function (d) {
                             var attrs = this.attributes;
@@ -1339,7 +1340,7 @@ define([
                             d3.select(this)
                                 .style('stroke-width', '3')
                                 .attr({
-                                    'stroke' : colorMap.barStroke,
+                                    'stroke': colorMap.barStroke,
                                     'opacity': 0.5
                                 });
 
@@ -1374,7 +1375,7 @@ define([
 
                 chart1 = d3.select('svg.opportunitieAgingCount')
                     .attr({
-                        'width' : outerWidth / 2,
+                        'width': outerWidth / 2,
                         'height': outerHeight
                     })
                     .append('g')
@@ -1394,11 +1395,11 @@ define([
                     .enter()
                     .append('line')
                     .attr({
-                        'class' : 'x',
-                        'x1'    : x,
-                        'x2'    : x,
-                        'y1'    : y,
-                        'y2'    : innerHeight,
+                        'class': 'x',
+                        'x1': x,
+                        'x2': x,
+                        'y1': y,
+                        'y2': innerHeight,
                         'stroke': '#ccc'
                     });
 
@@ -1418,18 +1419,18 @@ define([
                     .text(labelsMap.yCount);
 
                 baseX = {
-                    '0-7'   : 0,
-                    '8-15'  : 0,
-                    '16-30' : 0,
-                    '31-60' : 0,
+                    '0-7': 0,
+                    '8-15': 0,
+                    '16-30': 0,
+                    '31-60': 0,
                     '61-120': 0,
-                    '>120'  : 0
+                    '>120': 0
                 };
 
                 tip1 = chart1.append('text')
                     .attr({
-                        'class'      : 'tip',
-                        'font-size'  : '14',
+                        'class': 'tip',
+                        'font-size': '14',
                         'text-anchor': 'middle',
                         'font-weight': 'bolder'
                     });
@@ -1441,15 +1442,15 @@ define([
                         .enter()
                         .append('rect')
                         .attr({
-                            'class' : barsMap[dataEl.workflow],
-                            'x'     : function (d) {
+                            'class': barsMap[dataEl.workflow],
+                            'x': function (d) {
                                 baseX[d] += x(dataEl[d + '_Count']);
                                 return baseX[d] - x(dataEl[d + '_Count']);
                             },
-                            'y'     : function (d) {
+                            'y': function (d) {
                                 return y(d) + verticalBarSpacing;
                             },
-                            'width' : function (d) {
+                            'width': function (d) {
                                 var width = x(dataEl[d + '_Count']);
 
                                 if (width > verticalBarSpacing) {
@@ -1459,7 +1460,7 @@ define([
                                 }
                             },
                             'height': y.rangeBand() - 2 * verticalBarSpacing,
-                            'fill'  : colorMap[dataEl.workflow]
+                            'fill': colorMap[dataEl.workflow]
                         })
                         .on('mouseover', function (d) {
                             var attrs = this.attributes;
@@ -1469,7 +1470,7 @@ define([
                             d3.select(this)
                                 .style('stroke-width', '3')
                                 .attr({
-                                    'stroke' : colorMap.barStroke,
+                                    'stroke': colorMap.barStroke,
                                     'opacity': 0.5
                                 });
 
@@ -1557,14 +1558,14 @@ define([
                 });
 
                 colorMap = {
-                    'bar'      : '#93648D', //violet
-                    'bar2'     : '#4CC3D9', //blue
-                    'bar3'     : '#F1DD9E', //brown green
-                    'bar4'     : '#7BC8A4', //green
-                    'bar5'     : '#FFC65D', //yellow
-                    'bar6'     : '#5D4C46', //brown
-                    'bar7'     : '#EB6E44', //orange
-                    'bar8'     : '#93073E', //dark red
+                    'bar': '#93648D', //violet
+                    'bar2': '#4CC3D9', //blue
+                    'bar3': '#F1DD9E', //brown green
+                    'bar4': '#7BC8A4', //green
+                    'bar5': '#FFC65D', //yellow
+                    'bar6': '#5D4C46', //brown
+                    'bar7': '#EB6E44', //orange
+                    'bar8': '#93073E', //dark red
                     'barStroke': '#2378ae'
                 };
 
@@ -2120,26 +2121,26 @@ define([
                 $('#timeBuildingDataFromServer').text('Server response in ' + self.buildTime + ' ms');
 
                 margin = {
-                    top   : 20,
-                    right : 160,
+                    top: 20,
+                    right: 160,
                     bottom: 190,
-                    left  : 160
+                    left: 160
                 };
 
                 width = $('#content-holder').width() - margin.left - margin.right;
                 height = 500 - margin.top - margin.bottom;
 
                 barMap = {
-                    'wonCount'       : 'bar4',
-                    'lostCount'      : 'bar5',
+                    'wonCount': 'bar4',
+                    'lostCount': 'bar5',
                     'inProgressCount': 'bar6'
                 };
 
                 colorMap = {
-                    'wonCount'       : '#6CC062',
-                    'lostCount'      : '#F68065',
+                    'wonCount': '#6CC062',
+                    'lostCount': '#F68065',
                     'inProgressCount': '#00B4EA',
-                    'percentLine'    : '#6CC062'
+                    'percentLine': '#6CC062'
                 };
 
                 x = d3.scale.ordinal()
@@ -2172,7 +2173,7 @@ define([
 
                 chart = d3.select('.winAndLostOpportunitiesChart')
                     .attr({
-                        'width' : width + margin.left + margin.right,
+                        'width': width + margin.left + margin.right,
                         'height': height + margin.top + margin.bottom
                     })
                     .append('g')
@@ -2237,7 +2238,7 @@ define([
                     value = d.wonCount || d.lostCount ? (d.wonCount / (d.wonCount + d.lostCount) * 100) : 0;
 
                     percent.push({
-                        date : d._id,
+                        date: d._id,
                         value: value
                     });
                 });
@@ -2254,7 +2255,7 @@ define([
 
                 chart.append('g')
                     .attr({
-                        'class'    : 'x axis',
+                        'class': 'x axis',
                         'transform': 'translate(0,' + (height + 35) + ')'
                     })
                     .call(xAxis)
@@ -2271,30 +2272,30 @@ define([
 
                 chart.append('g')
                     .attr({
-                        'class'    : 'y2 axis',
+                        'class': 'y2 axis',
                         'transform': 'translate(' + width + ',0)'
                     })
                     .call(yAxis2);
 
                 chart.append('text')
                     .attr({
-                        'class'      : 'y label',
+                        'class': 'y label',
                         'text-anchor': 'end',
-                        'y'          : -50,
-                        'x'          : -50,
-                        'dy'         : '.75em',
-                        'transform'  : 'rotate(-90)'
+                        'y': -50,
+                        'x': -50,
+                        'dy': '.75em',
+                        'transform': 'rotate(-90)'
                     })
                     .text('Number of Opportunities');
 
                 chart.append('text')
                     .attr({
-                        'class'      : 'y2 label',
+                        'class': 'y2 label',
                         'text-anchor': 'middle',
-                        'y'          : -50,
-                        'x'          : 120,
-                        'dy'         : 0,
-                        'transform'  : 'rotate(90), translate(0,' + (-width) + ')'
+                        'y': -50,
+                        'x': 120,
+                        'dy': 0,
+                        'transform': 'rotate(90), translate(0,' + (-width) + ')'
                     })
                     .text('Win percent');
 
@@ -2303,25 +2304,25 @@ define([
                     .enter()
                     .append('rect')
                     .attr({
-                        'class' : 'bar4',
-                        'x'     : function (d) {
+                        'class': 'bar4',
+                        'x': function (d) {
                             range = x.rangeBand();
                             difference = range > 70 ? (range - 70) / 2 : 0;
 
                             return x(format(d._id)) + difference;
                         },
-                        'y'     : function (d) {
+                        'y': function (d) {
                             return y(d.wonCount);
                         },
                         'height': function (d) {
                             return height - y(d.wonCount);
                         },
-                        'width' : function () {
+                        'width': function () {
                             range = x.rangeBand();
 
                             return range < 70 ? range : 70;
                         },
-                        'fill'  : colorMap.wonCount
+                        'fill': colorMap.wonCount
                     });
 
                 chart.selectAll('.bar5')
@@ -2329,25 +2330,25 @@ define([
                     .enter()
                     .append('rect')
                     .attr({
-                        'class' : 'bar5',
-                        'x'     : function (d) {
+                        'class': 'bar5',
+                        'x': function (d) {
                             range = x.rangeBand();
                             difference = range > 70 ? (range - 70) / 2 : 0;
 
                             return x(format(d._id)) + difference;
                         },
-                        'y'     : function (d) {
+                        'y': function (d) {
                             return y(d.inProgressCount + d.wonCount) - verticalBarSpacing;
                         },
                         'height': function (d) {
                             return height - y(d.inProgressCount);
                         },
-                        'width' : function () {
+                        'width': function () {
                             range = x.rangeBand();
 
                             return range < 70 ? range : 70;
                         },
-                        'fill'  : colorMap.inProgressCount
+                        'fill': colorMap.inProgressCount
                     });
 
                 chart.selectAll('.bar6')
@@ -2355,32 +2356,32 @@ define([
                     .enter()
                     .append('rect')
                     .attr({
-                        'class' : 'bar6',
-                        'x'     : function (d) {
+                        'class': 'bar6',
+                        'x': function (d) {
                             range = x.rangeBand();
                             difference = range > 70 ? ((range - 70) / 2) : 0;
 
                             return x(format(d._id)) + difference;
                         },
-                        'y'     : function (d) {
+                        'y': function (d) {
                             return y(d.inProgressCount + d.wonCount + d.lostCount) - 2 * verticalBarSpacing;
                         },
                         'height': function (d) {
                             return height - y(d.lostCount);
                         },
-                        'width' : function () {
+                        'width': function () {
                             range = x.rangeBand();
 
                             return range < 70 ? range : 70;
                         },
-                        'fill'  : colorMap.lostCount
+                        'fill': colorMap.lostCount
                     });
 
                 chart.append('path')
                     .datum(percent)
                     .attr({
                         'class': 'line',
-                        'd'    : line
+                        'd': line
                     })
                     .style('stroke', colorMap.percentLine)
                     .style('stroke-width', 5);
@@ -2391,18 +2392,18 @@ define([
                     .data(percent)
                     .enter().append('circle')
                     .attr({
-                        'class'       : 'circle',
-                        'cx'          : function (d) {
+                        'class': 'circle',
+                        'cx': function (d) {
                             return x(format(d.date)) + x.rangeBand() / 2;
                         },
-                        'cy'          : function (d) {
+                        'cy': function (d) {
                             return y2(d.value);
                         },
-                        'r'           : function (d) {
+                        'r': function (d) {
                             return percentCircleRadius * d.value / 100;
                         },
-                        'fill'        : colorMap.percentLine,
-                        'stroke'      : '#fff',
+                        'fill': colorMap.percentLine,
+                        'stroke': '#fff',
                         'stroke-width': '2'
                     });
             });
@@ -2461,10 +2462,10 @@ define([
                     .transition().remove();
                 g = svg.select('g');
                 margin = {
-                    top   : 20,
-                    right : 130,
+                    top: 20,
+                    right: 130,
                     bottom: 30,
-                    left  : 130
+                    left: 130
                 };
                 width = ($wrapper.width() - margin.right) / 2.1;
                 height = parseInt($wrapper.width() / 4);
@@ -2476,7 +2477,7 @@ define([
 
                 barChart = d3.select('svg.salesByCountryBarChart')
                     .attr({
-                        'width' : width - 30 + margin.left + margin.right,
+                        'width': width - 30 + margin.left + margin.right,
                         'height': height1 + margin.top + margin.bottom
                     })
                     .append('g')
@@ -2496,24 +2497,24 @@ define([
                         .enter()
                         .append('circle')
                         .attr({
-                            'cx'          : function (d) {
+                            'cx': function (d) {
                                 return projection([
                                     parseFloat(d.CapitalLongitude),
                                     parseFloat(d.CapitalLatitude)
                                 ])[0];
                             },
-                            'cy'          : function (d) {
+                            'cy': function (d) {
                                 return projection([
                                     parseFloat(d.CapitalLongitude),
                                     parseFloat(d.CapitalLatitude)]
                                 )[1];
                             },
-                            'r'           : function (d) {
+                            'r': function (d) {
                                 return chooseRadius(d);
                             },
-                            'fill'        : '#5CD1C8',
-                            'opacity'     : 0.75,
-                            'stroke'      : '#43A395',
+                            'fill': '#5CD1C8',
+                            'opacity': 0.75,
+                            'stroke': '#43A395',
                             'stroke-width': 1
                         });
                 });
@@ -2534,25 +2535,25 @@ define([
 
                 gradient = svg.append("linearGradient")
                     .attr({
-                        'y1'           : 0,
-                        'y2'           : 0,
-                        'x1'           : '0',
-                        'x2'           : width - 30,
-                        'id'           : 'gradientBar',
+                        'y1': 0,
+                        'y2': 0,
+                        'x1': '0',
+                        'x2': width - 30,
+                        'id': 'gradientBar',
                         'gradientUnits': 'userSpaceOnUse'
                     });
 
                 gradient
                     .append('stop')
                     .attr({
-                        'offset'    : '0',
+                        'offset': '0',
                         'stop-color': '#FFA17F'
                     });
 
                 gradient
                     .append('stop')
                     .attr({
-                        'offset'    : '0.5',
+                        'offset': '0.5',
                         'stop-color': '#ACC7F2'
                     });
 
@@ -2561,17 +2562,17 @@ define([
                     .enter()
                     .append('rect')
                     .attr({
-                        x     : function () {
+                        x: function () {
                             return 0;
                         },
-                        y     : function (d, i) {
+                        y: function (d, i) {
                             return yScale(i) + offset;
                         },
-                        width : function (d) {
+                        width: function (d) {
                             return xScale(d.pays / 100);
                         },
                         height: rect - 2 * offset,
-                        fill  : 'url(#gradientBar)'
+                        fill: 'url(#gradientBar)'
                     });
 
                 xAxis = d3.svg.axis()
@@ -2590,21 +2591,21 @@ define([
 
                 barChart.append('g')
                     .attr({
-                        'class'    : 'x axis',
+                        'class': 'x axis',
                         'transform': 'translate(0,' + height1 + ')'
                     })
                     .call(xAxis);
 
                 barChart.append('g')
                     .attr({
-                        'class'    : 'y axis',
+                        'class': 'y axis',
                         'transform': 'translate(0,' + (padding - 2 * offset) + ')'
                     })
                     .call(yAxis);
 
                 barChart.selectAll('.x .tick line')
                     .attr({
-                        'y2'   : function (d) {
+                        'y2': function (d) {
                             return -height1
                         },
                         'style': 'stroke: #f2f2f2'
@@ -2683,10 +2684,10 @@ define([
                 max = Math.ceil((max1 + max2) / 10) * 10;
 
                 margin = {
-                    top   : 50,
-                    right : 150,
+                    top: 50,
+                    right: 150,
                     bottom: 80,
-                    left  : 200
+                    left: 200
                 };
 
                 width = $wrapper.width() - margin.left - margin.right;
@@ -2694,7 +2695,7 @@ define([
 
                 barChart = d3.select('svg.leadsBarChart')
                     .attr({
-                        'width' : width + margin.left + margin.right,
+                        'width': width + margin.left + margin.right,
                         'height': height + margin.top + margin.bottom
                     })
                     .append('g')
@@ -2748,7 +2749,7 @@ define([
                     .enter()
                     .append('rect')
                     .attr({
-                        x          : function (d) {
+                        x: function (d) {
                             date = (d._id).toString();
                             year = date.substr(0, 4);
                             month = date.substr(4, 2);
@@ -2756,15 +2757,15 @@ define([
 
                             return xScale(new Date(year + '-' + month + '-' + day));
                         },
-                        y          : function (d) {
+                        y: function (d) {
                             return height - yScale(d.count)
                         },
-                        width      : rectWidth,
-                        height     : function (d) {
+                        width: rectWidth,
+                        height: function (d) {
                             return yScale(d.count)
                         },
-                        fill       : '#57D0b5',
-                        class      : function (d) {
+                        fill: '#57D0b5',
+                        class: function (d) {
                             return 'total_' + d._id;
                         },
                         'transform': 'translate(' + (-(rectWidth / 2 + 2 * offset)) + ',0)'
@@ -2775,7 +2776,7 @@ define([
                     .enter()
                     .append('rect')
                     .attr({
-                        x          : function (d) {
+                        x: function (d) {
                             date = (d._id).toString();
                             year = date.substr(0, 4);
                             month = date.substr(4, 2);
@@ -2783,7 +2784,7 @@ define([
 
                             return xScale(new Date(year + '-' + month + '-' + day));
                         },
-                        y          : function (d, i) {
+                        y: function (d, i) {
 
                             baseRect = d3.select('rect.total_' + d._id);
 
@@ -2795,8 +2796,8 @@ define([
 
                             return yOffset - yScale(d.count)
                         },
-                        width      : rectWidth,
-                        height     : function (d) {
+                        width: rectWidth,
+                        height: function (d) {
 
                             baseRect = d3.select('rect.total_' + d._id);
 
@@ -2806,7 +2807,7 @@ define([
 
                             return yScale(d.count);
                         },
-                        fill       : '#00B4EA',
+                        fill: '#00B4EA',
                         'transform': 'translate(' + (-(rectWidth / 2 + 2 * offset)) + ',0)'
                     });
 
@@ -2840,7 +2841,7 @@ define([
 
                 for (i = 0; i < keys.length; i++) {
                     percentData.push({
-                        date : keys[i],
+                        date: keys[i],
                         value: percent[keys[i]]
                     })
                 }
@@ -2863,8 +2864,8 @@ define([
                     .datum(percentData)
                     .attr({
                         'class': 'line1',
-                        'd'    : line,
-                        'fill' : 'none'
+                        'd': line,
+                        'fill': 'none'
                     })
                     .style('stroke', '#00B4EA')
                     .style('stroke-width', 2);
@@ -2873,26 +2874,26 @@ define([
                     .data(percentData)
                     .enter().append('circle')
                     .attr({
-                        'class'       : 'circle',
-                        'cx'          : function (d) {
+                        'class': 'circle',
+                        'cx': function (d) {
                             var date = d.date;
                             var year = date.substr(0, 4);
                             var month = date.substr(4, 2);
                             var day = date.substr(6, 2);
                             return xScale(new Date(year + '-' + month + '-' + day)) - 2 * offset || 0;
                         },
-                        'cy'          : function (d) {
+                        'cy': function (d) {
                             return yScale2(d.value * 100);
                         },
-                        'r'           : 3,
-                        'fill'        : '#00B4EA',
-                        'stroke'      : '#fff',
+                        'r': 3,
+                        'fill': '#00B4EA',
+                        'stroke': '#fff',
                         'stroke-width': '1'
                     });
 
                 barChart.append('g')
                     .attr({
-                        'class'    : 'x axis',
+                        'class': 'x axis',
                         'transform': 'translate(0,' + height + ')'
                     })
                     .call(xAxis);
@@ -2911,7 +2912,7 @@ define([
 
                 barChart.append('g')
                     .attr({
-                        'class'    : 'y2 axis2',
+                        'class': 'y2 axis2',
                         'transform': 'translate(' + (width) + ',0)'
                     })
                     .call(yAxis2)
@@ -2922,10 +2923,10 @@ define([
 
                 barChart.selectAll('.y .tick line')
                     .attr({
-                        'x2'       : function (d) {
+                        'x2': function (d) {
                             return width + 1.4 * padding;
                         },
-                        'stroke'   : '#f2f2f2',
+                        'stroke': '#f2f2f2',
                         'transform': 'translate(' + (-0.7 * padding) + ',0)'
                     });
             });
@@ -2964,7 +2965,7 @@ define([
 
                 barChart = d3.select('svg.leadsByNameBarChart')
                     .attr({
-                        'width' : width + margin.left / 2,
+                        'width': width + margin.left / 2,
                         'height': height + margin.bottom + margin.top
                     })
                     .append('g')
@@ -2988,25 +2989,25 @@ define([
 
                 gradient = d3.select('svg.leadsByNameBarChart').append('linearGradient')
                     .attr({
-                        'y1'           : 0,
-                        'y2'           : 0,
-                        'x1'           : '0',
-                        'x2'           : width - 30,
-                        'id'           : 'gradientBarForLeads',
+                        'y1': 0,
+                        'y2': 0,
+                        'x1': '0',
+                        'x2': width - 30,
+                        'id': 'gradientBarForLeads',
                         'gradientUnits': 'userSpaceOnUse'
                     });
 
                 gradient
                     .append('stop')
                     .attr({
-                        'offset'    : '0',
+                        'offset': '0',
                         'stop-color': '#FFA17F'
                     });
 
                 gradient
                     .append('stop')
                     .attr({
-                        'offset'    : '0.5',
+                        'offset': '0.5',
                         'stop-color': '#ACC7F2'
                     });
 
@@ -3015,17 +3016,17 @@ define([
                     .enter()
                     .append('rect')
                     .attr({
-                        x     : function () {
+                        x: function () {
                             return 0;
                         },
-                        y     : function (d, i) {
+                        y: function (d, i) {
                             return yScale(i) + offset;
                         },
-                        width : function (d) {
+                        width: function (d) {
                             return xScale(d.count);
                         },
                         height: rect - 2 * offset,
-                        fill  : 'url(#gradientBarForLeads)'
+                        fill: 'url(#gradientBarForLeads)'
                     });
 
                 xAxis = d3.svg.axis()
@@ -3044,21 +3045,21 @@ define([
 
                 barChart.append('g')
                     .attr({
-                        'class'    : 'x axis',
+                        'class': 'x axis',
                         'transform': 'translate(0,' + height + ')'
                     })
                     .call(xAxis);
 
                 barChart.append('g')
                     .attr({
-                        'class'    : 'y axis',
+                        'class': 'y axis',
                         'transform': 'translate(0,' + (padding - 2 * offset) + ')'
                     })
                     .call(yAxis);
 
                 barChart.selectAll('.x .tick line')
                     .attr({
-                        'y2'   : -height,
+                        'y2': -height,
                         'style': 'stroke: #f2f2f2'
                     });
 
@@ -3087,32 +3088,32 @@ define([
                 {
                     continent: 'Asia',
                     longitude: 107,
-                    latitude : 63
+                    latitude: 63
                 },
                 {
                     continent: 'Europe',
                     longitude: 4.9,
-                    latitude : 52
+                    latitude: 52
                 },
                 {
                     continent: 'South America',
                     longitude: -76,
-                    latitude : -11
+                    latitude: -11
                 },
                 {
                     continent: 'Africa',
                     longitude: 7.5,
-                    latitude : 9
+                    latitude: 9
                 },
                 {
                     continent: 'North America',
                     longitude: -130,
-                    latitude : 55
+                    latitude: 55
                 },
                 {
                     continent: 'Australia',
                     longitude: 125,
-                    latitude : -25
+                    latitude: -25
                 }
             ];
             var projection;
@@ -3126,10 +3127,10 @@ define([
             d3.selectAll('svg.salesByCountryChart > *').remove();
 
             margin = {
-                top   : 20,
-                right : 130,
+                top: 20,
+                right: 130,
                 bottom: 30,
-                left  : 130
+                left: 130
             };
 
             width = ($wrapper.width() - margin.right) / 2.1;
@@ -3143,9 +3144,9 @@ define([
 
             svg = d3.select('svg.salesByCountryChart')
                 .attr({
-                    'width' : width,
+                    'width': width,
                     'height': height,
-                    'style' : 'background: #ACC7F2'
+                    'style': 'background: #ACC7F2'
                 })
                 .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
@@ -3159,9 +3160,9 @@ define([
                     .enter()
                     .append('path')
                     .attr({
-                        'd'   : path,
+                        'd': path,
                         'fill': '#F4F3EF',
-                        'id'  : function (d) {
+                        'id': function (d) {
                             return d.id;
                         }
                     });
@@ -3229,7 +3230,7 @@ define([
 
                 if (!data.length) {
                     data[0] = {
-                        name   : '',
+                        name: '',
                         payment: 0
                     }
                 }
@@ -3263,7 +3264,7 @@ define([
                     .style('position', 'relative');
 
                 root = {
-                    name    : 'tree',
+                    name: 'tree',
                     children: data
                 };
 
@@ -3282,11 +3283,11 @@ define([
                 d3.selectAll('input').on('change', function change() {
                     var value = this.value === 'count'
                         ? function () {
-                        return 1;
-                    }
+                            return 1;
+                        }
                         : function (d) {
-                        return d.size;
-                    };
+                            return d.size;
+                        };
 
                     node
                         .data(treemap.value(value).nodes)

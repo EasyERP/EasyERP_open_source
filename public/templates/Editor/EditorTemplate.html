@@ -6,8 +6,12 @@
     <div class="dialog-tabs-items">
         <div class="editorTab dialog-tabs-item active" id="note">
             <div class="addNote createHolder">
-                <div class="area_holder">
-                    <textarea id="noteArea" placeholder="Add a Note...Max 500 symbols." maxlength="500"></textarea>
+                <div class="area_holder _withCounter counterWrap">
+                    <textarea class="counterEl" id="noteArea" placeholder="Add a Note...Max 500 symbols." maxlength="500"></textarea>
+                    <div class="counter-wrap">
+                        <span class="counter-label">Characters left:</span>
+                        <span class="counter-value" id="counterValue">500</span>
+                    </div>
                     <a href="javascript:;" class="attach_file">
                         <span class="icon-attach"></span>
                     </a>
@@ -42,7 +46,7 @@
                         <label>Assigned To</label>
                         <a  href="javascript:;"  class="current-selected" data-id="<%= assignedTo ? assignedTo._id : '' %>" id="assignedToDd"><%= assignedTo ? assignedTo.fullName : 'Select' %></a>
                     </div>
-                    <div id="categoryHolder"></div>
+                    <div class="categoryHolder" id="categoryHolder"></div>
                     <div class="inputDateActonBlock">
                         <input type="text" id="timepickerOne" name="timepicker-one" class="timepicker" readonly/>
                         <input type="text" class="date _taskDueDate" id="taskDueDate"
@@ -50,11 +54,18 @@
                                placeholder="Date" readonly/>
                     </div>
                 </div>
-                <div class="area_holder">
+                <div class="area_holder _withCounter counterWrap">
                     <textarea id="taskArea" class="taskArea personsTaskArea" placeholder="Description...Max 500 symbols." maxlength="500"></textarea>
+
+                    <div class="counter-wrap">
+                        <span class="counter-label">Characters left:</span>
+                        <span class="counter-value" id="counterValue">500</span>
+                    </div>
+
                     <a href="javascript:;" class="attach_file">
                         <span class="icon-attach"></span>
                     </a>
+
                 </div>
                 <div class="buttons">
                     <span class="btn blue btnSave" id="addTask">Save</span>

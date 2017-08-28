@@ -8,8 +8,9 @@ define([
     'moment',
     'dataService',
     'views/selectView/selectView',
-    'constants'
-], function (Backbone, _, $, mainTemplate, AttendanceModel, MonthView, moment, dataService, SelectView, CONSTANTS) {
+    'constants',
+    'views/guideTours/guideNotificationView'
+], function (Backbone, _, $, mainTemplate, AttendanceModel, MonthView, moment, dataService, SelectView, CONSTANTS, GuideNotify) {
     'use strict';
 
     var View = Backbone.View.extend({
@@ -236,6 +237,14 @@ define([
             this.$el.html(this.template(self.model.toJSON()));
 
             this.rendered = true;
+
+            if (App.guide) {
+                if (App.notifyView) {
+                    App.notifyView.undelegateEvents();
+                    App.notifyView.stopListening();
+                }
+                App.notifyView = new GuideNotify({e: null, data: App.guide});
+            }
 
             return this;
         }

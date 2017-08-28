@@ -417,7 +417,8 @@ module.exports = function (models) {
                     imageSrc         : '$product.imageSrc',
                     channelLinks     : '$product.channelLinks',
                     inventory        : '$product.inventory',
-                    productImages    : '$product.productImages'
+                    productImages    : '$product.productImages',
+                    isVariant        : '$product.isVariant'
                 }
             }];
 
@@ -657,6 +658,7 @@ module.exports = function (models) {
                         available: 1,
                         allocated: 1,
                         onHand   : 1,
+                        orderRows: 1,
                         orders   : {
                             $filter: {
                                 input: '$orders',
@@ -671,6 +673,16 @@ module.exports = function (models) {
                                 }
                             }
                         }
+                    }
+                }, {
+                    $group: {
+                        _id      : '$orderRows._id',
+                        location : {$first: '$location'},
+                        warehouse: {$first: '$warehouse'},
+                        available: {$sum: '$available'},
+                        allocated: {$sum: '$allocated'},
+                        onHand   : {$sum: '$onHand'},
+                        orders   : {$first: '$orders'}
                     }
                 }, {
                     $unwind: {
@@ -822,6 +834,8 @@ module.exports = function (models) {
                     return callback(err);
                 }
 
+                console.log(result);
+
                 callback(null, result);
             });
 
@@ -842,6 +856,114 @@ module.exports = function (models) {
             }
 
             aggregationQuery = [{
+                $unwind: {
+                    path                      : '$variants',
+                    preserveNullAndEmptyArrays: true
+                }
+            }, {
+                $lookup: {
+                    from        : 'ProductOptionsValues',
+                    localField  : 'variants',
+                    foreignField: '_id',
+                    as          : 'variants'
+                }
+            }, {
+                $project: {
+                    name     : 1,
+                    imageSrc : 1,
+                    info     : 1,
+                    inventory: 1,
+                    variants : {$arrayElemAt: ['$variants', 0]},
+                    groupId  : 1,
+                    isVariant: 1
+                }
+            }, {
+                $lookup: {
+                    from        : 'ProductOptions',
+                    localField  : 'variants.optionId',
+                    foreignField: '_id',
+                    as          : 'productOptions'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Images',
+                    localField  : 'groupId',
+                    foreignField: 'product',
+                    as          : 'productImages'
+                }
+            }, {
+                $project: {
+                    name          : 1,
+                    imageSrc      : 1,
+                    info          : 1,
+                    inventory     : 1,
+                    variants      : 1,
+                    groupId       : 1,
+                    productImages : 1,
+                    isVariant     : 1,
+                    productOptions: {$arrayElemAt: ['$productOptions', 0]}
+                }
+            }, {
+                $group: {
+                    _id          : '$_id',
+                    name         : {$first: '$$ROOT.name'},
+                    imageSrc     : {$first: '$$ROOT.imageSrc'},
+                    info         : {$first: '$$ROOT.info'},
+                    inventory    : {$first: '$$ROOT.inventory'},
+                    values       : {$addToSet: '$$ROOT.variants.value'},
+                    options      : {$addToSet: '$$ROOT.productOptions.name'},
+                    groupId      : {$first: '$$ROOT.groupId'},
+                    isVariant    : {$first: '$$ROOT.isVariant'},
+                    productImages: {$first: '$$ROOT.productImages'}
+                }
+            }];
+
+            if (query) {
+                aggregationQuery.unshift({
+                    $match: query
+                });
+            }
+
+            Model = models.get(dbName, 'Product', ProductSchema);
+            Model.aggregate(aggregationQuery, function (err, products) {
+                if (err) {
+                    return callback(err);
+                }
+
+                callback(null, products);
+            });
+        };
+
+        this.getProductsForChannelWithVariants = function (options, callback) {
+            var channel = options.channel;
+            var dbName = options.dbName;
+            var query = options.query;
+            var aggregationQuery;
+            var Model;
+            var error;
+
+            console.log('dbName line 932', dbName);
+            console.log('_id line 933', channel);
+
+            if (!dbName || !channel) {
+                error = new Error('invalid parameters');
+                error.status = 400;
+
+                return callback(error);
+            }
+
+            aggregationQuery = [{
+                $lookup: {
+                    from        : 'channelLinks',
+                    localField  : '_id',
+                    foreignField: 'product',
+                    as          : 'channelLinks'
+                }
+            }, {
+                $match: {
+                    'channelLinks.channel': {$in: [objectId(channel)]}
+                }
+            }, {
                 $unwind: {
                     path                      : '$variants',
                     preserveNullAndEmptyArrays: true
@@ -898,99 +1020,6 @@ module.exports = function (models) {
                     options      : {$addToSet: '$$ROOT.productOptions.name'},
                     groupId      : {$first: '$$ROOT.groupId'},
                     productImages: {$first: '$$ROOT.productImages'}
-                }
-            }];
-
-            if (query) {
-                aggregationQuery.unshift({
-                    $match: query
-                });
-            }
-
-            Model = models.get(dbName, 'Product', ProductSchema);
-            Model.aggregate(aggregationQuery, function (err, products) {
-                if (err) {
-                    return callback(err);
-                }
-
-                callback(null, products);
-            });
-        };
-
-        this.getProductsForChannelWithVariants = function (options, callback) {
-            var channel = options.channel;
-            var dbName = options.dbName;
-            var query = options.query;
-            var aggregationQuery;
-            var Model;
-            var error;
-
-            if (!dbName || !channel) {
-                error = new Error('invalid parameters');
-                error.status = 400;
-
-                return callback(error);
-            }
-
-            aggregationQuery = [{
-                $lookup: {
-                    from        : 'channelLinks',
-                    localField  : '_id',
-                    foreignField: 'product',
-                    as          : 'channelLinks'
-                }
-            }, {
-                $match: {
-                    'channelLinks.channel': {$in: [objectId(channel)]}
-                }
-            }, {
-                $unwind: {
-                    path                      : '$variants',
-                    preserveNullAndEmptyArrays: true
-                }
-            }, {
-                $lookup: {
-                    from        : 'ProductOptionsValues',
-                    localField  : 'variants',
-                    foreignField: '_id',
-                    as          : 'variants'
-                }
-            }, {
-                $project: {
-                    name     : 1,
-                    imageSrc : 1,
-                    info     : 1,
-                    inventory: 1,
-                    variants : {$arrayElemAt: ['$variants', 0]},
-                    groupId  : 1
-                }
-            }, {
-                $lookup: {
-                    from        : 'ProductOptions',
-                    localField  : 'variants.optionId',
-                    foreignField: '_id',
-                    as          : 'productOptions'
-                }
-            }, {
-                $project: {
-                    name          : 1,
-                    imageSrc      : 1,
-                    info          : 1,
-                    inventory     : 1,
-                    variants      : 1,
-                    groupId       : 1,
-                    productOptions: {$arrayElemAt: ['$productOptions', 0]}
-                }
-            }, {
-                $group: {
-                    _id      : '$_id',
-                    name     : {$first: '$$ROOT.name'},
-                    imageSrc : {$first: '$$ROOT.imageSrc'},
-                    info     : {$first: '$$ROOT.info'},
-                    inventory: {$first: '$$ROOT.inventory'},
-                    values   : {$addToSet: '$$ROOT.variants.value'},
-                    options  : {$addToSet: '$$ROOT.productOptions.name'},
-                    groupId  : {$first: '$$ROOT.groupId'}
                 }
             }];
 

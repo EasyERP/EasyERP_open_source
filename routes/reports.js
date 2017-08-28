@@ -13,13 +13,28 @@ module.exports = function (models, event) {
 
     router.use(authStackMiddleware);
     router.use(accessStackMiddleWare);
-    
-    router.get('/products', handler.getInfoBySalesProducts);
-    router.get('/incomingStock', handler.getIncomingStockReport);
-    router.get('/scarceProducts', handler.getScarceProducts);
-    router.get('/getProductListingReport', handler.getProductListingReport);
-    router.get('/getInfoSalesByMonth', handler.getInfoSalesByMonth);
-    router.get('/getInfoSalesByChannel', handler.getInfoSalesByChannel);
+
+    router.get('/warehouseMovements', handler.warehouseMovements);
+    router.get('/', handler.get);
+    router.post('/', handler.create);
+    router.patch('/:id', handler.patch);
+    router.delete('/', handler.remove);
+    router.patch('/:id', handler.patch);
+
+    router.get('/exportToXLS/:id', handler.exportToXlsx);
+    router.get('/exportToCSV/:id', handler.exportToCsv);
+
+    router.get('/favorite/:id', handler.addToFavorite);
+    router.get('/unfavorite/:id', handler.removeFromFavorite);
+
+    router.get('/data', handler.getById);
+
+    /* router.get('/products', handler.getInfoBySalesProducts);
+     router.get('/incomingStock', handler.getIncomingStockReport);
+     router.get('/scarceProducts', handler.getScarceProducts);
+     router.get('/getProductListingReport', handler.getProductListingReport);
+     router.get('/getInfoSalesByMonth', handler.getInfoSalesByMonth);
+     router.get('/getInfoSalesByChannel', handler.getInfoSalesByChannel);*/
 
     return router;
 };

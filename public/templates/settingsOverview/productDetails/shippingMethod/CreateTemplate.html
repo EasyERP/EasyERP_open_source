@@ -3,15 +3,16 @@
         <h4 class="_dialogMainTitle">New Shipping Method</h4>
         <div class="_formWrap _enlargedItemMargin newItem">
             <div class="_formBlock _equal">
-                <div class="_animateInputBox">
+                <div class="_animateInputBox _withInfo">
                     <input type="text"
                            class="_animate "
                            id="name"
                            required
                            value=""/>
                     <label class="_animate">Shipping Method Name</label>
+                    <span class="tips icon-info" data-id="name"></span>
                 </div>
-                <div class="_animateInputBox">
+                <div class="_animateInputBox _withInfo">
                     <input type="text"
                            class="_animate "
                            id="code"
@@ -19,8 +20,9 @@
                            maxlength="48"
                            value=""/>
                     <label class="_animate">Code</label>
+                    <span class="tips icon-info" data-id="code"></span>
                 </div>
-                <div class="_animateSelectBox">
+                <div class="_animateSelectBox _withInfo">
                     <span class="_selectTitle">Account</span>
                     <div class="_newSelectListWrap">
                         <a id="account"
@@ -29,8 +31,9 @@
                            data-id=""
                            href="javascript:;">Select account</a>
                     </div>
+                    <span class="tips icon-info" data-id="account"></span>
                 </div>
-                <div class="_animateInputBox">
+                <div class="_animateInputBox _withInfo">
                     <div class="_newSelectListWrap">
                         <input type="text"
                                class="_animate "
@@ -40,6 +43,7 @@
                                value=""/>
                         <label class="_animate">Price <%=App.organizationSettings && App.organizationSettings.currency ? App.organizationSettings.currency.symbol : ''%></label>
                     </div>
+                    <span class="tips icon-info" data-id="price"></span>
                 </div>
             </div>
         </div>

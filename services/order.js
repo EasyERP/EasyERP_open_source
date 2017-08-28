@@ -2,6 +2,7 @@
 
 var mongoose = require('mongoose');
 var OrderSchema = mongoose.Schemas.Order;
+var ManufacturingOrdersSchema = mongoose.Schemas.manufacturingOrder;
 var validator = require('validator');
 var _ = require('lodash');
 var async = require('async');
@@ -9,8 +10,11 @@ var leanWrapper = require('../helpers/callbackWrapper').lean;
 var objectId = mongoose.Types.ObjectId;
 var unlinkedWorkflowId = require('../constants/mainConstants').DEFAULT_UNLINKED_WORKFLOW_ID;
 var InProgressWorkflowId = require('../constants/mainConstants').IN_PROGRESS_WORKFLOW_ID;
+var WorkflowHandler = require('../handlers/workflow');
 
 module.exports = function (models) {
+    var workflowHandler = new WorkflowHandler(models);
+
     return new function () {
         this.create = function (options, callback) {
             var dbName;
@@ -210,7 +214,13 @@ module.exports = function (models) {
                 return callback(err);
             }
 
-            Order = models.get(dbName, 'Order', OrderSchema);
+            if (options.manufacturingOrder) {
+                delete options.manufacturingOrder;
+                Order = models.get(dbName, 'ManufacturingOrders', ManufacturingOrdersSchema);
+            } else {
+                Order = models.get(dbName, 'Order', OrderSchema);
+            }
+
             query = Order.findById(_id);
 
             if (typeof callback !== 'function') {
@@ -441,6 +451,8 @@ module.exports = function (models) {
             var field;
             var name;
             var id;
+            var orderId;
+            var queryObj;
 
             if (typeof options === 'function') {
                 callback = options;
@@ -466,14 +478,25 @@ module.exports = function (models) {
             field = options.field;
             name = options.name;
             id = options.id;
+            orderId = options.orderId;
 
             Order = models.get(dbName, 'Order', OrderSchema);
 
-            Order.find({
-                workflow                  : unlinkedWorkflowId,
-                'conflictTypes.type'      : field,
-                'conflictTypes.value.name': name
-            }, function (err, result) {
+            queryObj = {
+                workflow            : unlinkedWorkflowId,
+                'conflictTypes.type': field
+            };
+
+            if (name) {
+                queryObj['conflictTypes.value.name'] = name;
+            }
+
+            if (orderId) {
+                orderId = orderId.toString();
+                queryObj._id = objectId(orderId);
+            }
+
+            Order.find(queryObj, function (err, result) {
                 if (err) {
                     return callback(err);
                 }
@@ -488,16 +511,18 @@ module.exports = function (models) {
                         $set: {}
                     };
 
-                    body.$set[field] = id;
+                    if (name) {
+                        body.$set[field] = id;
+                    }
 
-                    if (type && type.value.name && type.value.name.length === 1 && index !== -1) {
-                        conflictTypes.slice(index, 1);
+                    if (((type && type.value.name && type.value.name.length) || orderId) && index !== -1) {
+                        conflictTypes.splice(index, 1);
                     }
 
                     body.$set.conflictTypes = conflictTypes;
 
-                    if (conflictTypes.length === 1) {
-                        body.$set.workflow = InProgressWorkflowId;
+                    if (conflictTypes.length === 0) {
+                        body.$set.workflow = order.tempWorkflow;
                     }
 
                     Order.findByIdAndUpdate(order._id, body, {new: true}, function (err, result) {
@@ -516,6 +541,75 @@ module.exports = function (models) {
                 });
             });
 
+        };
+
+        this.setInProgressStatus = function (options, callback) {
+            var Order;
+            var dbName;
+            var err;
+            var query;
+            var request;
+
+            if (typeof options === 'function') {
+                callback = options;
+                options = {};
+            }
+
+            if (!callback || typeof callback !== 'function') {
+                callback = function () {
+                };
+            }
+
+            query = options.query;
+
+            if (!query) {
+                err = new Error('Invalid input parameters');
+                err.status = 400;
+
+                return callback(err);
+            }
+
+            dbName = options.dbName;
+            delete options.dbName;
+
+            if (!dbName) {
+                err = new Error('Invalid input parameters');
+                err.status = 400;
+
+                return callback(err);
+            }
+
+            Order = models.get(dbName, 'Order', OrderSchema);
+
+            request = {
+                query: {},
+
+                session: {
+                    lastDb: dbName
+                }
+            };
+
+            request.query.wId = 'Purchase Order';
+            request.query.status = 'In Progress';
+            request.query.order = 1;
+
+            workflowHandler.getFirstForConvert(request, function (err, workflow) {
+                var updateObj;
+
+                if (err) {
+                    return callback(err);
+                }
+
+                updateObj = {workflow: workflow._id};
+
+                Order.update(query, {$set: updateObj}, function (err) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    callback();
+                });
+            });
         };
     };
 };

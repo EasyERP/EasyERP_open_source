@@ -10,7 +10,7 @@ var Module = function (models) {
         var IntegrationService = require('../services/integration')(models);
 
         IntegrationService.findOne({
-            channelName: channel
+            _id: channel
         }, {
             dbName: db
         }, function (err, response) {

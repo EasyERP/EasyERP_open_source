@@ -12,6 +12,11 @@ module.exports = function (models, event) {
     var handler = new CustomerHandler(models, event);
     var moduleId = MODULES.COMPANIES;
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
+    var accessDeleteStackMiddleware = require('../helpers/checkDelete');
+
+    function accessDeleteStackMiddlewareFunction(req, res, next) {
+        accessDeleteStackMiddleware(req, res, next, models, 'person', event);
+    }
 
     router.use(authStackMiddleware);
 
@@ -1185,7 +1190,7 @@ module.exports = function (models, event) {
          "success": "customer removed"
      }
      */
-    router.delete('/:id', accessStackMiddleware, handler.remove);
+    router.delete('/:id', accessStackMiddleware, accessDeleteStackMiddlewareFunction, handler.remove);
 
     /**
      *@api {delete} /companies/ Request for deleting a few Companies
@@ -1211,7 +1216,7 @@ module.exports = function (models, event) {
          "n":2
      }
      */
-    router.delete('/', accessStackMiddleware, handler.bulkRemove);
+    router.delete('/', accessStackMiddleware, accessDeleteStackMiddlewareFunction, handler.bulkRemove);
 
     return router;
 };

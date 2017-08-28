@@ -7,10 +7,6 @@ define([
     'views/selectView/selectView',
     'views/journalEntry/ViewSource',
     'views/manualEntry/CreateView',
-    'models/InvoiceModel',
-    'models/jobsModel',
-    'models/EmployeesModel',
-    'models/PaymentModel',
     'collections/manualEntry/filterCollection',
     'constants',
     'helpers',
@@ -26,10 +22,6 @@ define([
              SelectView,
              View,
              CreateView,
-             InvoiceModel,
-             JobsModel,
-             EmployeesModel,
-             PaymentModel,
              contentCollection,
              CONSTANTS,
              helpers,
@@ -50,17 +42,11 @@ define([
         hasPagination    : true,
         responseObj      : {},
         CreateView       : CreateView,
-        JobsModel        : JobsModel,
-        InvoiceModel     : InvoiceModel,
-        PaymentModel     : PaymentModel,
-        EmployeesModel   : EmployeesModel,
 
         events: {
-            // 'click .newSelectList li:not(.miniStylePagination)': 'viewSourceDocument',
             'click .source': 'viewSourceDocument'
         },
 
-        
         initialize: function (options) {
             var dateRange;
 
@@ -130,12 +116,16 @@ define([
 
             $checkBoxes.each(function () {
 
-                self.$el.find('[data-time="' + timestamp + '"]').each(function () {
+                if (timestamp) {
+                    self.$el.find('[data-time="' + timestamp + '"]').each(function () {
+                        $(this).find('.checkbox').prop('checked', checked);
+                    });
+                } else {
                     $(this).find('.checkbox').prop('checked', checked);
-                });
+                }
             });
 
-            $checkBoxes = $thisEl.find('.checkbox:checked:not(#checkAll,notRemovable)');
+            $checkBoxes = $thisEl.find('.checkbox:checked:not(#checkAll, .notRemovable)');
 
             checkAllBool = (($checkBoxes.length + notRemovable.length) === this.collection.length);
 
@@ -153,13 +143,11 @@ define([
         },
 
         viewSourceDocument: function (e) {
-            var $target = $(e.target);
-            var id = $target.attr('id');
-            var closestSpan = $target.closest('.source').find('.current-selected');
+            var $target = $(e.target).closest('.source');
+            var closestSpan = $target.find('.current-selected');
             var dataId = closestSpan.attr('data-id');
             var dataName = closestSpan.attr('data-name');
             var dataEmployee = closestSpan.attr('data-employee');
-            var model;
             var data;
 
             App.startPreload();
@@ -168,94 +156,7 @@ define([
                 this.selectView.remove();
             }
 
-            switch (dataName) {
-                case 'wTrack':
-                    model = new this.JobsModel();
-                    data = {
-                        employee: dataEmployee,
-                        _id     : dataId
-                    };
-
-                    model.urlRoot = '/journalEntries/jobs';
-                    break;
-                case 'expensesInvoice':
-                case 'dividendInvoice':
-                case 'Invoice':
-                    model = new this.InvoiceModel();
-                    data = {
-                        _id: dataId
-                    };
-
-                    model.urlRoot = '/journalEntries/invoices';
-
-                    break;
-                case 'Proforma':
-                    model = new this.InvoiceModel();
-                    data = {
-                        _id     : dataId,
-                        proforma: true
-                    };
-
-                    model.urlRoot = '/journalEntries/invoices';
-
-                    break;
-                case 'jobs':
-                    model = new this.JobsModel();
-                    data = {
-                        _id: dataId
-                    };
-
-                    model.urlRoot = '/journalEntries/jobs';
-
-                    break;
-                case 'Payment':
-                    model = new this.PaymentModel();
-                    data = {
-                        _id: dataId
-                    };
-
-                    model.urlRoot = '/journalEntries/payments';
-
-                    break;
-                case 'Employees':
-                    model = new this.EmployeesModel();
-                    data = {
-                        _id: dataId
-                    };
-
-                    model.urlRoot = '/journalEntries/employees';
-
-                    break;
-
-                // skip default;
-            }
-
-            if (model) {
-                model.fetch({
-                    data   : data,
-                    success: function (model) {
-                        new View({model: model, type: dataName, employee: dataEmployee});
-
-                        App.stopPreload();
-                    },
-
-                    error: function () {
-                        App.stopPreload();
-
-                        App.render({
-                            type   : 'error',
-                            message: 'Please refresh browser'
-                        });
-                    }
-                });
-            } else {
-                App.stopPreload();
-
-                App.render({
-                    type   : 'notify',
-                    message: 'No Source Document is required'
-                });
-            }
+            return new View({type: dataName, employee: dataEmployee, dataId: dataId});
         },
 
         changeDateRange: function (dateArray) {

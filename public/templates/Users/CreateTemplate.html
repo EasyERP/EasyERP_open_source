@@ -1,4 +1,4 @@
-<div class="form-holder _newForm">
+    <div class="form-holder _newForm">
     <form method="post" action="" id="createUserForm">
         <div class="_formWrap">
             <div class="_avatarBlock">
@@ -16,7 +16,7 @@
                 </div>
             </div>
             <div class="_formBlock">
-                <div class="_animateInputBox">
+                <div class="_animateInputBox _withInfo">
                     <input type="text"
                            name="login"
                            class="_animate"
@@ -26,8 +26,9 @@
                            value=""
                            maxlength="24"/>
                     <label class="_animate">User Name</label>
+                    <span class="tips icon-info" data-id="login"></span>
                 </div>
-                <div class="_animateInputBox">
+                <div class="_animateInputBox _withInfo">
                     <input type="password"
                            name="confirmpassword"
                            class="_animate"
@@ -35,8 +36,9 @@
                            maxlength="32"
                            required/>
                     <label class="_animate">Password</label>
+                    <span class="tips icon-info" data-id="confirmpassword"></span>
                 </div>
-                <div class="_animateInputBox">
+                <div class="_animateInputBox _withInfo">
                     <input type="password"
                            name="password"
                            class="_animate"
@@ -45,8 +47,9 @@
                            value=""
                            maxlength="32"/>
                     <label class="_animate">Confirm Password</label>
+                    <span class="tips icon-info" data-id="password"></span>
                 </div>
-                <div class="_animateInputBox">
+                <div class="_animateInputBox _withInfo">
                     <input type="confirmpassword"
                            name="email"
                            class="_animate"
@@ -55,8 +58,9 @@
                            value=""
                            required/>
                     <label class="_animate">Email</label>
+                    <span class="tips icon-info" data-id="email"></span>
                 </div>
-                <div class="_animateSelectBox">
+                <div class="_animateSelectBox _withInfo">
                     <span class="_selectTitle">Profile</span>
                     <div class="_newSelectListWrap">
                         <a href="javascript:;"
@@ -64,6 +68,7 @@
                            id="profilesDd"
                            data-id="address_country">Select profile</a>
                     </div>
+                    <span class="tips icon-info" data-id="profilesDd"></span>
                 </div>
             </div>
         </div>

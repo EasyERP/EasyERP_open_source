@@ -1,19 +1,23 @@
 'use strict';
 
 module.exports = function (connection, Store) {
+    process.env.SESSION_MAX_AGE = 31 * 24 * 60 * 60 * 1000;
+
     return {
-        name             : 'crm',
-        key              : 'CRMkey',
-        secret           : '1q2w3e4r5tdhgkdfhgejflkejgkdlgh8j0jge4547hh',
+        name             : 'paas',
+        secret           : 'kdf78945jhnedih62hAsJJ%$hjjshfdKhwger423,cmnbdfnbgfhtyr908765ytu',
         resave           : false,
         rolling          : true,
         saveUninitialized: false,
         store            : new Store({
-            mongooseConnection: connection
+            mongooseConnection: connection,
+            reapInterval      : 500000
         }),
 
         cookie: {
-            maxAge: 31 * 24 * 60 * 60 * 1000 // One month
+            path  : '/',
+            //domain: 'live.easyerp.com',
+            maxAge: process.env.SESSION_MAX_AGE
         }
     };
 };

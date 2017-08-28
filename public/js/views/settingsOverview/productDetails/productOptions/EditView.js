@@ -165,7 +165,14 @@ define([
 
             e.stopPropagation();
 
-            $boxForValues.prepend('<input type="text" class="_animate optionValue">');
+            if (!$boxForValues.find('input').length || $boxForValues.find('input').last().val()) {
+                if ($boxForValues.find('input').length) {
+                    return $boxForValues.find('input').last().after('<input type="text" class="_animate optionValue">');
+                }
+
+                $boxForValues.prepend('<input type="text" class="_animate optionValue">');
+            }
+
         },
 
         setChangeValueToModel: function (e) {
@@ -271,6 +278,7 @@ define([
                             class: 'btn blue',
                             click: function () {
                                 self.saveChangeTypes();
+                                self.gaTrackingEditConfirm();
                             }
                         }, {
                             text : 'Cancel',

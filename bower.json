@@ -1,5 +1,5 @@
 {
-  "name": "easyerp-desktop",
+  "name": "roma",
   "version": "1.0.1",
   "homepage": "https://github.com/thinkmobiles/EasyErp-Desktop",
   "authors": [
@@ -14,7 +14,8 @@
     "node_modules",
     "bower_components",
     "test",
-    "tests"
+    "tests",
+    "public/js/libs/"
   ],
   "dependencies": {
     "spin.js": "spinjs#^2.3.2",
@@ -26,6 +27,10 @@
     "jquery-backstretch": "backstretch#2.0.4",
     "malihu-custom-scrollbar-plugin": "3.1.5",
     "wickedpicker": "^0.4.1",
-    "bxslider-4": "^4.2.5"
-  }
+    "bxslider-4": "^4.2.5",
+    "dragtable": "^2.0.15",
+    "js-cookie": "^2.0.5"
+  },
+  "description": "",
+  "main": ""
 }

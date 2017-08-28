@@ -5,7 +5,7 @@
             <li><a class="active" href="javascript:;">Product Info</a></li>
             <li><a href="javascript:;">Stock/Inventory</a></li>
             <li><a href="javascript:;">Bundle</a></li>
-            <li><a href="javascript:;">Prices</a></li>
+            <li><a href="javascript:;">Price Lists</a></li>
         </ul>
         <div class="dialog-tabs-items mainTabs">
             <div class="dialog-tabs-item mainTabs active">
@@ -27,7 +27,7 @@
                         </div>
                     </div>
                     <div class="_formBlock _equal">
-                        <div class="_animateInputBox">
+                        <div class="_animateInputBox _withInfo">
                             <input type="text"
                                    class="_animate"
                                    id="product"
@@ -35,9 +35,10 @@
                                    required
                                    maxlength="32"/>
                             <label class="_animate">Product Name</label>
+                            <span class="tips icon-info" data-id="product"></span>
                         </div>
-                        <div class="_formRow">
-                            <label class="_animatedCheckbox">
+                        <div class="_formRow _tipsWrap">
+                            <label class="_animatedCheckbox _withInfo">
                                 <input id="sold"
                                        type="checkbox" <% if (contentType === 'salesProduct') {%>
                                 checked
@@ -45,16 +46,18 @@
                                 <span></span>
                             </label>
                             <label for="sold">Can be Sold</label>
+                            <span class="tips icon-info" data-id="sold"></span>
                         </div>
-                        <div class="_formRow">
+                        <div class="_formRow _tipsWrap">
                             <label class="_animatedCheckbox">
                                 <input id="expensed"
                                        type="checkbox">
                                 <span></span>
                             </label>
                             <label for="expensed">Can be Expensed</label>
+                            <span class="tips icon-info" data-id="expensed"></span>
                         </div>
-                        <div class="_formRow">
+                        <div class="_formRow _tipsWrap">
                             <label class="_animatedCheckbox">
                                 <input id="purchased"
                                        type="checkbox"<% if (contentType === 'Product') {%>
@@ -63,55 +66,62 @@
                                 <span></span>
                             </label>
                             <label for="purchased">Can be Purchased</label>
+                            <span class="tips icon-info" data-id="purchased"></span>
                         </div>
-                        <div class="_animateSelectBox">
+                        <div class="_animateSelectBox _withInfo">
                             <span class="_selectTitle">Product type</span>
                             <div class="_newSelectListWrap">
                                 <a id="productType"
                                    class="current-selected">Select product type</a>
                             </div>
+                            <span class="tips icon-info" data-id="productType"></span>
                         </div>
                         <span class="_variantsLabel">Product Categories:</span>
-                        <div id="variantsCategoriesBlock" class="_variantsBlock">
+                        <div id="variantsCategoriesBlock" class="_variantsBlock _withInfo">
                             <div class="_checkCategoriesWrap">
                                 <ul id="checkedProductCategories" class="_checkCategories"></ul>
                                 <span id="showBtn" class="_arrow"></span>
                             </div>
                             <ul id="productCategories" class="_categoriesList"></ul>
+                            <span class="tips icon-info" data-id="variantsCategoriesBlock"></span>
                         </div>
                     </div>
                     <div class="_formBlock _equal">
-                        <div class="_animateInputBox">
+                        <div class="_animateInputBox _withInfo">
                             <input type="text"
                                    class="_animate"
                                    id="SKU"
                                    required
                                    maxlength="32"/>
                             <label class="_animate">Model / SKU</label>
+                            <span class="tips icon-info" data-id="SKU"></span>
                         </div>
-                        <div class="_animateInputBox">
+                        <div class="_animateInputBox _withInfo">
                             <input type="text"
                                    class="_animate"
                                    id="UPC"
                                    required
                                    maxlength="32"/>
                             <label class="_animate">UPC</label>
+                            <span class="tips icon-info" data-id="UPC"></span>
                         </div>
-                        <div class="_animateInputBox">
+                        <div class="_animateInputBox _withInfo">
                             <input type="text"
                                    class="_animate"
                                    id="ISBN"
                                    required
                                    maxlength="32"/>
                             <label class="_animate">ISBN</label>
+                            <span class="tips icon-info" data-id="ISBN"></span>
                         </div>
-                        <div class="_animateInputBox">
+                        <div class="_animateInputBox _withInfo">
                             <input type="text"
                                    class="_animate"
                                    id="EAN"
                                    required
                                    maxlength="32"/>
                             <label class="_animate">EAN</label>
+                            <span class="tips icon-info" data-id="EAN"></span>
                         </div>
                         <div class="_animateInputBox">
                             <input type="text"
@@ -121,12 +131,16 @@
                                    maxlength="32"/>
                             <label class="_animate">Weight in kilograms</label>
                         </div>
-                        <div class="_animateTextareaBox">
+                        <div class="_animateTextareaBox counterWrap">
                             <textarea class="_animate"
                                       id="description"
                                       maxlength="500"
                                       required></textarea>
                             <label class="_animate" for="description">Description</label>
+                            <div class="counter-wrap">
+                                <span class="counter-label">Characters left:</span>
+                                <span class="counter-value" id="counterValue">500</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -134,13 +148,14 @@
             <div class="dialog-tabs-item mainTabs">
                 <div class="_formWrap _enlargedItemMargin">
                     <div class="_formBlock _equal">
-                        <div class="_animateInputBox">
+                        <div class="_animateInputBox _withInfo">
                             <input type="text"
                                    class="_animate"
                                    id="mainMinStockLevel"
                                    required
                                    maxlength="32"/>
                             <label class="_animate">Minimum stock level</label>
+                            <span class="tips icon-info" data-id="mainMinStockLevel"></span>
                         </div>
                     </div>
                 </div>

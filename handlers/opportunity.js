@@ -26,6 +26,7 @@ var Module = function (models, event) {
 
     var HistoryService = require('../services/history.js')(models);
     var FollowersService = require('../services/followers')(models);
+    var EmployeeService = require('../services/employee')(models);
     var DealTasksService = require('../services/dealTask')(models);
 
     var FilterMapper = require('../helpers/filterMapper');
@@ -42,6 +43,42 @@ var Module = function (models, event) {
     function validBody(body) {
 
         return !!body.name;
+    }
+
+    function checkIfNameIsUnique(req, name, cb) {
+        models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema).find({name: name}, function (error, doc) {
+            if (error) {
+                return cb(error);
+            }
+
+            if (doc.length > 0) {
+                if (doc[0].name === name) {
+                    cb();
+                }
+            } else if (doc.length === 0) {
+                cb(null, true);
+            }
+        });
+    }
+
+    function checkIfEmailIsUnique(req, email, cb) {
+        if (email === '') {
+            return cb(null, true);
+        } else {
+            models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema).find({email: email}, function (error, doc) {
+                if (error) {
+                    return cb(error);
+                }
+
+                if (doc.length > 0) {
+                    if (doc[0].email === email) {
+                        cb();
+                    }
+                } else if (doc.length === 0) {
+                    cb(null, true);
+                }
+            });
+        }
     }
 
     function getTimeLine(options, cb) {
@@ -110,27 +147,43 @@ var Module = function (models, event) {
         }
 
         function getFollowers(parallelCb) {
-            FollowersService.find({
-                contentId: id
-            }, {
-                dbName: dbName
-            })
-                .populate('followerId', 'name fullName')
-                .exec(function (err, res) {
-                    if (err) {
-                        return parallelCb(err);
+            FollowersService.aggregateFind(id, {dbName: dbName}, function (err, res) {
+                if (err) {
+                    return parallelCb(err);
+                }
+                res = res.map(function (elem) {
+                    if (elem.follower){
+                      return {
+                        name      : elem.followerName,
+                        followerId: elem.follower._id,
+                        _id       : elem._id
+                      };
                     }
-
-                    res = res.map(function (elem) {
-                        return {
-                            name      : elem.followerId.fullName,
-                            followerId: elem.followerId._id,
-                            _id       : elem._id
-                        };
-                    });
-
-                    parallelCb(null, res);
                 });
+                parallelCb(null, res);
+            });
+
+            /* FollowersService.find({
+             contentId: id
+             }, {
+             dbName: dbName
+             })
+             .populate('followerId', 'login')
+             .exec(function (err, res) {
+             if (err) {
+             return parallelCb(err);
+             }
+
+             res = res.map(function (elem) {
+             return {
+             name      : elem.followerId.login,
+             followerId: elem.followerId._id,
+             _id       : elem._id
+             };
+             });
+
+             parallelCb(null, res);
+             });*/
         }
 
         parallelTasks = [getTask, getHistoryNotes, getFollowers];
@@ -138,6 +191,11 @@ var Module = function (models, event) {
         async.parallel(parallelTasks, function (err, results) {
 
             model.notes = model.notes.concat(results[0], results[1]);
+            model.notes = _.map(model.notes, function (el) {
+                el.date = new Date(el.date);
+
+                return el;
+            });
             model.notes = _.sortBy(model.notes, 'date');
 
             model.followers = results[2] || [];
@@ -267,50 +325,41 @@ var Module = function (models, event) {
             },
 
             leadsBySales: function (parCb) {
-                Opportunities.aggregate([
-                    {
-                        $match: matchObj
-                    },
-                    {
-                        $lookup: {
-                            from        : 'Employees',
-                            localField  : 'salesPerson',
-                            foreignField: '_id',
-                            as          : 'salesPerson'
-                        }
-                    },
-                    {
-                        $unwind: {
-                            path                      : '$salesPerson',
-                            preserveNullAndEmptyArrays: true
-                        }
-                    },
-                    {
-                        $project: {
-                            salesPerson: {$concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']}
-                        }
-                    },
-                    {
-                        $group: {
-                            _id  : '$salesPerson',
-                            count: {$sum: 1}
-                        }
-                    },
-                    {
-                        $project: {
-                            _id  : {$ifNull: ['$_id', 'Empty']},
-                            count: 1
-                        }
-                    },
-                    {
-                        $project: {
-                            salesPerson: '$_id',
-                            count      : 1,
-                            _id        : 0
-                        }
+                Opportunities.aggregate([{
+                    $match: matchObj
+                }, {
+                    $lookup: {
+                        from        : 'Employees',
+                        localField  : 'salesPerson',
+                        foreignField: '_id',
+                        as          : 'salesPerson'
                     }
-
-                ], parCb);
+                }, {
+                    $unwind: {
+                        path                      : '$salesPerson',
+                        preserveNullAndEmptyArrays: true
+                    }
+                }, {
+                    $project: {
+                        salesPerson: {$concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']}
+                    }
+                }, {
+                    $group: {
+                        _id  : '$salesPerson',
+                        count: {$sum: 1}
+                    }
+                }, {
+                    $project: {
+                        _id  : {$ifNull: ['$_id', 'Empty']},
+                        count: 1
+                    }
+                }, {
+                    $project: {
+                        salesPerson: '$_id',
+                        count      : 1,
+                        _id        : 0
+                    }
+                }], parCb);
             },
 
             qualifiedBy: function (parCb) {
@@ -417,6 +466,9 @@ var Module = function (models, event) {
         var Opportunities = models.get(req.session.lastDb, opportunitiesCT, opportunitiesSchema);
         var Tags = models.get(req.session.lastDb, 'tags', tagsSchema);
         var data = req.query;
+        var quickSearch = data.quickSearch;
+        var matchObject = {};
+        var regExp;
         var contentType = data.contentType;
         var paginationObject = pageHelper(data);
         var limit = paginationObject.limit;
@@ -507,6 +559,11 @@ var Module = function (models, event) {
 
                 case (opportunitiesCT):
 
+                    if (quickSearch) {
+                        regExp = new RegExp(quickSearch, 'ig');
+                        matchObject.customer = {$regex: regExp};
+                    }
+
                     aggregateQuery.push({
                         $lookup: {
                             from        : 'Customers',
@@ -527,12 +584,14 @@ var Module = function (models, event) {
                             salesPerson    : {$arrayElemAt: ['$salesPerson', 0]},
                             'editedBy.user': {$arrayElemAt: ['$editedBy.user', 0]},
                             'editedBy.date': 1,
-                            isOpportunitie : 1
+                            isOpportunitie : 1,
                         }
                     }, {
                         $match: {
                             $and: optionsObject
                         }
+                    }, {
+                        $match: matchObject
                     }, {
                         $group: {
                             _id  : null,
@@ -565,6 +624,11 @@ var Module = function (models, event) {
 
                     break;
                 case ('Leads'):
+
+                    if (quickSearch) {
+                        regExp = new RegExp(quickSearch, 'ig');
+                        matchObject.contactName = {$regex: regExp};
+                    }
 
                     aggregateQuery.push({
                         $lookup: {
@@ -605,6 +669,8 @@ var Module = function (models, event) {
                         $match: {
                             $and: optionsObject
                         }
+                    }, {
+                        $match: matchObject
                     }, {
                         $group: {
                             _id  : null,
@@ -680,7 +746,6 @@ var Module = function (models, event) {
             response.total = count;
             response.data = result;
 
-
             Tags.populate(response.data, {
                 path  : 'tags',
                 select: 'color name'
@@ -698,11 +763,16 @@ var Module = function (models, event) {
         var waterfallTasks;
         var contentSearcher;
         var accessRollSearcher;
+        var pipelines;
 
         var or;
         var filterObj = {};
         var optionsObject = {};
         var data = req.query;
+        var quickSearch = data.quickSearch;
+        var regExp;
+        var matchObject = {};
+
         var filter = data.filter || {};
         var query;
 
@@ -711,6 +781,11 @@ var Module = function (models, event) {
         or = filterObj.$or;
 
         optionsObject.$and.push({isOpportunitie: true});
+
+        if (quickSearch) {
+            regExp = new RegExp(quickSearch, 'ig');
+            matchObject.customerName = {$regex: regExp};
+        }
 
         if (data && filter) {
             optionsObject.$and.push(filterMapper.mapFilter(filter, {contentType: opportunitiesCT}));
@@ -728,31 +803,133 @@ var Module = function (models, event) {
             if (optionsObject.$and.length) {
                 queryObject.$and.push(optionsObject);
             }
-            queryObject.$and.push({workflow: data.workflowId});
+            queryObject.$and.push({workflow: objectId(data.workflowId)});
+
+            pipelines = [
+                {
+                    $match: queryObject
+                },
+                {
+                    $lookup: {
+                        from        : 'Customers',
+                        localField  : 'customer',
+                        foreignField: '_id',
+                        as          : 'customer'
+                    }
+                },
+                {
+                    $lookup: {
+                        from        : 'Employees',
+                        localField  : 'salesPerson',
+                        foreignField: '_id',
+                        as          : 'salesPerson'
+                    }
+                },
+                {
+                    $unwind: {
+                        path                      : '$tags',
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                {
+                    $lookup: {
+                        from        : 'tags',
+                        localField  : 'tags',
+                        foreignField: '_id',
+                        as          : 'tags'
+                    }
+                },
+                {
+                    $project: {
+                        name           : 1,
+                        sequence       : 1,
+                        expectedRevenue: 1,
+                        expectedClosing: 1,
+                        customer       : {$arrayElemAt: ['$customer', 0]},
+                        salesPerson    : {$arrayElemAt: ['$salesPerson', 0]},
+                        nextAction     : 1,
+                        workflow       : 1,
+                        projectType    : 1,
+                        tags           : {$arrayElemAt: ['$tags', 0]},
+                        attachments    : 1,
+                        notes          : 1
+                    }
+                },
+                {
+                    $project: {
+                        name           : 1,
+                        sequence       : 1,
+                        expectedRevenue: 1,
+                        expectedClosing: 1,
+                        customer       : 1,
+                        customerName   : {$concat: ['$customer.name.first', ' ', '$customer.name.last']},
+                        salesPerson    : 1,
+                        nextAction     : 1,
+                        workflow       : 1,
+                        projectType    : 1,
+                        'tags.color'   : 1,
+                        'tags.name'    : 1,
+                        attachments    : 1,
+                        notes          : 1
+                    }
+                },
+                {
+                    $group: {
+                        _id            : '$_id',
+                        tags           : {$push: '$tags'},
+                        name           : {$first: '$name'},
+                        sequence       : {$first: '$sequence'},
+                        expectedRevenue: {$first: '$expectedRevenue'},
+                        expectedClosing: {$first: '$expectedClosing'},
+                        customer       : {$first: '$customer'},
+                        customerName   : {$first: '$customerName'},
+                        salesPerson    : {$first: '$salesPerson'},
+                        nextAction     : {$first: '$nextAction'},
+                        workflow       : {$first: '$workflow'},
+                        projectType    : {$first: '$projectType'},
+                        attachments    : {$first: '$attachments'},
+                        notes          : {$first: '$notes'}
+                    }
+                },
+                {
+                    $match: matchObject
+                },
+                {
+                    $sort: {
+                        sequence: -1
+                    }
+                },
+                {
+                    $limit: limit
+                }
+            ];
 
             query = Opportunities
-                .find(queryObject, {
-                    name           : 1,
-                    sequence       : 1,
-                    expectedRevenue: 1,
-                    expectedClosing: 1,
-                    customer       : 1,
-                    salesPerson    : 1,
-                    nextAction     : 1,
-                    workflow       : 1,
-                    projectType    : 1,
-                    tags           : 1,
-                    attachments    : 1,
-                    notes          : 1
-                })
-                .populate('customer', 'name')
-                .populate('salesPerson', 'name')
-                .populate('tags', 'color name')
-                .populate('workflow', '_id')
-                .sort({sequence: -1})
-                .limit(limit);
+                .aggregate(pipelines)
+                .exec(waterfallCallback);
 
-            query.exec(waterfallCallback);
+            // query = Opportunities
+            //     .find(queryObject, {
+            //         name           : 1,
+            //         sequence       : 1,
+            //         expectedRevenue: 1,
+            //         expectedClosing: 1,
+            //         customer       : 1,
+            //         salesPerson    : 1,
+            //         nextAction     : 1,
+            //         workflow       : 1,
+            //         projectType    : 1,
+            //         tags           : 1,
+            //         attachments    : 1,
+            //         notes          : 1
+            //     })
+            //     .populate('customer', 'name')
+            //     .populate('salesPerson', 'name')
+            //     .populate('tags', 'color name')
+            //     .sort({sequence: -1})
+            //     .limit(limit);
+
+            // query.exec(waterfallCallback);
         };
 
         waterfallTasks = [accessRollSearcher, contentSearcher];
@@ -1328,12 +1505,15 @@ var Module = function (models, event) {
         var userId = req.session.uId;
         var Opportunity = models.get(dbName, opportunitiesCT, opportunitiesSchema);
         var data = req.body;
+        var name = data.name;
+        var email = data.email;
         var _id = req.params.id;
         var fileName = data.fileName;
         var remove = req.headers.remove;
         var edit = req.headers.edit;
         var newDirname;
         var noteObject;
+        var saveToDb;
         var obj;
         var i;
 
@@ -1372,178 +1552,209 @@ var Module = function (models, event) {
             }
         }
 
-        if (data.workflow && data.sequenceStart && data.workflowStart) {
-            if (data.sequence === -1) {
-                event.emit('updateSequence', Opportunity, 'sequence', data.sequenceStart, data.sequence, data.workflowStart, data.workflowStart, false, true, function (sequence) {
-                    event.emit('updateSequence', Opportunity, 'sequence', data.sequenceStart, data.sequence, data.workflow, data.workflow, true, false, function (sequence) {
-                        data.sequence = sequence;
-                        if (data.workflow === data.workflowStart) {
-                            data.sequence -= 1;
-                        }
-
-                        Opportunity.findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
-                            if (err) {
-                                return next(err);
-                            }
-
-                            res.status(200).send({success: 'Opportunities updated', sequence: result.sequence});
-                        });
-
-                    });
-                });
-            } else {
-                event.emit('updateSequence', Opportunity, 'sequence', data.sequenceStart, data.sequence, data.workflowStart, data.workflow, false, false, function (sequence) {
-                    delete data.sequenceStart;
-                    delete data.workflowStart;
-                    data.info = {};
-                    data.sequence = sequence;
-
-                    Opportunity.findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
-
-                        var historyOptions;
-
-                        if (err) {
-                            return next(err);
-                        }
-
-                        historyOptions = {
-                            contentType: result.isOpportunitie ? 'opportunitie' : 'lead',
-                            data       : data,
-                            dbName     : dbName,
-                            contentId  : result._id,
-                            contentName: result.name,
-                            userId     : userId
-                        };
-
-                        if (noteObject && !edit) {
-                            historyOptions.note = noteObject;
-                            historyWriter.sendToFollowers(historyOptions);
-                        } else if (noteObject && edit) {
-                            historyOptions.note = noteObject;
-                            historyOptions.edit = edit;
-                            historyWriter.sendToFollowers(historyOptions);
-                        }
-
-                        HistoryService.addEntry(historyOptions, function (err, historyEntry) {
-                            res.status(200).send({success: 'Opportunities updated'});
-
-                            historyOptions._id = historyEntry && historyEntry[0] ? historyEntry[0]._id : null;
-
-                            if (!historyOptions._id) {
-                                return;
-                            }
-
-                            historyWriter.sendToFollowers(historyOptions);
-                        });
-
-                    });
-                });
+        checkIfNameIsUnique(req, name, function (err, resp) {
+            if (err) {
+                return next(err);
             }
-        } else {
-            Opportunity.findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
-                var os = require('os');
-                var osType = (os.type().split('_')[0]);
-                var historyOptions;
-                var _getTimeLine;
-                var _addEntry;
-                var path;
-                var dir;
 
-                if (err) {
-                    return next(err);
-                }
-
-                if (fileName) {
-                    switch (osType) {
-                        case 'Windows':
-                            newDirname = __dirname.replace('\\Modules', '');
-                            while (newDirname.indexOf('\\') !== -1) {
-                                newDirname = newDirname.replace('\\', '\/');
-                            }
-                            path = newDirname + '\/uploads\/' + _id + '\/' + fileName;
-                            dir = newDirname + '\/uploads\/' + _id;
-                            break;
-                        case 'Linux':
-                            newDirname = __dirname.replace('/Modules', '');
-                            while (newDirname.indexOf('\\') !== -1) {
-                                newDirname = newDirname.replace('\\', '\/');
-                            }
-                            path = newDirname + '\/uploads\/' + _id + '\/' + fileName;
-                            dir = newDirname + '\/uploads\/' + _id;
-                            break;
-                        //skip default;
-                    }
-
-                    fs.unlink(path, function (err) {
-                        console.log(err);
-                        fs.readdir(dir, function (err, files) {
-                            if (files && files.length === 0) {
-                                fs.rmdir(dir, function () {
-                                });
-                            }
-                        });
-                    });
-
-                }
-
-                historyOptions = {
-                    contentType: result.isOpportunitie ? 'opportunitie' : 'lead',
-                    data       : data,
-                    userId     : userId,
-                    contentId  : result._id,
-                    contentName: result.name,
-                    dbName     : dbName
-                };
-
-                _addEntry = async.apply(HistoryService.addEntry, historyOptions);
-                _getTimeLine = function (historyEntry, waterfallCb) {
-                    getTimeLine({dbName: dbName, model: result.toJSON()}, waterfallCb)
-                };
-
-                if (noteObject && !edit) {
-                    historyOptions.note = noteObject;
-                    historyWriter.sendToFollowers(historyOptions);
-                } else if (noteObject && edit) {
-                    historyOptions.note = noteObject;
-                    historyOptions.edit = edit;
-                    historyWriter.sendToFollowers(historyOptions);
-                }
-
-                async.waterfall([_addEntry, _getTimeLine], function (err, model) {
+            if (resp) {
+                checkIfEmailIsUnique(req, email, function (err, resp) {
                     if (err) {
                         return next(err);
                     }
 
-                    model = model || {};
+                    if (resp) {
+                        saveToDb();
+                    } else {
+                        err = new Error('The same email already exists');
+                        err.status = 400;
 
-                    res.status(200).send({
-                        success : 'Opportunities updated',
-                        notes   : model.notes,
-                        sequence: model.sequence
+                        return next(err);
+                    }
+                });
+            } else {
+                err = new Error('The same name already exists');
+                err.status = 400;
+
+                return next(err);
+            }
+        });
+
+        saveToDb = function () {
+            if (data.workflow && data.sequenceStart && data.workflowStart) {
+                if (data.sequence === -1) {
+                    event.emit('updateSequence', Opportunity, 'sequence', data.sequenceStart, data.sequence, data.workflowStart, data.workflowStart, false, true, function (sequence) {
+                        event.emit('updateSequence', Opportunity, 'sequence', data.sequenceStart, data.sequence, data.workflow, data.workflow, true, false, function (sequence) {
+                            data.sequence = sequence;
+                            if (data.workflow === data.workflowStart) {
+                                data.sequence -= 1;
+                            }
+
+                            Opportunity.findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
+                                if (err) {
+                                    return next(err);
+                                }
+
+                                res.status(200).send({success: 'Opportunities updated', sequence: result.sequence});
+                            });
+
+                        });
                     });
+                } else {
+                    event.emit('updateSequence', Opportunity, 'sequence', data.sequenceStart, data.sequence, data.workflowStart, data.workflow, false, false, function (sequence) {
+                        delete data.sequenceStart;
+                        delete data.workflowStart;
+                        data.info = {};
+                        data.sequence = sequence;
+
+                        Opportunity.findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
+
+                            var historyOptions;
+
+                            if (err) {
+                                return next(err);
+                            }
+
+                            historyOptions = {
+                                contentType: result.isOpportunitie ? 'opportunitie' : 'lead',
+                                data       : data,
+                                dbName     : dbName,
+                                contentId  : result._id,
+                                contentName: result.name,
+                                userId     : userId
+                            };
+
+                            if (noteObject && !edit) {
+                                historyOptions.note = noteObject;
+                                historyWriter.sendToFollowers(historyOptions);
+                            } else if (noteObject && edit) {
+                                historyOptions.note = noteObject;
+                                historyOptions.edit = edit;
+                                historyWriter.sendToFollowers(historyOptions);
+                            }
+
+                            HistoryService.addEntry(historyOptions, function (err, historyEntry) {
+                                res.status(200).send({success: 'Opportunities updated'});
+
+                                historyOptions._id = historyEntry && historyEntry[0] ? historyEntry[0]._id : null;
+
+                                if (!historyOptions._id) {
+                                    return;
+                                }
+
+                                historyWriter.sendToFollowers(historyOptions);
+                            });
+
+                        });
+                    });
+                }
+            } else {
+                Opportunity.findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
+                    var os = require('os');
+                    var osType = (os.type().split('_')[0]);
+                    var historyOptions;
+                    var _getTimeLine;
+                    var _addEntry;
+                    var path;
+                    var dir;
+
+                    if (err) {
+                        return next(err);
+                    }
+
+                    if (fileName) {
+                        switch (osType) {
+                            case 'Windows':
+                                newDirname = __dirname.replace('\\Modules', '');
+                                while (newDirname.indexOf('\\') !== -1) {
+                                    newDirname = newDirname.replace('\\', '\/');
+                                }
+                                path = newDirname + '\/uploads\/' + _id + '\/' + fileName;
+                                dir = newDirname + '\/uploads\/' + _id;
+                                break;
+                            case 'Linux':
+                                newDirname = __dirname.replace('/Modules', '');
+                                while (newDirname.indexOf('\\') !== -1) {
+                                    newDirname = newDirname.replace('\\', '\/');
+                                }
+                                path = newDirname + '\/uploads\/' + _id + '\/' + fileName;
+                                dir = newDirname + '\/uploads\/' + _id;
+                                break;
+                            //skip default;
+                        }
+
+                        fs.unlink(path, function (err) {
+                            console.log(err);
+                            fs.readdir(dir, function (err, files) {
+                                if (files && files.length === 0) {
+                                    fs.rmdir(dir, function () {
+                                    });
+                                }
+                            });
+                        });
+
+                    }
+
+                    historyOptions = {
+                        contentType: result.isOpportunitie ? 'opportunitie' : 'lead',
+                        data       : data,
+                        userId     : userId,
+                        contentId  : result._id,
+                        contentName: result.name,
+                        dbName     : dbName
+                    };
+
+                    _addEntry = async.apply(HistoryService.addEntry, historyOptions);
+                    _getTimeLine = function (historyEntry, waterfallCb) {
+                        getTimeLine({dbName: dbName, model: result.toJSON()}, waterfallCb)
+                    };
+
+                    if (noteObject && !edit) {
+                        historyOptions.note = noteObject;
+                        historyWriter.sendToFollowers(historyOptions);
+                    } else if (noteObject && edit) {
+                        historyOptions.note = noteObject;
+                        historyOptions.edit = edit;
+                        historyWriter.sendToFollowers(historyOptions);
+                    }
+
+                    async.waterfall([_addEntry, _getTimeLine], function (err, model) {
+                        if (err) {
+                            return next(err);
+                        }
+
+                        model = model || {};
+
+                        res.status(200).send({
+                            success : 'Opportunities updated',
+                            notes   : model.notes,
+                            sequence: model.sequence
+                        });
+                    });
+
+                    /* HistoryService.addEntry(historyOptions, function (err, historyEntry) {
+                     res.status(200).send({success: 'Opportunities updated'});
+
+                     historyOptions._id = historyEntry && historyEntry[0] ? historyEntry[0]._id : null;
+
+                     if (!historyOptions._id) {
+                     return;
+                     }
+
+                     historyWriter.sendToFollowers(historyOptions);
+                     }); */
                 });
 
-                /* HistoryService.addEntry(historyOptions, function (err, historyEntry) {
-                 res.status(200).send({success: 'Opportunities updated'});
-
-                 historyOptions._id = historyEntry && historyEntry[0] ? historyEntry[0]._id : null;
-
-                 if (!historyOptions._id) {
-                 return;
-                 }
-
-                 historyWriter.sendToFollowers(historyOptions);
-                 }); */
-            });
-
-        }
-
+            }
+        };
     };
 
     this.create = function (req, res, next) {
         var data = req.body;
         var dbName = req.session.lastDb;
         var userId = req.session.uId;
+        var name = req.body.name;
+        var email = req.body.email;
         var err;
 
         var savetoDb = function (data) {
@@ -1562,9 +1773,11 @@ var Module = function (models, event) {
                     _opportunitie.expectedRevenue.currency = data.expectedRevenue.currency;
                 }
             }
+
             if (data.creationDate) {
                 _opportunitie.creationDate = data.creationDate;
             }
+
             if (data.notes && data.notes.length) {
                 noteObj = data.notes[0];
 
@@ -1660,8 +1873,33 @@ var Module = function (models, event) {
 
             return next(err);
         }
-        savetoDb(data);
+        checkIfNameIsUnique(req, name, function (err, resp) {
+            if (err) {
+                return next(err);
+            }
 
+            if (resp) {
+                checkIfEmailIsUnique(req, email, function (err, resp) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    if (resp) {
+                        savetoDb(data);
+                    } else {
+                        err = new Error('The same email already exists');
+                        err.status = 400;
+
+                        return next(err);
+                    }
+                });
+            } else {
+                err = new Error('The same name already exists');
+                err.status = 400;
+
+                return next(err);
+            }
+        });
     };
 
     this.getLeadsForChart = function (req, res, next) {

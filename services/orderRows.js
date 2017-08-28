@@ -125,13 +125,29 @@ module.exports = function (models) {
 
             Model = models.get(dbName, 'orderRows', orderRowsSchema);
 
-            Model.collection.insertMany(options.arrayRows, function (err) {
+            async.each(options.arrayRows, function (el, cb) {
+                if (el._id) {
+                    delete el._id;
+
+                    Model.findByIdAndUpdate(el._id, {$set: el}, {new: true}, cb);
+                } else {
+                    Model.collection.insert(el, cb);
+                }
+            }, function (err) {
                 if (err) {
                     return callback(err);
                 }
-
                 callback();
+
             });
+
+            /*Model.collection.insertMany(options.arrayRows, function (err) {
+             if (err) {
+             return callback(err);
+             }
+
+             callback();
+             });*/
         };
 
         this.remove = function (options, callback) {

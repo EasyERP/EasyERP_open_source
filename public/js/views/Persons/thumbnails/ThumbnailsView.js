@@ -8,10 +8,11 @@
     'views/Persons/CreateView',
     'text!templates/Alpabet/AphabeticTemplate.html',
     'text!templates/Persons/thumbnails/ThumbnailsItemTemplate.html',
+    'views/guideTours/guideNotificationView',
     'dataService',
     'views/Filter/filterView',
     'constants'
-], function (Backbone, $, _, common, BaseView, EditView, CreateView, AphabeticTemplate, ThumbnailsItemTemplate, dataService, FilterView, CONSTANTS) {
+], function (Backbone, $, _, common, BaseView, EditView, CreateView, AphabeticTemplate, ThumbnailsItemTemplate, GuideNotify, dataService, FilterView, CONSTANTS) {
     'use strict';
 
     var PersonsThumbnailView = BaseView.extend({

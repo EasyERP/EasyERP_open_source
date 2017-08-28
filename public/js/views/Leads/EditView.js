@@ -189,6 +189,7 @@ define([
             var mid = 39;
             var self = this;
             var answer;
+
             event.preventDefault();
             answer = confirm('Really DELETE items ?!');
             if (answer) {
@@ -210,6 +211,7 @@ define([
 
         chooseOption: function (e) {
             var holder = $(e.target).parents('dd').find('.current-selected');
+
             holder.text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
             if (holder.attr('id') === 'customerDd') {
                 this.selectCustomer($(e.target).attr('id'));

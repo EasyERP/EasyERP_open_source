@@ -10,12 +10,14 @@ define([
     'helpers/keyCodeHelper',
     'populate',
     'helpers',
-    'dataService'
-], function (Backbone, $, _, ParentView, CreateJournalView, SelectView, CreateTemplate, JournalModel, keyCodes, populate, helpers, dataService) {
+    'dataService',
+    'helpers/ga'
+], function (Backbone, $, _, ParentView, CreateJournalView, SelectView, CreateTemplate, JournalModel, keyCodes, populate, helpers, dataService, ga) {
     'use strict';
 
     var CreateView = ParentView.extend({
         el         : '#content-holder',
+        contentType: 'manualEntry',
         template   : _.template(CreateTemplate),
         responseObj: {},
 
@@ -435,11 +437,15 @@ define([
                         text : 'Create',
                         click: function () {
                             self.saveItem();
+                            self.gaTrackingConfirmEvents();
                         }
                     }, {
                         text : 'Cancel',
                         class: 'btn',
-                        click: self.hideDialog
+                        click: function () {
+                            self.hideDialog();
+                            ga && ga.trackingEditCancel();
+                        }
                     }]
 
             });
@@ -458,7 +464,7 @@ define([
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
-                maxDate    : new Date(),
+                maxDate    : new Date()
             }).datepicker('setDate', new Date());
 
             this.delegateEvents(this.events);

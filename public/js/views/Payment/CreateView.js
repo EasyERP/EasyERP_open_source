@@ -15,23 +15,26 @@ define([
     'dataService',
     'constants',
     'helpers/keyValidator',
-    'helpers'], function (Backbone,
-                          $,
-                          _,
-                          Parent,
-                          CreateTemplate,
-                          PersonCollection,
-                          DepartmentCollection,
-                          invoiceCollection,
-                          paymentCollection,
-                          PaymentView,
-                          PaymentModel,
-                          common,
-                          populate,
-                          dataService,
-                          CONSTANTS,
-                          keyValidator,
-                          helpers) {
+    'helpers',
+    'views/guideTours/guideNotificationView'
+], function (Backbone,
+             $,
+             _,
+             Parent,
+             CreateTemplate,
+             PersonCollection,
+             DepartmentCollection,
+             invoiceCollection,
+             paymentCollection,
+             PaymentView,
+             PaymentModel,
+             common,
+             populate,
+             dataService,
+             CONSTANTS,
+             keyValidator,
+             helpers,
+             GuideNotify) {
     var CreateView = Parent.extend({
         el         : '#paymentHolder',
         contentType: 'Payment',
@@ -63,6 +66,13 @@ define([
             this.changePaidAmount = _.debounce(this.changePaidAmount, 500);
 
             this.render();
+            if (App.guide) {
+                if (App.notifyView) {
+                    App.notifyView.undelegateEvents();
+                    App.notifyView.stopListening();
+                }
+                App.notifyView = new GuideNotify({e: null, data: App.guide});
+            }
         },
 
         events: {
@@ -429,7 +439,7 @@ define([
             if (!model.paymentMethod && model.project && model.project.paymentMethod) {
                 populate.get('#paymentMethod', '/paymentMethod', {}, 'name', this, true, true, model.project.paymentMethod, null);
             } else {
-                populate.get('#paymentMethod', '/paymentMethod', {}, 'name', this, true, true, model.paymentMethod, null, this.$el);
+                populate.get('#paymentMethod', '/paymentMethod', {}, 'name', this, true, true,  model.paymentMethod && model.paymentMethod._id ? model.paymentMethod._id : model.paymentMethod, null, this.$el);
             }
 
             populate.get('#currencyDd', '/currency/getForDd', {}, 'name', this, true);

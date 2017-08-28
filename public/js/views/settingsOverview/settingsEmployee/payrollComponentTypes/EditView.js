@@ -3,8 +3,9 @@ define([
     'Underscore',
     'Backbone',
     'text!templates/payrollComponentTypes/EditTemplate.html',
-    'models/PayrollComponentTypeModel'
-], function ($, _, Backbone, EditTemplate) {
+    //'models/PayrollComponentTypeModel'
+    'helpers/ga'
+], function ($, _, Backbone, EditTemplate, ga) {
 
     var EditView = Backbone.View.extend({
         el         : '#content-holder',
@@ -134,12 +135,14 @@ define([
                     text : 'Save',
                     click: function () {
                         self.saveItem();
+                        ga && ga.trackingEditConfirm(self.contentType);
                     }
                 }, {
                     text : 'Cancel',
                     class: 'btn',
                     click: function () {
                         self.hideDialog();
+                        ga && ga.trackingEditCancel(self.contentType);
                     }
                 }]
 

@@ -22,6 +22,11 @@ module.exports = function (models, event) {
 
     var moduleId = MODULES.PROJECTS;
     var accessStackMiddleWare = require('../helpers/access')(moduleId, models);
+    var accessDeleteStackMiddleware = require('../helpers/checkDelete');
+
+    function accessDeleteStackMiddlewareFunction(req, res, next) {
+        accessDeleteStackMiddleware(req, res, next, models, 'project', event);
+    }
 
     router.use(authStackMiddleware);
 
@@ -1073,7 +1078,7 @@ module.exports = function (models, event) {
          "n":2
      }
      */
-    router.delete('/', accessStackMiddleWare, handler.bulkRemove);
+    router.delete('/', accessStackMiddleWare, accessDeleteStackMiddlewareFunction, handler.bulkRemove);
 
     return router;
 };

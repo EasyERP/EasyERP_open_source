@@ -6,11 +6,12 @@ define([
     'text!templates/Persons/CreateTemplate.html',
     'views/CustomersSuppliers/salesPurchases',
     'models/PersonsModel',
+    'views/guideTours/guideNotificationView',
     'common',
     'populate',
     'constants',
     'custom'
-], function (Backbone, $, _, ParentView, CreateTemplate, SalesPurchasesView, PersonModel, common, populate, CONSTANTS, custom) {
+], function (Backbone, $, _, ParentView, CreateTemplate, SalesPurchasesView, PersonModel,GuideNotify, common, populate, CONSTANTS, custom) {
     'use strict';
     var CreateView = ParentView.extend({
         el         : '#content-holder',
@@ -200,6 +201,7 @@ define([
                         text : 'Create',
                         click: function () {
                             self.saveItem();
+                            self.gaTrackingConfirmEvents();
                         }
                     },
 
@@ -237,6 +239,14 @@ define([
                 minDate    : null
             });
             this.delegateEvents(this.events);
+
+            if (App.guide) {
+                if (App.notifyView) {
+                    App.notifyView.undelegateEvents();
+                    App.notifyView.stopListening();
+                }
+                App.notifyView = new GuideNotify({e: null, data: App.guide});
+            }
             return this;
         }
 

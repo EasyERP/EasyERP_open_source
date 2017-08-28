@@ -41,6 +41,8 @@ mainDb.once('open', function callback() {
     port += instance;
     mainDb.dbsObject = dbsObject;
 
+    dbsObject.mainDB = mainDb;
+
     console.log('Connection to mainDB is success');
 
     require('./models/index.js');
@@ -55,7 +57,7 @@ mainDb.once('open', function callback() {
     }, {collection: 'easyErpDBS'});
 
     main = mainDb.model('easyErpDBS', mainDBSchema);
-    main.find().exec(function (err, result) {
+    main.find({}).exec(function (err, result) {
         if (err) {
             process.exit(1, err);
         }
@@ -76,6 +78,7 @@ mainDb.once('open', function callback() {
                 // mongos: true,
                 // config: { autoIndex: false } // todo uncomment in production
             };
+
             var dbObject = mongoose.createConnection(_db.url, _db.DBname, _db.port, opts);
 
             dbObject.on('error', function (err) {
@@ -96,6 +99,7 @@ mainDb.once('open', function callback() {
             if (err) {
                 return console.error(err);
             }
+
             app = require('./app')(mainDb, dbsNames);
 
             app.listen(port, function () {

@@ -3,8 +3,8 @@ define([
     'jQuery',
     'Underscore',
     'views/order/form/FormView',
-    'text!templates/order/form/EditTemplate.html',
-    'text!templates/order/form/ViewTemplate.html',
+    'text!templates/order/baseForm/baseFormEditTemplate.html',
+    'text!templates/order/baseForm/baseFormViewTemplate.html',
     'views/NoteEditor/NoteView',
     'models/goodsOutNotesModel',
     'views/Products/orderRows/ProductItems',
@@ -17,7 +17,24 @@ define([
     'constants',
     'helpers',
     'services/showJournalEntries'
-], function (Backbone, $, _, ParentView, EditTemplate, ViewTemplate, NoteEditor, GoodsOutNote, ProductItemView, CreateView, PaymentCreateView, common, Custom, dataService, populate, CONSTANTS, helpers, journalService) {
+], function (Backbone,
+             $,
+             _,
+             ParentView,
+             EditTemplate,
+             ViewTemplate,
+             NoteEditor,
+             GoodsOutNote,
+             ProductItemView,
+             CreateView,
+             PaymentCreateView,
+             common,
+             Custom,
+             dataService,
+             populate,
+             CONSTANTS,
+             helpers,
+             journalService) {
 
     var EditView = ParentView.extend({
         contentType: 'order',
@@ -60,6 +77,11 @@ define([
         cancelOrder: function (e) {
             var self = this;
             var canceledObj;
+            var answer = confirm('Do you really want to Cancel Order? All products will be returned.');
+
+            if (!answer){
+                return false;
+            }
 
             e.preventDefault();
             e.stopPropagation();
@@ -159,7 +181,7 @@ define([
                         if (err) {
                             App.render({
                                 type   : 'error',
-                                message: 'Can\'t receive invoice'
+                                message: 'Can\'t create invoice'
                             });
                         } else {
                             if (self.eventChannel) {
@@ -311,7 +333,7 @@ define([
                 } else {
                     App.render({
                         type   : 'notify',
-                        message: 'All items were allocated successfully'
+                        message: 'Success'
                     });
                 }
                 if (cb && typeof cb === 'function') {
@@ -330,16 +352,28 @@ define([
                 var allocatedAll = $(this).find('input#quantity').val() || $(this).find('[data-name="quantity"] span').text();
                 var fullfield = $(this).next().find('#fullfilled').text();
                 var lastQuantity = allocatedAll - fullfield;
+                var onHand = parseInt($(this).attr('data-hand'), 10);
 
-                rows.push({
-                    orderRowId: $(this).attr('data-id'),
-                    quantity  : lastQuantity,
-                    product   : $(this).find('.productsDd').attr('data-id'),
-                    warehouse : self.warehouse
-                });
+                if (onHand) {
+                    rows.push({
+                        orderRowId: $(this).attr('data-id'),
+                        quantity  : lastQuantity,
+                        product   : $(this).find('.productsDd').attr('data-id'),
+                        warehouse : self.warehouse
+                    });
+                }
+
             });
 
-            this.createAllocation(rows);
+            if (rows && rows.length) {
+                this.createAllocation(rows);
+            } else {
+                App.render({
+                    type   : 'notify',
+                    message: 'Nothing can be allocated. On Hand value is 0'
+                });
+            }
+
         },
 
         resetPrices: function (e) {
@@ -409,6 +443,11 @@ define([
             var $targetElement = $(e.target).closest('a');
             var symbol;
             var currency;
+          var warehouse;
+          var account;
+          var table = this.$el.find('#productItemsHolder');
+          var trs = table.find('tr.productItem');
+          var accountObj;
 
             if ($target.closest('a').attr('id') === 'currencyDd') {
                 currency = _.findWhere(this.responseObj['#currencyDd'], {_id: $target.attr('id')});
@@ -419,16 +458,51 @@ define([
                 this.$el.find('.currencySymbol').text(symbol);
             } else if ($target.closest('a').attr('id') === 'workflowsDd' && $(e.target).attr('data-status') === 'cancelled') {
                 this.cancelOrder(e);
+            } else if ($target.closest('a').attr('id') === 'warehouseDd') {
+              warehouse = _.findWhere(this.responseObj['#warehouseDd'], {_id: $target.attr('id')});
+              account = warehouse ? warehouse.account : null;
+              accountObj = _.findWhere(this.responseObj['#account'], {_id: account});
+
+              if (accountObj && accountObj._id) {
+                trs.each(function () {
+                  var self = this;
+
+                  $(this).find('.accountDd').text(accountObj.name).attr('data-id', accountObj._id);
+
+                  if ($(this).find('.productsDd').attr('data-id')) {
+                    dataService.getData('/products/productAvalaible', {
+                      product  : $(this).find('.productsDd').attr('data-id'),
+                      warehouse: warehouse._id
+                    }, function (data) {
+                      var itemsStock = data.onHand ? 'green' : 'red';
+                      var fullfilledHolder = $(self).next().find('.fullfilledHolder');
+
+                      fullfilledHolder.removeClass('green red');
+
+                      fullfilledHolder.addClass(itemsStock);
+                      $(self).attr('data-hand', data.onHand);
+                      fullfilledHolder.find('.fullfilledInfo').html('<div><span>' + (data.inStock || 0) + ' in Stock, ' + (data.onHand || 0) + ' on Hand </span></div>');
+                    });
+                  }
+
+                });
+              } else {
+                return App.render({
+                  type   : 'error',
+                  message: 'There is no account in this warehouse, please go to Settings and set it.'
+                });
+              }
             }
 
-            $targetElement.text($(e.target).text()).attr('data-id', id);
+
+          $targetElement.text($(e.target).text()).attr('data-id', id);
 
             this.hideNewSelect();
         },
 
         saveOrder: function (e) {
             e.preventDefault();
-
+            this.gaTrackingEditConfirm();
             this.saveItem();
         },
 
@@ -453,16 +527,11 @@ define([
 
             var debitAccount = $.trim(thisEl.find('#account').attr('data-id'));
             var paymentMethod = $.trim(thisEl.find('#paymentMethod').attr('data-id')) || null;
-            var destination = $.trim(thisEl.find('#destination').data('id'));
-            var costList = $.trim(thisEl.find('#costList').data('id'));
             var priceList = $.trim(thisEl.find('#priceList').data('id'));
-            var invoiceControl = $.trim(thisEl.find('#costList').data('id'));
-            var paymentTerm = $.trim(thisEl.find('#paymentTerm').data('id'));
-            var fiscalPosition = $.trim(thisEl.find('#fiscalPosition').data('id'));
-            var supplierReference = thisEl.find('#supplierReference').val();
             var orderDate = thisEl.find('#orderDate').val() || thisEl.find('#orderDate').text();
             var expectedDate = thisEl.find('#expectedDate').val() || thisEl.find('#expectedDate').text();
             var assignedTo = $.trim(thisEl.find('#assignedTo').attr('data-id'));
+            var warehouse = $.trim(thisEl.find('#warehouseDd').attr('data-id'));
 
             var total = helpers.spaceReplacer($.trim(thisEl.find('#totalAmount').text()));
             var totalTaxes = helpers.spaceReplacer($.trim(thisEl.find('#taxes').text()));
@@ -538,6 +607,7 @@ define([
             shippingId = thisEl.find('#shippingDd').attr('data-id');
             shippingAccount = thisEl.find('#shippingRow').find('.accountDd').attr('data-id');
             shippingAmount = helpers.spaceReplacer(thisEl.find('#shippingRow').find('[data-name="price"] input').val()) || helpers.spaceReplacer(thisEl.find('#shippingRow').find('[data-name="price"] span:not(.currencySymbol)').text());
+            shippingAmount = shippingAmount || 0;
 
             shippingAmount = parseFloat(shippingAmount) * 100;
 
@@ -631,23 +701,18 @@ define([
             }
 
             data = {
-                currency         : currency,
-                supplier         : supplier,
-                paymentMethod    : paymentMethod,
-                supplierReference: supplierReference,
-                costList         : costList,
-                priceList        : priceList,
-                orderRows        : products,
-                orderDate        : orderDate,
-                expectedDate     : expectedDate,
-                destination      : destination || null,
-                invoiceControl   : invoiceControl || null,
-                paymentTerm      : paymentTerm || null,
-                fiscalPosition   : fiscalPosition || null,
-                workflow         : workflow,
-                salesPerson      : assignedTo,
-                shippingMethod   : shippingId,
-                shippingExpenses : {
+                currency        : currency,
+                supplier        : supplier,
+                paymentMethod   : paymentMethod,
+                priceList       : priceList,
+                orderRows       : products,
+                orderDate       : orderDate,
+                expectedDate    : expectedDate,
+                workflow        : workflow,
+                warehouse       : warehouse,
+                salesPerson     : assignedTo,
+                shippingMethod  : shippingId,
+                shippingExpenses: {
                     account: shippingAccount,
                     amount : shippingAmount
                 },
@@ -726,7 +791,7 @@ define([
             } else {
                 App.render({
                     type   : 'error',
-                    message: CONSTANTS.RESPONSES.CREATE_QUOTATION
+                    message: CONSTANTS.RESPONSES.CREATE_ORDER
                 });
             }
         },
@@ -780,11 +845,12 @@ define([
              }*/
 
             formString = this.template({
-                model   : this.currentModel.toJSON(),
-                visible : this.visible,
-                onlyView: this.onlyView,
-                forSales: this.forSales,
-                dialog  : this.dialog
+                model      : this.currentModel.toJSON(),
+                visible    : this.visible,
+                onlyView   : this.onlyView,
+                forSales   : this.forSales,
+                dialog     : this.dialog,
+                notEditable: this.notEditable
             });
 
             if (!this.dialog) {
@@ -828,13 +894,9 @@ define([
             if (!this.onlyView/* || this.currentModel.toJSON().status.fulfillStatus !== 'ALL'*/) {
 
                 populate.get('#currencyDd', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
-                populate.get('#costList', '/destination', {}, 'name', this, false, true);
                 populate.get('#paymentMethod', '/paymentMethod', {}, 'name', this, false, true, null);
-                populate.get('#destination', '/destination', {}, 'name', this, false, true);
-                populate.get('#costList', 'priceList/getForDd', {cost: true}, 'name', this, true, true);
                 populate.get('#priceList', 'priceList/getForDd', {cost: false}, 'name', this, true, true);
                 populate.get('#invoicingControl', '/invoicingControl', {}, 'name', this, false, true);
-                populate.get('#paymentTerm', '/paymentTerm', {}, 'name', this, false, true);
                 populate.get('#deliveryDd', '/deliverTo', {}, 'name', this, false, true);
                 populate.get2name('#supplierDd', CONSTANTS.URLS.CUSTOMERS, {isCustomer: true}, this, false, true);
                 populate.get('#taxCode', '/taxSettings/getForDd', {}, 'name', this, true, true);
@@ -842,7 +904,7 @@ define([
                     id    : 'Sales Order',
                     status: {$ne: 'Done'}
                 }, 'name', this);
-                populate.get('#account', '/chartOfAccount/getForDd', {category: 'ACCOUNTS_EXPENSES'}, 'name', this, true, true);
+                populate.get('#account', '/chartOfAccount/getForDd', {}, 'name', this, true, true);
                 populate.get('#warehouseDd', 'warehouse/getForDd', {}, 'name', this, true);
 
                 this.$el.find('#expectedDate').datepicker({

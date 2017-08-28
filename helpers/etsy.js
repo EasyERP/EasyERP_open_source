@@ -8,6 +8,7 @@ var ratesRetriever = require('../helpers/ratesRetriever')();
 var RefundHelper = require('../helpers/refunds');
 var Uploader = require('../services/fileStorage/index');
 var uploader = new Uploader();
+var SyncLogsHelper = require('../helpers/syncLogs');
 
 module.exports = function (models, event) {
     'use strict';
@@ -32,51 +33,96 @@ module.exports = function (models, event) {
     var ratesService = require('../services/rates')(models);
     var journalEntryService = require('../services/journalEntry')(models);
     var imagesService = require('../services/images')(models);
+    var syncLogsHelper = new SyncLogsHelper(models);
+    var logs;
 
     var refundHelper = new RefundHelper(models);
 
     function createMatchDataForProducts(product, opts, cb) {
         var db = opts.dbName;
         var uId = opts.uId;
-        var channel = opts._id;
+        var channel = opts._id || opts.channel;
 
-        ChannelLinksService.find({
-            linkId: product.listing_id.toString()
-        }, {
-            dbName: db
-        })
-            .lean()
-            .exec(function (err, result) {
-                if (err) {
-                    return cb(err);
-                }
+        productService.find({}, {
+            'info.SKU': 1,
+            dbName    : db
+        }, function (err, nativeProducts) {
+            if (err) {
+                return cb(err);
+            }
 
-                if (!result || !result.length) {
-                    return cb();
-                }
+            ChannelLinksService.find({
+                linkId: product.listing_id.toString()
+            }, {
+                dbName: db
+            })
+                .lean()
+                .exec(function (err, result) {
+                    var checkIdentitySKU;
+                    var checkIdentityChannel;
 
-                if (_.find(result, {channel: ObjectId(channel)})) {
-                    return cb(null, true);
-                }
-
-                ConflictService.create({
-                    user  : uId,
-                    entity: 'Product',
-                    fields: {
-                        linkId: product.id,
-                        name  : product.name
-                    },
-                    dbName: db
-                }, function (err) {
                     if (err) {
                         return cb(err);
                     }
 
-                    event.emit('showResolveConflict', {uId: uId});
+                    checkIdentitySKU = _.find(nativeProducts, function (el) {
+                        return el.info.SKU === product.listing_id.toString();
+                    });
 
-                    cb(null, true);
+                    checkIdentityChannel = _.find(result, function (el) {
+                        return el.channel.toString() === channel;
+                    });
+
+                    if (checkIdentityChannel) {
+                        return cb(null, true);
+                    }
+
+                    if (!checkIdentitySKU) {
+                        return cb();
+                    }
+
+                    ConflictService.findAndUpdate({
+                        'fields.listing_id': product.listing_id,
+                        'fields.channel'   : ObjectId(channel)
+                    }, {
+                        entity: 'Product',
+
+                        fields: {
+                            linkId: product.listing_id,
+                            name  : product.title,
+
+                            info: {
+                                SKU: product.listing_id.toString()
+                            },
+
+                            listing_id: product.listing_id,
+                            channel   : ObjectId(channel)
+                        }
+                    }, {
+                        upsert: true,
+                        dbName: db
+                    }, function (err) {
+                        if (err) {
+                            return cb(err);
+                        }
+
+                        if (!result._id) {
+                            logs = syncLogsHelper.addConflict(logs, {
+                                action  : 'imports',
+                                category: 'products'
+                            }, {
+                                entityId         : product.listing_id,
+                                entityDescription: product.title
+                            });
+                        }
+
+                        event.emit('showResolveConflict', {uId: uId});
+
+                        cb(null, true);
+                    });
+
                 });
-            });
+        });
     }
 
     function imageCreator(image, db, id, main, channel, cb) {
@@ -116,6 +162,8 @@ module.exports = function (models, event) {
                 products = docs ? docs.results : [];
 
                 if (err) {
+                    syncLogsHelper.addC
+
                     return eachCallback(err);
                 }
 
@@ -351,7 +399,7 @@ module.exports = function (models, event) {
                             imagesService.create({
                                 imageSrc     : image.imageSrc,
                                 product      : groupId,
-                                channel      : opts._id,
+                                channel      : opts._id || opts.channel,
                                 integrationId: image.integrationId,
                                 dbName       : opts.dbName
                             }, function (err, createdImage) {
@@ -429,7 +477,7 @@ module.exports = function (models, event) {
                         var channelLinksObj = {
                             product  : productId,
                             linkId   : product.listing_id,
-                            channel  : opts._id,
+                            channel  : opts._id || opts.channel,
                             priceList: opts.priceList,
                             dbName   : opts.dbName
                         };
@@ -453,7 +501,8 @@ module.exports = function (models, event) {
         var orderUri = (opts.settings && opts.settings.orders && opts.settings.orders.get) || '/receipts';
         var warehouse = opts.warehouseSettings && opts.warehouseSettings.warehouse;
         var dbName = opts.dbName;
-        var channel = opts._id;
+        var channel = opts._id || opts.channel;
+        var dateOrderFrom = opts.ordersDate || new Date(0);
         var uId = opts.uId;
         var priceList = opts.priceList;
         var nativeUnlinked;
@@ -603,7 +652,7 @@ module.exports = function (models, event) {
                                     }
                                 } else {
                                     workflow = workflowId;
-                                    tempWorkflow = null;
+                                    tempWorkflow = workflow;
                                 }
 
                                 waterFallCb();
@@ -733,6 +782,10 @@ module.exports = function (models, event) {
 
                             currency: currency
                         };
+
+                        if ((new Date(order.creation_tsz.createdAt) < new Date(dateOrderFrom))) {
+                            return waterFallCb(null);
+                        }
 
                         if (conflictTypes) {
                             saveObject.conflictTypes = conflictTypes;
@@ -1318,7 +1371,7 @@ module.exports = function (models, event) {
 
                 var channelLinksObj = {
                     product: product._id,
-                    channel: opts._id
+                    channel: opts._id || opts.channel
                 };
 
                 ChannelLinksService.findOne(channelLinksObj, {dbName: opts.dbName}, function (err, link) {
@@ -1504,13 +1557,16 @@ module.exports = function (models, event) {
 
             products = docs ? docs.results : [];
 
-            console.log(products);
-
             callback();
         });
     }
 
     function syncChannel(opts, callback) {
+        logs = syncLogsHelper.initialize({
+            dbName : opts.dbName,
+            channel: opts.channel
+        });
+
         async.series([
             function (sCb) {
                 exportProducts(opts, function (err) {
@@ -1543,9 +1599,43 @@ module.exports = function (models, event) {
                 });
             }
         ], function (err) {
+            syncLogsHelper.create({
+                logs  : logs,
+                dbName: opts.dbName
+            });
+
             if (err) {
                 return callback(err);
             }
+
+            console.log('Etsy -> synchronization is complete!');
+
+            callback();
+        });
+    }
+
+    function getOnlyProducts(opts, callback) {
+        var uId = opts.userId;
+        var dbName = opts.dbName;
+
+        async.series([
+            function (sCb) {
+                importProducts(opts, function (err) {
+                    if (err) {
+                        return sCb(err);
+                    }
+
+                    console.log('Etsy -> Products imported');
+                    sCb();
+                });
+            }], function (err) {
+            if (err) {
+                return callback(err);
+            }
+
+            console.log('Etsy -> import products is complete!');
+
+            event.emit('getAllDone', {uId: uId, dbName: dbName});
 
             callback();
         });
@@ -1576,7 +1666,7 @@ module.exports = function (models, event) {
         var settings = opts.settings;
         var productPrices = nativeProduct.productPrices;
         var price = (productPrices && productPrices.prices && productPrices.prices.length && productPrices.prices[0].price) || 0;
-        var shippingTemplate = opts.shippingTemplate;
+        var shippingTemplate = opts.shippingTemplate || 34645856098;
         var waterfallFunctions = [];
         var listingId;
         var publishResults;
@@ -1588,9 +1678,9 @@ module.exports = function (models, event) {
                 who_made            : 'i_did',
                 when_made           : 'made_to_order',
                 title               : nativeProduct.name,
-                description         : nativeProduct.info.description || nativeProduct.name,
+                description         : nativeProduct.info.description.trim() || nativeProduct.name,
                 shipping_template_id: shippingTemplate,
-                price               : price,
+                price               : price || 0.2,
                 is_supply           : 'false',
                 quantity            : 1,
                 state               : 'draft'
@@ -1686,6 +1776,7 @@ module.exports = function (models, event) {
         importProducts     : importProducts,
         syncChannel        : syncChannel,
         exportProducts     : exportProducts,
+        getOnlyProducts    : getOnlyProducts,
         importOrders       : importOrders,
         getAll             : getAll,
         publishProduct     : publishProduct,

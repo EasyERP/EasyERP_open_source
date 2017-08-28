@@ -1,13 +1,8 @@
 <%if (paymentCollection && paymentCollection.length) {
 paymentCollection.forEach(function(payment) {%>
 <tr data-id="<%=payment._id%>">
-    <td data-name="date"><%=payment.date%></td>
-    <td data-name=""></td>
-    <td data-name="paymentRef"><%=payment.paymentRef%></td>
     <td data-name="name"><%=payment.name%></td>
-    <td data-name=""></td>
-    <td data-name=""></td>
-    <td data-name=""></td>
+    <td data-name="date"><%=payment.date%></td>
     <td data-name="paidAmount" class="money textRight"><%=payment.paidAmount ? currencySplitter((payment.paidAmount /
         100).toFixed(2)) : 2%>
     </td>

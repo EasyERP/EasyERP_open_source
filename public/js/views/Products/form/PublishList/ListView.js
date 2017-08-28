@@ -33,7 +33,7 @@ define([
 
         initialize: function (options) {
             this.product = options.product;
-            this.collection = new ChannelCollection();
+            this.collection = new ChannelCollection({});
             this.eventsChannel = App.eventsChannel || _.extend({}, Backbone.Events);
 
             this.listenTo(this.eventsChannel, 'closeDialog', this.closeDialog);

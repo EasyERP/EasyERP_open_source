@@ -11,11 +11,12 @@ define([
     'models/ProductModel',
     'text!templates/Alpabet/AphabeticTemplate.html',
     'collections/Products/filterCollection',
+    'views/guideTours/guideNotificationView',
     'dataService',
     'common',
     'constants',
     'helpers'
-], function (Backbone, $, _, ListViewBase, listTemplate, CreateView, ListItemView, EditView, PublishProductView, ProductModel, aphabeticTemplate, contentCollection, dataService, common, CONSTANTS, helpers) {
+], function (Backbone, $, _, ListViewBase, listTemplate, CreateView, ListItemView, EditView, PublishProductView, ProductModel, aphabeticTemplate, contentCollection, GuideNotify, dataService, common, CONSTANTS, helpers) {
     var ProductsListView = ListViewBase.extend({
         CreateView       : CreateView,
         EditView         : EditView,
@@ -57,6 +58,14 @@ define([
             ListViewBase.prototype.initialize.call(this, options);
 
             this.contentCollection = contentCollection;
+
+            if (App.guide) {
+                if (App.notifyView) {
+                    App.notifyView.undelegateEvents();
+                    App.notifyView.stopListening();
+                }
+                App.notifyView = new GuideNotify({e: null, data: App.guide});
+            }
         },
 
         events: {
@@ -247,7 +256,7 @@ define([
             }
 
             if (this.toExpand) {
-                $holder.find('._inventoryProductWrap').html(_.template(listTemplate)({
+                this.$el.html(_.template(listTemplate)({
                     toExpand: this.toExpand
                 }));
             }

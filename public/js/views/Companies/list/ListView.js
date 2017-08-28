@@ -7,9 +7,12 @@ define([
     'views/Companies/CreateView',
     'views/Companies/list/ListItemView',
     'collections/Companies/filterCollection',
+    'views/guideTours/guideNotificationView',
     'common',
-    'constants'
-], function (Backbone, $, _, ListViewBase, listTemplate, CreateView, ListItemView, contentCollection, common, CONSTANTS) {
+    'constants',
+    'helpers/ga',
+    'constants/googleAnalytics'
+], function (Backbone, $, _, ListViewBase, listTemplate, CreateView, ListItemView, contentCollection,GuideNotify, common, CONSTANTS, ga, GA) {
     'use strict';
 
     var CompaniesListView = ListViewBase.extend({
@@ -85,6 +88,14 @@ define([
 
             App.ownContentType = true;
             Backbone.history.navigate(url, {trigger: true});
+
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventAction  : GA.EVENT_ACTIONS.COMPANIES,
+                eventLabel   : GA.EVENT_LABEL.LIST_EDITING,
+                eventValue   : GA.EVENTS_VALUES[35],
+                fieldsObject : {}
+            });
         },
 
         render: function () {
@@ -109,6 +120,14 @@ define([
                 page       : this.page,
                 itemsNumber: this.collection.pageSize
             }).render());
+
+            if (App.guide) {
+                if (App.notifyView) {
+                    App.notifyView.undelegateEvents();
+                    App.notifyView.stopListening();
+                }
+                App.notifyView = new GuideNotify({e: null, data: App.guide});
+            }
         }
     });
 

@@ -45,6 +45,48 @@ module.exports = function (models) {
             });
         };
 
+        this.findOne = function (query, options, callback) {
+            var Invoice;
+            var dbName;
+            var err;
+
+            if (typeof options === 'function') {
+                callback = options;
+                options = {};
+            }
+
+            if (!callback || typeof callback !== 'function') {
+                callback = function () {
+                };
+            }
+
+            if (!query) {
+                err = new Error('Invalid input parameters');
+                err.status = 400;
+
+                return callback(err);
+            }
+
+            dbName = options.dbName;
+            delete options.dbName;
+
+            if (!dbName) {
+                err = new Error('Invalid input parameters');
+                err.status = 400;
+
+                return callback(err);
+            }
+
+            Invoice = models.get(dbName, 'Invoices', InvoiceSchema);
+            Invoice.findOne(query, function (err, invoice) {
+                if (err) {
+                    return callback(err);
+                }
+
+                callback(null, invoice);
+            });
+        };
+
         this.findAndUpdate = function (query, updateObject, options, callback) {
             var _options = {};
             var Invoice;
@@ -163,5 +205,47 @@ module.exports = function (models) {
                 }
             });
         };
+
+        this.findByIdAndUpdate = function (id, updateObj, options, callback) {
+            var _options = {};
+            var Invoice;
+            var dbName;
+            var err;
+
+            if (!callback || typeof callback !== 'function') {
+                callback = function () {
+                };
+            }
+
+            if (!id || !updateObj || typeof updateObj !== 'object') {
+                err = new Error('Invalid input parameters');
+                err.status = 400;
+
+                return callback(err);
+            }
+
+            if (options) {
+                _options = _.assign(_options, options);
+            }
+
+            dbName = _options.dbName;
+            delete _options.dbName;
+
+            if (!dbName) {
+                err = new Error('Invalid input parameters');
+                err.status = 400;
+
+                return callback(err);
+            }
+
+            Invoice = models.get(dbName, 'Invoices', InvoiceSchema);
+            Invoice.findByIdAndUpdate(id, updateObj, _options, function (err, resultInvoice) {
+                if (err) {
+                    return callback(err);
+                }
+
+                callback(null, resultInvoice);
+            });
+        }
     };
 };

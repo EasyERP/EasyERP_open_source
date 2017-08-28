@@ -1,24 +1,22 @@
-<table id="listTable">
+<div id="listTable">
     <% companies.forEach(function(company, index){ %>
-    <tr class="compactView" data-id="<%=company._id%>">
-        <td class="checkboxRow">
+    <div class="compactView" data-id="<%=company._id%>">
+        <div class="checkboxRow willHidden">
             <label class="_customCHeckbox">
                 <input type="checkbox" value="<%=company._id%>" class="checkbox" />
                 <span></span>
             </label>
-        </td>
-        <td>
-            <div class="compactRowWrap">
-                <div class="compactRow">
-                    <div class="firstName" data-key="name.first"><%- company.fullName %></div>
-                    <div class="country" data-key="address.country"><%= company.address.country %></div>
-                </div>
-                <div class="compactRow">
-                    <div class="email" data-key="email"><%= company.email %></div>
-                    <div class="phone" data-key="phones.phone"><%= company.phones.phone %></div>
-                </div>
+        </div>
+        <div class="compactRowWrap">
+            <div class="compactRow">
+                <div class="firstName _growed _mainTitle" data-key="name.first"><%- company.fullName %></div>
+                <div class="country _static willHidden" data-key="address.country"><%= company.address.country %></div>
             </div>
-        </td>
-    </tr>
+            <div class="compactRow">
+                <div class="email _growed" data-key="email"><%= company.email %></div>
+                <div class="phone _static willHidden" data-key="phones.phone"><%= company.phones.phone %></div>
+            </div>
+        </div>
+    </div>
     <% }) %>
-</table>
+</div>

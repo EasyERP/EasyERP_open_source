@@ -14,7 +14,7 @@
         <label class="inputBox _newSelectListWrap">
             <label for="isCustomer">Is Customer</label>
             <label class="_animatedCheckbox">
-                <input  id="isCustomer" data-id="salesPurchases_isCustomer"
+                <input  id="isCustomer" data-id="salesPurchases_isCustomer" class="checkbox"
                         type="checkbox" <%=(model && model.salesPurchases && model.salesPurchases.isCustomer) ? 'checked':''%> />
                 <span></span>
             </label>
@@ -23,7 +23,7 @@
             <label for="isSupplier">Is Supplier</label>
             <label class="_animatedCheckbox">
                 <input id="isSupplier"
-                       data-id="salesPurchases_isSupplier"
+                       data-id="salesPurchases_isSupplier" class="checkbox"
                        type="checkbox" <%=(model && model.salesPurchases &&model.salesPurchases.isSupplier) ? 'checked':''%> />
                 <span></span>
             </label>
@@ -40,7 +40,7 @@
         </div>
     </div>
     <div class="_animateSelectBox">
-        <span class="_selectTitle">Sales Person</span>
+        <span class="_selectTitle">Salesperson</span>
         <div class="inputBox _newSelectListWrap">
             <a id="employeesDd"
                class="current-selected"

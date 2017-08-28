@@ -46,9 +46,8 @@
 ._tagSmall {
   display: inline-block;
   float: left;
-  padding: 0 5px;
-  height: 18px;
-  line-height: 18px;
+  padding: 4px 5px;
+  min-height: 18px;
   font-size: 14px;
   border-radius: 3px;
   background-color: #cccbcb;
@@ -75,6 +74,7 @@
     justify-content: space-between;
     margin-top: 5px;
     overflow: hidden;
+
 
     span {
 
@@ -259,12 +259,11 @@
     &.checked {
       position: relative;
       cursor: not-allowed;
-      &:after {
-        content: "\e907";
+
+      &:before {
         position: absolute;
         left: 9px;
         top: 7px;
-        font-family: $icon-font;
         font-size: 16px;
         color: #fff;
       }

@@ -6,8 +6,10 @@ define([
     'views/Notes/AttachView',
     'custom',
     'common',
-    'constants'
-], function (_, BaseView, ContentTopBarTemplate, importTemplate, attachView, Custom, Common, CONSTANTS) {
+    'constants',
+    'helpers/ga',
+    'constants/googleAnalytics'
+], function (_, BaseView, ContentTopBarTemplate, importTemplate, attachView, Custom, Common, CONSTANTS, ga, GA) {
     var TopBarView = BaseView.extend({
         el            : '#top-bar',
         contentType   : CONSTANTS.PRODUCTS,
@@ -37,12 +39,28 @@ define([
             event.preventDefault();
 
             this.trigger('configureChannel', 'publish');
+
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventAction  : this.contentType || 'No Content Type',
+                eventLabel   : GA.EVENT_LABEL.CONFIGURE_PUBLISHING,
+                eventValue   : GA.EVENTS_VALUES[45],
+                fieldsObject : {}
+            });
         },
 
         unpublishFromChannel: function (event) {
             event.preventDefault();
 
             this.trigger('configureChannel', 'unpublish');
+
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventAction  : this.contentType || 'No Content Type',
+                eventLabel   : GA.EVENT_LABEL.CONFIGURE_UNPUBLISHING,
+                eventValue   : GA.EVENTS_VALUES[44],
+                fieldsObject : {}
+            });
         },
 
         unlinkFromChannel: function (event) {

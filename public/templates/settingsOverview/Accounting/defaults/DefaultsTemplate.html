@@ -77,4 +77,44 @@
             </div>
         </div>
     </div>
+    <div class="col m-6 l-4 settingItem">
+        <div class="_animateSelectBox">
+            <span class="_selectTitle">Default Bank Account</span>
+            <div class="_newSelectListWrap">
+                <a href="javascript:;"
+                   id="bankAccount"
+                   class="account current-selected"
+                   data-id="<%=model && model.bankAccount ? model.bankAccount._id : null%>">
+                    <%=model && model.bankAccount ? model.bankAccount.account : 'Select'%>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col m-6 l-4 settingItem">
+        <div class="_animateSelectBox">
+            <span class="_selectTitle">Default Work In Progress (for Manufacturing)</span>
+            <div class="_newSelectListWrap">
+                <a href="javascript:;"
+                   id="workInProgress"
+                   class="account current-selected"
+                   data-id="<%=model && model.workInProgress ? model.workInProgress._id : null%>">
+                    <%=model && model.workInProgress ? model.workInProgress.account : 'Select'%>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col m-6 l-4 settingItem">
+        <div class="_animateSelectBox">
+            <span class="_selectTitle">Default Payment Term</span>
+            <div class="_newSelectListWrap">
+                <a href="javascript:;"
+                   id="paymentTerm"
+                   class="account current-selected"
+                   data-id="<%=model && model.paymentTerms ? model.paymentTerms.count : null%>">
+                    <%=model && model.paymentTerms ? model.paymentTerms.count : 'Select'%>
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
+

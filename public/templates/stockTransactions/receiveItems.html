@@ -1,4 +1,4 @@
-<table class="list _projectTableLeftAlign tableFixed _invoiceTable">
+<table class="_productTable">
     <colgroup>
         <col width="150px">
         <!--<col width="200px">-->
@@ -7,29 +7,29 @@
         <col width="100px">
         <col width="100px">
         <col width="200px">
-        <col width="100px">
+
+        <!--<col width="100px">-->
     </colgroup>
     <thead>
-    <tr class="productListItemsColumns _deleteHeader">
-        <th class="width20">
+    <tr class="_simpleHeader">
+        <th>
             SKU
         </th>
-        <th class="width20">
+        <th>
             Product
         </th>
-        <th class="width20">
+        <th>
             Ordered
         </th>
-        <th class="width20">
+        <th>
             Receive now
         </th>
-        <th class="width20">
+        <th>
             Location
         </th>
     </tr>
     </thead>
     <tbody id="tbodyProducts">
-    <tr></tr>
 
     <%products.forEach(function(elem){%>
     <tr class="productItem deleteRow" id="<%=elem._id%>" data-id="<%=elem.warehouse ? elem.warehouse._id : ''%>">

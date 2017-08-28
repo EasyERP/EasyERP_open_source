@@ -14,8 +14,10 @@ define([
     'dataService',
     'constants',
     'helpers',
-    'services/showJournalEntries'
-], function (Backbone, $, _, ParentView, EditTemplate, DocumentTemplate, NoteEditor, AttachView, PaymentCreateView, RefundCreateView, ReturnSalesView, CreatePaymentMethod, dataService, CONSTANTS, helpers, journalService) {
+    'services/showJournalEntries',
+    'helpers/ga',
+    'views/guideTours/guideNotificationView'
+], function (Backbone, $, _, ParentView, EditTemplate, DocumentTemplate, NoteEditor, AttachView, PaymentCreateView, RefundCreateView, ReturnSalesView, CreatePaymentMethod, dataService, CONSTANTS, helpers, journalService, ga, GuideNotify) {
 
     var FormView = ParentView.extend({
         contentType: 'order',
@@ -145,7 +147,7 @@ define([
                 return new PaymentCreateView({
                     model       : self.currentModel,
                     currency    : currency && (typeof currency._id === 'object') ? currency._id : currency,
-                    title       : 'Create Prepayment',
+                    title       : 'Get payment',
                     prepayment  : true,
                     mid         : 123,
                     eventChannel: self.eventChannel,
@@ -246,6 +248,14 @@ define([
             }
 
             this.delegateEvents(this.events);
+
+            if (App.guide) {
+                if (App.notifyView) {
+                    App.notifyView.undelegateEvents();
+                    App.notifyView.stopListening();
+                }
+                App.notifyView = new GuideNotify({e: null, data: App.guide});
+            }
 
             return this;
         }

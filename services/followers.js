@@ -115,6 +115,92 @@ module.exports = function (models) {
             });
         };
 
+        this.aggregateFind = function (_id, options, callback) {
+            var FollowersModel;
+            var dbName;
+            var err;
+
+            if (typeof options === 'function') {
+                callback = options;
+                options = {};
+            }
+
+            if (typeof callback !== 'function') {
+                callback = function () {
+                };
+            }
+
+            dbName = options.dbName;
+
+            if (!dbName) {
+                err = new Error('Invalid input parameters');
+                err.status = 400;
+
+                return callback(err);
+            }
+
+            FollowersModel = models.get(dbName, 'followers', followersSchema);
+            FollowersModel.aggregate([{
+                $match: {
+                    contentId: _id
+                }
+            }, {
+                $lookup: {
+                    from        : 'Users',
+                    localField  : 'followerId',
+                    foreignField: '_id',
+                    as          : 'follower'
+                }
+            }, {
+                $project: {
+                    follower      : {$arrayElemAt: ['$follower', 0]},
+                    collectionName: 1,
+                    contentId     : 1,
+                    date          : 1,
+                    editedBy      : 1,
+                    createdBy     : 1
+                }
+            }, {
+                $lookup: {
+                    from        : 'Employees',
+                    localField  : 'follower.relatedEmployee',
+                    foreignField: '_id',
+                    as          : 'employee'
+                }
+            }, {
+                $project: {
+                    follower      : 1,
+                    employee      : {$arrayElemAt: ['$employee', 0]},
+                    collectionName: 1,
+                    contentId     : 1,
+                    date          : 1,
+                    editedBy      : 1,
+                    createdBy     : 1
+                }
+            }, {
+                $project: {
+                    follower      : 1,
+                    followerName  : {
+                        $cond: ['$employee', {
+                            $concat: ['$employee.name.first', ' ', '$employee.name.last']
+                        },
+                            '$follower.login']
+                    },
+                    collectionName: 1,
+                    contentId     : 1,
+                    date          : 1,
+                    editedBy      : 1,
+                    createdBy     : 1
+                }
+            }], function (err, docs) {
+                if (err) {
+                    return callback(err);
+                }
+
+                callback(null, docs);
+            });
+        };
+
         this.findByIdAndRemove = function (_id, options, callback) {
             var _options = {};
             var FollowersModel;
@@ -154,5 +240,7 @@ module.exports = function (models) {
                 callback(null, follower);
             });
         };
-    };
-};
+    }
+        ;
+}
+;

@@ -101,6 +101,8 @@ var LocalFs = function () {
         var targetPath = path.join(defaultImageDir, folderName);
         var imagePath = path.join(targetPath, imageData.name);
 
+        imagePath = imagePath.split('\\').join('/');
+
         if (typeof options === 'function') {
             callback = options;
             options = {};

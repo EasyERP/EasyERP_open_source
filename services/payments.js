@@ -98,6 +98,47 @@ module.exports = function (models) {
             });
         };
 
+        this.find = function (query, options, callback) {
+            var Payment;
+            var dbName;
+            var err;
+            var _query;
+
+            if (typeof options === 'function') {
+                callback = options;
+                options = {};
+            }
+
+            dbName = options.dbName;
+            delete options.dbName;
+
+            if (!dbName || !query) {
+                err = new Error('Invalid input parameters');
+                err.status = 400;
+
+                if (typeof callback !== 'function') {
+                    return populateWrapper(err);
+                }
+
+                return callback(err);
+            }
+
+            Payment = models.get(dbName, 'Payment', PaymentSchema);
+            _query = Payment.find(query, options);
+
+            if (typeof callback !== 'function') {
+                return _query;
+            }
+
+            _query.exec(function (err, payment) {
+                if (err) {
+                    return callback(err);
+                }
+
+                callback(null, payment);
+            });
+        };
+
         this.findById = function (_id, options, callback) {
             var PaymentModel;
             var dbName;

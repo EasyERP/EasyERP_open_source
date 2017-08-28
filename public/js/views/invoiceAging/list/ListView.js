@@ -5,8 +5,10 @@ define([
     'text!templates/invoiceAging/list/ListHeader.html',
     'views/invoiceAging/list/ListItemView',
     'collections/invoiceAging/filterCollection',
+    'views/guideTours/guideNotificationView',
     'constants'
-], function ($, _, listViewBase, listTemplate, ListItemView, contentCollection, CONSTANTS) {
+], function ($, _, listViewBase, listTemplate, ListItemView, contentCollection, GuideNotify,
+             CONSTANTS) {
     'use strict';
 
     var ListView = listViewBase.extend({
@@ -50,6 +52,13 @@ define([
 
             $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
 
+            if (App.guide) {
+                if (App.notifyView) {
+                    App.notifyView.undelegateEvents();
+                    App.notifyView.stopListening();
+                }
+                App.notifyView = new GuideNotify({e: null, data: App.guide});
+            }
         }
 
     });

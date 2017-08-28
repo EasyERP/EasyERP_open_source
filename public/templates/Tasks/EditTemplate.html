@@ -17,8 +17,13 @@
             <input type="text" name="summary" class="input-title-long blueback projectSummary" id="summaryEdit" value="<%=model.summary%>" required maxlength="32"/>
 
             <div class="half-block left withPaddingLeftProject taskNote">
-                <div class="">
+                <div class="counterWrap">
                     <textarea type="text" name="description" class="taskDescriptionEdit" placeholder="Add a Description" id="description" required maxlength="500"><%=model.description%> </textarea>
+
+                    <div class="counter-wrap">
+                        <span class="counter-label">Characters left:</span>
+                        <span class="counter-value" id="counterValue"><%= 500 - model.description.length %></span>
+                    </div>
                 </div>
             </div>
             <div class="half-block left withPaddingRightProject">

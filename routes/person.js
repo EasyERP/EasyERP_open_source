@@ -11,6 +11,11 @@ module.exports = function (models, event) {
     var handler = new CustomerHandler(models, event);
     var moduleId = MODULES.PERSONS;
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
+    var accessDeleteStackMiddleware = require('../helpers/checkDelete');
+
+    function accessDeleteStackMiddlewareFunction(req, res, next) {
+        accessDeleteStackMiddleware(req, res, next, models, 'person', event);
+    }
 
     router.use(authStackMiddleware);
 
@@ -95,8 +100,6 @@ module.exports = function (models, event) {
          }
      */
     router.get('/', accessStackMiddleware, handler.getByViewType);
-
-
 
     /**
      *@api {get} /persons/getPersonAlphabet/ Request PersonAlphabet
@@ -1098,7 +1101,7 @@ module.exports = function (models, event) {
          "success":"customer removed"
      }
      */
-    router.delete('/:id', accessStackMiddleware, handler.remove);
+    router.delete('/:id', accessStackMiddleware, accessDeleteStackMiddlewareFunction, handler.remove);
 
     /**
      *@api {delete} /persons/ Request for deleting chosen Persons
@@ -1124,7 +1127,7 @@ module.exports = function (models, event) {
          "n":2
      }
      */
-    router.delete('/', accessStackMiddleware, handler.bulkRemove);
+    router.delete('/', accessStackMiddleware, accessDeleteStackMiddlewareFunction, handler.bulkRemove);
 
     return router;
 };

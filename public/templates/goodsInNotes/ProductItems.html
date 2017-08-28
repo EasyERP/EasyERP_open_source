@@ -1,4 +1,3 @@
-
 <table class="list _projectTableLeftAlign tableFixed _invoiceTable">
     <colgroup>
         <col width="150px">
@@ -19,53 +18,56 @@
             Product
         </th>
         <th class="width20">
-           Ordered
+            Ordered
         </th>
         <th class="width20">
-          Received
+            Received
         </th>
         <th class="width20">
             Receive now
         </th>
         <th class="width20">
-           Location
+            Location
         </th>
     </tr>
     </thead>
     <tbody id="tbodyProducts">
     <tr></tr>
 
-    <%products.forEach(function(elem){%>
+    <%products.forEach(function(elem, i){%>
 
     <%if (elem.product) {%>
     <tr class="productItem deleteRow" id="<%=elem._id%>" data-id="<%=elem.warehouse ? elem.warehouse._id : ''%>">
 
         <td data-name="productName">
 
-                <a class="current-selected" id="productsDd" href="javascript:;" data-id="<%= elem.product ? elem.product._id : ''%>">
+            <a class="current-selected" id="productsDd" href="javascript:;"
+               data-id="<%= elem.product ? elem.product._id : ''%>">
 
-                    <%=elem.product && elem.product.info ? elem.product.info.SKU : 'Select' %>
-                </a>
+                <%=elem.product && elem.product.info ? elem.product.info.SKU : 'Select' %>
+            </a>
 
 
         </td>
         <td data-name="description">
-            <%= elem.product ? elem.product.name :  ''%>
+            <%= elem.product ? elem.product.name : ''%>
         </td>
         <td data-name="ordered">
-            <input id="ordered" class="quantity statusInfo" maxlength="9" value="<%=elem.quantity%>" size=7 type="text" readonly/>
+            <input id="ordered" class="statusInfo" maxlength="9" value="<%=elem.quantity%>" size=7 type="text" readonly/>
         </td>
         <td data-name="received">
-            <input id="received" class="quantity statusInfo" maxlength="9" value="<%=elem.fulfilled || 0%>" size=7 type="text" readonly/>
+            <input id="received" class="statusInfo" maxlength="9" value="<%=elem.fulfilled || 0%>" size=7 type="text" readonly/>
         </td>
         <td data-name="newShip">
             <div class="receiveLocation">
                 <div>
-                    <input id="newShip" class="quantity" maxlength="9" value="<%=elem.quantity - elem.fulfilled%>" size=7 type="text"/>
+                    <input id="newShip" class="quantity" maxlength="9" value="<%=elem.quantity - elem.fulfilled%>"
+                           size=7 type="text"/>
                     into
                 </div>
                 <div>
-                    <a class="current-selected" id="locationDd" href="javascript:;" data-id="<%= elem.location ? elem.location._id : ''%>">
+                    <a class="current-selected locationDd"  href="javascript:;"
+                       data-id="<%= elem.location ? elem.location._id : ''%>">
                         <%=elem.location ? elem.location.name: 'Select' %>
                     </a>
                 </div>

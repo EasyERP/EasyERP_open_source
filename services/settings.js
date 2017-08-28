@@ -1,7 +1,7 @@
 'use strict';
 
-module.exports = function (models) {
-    var _getHelper = require('../helpers/integrationHelperRetriever')(models);
+module.exports = function (models, event) {
+    var _getHelper = require('../helpers/integrationHelperRetriever')(models, event);
     var getVersion = _getHelper.getVersion;
 
     return new function () {
@@ -185,6 +185,8 @@ module.exports = function (models) {
                 if (err) {
                     return callback(err);
                 }
+
+                console.log(setting, app, version);
 
                 if (setting && setting.apps && setting.apps[app] && setting.apps[app][version]) {
                     return callback(null, setting.apps[app][version]);

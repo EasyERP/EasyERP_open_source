@@ -4,8 +4,10 @@ define([
     'Underscore',
     'common',
     'custom',
-    'views/Notes/AttachView'
-], function (Backbone, $, _, Common, Custom, AttachView) {
+    'views/Notes/AttachView',
+    'helpers/ga',
+    'constants/googleAnalytics'
+], function (Backbone, $, _, Common, Custom, AttachView, ga, GA) {
     'use strict';
     var TopBarView = Backbone.View.extend({
         el        : '#top-bar',
@@ -19,6 +21,7 @@ define([
             'click #top-bar-createBtn'      : 'onCreateEvent',
             'click #top-bar-discardBtn'     : 'onDiscardEvent',
             'click #top-bar-editBtn'        : 'onEditEvent',
+            'click #top-bar-edit'           : 'onEditListEvent',
             'click #top-bar-saveBtn'        : 'onSaveEvent',
             'click #kanban-settings-Btn'    : 'onEditKanban',
 //            'click #top-bar-importBtn'      : 'importEvent',
@@ -42,11 +45,21 @@ define([
         exportToCsv: function (event) {
             event.preventDefault();
             this.trigger('exportToCsv');
+
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.EXPORT_TO_CSV
+            });
         },
 
         exportToXlsx: function (event) {
             event.preventDefault();
             this.trigger('exportToXlsx');
+
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.EXPORT_TO_XLSX
+            });
         },
 
         importEvent: function (event) {
@@ -82,6 +95,11 @@ define([
         onCreateEvent: function (event) {
             event.preventDefault();
             this.trigger('createEvent');
+
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.CREATE_BTN
+            });
         },
 
         onDiscardEvent: function (event) {
@@ -94,35 +112,69 @@ define([
             this.trigger('editEvent');
         },
 
+        onEditListEvent: function (event) {
+            event.preventDefault();
+            this.trigger('editEvent');
+        },
+
         onSaveEvent: function (event) {
             event.preventDefault();
 
             this.trigger('saveEvent');
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.SAVE_BTN
+            });
         },
 
         onDeleteEvent: function (event) {
             event.preventDefault();
             this.trigger('deleteEvent');
+
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.DELETE_BTN
+            });
         },
 
         onEditKanban: function (event) {
             event.preventDefault();
             this.trigger('editKanban');
+
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.SETTINGS_BTN
+            });
         },
 
         moveToEdit: function (event) {
             event.preventDefault();
             this.trigger('moveToEdit');
+
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.MOVE_TO_EDIT
+            });
         },
 
         onSaveAllEvent: function (event) {
             event.preventDefault();
             this.trigger('saveAllEvent');
+
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.SAVE_ALL_BTN
+            });
         },
 
         onRemoveAllEvent: function (event) {
             event.preventDefault();
             this.trigger('removeAllEvent');
+
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.REMOVE_ALL_BTN
+            });
         },
 
         render: function (options) {

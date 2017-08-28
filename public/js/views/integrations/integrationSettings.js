@@ -5,29 +5,35 @@ define([
     'text!templates/Integrations/ChannelSettings.html',
     'text!templates/Integrations/GoToRemoveTemplate.html',
     'models/integrationChannel',
+    'views/dialogViewBase',
     'views/selectView/selectView',
     'views/settingsOverview/productDetails/priceLists/CreateView',
     'views/warehouse/CreateView',
     'services/select',
     'dataService',
     'constants',
-    'populate'
+    'populate',
+    'tracker',
+    'helpers'
 ], function (Backbone,
              $,
              _,
              channelSettingsTemplate,
              goToRemoveTemplate,
              Model,
+             DialogViewBase,
              selectView,
              CreatePriceListView,
              CreateWarehouseView,
              select,
              dataService,
              CONSTANTS,
-             populate) {
+             populate,
+             tracker,
+             helpers) {
     'use strict';
 
-    var Integrations = Backbone.View.extend({
+    var Integrations = DialogViewBase.extend({
         contentType            : CONSTANTS.INTEGRATIONS,
         channelSettingsTemplate: _.template(channelSettingsTemplate),
         goToRemoveTemplate     : _.template(goToRemoveTemplate),
@@ -37,7 +43,8 @@ define([
             'click .current-selected:not(.disabled)': 'showNewSelect',
             click                                   : 'hideNewSelect',
             'click #createOwn'                      : 'onCreatePriceList',
-            'click #createWarehouse'                : 'onCreateWarehouse'
+            'click #createWarehouse'                : 'onCreateWarehouse',
+            'click .syncProducts'                   : 'syncProducts'
         },
 
         initialize: function (options) {
@@ -52,17 +59,38 @@ define([
             this.render(options);
         },
 
+        syncProducts: function (e) {
+            var model = this.model.toJSON();
+
+            App.render({type: 'notify', message: 'Please, wait few minutes. Your request is in process'});
+
+            this.cancel();
+
+            dataService.getData('/channels/getOnlyProducts', {
+                type   : model.type,
+                channel: model._id
+            }, function (response) {
+
+            });
+        },
+
         reloadTempShips: function (e) {
             e.preventDefault();
 
-            populate.get('#shippingTemps', 'integration/etsy/shippingTemplate', {channel: this.model.get('channelName')}, 'name', this);
+            populate.get('#shippingTemps', 'integration/etsy/shippingTemplate', {channel: this.model.get('_id')}, 'name', this);
 
             return false;
         },
 
-        removeChannelButtons: function (e, self) {
+        removeChannelButtons: function (e, self, conflicted, unlinked) {
             var $target = e ? $(e.target) : null;
             var data = $target ? $target.attr('data-type') : 'remove';
+            var url = '#easyErp/unlinkedProducts/filter=';
+            var filter = {
+                channel: this.model.toJSON()._id
+            };
+
+            url = url + encodeURIComponent(JSON.stringify(filter)) + '?fromIntegration=true';
 
             if (data === 'remove') {
                 return self.remove();
@@ -70,7 +98,10 @@ define([
 
             self.cancel();
             self.cancelTwoDialog();
-            self.eventsChannel.trigger('resolveConflict');
+
+            Backbone.history.fragment = '';
+            Backbone.history.navigate(url, {trigger: true});
+
         },
 
         showNewSelect: function (e) {
@@ -125,6 +156,8 @@ define([
             var shopname = $thisEl.find('#apishop').val();
             var username = $thisEl.find('#apiuser').val();
             var password = $thisEl.find('#apipassword').val();
+            var version = $thisEl.find('#version').val();
+            var sharedSecret = $thisEl.find('#sharedSecret').val();
             var warehouse = $thisEl.find('#warehouse').attr('data-id');
             var location = $thisEl.find('#location').attr('data-id');
             var priceList = $thisEl.find('#priceList').attr('data-id');
@@ -133,8 +166,11 @@ define([
             var bankAccount = $thisEl.find('#bankAccount').attr('data-id');
             var shippingStatus = $thisEl.find('#shippingStatus').prop('checked');
             var shippingMethod = $thisEl.find('#shippingMethod').prop('checked');
+            var isCreate = $thisEl.find('#automatingGetProducts').prop('checked');
+            var dateFrom = helpers.setTimeToDate(new Date($thisEl.find('#dateFrom').val()));
             var url = this.url + '/' + this.type;
             var model = this.model || new Model({type: this.type});
+            var errorContainer = 'password';
             var isNew;
             var data;
 
@@ -155,14 +191,32 @@ define([
             if (!warehouse || !location) {
                 return App.render({
                     type   : 'error',
-                    message: 'Please, fill warehouse and location fields'
+                    message: 'Select warehouse and location fields, please.'
+                });
+            }
+
+            if (!priceList) {
+                return App.render({
+                    type   : 'error',
+                    message: 'Select price list, please.'
+                });
+            }
+
+            if (!bankAccount && this.type === 'etsy') {
+                return App.render({
+                    type   : 'error',
+                    message: 'Select bankAccount field, please.'
                 });
             }
 
             if (!password) {
+                if (this.type === 'woo') {
+                    errorContainer = 'consumer secret';
+                }
+
                 return App.render({
                     type   : 'error',
-                    message: 'Please, enter password first'
+                    message: 'Please, enter ' + errorContainer + ' first'
                 });
             }
 
@@ -176,7 +230,11 @@ define([
                 location            : location,
                 bankAccount         : bankAccount,
                 updateShippingStatus: shippingStatus,
-                updateShippingMethod: shippingMethod
+                updateShippingMethod: shippingMethod,
+                version             : version,
+                sharedSecret        : sharedSecret,
+                automatingGetProduct: isCreate,
+                ordersDate          : dateFrom
             };
 
             if (this.type === 'etsy') {
@@ -186,16 +244,37 @@ define([
             isNew = !!model.isNew();
 
             if (isNew) {
+                data.connected = false;
                 model.urlRoot = url;
             }
 
             model.set(data);
             model.save(null, {
                 success: function (model) {
-                    if (isNew) {
+                    /*if (isNew) {
+                        tracker.track({
+                            date       : new Date(),
+                            eventType  : 'userFlow',
+                            name       : 'createChannel',
+                            message    : 'create channel',
+                            email      : App.currentUser.email,
+                            login      : App.currentUser.login,
+                            mobilePhone: App.currentUser.mobilePhone
+                        });
+
                         model = model && model.toJSON();
                         return triggerGetAll(model);
-                    }
+                    }*/
+
+                    tracker.track({
+                        date       : new Date(),
+                        eventType  : 'userFlow',
+                        name       : 'updateChannel',
+                        message    : 'update channel',
+                        email      : App.currentUser.email,
+                        login      : App.currentUser.login,
+                        mobilePhone: App.currentUser.mobilePhone
+                    });
 
                     App.render({
                         type   : 'notify',
@@ -297,6 +376,8 @@ define([
             var self = this;
             var stats = this.model.toJSON().stats;
             var answer;
+            var conflicted;
+            var unlinked;
             var dialogOptions = {
                 dialogClass: 'edit-dialog',
                 width      : 600,
@@ -314,14 +395,17 @@ define([
 
             dialogContent = this.goToRemoveTemplate({model: this.model});
 
-            if ((stats && stats.products && stats.products.conflicted && stats.products.conflicted.count) || (stats && stats.orders && stats.orders.unlinked && stats.orders.unlinked.count)) {
+            conflicted = stats && stats.products && stats.products.conflicted && stats.products.conflicted.count;
+            unlinked = stats && stats.orders && stats.orders.unlinked && stats.orders.unlinked.count;
+
+            if (conflicted || unlinked) {
                 this.secondDialog = $(dialogContent).dialog(dialogOptions);
 
                 this.secondDialog.on('click', '.removeChannelButtons', function (e) {
-                    self.removeChannelButtons(e, self);
+                    self.removeChannelButtons(e, self, conflicted, unlinked);
                 });
             } else {
-                answer = confirm('Really DELETE channel!?');
+                answer = confirm('Do you confirm the deletion of the channel?');
 
                 if (answer) {
                     self.removeChannelButtons(null, self);
@@ -331,6 +415,16 @@ define([
         },
 
         remove: function () {
+            tracker.track({
+                date       : new Date(),
+                eventType  : 'userFlow',
+                name       : 'removeChannel',
+                message    : 'remove channel',
+                email      : App.currentUser.email,
+                login      : App.currentUser.login,
+                mobilePhone: App.currentUser.mobilePhone
+            });
+
             this.model.destroy({
                 success: function () {
                     // self.eventsChannel.trigger('closeDialog');
@@ -344,10 +438,13 @@ define([
             var model = this.model;
             var type = options.type || model && model.get('type');
             var name = options.name || model && model.get('channelName');
+            var ordersDate = model && model.get('ordersDate');
             var self = this;
+            var isCreate = true;
+            var dialogTitle = 'Add channel details';
             var dialogOptions = {
                 dialogClass: 'edit-dialog',
-                width      : 600,
+                width      : 400,
                 buttons    : {
                     save: {
                         text : 'Save',
@@ -370,16 +467,13 @@ define([
                 });
             }
 
-            dialogContent = this.channelSettingsTemplate({
-                type       : type,
-                channelName: name,
-                credentials: model && model.toJSON()
-            });
-
             this.type = type;
             this.channelName = name;
 
             if (model && model.id) {
+                dialogTitle = 'Edit channel details';
+                isCreate = false;
+
                 dialogOptions.buttons.delete = {
                     text : 'Delete',
                     class: 'btn',
@@ -388,6 +482,14 @@ define([
                     }
                 };
             }
+
+            dialogContent = this.channelSettingsTemplate({
+                dialogTitle: dialogTitle,
+                type       : type,
+                channelName: name,
+                credentials: model && model.toJSON(),
+                isCreate   : isCreate
+            });
 
             this.$el = $(dialogContent).dialog(dialogOptions);
 
@@ -416,6 +518,13 @@ define([
                     isEmployee: false
                 });
             });
+
+            this.$el.find('#dateFrom').datepicker({
+                dateFormat : 'd M, yy',
+                changeMonth: true,
+                changeYear : true,
+                maxDate    : new Date()
+            }).datepicker('setDate', new Date(ordersDate));
 
             this.delegateEvents(this.events);
 

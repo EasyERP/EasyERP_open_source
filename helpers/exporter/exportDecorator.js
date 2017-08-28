@@ -59,7 +59,7 @@ function exportToCsv(options) {
 
                 fs.unlink(nameOfFile + '.csv', function (err) {
                     if (err) {
-                        console.log(err)
+                        console.log(err);
                     } else {
                         console.log('done');
                     }
@@ -140,8 +140,8 @@ function exportToXlsx(options) {
 
     var writeXlsx = function (array) {
         arrayToXlsx.writeFile(nameOfFile + '.xlsx', array, {
-            sheetName: "data",
-            headers: headersArray,
+            sheetName : "data",
+            headers   : headersArray,
             attributes: headersArray
         });
 
@@ -217,68 +217,89 @@ function exportToXlsx(options) {
         } else {
             writeXlsx(resultArray);
         }
-}
+    }
 }
 
 function reportToXlsx(options) {
     var res = options.res;
     var next = options.next;
     var map = options.map;
+    var attributes = options.attributes;
     var fileName = options.fileName;
     var resultArray = options.resultArray;
-    //var headersArray = Object.keys(map.aliases);
     var headersArray = map;
-    //var formatters = map.formatters;
-    var nameOfFile = fileName ? fileName : type ? type : 'data';
 
     var writeXlsx = function (array) {
-        var randomNumber = Number(Date.now());
-        var pathToFile = path.join('exportFiles', nameOfFile + '_' + randomNumber.toString() + '.xlsx');
+        var pathToFile = path.join('exportFiles', fileName + '.xlsx');
+
         arrayToXlsx.writeFile(pathToFile, array, {
             sheetName : 'report',
             headers   : headersArray,
-            attributes: headersArray
+            attributes: attributes
         });
 
-        pathToFile = encodeURIComponent(pathToFile);
+        //pathToFile = encodeURIComponent(pathToFile);
+        //pathToFile = path.join('download', pathToFile);
 
-        pathToFile = path.join('download', pathToFile);
-
-        next(null, {
-            fileName: nameOfFile + '.xlsx',
-            pathName: pathToFile
-        });
-    };
-
-
-    writeXlsx(resultArray);
-    /*if (formatters) {
-        async.each(resultArray, function (item, callback) {
-
-            var keys = Object.keys(formatters);
-
-            for (var i = keys.length - 1; i >= 0; i--) {
-                var key = keys[i];
-                item[key] = formatters[key](item[key]);
-            }
-
-            callback();
-
-        }, function (err) {
+        res.download(pathToFile, pathToFile, function (err) {
             if (err) {
                 return next(err);
             }
 
-            writeXlsx(resultArray);
+            fs.unlink(pathToFile, function (err) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    console.log('done');
+                }
+            });
         });
-    } else {
-        return writeXlsx(resultArray);
-    }*/
+    };
+
+    writeXlsx(resultArray);
+}
+
+function reportToCSV(options) {
+    var res = options.res;
+    var next = options.next;
+    var map = options.map;
+    var attributes = options.attributes;
+    var fileName = options.fileName;
+    var resultArray = options.resultArray;
+    var headersArray = map;
+
+    var writeCsv = function (array) {
+        var pathToFile = path.join('exportFiles', fileName + '.csv');
+        var writableStream = fs.createWriteStream(pathToFile);
+
+        writableStream.on('finish', function () {
+            res.download(pathToFile, pathToFile, function (err) {
+                if (err) {
+                    return next(err);
+                }
+
+                fs.unlink(pathToFile, function (err) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        console.log('done');
+                    }
+                });
+            });
+        });
+
+        csv
+            .write(array, {headers: true})
+            .pipe(writableStream);
+    };
+
+    writeCsv(resultArray);
 }
 
 exports.exportToCsv = exportToCsv;
 exports.exportToXlsx = exportToXlsx;
 exports.reportToXlsx = reportToXlsx;
+exports.reportToCSV = reportToCSV;
 //
 ///**
 // *

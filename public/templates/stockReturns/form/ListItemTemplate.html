@@ -1,24 +1,18 @@
-<table id="listTable">
+<div id="listTable">
     <% collection.forEach(function(item, index){ %>
+    <div class="compactView" data-id="<%=item._id%>">
+        <div class="compactRowWrap">
+            <div class="compactRow">
+                <div class="supplier firstName"><%=item.customer ? item.customer.name : ''%></div>
+            </div>
 
-    <tr class="compactView" data-id="<%=item._id%>">
-        <td class="checkboxRow">
-        </td>
-        <td>
-            <div class="compactRowWrap">
-                <div class="compactRow">
-                    <div class="supplier firstName"><%=item.customer ? item.customer.name : ''%></div>
-                </div>
-
-                <div class="compactRow">
-                    <div class="supplier firstName"><%=item.name%></div>
-                </div>
-                <div class="compactRow">
-                    <div class="date"><%= item.date || '' %></div>
-                </div>
-        <td></td>
+            <div class="compactRow">
+                <div class="supplier firstName"><%=item.name%></div>
+            </div>
+            <div class="compactRow">
+                <div class="date"><%= item.date || '' %></div>
+            </div>
         </div>
-        </td>
-    </tr>
-    <% }) %>
-</table>
+        <% }) %>
+    </div>
+</div>

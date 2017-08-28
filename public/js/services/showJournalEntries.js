@@ -7,7 +7,7 @@ define([
         var name = this.currentModel.get('name');
         var payments = this.currentModel.get('payments') || [];
         var order = this.currentModel.get('sourceDocument');
-        var goodsOutNotes = this.currentModel.get('goodsNotes');
+        var goodsOutNotes = this.currentModel.get('goodsNotes') || [];
         var startDate = this.currentModel.get('orderDate') ? new Date(this.currentModel.get('orderDate')) : new Date(this.currentModel.get('invoiceDate'));
         var prepayments = this.currentModel.get('prepayment') || {};
         var stockReturns = this.currentModel.get('stockReturns') || {};
@@ -29,7 +29,7 @@ define([
         };
 
         payments.forEach(function (el) {
-            filter.name.value.push(el.name);
+            valuesArray.push(el.name);
         });
 
         if (invoice) {
@@ -47,21 +47,23 @@ define([
             }
         });
 
-        if (prepayments.names){
-          valuesArray = valuesArray.concat(prepayments.names);
+        if (prepayments.names) {
+            valuesArray = valuesArray.concat(prepayments.names);
         }
 
-        if (stockReturns.names){
-          valuesArray = valuesArray.concat(stockReturns.names);
+        if (stockReturns.names) {
+            valuesArray = valuesArray.concat(stockReturns.names);
         }
 
-        if (stockReturns.journalEntrySources){
-          valuesArray = valuesArray.concat(stockReturns.journalEntrySources);
+        if (stockReturns.journalEntrySources) {
+            valuesArray = valuesArray.concat(stockReturns.journalEntrySources);
         }
 
         if (order) {
-            valuesArray.push(order.name, name);
+            valuesArray.push(order.name);
         }
+
+        valuesArray.push(name);
 
         filter.name.value = valuesArray;
 

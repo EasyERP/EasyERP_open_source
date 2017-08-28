@@ -10,8 +10,12 @@ define([
     'views/Users/EditView',
     'collections/menu/MenuItems',
     'dataService',
-    'constants'
-], function (Backbone, _, $, MainTemplate, EmployeesModel, UsersModel, LeftMenuView, EmployeeEditView, UserEditView, MenuItemsCollection, dataService, CONSTANTS) {
+    'constants',
+    'constants/googleAnalytics',
+    'helpers/ga',
+    'views/guideTours/listView'
+], function (Backbone, _, $, MainTemplate, EmployeesModel, UsersModel, LeftMenuView, EmployeeEditView, UserEditView, MenuItemsCollection, dataService, CONSTANTS, GA, ga,
+             GuideToursListView) {
     'use strict';
     var MainView = Backbone.View.extend({
         el      : '#wrapper',
@@ -30,7 +34,11 @@ define([
         events: {
             'click .sidebarToggler': 'expandCollapse',
             'click #loginPanel'    : 'openLogin',
-            'click #userpage'      : 'goToMyProfile'
+            'click #userpage'      : 'goToMyProfile',
+            'click #logout'        : 'clickLogOut',
+            'click .integrationBtn': 'clickIntegrationBtn',
+            'click #clearDemoData' : 'clearDemoData',
+            'click #guide'         : 'openGuide'
         },
 
         bindMouseEvents: function () {
@@ -60,11 +68,41 @@ define([
             if (resizableArray.indexOf(contentType) > -1) {
                 $(window).trigger('resize');
             }
+
+            // this.leftMenu.applyScroll();
+        },
+
+        clickIntegrationBtn: function () {
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventAction  : GA.EVENT_ACTIONS.MAIN_VIEW,
+                eventLabel   : GA.EVENT_LABEL.INTEGRATIONS,
+                eventValue   : GA.EVENTS_VALUES[5],
+                fieldsObject : {}
+            });
+        },
+
+        clickLogOut: function () {
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventAction  : GA.EVENT_ACTIONS.MAIN_VIEW,
+                eventLabel   : GA.EVENT_LABEL.LOG_OUT,
+                eventValue   : GA.EVENTS_VALUES[4],
+                fieldsObject : {}
+            });
         },
 
         openLogin: function (e) {
             e.stopPropagation();
             $(e.target).closest('.loginPanel').toggleClass('open');
+
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventAction  : GA.EVENT_ACTIONS.MAIN_VIEW,
+                eventLabel   : GA.EVENT_LABEL.PROFILE_ICON,
+                eventValue   : GA.EVENTS_VALUES[2],
+                fieldsObject : {}
+            });
         },
 
         goToMyProfile: function (e) {
@@ -74,7 +112,7 @@ define([
 
             e.preventDefault();
 
-            if (App.currentUser && App.currentUser.relatedEmployee) {
+            if (App.currentUser && App.currentUser.relatedEmployee && App.currentUser.relatedEmployee._id) {
                 employee = new EmployeesModel({_id: App.currentUser._id}); // get employee by relatedUser
                 employee.fetch({
                     success: function (model) {
@@ -102,6 +140,14 @@ define([
                     model      : new UsersModel(App.currentUser)
                 });
             }
+
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventAction  : GA.EVENT_ACTIONS.MAIN_VIEW,
+                eventLabel   : GA.EVENT_LABEL.OPEN_PROFILE,
+                eventValue   : GA.EVENTS_VALUES[3],
+                fieldsObject : {}
+            });
         },
 
         createMenuViews: function () {
@@ -173,6 +219,26 @@ define([
             $thisEl.addClass('collapsed');
         },
 
+        clearDemoData: function () {
+            var answer = confirm('Do you really want to delete ALL DATA except settings!?');
+
+            if (answer) {
+                dataService.getData('/clearDemoData', {}, function (result) {
+                    if (!result.error) {
+                        Backbone.history.fragment = '';
+                        Backbone.history.navigate(window.location.hash, {trigger: true});
+                        return false;
+                    }
+
+                    return App.render({type: 'error', message: 'Some error'});
+                });
+            }
+        },
+
+        openGuide: function () {
+            new GuideToursListView();
+        },
+
         render: function () {
             var self = this;
 
@@ -194,6 +260,7 @@ define([
             if (!App.currentUser || !App.currentUser.login) {
 
                 dataService.getData(CONSTANTS.URLS.CURRENT_USER, null, function (response) {
+                    var gatherInfoUrl = '#easyErp/gatherInfo';
                     var currentUser;
 
                     currentUser = response.user || {};
@@ -213,6 +280,11 @@ define([
                     self.$el.html(self.template(currentUser));
                     self.createMenuViews();
                     self.trigger('rendered');
+
+                    if (!App.currentUser.mobilePhone || App.currentUser.mobilePhone.length === 1) {
+                        Backbone.history.fragment = '';
+                        Backbone.history.navigate(gatherInfoUrl, {trigger: true});
+                    }
                 });
 
             } else {

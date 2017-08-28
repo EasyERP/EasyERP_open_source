@@ -71,7 +71,7 @@ define([
                     checkedSelectedId = category._id;
                     checkedName = category.name;
                 } else {
-                    $categoryContainer.append('<li><label class="_customCHeckbox"><input type="checkbox" class="checkbox productCategory" id="' + category._id + '" data-value="' + category.name + '" data-id="' + category._id + '"> <span></span></label><label class="_checkboxLabel" for="'+ category._id + '">' + category.name + '</label></li>');
+                    $categoryContainer.append('<li><label class="_customCHeckbox"><input type="checkbox" class="checkbox productCategory" id="' + category._id + '" data-value="' + category.name + '" data-id="' + category._id + '"> <span></span></label><label class="_checkboxLabel" for="' + category._id + '">' + category.name + '</label></li>');
                 }
 
                 if (checkedName) {
@@ -79,7 +79,7 @@ define([
                 }
             });
 
-            $categoriesBlock.children('ul').hide();
+            // $categoriesBlock.children('ul').hide();
 
         }, this);
     }
@@ -115,7 +115,7 @@ define([
 
             });
 
-            $categoriesBlock.children('ul').hide();
+            // $categoriesBlock.children('ul').hide();
 
         }, this);
     }

@@ -7,7 +7,7 @@
             </div>
         </div>
 
-        <%if (!model.refund) {%>
+        <%if (!model.refund && model._type !== 'expensesInvoicePayment') {%>
         <span class="btn blue refund">Refund</span>
         <%}%>
 
@@ -23,7 +23,7 @@
                     <div class="_entityBlock">
                         <div class="_entityTitle">
                             <%if (!model.refund) {%>
-                            <%=model.order ? 'Prepayment' : 'Payment'%> <%=model.name || ''%>
+                            <%=model.order ? '<Pr></Pr>epayment' : 'Payment'%> <%=model.name || ''%>
                             <%} else {%>
                             Refund <%=model.name || ''%>
                             <%}%>

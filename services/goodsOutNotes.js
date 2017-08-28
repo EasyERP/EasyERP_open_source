@@ -5,8 +5,11 @@ var GoodsInNotesSchema = mongoose.Schemas.goodsInNote;
 var populateWrapper = require('../helpers/callbackWrapper').populate;
 var _ = require('underscore');
 var async = require('async');
+var ISODate = Date;
 
 module.exports = function (models) {
+    var journalEntriesService = require('./journalEntry')(models);
+
     return new function () {
 
         this.create = function (options, callback) {
@@ -160,11 +163,23 @@ module.exports = function (models) {
             GoodsOutNote = models.get(dbName, 'GoodsOutNote', GoodsOutNotesSchema);
 
             GoodsOutNote.findByIdAndRemove(id, function (err, result) {
+                var query;
                 if (err) {
                     return callback(err);
                 }
 
-                callback(null, result);
+                query = {
+                    'sourceDocument._id': id
+                };
+
+                journalEntriesService.remove({dbName: dbName, query: query}, function (err) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    callback(null, result);
+                })
+
             });
         };
 
@@ -199,7 +214,13 @@ module.exports = function (models) {
 
             GoodsOutNote.aggregate([{
                 $match: {
-                    order: order
+                    $or: [{
+                        order: {$eq: order}
+                    }, {
+                        manufacturingOrder: {$eq: order}
+                    }],
+
+                    _type: 'GoodsOutNote'
                 }
             }, {
                 $group: {
@@ -286,13 +307,17 @@ module.exports = function (models) {
 
                 qty = prod ? prod.quantity : 1;
 
-                cost = cost / qty;
+                if (!purchase) {
+                    cost = cost / qty;
+                }
 
                 newCost = cost * (qty - updateQty);
 
-                if (!updateObj.$pull) {
+                if (!updateObj.$pull && !purchase) {
                     updateObj['orderRows.$.cost'] = newCost;
                 }
+
+                console.log(updateObj);
 
                 GoodsOutNote.update(query, updateObj, function (err, result) {
                     if (err) {
@@ -360,13 +385,212 @@ module.exports = function (models) {
             if (populate) {
                 query.populate(populate);
             }
-            
+
             query.exec(function (err, doc) {
                 if (err) {
                     return callback(err);
                 }
 
                 callback(null, doc);
+            });
+        };
+
+        this.getBetwenDates = function (options, callback) {
+            var GoodsOutNote;
+            var dbName;
+            var err;
+            var startDate;
+            var endDate;
+
+            if (typeof options === 'function') {
+                callback = options;
+                options = {};
+            }
+
+            if (typeof callback !== 'function') {
+                callback = function () {
+                    return false;
+                };
+            }
+
+            dbName = options.dbName;
+            startDate = options.startDate || new Date();
+            endDate = options.endDate || new Date();
+
+            if (!dbName) {
+                err = new Error('Invalid input parameters');
+                err.status = 400;
+
+                return callback(err);
+            }
+
+            GoodsOutNote = models.get(dbName, 'GoodsOutNote', GoodsOutNotesSchema);
+
+            GoodsOutNote.aggregate([
+                {
+                    $match: {
+                        _type : 'GoodsOutNote',
+                        'date': {
+                            $ne : null,
+                            $gte: new Date(startDate),
+                            $lte: new Date(endDate)
+                        }
+                    }
+                },
+                {
+                    $lookup: {
+                        from        : 'warehouse',
+                        localField  : 'warehouse',
+                        foreignField: '_id',
+                        as          : 'warehouse'
+                    }
+                },
+                {
+                    $unwind: {
+                        path                      : '$orderRows',
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                {
+                    $lookup: {
+                        from        : 'Products',
+                        localField  : 'orderRows.product',
+                        foreignField: '_id',
+                        as          : 'product'
+                    }
+                },
+                {
+                    $project: {
+                        product  : {$arrayElemAt: ['$product', 0]},
+                        warehouse: {$arrayElemAt: ['$warehouse', 0]},
+                        orderRows: 1
+                    }
+                },
+                {
+                    $group: {
+                        _id     : {
+                            product  : '$product',
+                            warehouse: '$warehouse',
+                            sku      : '$product.info.SKU'
+                        },
+                        //cost    : {$sum: '$orderRows.cost'},
+                        quantity: {$sum: '$orderRows.quantity'}
+                    }
+                },
+                {
+                    $project: {
+                        name            : '$_id.product.name',
+                        sku             : '$_id.sku',
+                        warehouse       : '$_id.warehouse.name',
+                        outwardsQuantity: '$quantity',
+                        _id             : '$_id.product._id'
+                    }
+                }
+            ]).exec(function (err, result) {
+                if (err) {
+                    return callback(err);
+                }
+
+                callback(null, result);
+            });
+
+        };
+
+        this.getBeforeStartDate = function (options, callback) {
+            var GoodsOutNote;
+            var dbName;
+            var err;
+            var startDate;
+
+            if (typeof options === 'function') {
+                callback = options;
+                options = {};
+            }
+
+            if (typeof callback !== 'function') {
+                callback = function () {
+                    return false;
+                };
+            }
+
+            dbName = options.dbName;
+            startDate = options.startDate || new Date();
+
+            if (!dbName) {
+                err = new Error('Invalid input parameters');
+                err.status = 400;
+
+                return callback(err);
+            }
+
+            GoodsOutNote = models.get(dbName, 'GoodsOutNote', GoodsOutNotesSchema);
+
+            GoodsOutNote.aggregate([
+                {
+                    $match: {
+                        _type : 'GoodsOutNote',
+                        'date': {
+                            $ne : null,
+                            $lte: new Date(startDate)
+                        }
+                    }
+                },
+                {
+                    $lookup: {
+                        from        : 'warehouse',
+                        localField  : 'warehouse',
+                        foreignField: '_id',
+                        as          : 'warehouse'
+                    }
+                },
+                {
+                    $unwind: {
+                        path                      : '$orderRows',
+                        preserveNullAndEmptyArrays: true
+                    }
+                },
+                {
+                    $lookup: {
+                        from        : 'Products',
+                        localField  : 'orderRows.product',
+                        foreignField: '_id',
+                        as          : 'product'
+                    }
+                },
+                {
+                    $project: {
+                        product  : {$arrayElemAt: ['$product', 0]},
+                        warehouse: {$arrayElemAt: ['$warehouse', 0]},
+                        orderRows: 1
+                    }
+                },
+                {
+                    $group: {
+                        _id     : {
+                            product  : '$product',
+                            warehouse: '$warehouse',
+                            sku      : '$product.info.SKU'
+                        },
+                        //cost    : {$sum: '$orderRows.cost'},
+                        quantity: {$sum: '$orderRows.quantity'}
+                    }
+                },
+                {
+                    $project: {
+                        name              : '$_id.product.name',
+                        sku               : '$_id.sku',
+                        warehouse         : '$_id.warehouse.name',
+                        openingQuantityOut: '$quantity',
+                        _id               : '$_id.product._id',
+                        warehouseId       : '$_id.warehouse._id'
+                    }
+                }
+            ]).exec(function (err, result) {
+                if (err) {
+                    return callback(err);
+                }
+
+                callback(null, result);
             });
         };
     };

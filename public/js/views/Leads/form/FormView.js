@@ -15,8 +15,10 @@ define([
     'dataService',
     'views/selectView/selectView',
     'populate',
-    'moment'
-], function (Backbone, _, $, OpportunitiesFormTemplate, workflowProgress, aboutTemplate, EditorView, AttachView, CompanyFormProperty, ContactFormProperty, TagView, Followers, constants, dataService, SelectView, populate, moment) {
+    'moment',
+    'helpers/ga',
+    'constants/googleAnalytics'
+], function (Backbone, _, $, OpportunitiesFormTemplate, workflowProgress, aboutTemplate, EditorView, AttachView, CompanyFormProperty, ContactFormProperty, TagView, Followers, constants, dataService, SelectView, populate, moment, ga, GA) {
     'use strict';
 
     var FormOpportunitiesView = Backbone.View.extend({
@@ -40,7 +42,8 @@ define([
             'click .tabListItem'                               : 'changeWorkflow',
             'click .current-selected:not(.jobs)'               : 'showNewSelect',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
-            'click #convertToOpportunity'                      : 'openDialog'
+            'click #convertToOpportunity'                      : 'openDialog',
+            scroll                                             : 'hideDatepicker'
         },
 
         hideNewSelect: function () {
@@ -54,6 +57,11 @@ define([
         openDialog: function (e) {
             e.preventDefault();
             $('#convert-dialog-form').dialog('open');
+
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.CONVERT_TO_OPPORTUNITY
+            });
         },
 
         /*   convertToOpp : function (e){
@@ -70,7 +78,6 @@ define([
             var property = $target.attr('id').replace('_', '.');
             var value = $target.val();
             var newProperty;
-
 
             $target.closest('.propertyFormList').addClass('active');
 
@@ -105,12 +112,16 @@ define([
         saveChanges: function (e) {
             e.preventDefault();
             this.saveDeal(this.modelChanged);
+
+            ga && ga.trackingEditConfirm();
         },
 
         cancelChanges: function (e) {
             e.preventDefault();
             this.modelChanged = {};
             this.renderAbout();
+
+            ga && ga.trackingEditCancel();
         },
 
         showNewSelect: function (e) {
@@ -353,9 +364,15 @@ define([
                     self.modelChanged['dateBirth'] = new Date(dateText);
                     self.showButtons();
                 }
-
             });
+        },
 
+        hideDatepicker: function () {
+            var $datepickers = this.$el.find('#expectedClosing, #dateBirth');
+
+            if ($datepickers.datepicker("widget").is(":visible")) {
+                $datepickers.datepicker('hide');
+            }
         },
 
         render: function () {

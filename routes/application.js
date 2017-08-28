@@ -11,6 +11,12 @@ module.exports = function (event, models) {
     var accessStackMiddleWare = require('../helpers/access')(moduleId, models);
     var multipart = require('connect-multiparty');
     var multipartMiddleware = multipart();
+    var accessDeleteStackMiddleware = require('../helpers/checkDelete');
+
+    function accessDeleteStackMiddlewareFunction(req, res, next) {
+        accessDeleteStackMiddleware(req, res, next, models, 'employees', event);
+    }
+
     router.use(authStackMiddleware);
 
     /**
@@ -526,7 +532,7 @@ module.exports = function (event, models) {
       "success":true
      }
      */
-    router.delete('/', accessStackMiddleWare, handler.bulkRemove);
+    router.delete('/', accessStackMiddleWare, accessDeleteStackMiddlewareFunction, handler.bulkRemove);
 
     return router;
 };

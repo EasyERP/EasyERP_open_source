@@ -3,16 +3,17 @@
         <h4 class="_dialogMainTitle">New <%=title%></h4>
         <div class="_formWrap _enlargedItemMargin">
             <div class="_formBlock _equal">
-                <div class="_animateInputBox">
+                <div class="_animateInputBox _withInfo">
                     <input type="text"
                            class="_animate "
                            id="name"
                            required
                            maxlength="48"/>
                     <label class="_animate">Warehouse Name</label>
+                    <span class="tips icon-info" data-id="name"></span>
                 </div>
                 <div class="_checkboxWrap">
-                    <div class="_checkboxContainer">
+                    <div class="_checkboxContainer _tipsWrap">
                         <label class="_animatedCheckbox">
                             <input id="isOwn"
                                    type="checkbox"
@@ -20,8 +21,9 @@
                             <span></span>
                         </label>
                         <label for="isOwn">Is Own</label>
+                        <span class="tips icon-info" data-id="isOwn"></span>
                     </div>
-                    <div class="_checkboxContainer">
+                    <div class="_checkboxContainer _tipsWrap">
                         <label class="_animatedCheckbox">
                             <input id="main"
                                    type="checkbox"
@@ -29,6 +31,8 @@
                             <span></span>
                         </label>
                         <label for="main">Mark As Main</label>
+                        <span class="tips icon-info" data-id="main"></span>
+
                     </div>
                 </div>
                 <div class="_animateSelectBox">

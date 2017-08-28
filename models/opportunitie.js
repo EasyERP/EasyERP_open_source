@@ -61,7 +61,7 @@ module.exports = (function () {
          *
          * @property {String} internalNotes - Some notes
          *
-         * @property {String} salesPerson - Sales person
+         * @property {String} salesPerson - Salesperson
          *
          * @property {Object} phones - `Phones` of _Lead_
          * @property {String} phones.mobile - `mobile` of _Lead_

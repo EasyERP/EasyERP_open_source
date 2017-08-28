@@ -11,11 +11,13 @@ define([
     'custom',
     'common',
     'constants/filters',
-    'async'
+    'async',
+    'helpers/ga',
+    'constants/googleAnalytics'
 ], function (Backbone, _, $, ContentFilterTemplate,
              searchGroupLiTemplate, FilterIconElement, valuesView,
              SavedFiltersView, filterValuesCollection, custom,
-             Common, FILTERS, async) {
+             Common, FILTERS, async, ga, GA) {
     'use strict';
 
     var FilterView = Backbone.View.extend({
@@ -66,7 +68,6 @@ define([
             var searchFilterContainer;
 
             var allResults;
-
             if (e.which === 8) {
                 if (searchInputVal.length === 0) {
                     searchFilterContainer = $('#searchFilterContainer').children('div:last');
@@ -126,7 +127,7 @@ define([
                         $filterValues.append('<span class="showLast"> ...&nbsp </span>');
                     }
 
-                    if ((key !== 'forSales') && (key !== 'viewType') && (key !== 'startDate') && (key !== 'endDate') && (key !== 'workflowId') && (key !== 'date')&& (key !== 'toExpand')&& (key !== 'channelLinks')) {
+                    if ((key !== 'forSales') && (key !== 'viewType') && (key !== 'startDate') && (key !== 'endDate') && (key !== 'workflowId') && (key !== 'date') && (key !== 'toExpand') && (key !== 'channelLinks')) {
                         groupName = self.constantsObject[key] ? self.constantsObject[key].displayName : 'letter';
                     } else {
                         groupName = null;
@@ -230,6 +231,10 @@ define([
             this.previousGroupContainer = filterGroupContainer;
             this.toggleGroup(filterGroupContainer);
 
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL[filterGroupContainer[0].id]
+            });
         },
 
         toggleGroup: function (filterGroupContainer) {
@@ -481,16 +486,33 @@ define([
             } else {
                 el.addClass(selector);
             }
+
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.SHOW_SEARCH_CONTENT
+            });
         },
 
         showFilterContent: function (e) {
-            var currentValue = $(e.target).attr('data-value');
+
+            var $el = $(e.target).closest('.filterTabs');
+            var $tabItems = this.$('.filterTabs');
+            var currentValue = $el.attr('data-value');
+
+            if (!$el.hasClass('active')) {
+                $tabItems.removeClass('active');
+                $el.addClass('active');
+            }
 
             this.$el.find(currentValue)
                 .removeClass('hidden')
                 .siblings()
                 .addClass('hidden');
 
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL[currentValue.slice(1)]
+            });
         },
 
         render: function (options) {

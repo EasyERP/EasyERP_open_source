@@ -1,16 +1,16 @@
 .countCircle {
   display: inline-block;
-  width: 20px;
-  height: 20px;
-  line-height: 18px;
+  width: 21px;
+  height: 21px;
+  line-height: 22px;
   color: #fff;
   background: #9a9a9e;
   text-align: center;
   border-radius: 50%;
-  font-size: 12px;
+  @include rem('font-size', 12px);
 
   &.red {
-    background: #ff0000;
+    background: #f94437;
   }
 
   &:empty {
@@ -20,10 +20,11 @@
 
 .dateListElementTitle {
   display: inline-block;
-  margin: 20px 20px 0 20px;
+  margin: 12px 12px 2px;
   color: #8c8e8f;
   text-transform: uppercase;
   font-size: 14px;
+  font-family: $semibold-font-family;
 
   .countCircle {
     margin-left: 8px;
@@ -32,20 +33,41 @@
 
 .dateListItem {
   display: flex;
-  height: 46px;
-  margin: 15px 0;
+  margin: 8px;
+  background-color: #fafafa;
+  border: 1px solid #eaeaea;
+  border-radius: 3px;
+  box-shadow: 0 4px 7px -3px rgba(0,0,0,.2);
+  transition: all 100ms ease-in-out;
 
+  &:hover {
+    background-color: #fff;
+    box-shadow: 0 6px 8px -3px rgba(0,0,0,.3);
+  }
+
+  &.completed {
+    background-color: #d2e6d0;
+    border-color: #c0debd;
+    box-shadow: none;
+    transition: all .2s ease-in-out .7s;
+  }
 
   .dateListCheckboxWrap {
-    padding: 0 20px;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
   }
 
   .dateListBody {
-    min-width: 1px;
     flex-grow: 1;
+    min-width: 1px;
+    padding: 10px 10px 10px 0;
+    cursor: pointer;
 
     .dateListFooter {
+      margin-top: 5px;
+      @include rem('font-size', 12px);
 
       .listFooterDate {
         color: #9a9a9e;
@@ -56,6 +78,7 @@
 
 .dateListHeader {
   display: flex;
+  align-items: center;
 
   ._tagSmall {
     flex-shrink: 0;
@@ -64,24 +87,31 @@
   }
 
   .dateListDescription {
-    flex-grow: 1;
+    word-break: break-word;
   }
 }
 
 ._taskListWrap {
   display: flex;
   height: calc(100vh - 100px);
+  border-bottom: 1px solid #eaeaea;
 
   ._taskListDateBlock {
     width: calc(100% - (35% + 159px));
     overflow: auto;
     min-width: 420px;
+    background: #f1f1f1;
 
     ._dateListElement {
-      max-height: 400px;
-      overflow: hidden;
       position: relative;
       font-size: 14px;
+      padding: 0 12px 20px;
+
+      .dateListItem {
+        &:nth-child(n+7) {
+          display: none;
+        }
+      }
 
       .hideList {
         display: none;
@@ -100,6 +130,12 @@
 
       &.open {
         max-height: none;
+
+        .dateListItem {
+          &:nth-child(n+6) {
+            display: flex;
+          }
+        }
 
         .showmore {
           display: none !important;
@@ -124,21 +160,57 @@
   display: flex;
   flex-direction: column;
   width: calc(35% + 159px);
+  background: #f1f1f1;
 
   ._activityHolderTitle {
     flex-shrink: 0;
-
-    padding: 20px;
-    border-bottom: 1px solid #c8c8d3;
+    color: #8c8e8f;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: $semibold-font-family;
+    text-transform: uppercase;
   }
 
   ._activityHolder {
-    -webkit-flex-grow: 1;
     flex-grow: 1;
 
-    padding: 0 20px;
+    padding: 0 10px;
     font-size: 14px;
     overflow: auto;
+  }
+
+  .noteMainContainer {
+    padding: 0 16px;
+    border-left: 2px solid #c1c1c1;
+  }
+
+  ._activityListInfo {
+    position: relative;
+    padding: 6px 10px;
+    border-bottom: 1px solid #eaeaea;
+
+    &:after {
+      content: '';
+      position: absolute;
+      top: 12px;
+      left: -23px;
+      height: 10px;
+      width: 10px;
+      background-color: #c1c1c1;
+      border-radius: 50%;
+      transition: transform 150ms ease-in;
+    }
+  }
+
+  ._activityDescription {
+    line-height: 1.3;
+    padding: 5px 10px;
+
+    &:empty {
+      &:after {
+        content: 'no data';
+      }
+    }
   }
 }
 
@@ -156,7 +228,7 @@
 
   .showmore {
     position: absolute;
-    right: 10px;
+    right: 20px;
     bottom: 0;
     background-color: #7eadcc;
     color: #fff;
@@ -169,54 +241,58 @@
   }
 
   .dateListHeader {
-    display: block;
-    height: 40px;
-    overflow: hidden;
-    position: relative;
 
-    &:before, &:after {
-      box-sizing:initial;
-    }
-
-    &:before {
-      content: "";
-      float: left;
-      height: 100%;
-      width: 0.5em;
-    }
-
-    &:after {
-      content: '...';
-      float: right;
-      left: 100%;
-      margin-left: -6em;
-      padding-right: 0.5em;
-      position: relative;
-      text-align: left;
-      //top: -25px;
-      top: -20px;
-      width: 6em;
-      background: linear-gradient(to right, rgba(255, 255, 255, 0), white 15%, white);
-      text-align: left;
-      text-indent: 0.75em;
-    }
-
-
-    .textEllipsis {
-      float: right;
-      width: 100%;
-      margin-left: -0.5em;
-      cursor: pointer;
-    }
   }
 }
 
 ._activitiesListItem {
-  padding: 10px 0;
-  border-bottom: 1px solid #c8c8d3;
+  position: relative;
+  margin: 10px 0;
+  background-color: #fff;
+  border: 1px solid #eaeaea;
+  border-radius: 3px;
 
-  &:last-child {
-    border-bottom: none;
+  &:hover {
+    border-color: #7eadcc;
+
+    &:before {
+      border-color: transparent #6b9bbb transparent transparent;
+    }
+
+    ._activityListInfo {
+      &:after {
+        background-color: #7eadcc;
+        transform: scale(1.4);
+      }
+    }
+  }
+  
+  &:before,
+  &:after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+  }
+
+  &:before {
+    top: 8px;
+    left: -9px;
+    border: {
+      color: transparent #e0dede transparent transparent;
+      width: 9px 9px 9px 0;
+      style: solid;
+    };
+  }
+
+  &:after {
+    top: 9px;
+    left: -8px;
+    border: {
+      color: transparent #fff transparent transparent;
+      width: 8px 8px 8px 0;
+      style: solid;
+    };
   }
 }
 
@@ -391,12 +467,6 @@
     }
   }
 }
-
-//.list td {
-//  &._priorityCell {
-//    padding: 0;
-//  }
-//}
 
 ._tagsCellWrap {
   min-width: 100px;
@@ -648,8 +718,6 @@
     }
   }
 }
-
-
 
 /*added from _icons.scss 22.09*/
 

@@ -14,8 +14,9 @@ define([
     'constants',
     'dataService',
     'views/selectView/selectView',
-    'helpers/keyValidator'
-], function (Backbone, _, $, OpportunitiesFormTemplate, workflowProgress, aboutTemplate, EditorView, AttachView, CompanyFormProperty, ContactFormProperty, TagView, Followers, constants, dataService, SelectView, keyValidator) {
+    'helpers/keyValidator',
+    'helpers/ga'
+], function (Backbone, _, $, OpportunitiesFormTemplate, workflowProgress, aboutTemplate, EditorView, AttachView, CompanyFormProperty, ContactFormProperty, TagView, Followers, constants, dataService, SelectView, keyValidator, ga) {
     'use strict';
 
     var FormOpportunitiesView = Backbone.View.extend({
@@ -110,12 +111,14 @@ define([
             e.preventDefault();
 
             this.saveDeal(this.modelChanged);
+            ga && ga.trackingEditConfirm();
         },
 
         cancelChanges: function (e) {
             e.preventDefault();
             this.modelChanged = {};
             this.renderAbout();
+            ga && ga.trackingEditCancel();
         },
 
         showNewSelect: function (e) {

@@ -3,8 +3,9 @@ define([
     'Underscore',
     'Backbone',
     'text!templates/settingsOverview/settingsEmployee/weeklyScheduler/CreateTemplate.html',
-    'models/WeeklySchedulerModel'
-], function ($, _, Backbone, CreateTemplate, WeeklySchedulerModel) {
+    'models/WeeklySchedulerModel',
+    'helpers/ga'
+], function ($, _, Backbone, CreateTemplate, WeeklySchedulerModel, ga) {
 
     var CreateView = Backbone.View.extend({
         el         : '#content-holder',
@@ -120,12 +121,14 @@ define([
                     text : 'Create',
                     click: function () {
                         self.saveItem();
+                        ga && ga.trackingEditConfirm(self.contentType);
                     }
                 }, {
                     text : 'Cancel',
                     class: 'btn',
                     click: function () {
                         self.hideDialog();
+                        ga && ga.trackingEditCancel(self.contentType);
                     }
                 }]
             });

@@ -40,6 +40,18 @@ validator.extend('isEmployeeDate', function (str) {
     return regExp.test(str);
 });
 
+function getValidNewUserBody(body) {
+    var hasLogin = body.hasOwnProperty('login');
+    var hasEmail = body.hasOwnProperty('email');
+    var hasPass = body.hasOwnProperty('pass');
+
+    hasEmail = hasEmail ? validator.isEmail(body.email) : false;
+    hasLogin = hasLogin ? validator.isLogin(body.login) : false;
+    hasPass = hasPass ? validator.isPass(body.pass) : false;
+
+    return hasEmail && hasLogin && hasPass;
+}
+
 function getValidUserBody(body) {
     var hasLogin = body.hasOwnProperty('login');
     var hasEmail = body.hasOwnProperty('email');
@@ -72,6 +84,11 @@ function parseUserBody(body) {
         body.pass = xssFilters.inHTMLData(body.pass);
     }
 
+    if (body.mobilePhone) {
+        body.mobilePhone = validator.escape(body.mobilePhone);
+        body.mobilePhone = xssFilters.inHTMLData(body.mobilePhone);
+    }
+
     return body;
 }
 
@@ -90,7 +107,6 @@ function parseProfileBody(body) {
         body.profileName = validator.escape(body.profileName);
         body.profileName = xssFilters.inHTMLData(body.profileName);
     }
-
 
     if (body.profileDescription) {
         body.profileDescription = validator.escape(body.profileDescription);
@@ -240,7 +256,6 @@ function parseTaskBody(body) {
         body.duration = dateCalculator.returnDuration(StartDate, body.EndDate);
     }
 
-
     return body;
 }
 
@@ -258,6 +273,7 @@ function validEmployeeBody(body) {
 
 module.exports = {
     validUserBody    : getValidUserBody,
+    validNewUserBody : getValidNewUserBody,
     parseUserBody    : parseUserBody,
     validProfileBody : getValidProfileBody,
     parseProfileBody : parseProfileBody,

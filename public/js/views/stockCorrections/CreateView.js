@@ -36,7 +36,7 @@ define([
         },
 
         getProducts: function (e) {
-            this.$el.find('#tbodyProducts').prepend(_.template(ProductItem, {elem: {}}));
+            this.$el.find('#productList').prepend(_.template(ProductItem, {elem: {}}));
         },
 
         keypressHandler: function (e) {
@@ -48,7 +48,7 @@ define([
             var $parent = $targetEl.closest('tr');
             var inputEl = $targetEl.closest('input');
             var type = inputEl.attr('id');
-            var available = parseInt($parent.find('#onHand').val());
+            var available = parseInt($parent.find('#onHand').val()) || 0;
             var val;
 
             if (!inputEl.length) {
@@ -187,7 +187,7 @@ define([
             if (type === 'warehouseDd') {    // added condition for project with no data-level empty
                 populate.get('#locationDd', 'warehouse/location/getForDd', {warehouse: id}, 'name', this, false);
                 $thisEl.find('.jobs').removeClass('jobs');
-                $thisEl.find('#tbodyProducts').html('');
+                $thisEl.find('#productList').html('');
                 $thisEl.find('#locationDd').text('Select').attr('data-id', '');
                 self.responseObj['#productsDd'].forEach(function (el) {
                     delete el.selectedElement;
@@ -196,7 +196,7 @@ define([
 
             if (type === 'locationDd' && warehouse) {    // added condition for project with no data-level empty
                 $thisEl.find('#newItem').removeClass('hidden');
-                $thisEl.find('#tbodyProducts').html('');
+                $thisEl.find('#productList').html('');
                 self.responseObj['#productsDd'].forEach(function (el) {
                     delete el.selectedElement;
                 });
@@ -212,7 +212,7 @@ define([
                     }
 
                     product.selectedElement = true;
-                    $row.find('.productDescr').val(product.info.description);
+                    $row.find('.productDescr').val(product.info.description).prop('disabled', false).attr('placeholder', '');
                     if (data) {
                         $row.attr('id', data._id);
                         $row.find('#onHand').val(data.onHand || 0);
@@ -246,7 +246,10 @@ define([
                     save: {
                         text : 'Create',
                         class: 'btn blue',
-                        click: self.saveItem
+                        click: function () {
+                            self.saveItem();
+                            self.gaTrackingConfirmEvents();
+                        }
                     },
 
                     cancel: {

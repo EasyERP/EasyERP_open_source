@@ -94,4 +94,11 @@ module.exports = (function () {
     require('./rates.js');
     require('./shippingMethod.js');
     require('./images.js');
+    require('./expensesCategories.js');
+    require('./customReports.js');
+    require('./workCentre.js');
+    require('./routing.js');
+    require('./billOfMaterial.js');
+    require('./syncLogs.js');
+    require('./manufacturingOrders.js');
 })();

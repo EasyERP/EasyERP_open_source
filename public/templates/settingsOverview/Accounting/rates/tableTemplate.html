@@ -22,7 +22,7 @@
             <%var currObj = elem.rates[el];%>
             <%var array = Object.keys(currObj);%>
             <%array.forEach(function (to){%>
-            <span class="_tagSmall grey"><%= el + ' / ' + to + '  ' + currObj[to]%></span>
+            <span class="_tagSmall grey"><%= el + ' / ' + to + '  ' + currObj[to].toFixed(3)%></span>
             <%});%>
             <%});%>
         </td>

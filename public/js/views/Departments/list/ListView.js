@@ -6,8 +6,10 @@ define([
     'views/Departments/CreateView',
     'models/DepartmentsModel',
     'views/Departments/list/ListItemView',
-    'views/Departments/EditView'
-], function (Backbone, $, _, ListTemplate, CreateView, currentModel, ListItemView, EditView) {
+    'views/Departments/EditView',
+    'helpers/ga',
+    'constants/googleAnalytics'
+], function (Backbone, $, _, ListTemplate, CreateView, currentModel, ListItemView, EditView, ga, GA) {
     'use strict';
 
     var DepartmentsListView = Backbone.View.extend({
@@ -30,7 +32,7 @@ define([
         },
 
         createDepartmentListRow: function (department, index, className) {
-            return ('<li class="' + className + '" data-id="' + department._id + '" data-level="' + department.nestingLevel + '" data-sequence="' + department.sequence + '"><span class="content"><span class="dotted-line"></span><span class="text">' + department.name + '<span title="Edit" class="edit icon-pencil"></span><span title="Delete" class="trash icon-trash"></span></span></span></li>');
+            return ('<li class="' + className + '" data-id="' + department._id + '" data-level="' + department.nestingLevel + '" data-sequence="' + department.sequence + '"><span class="content"><span class="text">' + department.name + '</span><div class="_actions"><span title="Edit" class="edit icon-pencil"></span><span title="Delete" class="trash icon-trash"></span></div></span></li>');
         },
 
         editItem: function (e) {
@@ -58,8 +60,14 @@ define([
             var mid = 39;
             var self = this;
             var answer = confirm('Really DELETE items ?!');
+            var modelName = myModel.get('name');
 
             e.preventDefault();
+
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.REMOVE_LIST_BTN + ' "' + modelName + '"'
+            });
 
             if (answer === true) {
                 myModel.destroy({

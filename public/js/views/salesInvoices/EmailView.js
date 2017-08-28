@@ -5,17 +5,20 @@ define([
     'text!templates/salesInvoices/EmailTemplate.html',
     'common',
     'populate',
-    'dataService'
+    'dataService',
+    'views/dialogViewBase'
 ], function (Backbone,
              $,
              _,
              CreateTemplate,
              common,
              populate,
-             dataService) {
-    var EmailView = Backbone.View.extend({
-        el      : '#emailHolder',
-        template: _.template(CreateTemplate),
+             dataService,
+             DialogViewBase) {
+    var EmailView = /*Backbone.View*/DialogViewBase.extend({
+        el         : '#emailHolder',
+        template   : _.template(CreateTemplate),
+        contentType: 'invoiceEmail',
 
         initialize: function (options) {
             var self = this;
@@ -114,6 +117,7 @@ define([
                 autoOpen   : true,
                 dialogClass: 'email-dialog',
                 title      : 'Email invoice',
+                width      : '500',
                 buttons    : [
                     {
                         id   : 'send-email-dialog',

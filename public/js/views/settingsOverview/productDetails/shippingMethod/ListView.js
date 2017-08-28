@@ -5,8 +5,10 @@ define([
     'text!templates/settingsOverview/productDetails/shippingMethod/ListTemplate.html',
     'views/settingsOverview/productDetails/shippingMethod/EditView',
     'views/settingsOverview/productDetails/shippingMethod/CreateView',
-    'helpers'
-], function (Backbone, _, $, PaymentMethodList, EditView, CreateView, helpers) {
+    'helpers',
+    'helpers/ga',
+    'constants/googleAnalytics'
+], function (Backbone, _, $, PaymentMethodList, EditView, CreateView, helpers, ga, GA) {
     'use strict';
 
     var ContentView = Backbone.View.extend({
@@ -36,6 +38,11 @@ define([
             var answer = confirm('Really DELETE items ?!');
 
             e.preventDefault();
+
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.DELETE_SHIPPING_METHOD
+            });
 
             if (answer === true && model) {
 
@@ -68,6 +75,10 @@ define([
             var model = this.collection.get(id);
 
             e.preventDefault();
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.EDIT_SHIPPING_METHOD
+            });
 
             if (model) {
                 return new EditView({model: model, collection: this.collection});
@@ -76,6 +87,11 @@ define([
 
         create: function (e) {
             e.preventDefault();
+
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.CREATE_SHIPPING_METHOD
+            });
 
             return new CreateView({collection: this.collection});
         },

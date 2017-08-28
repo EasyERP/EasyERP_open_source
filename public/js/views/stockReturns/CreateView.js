@@ -4,14 +4,13 @@ define([
     'Underscore',
     'views/dialogViewBase',
     'text!templates/stockReturns/CreateTemplate.html',
-    'models/PaymentModel',
     'helpers/keyValidator',
     'helpers',
     'dataService',
     'populate',
     'constants',
     'moment'
-], function (Backbone, $, _, Parent, CreateTemplate, PaymentModel, keyValidator, helpers, dataService, populate, CONSTANTS, moment) {
+], function (Backbone, $, _, Parent, CreateTemplate, keyValidator, helpers, dataService, populate, CONSTANTS, moment) {
     var CreateView = Parent.extend({
         el         : '#content-holder',
         contentType: 'Payment',
@@ -23,8 +22,6 @@ define([
             this.parentView = options.parentView;
             this.cancel = options.cancel;
             this.responseObj = {};
-
-            this.newModel = new PaymentModel();
 
             this.render();
         },

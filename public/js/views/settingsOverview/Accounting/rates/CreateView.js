@@ -12,7 +12,8 @@ define([
     'use strict';
 
     var EditView = Parent.extend({
-        template: _.template(EditTemplate),
+        template   : _.template(EditTemplate),
+        contentType: 'rates',
 
         initialize: function (options) {
 

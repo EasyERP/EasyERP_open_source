@@ -11,6 +11,11 @@ module.exports = function (models, event) {
     var moduleId = MODULES.TASKS;
     var handler = new TasksHandler(models, event);
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
+    var accessDeleteStackMiddleware = require('../helpers/checkDelete');
+
+    function accessDeleteStackMiddlewareFunction(req, res, next) {
+        accessDeleteStackMiddleware(req, res, next, models, 'tasks', event);
+    }
 
     router.use(authStackMiddleware);
     router.use(accessStackMiddleware);
@@ -576,7 +581,7 @@ HTTP/1.1 200 OK
     "success":true
 }
      */
-    router.delete('/', handler.bulkRemove);
+    router.delete('/', accessDeleteStackMiddlewareFunction, handler.bulkRemove);
 
     return router;
 };

@@ -10,7 +10,8 @@ define([
     'collections/Applications/filterCollection',
     'common',
     'text!templates/stages.html',
-    'constants'
+    'constants',
+    'views/guideTours/guideNotificationView'
 ], function ($,
              _,
              ListViewBase,
@@ -22,7 +23,8 @@ define([
              contentCollection,
              common,
              stagesTamplate,
-             CONSTANTS) {
+             CONSTANTS,
+             GuideNotify) {
     'use strict';
 
     var ApplicationsListView = ListViewBase.extend({
@@ -130,6 +132,14 @@ define([
                 self.stages = stages;
                 itemView.trigger('incomingStages', stages);
             });
+
+            if (App.guide) {
+                if (App.notifyView) {
+                    App.notifyView.undelegateEvents();
+                    App.notifyView.stopListening();
+                }
+                App.notifyView = new GuideNotify({e: null, data: App.guide});
+            }
 
             // this.renderPagination($currentEl, this);
             // this.renderFilter();

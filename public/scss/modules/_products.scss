@@ -243,6 +243,12 @@ $top-font-color: #666666;
 
       li {
         position: relative;
+
+        &.parent {
+          > .content .text:before {
+            display: none;
+          }
+        }
       }
     }
 
@@ -390,7 +396,7 @@ $top-font-color: #666666;
         }
 
         .info {
-          word-break: break-all;
+          word-break: break-word;
           padding-left: 55px;
         }
       }

@@ -6,99 +6,195 @@
         </div>
         <div class="loginContent col m-6">
             <div class="loginContainer">
-                <div class="loginWrapper row">
-                    <div class="col s-6 m-6 l-6">
-                        <h1 id="titleForm" class="loginTitle float-left">Login to account</h1>
-                        <%
-                        currentDb = currentDb || 'production';
-                        var validDb = currentDb ? !!dbs[currentDb] : false;
-                        var dbNames = Object.keys(dbs);
-                        var firstDb = dbNames[0];
-                        %>
-                    </div>
-                    <div class="col s-6 m-6 l-6 float-right">
-                        <div class="selectDd">
-                            <span id="selectedDb" class="selectedDb" data-id="<%= validDb ? currentDb : firstDb %>"><%= validDb ? currentDb + ' (' + dbs[currentDb].url + ')' : firstDb +' (' + dbs[firstDb].url + ')'%></span>
-                            <ul id="dbs" class="float-right">
-                                <% for(var i = dbNames.length-1; i>=0; i-- ){
-                                var dbName = dbNames[i];
+                <h2 class="loginTitle">EasyERP</h2>
+                <div class="loginWrapper">
+                    <ul class="tabs">
+                        <li id="login" class="active">Log In</li>
+                        <li id="signUp">Sign Up</li>
+                    </ul>
+                    <div class="control-group">
+                        <div class="controls"></div>
+                        <div class="input-group forSelectDd">
+                            <div class="selectDd">
+                                <%
+                                currentDb = currentDb || 'production';
+                                var validDb = currentDb ? !!dbs[currentDb] : false;
+                                var dbNames = Object.keys(dbs);
+                                var firstDb = dbNames[0];
                                 %>
-                                <li data-id="<%=dbName%>"
-                                <%if(dbName === currentDb) {%>class="selected"<%}%>><%=dbName%> (<%=dbs[dbName].url%>)
-                                </li>
-                                <%}%>
-                            </ul>
+                                <span id="selectedDb" class="selectedDb" data-id="<%= validDb ? currentDb : firstDb %>"><%= validDb ? currentDb + ' (' + dbs[currentDb].url + ')' : firstDb +' (' + dbs[firstDb].url + ')'%></span>
+                                <ul id="dbs" class="float-right">
+                                    <% for(var i = dbNames.length-1; i>=0; i-- ){
+                                    var dbName = dbNames[i];
+                                    %>
+                                    <li data-id="<%=dbName%>"
+                                    <%if(dbName === currentDb) {%>class="selected"<%}%>><%=dbName%>
+                                    (<%=dbs[dbName].url%>)
+                                    </li>
+                                    <%}%>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="error hidden">Such user doesn't registered</div>
                 <form id="loginForm" class="loginWrap" action="javascript:;">
-                    <div class="row">
-                        <div class="col s-6">
-                            <div class="_animateInputBox">
+                    <div class="control-group">
+                        <div class="controls">
+                            <div class="input-group">
                                 <input type="text"
                                        name="ulogin"
-                                       class="_animate ulogin"
+                                       class="ulogin"
+                                       placeholder="Username or Email"
                                        required
                                        autofocus
                                        value="<%-login || ''%>"
                                        maxlength="60"/>
-                                <label class="_animate">Username or Email</label>
+                                <div class="requiredField" data-hover="This is required field">*</div>
                             </div>
                         </div>
-                        <div class="col s-6">
-                            <div class="_animateInputBox">
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <div class="input-group">
                                 <input type="password"
                                        name="upass"
-                                       class="_animate"
+                                       class=""
                                        id="upass"
+                                       placeholder="Password"
                                        required
                                        value="<%-password || ''%>"
                                        maxlength="60"/>
-                                <label class="_animate">Password</label>
+                                <div class="requiredField" data-hover="This is required field">*</div>
                             </div>
                         </div>
                     </div>
                     <div class="formActions">
-                        <div class="row">
-                            <div class="col xs-12 s-4 m-5">
-                                <label class="switchLabel rememberCheckWrap" for="switchElement">
-                                    <input type="checkbox" name="switch" class="rememberCheck" id="switchElement" checked>
-                                    Remember me
-                                    <span></span>
-                                </label>
+                        <div class="control-group spaced">
+                            <div class="switchWrap">
+                                <div>
+                                    <label class="_animatedCheckbox">
+                                        <input id="switchElement" class="switchLabel rememberCheckWrap" name="switch"
+                                               type="checkbox" checked="checked">
+                                        <span></span>
+                                    </label>
+                                    <label for="switchElement">Remember me</label>
+                                </div>
+
+                                <div class="loginForgot">
+                                    <a id="forgotPass" class="forgotPass" href="javascript:;">Forgot Password?</a>
+                                </div>
                             </div>
-                            <div class="col xs-12 s-8 m-7 text-right loginForgot">
-                                <a id="forgotPass" class="forgotPass" href="javascript:;">Forgot Password?</a>
-                                <a class="login-button btn blue" href="javascript:;">Sign In</a>
+                        </div>
+                        <a class="login-button btn blue" id="loginTrigger" href="javascript:;">Log In</a>
+                        <div class="or">Or Log In with</div>
+                        <div class="signInServices">
+                            <div class="signInService">
+                                <a class="btn socialService facebookLogin" id="facebookLogin" href="javascript:;"><span
+                                        class="icon-facebook2"></span>Facebook</a>
                             </div>
+                            <div class="signInService">
+                                <a class="btn socialService googlePlusLogin g-signin2" data-onsuccess="onSignIn"
+                                   id="gmailLogin" href="javascript:;"><span class="icon-google-plus"></span>Google</a>
+                            </div>
+                            <div class="signInService">
+                                <a class="btn socialService linkedinLogin" id="linkedInLogin" href="javascript:;"><span
+                                        class="icon-linkedin2"></span>LinkedIn</a>
+                            </div>
+
+                            <script>
+                                function onSignIn(googleUser) {
+                                    var profile = googleUser.getBasicProfile();
+                                    console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+                                    console.log('Name: ' + profile.getName());
+                                    console.log('Image URL: ' + profile.getImageUrl());
+                                    console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+                                }
+                            </script>
                         </div>
                     </div>
                     <input type="submit" class="right hidden" value="">
+                </form>
+                <form id="signUpForm" class="loginWrap hidden" action="javascript:;">
+                    <div class="control-group">
+                        <div class="controls">
+                            <div class="input-group">
+                                <input type="text"
+                                       name="login"
+                                       class="login"
+                                       placeholder="Email"
+                                       required
+                                       autofocus
+                                       maxlength="60"/>
+                                <div class="requiredField" data-hover="This is required field">*</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <div class="input-group">
+                                <input type="password"
+                                       name="upass"
+                                       class=""
+                                       id="pass"
+                                       placeholder="Password"
+                                       required
+                                       value="<%-password || ''%>"
+                                       maxlength="60"/>
+                                <div class="requiredField" data-hover="This is required field">*</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="formActions">
+                        <div class="control-group forSignUp spaced">
+                            <a class="signUp-button btn blue" id="signUpTrigger" href="javascript:;">Sign Up</a>
+                        </div>
+                        <div class="or">Or Sign Up with</div>
+                        <div class="signInServices">
+                            <div class="signInService">
+                                <a class="btn socialService facebookLogin" id="facebookLogin" href="javascript:;"><span
+                                        class="icon-facebook2"></span>Facebook</a>
+                            </div>
+
+                            <div class="signInService">
+                                <a class="btn socialService googlePlusLogin g-signin2" data-onsuccess="onSignIn"
+                                   id="gmailLogin" href="javascript:;"><span class="icon-google-plus"></span>Google</a>
+                            </div>
+                            <div class="signInService">
+                                <a class="btn socialService linkedinLogin" id="linkedInLogin" href="javascript:;"><span
+                                        class="icon-linkedin2"></span>LinkedIn</a>
+                            </div>
+                        </div>
+                    </div>
                 </form>
                 <form id="forgotPassword" class="forgotWrap hidden" action="javascript:;">
                     <p class="forgotDescription">Enter your e-mail address below to reset your password.</p>
 
                     <div class="formGroup">
-                        <div class="_animateInputBox">
-                            <input type="text"
-                                   name="ulogin"
-                                   class="_animate ulogin"
-                                   required
-                                   autofocus
-                                   value=""
-                                   maxlength="60"/>
-                            <label class="_animate">Username or Email</label>
+                        <div class="control-group">
+                            <div class="control">
+                                <div class="input-group">
+                                    <input type="text"
+                                           name="ulogin"
+                                           class="_animate ulogin"
+                                           placeholder="Email"
+                                           required
+                                           autofocus
+                                           value=""
+                                           maxlength="60"/>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="formActions">
-                        <a id="backToLogin" class="forgot-button btn  blue" href="javascript:;">Back</a>
+                    <div class="formActions forgotBtnWrap">
+                        <a id="backToLogin" class="forgot-button btn backToLogin" href="javascript:;">Back</a>
                         <a class="submitButton btn blue float-right" href="javascript:;">Submit</a>
                     </div>
                     <input type="submit" class="right hidden" value="">
                 </form>
+                <p class="loginCopyright">Copyright © ThinkMobiles 2017</p>
             </div>
-            <p class="loginCopyright">Copyright © ThinkMobiles 2016</p>
+
+
         </div>
     </div>
 </div>

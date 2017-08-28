@@ -52,9 +52,9 @@ define([
         },
 
         events: {
-            'click #resetPrices'                                             : 'resetPrices',
-            'keypress .forNum'                                               : 'keydownHandler',
-            'click .newSelectList li:not(.miniStylePagination,#generateJobs)': 'chooseOption'
+            'click #resetPrices': 'resetPrices',
+            'keypress .forNum'  : 'keydownHandler',
+            //'click .newSelectList li:not(.miniStylePagination,#generateJobs)': 'chooseOption'
         },
 
         resetPrices: function (e) {
@@ -93,14 +93,15 @@ define([
         },
 
         chooseOption: function (e) {
+            var self = this;
             var $target = $(e.target);
             var id = $target.attr('id');
             var symbol;
             var currency;
             var warehouse;
             var account;
-            var table = this.$el.find('.list');
-            var trs = table.find('tr');
+            var table = this.$el.find('._productTable');
+            var trs = table.find('tr.productItem');
             var accountObj;
 
             if ($target.closest('a').attr('id') === 'currencyDd') {
@@ -119,7 +120,31 @@ define([
 
                 if (accountObj && accountObj._id) {
                     trs.each(function () {
+                        var self = this;
+
                         $(this).find('.accountDd').text(accountObj.name).attr('data-id', accountObj._id);
+
+                        if ($(this).find('.productsDd').attr('data-id')) {
+                            dataService.getData('/products/productAvalaible', {
+                                product  : $(this).find('.productsDd').attr('data-id'),
+                                warehouse: warehouse._id
+                            }, function (data) {
+                                var itemsStock = data.onHand ? 'green' : 'red';
+                                var fullfilledHolder = $(self).next().find('.fullfilledHolder');
+
+                                fullfilledHolder.removeClass('green red');
+
+                                fullfilledHolder.addClass(itemsStock);
+                                $(self).attr('data-hand', data.onHand);
+                                fullfilledHolder.find('.fullfilledInfo').html('<div><span>' + (data.inStock || 0) + ' in Stock, ' + (data.onHand || 0) + ' on Hand </span></div>');
+                            });
+                        }
+
+                    });
+                } else {
+                    return App.render({
+                        type   : 'error',
+                        message: 'There is no account in this warehouse, please go to Settings and set it.'
                     });
                 }
             }
@@ -217,6 +242,7 @@ define([
             shippingId = thisEl.find('#shippingDd').attr('data-id');
             shippingAccount = thisEl.find('#shippingRow').find('.accountDd').attr('data-id');
             shippingAmount = helpers.spaceReplacer(thisEl.find('#shippingRow').find('[data-name="price"] input').val()) || helpers.spaceReplacer(thisEl.find('#shippingRow').find('[data-name="price"] span:not(.currencySymbol)').text());
+            shippingAmount = shippingAmount || 0;
 
             shippingAmount = parseFloat(shippingAmount) * 100;
 
@@ -260,7 +286,7 @@ define([
                 subTotal = helpers.spaceReplacer(targetEl.find('.subtotal .sum').text());
                 subTotal = parseFloat(subTotal) * 100;
                 jobs = targetEl.find('.current-selected.jobs').attr('data-id');
-                account = targetEl.find('.current-selected.accountDd').attr('data-id');
+                account = targetEl.find('.accountDd').attr('data-id');
                 taxCode = targetEl.find('.current-selected.taxCode').attr('data-id');
 
                 if (productId && !price) {
@@ -396,9 +422,12 @@ define([
                     responseObj     : this.responseObj,
                     discountVisible : true,
                     forSales        : true,
-                    deletedProducts : this.deletedProducts
+                    deletedProducts : this.deletedProducts,
+                    account         : this.warehouse.account
                 }).render().el
             );
+
+            this.dialogCentering(this.$el);
         },
 
         render: function () {
@@ -417,6 +446,7 @@ define([
                     class: 'btn blue',
                     click: function () {
                         self.saveItem();
+                        self.gaTrackingConfirmEvents();
                     }
                 }, {
                     text : 'Cancel',
@@ -433,19 +463,28 @@ define([
             populate.get('#destination', '/destination', {}, 'name', this, true, true);
             populate.get('#incoterm', '/incoterm', {}, 'name', this, true, true);
             populate.get('#invoicingControl', '/invoicingControl', {}, 'name', this, true, true);
-            populate.get('#paymentTerm', '/paymentTerm', {}, 'name', this, true, true);
+            // populate.get('#paymentTerm', '/paymentTerm', {}, 'name', this, true, true);
             populate.get('#deliveryDd', '/deliverTo', {}, 'name', this, true);
             populate.get2name('#customerDd', CONSTANTS.URLS.CUSTOMERS, {isCustomer: true}, this, true, true);
             populate.get('#priceList', 'priceList/getForDd', {cost: false}, 'name', this, true);
-            populate.get('#paymentMethod', '/paymentMethod', {}, 'name', this, false, true, null);
 
+            populate.get('#paymentMethod', '/paymentMethod', {}, 'name', this, true, false, null);
             populate.get('#currencyDd', CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
 
-            populate.get('#warehouseDd', 'warehouse/getForDd', {}, 'name', this, true);
             populate.get('#account', '/chartOfAccount/getForDd', {}, 'name', this, true, true);
             populate.get('#taxCode', '/taxSettings/getForDd', {}, 'name', this, true);
 
-            self.createProductView();
+            dataService.getData('warehouse/getForDd', {}, function (resp) {
+                var el = self.$el.find('#warehouseDd');
+                self.responseObj['#warehouseDd'] = resp.data;
+
+                if (resp.data && resp.data.length) {
+                    self.warehouse = resp.data[0];
+                    el.text(resp.data[0].name).attr('data-id', resp.data[0]._id)
+                }
+
+                self.createProductView();
+            });
 
             dataService.getData('/employees/getForDD', {isEmployee: true}, function (employees) {
                 employees = _.map(employees.data, function (employee) {
@@ -456,16 +495,6 @@ define([
 
                 self.responseObj['#assignedTo'] = employees;
             });
-
-            /* dataService.getData('/projects/getForWtrack', null, function (projects) {
-             projects = _.map(projects.data, function (project) {
-             project.name = project.projectName;
-
-             return project;
-             });
-
-             self.responseObj['#project'] = projects;
-             });*/
 
             populate.getWorkflow('#workflowsDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {
                 id    : 'Sales Order',
@@ -480,13 +509,19 @@ define([
                 onSelect   : function (date) {
                     self.$el.find('#expectDate').datepicker('option', 'minDate', new Date(date));
                 }
-            }).datepicker('setDate', curDate);
+            }).datepicker('setDate', new Date(curDate));
 
-            this.$el.find('#expectDate').datepicker({
-                dateFormat : 'd M, yy',
-                changeMonth: true,
-                changeYear : true,
-                minDate    : new Date()
+            dataService.getData('/paymentTerm', {}, function (paymentTerm) {
+                var currentDate = new Date();
+                var dates = paymentTerm.data[0] && paymentTerm.data[0].hasOwnProperty('count') ? paymentTerm.data[0].count : 0;
+                currentDate.setDate(currentDate.getDate() + parseInt(dates));
+
+                self.$el.find('#expectDate').datepicker({
+                    dateFormat : 'd M, yy',
+                    changeMonth: true,
+                    changeYear : true,
+                    minDate    : new Date(curDate)
+                }).datepicker('setDate', currentDate);
             });
 
             this.delegateEvents(this.events);

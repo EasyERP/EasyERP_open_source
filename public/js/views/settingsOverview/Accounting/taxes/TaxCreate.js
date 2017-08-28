@@ -12,6 +12,7 @@ define([
 
     var EditView = Parent.extend({
         template: _.template(template),
+        contentType: 'taxes',
 
         initialize: function (options) {
 

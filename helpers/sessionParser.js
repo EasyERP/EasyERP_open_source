@@ -1,7 +1,5 @@
-/**
- * Created by Roman on 09.04.2015.
- */
-module.exports = function(arrayOfSessions, dbsObject){
+'use strict';
+module.exports = function (arrayOfSessions, dbsObject) {
     var lastDbsArray = [];
     var _ = require('underscore');
 
@@ -30,5 +28,4 @@ module.exports = function(arrayOfSessions, dbsObject){
     lastDbsArray = _.unique(lastDbsArray);
 
     return lastDbsArray;
-
 };

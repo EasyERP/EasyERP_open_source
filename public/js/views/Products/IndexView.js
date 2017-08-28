@@ -9,11 +9,12 @@ define([
     'views/Products/category/EditView',
     'views/Products/category/TopBarView',
     'collections/Products/filterCollection',
+    'collections/Products/ProductCategories',
     'views/Products/thumbnails/ThumbnailsView',
     'helpers/eventsBinder',
     'dataService',
     'constants'
-], function (Backbone, $, _, ContentTemplate, ItemTemplate, CurrentModel, CreateCategoryView, EditCategoryView, TopBarView, ProductsCollection, ThumbnailsView, eventsBinder, dataService, CONSTANTS) {
+], function (Backbone, $, _, ContentTemplate, ItemTemplate, CurrentModel, CreateCategoryView, EditCategoryView, TopBarView, ProductsCollection, CategoryCollection, ThumbnailsView, eventsBinder, dataService, CONSTANTS) {
     var ProductsView = Backbone.View.extend({
         el               : '#content-holder',
         thumbnailsView   : null,
@@ -63,6 +64,7 @@ define([
             event.preventDefault();
             this.thumbnailsView.magentoExport();
         },
+
         magentoProductImport: function (event) {
             event.preventDefault();
             this.thumbnailsView.magentoImport();
@@ -111,14 +113,16 @@ define([
 
         expandHideItem: function (e) {
             var $target = $(e.target);
+            var parentId = $target.closest('li').attr('data-id');
             var $ulEl = $target.closest('li').find('ul');
 
             if ($target.hasClass('disclosed')) {
-                $ulEl.addClass('hidden');
-                $ulEl.closest('li').find('.expand').removeClass('disclosed icon-folder-open3').addClass('icon-folder3');
+                $ulEl.remove();
+                $target.closest('li').find('.expand').removeClass('disclosed icon-folder-open3').addClass('icon-folder3');
             } else {
-                $ulEl.first().removeClass('hidden');
-                $ulEl.closest('li').find('.expand').first().removeClass('icon-folder3').addClass('disclosed icon-folder-open3');
+                this.trigger('renderChildren', {parentId: parentId});
+
+                $target.removeClass('icon-folder3').addClass('disclosed icon-folder-open3');
             }
         },
 
@@ -129,7 +133,7 @@ define([
 
             dataService.getData(categoryUrl, {}, function (category) {
 
-                ids = category.child;
+                ids = category.child || [];
                 ids.push(categoryId);
 
                 if (!App.filtersObject.filter) {
@@ -201,6 +205,7 @@ define([
 
         renderItem: function (product, className, selected) {
             var canDelete = true;
+            var hasChild = false;
 
             if (product.child && product.child.length) {
                 canDelete = false;
@@ -210,10 +215,15 @@ define([
                 }
             }
 
+            if (product.ch && product.ch.length) {
+                hasChild = true;
+            }
+
             return this.itemTemplate({
                 className: className,
                 selected : selected,
                 product  : product,
+                hasChild : hasChild,
                 canDelete: canDelete
             });
         },
@@ -221,9 +231,8 @@ define([
         renderFoldersTree: function (products) {
             var self = this;
             var $thisEl = this.$el;
-            var par;
-            var selected = '';
             var selectedMain = '';
+            var selected = '';
             var currentCategory;
 
             if (App.filtersObject.filter && App.filtersObject.filter.productCategory && App.filtersObject.filter.productCategory.value.length) {
@@ -242,23 +251,37 @@ define([
                     }
                 }
 
-                if (!product.parent) {
-                    $thisEl.find('.groupList').append(self.renderItem(product, 'child', selectedMain));
-                } else {
-                    par = $thisEl.find("[data-id='" + product.parent._id + "']").removeClass('child').addClass('parent');
-
-                    if (!par.find('.expand').length) {
-                        par.append('<a class="expand disclosed icon-folder-open3" href="javascript:;"></a>');
-                    }
-
-                    if (par.find('ul').length === 0) {
-                        par.append('<ul></ul>');
-                    }
-
-                    par.find('ul').first().append(self.renderItem(product, 'child', selected));
-                }
-
+                $thisEl.find('.groupList').append(self.renderItem(product, 'parent', selectedMain));
+                $thisEl.find('.groupList li.item').append('<a class="expand icon-folder3" href="javascript:;"></a>');
             });
+
+            this.on('renderChildren', renderChildren, this);
+
+            function renderChildren(opts) {
+                var parentId = opts.parentId;
+                var categories;
+                var par;
+
+                this.childrenCollection = new CategoryCollection({
+                    isChild  : true,
+                    parentId : parentId,
+                    forParent: true
+                }, {reset: true});
+
+                this.childrenCollection.on('reset', function () {
+                    categories = self.childrenCollection.toJSON();
+
+                    categories.forEach(function (category) {
+                        par = $thisEl.find("[data-id='" + category.parent + "']");
+
+                        if (par.find('ul').length === 0) {
+                            par.append('<ul></ul>');
+                        }
+
+                        par.find('ul').append(self.renderItem(category, 'child', selected));
+                    });
+                });
+            }
 
             $('.groupList .item .content').droppable({
                 accept   : '.product',
@@ -352,16 +375,16 @@ define([
             this.productCollection.unbind('reset');
 
             /*if (this.topBarView) {
-                this.topBarView.undelegateEvents();
-                this.topBarView.stopListening();
-            }
+             this.topBarView.undelegateEvents();
+             this.topBarView.stopListening();
+             }
 
-            this.topBarView = new TopBarView({
-                collection: this.productCollection,
-                actionType: 'Content'
-            });
+             this.topBarView = new TopBarView({
+             collection: this.productCollection,
+             actionType: 'Content'
+             });
 
-            eventsBinder.subscribeTopBarEvents(this.topBarView, this.thumbnailsView);*/
+             eventsBinder.subscribeTopBarEvents(this.topBarView, this.thumbnailsView);*/
             eventsBinder.subscribeCollectionEvents(this.productCollection, this.thumbnailsView);
 
             this.productCollection.trigger('fetchFinished', {

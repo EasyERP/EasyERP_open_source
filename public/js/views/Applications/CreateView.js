@@ -305,7 +305,10 @@ define([
                     save: {
                         text : 'Create',
                         class: 'btn blue',
-                        click: self.saveItem
+                        click: function () {
+                            self.saveItem();
+                            self.gaTrackingConfirmEvents();
+                        }
                     },
 
                     cancel: {

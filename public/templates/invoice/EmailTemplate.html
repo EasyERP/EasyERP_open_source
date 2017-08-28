@@ -1,31 +1,41 @@
-<div class="form-holder">
-    <form method="post" action="" id="sendEmailForm" class="form">
-        <fieldset>
-            <div class="inner">
-                <div class="topInputHolder">
-                    <h2>Email Invoice</h2>
+<div class="form-holder _newForm">
+    <form method="post" action="" id="sendEmailForm">
+        <h4 class="_dialogMainTitle">Email Invoice</h4>
+        <div class="_formWrap _enlargedItemMargin">
+            <div class="_formBlock">
+                <div class="_animateInputBox">
+                    <input type="text"
+                           id="To"
+                           class="_animate"
+                           value="<%= emails.To %>"
+                           multiple
+                           required/>
+                    <label for="To" class="_animate">To:</label>
                 </div>
-                <dl class="opp-info">
-                    <dt><label for="To">To:</label></dt>
-                    <dd>
-                        <input id="To" class="" type="email" value="<%= emails.To %>" multiple/>
-                    </dd>
-                    <dt><label for="Cc">Cc:</label></dt>
-                    <dd>
-                        <input id="Cc" class="" type="email" value="<%= emails.Cc %>" multiple/>
-                    </dd>
-                    <%if (attachments.length){%>
-                    <dt><label for="Attachments-list">Attachments:</label></dt>
-                    <dd>
-                        <ul id="Attachments-list" class="attachContainer">
-                            <% attachments.forEach(function(att) { %>
-                                <li><a href="download/<%=att.shortPas%>"><%=att.name %></a></li>
-                            <% }); %>
-                        </ul>
-                    </dd>
-                    <%}%>
-                </dl>
+                <div class="_animateInputBox">
+                    <input type="text"
+                           class="_animate"
+                           id="Cc"
+                           multiple
+                           required/>
+                    <label for="Cc" class="_animate">Cc:</label>
+                </div>
+                <%if (attachments.length){%>
+                <div class="_attachmentBox">
+                    <span class="_attachmentLabel">Attachments:</span>
+                    <ul id="Attachments-list" class="_attachContainer">
+                        <% attachments.forEach(function(att) { %>
+                        <li>
+                            <a href="download/<%=att.shortPas%>">
+                                <span class="icon-attach"></span>
+                                <span class="_attachInfo"><%=att.name %></span>
+                            </a>
+                        </li>
+                        <% }); %>
+                    </ul>
+                </div>
+                <%}%>
             </div>
-        </fieldset>
+        </div>
     </form>
 </div>

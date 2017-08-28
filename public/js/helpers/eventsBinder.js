@@ -32,6 +32,7 @@ define([
             topBarView.bind('saveEvent', contentView.saveItem, contentView);
             topBarView.bind('exportToCsv', contentView.exportToCsv, contentView);
             topBarView.bind('exportToXlsx', contentView.exportToXlsx, contentView);
+            topBarView.bind('exportToPdf', contentView.exportToPdf, contentView);
             topBarView.bind('importEvent', contentView.importFiles, contentView);
             topBarView.bind('copyEvent', contentView.copy, contentView);
             topBarView.bind('generateEvent', contentView.generate, contentView);
@@ -50,6 +51,7 @@ define([
             topBarView.bind('unpublish', contentView.unpublish, contentView);
             topBarView.bind('unlink', contentView.unlink, contentView);
             topBarView.bind('goBack', contentView.goBack, contentView);
+            topBarView.bind('cancelChanges', contentView.cancelChanges, contentView);
         },
 
         subscribeCustomChartEvents: function (chartView, gridView) {
@@ -67,7 +69,8 @@ define([
                     name   : 'sessionEnd',
                     message: 'sessionEnd',
                     email  : currentUser.email,
-                    login  : currentUser.login
+                    login  : currentUser.login,
+                  mobilePhone:currentUser.mobilePhone
                 });
                 tracker.track({
                     date     : new Date(),
@@ -75,7 +78,8 @@ define([
                     name     : 'close',
                     message  : 'close',
                     email    : currentUser.email,
-                    login    : currentUser.login
+                    login    : currentUser.login,
+                  mobilePhone:currentUser.mobilePhone
                 });
 
                 App.Tracker.send.call(App.Tracker);

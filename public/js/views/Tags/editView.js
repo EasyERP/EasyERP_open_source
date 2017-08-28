@@ -25,8 +25,8 @@ define([
 
         chooseNewColor: function (e) {
             var $target = $(e.target);
-            this.$el.find('.colorBox').removeClass('checked');
-            $target.addClass('checked');
+            this.$el.find('.colorBox').removeClass('checked icon-checked2');
+            $target.addClass('checked icon-checked2');
         },
 
         saveItem: function () {

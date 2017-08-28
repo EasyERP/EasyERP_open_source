@@ -39,10 +39,10 @@
         },
 
         asyncLoadImgs: function (collection) {
-            var ids = _.map(collection.toJSON(), function (item) {
+           /* var ids = _.map(collection.toJSON(), function (item) {
                 return item._id;
             });
-            common.getImages(ids, '/products/getProductsImages');
+            common.getImages(ids, '/products/getProductsImages');*/
         },
 
         createItemProduct: function () {

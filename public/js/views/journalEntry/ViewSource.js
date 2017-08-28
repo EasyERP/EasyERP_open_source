@@ -7,17 +7,30 @@ define([
     'text!templates/journalEntry/ProformaTemplate.html',
     'text!templates/journalEntry/InvoiceTemplate.html',
     'text!templates/journalEntry/EmployeesTemplate.html',
+    'text!templates/journalEntry/OrderTemplate.html',
+    'models/InvoiceModel',
+    'models/jobsModel',
+    'models/EmployeesModel',
+    'models/PaymentModel',
+    'models/orderModel',
     'helpers',
     'd3'
-], function (Backbone, $, _, jobsTemplate, PaymentTemplate, ProformaTemplate, InvoiceTemplate, EmployeesTemplate, helpers, d3) {
+], function (Backbone, $, _, jobsTemplate, PaymentTemplate, ProformaTemplate, InvoiceTemplate, EmployeesTemplate, OrderTemplate, InvoiceModel, JobsModel, EmployeesModel, PaymentModel, OrderModel, helpers, d3) {
     'use strict';
     var View = Backbone.View.extend({
-        el: '#content-holder',
+        el            : '#content-holder',
+        JobsModel     : JobsModel,
+        InvoiceModel  : InvoiceModel,
+        PaymentModel  : PaymentModel,
+        EmployeesModel: EmployeesModel,
+        OrderModel    : OrderModel,
 
         initialize: function (options) {
-            this.model = options.model;
+            var self = this;
+
             this.type = options.type;
             this.employee = options.employee;
+            this.dataId = options.dataId;
 
             this.Employees = _.template(EmployeesTemplate);
             this.Invoice = _.template(InvoiceTemplate);
@@ -27,8 +40,123 @@ define([
             this.Payment = _.template(PaymentTemplate);
             this.jobs = _.template(jobsTemplate);
             this.wTrack = _.template(jobsTemplate);
+            this.goodsInNote = _.template(OrderTemplate);
+            this.goodsOutNote = _.template(OrderTemplate);
 
-            this.render();
+            this.getData(function () {
+                self.render();
+            });
+        },
+
+        getData: function (cb) {
+            var self = this;
+            var data;
+            var type = this.type;
+            var dataEmployee = this.employee;
+            var dataId = this.dataId;
+            var model;
+
+            switch (type) {
+                case 'wTrack':
+                    model = new this.JobsModel();
+                    data = {
+                        employee: dataEmployee,
+                        _id     : dataId
+                    };
+
+                    model.urlRoot = '/journalEntries/jobs';
+                    break;
+                case 'expensesInvoice':
+                case 'dividendInvoice':
+                case 'Invoice':
+                    model = new this.InvoiceModel();
+                    data = {
+                        _id: dataId
+                    };
+
+                    model.urlRoot = '/journalEntries/invoices';
+
+                    break;
+                case 'Proforma':
+                    model = new this.InvoiceModel();
+                    data = {
+                        _id     : dataId,
+                        proforma: true
+                    };
+
+                    model.urlRoot = '/journalEntries/invoices';
+
+                    break;
+                case 'jobs':
+                    model = new this.JobsModel();
+                    data = {
+                        _id: dataId
+                    };
+
+                    model.urlRoot = '/journalEntries/jobs';
+
+                    break;
+                case 'Payment':
+                    model = new this.PaymentModel();
+                    data = {
+                        _id: dataId
+                    };
+
+                    model.urlRoot = '/journalEntries/payments';
+
+                    break;
+                case 'goodsOutNote':
+                case 'goodsInNote':
+                    model = new this.OrderModel();
+                    data = {
+                        goodsId: dataId,
+                        type   : type
+                    };
+
+                    model.urlRoot = '/journalEntries/order';
+
+                    break;
+                case 'Employees':
+                    model = new this.EmployeesModel();
+                    data = {
+                        _id: dataId
+                    };
+
+                    model.urlRoot = '/journalEntries/employees';
+
+                    break;
+
+                // skip default;
+            }
+
+            if (model) {
+                model.fetch({
+                    data   : data,
+                    success: function (model) {
+                       self.model = model;
+
+                        App.stopPreload();
+
+                        cb();
+                    },
+
+                    error: function () {
+                        App.stopPreload();
+
+                        App.render({
+                            type   : 'error',
+                            message: 'Please refresh browser'
+                        });
+                    }
+                });
+            } else {
+                App.stopPreload();
+
+                App.render({
+                    type   : 'notify',
+                    message: 'No Source Document is required'
+                });
+            }
         },
 
         renderCostCharts: function () {
@@ -137,6 +265,7 @@ define([
             template = temp({
                 currencySplitter: helpers.currencySplitter,
                 currencyClass   : helpers.currencyClass,
+                addressMaker    : helpers.addressMaker,
                 model           : model,
                 type            : this.type,
                 employee        : this.employee

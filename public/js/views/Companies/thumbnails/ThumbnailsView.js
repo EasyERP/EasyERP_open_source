@@ -11,7 +11,9 @@
     'text!templates/Companies/thumbnails/ThumbnailsItemTemplate.html',
     'dataService',
     'views/Filter/filterView',
-    'constants'
+    'constants',
+    'helpers/ga',
+    'constants/googleAnalytics'
 ], function (Backbone,
              $,
              _,
@@ -85,7 +87,6 @@
             if (this.filter) {
                 url += '/filter=' + encodeURI(JSON.stringify(this.filter));
             }
-
             window.location.hash = url;
         },
 

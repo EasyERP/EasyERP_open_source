@@ -128,9 +128,9 @@ input[type=number] {-moz-appearance: textfield;}
   &._socialWrap {
     display: flex;
 
-      .social {
-        position: static;
-        margin: 0;
+    .social {
+      position: static;
+      margin: 0;
     }
   }
 
@@ -143,6 +143,19 @@ input[type=number] {-moz-appearance: textfield;}
 
     ._staticInfo {
       width: 100%;
+    }
+  }
+
+  &._withTime {
+    ._inputWrap {
+      display: flex;
+    }
+
+    .hasWickedpicker {
+      height: 26px;
+      border: 0;
+      border-bottom: 1px solid #c8c8d3;
+      cursor: pointer;
     }
   }
 }
@@ -165,33 +178,6 @@ input[type=number] {-moz-appearance: textfield;}
     }
   }
 }
-
-/*== End Input type number =============*/
-//.input-file {
-//  position: relative;
-//  overflow: hidden;
-//  float: left;
-//  width: 60px;
-//  margin-right: 10px;
-//  margin-top: 10px;
-//  text-align: center;
-//  border: 1px solid  #7f7f80;
-//  line-height: 20px;
-//  height: 20px;
-//  cursor: pointer;
-//  color: $tilte-color;
-//
-//  input {
-//    position: absolute;
-//    top: 0;
-//    right: 0;
-//    //font-size: 200px;
-//    font-size: 0;
-//    opacity: 0;
-//    filter: alpha(opacity=0);
-//    cursor: pointer;
-//  }
-//}
 
 textarea,
 select {
@@ -221,6 +207,10 @@ input {
       width: auto;
       line-height: 24px;
     }
+
+  }
+  &[readonly] {
+    border: 0;
   }
 }
 
@@ -407,10 +397,6 @@ input {
     border: 1px solid #c2cad8;
     cursor: pointer;
   }
-
-  .hasWickedpicker {
-    margin: 15px auto 0;
-  }
 }
 
 ._inputsList {
@@ -460,7 +446,8 @@ input {
 
   ._staticInfo {
     display: block;
-    padding: 6px 10px 6px 0;
+    height: 26px;
+    padding: 4px 10px 5px 0;
     border: none;
     border-bottom: 1px solid #c8c8d3;
     transition: all .2s ease-in-out;
@@ -486,6 +473,35 @@ input {
   }
 }
 
+._attachmentBox {
+
+  ._attachmentLabel {
+    color: #4081ad;
+  }
+
+  ._attachContainer {
+    margin-top: 5px;
+
+    ._attachItem {
+      display: flex;
+      align-items: center;
+      padding-bottom: 2px;
+      border-bottom: 1px dashed #c8c8d3;
+    }
+  }
+
+  [class^="icon-"],
+  [class*=" icon-"] {
+    margin: 0 4px 2px 0;
+    font-size: 22px;
+    color: #c8c8d3;
+  }
+
+  ._attachInfo {
+    color: #364150;
+  }
+}
+
 input,
 textarea {
   &._animate {
@@ -498,7 +514,8 @@ textarea {
     transition: all .2s ease-in-out;
     @include rem('font-size', 13px);
 
-    &[readonly]:focus {
+    &[readonly],
+    &[readonly]:focus{
       border-bottom: 1px solid #c8c8d3;
       box-shadow: 0 1px 0 0 transparent;
     }
@@ -549,7 +566,7 @@ input {
 
 textarea {
   &._animate {
-    height: 120px;
+    height: 130px;
     width: 100%;
     padding: 0 10px 5px 0;
     margin-top: 5px;
@@ -570,6 +587,17 @@ textarea {
   }
 }
 
+
+._animateTextareaBox.withAttach {
+  textarea {
+    &._animate {
+      height: 140px;
+      padding-right: 15px;
+    }
+  }
+}
+
+
 label._animate {
   position: absolute;
   top:0;
@@ -580,6 +608,46 @@ label._animate {
   backface-visibility: hidden;
   @include rem('font-size', 12px);
 }
+
+
+._newSelectListWrap._singleSelectBox {
+  position: relative;
+  display: block;
+  padding: 0 24px 0 10px;
+  border: none;
+  border-bottom: 1px solid #c8c8d3;
+  font-size: 13px;
+  color: #999 !important;
+
+  .current-selected {
+    position: static;
+    display: block;
+    min-height: 26px;
+    padding: 6px 0;
+    line-height: 1;
+    text-align: left;
+    color: #666682;
+
+    &:hover {
+      text-decoration: none;
+    }
+
+    &:after {
+      content: '\f107';
+      position: absolute;
+      display: inline-block;
+      right: 0;
+      bottom: 0;
+      height: 25px;
+      width: 25px;
+      line-height: 25px;
+      text-align: center;
+      font-family: "erp-icons";
+      font-size: 18px;
+    }
+  }
+}
+
 
 ._animateSelectBox {
   position: relative;
@@ -610,6 +678,18 @@ label._animate {
     }
   }
 
+  &._withImage {
+    padding-right: 50px;
+
+    ._dataImg {
+      position: absolute;
+      top: -10px;
+      right: 0;
+      width: 45px;
+      border-radius: 50%;
+    }
+  }
+
   ._selectTitle {
     position: absolute;
     top: -9px;
@@ -622,7 +702,7 @@ label._animate {
   ._newSelectListWrap {
     position: relative;
     display: block;
-    padding: 0 10px 0 0;
+    padding: 0 20px 0 0;
     border: none;
     border-bottom: 1px solid #c8c8d3;
     font-size: 13px;
@@ -631,9 +711,10 @@ label._animate {
     .current-selected {
       position: static;
       display: block;
+      min-height: 26px;
       padding: 6px 0;
-      min-height: auto;
       line-height: 1;
+      text-align: left;
       color: #666682;
 
       &:hover {
@@ -672,6 +753,13 @@ label._animate {
     margin-top: 25px;
   }
 
+  .counter-wrap {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    padding: 2px 0;
+  }
+
   label._animate {
     top: -5px;
     user-select: none;
@@ -708,3 +796,208 @@ label._animate {
     padding-right: 28px;
   }
 }
+
+//circle checkbox start
+
+$size: 24px;
+$border: 2px;
+$border-color: #7eadcc;
+$beforeWidth: 11px;
+$afterWidth: 18px;
+$height: 2px;
+$translate: 17px;
+
+.custom-checkbox {
+  display: none;
+
+  //&:checked {
+  //
+  //  + label {
+  //    .circle-line {
+  //
+  //      .line {
+  //        opacity: 0;
+  //        transition: transform .3s ease, opacity .1s ease .3s;
+  //      }
+  //
+  //      &:nth-child(1) {
+  //
+  //        .line {
+  //          transform: rotate(135deg);
+  //        }
+  //      }
+  //
+  //      &:nth-child(2) {
+  //
+  //        .line {
+  //          transform: rotate(-135deg);
+  //        }
+  //      }
+  //    }
+  //
+  //    .check {
+  //      &:before,
+  //      &:after {
+  //        transition: all .3s ease .5s;
+  //      }
+  //
+  //      &:before {
+  //        width: $beforeWidth;
+  //      }
+  //
+  //      &:after {
+  //        width: $afterWidth;
+  //      }
+  //    }
+  //
+  //    .check-wrap {
+  //      transform: translateY($translate);
+  //    }
+  //  }
+  //}
+}
+
+.circle-wrap {
+  position: relative;
+  display: block;
+  width: $size;
+  height: $size;
+  cursor: pointer;
+  user-select: none;
+
+  &.checked {
+    .circle-line {
+
+      .line {
+        opacity: 0;
+        transition: transform .3s ease, opacity .1s ease .3s;
+      }
+
+      &:nth-child(1) {
+
+        .line {
+          transform: rotate(135deg);
+        }
+      }
+
+      &:nth-child(2) {
+
+        .line {
+          transform: rotate(-135deg);
+        }
+      }
+    }
+
+    .check {
+      &:before,
+      &:after {
+        transition: all .3s ease .5s;
+      }
+
+      &:before {
+        width: $beforeWidth;
+      }
+
+      &:after {
+        width: $afterWidth;
+      }
+    }
+
+    .check-wrap {
+      transform: translateY($translate);
+    }
+  }
+
+  .circle-line {
+    position: absolute;
+    top: 0;
+    width: $size / 2;
+    height: $size;
+    overflow: hidden;
+
+    .line {
+      position: absolute;
+      top: 0;
+      width: $size;
+      height: $size;
+      transition: all .3s ease .6s;
+    }
+
+    &:nth-child(1) {
+      left: 0;
+
+      .line {
+        left: 0;
+        border: {
+          width: $border;
+          style: solid;
+          color: $border-color transparent transparent $border-color;
+          radius: 50%;
+
+        }
+        transform: rotate(-45deg);
+      }
+    }
+
+    &:nth-child(2) {
+      right: 0;
+
+      .line {
+        right: 0;
+        border: {
+          width: $border;
+          style: solid;
+          color: $border-color $border-color transparent transparent;
+          radius: 50%;
+        }
+        transform: rotate(45deg);
+      }
+    }
+  }
+}
+
+.check-wrap {
+  position: absolute;
+  left: calc(50% - 3px);
+  transform: none;
+  transition: all .3s ease .3s;
+}
+
+.check {
+  $half: ($height / 2);
+  $check-color: $border-color;
+
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: $height;
+  width: $height;
+
+  &:before,
+  &:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    height: $height;
+    border-radius: $height / 2;
+    transition: all .3s ease;
+  }
+
+  &:before {
+    left: 0;
+    width: 2px;
+    background-color: $check-color;
+    transform: rotate(-135deg);
+    transform-origin: $half;
+  }
+
+  &:after {
+    left: 0;
+    width: 2px;
+    background-color: $check-color;
+    transform: rotate(-45deg);
+    transform-origin: $half;
+  }
+}
+
+//circle checkbox end

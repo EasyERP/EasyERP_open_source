@@ -10,7 +10,7 @@
             <div class="noteBody">
                 <%if (val.history) {%>
                 <%var name = val.history.collectionName%>
-                <span class="dateNote"><%=val.date%></span>
+                <span class="dateNote"><%=val.date.format('DD MMM, YYYY, hh:mm')%></span>
                 <div class="itemCircleWrap">
                     <div class="itemCircle">
                     <span class="icon-edit-list"></span>
@@ -28,7 +28,7 @@
                 </div>
                 <%} else if (val.pay) {%>
 
-                <span class="dateNote"><%=val.date%></span>
+                <span class="dateNote"><%=val.date.format('DD MMM, YYYY, hh:mm')%></span>
                 <div class="itemCircleWrap">
                     <div class="itemCircle">
                         <span class="icon-usd"></span>
@@ -40,7 +40,7 @@
                 </div>
 
                 <%} else if (val.attachment) {%>
-                <span class="dateNote"><%=val.date%></span>
+                <span class="dateNote"><%=val.date.format('DD MMM, YYYY, hh:mm')%></span>
                 <div class="itemCircleWrap">
                     <div class="itemCircle">
                         <span class="icon-edit-list2" aria-hidden="true"></span>
@@ -52,7 +52,7 @@
 
                 <a href="javascript:;" data-type="del" class="editDelNote"></a>
                 <%} else {%>
-                <span class="dateNote"><%=val.date%></span>
+                <span class="dateNote"><%=val.date.format('DD MMM, YYYY, hh:mm')%></span>
                 <div class="itemCircleWrap">
                     <div class="itemCircle">
                         <span class="icon-coment" aria-hidden="true"></span>

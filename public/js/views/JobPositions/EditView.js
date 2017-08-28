@@ -124,6 +124,7 @@ define([
                         class: 'btn blue',
                         click: function () {
                             self.saveItem();
+                            self.gaTrackingEditConfirm();
                         }
                     },
 

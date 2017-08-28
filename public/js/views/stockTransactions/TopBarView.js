@@ -9,7 +9,7 @@ define([
     var topBarView = BaseView.extend({
         el           : '#top-bar',
         contentType  : CONSTANTS.STOCKTRANSACTIONS,
-        contentHeader: 'Transactions',
+        contentHeader: 'Transfers',
         template     : _.template(ContentTopBarTemplate)
     });
 

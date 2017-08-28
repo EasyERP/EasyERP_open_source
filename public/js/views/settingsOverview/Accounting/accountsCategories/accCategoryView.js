@@ -183,7 +183,7 @@ define([
                         parent             : ui.item.parents('li').attr('data-id') ? ui.item.parents('li').attr('data-id') : null,
                         nestingLevel       : nestingLevel,
                         sequence           : sequence,
-                        isAllUpdate        : nestingLevel !== model.toJSON().nestingLevel
+                        isAllUpdate        : true
                     });
                     model.save(model.changed, {
                         patch  : true,

@@ -1,1 +1,32 @@
-<h3><%=contentHeader%></h3>
+<h3 id="topBarHead"><%=contentHeader%></h3>
+<div id="createBtnHolder" class="btnsBlock">
+    <%if (!specificReport) {%>
+    <a href="#home/action-<%=contentType%>/Create" class="btn blue slim icon-plus" title="Create" id="top-bar-createBtn">New</a>
+    <%} else {%>
+<!--
+    <a href="javascript:;" class="btn blue slim hidden" title="Go Back" id="top-bar-back">Back</a>
+-->
+    <a href="javascript:;" class="btn blue slim hidden" title="Go Edit" id="top-bar-edit">Edit</a>
+    <button id="exportToPdf"
+            class="exportBtn"
+            title="Export to PDF">
+        <span class="icon-pdf"></span>
+    </button>
+    <button title="Export to csv"
+            id="top-bar-exportToCsvBtn"
+            class="exportBtn">
+        <span class="icon-csv"></span>
+    </button>
+    <button title="Export to xlsx"
+            id="top-bar-exportToXlsxBtn"
+            class="exportBtn">
+        <span class="icon-xlsx"></span>
+    </button>
+    <%}%>
+</div>
+
+<div style="float: right">
+    <div class="tags-container">
+
+    </div>
+</div>

@@ -1,14 +1,19 @@
 ﻿var models = function (dbsObject) {
     function get(id, collection, schema) {
         var model;
+        var error;
 
         if (!id) {
-            throw new Error('Please Authorize before');
+
+            error = new Error('Please Authorize before');
+
+            error.status = 401;
+            throw error;
         }
 
-        model = dbsObject[id].models[collection];
+        model = dbsObject[id] && dbsObject[id].models[collection];
 
-        return model || dbsObject[id].model(collection, schema);
+        return model || dbsObject[id] && dbsObject[id].model(collection, schema);
     }
 
     function connection(id) {

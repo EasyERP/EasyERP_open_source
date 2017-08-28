@@ -1,15 +1,16 @@
 define([
+    'Backbone',
     'jQuery',
     'Underscore',
     'views/listViewBase',
     'text!templates/ExpensesInvoice/list/ListHeader.html',
     'views/ExpensesInvoice/CreateView',
-    'views/ExpensesInvoice/EditView',
+    'views/ExpensesInvoice/form/EditView',
     'models/InvoicesModel',
     'views/ExpensesInvoice/list/ListItemView',
     'collections/salesInvoices/filterCollection',
     'helpers'
-], function ($, _, listViewBase, listTemplate, CreateView, EditView, InvoiceModel, ListItemView, contentCollection, helpers) {
+], function (Backbone, $, _, listViewBase, listTemplate, CreateView, EditView, InvoiceModel, ListItemView, contentCollection, helpers) {
     'use strict';
 
     var InvoiceListView = listViewBase.extend({
@@ -30,6 +31,9 @@ define([
 
         initialize: function (options) {
             $(document).off('click');
+
+            this.formUrl = 'easyErp/' + this.contentType + '/tform/';
+
 
             this.EditView = EditView;
             this.CreateView = CreateView;
@@ -87,6 +91,25 @@ define([
 
         gotoForm: function (e) {
             var id = $(e.target).closest('tr').data('id');
+            var page = this.collection.currentPage;
+            var countPerPage = this.collection.pageSize;
+            var url = this.formUrl + id + '/p=' + page + '/c=' + countPerPage;
+
+            if (!id || $(e.target).closest('tfoot').length) {
+                return;
+            }
+
+            if (this.filter) {
+                url += '/filter=' + encodeURI(JSON.stringify(this.filter));
+            }
+
+            App.ownContentType = true;
+
+            Backbone.history.navigate(url, {trigger: true});
+        }
+
+        /*gotoForm: function (e) {
+            var id = $(e.target).closest('tr').data('id');
             var model = new InvoiceModel({validate: false});
 
             if ($(e.target).closest('tfoot').length) {
@@ -116,7 +139,7 @@ define([
                     });
                 }
             });
-        }
+        }*/
 
     });
 

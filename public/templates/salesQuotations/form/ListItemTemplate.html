@@ -1,29 +1,27 @@
-<table id="listTable">
+<div id="listTable">
     <% quotations.forEach(function(quotation, index){ %>
-    <tr class="compactView" data-id="<%=quotation._id%>">
-        <td class="checkboxRow">
+    <div class="compactView" data-id="<%=quotation._id%>">
+        <div class="checkboxRow">
             <label class="_customCHeckbox">
                 <input type="checkbox" value="<%=quotation._id%>" class="checkbox listCB <%=quotation.proformaCounter ? 'notRemovable' : ''%>"  <%if (quotation.proformaCounter) { %>
                 disabled='disabled'
                 <% } %>/>
                 <span></span>
             </label>
-        </td>
-        <td>
-            <div class="compactRowWrap">
-                <div class="compactRow">
-                    <div class="firstName"><%= quotation.project.name%></div>
-                    <div class="company"><%=(quotation.supplier) ? quotation.supplier.name.first + ' ' + quotation.supplier.name.last : ''%></div>
-                </div>
-                <div class="compactRow">
-                    <div><%= quotation.orderDate %></div>
-                </div>
-                <div class="compactRow">
-                    <div class="total"><%=(quotation.currency && quotation.currency._id ? quotation.currency._id.symbol : '') + (quotation.paymentInfo) ? currencySplitter(quotation.paymentInfo.total) : '0'%></div>
-                    <div><%=(quotation.salesManager && quotation.salesManager.name) ? quotation.salesManager.name.first + ' ' + quotation.salesManager.name.last : ''%></div>
-                </div>
+        </div>
+        <div class="compactRowWrap">
+            <div class="compactRow">
+                <div class="firstName"><%= quotation.project.name%></div>
+                <div class="company"><%=(quotation.supplier) ? quotation.supplier.name.first + ' ' + quotation.supplier.name.last : ''%></div>
             </div>
-        </td>
-    </tr>
+            <div class="compactRow">
+                <div><%= quotation.orderDate %></div>
+            </div>
+            <div class="compactRow">
+                <div class="total"><%=(quotation.currency && quotation.currency._id ? quotation.currency._id.symbol : '') + (quotation.paymentInfo) ? currencySplitter(quotation.paymentInfo.total) : '0'%></div>
+                <div><%=(quotation.salesManager && quotation.salesManager.name) ? quotation.salesManager.name.first + ' ' + quotation.salesManager.name.last : ''%></div>
+            </div>
+        </div>
+    </div>
     <% }) %>
-</table>
+</div>

@@ -59,10 +59,6 @@ var Module = function (models) {
                         as          : 'module'
                     }
                 }, {
-                    $match: {
-                        'module.visible': true
-                    }
-                }, {
                     $project: {
                         module: {
                             $arrayElemAt: [
@@ -74,14 +70,21 @@ var Module = function (models) {
                         _id: 0
                     }
                 }, {
+                    $match: {
+                        'module.visible': true
+                    }
+                }, {
                     $project: {
                         _id     : '$module._id',
                         mname   : '$module.mname',
                         href    : '$module.href',
                         sequence: '$module.sequence',
-                        parrent : '$module.parrent',
-                        link    : '$module.link'
+                        parrent : {
+                            $cond: ['$module.single', '$module._id', '$module.parrent']
+                        },
 
+                        single: '$module.single',
+                        link  : '$module.link'
                     }
                 }, {
                     $sort: {
@@ -118,9 +121,10 @@ var Module = function (models) {
                         },
 
                         subModules: {
-                            mname: 1,
-                            href : 1,
-                            link : 1
+                            mname : 1,
+                            href  : 1,
+                            single: 1,
+                            link  : 1
                         },
 
                         _id: 0
@@ -138,9 +142,9 @@ var Module = function (models) {
                         _id       : '$module._id',
                         mname     : '$module.mname',
                         href      : '$module.href',
+                        single    : '$module.single',
                         link      : '$module.link',
                         subModules: 1
-
                     }
                 }],
 

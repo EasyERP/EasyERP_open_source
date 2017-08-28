@@ -9,10 +9,11 @@ var Module = function (models, event) {
     var wTrackSchema = mongoose.Schemas.wTrack;
     var objectId = mongoose.Types.ObjectId;
     var InvoiceSchema = mongoose.Schemas.Invoices;
-    var QuotationSchema = mongoose.Schemas.QuotationSchema;
+    var manufacturingOrderSchema = mongoose.Schemas.manufacturingOrder;
 
     var rewriteAccess = require('../helpers/rewriteAccess');
     var accessRoll = require('../helpers/accessRollHelper.js')(models);
+    var integrationStatsHelper = require('../helpers/integrationStatsComposer')(models);
     var Uploader = require('../services/fileStorage/index');
     var uploader = new Uploader();
     var RESPONSES = require('../constants/responses');
@@ -30,11 +31,13 @@ var Module = function (models, event) {
     var AvailabilitySchema = mongoose.Schemas.productsAvailability;
     var HistoryService = require('../services/history.js')(models);
     var StockReturnsService = require('../services/stockReturns.js')(models);
+    var ConflictsService = require('../services/conflict.js')(models);
     var path = require('path');
     var CONSTANTS = require('../constants/mainConstants.js');
     var pageHelper = require('../helpers/pageHelper');
     var moment = require('../public/js/libs/moment/moment');
     var ratesRetriever = require('../helpers/ratesRetriever')();
+    var redis = require('../helpers/redisClient');
 
     var FilterMapper = require('../helpers/filterMapper');
     var filterMapper = new FilterMapper();
@@ -251,6 +254,11 @@ var Module = function (models, event) {
                 order.notes = [];
             }
             order.notes = order.notes.concat(notes);
+            order.notes = _.map(order.notes, function (el) {
+                el.date = new Date(el.date);
+
+                return el;
+            });
             order.notes = _.sortBy(order.notes, 'date');
             cb(null, order);
 
@@ -381,7 +389,7 @@ var Module = function (models, event) {
         var db = req.session.lastDb;
         var id = req.params.id;
         var data = mapObject(req.body);
-        var mid = parseInt(req.headers.mid, 10);
+        //var mid = parseInt(req.headers.mid, 10);
         var waterfallTasks;
         var getGoodsOutNotes;
         var updateFields;
@@ -425,7 +433,7 @@ var Module = function (models, event) {
                 goodsInNotesService.getByOrder({dbName: db, order: objectId(id)}, callback);
             };
 
-            removeGoods = function (ids, callback) {
+            removeGoods = function (ids, orderRows, callback) {
                 var options = {
                     ids   : ids,
                     dbName: db,
@@ -469,7 +477,6 @@ var Module = function (models, event) {
             });
         } else {
             updateOnlySelectedFields(req, res, next, id, data);
-
         }
     };
 
@@ -599,6 +606,7 @@ var Module = function (models, event) {
     function getByViewType(req, res, next) {
         var Order = models.get(req.session.lastDb, 'Order', OrderSchema);
         var data = req.query;
+        var quickSearch = data.quickSearch;
         var paginationObject = pageHelper(data);
         var limit = paginationObject.limit;
         var skip = paginationObject.skip;
@@ -611,7 +619,14 @@ var Module = function (models, event) {
         var key;
         var queryObject = {};
         var optionsObject = {};
+        var matchObject = {};
+        var regExp;
         var pastDue = filter.pastDue;
+
+        if (quickSearch) {
+            regExp = new RegExp(quickSearch, 'ig');
+            matchObject['supplier.name'] = {$regex: regExp};
+        }
 
         queryObject.$and = [];
 
@@ -784,6 +799,11 @@ var Module = function (models, event) {
                         name  : '$workflow.name'
                     },
 
+                    tempWorkflow: {
+                        _id   : '$tempWorkflow._id',
+                        status: '$tempWorkflow.status'
+                    },
+
                     channel: {
                         _id : '$channel._id',
                         name: '$channel.channelName',
@@ -803,6 +823,8 @@ var Module = function (models, event) {
                     forSales       : 1
                 }
             }, {
+                $match: matchObject
+            }, {
                 $lookup: {
                     from        : 'Employees',
                     localField  : 'salesManager.employeeId',
@@ -811,41 +833,43 @@ var Module = function (models, event) {
                 }
             }, {
                 $project: {
-                    salesPerson: {$ifNull: ['$salesPerson', {$arrayElemAt: ['$salesManager', 0]}]},
-                    workflow   : 1,
-                    supplier   : 1,
-                    currency   : 1,
-                    paymentInfo: 1,
-                    orderDate  : 1,
-                    payments   : 1,
-                    name       : 1,
-                    status     : 1,
-                    _type      : 1,
-                    forSales   : 1,
-                    channel    : 1
+                    salesPerson : {$ifNull: ['$salesPerson', {$arrayElemAt: ['$salesManager', 0]}]},
+                    workflow    : 1,
+                    tempWorkflow: 1,
+                    supplier    : 1,
+                    currency    : 1,
+                    paymentInfo : 1,
+                    orderDate   : 1,
+                    payments    : 1,
+                    name        : 1,
+                    status      : 1,
+                    _type       : 1,
+                    forSales    : 1,
+                    channel     : 1
                 }
             }, {
                 $project: {
-                    salesPerson: {
+                    salesPerson : {
                         _id : '$salesPerson._id',
                         name: {$concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']}
                     },
-                    workflow   : 1,
-                    supplier   : 1,
-                    currency   : 1,
-                    paymentInfo: 1,
-                    orderDate  : 1,
-                    name       : 1,
-                    status     : 1,
-                    _type      : 1,
-                    forSales   : 1,
-                    channel    : 1,
-                    payments   : 1,
-                    removable  : {
+                    workflow    : 1,
+                    tempWorkflow: 1,
+                    supplier    : 1,
+                    currency    : 1,
+                    paymentInfo : 1,
+                    orderDate   : 1,
+                    name        : 1,
+                    status      : 1,
+                    _type       : 1,
+                    forSales    : 1,
+                    channel     : 1,
+                    payments    : 1,
+                    removable   : {
                         $cond: {
-                            if  : {$and: [{$ne: ['$workflow.status', 'Done']}, {$ne: ['$status.fulfillStatus', 'ALL']}]},
-                            then: true,
-                            else: false
+                            if  : {$or: [{$eq: ['$workflow.status', 'Done']}, {$eq: ['$tempWorkflow.status', 'Done']}, {$and: [{$ne: ['$status.fulfillStatus', 'NOR']}, {$ne: ['$status.fulfillStatus', 'NOT']}]}]},
+                            then: false,
+                            else: true
                         }
                     }
                 }
@@ -913,6 +937,22 @@ var Module = function (models, event) {
                     total       : {$first: '$total'}
                 }
             }, {
+                $project: {
+                    salesPerson   : 1,
+                    workflow      : 1,
+                    supplier      : 1,
+                    currency      : 1,
+                    paymentInfo   : 1,
+                    orderDate     : 1,
+                    name          : 1,
+                    status        : 1,
+                    removable     : 1,
+                    channel       : 1,
+                    paymentsPaid  : 1,
+                    paymentBalance: {$subtract: ['$paymentInfo.total', '$paymentsPaid']},
+                    total         : 1
+                }
+            }, {
                 $sort: sort
             }, {
                 $skip: skip
@@ -953,255 +993,282 @@ var Module = function (models, event) {
 
         if (docs && docs.length) {
             async.each(docs, function (elem, eachCb) {
-                var product;
-                var warehouseId;
+                    var product;
+                    var warehouseId;
 
-                var parallelTasks;
+                    var parallelTasks;
 
-                elem = elem.toJSON();
+                    elem = elem.toJSON();
 
-                product = elem.product ? elem.product._id : null;
-                warehouseId = elem.warehouse ? objectId(elem.warehouse._id) : null;
+                    product = elem.product ? elem.product._id : null;
+                    warehouseId = elem.warehouse ? objectId(elem.warehouse._id) : null;
 
-                function getAvailabilities(parallelCb) {
-                    Availability.aggregate([{
-                        $match: {
-                            product  : objectId(product),
-                            warehouse: warehouseId
-                        }
-                    }, {
-                        $project: {
-                            product      : 1,
-                            warehouse    : 1,
-                            onHand       : 1,
-                            filterRows   : {
-                                $filter: {
-                                    input: '$orderRows',
-                                    as   : 'elem',
-                                    cond : {$eq: ['$$elem.orderRowId', objectId(elem._id)]}
+                    function getAvailabilities(parallelCb) {
+                        Availability.aggregate([{
+                                $match: {
+                                    product  : objectId(product),
+                                    warehouse: warehouseId
                                 }
-                            },
-                            orderRows    : 1,
-                            goodsOutNotes: 1
-                        }
-                    }, {
-                        $project: {
-                            product  : 1,
-                            warehouse: 1,
-                            onHand   : 1,
-                            allocated: {
-                                $sum: '$filterRows.quantity'
-                            },
-
-                            allocatedAll: {
-                                $sum: '$orderRows.quantity'
-                            },
-
-                            fulfillAll: {
-                                $sum: '$goodsOutNotes.quantity'
-                            }
-                        }
-                    }, {
-                        $project: {
-                            product  : 1,
-                            warehouse: 1,
-                            onHand   : 1,
-                            allocated: 1,
-                            inStock  : {
-                                $add: ['$onHand', '$allocatedAll', '$fulfillAll']
-                            }
-                        }
-                    }, {
-                        $group: {
-                            _id      : '$warehouse',
-                            allocated: {
-                                $sum: '$allocated'
-                            },
-
-                            onHand: {
-                                $sum: '$onHand'
-                            },
-
-                            inStock: {
-                                $sum: '$inStock'
-                            },
-
-                            onOrder: {
-                                $sum: '$onOrder'
-                            }
-                        }
-                    }], function (err, availability) {
-                        if (err) {
-                            return parallelCb(err);
-                        }
-                        parallelCb(null, availability);
-                    });
-                }
-
-                function getNotes(parallelCb) {
-                    var Model = forSales ? GoodsOutNote : GoodsInNote;
-
-                    Model.aggregate([{
-                        $match: {
-                            'orderRows.orderRowId': elem._id,
-                            _type                 : forSales ? 'GoodsOutNote' : 'GoodsInNote',
-                            archived              : {$ne: true}
-                        }
-                    }, {
-                        $lookup: {
-                            from        : 'warehouse',
-                            localField  : 'warehouse',
-                            foreignField: '_id',
-                            as          : 'warehouse'
-                        }
-                    }, {
-                        $lookup: {
-                            from        : 'productsAvailability',
-                            localField  : '_id',
-                            foreignField: 'goodsInNote',
-                            as          : 'goodsInNote'
-                        }
-                    }, {
-                        $lookup: {
-                            from        : 'Users',
-                            localField  : 'status.printedById',
-                            foreignField: '_id',
-                            as          : 'status.printedById'
-                        }
-                    }, {
-                        $lookup: {
-                            from        : 'Users',
-                            localField  : 'status.pickedById',
-                            foreignField: '_id',
-                            as          : 'status.pickedById'
-                        }
-                    }, {
-                        $lookup: {
-                            from        : 'Users',
-                            localField  : 'status.packedById',
-                            foreignField: '_id',
-                            as          : 'status.packedById'
-                        }
-                    }, {
-                        $lookup: {
-                            from        : 'Users',
-                            localField  : 'status.shippedById',
-                            foreignField: '_id',
-                            as          : 'status.shippedById'
-                        }
-                    }, {
-                        $lookup: {
-                            from        : 'Order',
-                            localField  : 'order',
-                            foreignField: '_id',
-                            as          : 'order'
-                        }
-                    }, {
-                        $project: {
-                            name    : '$name',
-                            orderRow: {
-                                $filter: {
-                                    input: '$orderRows',
-                                    as   : 'elem',
-                                    cond : {$eq: ['$$elem.orderRowId', objectId(elem._id)]}
+                            }, {
+                                $project: {
+                                    product      : 1,
+                                    warehouse    : 1,
+                                    onHand       : 1,
+                                    filterRows   : {
+                                        $filter: {
+                                            input: '$orderRows',
+                                            as   : 'elem',
+                                            cond : {$eq: ['$$elem.orderRowId', objectId(elem._id)]}
+                                        }
+                                    },
+                                    orderRows    : 1,
+                                    goodsOutNotes: 1
                                 }
-                            },
+                            }, {
+                                $unwind: {
+                                    path                      : '$goodsOutNotes',
+                                    preserveNullAndEmptyArrays: true
+                                }
+                            }, {
+                                $lookup: {
+                                    from        : 'GoodsNote',
+                                    localField  : 'goodsOutNotes.goodsNoteId',
+                                    foreignField: '_id',
+                                    as          : 'goodsOutNotes.goodsNoteId'
+                                }
+                            }, {
+                                $project: {
+                                    product    : 1,
+                                    warehouse  : 1,
+                                    onHand     : 1,
+                                    filterRows : 1,
+                                    orderRows  : 1,
+                                    goodsNoteId: {$arrayElemAt: ['$goodsOutNotes.goodsNoteId', 0]},
+                                    quantity   : '$goodsOutNotes.quantity'
+                                }
+                            }, {
+                                $project: {
+                                    product    : 1,
+                                    warehouse  : 1,
+                                    onHand     : 1,
+                                    filterRows : 1,
+                                    quantity   : 1,
+                                    goodsNoteId: 1,
+                                    allocated  : {
+                                        $sum: '$filterRows.quantity'
+                                    },
 
-                            goodsInNote         : {$arrayElemAt: ['$goodsInNote', 0]},
-                            warehouse           : {$arrayElemAt: ['$warehouse', 0]},
-                            order               : {$arrayElemAt: ['$order', 0]},
-                            'status.printedById': {$arrayElemAt: ['$status.printedById', 0]},
-                            'status.pickedById' : {$arrayElemAt: ['$status.pickedById', 0]},
-                            'status.packedById' : {$arrayElemAt: ['$status.packedById', 0]},
-                            'status.shippedById': {$arrayElemAt: ['$status.shippedById', 0]},
-                            'status.printedOn'  : 1,
-                            'status.pickedOn'   : 1,
-                            'status.packedOn'   : 1,
-                            'status.shippedOn'  : 1,
-                            'status.receivedOn' : 1,
-                            'status.shipped'    : 1,
-                            'status.picked'     : 1,
-                            'status.packed'     : 1,
-                            'status.printed'    : 1
-                        }
-                    }, {
-                        $project: {
-                            name                : '$name',
-                            orderRow            : {$arrayElemAt: ['$orderRow', 0]},
-                            status              : 1,
-                            warehouse           : 1,
-                            'goodsInNote._id'   : 1,
-                            'goodsInNote.onHand': 1,
-                            'order.name'        : 1
-                        }
-                    }, {
-                        $project: {
-                            name        : '$name',
-                            orderRow    : '$orderRow.orderRowId',
-                            quantity    : '$orderRow.quantity',
-                            status      : 1,
-                            warehouse   : 1,
-                            goodsInNote : 1,
-                            'order.name': 1
-                        }
-                    }], function (err, docs) {
-                        if (err) {
-                            return parallelCb(err);
-                        }
-                        if (docs && docs.length) {
-                            docs = docs.map(function (el) {
-                                el._id = el._id.toJSON();
-                                return el;
-                            });
-                        }
+                                    allocatedAll: {
+                                        $sum: '$orderRows.quantity'
+                                    }
+                                }
+                            }, {
+                                $group: {
+                                    _id         : '$goodsNoteId.status.shipped',
+                                    product     : {$first: '$product'},
+                                    warehouse   : {$first: '$warehouse'},
+                                    onHand      : {$sum: '$onHand'},
+                                    filterRows  : {$first: '$filterRows'},
+                                    allocatedAll: {$first: '$allocatedAll'},
+                                    allocated   : {$first: '$allocated'},
+                                    quantity    : {$sum: '$quantity'}
+                                }
+                            }],
+                            function (err, availability) {
+                                var availObj = {
+                                    inStock: 0
+                                };
 
-                        parallelCb(null, docs);
-                    });
-                }
+                                if (err) {
+                                    return parallelCb(err);
+                                }
 
-                parallelTasks = [getNotes, getAvailabilities];
+                                availability.forEach(function (el) {
+                                    availObj.product = el.product;
+                                    availObj.warehouse = el.warehouse;
+                                    availObj.onHand = el.onHand;
+                                    availObj.filterRows = el.filterRows;
+                                    availObj.allocatedAll = el.allocatedAll;
+                                    availObj.allocated = el.allocated;
 
-                async.parallel(parallelTasks, function (err, response) {
-                    var availability;
-                    var goodsNotes;
+                                    if (!el._id) {
+                                        availObj.inStock += el.quantity;
+                                    }
+                                });
 
-                    if (err) {
-                        return eachCb(err);
+                                availObj.inStock += availObj.onHand;
+
+                                parallelCb(null, [availObj]);
+                            }
+                        );
                     }
 
-                    availability = response[1];
-                    goodsNotes = response[0];
-                    allGoodsNotes = allGoodsNotes.concat(goodsNotes);
+                    function getNotes(parallelCb) {
+                        var Model = forSales ? GoodsOutNote : GoodsInNote;
 
-                    availability = availability && availability.length ? availability[0] : null;
+                        Model.aggregate([{
+                            $match: {
+                                'orderRows.orderRowId': elem._id,
+                                _type                 : forSales ? 'GoodsOutNote' : 'GoodsInNote',
+                                archived              : {$ne: true}
+                            }
+                        }, {
+                            $lookup: {
+                                from        : 'warehouse',
+                                localField  : 'warehouse',
+                                foreignField: '_id',
+                                as          : 'warehouse'
+                            }
+                        }, {
+                            $lookup: {
+                                from        : 'productsAvailability',
+                                localField  : '_id',
+                                foreignField: 'goodsInNote',
+                                as          : 'goodsInNote'
+                            }
+                        }, {
+                            $lookup: {
+                                from        : 'Users',
+                                localField  : 'status.printedById',
+                                foreignField: '_id',
+                                as          : 'status.printedById'
+                            }
+                        }, {
+                            $lookup: {
+                                from        : 'Users',
+                                localField  : 'status.pickedById',
+                                foreignField: '_id',
+                                as          : 'status.pickedById'
+                            }
+                        }, {
+                            $lookup: {
+                                from        : 'Users',
+                                localField  : 'status.packedById',
+                                foreignField: '_id',
+                                as          : 'status.packedById'
+                            }
+                        }, {
+                            $lookup: {
+                                from        : 'Users',
+                                localField  : 'status.shippedById',
+                                foreignField: '_id',
+                                as          : 'status.shippedById'
+                            }
+                        }, {
+                            $lookup: {
+                                from        : 'Order',
+                                localField  : 'order',
+                                foreignField: '_id',
+                                as          : 'order'
+                            }
+                        }, {
+                            $project: {
+                                name    : '$name',
+                                orderRow: {
+                                    $filter: {
+                                        input: '$orderRows',
+                                        as   : 'elem',
+                                        cond : {$eq: ['$$elem.orderRowId', objectId(elem._id)]}
+                                    }
+                                },
 
-                    if (availability) {
-                        elem.inStock = availability.inStock;
-                        elem.onHand = availability.onHand;
-                        elem.allocated = availability.allocated;
-                    }
-                    elem.goodsNotes = goodsNotes;
-                    elem.fulfilled = 0;
+                                goodsInNote         : {$arrayElemAt: ['$goodsInNote', 0]},
+                                warehouse           : {$arrayElemAt: ['$warehouse', 0]},
+                                order               : {$arrayElemAt: ['$order', 0]},
+                                'status.printedById': {$arrayElemAt: ['$status.printedById', 0]},
+                                'status.pickedById' : {$arrayElemAt: ['$status.pickedById', 0]},
+                                'status.packedById' : {$arrayElemAt: ['$status.packedById', 0]},
+                                'status.shippedById': {$arrayElemAt: ['$status.shippedById', 0]},
+                                'status.printedOn'  : 1,
+                                'status.pickedOn'   : 1,
+                                'status.packedOn'   : 1,
+                                'status.shippedOn'  : 1,
+                                'status.receivedOn' : 1,
+                                'status.shipped'    : 1,
+                                'status.picked'     : 1,
+                                'status.packed'     : 1,
+                                'status.printed'    : 1
+                            }
+                        }, {
+                            $project: {
+                                name                : '$name',
+                                orderRow            : {$arrayElemAt: ['$orderRow', 0]},
+                                status              : 1,
+                                warehouse           : 1,
+                                'goodsInNote._id'   : 1,
+                                'goodsInNote.onHand': 1,
+                                'order.name'        : 1
+                            }
+                        }, {
+                            $project: {
+                                name        : '$name',
+                                orderRow    : '$orderRow.orderRowId',
+                                quantity    : '$orderRow.quantity',
+                                status      : 1,
+                                warehouse   : 1,
+                                goodsInNote : 1,
+                                'order.name': 1
+                            }
+                        }], function (err, docs) {
+                            if (err) {
+                                return parallelCb(err);
+                            }
+                            if (docs && docs.length) {
+                                docs = docs.map(function (el) {
+                                    el._id = el._id.toJSON();
+                                    return el;
+                                });
+                            }
 
-                    if (goodsNotes && goodsNotes.length) {
-                        goodsNotes.forEach(function (el) {
-                            elem.fulfilled += el.quantity;
+                            parallelCb(null, docs);
                         });
                     }
-                    populateDocs.push(elem);
-                    eachCb();
-                });
 
-            }, function (err) {
-                if (err) {
-                    return cb(err);
+                    parallelTasks = [getNotes, getAvailabilities];
+
+                    async.parallel(parallelTasks, function (err, response) {
+                        var availability;
+                        var goodsNotes;
+
+                        if (err) {
+                            return eachCb(err);
+                        }
+
+                        availability = response[1];
+                        goodsNotes = response[0];
+                        allGoodsNotes = allGoodsNotes.concat(goodsNotes);
+
+                        availability = availability && availability.length ? availability[0] : null;
+
+                        if (availability) {
+                            elem.inStock = availability.inStock;
+                            elem.onHand = availability.onHand;
+                            elem.allocated = availability.allocated;
+                        }
+                        elem.goodsNotes = goodsNotes;
+                        elem.fulfilled = 0;
+
+                        if (goodsNotes && goodsNotes.length) {
+                            goodsNotes.forEach(function (el) {
+                                elem.fulfilled += el.quantity;
+                            });
+                        }
+                        populateDocs.push(elem);
+                        eachCb();
+                    });
+
+                },
+                function (err) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    allGoodsNotes = _.uniq(allGoodsNotes, '_id');
+
+                    cb(null, populateDocs, allGoodsNotes);
+
                 }
-
-                allGoodsNotes = _.uniq(allGoodsNotes, '_id');
-
-                cb(null, populateDocs, allGoodsNotes);
-
-            });
+            );
         } else {
             cb();
         }
@@ -1211,6 +1278,7 @@ var Module = function (models, event) {
     function getById(req, res, next) {
         var id = req.query.id || req.params.id;
         var Order = models.get(req.session.lastDb, 'Order', OrderSchema);
+        var manufacturingOrder = models.get(req.session.lastDb, 'manufacturingOrder', manufacturingOrderSchema);
         var Prepayments = models.get(req.session.lastDb, 'prepayment', PrepaymentSchema);
         var OrderRows = models.get(req.session.lastDb, 'orderRows', OrderRowsSchema);
         var Invoice = models.get(req.session.lastDb, 'Invoices', InvoiceSchema);
@@ -1222,6 +1290,14 @@ var Module = function (models, event) {
         var invoiceSearcher;
         var stockReturnsSearcher;
         var waterfallTasks;
+        var goodsId = req.query.goodsId;
+        var type = req.query.type;
+        var Model;
+        var isManufacturing = false;
+
+        if (goodsId) {
+            id = goodsId;
+        }
 
         if (id.length < 24) {
             return res.status(400).send();
@@ -1268,32 +1344,78 @@ var Module = function (models, event) {
         contentSearcher = function (quotationsIds, waterfallCallback) {
             var query;
 
-            query = Order.findById(id);
+            if (goodsId) {
+                goodsOutNotesService.findOne({_id: goodsId}, {dbName: req.session.lastDb}, function (err, goodsNote) {
+                    if (err) {
+                        return waterfallCallback(err);
+                    }
 
-            query
-                .populate('supplier', '_id name fullName address')
-                .populate('destination')
-                .populate('currency._id')
-                .populate('incoterm')
-                .populate('priceList', 'name')
-                .populate('costList', 'name')
-                .populate('warehouse', 'name')
-                .populate('salesPerson', 'name')
-                .populate('invoiceControl')
-                .populate('paymentTerm')
-                .populate('paymentMethod', '_id name account bank address swiftCode owner')
-                .populate('editedBy.user', '_id login')
-                .populate('deliverTo', '_id, name')
-                .populate('project', '_id name')
-                .populate('shippingMethod', '_id name')
-                .populate('workflow', '_id name status');
+                    id = goodsNote.order;
+                    Model = Order;
 
-            query.exec(waterfallCallback);
+                    if (!goodsNote.order && goodsNote.manufacturingOrder) {
+                        id = goodsNote.manufacturingOrder;
+
+                        Model = manufacturingOrder;
+
+                        isManufacturing = true;
+                    }
+
+                    query = Model.findById(id);
+
+                    query
+                        .populate('supplier', '_id name fullName address')
+                        .populate('destination')
+                        .populate('currency._id')
+                        .populate('incoterm')
+                        .populate('priceList', 'name')
+                        .populate('costList', 'name')
+                        .populate('warehouse', 'name')
+                        .populate('salesPerson', 'name')
+                        .populate('invoiceControl')
+                        .populate('paymentTerm')
+                        .populate('paymentMethod', '_id name account bank address swiftCode owner')
+                        .populate('editedBy.user', '_id login')
+                        .populate('deliverTo', '_id, name')
+                        .populate('project', '_id name')
+                        .populate('shippingMethod', '_id name')
+                        .populate('workflow', '_id name status');
+
+                    query.exec(waterfallCallback);
+                })
+            } else {
+                query = Order.findById(id);
+
+                query
+                    .populate('supplier', '_id name fullName address')
+                    .populate('destination')
+                    .populate('currency._id')
+                    .populate('incoterm')
+                    .populate('priceList', 'name')
+                    .populate('costList', 'name')
+                    .populate('warehouse', 'name')
+                    .populate('salesPerson', 'name')
+                    .populate('invoiceControl')
+                    .populate('paymentTerm')
+                    .populate('paymentMethod', '_id name account bank address swiftCode owner')
+                    .populate('editedBy.user', '_id login')
+                    .populate('deliverTo', '_id, name')
+                    .populate('project', '_id name')
+                    .populate('shippingMethod', '_id name')
+                    .populate('workflow', '_id name status');
+
+                query.exec(waterfallCallback);
+            }
         };
 
         orderRowsSearcher = function (order, waterfallCallback) {
+            var query = {order: order && order._id};
 
-            OrderRows.find({order: order._id})
+            if (manufacturingOrder) {
+                query.isFromManufacturingForReceive = true;
+            }
+
+            OrderRows.find(query)
                 .populate('product', 'cost name sku info')
                 .populate('debitAccount', 'name')
                 .populate('creditAccount', 'name')
@@ -1305,7 +1427,7 @@ var Module = function (models, event) {
                         return waterfallCallback(err);
                     }
 
-                    order = order.toJSON();
+                    order = order ? order.toJSON() : {}
 
                     getAvailableForRows(req, docs, order.forSales, function (err, docs, goodsNotes) {
                         if (err) {
@@ -1793,46 +1915,12 @@ var Module = function (models, event) {
         });
     };
 
-    this.getFilterValues = function (req, res, next) {
-        var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
-
-        async.waterfall([
-            function (cb) {
-                Quotation
-                    .aggregate([
-                        {
-                            $group: {
-                                _id         : null,
-                                'Order date': {
-                                    $addToSet: '$orderDate'
-                                }
-                            }
-                        }
-                    ], function (err, quot) {
-                        if (err) {
-                            return cb(err);
-
-                        }
-
-                        cb(null, quot);
-                    });
-            },
-            function (quot, cb) {
-                cb(null, quot);
-            }
-
-        ], function (err, result) {
-            if (err) {
-                return next(err);
-            }
-            res.status(200).send(result);
-
-        });
-    };
-
     this.bulkRemove = function (req, res, next) {
-        var Order = models.get(req.session.lastDb, 'Order', OrderSchema);
-        var OrderRows = models.get(req.session.lastDb, 'orderRows', OrderRowsSchema);
+        var db = req.session.lastDb;
+        var Order = models.get(db, 'Order', OrderSchema);
+        var OrderRows = models.get(db, 'orderRows', OrderRowsSchema);
+        var GoodsOutNote = models.get(req.session.lastDb, 'GoodsOutNote', GoodsOutSchema);
+
         var body = req.body || {ids: []};
         var ids = body.ids;
 
@@ -1847,9 +1935,121 @@ var Module = function (models, event) {
                 if (err) {
                     return next(err);
                 }
-                res.status(200).send(removed);
+
+                integrationStatsHelper(db, function (err, stats) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    ConflictsService.remove({'fields.order': {$in: ids}}, {dbName: db}, function () {
+                        if (err) {
+                            return next(err);
+                        }
+
+                        event.emit('recollectedStats', {dbName: db, stats: stats});
+                        redis.writeToStorage('syncStats', db, JSON.stringify(stats));
+
+                        GoodsOutNote.find({order: {$in: ids}}, function (err, result) {
+                            if (err) {
+                                return next(err);
+                            }
+
+                            async.each(result, function (el, cb) {
+                                goodsOutNotesService.remove({dbName: db, id: el._id}, cb)
+                            }, function (err) {
+                                if (err) {
+                                    return next(err);
+                                }
+
+                                res.status(200).send(removed);
+                            });
+                        });
+                    });
+                });
             });
 
+        });
+    };
+
+    this.getTotalForDashboard = function (req, res, next) {
+        var dbIndex = req.session.lastDb;
+        var Order = models.get(req.session.lastDb, 'Order', OrderSchema);
+        var data = req.query;
+        var forSales = data.forSales === 'true';
+        var filter = data.filter || {};
+        var match = filterMapper.mapFilter(filter, {contentType: orderCT});
+
+        if (!forSales) {
+            Order = models.get(dbIndex, purchaseOrderCT, purchaseOrdersSchema);
+            match = filterMapper.mapFilter(filter, {contentType: purchaseOrderCT});
+        }
+
+        Order.aggregate([{
+            $match: match
+        }, {
+            $match: {
+                forSales: forSales
+            }
+        }], function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({count: result.length});
+        });
+    };
+
+    this.getByStatus = function (req, res, next) {
+        var dbIndex = req.session.lastDb;
+        var Order = models.get(req.session.lastDb, 'Order', OrderSchema);
+        var data = req.query;
+        var forSales = data.forSales === 'true';
+        var total = data.total === 'true';
+        var filter = data.filter || {};
+        var match = filterMapper.mapFilter(filter, {contentType: orderCT});
+        var secondMatch;
+
+        if (!forSales) {
+            Order = models.get(dbIndex, purchaseOrderCT, purchaseOrdersSchema);
+            match = filterMapper.mapFilter(filter, {contentType: purchaseOrderCT});
+        }
+
+        if (forSales) {
+            if (total) {
+                secondMatch = {
+                    'status.shippingStatus': 'ALL'
+                }
+            } else {
+                secondMatch = {
+                    'status.shippingStatus': 'NOA'
+                }
+            }
+        } else {
+            if (total) {
+                secondMatch = {
+                    'status.fulfillStatus': 'ALL'
+                }
+            } else {
+                secondMatch = {
+                    'status.fulfillStatus': 'NOA'
+                }
+            }
+        }
+
+        Order.aggregate([{
+            $match: match
+        }, {
+            $match: {
+                forSales: forSales
+            }
+        }, {
+            $match: secondMatch
+        }], function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({count: result.length});
         });
     };
 
@@ -1881,6 +2081,13 @@ var Module = function (models, event) {
             }
         }, {
             $project: {
+                paymentInfo    : 1,
+                'currency.rate': {$ifNull: [1, '$currency.rate']},
+                workflow       : 1,
+                status         : 1
+            }
+        }, {
+            $project: {
                 sum     : {$divide: ['$paymentInfo.total', '$currency.rate']},
                 workflow: {$arrayElemAt: ['$workflow', 0]},
                 status  : 1
@@ -1899,6 +2106,12 @@ var Module = function (models, event) {
                 name  : 1,
                 count : 1,
                 status: 1
+            }
+        }, {
+            $match: {
+                total: {
+                    $gt: 0
+                }
             }
         }], function (err, result) {
             if (err) {

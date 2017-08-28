@@ -15,6 +15,7 @@ define([
     var CreateView = ParentView.extend({
         el         : '#content-holder',
         template   : _.template(CreateTemplate),
+        contentType: 'ChartOfAccount',
         responseObj: {},
 
         events: {
@@ -171,6 +172,7 @@ define([
                         text : 'Create',
                         click: function () {
                             self.saveItem();
+                            self.gaTrackingConfirmEvents();
                         }
                     }, {
                         text : 'Cancel',

@@ -13,9 +13,10 @@ define([
     'use strict';
 
     var EditView = Parent.extend({
-        template: _.template(template),
+        template   : _.template(template),
+        contentType: 'shippingMethods',
 
-        initialize: function (options) {
+        initialize : function (options) {
             options = options || {};
 
             _.bindAll(this, 'render', 'saveItem');

@@ -74,9 +74,7 @@
   .listContentWrap {
 
     #searchContainer {
-      position: relative;
-      right: auto;
-      float: right;
+      position: static;
       min-width: 240px; // is needed to overwrite default value
       width: 253px;
       margin-right: 0;
@@ -284,48 +282,65 @@ dl.payrollDateBlock {
   }
 }
 
-.compactView {
-  cursor: pointer;
-
-  &.selected {
-    background-color: #f5f5f5;
-  }
-  &:hover {
-    background-color: #f0f0f0;
-  }
-
-  &:nth-child(n+2) {
-    border-top: 1px solid #ededed;
-  }
-}
-
 .compactRow {
   word-break: break-all;
 
   > * {
     line-height: normal;
   }
+
   > div {
     &:nth-child(odd) {
       float: left;
       clear: both;
     }
+
     &:nth-child(even) {
       float: right;
     }
   }
+
   &:nth-child(n+2) {
     margin-top: 10px;
   }
-  &:after {
-    content: '';
-    display: table;
-    clear: both;
+
+}
+
+.compactView {
+  margin: 6px;
+  display: flex;
+  border: 1px solid #eaeaea;
+  background-color: #fafafa;
+  border-radius: 3px;
+  box-shadow: 0 4px 7px -3px rgba(0,0,0, .2);
+  transition: background-color 100ms ease-in-out,
+              box-shadow 100ms ease-in-out;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #fff;
+    box-shadow: 0 6px 8px -3px rgba(0,0,0, .3);
+  }
+
+  &.selected {
+    background-color: #f5f5f5;
+  }
+
+  .checkboxRow {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+  }
+
+  .compactRowWrap {
+    flex-grow: 1;
   }
 }
 
 .compactRowWrap {
-  padding: 12px 12px 12px 0;
+  padding: 8px 8px 8px 0;
 
   .quotationsNameLeftBar {
     margin-bottom: 10px;
@@ -338,8 +353,9 @@ dl.payrollDateBlock {
   flex-grow: 1;
 }
 
-.formContent {
-  //overflow-y: hidden;
+.listContent {
+  border-top: 1px solid #eaeaea;
+  background-color: #f1f1f1;
 }
 
 .formContentWrap,
@@ -352,7 +368,6 @@ dl.payrollDateBlock {
   flex-grow: 1;
   width: calc(100% - 300px);
   overflow: auto;
-  border-top: 1px solid #ededed;
 }
 
 .content-holder {
@@ -376,11 +391,24 @@ dl.payrollDateBlock {
 }
 
 .listContentTitle {
-  height: 42px;
-  padding: 7px;
-  border-top: 1px solid #ededed;
-  border-bottom: 1px solid #ededed;
   flex-shrink: 0;
+  display: flex;
+  height: 40px;
+  align-items: center;
+  justify-content: space-between;
+
+  .btn-toggle {
+    width: 40px;
+    line-height: 40px;
+    text-align: center;
+    background-color: #fff;
+    font-size: 20px;
+
+    &:hover {
+      background-color: #7eadcc;
+      color: #fff;
+    }
+  }
 }
 
 .listContentTitle {
@@ -497,12 +525,102 @@ dl.payrollDateBlock {
   }
 }
 
+
+.highlight{
+  &:after {
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+
+  &.current-selected  {
+    border: 1px solid #7eadcc;
+    padding: 4px;
+    border-radius: 5px;
+  }
+
+
+
+  &#goodsInNotesSaveBtn,  &._newForm {
+    position: relative;
+    overflow: visible;
+    z-index: 1001;
+
+    &:after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      transform: translate(-50%, -50%);
+      padding: 4px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 5px;
+      border: 2px solid #7eadcc;
+      box-sizing: content-box;
+      visibility: visible;
+      z-index: 1000;
+    }
+  }
+}
+
+#wrapper.layer + #dialogContainer > .ui-widget-overlay {
+  position: static;
+}
+
+#wrapper.layer + #dialogContainer > .ui-dialog {
+  z-index: 999;
+}
+
+
 #wrapper {
   min-width: 100%;
   height: 100%;
   position: absolute;
   clear: both;
   box-sizing: border-box;
+
+  &.layer:before {
+    content: '';
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    z-index: 1000;
+  }
+
+  &.layer {
+      .sideMenu {
+        position: static;
+      }
+
+      .highlight {
+        position: relative;
+        overflow: visible;
+        z-index: 1001;
+
+
+
+        &:after {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 100%;
+          height: 100%;
+          transform: translate(-50%, -50%);
+          padding: 4px;
+          background: rgba(255, 255, 255, 0.2);
+          border-radius: 5px;
+          border: 2px solid #7eadcc;
+          box-sizing: content-box;
+          visibility: visible;
+          z-index: 1000;
+        }
+      }
+  }
+
+
 
   #content-holder {
     position: relative;
@@ -511,8 +629,72 @@ dl.payrollDateBlock {
     -webkit-flex-grow: 1;
     flex-grow: 1;
     overflow: auto;
+
+    .withGuideTour-holder {
+      display: flex;
+      flex-grow: 1;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+    }
+
+    .withGuideTour {
+      flex-grow: 1;
+      overflow: auto;
+    }
+
+    .guideTour {
+      flex-shrink: 0;
+      width: 320px;
+      padding: 20px;
+
+      .titleGuideTour {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 10px;
+        color: $guideToutTitle;
+
+        h1 {
+          flex-grow: 1;
+        }
+      }
+
+      p {
+        font-size: 16px;
+      }
+
+      ._guideList {
+        margin-left: 25px;
+        margin-top: 20px;
+
+        li {
+          padding-left: 10px;
+          margin-bottom: 5px;
+          list-style-type: circle;
+          font-size: 14px;
+          color: $guideLiColor;
+
+          a {
+            position: relative;
+            left: -10px;
+            color: lighten($guideLiColor, 5%);
+            cursor: pointer;
+
+            &:hover {
+              color: $guideLiColor;
+            }
+          }
+
+          .caret {
+            transform: rotate(-90deg);
+          }
+        }
+      }
+    }
   }
 }
+
 
 #startLetter {
   flex-shrink: 0;
@@ -857,6 +1039,10 @@ dl.payrollDateBlock {
 
         > div {
           display: inline-block;
+
+          &.editable.current-selected {
+            position: static;
+          }
         }
         .editable {
           cursor: pointer;
@@ -967,6 +1153,7 @@ a.attach_file {
     display: flex;
     flex-direction: column;
     height: calc(100% - 15px);
+    padding-bottom: 70px;
   }
 
   ._tableScrollWrap {
@@ -1164,12 +1351,21 @@ textarea#editInput {
   .chart-tabs-item {
     display: none;
 
+
+
     &.active {
       display: block;
     }
+
+
+
   }
 
   margin-bottom: 0;
+
+  .left{
+    margin-left: 25px;
+  }
 }
 
 .chart {
@@ -2119,9 +2315,9 @@ a {
       clear: both;
     }
 
-    &._warehouseWrap {
-      margin-top: 0;
-    }
+    //&._warehouseWrap {
+    //  margin-top: 0;
+    //}
   }
 }
 
@@ -2584,8 +2780,14 @@ a {
 
 ._variantsBlock {
   position: relative;
-  border: 1px solid #c8c8d3;
+  border: 1px solid #eaeaea;
   @extend %clearfix;
+
+  &.open {
+    ._categoriesList {
+      display: block;
+    }
+  }
 
   ._checkCategoriesWrap {
 
@@ -2656,6 +2858,7 @@ a {
   }
 
   ._categoriesList {
+    display: none;
     position: absolute;
     z-index: 2;
     top: 100%;
@@ -2703,30 +2906,6 @@ a {
 
 ._settingsHolder {
   min-height: calc(100% - 55px);
-}
-
-._statusOrderBlock {
-  display: flex;
-  ._saveEdit, ._statusInfo {
-    margin-right: 10px;
-  }
-
-  ._statusIndicators {
-    display: flex;
-    align-items: center;
-  }
-
-  ._statusActions {
-    margin-left: auto;
-  }
-
-  .fullfillOrderWrap {
-    margin-left: 3px;
-  }
-
-  li.right {
-    margin-left: 3px;
-  }
 }
 
 ._tableLettersWrap {
@@ -2836,3 +3015,4 @@ a {
   color: #364150;
   line-height: 26px;
 }
+

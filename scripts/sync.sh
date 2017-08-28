@@ -3,7 +3,7 @@
 host=http://localhost
 port=8089
 now=$(date)
-projectDir=~/path_to_project/EasyERP_open_source
+projectDir=~/WebstormProjects/EasyErp-Desktop
 
 echo ">>>>>> sync $now" >> "$projectDir/cron.txt"
 

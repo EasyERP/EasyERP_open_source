@@ -25,10 +25,10 @@ module.exports = (function () {
             date: {type: Date, default: Date.now}
         },
 
-        order: {type: ObjectId, ref: 'Order', default: null},
-
-        attachments: {type: Array, default: []},
-        orderRows  : [{
+        order             : {type: ObjectId, ref: 'Order', default: null},
+        manufacturingOrder: {type: ObjectId, ref: 'manufacturingOrder', default: null},
+        attachments       : {type: Array, default: []},
+        orderRows         : [{
             _id             : false,
             orderRowId      : {type: ObjectId, ref: 'orderRows', default: null},
             product         : {type: ObjectId, ref: 'Product', default: null},
@@ -59,7 +59,7 @@ module.exports = (function () {
             printedById: {type: ObjectId, ref: 'Users', default: null},
         },
 
-        archived: {type: Boolean, defaul: false}
+        archived: {type: Boolean, default: false}
     });
 
     var goodsInNoteSchema = goodsNoteSchema.extend({
@@ -258,6 +258,7 @@ module.exports = (function () {
         mongoose.Schemas = {};
     }
 
+    mongoose.Schemas.GoodsNote = goodsNoteSchema;
     mongoose.Schemas.GoodsOutNote = goodsOutNoteSchema;
     mongoose.Schemas.GoodsInNote = goodsInNoteSchema;
     mongoose.Schemas.stockCorrection = stockCorrectionSchema;

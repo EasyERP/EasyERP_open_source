@@ -13,26 +13,28 @@
             </div>
         </div>-->
         <div class="_formBlock _equal">
-            <div class="_animateInputBox">
+            <div class="_animateInputBox _withInfo">
                 <input type="text"
                        class="_animate"
                        id="allCurrencies"
                        maxlength="3"
                        required/>
                 <label class="_animate">New currency</label>
+                <span class="tips icon-info" data-id="allCurrencies"></span>
             </div>
         </div>
         <div class="_formBlock _equal">
-            <div class="_animateInputBox">
+            <div class="_animateInputBox _withInfo">
                 <input type="text"
                        class="_animate"
                        id="currencySymbol"
                        required/>
                 <label class="_animate">Symbol</label>
+                <span class="tips icon-info" data-id="currencySymbol"></span>
             </div>
         </div>
         <div class="_formBlock _equal">
-            <div class="_animateInputBox">
+            <div class="_animateInputBox _withInfo">
                 <span class="_staticLabel">Decimal Places</span>
                 <input type="text"
                        class="_animate"
@@ -40,13 +42,14 @@
                        value="0"
                        required
                        readonly/>
+                <span class="tips icon-info" data-id="decPlaces"></span>
             </div>
             <div class="_formRow">
                 <label class="_animatedCheckbox">
                     <input id="active" type="checkbox" checked="checked">
-                    <span></span>
                 </label>
                 <label for="active">Active</label>
+                <span class="tips icon-info" data-id="active"></span>
             </div>
         </div>
     </div>

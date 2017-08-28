@@ -13,6 +13,11 @@ module.exports = function (event, models) {
     var bitthdaysStackMiddleware = require('../helpers/access')(bitthdaysModule, models);
     var multipart = require('connect-multiparty');
     var multipartMiddleware = multipart();
+    var accessDeleteStackMiddleware = require('../helpers/checkDelete');
+
+    function accessDeleteStackMiddlewareFunction(req, res, next) {
+        accessDeleteStackMiddleware(req, res, next, models, 'employees', event);
+    }
 
     function profileAccess(req, res, next) {
         var currentUserId = req.session && req.session.uId;
@@ -244,7 +249,7 @@ module.exports = function (event, models) {
          ]
      }
      */
-    router.get('/getForDd', handler.getSalesPerson);
+        router.get('/getForDd', handler.getSalesPerson);
 
     /**
      *@api {get} /employees/getEmployeesAlphabet Request for Employees dropDown
@@ -382,93 +387,6 @@ module.exports = function (event, models) {
          }
      */
     router.get('/getEmployeesImages', handler.getEmployeesImages);
-
-    /**
-     *@api {get} /employees/nationality/ Request Employees nationality
-     *
-     * @apiVersion 0.0.1
-     * @apiName getEmployeesNationality
-     * @apiGroup Employee
-     *
-     * @apiSuccess {Object} EmployeesNationality
-     * @apiSuccessExample Success-Response:
-     HTTP/1.1 304 Not Modified
-     {
-       "data": [
-         {
-           "_id": "British",
-           "__v": 0
-         },
-         {
-           "_id": "Canadian",
-           "__v": 0
-         },
-         {
-           "_id": "Czech",
-           "__v": 0
-         },
-         {
-           "_id": "Danish",
-           "__v": 0
-         },
-         {
-           "_id": "English",
-           "__v": 0
-         },
-         {
-           "_id": "Finnish",
-           "__v": 0
-         },
-         {
-           "_id": "Georgian",
-           "__v": 0
-         },
-         {
-           "_id": "German",
-           "__v": 0
-         },
-         {
-           "_id": "Romanian",
-           "__v": 0
-         },
-         {
-           "_id": "Serbian",
-           "__v": 0
-         },
-         {
-           "_id": "Turkish",
-           "__v": 0
-         },
-         {
-           "_id": "Ukrainian",
-           "__v": 0
-         }
-       ]
-     }
-     */
-    router.get('/nationality', accessStackMiddleware, handler.getNationality);
-
-    /**
-     *@api {get} /employees/languages/ Request Employees languages
-     *
-     * @apiVersion 0.0.1
-     * @apiName getEmployeesLanguages
-     * @apiGroup Employee
-     *
-     * @apiSuccess {Object} EmployeesLanguages
-     * @apiSuccessExample Success-Response:
-     HTTP/1.1 200 OK
-     {
-         "data": [
-             {
-                 "_id": "5301e61b3d8b9898d5896e67",
-                 "attachments": [],
-                 "name": "English"
-             }
-         ]
-     }
-     */
-    router.get('/languages', handler.getLanguages);
 
     /**
      *@api {get} /employees/sources/ Request Employees sources
@@ -1001,7 +919,9 @@ module.exports = function (event, models) {
        "success": true
      }
      */
-    router.delete('/', accessStackMiddleware, handler.bulkRemove);
+    router.delete('/', accessStackMiddleware, accessDeleteStackMiddlewareFunction, handler.bulkRemove);
+
+
 
     return router;
 };

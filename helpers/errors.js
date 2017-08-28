@@ -40,6 +40,14 @@ var Errors = function () {
         return err;
     };
 
+    this.BadCredentials = function () {
+        var err = new Error('Verify your credentials and Base URL please.');
+
+        err.status = 400;
+
+        return err;
+    };
+
     this.BadRequest = function (options) {
         options = options || {};
 

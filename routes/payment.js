@@ -8,6 +8,11 @@ module.exports = function (models, event) {
     var handler = new PaymentHandler(models, event);
     var moduleId = MODULES.CUSTOMER_PAYMENTS;
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
+    var accessDeleteStackMiddleware = require('../helpers/checkDelete');
+
+    function accessDeleteStackMiddlewareFunction(req, res, next) {
+        accessDeleteStackMiddleware(req, res, next, models, 'payment', event);
+    }
 
     router.use(authStackMiddleware);
     router.use(accessStackMiddleware);

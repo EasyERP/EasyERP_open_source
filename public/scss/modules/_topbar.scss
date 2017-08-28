@@ -1,12 +1,14 @@
 .topbarHolder {
   position: fixed;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   height: $topbarHeight;
   width: 100%;
   background-color: #2b3643;
   z-index: 300;
 
   .topbarLogo {
-    float: left;
     display: block;
     width: 200px;
     height: $topbarHeight;
@@ -15,11 +17,42 @@
     box-sizing: border-box;
 
     .mainLogo {
+      font-family: $light-font-family;
       font-size: 22px;
       line-height: 40px;
-      font-family: $light-font-family;
     }
   }
+
+  .right-section {
+    display: flex;
+    align-items: center;
+  }
+
+  .user-snap {
+    display: inline-block;
+    max-width: 160px;
+    margin: 0 20px;
+    //overflow: hidden;
+
+    .default {
+      position: relative;
+      background-color: #7eadcc;
+      top: 0;
+      left: 0;
+      height: 26px;
+      line-height: 26px;
+      border-top: 0 none;
+      border-radius: 3px;
+      background-position: 10px 5px;
+
+      &:hover {
+        background-color: #7eadcc;
+        height: 26px;
+        border-top: 0 none;
+      }
+    }
+  }
+
   .sidebarToggler {
     position: relative;
     top: 12px;
@@ -52,13 +85,14 @@
       }
     }
   }
+
   .loginPanel {
     position: relative;
     display: inline-block;
-    float: right;
     padding: 9px 6px 7px 8px;
     margin-right: 40px;
     cursor: pointer;
+
     &:hover {
       background-color: #3f4f62;
     }
@@ -70,7 +104,6 @@
     }
 
     .dropdownButton {
-
       &:after {
         content: "\f107";
         display: inline-block;
@@ -157,21 +190,31 @@
   width: 29px;
   border-radius: 50%;
   display: inline-block;
-  font-size: 13px;    // if img is broken
+  font-size: 13px; // if img is broken
   text-align: center; // if img is broken
+}
+
+.top-bar {
+  display: flex;
+  flex-shrink: 0;
+  position: relative;
+  height: $topbarHeight; // don't use min-height, it's important to prevent layout braking
+  border-bottom: 1px solid #eaeaea;
+
+  .btnsBlock.right {
+    padding-right: 20px;
+    margin-left: auto;
+  }
+
+  .template-switcher {
+    margin-left: auto;
+  }
 }
 
 .top-bar {
   &:empty {
     display: none !important;
   }
-}
-
-#top-bar {
-  flex-shrink: 0;
-  position: relative;
-  height: $topbarHeight; // don't use min-height, it's important to prevent layout braking
-  border-bottom: 1px solid #eaeaea;
 
   &.banned {
     border-bottom: 0
@@ -180,43 +223,19 @@
   h3 {
     line-height: 40px;
     padding: 0 20px;
-    color: #666666  !important;
+    color: #666666 !important;
     font-family: $semibold-font-family;
     font-weight: normal;
     float: left;
     overflow: visible;
-  }
 
-  > .btnsBlock {
-    margin-top: 6px;
-
-    > * {
-      margin-right: 7px;
+    &:empty {
+      display: none !important;
     }
-  }
-
-  ._filterDropDownWrap {
-    margin-top: 7px;
   }
 
   #reconcileDate {
     color: #333;
-  }
-
-  #createBtnHolder,
-  .createBtnHolder {
-    margin-top: 7px;
-  }
-
-  ._breadcrunmbs {
-    #createBtnHolder,
-    .createBtnHolder {
-      margin-top: 0;
-
-      .btn {
-        margin-right: 0;
-      }
-    }
   }
 
   #createBtnHolder {
@@ -230,11 +249,48 @@
     }
   }
 
-  ._breadcrunmbs + #createBtnHolder {
-    position: absolute;
-    right: 8px;
-    top: 7px;
-    margin-top: 0;
+  #createBtnHolder,
+  .createBtnHolder {
+    margin-top: 7px;
+
+    &.btnsBlock {
+      margin-top: 0;
+    }
+  }
+
+  .channelStatus {
+    display: flex;
+    align-items: center;
+
+    .channelImg {
+      height: 20px;
+    }
+
+    .channelName {
+      margin-left: 10px;
+    }
+  }
+
+  ._breadcrunmbs {
+    #createBtnHolder,
+    .createBtnHolder {
+      margin-top: 0;
+
+      .btn {
+        margin-right: 0;
+      }
+    }
+
+    + #createBtnHolder {
+      position: absolute;
+      right: 8px;
+      top: 7px;
+      margin-top: 0;
+    }
+  }
+
+  ._filterDropDownWrap {
+    margin-top: 7px;
   }
 }
 

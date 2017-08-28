@@ -1,3 +1,4 @@
+<%var mapObject = {closeMonth: 'Close Month', Invoice: 'Invoice', expensesInvoice: 'Expenses Invoice', stockReturns: 'Stock Returns', product: 'Product', goodsInNote: 'Delivery-In Note', goodsOutNote: 'Delivery-Out Note', closeDay: 'Close Day', cashTransfer: 'Cash Transfer'  };%>
 <%var checkObj = {};%>
 <% var className = 1;%>
 <% var timestamp = collection.length ? collection[0].timestamp : null;%>
@@ -18,11 +19,12 @@
 
     <td><%=journalEntry.date%></td>
 
-    <td class="source"><span id="source" class="current-selected"
+    <td class="source"><span class="current-selected"
                              data-id="<%=journalEntry.sourceDocument._id%>"
                              data-name="<%=journalEntry.sourceDocument.model%>"
                              data-employee="<%=journalEntry.sourceDocument.employee%>"><%=journalEntry.sourceDocument.name%></span>
     </td>
+    <td><%=mapObject[journalEntry.sourceDocument.model] || journalEntry.sourceDocument.model%></td>
 
     <td><a title="Click to filter" class="clickToFilter textBlue" href="javascript:;"
            data-id="<%=journalEntry.account ? journalEntry.account._id : null%>" data-group="account"><%=journalEntry.account
@@ -46,7 +48,7 @@
 <%} else {%>
 <tr data-index="<%= className %>" data-id="<%=journalEntry._id%>">
 
-    <td colspan="3"></td>
+    <td colspan="4"></td>
 
     <td><a title="Click to filter" class="clickToFilter textBlue" href="javascript:;"
            data-id="<%=journalEntry.account ? journalEntry.account._id : null%>" data-group="account"><%=journalEntry.account

@@ -55,6 +55,7 @@ module.exports = function (models) {
             var StockTransaction;
             var dbName;
             var match = options.match;
+            var matchObject = options.matchObject || {};
             var sort = options.sort;
             var skip = options.skip;
             var limit = options.limit;
@@ -126,8 +127,10 @@ module.exports = function (models) {
                         description     : 1,
                         name            : 1,
                         status          : 1,
-                        notRemovable       : {$ifNull: ['$status.shippedById', false]}
+                        notRemovable    : {$ifNull: ['$status.shippedById', false]}
                     }
+                }, {
+                    $match: matchObject
                 }, {
                     $group: {
                         _id  : null,
@@ -138,16 +141,16 @@ module.exports = function (models) {
                     $unwind: '$root'
                 }, {
                     $project: {
-                        _id        : '$root._id',
-                        name       : '$root.name',
-                        location   : '$root.location',
-                        warehouse  : '$root.warehouse',
-                        warehouseTo: '$root.warehouseTo',
-                        createdBy  : '$root.createdBy',
-                        status     : '$root.status',
-                        description: '$root.description',
-                        notRemovable  : '$root.notRemovable',
-                        total      : 1
+                        _id         : '$root._id',
+                        name        : '$root.name',
+                        location    : '$root.location',
+                        warehouse   : '$root.warehouse',
+                        warehouseTo : '$root.warehouseTo',
+                        createdBy   : '$root.createdBy',
+                        status      : '$root.status',
+                        description : '$root.description',
+                        notRemovable: '$root.notRemovable',
+                        total       : 1
                     }
                 }, {
                     $sort: sort

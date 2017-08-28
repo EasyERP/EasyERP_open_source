@@ -1,10 +1,14 @@
 <div class="addNote createHolder">
-    <div class="_animateTextareaBox">
+    <div class="_animateTextareaBox counterWrap">
         <textarea id="noteArea"
                   class="_animate"
-                  placeholder="Add a Note...Max 500 symbols."
+                  placeholder="Add a Note"
                   maxlength="500"></textarea>
         <label for="noteArea" class="_animate">Add a note</label>
+        <div class="counter-wrap">
+            <span class="counter-label">Characters left:</span>
+            <span class="counter-value" id="counterValue">500</span>
+        </div>
         <span class="attach_file icon-attach"></span>
     </div>
     <div class="buttons">

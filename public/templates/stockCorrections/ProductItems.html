@@ -1,52 +1,39 @@
-<table class="list _projectTableLeftAlign tableFixed _invoiceTable">
+<table class="_productTable">
     <colgroup>
-        <col width="200px">
-        <!--<col width="200px">-->
-        <col width="100px">
+        <col width="180px">
+        <col width="100%">
+        <col width="70px">
         <col width="120px">
-
-        <col width="100px">
-        <col width="100px">
+        <col width="74px">
+        <col width="120px">
         <col width="30px">
     </colgroup>
     <thead>
     <tr class="productListItemsColumns _deleteHeader">
-        <th class="width20" data-sort="Product">
+        <th class="text-left" data-sort="Product">
             Product
         </th>
-        <th class="width20" data-sort="unitPrice">
+        <th>Info</th>
+        <th data-sort="unitPrice">
             On Hand
         </th>
-        <th class="width20" data-sort="taxes">
+        <th data-sort="taxes">
             Cost (per unit add)
         </th>
-        <th class="width20" data-sort="taxes">
+        <th data-sort="taxes">
             New Value
         </th>
-        <th class="width20" data-sort="subtotal">
+        <th data-sort="subtotal">
             Quantity Adjusted
         </th>
         <th class="deleteCell"></th>
     </tr>
     </thead>
-    <tbody id="tbodyProducts">
-    <tr></tr>
-
-    <tr>
-        <td class="invisible_border">&nbsp;</td>
-    </tr>
-    <tr>
-        <td class="invisible_border">&nbsp;</td>
-    </tr>
-    </tbody>
+    <tbody id="productList"></tbody>
     <tr class="hidden" id="newItem">
         <td class="addProductItem">
-            <a href="javascript:;">Add an item</a>
+            <a href="javascript:;" class="btn blue slim">Add an item</a>
         </td>
-
     </tr>
 </table>
-<div class="clearfix"></div>
-<div id="totalAmountContainer" class="_totalAmountContainer _createPopup">
-
-</div>
+<div id="totalAmountContainer" class="_totalAmountContainer _createPopup"></div>

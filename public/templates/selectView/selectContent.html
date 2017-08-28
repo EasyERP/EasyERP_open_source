@@ -4,21 +4,23 @@
     <%} else {%>
     <% collection.forEach(function(item){ %>
     <% var isFired = ''; %>
+    <%var classIcon = item.classIcon || '';%>
     <% if (item.isEmployee !== undefined) { %>
-    <%      isFired = item.isEmployee ? '' : 'fired'; %>
+    <% isFired = item.isEmployee ? '' : 'fired'; %>
     <% } %>
     <% if (!item.selectedElement) { %>
-    <li id="<%= item._id %>" class="<%= isFired %>"
+    <li id="<%= item._id %>" class="<%= isFired %> <%=classIcon%>"
         data-level="<%= item.level%>" data-fullname="<%= item.fullName%>"
         data-status="<%= item.status?item.status.replace(' ','').toLowerCase():''%>"
         data-type="<%= item.type || ''%>"
-        <% if (item.imageSrc) { %>
-        data-img="<%= item.imageSrc%>"
-        <% } %>
-    ><%=(item.info && item.info.SKU ? '<b>' + item.info.SKU +'</b>' + ' <span class="name">' + item.name +'</span>' : item.name)%>
+    <% if (item.imageSrc) { %>
+    data-img="<%= item.imageSrc%>"
+    <% } %>
+    ><%=(item.info && item.info.SKU ? '<b>' + item.info.SKU +'</b>' + ' <span class="name">' + item.name +'</span>' :
+    item.name)%>
 
     <% if (item.variants && item.variants instanceof Array) { %>
-    <div >
+    <div>
         <span class="variants"><% item.variants.forEach(function(el){  %>
              <%= el.value %>|
           <%  });%>

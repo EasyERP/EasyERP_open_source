@@ -39,12 +39,14 @@
   }
 }
 
-._acountingTableWrap, ._chartsTableWrap {
+._acountingTableWrap,
+._chartsTableWrap {
   display: flex;
   flex-direction: column;
   height: 100%;
 
-  #groupList, .grouplist {
+  #groupList,
+  .grouplist {
     .content {
       border: 1px solid #d7d7d7;
     }
@@ -78,12 +80,6 @@
 }
 
 ._acountingTitleBlock {
-  //display: flex;
-  //flex-shrink: 0;
-  //justify-content: space-between;
-  //align-items: center;
-  //height: 65px;
-  //padding: 0 30px;
 
   > .btnPositioned {
     position: absolute;
@@ -96,10 +92,10 @@
     height: auto;
   }
 
-  //._filterDropDownWrap{
-  //  width: 165px;
-  //  margin-left: 0;
-  //}
+  #dateFilter {
+    margin-top: 5px;
+    float: left;
+  }
 }
 
 ._acountingTitle {

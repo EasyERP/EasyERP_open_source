@@ -294,7 +294,7 @@ stockCorrections = function (models, event) {
             data.sort[keys] = parseInt(data.sort[keys], 10);
             sort = data.sort;
         } else {
-            sort = {'dueDate': -1};
+            sort = {'editedBy.date': -1};
         }
 
         StockCorrection
@@ -333,6 +333,8 @@ stockCorrections = function (models, event) {
                         warehouse       : {$arrayElemAt: ['$warehouse', 0]},
                         'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]},
                         'createdBy.date': 1,
+                        'editedBy.user': {$arrayElemAt: ['$createdBy.user', 0]},
+                        'editedBy.date': 1,
                         description     : 1
                     }
                 },
@@ -352,6 +354,7 @@ stockCorrections = function (models, event) {
                         location   : '$root.location',
                         warehouse  : '$root.warehouse',
                         createdBy  : '$root.createdBy',
+                        editedBy   : '$root.editedBy',
                         description: '$root.description',
                         total      : 1
                     }
@@ -375,6 +378,7 @@ stockCorrections = function (models, event) {
 
                 response.total = count;
                 response.data = result;
+
                 res.status(200).send(response);
             });
 

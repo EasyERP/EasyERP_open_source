@@ -16,8 +16,9 @@ define([
     'populate',
     'constants',
     'helpers',
-    'services/showJournalEntries'
-], function (Backbone, $, _, ParentView, EditTemplate, DocumentTemplate, NoteEditor, AttachView, PaymentCreateView, RefundCreateView, ReturnSalesView, common, Custom, dataService, populate, CONSTANTS, helpers, journalService) {
+    'services/showJournalEntries',
+    'views/guideTours/guideNotificationView'
+], function (Backbone, $, _, ParentView, EditTemplate, DocumentTemplate, NoteEditor, AttachView, PaymentCreateView, RefundCreateView, ReturnSalesView, common, Custom, dataService, populate, CONSTANTS, helpers, journalService, GuideNotify) {
 
     var FormView = ParentView.extend({
         contentType: 'purchaseOrders',
@@ -139,7 +140,7 @@ define([
                         return new PaymentCreateView({
                             model      : self.currentModel,
                             currency   : currency && (typeof currency._id === 'object') ? currency._id : currency,
-                            title      : 'Create Prepayment',
+                            title      : 'Get payment',
                             prepayment : true,
                             mid        : 129,
                             paymentsSum: data.paymentAmount
@@ -190,6 +191,14 @@ define([
                     forDoc     : true
                 }).render().el
             );
+
+            if (App.guide) {
+                if (App.notifyView) {
+                    App.notifyView.undelegateEvents();
+                    App.notifyView.stopListening();
+                }
+                App.notifyView = new GuideNotify({e: null, data: App.guide});
+            }
 
             this.delegateEvents(this.events);
 

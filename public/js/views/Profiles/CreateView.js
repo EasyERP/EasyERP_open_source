@@ -6,9 +6,10 @@ define([
     'models/ProfilesModel',
     'text!templates/Profiles/ModulesAccessListTemplate.html',
     'populate',
-    'views/selectView/selectView'
-], function (Backbone, $, _, CreateProfileTemplate, ProfilesModel, ModulesAccessTemplate, populate, SelectView) {
-    var CreateView = Backbone.View.extend({
+    'views/selectView/selectView',
+    'views/dialogViewBase'
+], function (Backbone, $, _, CreateProfileTemplate, ProfilesModel, ModulesAccessTemplate, populate, SelectView, DialogViewBase) {
+    var CreateView = /*Backbone.View*/DialogViewBase.extend({
         el         : '#content-holder',
         contentType: 'Profiles',
         template   : _.template(CreateProfileTemplate),

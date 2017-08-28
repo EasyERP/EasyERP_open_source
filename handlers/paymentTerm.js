@@ -6,11 +6,30 @@ var Module = function (models) {
 
     this.getForDd = function (req, res, next) {
         var PaymentTerm = models.get(req.session.lastDb, 'PaymentTerm', PaymentTermSchema);
+        var pipelines = [
+            {
+                $lookup: {
+                    from        : 'orgSettings',
+                    localField  : '_id',
+                    foreignField: 'paymentTerms',
+                    as          : 'defaultPaymentTerm'
+                }
+            },
+            {
+                $project: {
+                    name              : 1,
+                    count             : 1,
+                    defaultPaymentTerm: {$size: '$defaultPaymentTerm'}
+                }
+            },
+            {
+                $sort: {
+                    defaultPaymentTerm: -1,
+                    name              : 1
+                }
+            }];
 
-        PaymentTerm
-            .find()
-            .sort({name: 1})
-            .lean()
+        PaymentTerm.aggregate(pipelines)
             .exec(function (err, terms) {
                 if (err) {
                     return next(err);
@@ -18,6 +37,18 @@ var Module = function (models) {
 
                 res.status(200).send({data: terms});
             });
+
+        // PaymentTerm
+        //     .find()
+        //     .sort({name: 1})
+        //     .lean()
+        //     .exec(function (err, terms) {
+        //         if (err) {
+        //             return next(err);
+        //         }
+        //
+        //         res.status(200).send({data: terms});
+        //     });
     };
 
     this.getForList = function (req, res, next) {

@@ -8,10 +8,11 @@ define([
     'views/Persons/list/ListItemView',
     'collections/Persons/filterCollection',
     'views/Filter/filterView',
+    'views/guideTours/guideNotificationView',
     'dataService',
     'common',
     'constants'
-], function (Backbone, $, _, ListViewBase, listTemplate, CreateView, ListItemView, contentCollection, FilterView, dataService, common, CONSTANTS) {
+], function (Backbone, $, _, ListViewBase, listTemplate, CreateView, ListItemView, contentCollection, FilterView, GuideNotify, dataService, common, CONSTANTS) {
     'use strict';
 
     var PersonsListView = ListViewBase.extend({
@@ -123,8 +124,6 @@ define([
                 customers.push($el.val());
             });
 
-
-
             data = {
                 customers: customers
             };
@@ -158,6 +157,14 @@ define([
                 page       : this.page,
                 itemsNumber: this.collection.pageSize
             }).render());
+
+            if (App.guide) {
+                if (App.notifyView) {
+                    App.notifyView.undelegateEvents();
+                    App.notifyView.stopListening();
+                }
+                App.notifyView = new GuideNotify({e: null, data: App.guide});
+            }
         }
     });
 

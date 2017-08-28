@@ -6,8 +6,10 @@ define([
     'text!templates/settingsOverview/settingsEmployee/payrollStructureTypes/ListTemplate.html',
     'views/settingsOverview/settingsEmployee/payrollStructureTypes/structureElement/CreateView',
     'views/settingsOverview/settingsEmployee/payrollComponentTypes/EditView',
-    'collections/payrollComponentTypes/filterCollection'
-], function ($, _, Backbone, ListViewBase, ListTemplate, CreateView, EditView, ContentCollection) {
+    'collections/payrollComponentTypes/filterCollection',
+    'helpers/ga',
+    'constants/googleAnalytics'
+], function ($, _, Backbone, ListViewBase, ListTemplate, CreateView, EditView, ContentCollection, ga, GA) {
     var WeeklySchedulerListView = ListViewBase.extend({
         CreateView       : CreateView,
         contentCollection: ContentCollection,
@@ -44,6 +46,10 @@ define([
             var self = this;
 
             e.preventDefault();
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.CREATE_PAYROLL_DEDUCTIONS
+            });
 
             return new CreateView({
                 collection       : this.collection,
@@ -60,6 +66,11 @@ define([
 
             e.preventDefault();
             e.stopPropagation();
+
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.DELETE_PAYROLL_DEDUCTIONS
+            });
 
             if (confirm('Are you sure you want to DELETE this Payroll Component Type?')) {
                 model = self.collection.get(modelId);
@@ -83,6 +94,10 @@ define([
             var model = self.collection.get(modelId);
 
             e.preventDefault();
+            ga && ga.event({
+                eventCategory: GA.EVENT_CATEGORIES.USER_ACTION,
+                eventLabel   : GA.EVENT_LABEL.EDIT_PAYROLL_DEDUCTIONS
+            });
 
             return new EditView({
                 collection: this.collection,

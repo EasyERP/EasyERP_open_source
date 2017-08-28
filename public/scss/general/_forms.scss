@@ -19,7 +19,6 @@
     width: 100%;
   }
 
-
   .form {
     width: 98%;
     border: 0;
@@ -39,12 +38,11 @@
   float: left;
 
   .form {
-    width:98%;
+    width: 98%;
     margin-bottom: 10px;
-    border:0;
+    border: 0;
   }
 }
-
 
 .form-holder {
   width: 100%;
@@ -55,7 +53,7 @@
   }
 
   form {
-    max-width:100%;
+    max-width: 100%;
     border: none;
     margin: 0 auto;
     width: auto;
@@ -166,7 +164,7 @@
       max-width: 290px;
       height: 25px;
       padding: 0;
-      border: 1px solid #7f7f80;//$thin-border #E2E9EF;
+      border: 1px solid #7f7f80; //$thin-border #E2E9EF;
       border-top-color: #CBD3E2;
       color: #262626;
       font-family: $base-font-family;
@@ -201,7 +199,7 @@
       @include rem('font-size', 12px);
 
       &:focus {
-        border: 1px solid #7f7f80;//$thin-border $border-color-selected;
+        border: 1px solid #7f7f80; //$thin-border $border-color-selected;
         outline: medium none;
       }
 
@@ -210,16 +208,16 @@
       }
     }
 
-    input:not(._formInput) {
-      &.statusInfo {
-        width: 100%;
-        border-color: transparent;
-        &:focus {
-          border: 1px solid transparent;
-          box-shadow: none;
-        }
-      }
-    }
+    //input:not(._formInput) {
+    //  &.statusInfo {
+    //    width: 100%;
+    //    border-color: transparent;
+    //    &:focus {
+    //      border: 1px solid transparent;
+    //      box-shadow: none;
+    //    }
+    //  }
+    //}
 
     #description {
       margin-top: 15px;
@@ -315,7 +313,7 @@
         margin-top: 0;
         line-height: 0;
 
-        &>a {
+        & > a {
           line-height: 26px;
         }
       }
@@ -434,8 +432,8 @@
   max-width: 860px;
   min-height: 150px;
   margin: 0 auto;
-  border: 1px solid #7f7f80;//@border-color-main;
-  background:  #fff;//@bg-main;
+  border: 1px solid #7f7f80; //@border-color-main;
+  background: #fff; //@bg-main;
   position: relative;
 
   h3 {
@@ -561,7 +559,7 @@
   width: 860px;
   max-width: 860px;
   margin: 0 auto;
-  background:  #fff; //@bg-main;
+  background: #fff; //@bg-main;
   min-height: 150px;
   display: block;
   position: relative;
@@ -587,7 +585,7 @@
 
   .compactList {
     li {
-      border-bottom:  1px solid #7f7f80; // @thin-border @border-color-main;
+      border-bottom: 1px solid #7f7f80; // @thin-border @border-color-main;
 
       &.inner {
         margin: 0 !important;
@@ -638,12 +636,12 @@
       margin: 0;
       //padding: 10px;
       color: #5a86a2;
-      font-family: $semibold-font-family;// @fontSemiBold;
+      font-family: $semibold-font-family; // @fontSemiBold;
       font-size: 14px;
 
       span {
         width: inherit;
-        color:  #000; //@formColum-main-text-color;
+        color: #000; //@formColum-main-text-color;
         @extend %text-overflow;
       }
     }
@@ -655,7 +653,7 @@
         position: absolute;
         bottom: 5px;
         right: 10px;
-        color:  #000;// @mainText-color;
+        color: #000; // @mainText-color;
         font-size: 18px;
       }
     }
@@ -677,7 +675,7 @@
     h3 {
       min-height: 24px;
       line-height: 30px;
-      color: #000;//@formColum-main-text-color;
+      color: #000; //@formColum-main-text-color;
       font: $base-font-family; //@fontRegular;
       font-size: 24px;
     }
@@ -695,7 +693,7 @@
     padding: 2px 3px;
     text-align: center;
     line-height: 5px;
-    border: 1px solid #7f7f80;//@thin-border @border-color-main;
+    border: 1px solid #7f7f80; //@thin-border @border-color-main;
     color: #999;
     background: #cecece;
     cursor: pointer;
@@ -739,24 +737,23 @@
 
   h2 {
     margin-bottom: 12px;
-    color: #000;//@mainText-color;
-    font-family: $base-font-family;//@fontRegular;
+    color: #000; //@mainText-color;
+    font-family: $base-font-family; //@fontRegular;
     font-size: 24px !important;
   }
 
   h2:first-of-type {
     margin: 0 0 8px;
-    color: #000;//@mainText-color;
+    color: #000; //@mainText-color;
     font-size: 26px;
   }
 
   p {
     min-height: 30px;
     line-height: 30px;
-    color: #000;//@mainText-color;
-    font-family:  $base-font-family;//@fontRegular;
+    color: #000; //@mainText-color;
+    font-family: $base-font-family; //@fontRegular;
     font-size: 13px;
-
 
     label:not(._formLabel) {
       margin-bottom: 2px;
@@ -919,8 +916,7 @@
     }
   }
 
-
-  .propertyFormList  label {
+  .propertyFormList label {
     padding-right: 0;
 
     span._selectTitle {
@@ -934,7 +930,7 @@
     .inputBox {
       margin-right: 25px;
 
-      &+.inputBox {
+      & + .inputBox {
         margin-right: 0;
         padding-left: 20px;
       }
@@ -946,7 +942,7 @@
     }
 
     label[for="isSupplier"] {
-      width: 80px!important;
+      width: 80px !important;
     }
   }
 }
@@ -1006,7 +1002,7 @@ label._customCHeckbox {
     -moz-binding: none;
     opacity: 0;
 
-    &[disabled]{
+    &[disabled] {
       &:checked + span:before {
         background-color: #fff;
         border: {
@@ -1018,9 +1014,9 @@ label._customCHeckbox {
       }
 
       + span {
-        &:before{
-          background: rgba(128,128,128,0.1);
-          border: 1px solid rgba(114,114,114,0.1);
+        &:before {
+          background: rgba(128, 128, 128, 0.1);
+          border: 1px solid rgba(114, 114, 114, 0.1);
         }
       }
     }
@@ -1078,7 +1074,7 @@ label._customCHeckbox {
 
 ._animatedCheckbox {
 
-  > input[type='checkbox'] {
+  > input[type='checkbox'], > input[type='radio'] {
     display: none;
 
     &:checked + span {
@@ -1096,7 +1092,7 @@ label._customCHeckbox {
   }
 
   + label {
-    margin-left: 30px;
+    margin-left: 10px;
     line-height: 18px;
     cursor: pointer;
     user-select: none;
@@ -1134,12 +1130,43 @@ label._customCHeckbox {
   }
 }
 
+._animatedCheckbox._small,
+._animatedCheckbox._small span,
+._animatedCheckbox._small span:before {
+  width: 12px;
+  height: 12px;
+}
+
+._animatedCheckbox {
+  &._small {
+    display: inline-block;
+
+    span {
+
+      &:before {
+        border-width: 1px;
+      }
+
+      &:after {
+        width: 22px;
+        height: 22px;
+      }
+    }
+
+    > input[type='checkbox']:checked + span:before {
+      top: -2px;
+      left: 3px;
+      width: 7px;
+    }
+  }
+}
+
 @keyframes circleShadow {
   0% {
     background-color: transparent;
   }
   50% {
-    background-color: rgba(0,0,0,.07);
+    background-color: rgba(0, 0, 0, .07);
   }
   100% {
     background-color: transparent;
@@ -1166,7 +1193,7 @@ label._customCHeckbox {
 
 ._journalentryForm {
 
-  .ribbon{
+  .ribbon {
     position: absolute !important;
     top: -5px;
     left: -5px;
@@ -1193,7 +1220,7 @@ label._customCHeckbox {
       height: 18px;
 
       &:before,
-      &:after{
+      &:after {
         content: "";
         border-top: 5px solid transparent;
         border-left: 5px solid;
@@ -1208,13 +1235,13 @@ label._customCHeckbox {
         transform: rotate(-45deg);
       }
 
-      &:before{
+      &:before {
         left: -1px;
         border-left: 3px solid transparent;
         margin-left: 5px;
       }
 
-      &:after{
+      &:after {
         right: 2px;
         top: 13px;
         margin-right: 6px;
@@ -1278,7 +1305,7 @@ label._customCHeckbox {
   }
 
   .list {
-    tr:last-child{
+    tr:last-child {
       border-bottom: none;
     }
   }
@@ -1301,16 +1328,16 @@ label._customCHeckbox {
     float: left;
   }
 
-  ._avatarWrap{
+  ._avatarWrap {
     width: 350px;
 
-    .avatar{
+    .avatar {
       display: block;
       margin: 5px auto 5px auto;
       float: none;
     }
 
-    ._introInfo{
+    ._introInfo {
       padding: 2px;
       clear: both;
       box-shadow: none;
@@ -1354,19 +1381,22 @@ label._customCHeckbox {
     line-height: 27px;
   }
 
-  .list  {
+  .list {
     margin: 10px 0;
 
-    tbody tr:last-child{
+    tbody tr:last-child {
       border-bottom: none;
     }
   }
 }
 
 .jobsWescWrap {
-  margin: 5px 0;
-  border: 1px solid #d4d4d4;
-  border-radius: 2px;
+
+  textarea {
+    padding: 4px;
+    border: 0;
+    border-bottom: 1px solid #d4d4d4;
+  }
 
   &._newSelectListWrap {
     .newSelectList {
@@ -1376,11 +1406,19 @@ label._customCHeckbox {
   }
 }
 
+._newSelectListWrap.ellipsis {
+  .current-selected {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
 .jobs {
-  .jobsWescWrap{
+  .jobsWescWrap {
     &._newSelectListWrap {
       .newSelectList {
-        li.selected:hover{
+        li.selected:hover {
           color: #ffffff !important;
         }
       }
@@ -1394,7 +1432,7 @@ label._customCHeckbox {
   height: auto !important;
   min-height: 45px !important;
   padding: 0 10px !important;
-  margin: 5px 0;
+  //margin: 5px 0;
   border: none !important;
   color: #000;
   text-align: left !important;
@@ -1406,7 +1444,7 @@ label._customCHeckbox {
   margin: 5px;
 }
 
-.form table .productDescr{
+.form table .productDescr {
   padding: 0 8px 0 8px;
   border: none;
   min-height: 34px;
@@ -1421,7 +1459,7 @@ label._customCHeckbox {
 }
 
 .jobsWescWrap a,
-.jobsWescWrap span{
+.jobsWescWrap span {
   text-align: left;
   margin: 3px 3px 0;
   padding: 2px 5px;
@@ -1443,23 +1481,24 @@ label._customCHeckbox {
 
 .ui-dialog ._invoiceTable th:first-child,
 .ui-dialog ._invoiceTable th:nth-child(2),
-._invoiceTable th:first-child, ._invoiceTable th:nth-child(2){
-  text-align: left !important;
+._invoiceTable th:first-child, ._invoiceTable th:nth-child(2) {
+  //text-align: left !important;
 }
 
-._wTrackItemsHolder  ._invoiceTable th:first-child,
-._wTrackItemsHolder  ._invoiceTable th:nth-child(2) {
-  text-align: right !important;
+._wTrackItemsHolder ._invoiceTable th:first-child,
+._wTrackItemsHolder ._invoiceTable th:nth-child(2) {
+  text-align: right;
 }
 
 .quotationsTabs .list2 tbody tr {
   border-top: 0;
 }
+
 ._invoiceTable tbody .addProductItem,
-.ui-dialog  ._invoiceTable tbody ._addNewItem td {
+.ui-dialog ._invoiceTable tbody ._addNewItem td {
   border-top: 1px solid #d7d7d7;
   padding: 15px 6px;
-  text-align: left !important;
+  //text-align: left !important;
 }
 
 .ui-dialog ._invoiceTable thead th {
@@ -1473,17 +1512,17 @@ label._customCHeckbox {
   line-height: normal;
 }
 
-.quotationsTabs .list2 thead th[data-sort='unitPrice']{
+.quotationsTabs .list2 thead th[data-sort='unitPrice'] {
   padding-right: 35px;
 }
 
 .quotationsTabs .list2 #editInput,
-.ordersList .mainTabs .list2 #editInput{
+.ordersList .mainTabs .list2 #editInput {
   width: auto;
   text-align: left;
 }
 
-.topInputHolder .thirdPartBlock:first-child .person-info{
+.topInputHolder .thirdPartBlock:first-child .person-info {
   display: flex;
   margin-bottom: 5px;
 
@@ -1505,16 +1544,14 @@ label._customCHeckbox {
   margin-right: 0;
 }
 
-._deleteHeader th[data-sort="amount"]{
+._deleteHeader th[data-sort="amount"] {
   border-right: 1px solid #ECECEC;
 }
 
-.quotationsTabs .person-info  dt,
-.quotationsTabs .person-info dd{
+.quotationsTabs .person-info dt,
+.quotationsTabs .person-info dd {
   line-height: 30px;
 }
-
-
 
 /*08.09.16*/
 /*Organization settings*/
@@ -1523,16 +1560,16 @@ label._customCHeckbox {
   padding-top: 20px;
   border-top: 1px solid #ededed;
 
-  ._orgSettings{
+  ._orgSettings {
     margin: 0;
     max-width: 1000px;
 
-    p, a{
+    p, a {
       line-height: 15px;
     }
 
     ._formGroup {
-      margin:0 0px 15px 0px;
+      margin: 0 0px 15px 0px;
       display: table;
       width: 100%;
       color: #333;
@@ -1543,12 +1580,12 @@ label._customCHeckbox {
         border-top: 1px solid #eee;
       }
 
-      &:before, &:after{
+      &:before, &:after {
         display: table;
-        content:"";
+        content: "";
       }
       & > label:not(._formLabel),
-      & > div{
+      & > div {
         float: left;
       }
 
@@ -1617,7 +1654,7 @@ label._customCHeckbox {
 }
 
 /*09.09.16*/
-.ui-dialog.edit-settings-dialog{
+.ui-dialog.edit-settings-dialog {
   width: 600px !important;
   font-size: 14px;
 
@@ -1676,8 +1713,8 @@ label._customCHeckbox {
   text-align: right !important;
 }
 
-._invoiceTable [data-name="price"] input{
-  width: 60px !important;
+._invoiceTable [data-name="price"] input {
+  max-width: 60px !important;
   padding: 0 !important;
 }
 
@@ -1704,18 +1741,19 @@ label._customCHeckbox {
   font-size: 28px;
 }
 
-._chartOfAccountList tbody tr.child2 td:first-child:before{
+._chartOfAccountList tbody tr.child2 td:first-child:before {
   left: 38px;
 }
-._chartOfAccountList tbody tr.child3 td:first-child:before{
+
+._chartOfAccountList tbody tr.child3 td:first-child:before {
   left: 58px;
 }
 
-._chartOfAccountList tbody tr.child4 td:first-child:before{
+._chartOfAccountList tbody tr.child4 td:first-child:before {
   left: 78px;
 }
 
-._chartOfAccountList tbody tr.child5 td:first-child:before{
+._chartOfAccountList tbody tr.child5 td:first-child:before {
   left: 98px;
 }
 
@@ -1749,11 +1787,12 @@ label._customCHeckbox {
 ._chartOfAccountList tbody tr.child5 td:first-child:after {
   left: 125px;
 }
+
 ._chartOfAccountList tbody tr.child1 td,
 ._chartOfAccountList tbody tr.child2 td,
 ._chartOfAccountList tbody tr.child3 td,
 ._chartOfAccountList tbody tr.child4 td,
-._chartOfAccountList tbody tr.child5 td{
+._chartOfAccountList tbody tr.child5 td {
   position: relative;
 }
 
@@ -1828,11 +1867,10 @@ label._customCHeckbox {
     }
   }
 
-  .attachFileName{
+  .attachFileName {
     padding-bottom: 15px;
   }
 }
-
 
 .form-holder {
   form select._formCustomSelect {
@@ -1858,7 +1896,7 @@ label._customCHeckbox {
 }
 
 /*15.09*/
-@media (min-width:1050px){
+@media (min-width: 850px) {
   .pagination + #timeRecivingDataFromServer {
     position: absolute;
     bottom: 0;
@@ -1869,72 +1907,56 @@ label._customCHeckbox {
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*14.09 WarehouseForm*/
 
 ._warehouseForm {
   padding: 0 10px;
   //min-width:700px;
-  width: calc( 100% - 170px);
+  width: calc(100% - 170px);
 
-  .half-block{
+  .half-block {
     width: 45%;
     margin-right: 5%;
 
-    + .half-block{
+    + .half-block {
       margin-right: 0;
       margin-left: 5%;
     }
   }
 }
 
-.workflow-list-wrapper{
-  min-width:170px;
-  .itemsList{
-    li{
+.workflow-list-wrapper {
+  min-width: 170px;
+  .itemsList {
+    li {
       height: 45px;
       background-color: transparent !important;
 
-      &:after{
+      &:after {
         height: 45px;
         top: 0;
         right: 0;
         z-index: 1;
       }
     }
-    .items{
+    .items {
       height: 45px;
       line-height: 23px;
       overflow: hidden;
       -ms-text-overflow: ellipsis;
       text-overflow: ellipsis;
 
-      &.checked{
+      &.checked {
         background-color: #7eadcc;
         border-color: #fff;
         color: #fff;
       }
     }
   }
-  &+._warehouseForm {
-    ._modalSelect{
+  & + ._warehouseForm {
+    ._modalSelect {
 
-      > a, > input{
+      > a, > input {
         min-height: 30px !important;
       }
 
@@ -1947,91 +1969,84 @@ label._customCHeckbox {
   }
 }
 
-
-._warehouseWrap {
-  display: flex;
-
-  .workflow-list-wrapper{
-    //border-right: 1px solid #7f7f80;
-    .workflow-list,
-    .workflow-sub-list{
-
-      li{
-        border-right: none;
-        border-top: none;
-
-        &:after {
-          display: none;
-        }
-      }
-    }
-  }
-
-  ._zoneLocWrap {
-
-    + ._zoneLocWrap {
-      margin-top: 35px;
-    }
-
-    tr:first-child {
-      th:first-child {
-        padding-bottom: 25px;
-        > .btn {
-          float: right;
-        }
-      }
-    }
-
-    tbody {
-      td {
-        border-top: 1px solid #d8dde6;
-      }
-    }
-
-    th, td {
-      &:nth-child(n+2) {
-        text-align: right;
-      }
-    }
-  }
-
-  ._warehouseForm{
-    background-color: #f2f5fa;
-
-    ._listModal {
-      background: #fff;
-      border: 1px solid #d8dde6;
-      border-radius: 4px;
-      margin-top: 10px;
-      margin-bottom: 16px;
-      padding: 30px 40px;
-    }
-  }
-
-  table{
-    //tr._noBorder{
-    //  border:none;
-    //  text-align: right !important;
-    //  th{
-    //    width: 100%;
-    //    padding-bottom: 25px;
-    //  }
-    //}
-    td{
-      word-break: break-word;
-      white-space: initial;
-      line-height: 20px;
-
-      &:first-child{
-        text-align: center;
-      }
-    }
-    .newSelectList {
-      left: auto;
-      right: 0;
-    }
-  }
-}
+//._warehouseWrap {
+//  display: flex;
+//
+//  .workflow-list-wrapper{
+//    //border-right: 1px solid #7f7f80;
+//    .workflow-list,
+//    .workflow-sub-list{
+//
+//      li{
+//        border-right: none;
+//        border-top: none;
+//
+//        &:after {
+//          display: none;
+//        }
+//      }
+//    }
+//  }
+//
+//  ._zoneLocWrap {
+//
+//    + ._zoneLocWrap {
+//      margin-top: 35px;
+//    }
+//
+//    tr:first-child {
+//      th:first-child {
+//        padding-bottom: 25px;
+//        > .btn {
+//          float: right;
+//        }
+//      }
+//    }
+//
+//    tbody {
+//      td {
+//        border-top: 1px solid #d8dde6;
+//      }
+//    }
+//
+//    th, td {
+//      &:nth-child(n+2) {
+//        text-align: right;
+//      }
+//    }
+//  }
+//
+//  ._warehouseForm{
+//    background-color: #f2f5fa;
+//
+//    ._listModal {
+//      background: #fff;
+//      border: 1px solid #d8dde6;
+//      border-radius: 4px;
+//      margin-top: 10px;
+//      margin-bottom: 16px;
+//      padding: 30px 40px;
+//    }
+//  }
+//
+//  table{
+//
+//    td{
+//      word-break: break-word;
+//      white-space: initial;
+//      line-height: 20px;
+//
+//      &:first-child{
+//        text-align: center;
+//      }
+//    }
+//
+//    .newSelectList {
+//      left: auto;
+//      right: 0;
+//    }
+//  }
+//}
 
 ._zoneLocWrap {
   ._inputsList {
@@ -2046,6 +2061,7 @@ label._customCHeckbox {
     text-align: left;
   }
 }
+
 /*19.09 WarehouseForm*/
 
 ._accountscategories-holder {
@@ -2056,23 +2072,22 @@ label._customCHeckbox {
   display: none;
 }
 
-
 /*21.09*/
 template, [hidden] {
-  display: none !important;//attach to base.scss
+  display: none !important; //attach to base.scss
 }
 
 ._modalList {
   @extend %clearfix;
 }
 
-.form-holder{
+.form-holder {
   form._modalForm {
-    ._listModal{
-      ._modalList{
+    ._listModal {
+      ._modalList {
         display: flex;
-        dt{
-          &._modalLabel{
+        dt {
+          &._modalLabel {
             margin-bottom: 0;
             line-height: 33px;
           }
@@ -2085,14 +2100,13 @@ template, [hidden] {
   }
 }
 
-
 /*23.09*/
 
 .forSCU.list {
   th:nth-child(-n+4),
   td:nth-child(-n+4),
-  td:nth-child(-n+4) input{
-    text-align: left !important;
+  td:nth-child(-n+4) input {
+    text-align: right;
 
   }
 
@@ -2116,7 +2130,7 @@ template, [hidden] {
     padding-bottom: 6px !important;
 
     > div {
-      padding:5px 6px 5px 6px;
+      padding: 5px 6px 5px 6px;
       background-color: $white !important;
       min-height: 26px;
     }
@@ -2140,31 +2154,30 @@ template, [hidden] {
         background-color: #ccffcc;
 
         td.subtotal {
-          border-right: 1px solid  #ccffcc;
+          border-right: 1px solid #ccffcc;
         }
       }
       &.red {
         background-color: #fd9090;
 
         td.subtotal {
-          border-right: 1px solid   #fd9090;
+          border-right: 1px solid #fd9090;
         }
       }
 
       &.errored {
         background-color: #fab2b1;
         td.subtotal {
-          border-right: 1px solid  #fab2b1;
+          border-right: 1px solid #fab2b1;
         }
       }
     }
 
-
-    td.scuItemHolder.red{
-      border-right: 1px solid   #fd9090;
+    td.scuItemHolder.red {
+      border-right: 1px solid #fd9090;
     }
     td.scuItemHolder.green {
-      border-right: 1px solid  #ccffcc;
+      border-right: 1px solid #ccffcc;
     }
 
     td:last-child {
@@ -2178,7 +2191,7 @@ template, [hidden] {
     border: none;
   }
 
-  .fullfilledWrap{
+  .fullfilledWrap {
     text-align: center;
     background-color: transparent !important;
     white-space: normal;
@@ -2209,7 +2222,7 @@ template, [hidden] {
     .current-selected {
 
       &:hover {
-        .newSelectList li{
+        .newSelectList li {
           text-decoration: none !important;
         }
       }
@@ -2231,9 +2244,8 @@ template, [hidden] {
   padding-bottom: 20px;
 }
 
-
 //07.10.16
-._wTrackItemsHolder{
+._wTrackItemsHolder {
   ._invoiceTable {
     &.list tbody tr,
     &.list2 tbody tr {
@@ -2242,25 +2254,21 @@ template, [hidden] {
   }
 }
 
-
-
 /*13.10*/
-.ui-dialog .form .attachments  {
+.ui-dialog .form .attachments {
   border: none;
 }
-
 
 ._jobsItem .remove {
   a {
     display: none;
   }
   &:hover {
-    a{
+    a {
       display: block;
     }
   }
 }
-
 
 /*18.10.16*/
 
@@ -2269,7 +2277,7 @@ template, [hidden] {
   overflow: hidden;
   position: relative;
   padding-right: 30px;
-  &:before  {
+  &:before {
     content: "";
     float: left;
     width: 25px;
@@ -2295,7 +2303,7 @@ template, [hidden] {
 }
 
 ._ellipsisShowMore.showmore,
-._ellipsisCloseBtn.hideList{
+._ellipsisCloseBtn.hideList {
   display: block;
   box-sizing: content-box;
   float: right;
@@ -2327,7 +2335,6 @@ template, [hidden] {
   background: linear-gradient(to right, rgba(255, 255, 255, 0.5), white);
 }
 
-
 ._ellipsisCloseBtn.hideList {
   display: none;
   position: absolute;
@@ -2353,6 +2360,12 @@ template, [hidden] {
 #stockCorrection {
   ._invoiceTable {
     margin-top: 15px;
+  }
+}
+
+._stockCorrectionForm {
+  textarea._animate {
+    height: 170px;
   }
 }
 
@@ -2541,6 +2554,12 @@ template, [hidden] {
 
 ._productsForBundle {
 
+  > li.itemForLink { //todo hack
+    &.focus {
+      background-color: #cacaca;
+    }
+  }
+
   > li {
     display: flex;
     justify-content: space-between;
@@ -2577,7 +2596,7 @@ template, [hidden] {
     align-items: center;
     margin: 5px 0;
 
-    ._editConteiner{
+    ._editConteiner {
       display: flex;
 
       ._quantity {
@@ -2617,7 +2636,8 @@ template, [hidden] {
   ._searchBtn {
     flex-shrink: 0;
     display: inline-block;
-    width: 26px;
+    //width: 26px;
+    padding: 0 4px;
     margin-top: 0;
     background-color: #7eadcc;
     line-height: 26px;
@@ -2639,9 +2659,9 @@ template, [hidden] {
   color: #7d7d7d;
   border: 1px solid #ddd;
   border-radius: 10px;
-  box-shadow: 0 4px 5px 0 rgba(0,0,0,0.14),
-  0 1px 10px 0 rgba(0,0,0,0.12),
-  0 2px 4px -1px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14),
+  0 1px 10px 0 rgba(0, 0, 0, 0.12),
+  0 2px 4px -1px rgba(0, 0, 0, 0.3);
 }
 
 .chatraWrapper {
@@ -2943,9 +2963,9 @@ button {
     color: #fff;
     font-family: $semibold-font-family;
     cursor: pointer;
-    box-shadow: 0 8px 10px 1px rgba(0,0,0,0.14),
-    0 3px 14px 2px rgba(0,0,0,0.12),
-    0 5px 5px -3px rgba(0,0,0,0.3);
+    box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14),
+    0 3px 14px 2px rgba(0, 0, 0, 0.12),
+    0 5px 5px -3px rgba(0, 0, 0, 0.3);
     @include rem('font-size', 16px);
 
     h4 {
@@ -2974,4 +2994,11 @@ button {
     transform: none;
   }
 }
+
 // clear
+
+._checkboxList {
+  ._animatedCheckbox {
+    margin-left: 15px;
+  }
+}

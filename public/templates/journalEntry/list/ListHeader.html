@@ -4,8 +4,9 @@
         <colgroup>
             <col width="180px">
             <col width="180px">
-            <col width="150px">
-            <col width="180px">
+            <col width="90px">
+            <col width="120px">
+            <col width="120px">
             <col width="120px">
             <col width="120px">
         </colgroup>
@@ -29,6 +30,11 @@
                 <span class="arrow up"></span>
             </th>
             <th class="oe_sortable"
+                data-sort="type">Document Type
+                <span class="arrow down"></span>
+                <span class="arrow up"></span>
+            </th>
+            <th class="oe_sortable"
                 data-sort="account.name">Account
                 <span class="arrow down"></span>
                 <span class="arrow up"></span>
@@ -48,7 +54,7 @@
         <tbody id="listTable"></tbody>
         <tfoot id="listFooter">
         <tr>
-            <td colspan="4">Total</td>
+            <td colspan="5">Total</td>
             <td id="totalDebit" class="money"></td>
             <td id="totalCredit" class="money"></td>
         </tr>

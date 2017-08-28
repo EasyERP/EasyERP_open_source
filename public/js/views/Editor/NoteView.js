@@ -19,7 +19,7 @@ define([
     var NoteView = Backbone.View.extend({
 
         template        : _.template(NoteTemplate),
-        onlyNoteTemplate        : _.template(onlyNoteTemplate),
+        onlyNoteTemplate: _.template(onlyNoteTemplate),
         timeLineTemplate: _.template(timelineTemplate),
 
         initialize: function (options) {
@@ -34,6 +34,7 @@ define([
         },
 
         events: {
+            'focus .counterEl'                                 : 'checkCount',
             'click #noteArea, #taskArea'                       : 'expandNote',
             'click .cancelNote, #cancelTask'                   : 'cancelNote',
             'click #addNote, .saveNote'                        : 'saveNote',
@@ -45,6 +46,28 @@ define([
             'click .chart-tabs li'                             : 'changeTab',
             'click .current-selected:not(.jobs)'               : 'showNewSelect',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
+        },
+
+        checkCount: function (e) {
+            var $elem = $(e.target);
+            var $parent = $elem.closest('.counterWrap');
+            e.stopPropagation();
+            var $counterEl = $parent.find('#counterValue');
+
+            this.calculateValue($elem, $counterEl);
+        },
+
+        calculateValue: function (elem, countEl) {
+            var $elem = elem;
+            var maxValue = parseInt($elem.attr('maxlength'));
+            var $counterEl = countEl;
+
+            $elem.on('keyup', function () {
+                var numOfSymbols = maxValue - $elem.val().length;
+                var resultVal = (numOfSymbols === maxValue) ? maxValue : numOfSymbols ? numOfSymbols : '0';
+
+                $counterEl.text(resultVal);
+            })
         },
 
         showButtons: function (e) {
@@ -366,9 +389,9 @@ define([
                         return note;
                     });
 
-                  if (self.isCreate){
-                    return formModel.set('notes', editNotes)
-                  }
+                    if (self.isCreate) {
+                        return formModel.set('notes', editNotes)
+                    }
 
                     formModel.save({notes: editNotes},
                         {
@@ -394,18 +417,17 @@ define([
                     //noteObj.date = moment(noteObj.date).format('DD MMM, YYYY);
                     notes.push(noteObj);
 
-                    if (self.isCreate){
+                    if (self.isCreate) {
 
-                      var formLeftColumn = self.$el.find('.formLeftColumn');
-                      var noteWrapper = formLeftColumn.find('.noteWrapper');
+                        var formLeftColumn = self.$el.find('.formLeftColumn');
+                        var noteWrapper = formLeftColumn.find('.noteWrapper');
 
-                      formModel.set('notes', notes);
+                        formModel.set('notes', notes);
 
-                      noteWrapper.empty();
-                      formLeftColumn.append(self.render());
+                        noteWrapper.empty();
+                        formLeftColumn.append(self.render());
 
-
-                      return false;
+                        return false;
                     }
                     formModel.save({notes: notes}, {
                         headers : {
@@ -465,13 +487,12 @@ define([
 
             modelObj.needNotes = this.needNotes;
 
-            if (this.onlyNote){
-              $thisEl.html(this.onlyNoteTemplate({date: date, assignedTo: assignedTo}));
+            if (this.onlyNote) {
+                $thisEl.html(this.onlyNoteTemplate({date: date, assignedTo: assignedTo}));
 
             } else {
-              $thisEl.html(this.template({date: date, assignedTo: assignedTo}));
+                $thisEl.html(this.template({date: date, assignedTo: assignedTo}));
             }
-
 
             this.renderTimeline();
 

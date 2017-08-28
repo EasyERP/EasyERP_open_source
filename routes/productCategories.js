@@ -9,6 +9,11 @@ module.exports = function (models, event) {
 
     var moduleId = MODULES.PRODUCTSETTINGS;
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
+    var accessDeleteStackMiddleware = require('../helpers/checkDelete');
+
+    function accessDeleteStackMiddlewareFunction(req, res, next) {
+        accessDeleteStackMiddleware(req, res, next, models, 'productCategories', event);
+    }
 
     router.use(authStackMiddleware);
     router.use(accessStackMiddleware);
@@ -257,7 +262,7 @@ HTTP/1.1 200 OK
     "success":"Category was removed"
 }
      */
-    router.delete('/:id', handler.remove);
+    router.delete('/:id', accessDeleteStackMiddlewareFunction, handler.remove);
 
     return router;
 };

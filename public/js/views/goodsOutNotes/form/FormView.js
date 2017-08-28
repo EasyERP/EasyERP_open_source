@@ -129,7 +129,7 @@ define([
                 saveObject['status.' + status] = false;
             }
 
-            if (status === 'shipped') {
+            if (status === 'shipped' && modelJSON.order) {
 
                 if (modelJSON.order.shippingExpenses && modelJSON.order.shippingExpenses.amount && !modelJSON.shippingMethod) {
                     return App.render({
@@ -184,7 +184,7 @@ define([
                     dateFormat : 'd M, yy',
                     changeMonth: true,
                     changeYear : true,
-                    minDate    : new Date(model.order.orderDate),
+                    minDate    : new Date(model.order ? model.order.orderDate : model.manufacturingOrder.deadlineStart),
                     maxDate    : new Date()
                 }).datepicker('setDate', new Date(model.date));
             }

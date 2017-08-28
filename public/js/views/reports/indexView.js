@@ -2,201 +2,356 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
+    'views/listViewBase',
+    'views/reports/CreateView',
+    'views/reports/EditView',
+    'dataService',
+    'moment',
     'text!templates/reports/MainTemplate.html',
-    'views/reports/inventoryReports/ContentView',
-    'views/reports/salesReports/ContentView',
-    'views/Dashboard/ContentView'
-], function (Backbone, $, _, mainTemplate, inventoryReportsView, salesReportsView, crmView) {
+    'constants/customReports',
+    'services/productCategories'
+], function (Backbone, $, _, Parent, CreateView, EditView, dataService, moment, mainTemplate, constants, productCategoriesService) {
     'use strict';
 
-    var ContentView = Backbone.View.extend({
+    var ContentView = Parent.extend({
         contentType: 'reports',
         actionType : 'Content',
+        CreateView : CreateView,
+        EditView   : EditView,
         template   : _.template(mainTemplate),
         el         : '#content-holder',
+        responseObj: {},
 
         initialize: function (options) {
+            var collectionJson;
+
             this.startTime = options.startTime;
+            this.collection = options.collection;
 
-            this.views = {};
+            collectionJson = this.collection.toJSON();
 
-            /*this.views.productsReportsView = {
-             view       : productsReportsView,
-             redirectRef: '#easyErp/productsReports'
-             };*/
+            this.collection.bind('change', this.render, this);
 
-            this.views.inventoryReportsView = {
-                view       : inventoryReportsView,
-                redirectRef: '#easyErp/inventoryReports'
-            };
+            this.model = collectionJson.length ? collectionJson[0] : {};
+            this.render();
 
-            this.views.salesReportsView = {
-                view       : salesReportsView,
-                redirectRef: '#easyErp/salesReports'
-            };
+            this.productCategoriesIds = [];
+        },
 
-            this.views.stockInventory = {
-                trigger    : true,
-                redirectRef: '#easyErp/stockInventory/list'
-            };
+        events: {
+            'click .mainSettings'    : 'chooseDetails',
+            'click .mainList'        : 'renderChildElements',
+            'click .editRow'         : 'editItem',
+            'click .deleteRow'       : 'deleteItem',
+            'click .copyRow'         : 'copyRow',
+            'click #showBtn'         : productCategoriesService.showCategories,
+            'change .productCategory': 'changeCategory',
+            'click .deleteTag'       : 'deleteCategory',
+            'click .favoriteRow'     : 'addToFavorite',
+            'click .allreadyFav'     : 'onAllreadyFav'
+        },
 
-            this.views.crmReports = {
-                view       : crmView,
-                redirectRef: '#easyErp/Dashboard'
-            };
+        renderReportCategories: function () {
+            var $thisEl = this.$el;
+            var $checkedCategoryContainer = $thisEl.find('#checkedProductCategories');
+            var changedCategories = this.productCategoriesIds || [];
+            var constantsTypesReport = constants.typesReports;
+
+            _.each(changedCategories, function (category) {
+                $thisEl.find('#' + category).prop('checked', true);
+
+                $checkedCategoryContainer.append('<li><span class="checkedProductCategory"  data-value="' + category + '" data-id="' + category + '">' + constantsTypesReport[category] + '</span><span class="deleteTag icon-close3"></span></li>');
+            });
+        },
+
+        changeCategory: function (e) {
+            var $thisEl = this.$el;
+            var $categoryContainer = $thisEl.find('#checkedProductCategories');
+            var $target = $(e.target);
+            var categoryId = $target.data('id');
+            var categoryName = $target.data('value');
+            var checkedProductCategory = $thisEl.find('.checkedProductCategory');
+            var constantsTypesReport = constants.typesReports;
+            var idsArray = [];
+            var indexCategory;
+
+            e.stopPropagation();
+
+            if (checkedProductCategory && checkedProductCategory.length) {
+                checkedProductCategory.each(function (key, item) {
+                    idsArray.push($(item).data('id'));
+                });
+            }
+
+            if (idsArray.length && idsArray.indexOf(categoryId) >= 0) {
+                $categoryContainer.find('[data-id=' + categoryId + ']').closest('li').remove();
+            } else {
+                $categoryContainer.append('<li><span class="checkedProductCategory"  data-value="' + categoryName + '" data-id="' + categoryId + '">' + constantsTypesReport[categoryName] + '</span><span class="deleteTag icon-close3"></span></li>');
+            }
+
+            if (typeof this.useFilter === 'function') {
+                this.useFilter();
+            }
+
+            indexCategory = this.productCategoriesIds.indexOf(categoryId);
+
+            if (indexCategory >= 0) {
+                this.productCategoriesIds.splice(indexCategory, 1);
+            } else {
+                this.productCategoriesIds.push(categoryId);
+            }
+
+            this.collection.getFirstPage({
+                reportCategory: this.productCategoriesIds
+            });
+        },
+
+        deleteCategory: function (e) {
+            var $thisEl = this.$el;
+            var $target = $thisEl.find(e.target);
+            var id = $thisEl.find($target.closest('li')
+                .find('.checkedProductCategory')[0])
+                .data('id');
+            var indexCategory = this.productCategoriesIds.indexOf(id);
+
+            e.stopPropagation();
+
+            $thisEl.find('.productCategory[data-id="' + id + '"]')
+                .prop('checked', false);
+            $target.closest('li').remove();
+
+            if (typeof this.useFilter === 'function') {
+                this.useFilter();
+            }
+
+            if (indexCategory >= 0) {
+                this.productCategoriesIds.splice(indexCategory, 1);
+            }
+
+            this.collection.getFirstPage({
+                type: this.productCategoriesIds
+            });
+        },
+
+        editItem: function (e) {
+            var id = $(e.target).closest('tr').attr('id');
+            var collection = this.collection.toJSON()[0].all;
+            var isPrivate = $(e.target).closest('tr').hasClass('private');
+            var model;
+
+            model = _.find(collection, function (item) {
+                return item._id === id;
+            });
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (isPrivate) {
+
+                if (model.createdBy.user !== App.currentUser._id) {
+                    return App.render({type: 'error', message: 'Permission denied. It\'s private report'});
+                }
+            }
+
+            return new EditView({model: model, collection: this.collection});
+            //return new EditView({model: this.model});
+        },
+
+        copyRow: function (e) {
+            var id = $(e.target).closest('tr').attr('id');
+            var collection = this.collection.toJSON()[0].all;
+            var isPrivate = $(e.target).closest('tr').hasClass('private');
+            var model;
+
+            model = _.find(collection, function (item) {
+                return item._id === id;
+            });
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (isPrivate) {
+
+                if (model.createdBy.user !== App.currentUser._id) {
+                    return App.render({type: 'error', message: 'Permission denied. It\'s private report'});
+                }
+            }
+            return new EditView({model: model, collection: this.collection, copyReport: true});
+        },
+
+        chooseDetails: function (e) {
+            var $elem = $(e.target);
+            var rowId = $elem.closest('.mainSettings').attr('id');
+            var pathFragment = '#easyErp/reports/';
+            var isPrivate = $elem.closest('.mainSettings').hasClass('private');
+            var current;
+
+            if (isPrivate) {
+                current = _.find(this.model.private, function (el) {
+                    return el._id === rowId;
+                });
+
+                if (current.createdBy.user !== App.currentUser._id) {
+                    return App.render({type: 'error', message: 'Permission denied. It\'s private report'});
+                }
+            }
+
+            Backbone.history.navigate(pathFragment + rowId, {trigger: true});
+        },
+
+        deleteItem: function (e) {
+            var $elem = $(e.target);
+            var $currentRow = $elem.closest('.mainSettings');
+            var id = $currentRow.attr('id');
+            var collection = this.collection;
+            var url = collection.url;
+            var isPrivate = $elem.closest('.mainSettings').hasClass('private');
+            var answer;
+            var current;
+
+            e.stopPropagation();
+
+            if (this.changed) {
+                return this.cancelChanges();
+            }
+
+            if (isPrivate) {
+                current = _.find(this.model.private, function (el) {
+                    return el._id === id;
+                });
+
+                if (current.createdBy.user !== App.currentUser._id) {
+                    return App.render({type: 'error', message: 'Permission denied. It\'s private dashboard'});
+                }
+            }
+
+            answer = confirm('Really DELETE items ?!');
+
+            if (answer === false) {
+                return false;
+            }
+
+            dataService.deleteData(url, {contentType: this.contentType, ids: [id]}, function (err, response) {
+                if (err) {
+                    return App.render({
+                        type   : 'error',
+                        message: 'Can\'t remove items'
+                    });
+                }
+
+                Backbone.history.fragment = '';
+                Backbone.history.navigate('easyErp/reports', {trigger: true});
+            });
+        },
+
+        addToFavorite: function (e) {
+            var $elem = $(e.target);
+            var $currentRow;
+            var reportId;
+            var favoriteUrl = '/reports/favorite/';
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            $currentRow = $elem.closest('tr');
+            reportId = $currentRow.attr('id');
+
+            favoriteUrl = favoriteUrl + reportId;
+
+            dataService.getData(favoriteUrl, {}, function (response) {
+                if (response.success) {
+                    $elem.removeClass('icon-star');
+                    $elem.removeClass('favoriteRow');
+                    $elem.addClass('icon-star2');
+                    $elem.addClass('allreadyFav');
+
+                    App.render({
+                        type   : 'notify',
+                        message: response.success
+                    });
+                } else {
+                    App.render({
+                        type   : 'error',
+                        message: response.error
+                    });
+                }
+            }, this);
+        },
+
+        onAllreadyFav: function (e) {
+            var $elem = $(e.target);
+            var $currentRow;
+            var reportId;
+            var favoriteUrl = '/reports/unfavorite/';
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            $currentRow = $elem.closest('tr');
+            reportId = $currentRow.attr('id');
+
+            favoriteUrl = favoriteUrl + reportId;
+
+            dataService.getData(favoriteUrl, {}, function (response) {
+                if (response.success) {
+                    $elem.removeClass('icon-star2');
+                    $elem.removeClass('allreadyFav');
+                    $elem.addClass('icon-star');
+                    $elem.addClass('favoriteRow');
+
+                    App.render({
+                        type   : 'notify',
+                        message: response.success
+                    });
+                } else {
+                    App.render({
+                        type   : 'error',
+                        message: response.error
+                    });
+                }
+            }, this);
+        },
+
+        renderChildElements: function (e) {
+            var allMainLi = this.$el.find('.reportsList').find('li');
+            var $target = e ? $(e.target) : allMainLi.first();
+            var id = $target.closest('li').attr('id');
+
+            allMainLi.removeClass('active');
+            $target.addClass('active');
+
+            this.$el.find('.childBlock').addClass('hidden');
+
+            this.$el.find('[data-id="' + id + '"]').removeClass('hidden');
+        },
+
+        showMoreContent: function (newModels) {
+            newModels = newModels.toJSON();
+
+            this.model = newModels.length ? newModels[0] : {};
 
             this.render();
         },
 
-        events: {
-            'click .mainSettings': 'chooseDetails'
-        },
-
-        selectMenuItem: function (url) {
-            var $rootElement = $('#submenuHolder').find('li.root');
-            var li;
-
-            $rootElement.find('li.opened').removeClass('opened');
-            $rootElement.find('ul.opened').removeClass('opened');
-            $rootElement.find('li.active').removeClass('active');
-            $rootElement.find('li.selected').removeClass('selected');
-
-            li = $rootElement.find('[href="' + url + '"]').closest('li');
-
-            li.addClass('selected');
-            li.closest('ul').closest('li').addClass('active opened');
-        },
-
-        chooseDetails: function (e) {
-            var $target = $(e.target);
-            var $parentDiv = $target.closest('.mainSettings');
-            var id = $parentDiv.attr('id');
-            var type = $parentDiv.attr('data-type');
-            var viewObject = this.views[id];
-            var View = viewObject.view;
-            var url = viewObject.redirectRef;
-            var options = viewObject.trigger ? {trigger: true} : {};
-
-            e.stopPropagation();
-            e.preventDefault();
-
-            Backbone.history.navigate(url, options);
-
-            $('#content-holder').html('');
-            $('#top-bar').hide();
-
-            if (View) {
-                this.selectMenuItem(url);
-                return new View({type: type});
-            }
-
-        },
-
         render: function () {
+            var $thisEl = this.$el;
+            var constantsReports = constants.reports;
+            var constantsTypesReport = constants.typesReports;
+            var $categoriesBlock;
+
             this.$el.html(this.template({
-                salesReports: {
-                    _id : 'salesReportsView',
-                    type: 'info_by_sales',
-                    name: 'Sales Reports',
-                    data: [
-                        {
-                            _id        : 'salesReportsView',
-                            type       : 'info_by_sales',
-                            name       : 'Sales by product',
-                            description: 'Monitor your amount of sold products on one page with ease'
-                        }, {
-                            _id        : 'salesReportsView',
-                            type       : 'month_sales',
-                            name       : 'Sales By Month',
-                            description: 'Analyze your growth by monthly sales and total revenue'
-                        },
-                        {
-                            _id        : 'salesReportsView',
-                            type       : 'channel_sales',
-                            name       : 'Sales By Channel',
-                            description: 'Know what sales channel brings the most profit for your company'
-                        }
-                    ]
-                },
-
-                inventoryReports: {
-                    _id : 'inventoryReportsView',
-                    type: 'low_stock',
-                    name: 'Inventory Reports',
-                    data: [{
-                        _id        : 'inventoryReportsView',
-                        type       : 'low_stock',
-                        name       : 'Low Stock',
-                        description: 'Control the level of each product on all your warehouses and locations'
-                    }, {
-                        _id        : 'inventoryReportsView',
-                        type       : 'incoming_stock',
-                        name       : 'Incoming Stock',
-                        description: 'See all goods you have already purchased and which will be shipped to you soon'
-                    }, {
-                        _id        : 'inventoryReportsView',
-                        type       : 'product_listing',
-                        name       : 'Product Listing',
-                        description: 'View sale orders for each sold unit from all your eCommerce channels'
-                    }]
-                },
-
-                stockInventory: {
-                    _id : 'stockInventory',
-                    type: 'stock_inventory',
-                    name: 'Stock Details',
-                    data: [{
-                        _id        : 'stockInventory',
-                        type       : 'stock_inventory',
-                        name       : 'Stock Details',
-                        description: 'Get real-time data for all products you have in-stock on your warehouses'
-                    }]
-                }
-                /*  crmReports: {
-                 _id : 'crmReports',
-                 type: 'leadsByResearcher',
-                 name: 'CRM Reports',
-                 data: [{
-                 _id : 'crmReports',
-                 type: 'leadsByResearcher',
-                 name: 'Leads By Manager'
-                 }, {
-                 _id : 'crmReports',
-                 type: 'leadsBySource',
-                 name: 'Leads By Source'
-                 }, {
-                 _id : 'crmReports',
-                 type: 'opportunityConversion',
-                 name: 'Opportunity Conversion'
-                 }, {
-                 _id : 'crmReports',
-                 type: 'opportunityAging',
-                 name: 'opportunityAging'
-                 }, {
-                 _id : 'crmReports',
-                 type: 'opportunities',
-                 name: 'Opportunities'
-                 }, {
-                 _id : 'crmReports',
-                 type: 'wonLost',
-                 name: 'Won / Lost'
-                 }, {
-                 _id : 'crmReports',
-                 type: 'salesByCountry',
-                 name: 'Sales By Country'
-                 }, {
-                 _id : 'crmReports',
-                 type: 'leadsByDate',
-                 name: 'Leads By Date'
-                 }, {
-                 _id : 'crmReports',
-                 type: 'leadsByNames',
-                 name: 'Leads By Names'
-                 }]
-                 }*/
+                moment              : moment,
+                model               : this.model,
+                constants           : Object.keys(constantsReports),
+                constantsTypesReport: constantsTypesReport
             }));
 
-            $('#top-bar').show();
+            $categoriesBlock = $thisEl.find('#variantsCategoriesBlock');
+            $categoriesBlock.removeClass('open');
+            $categoriesBlock.children('ul').hide();
+
+            this.renderChildElements();
+            this.renderReportCategories();
 
             return this;
         }

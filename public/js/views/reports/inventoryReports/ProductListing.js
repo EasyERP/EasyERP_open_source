@@ -10,7 +10,7 @@ define([
     'dataService',
     'moment',
     'helpers',
-    'mixins/listView',
+    'mixins/listView'
 ], function (Backbone, _, $, main, ProductListingTemplate, listTemplate, ListViewBase, DateFilterView, dataService, moment, helpers, listMixIn) {
     'use strict';
 
@@ -85,5 +85,4 @@ define([
 
     return ContentView;
 });
-
 

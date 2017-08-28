@@ -1,15 +1,18 @@
 <div class="_formWrap _enlargedItemMargin">
     <div class="_formBlock _equal">
         <div class="_formRow">
-            <label class="_animatedCheckbox">
-                <input id="isCustomer"
-                       type="checkbox" <%=(model && model.salesPurchases &&
-                model.salesPurchases.isCustomer) ? 'checked' : ''%> >
-                <span></span>
-            </label>
-            <label for="isCustomer">Is Customer</label>
+            <div class="_tipsWrap">
+                <label class="_animatedCheckbox">
+                    <input id="isCustomer"
+                           type="checkbox" <%=(model && model.salesPurchases &&
+                    model.salesPurchases.isCustomer) ? 'checked' : ''%> >
+                    <span></span>
+                </label>
+                <label for="isCustomer">Is Customer</label>
+                <span class="tips icon-info" data-id="isCustomer"></span>
+            </div>
         </div>
-        <div class="_animateSelectBox">
+        <div class="_animateSelectBox _withInfo">
             <span class="_selectTitle">Sales Team</span>
             <div class="_newSelectListWrap">
                 <a id="departmentDd"
@@ -18,9 +21,10 @@
                     model.salesPurchases.salesTeam) ? model.salesPurchases.salesTeam.departmentName : 'Select Team'%>
                 </a>
             </div>
+            <span class="tips icon-info" data-id="departmentDd"></span>
         </div>
-        <div class="_animateSelectBox">
-            <span class="_selectTitle">Sales Person</span>
+        <div class="_animateSelectBox _withInfo">
+            <span class="_selectTitle">Salesperson</span>
             <div class="_newSelectListWrap">
                 <a id="employeesDd"
                    class="current-selected"
@@ -28,8 +32,9 @@
                     model.salesPurchases.salesPerson) ? model.salesPurchases.salesPerson.fullName : 'Select Person'%>
                 </a>
             </div>
+            <span class="tips icon-info" data-id="employeesDd"></span>
         </div>
-        <div class="_animateSelectBox">
+        <div class="_animateSelectBox _withInfo">
             <span class="_selectTitle">Implemented By</span>
             <div class="_newSelectListWrap">
                 <a id="implementedBy"
@@ -38,19 +43,23 @@
                     model.salesPurchases.implementedBy) ? model.salesPurchases.implementedBy.fullName : 'Select implementer'%>
                 </a>
             </div>
+            <span class="tips icon-info" data-id="implementedBy"></span>
         </div>
     </div>
     <div class="_formBlock _equal">
         <div class="_formRow">
-            <label class="_animatedCheckbox">
-                <input id="isSupplier"
-                       type="checkbox" <%=(model && model.salesPurchases &&
-                model.salesPurchases.isSupplier) ? 'checked' : ''%> >
-                <span></span>
-            </label>
-            <label for="isSupplier">Is Supplier</label>
+            <div class="_tipsWrap">
+                <label class="_animatedCheckbox">
+                    <input id="isSupplier"
+                           type="checkbox" <%=(model && model.salesPurchases &&
+                    model.salesPurchases.isSupplier) ? 'checked' : ''%> >
+                    <span></span>
+                </label>
+                <label for="isSupplier">Is Supplier</label>
+                <span class="tips icon-info" data-id="isSupplier"></span>
+            </div>
         </div>
-        <div class="_animateInputBox">
+        <div class="_animateInputBox _withInfo">
             <input type="text"
                    class="_animate"
                    id="reference"
@@ -58,6 +67,7 @@
                    value="<%=model.salesPurchases.reference%>"
                    required/>
             <label class="_animate">Reference</label>
+            <span class="tips icon-info" data-id="reference"></span>
         </div>
         <div class="_animateSelectBox">
             <span class="_selectTitle">Language</span>

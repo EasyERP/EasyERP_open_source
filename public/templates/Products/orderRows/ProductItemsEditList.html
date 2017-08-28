@@ -1,15 +1,4 @@
-<div class="_editAllocateAll">
-    <%if (!notEditable && forSales) {%>
-    <span class="btn slim <%=model && model.shippingExpenses && model.shippingExpenses.amount ? 'disabled' : ''%>" id="selectShippingMethod">Add Shipping Method</span>
-    <span class="btn slim" id="allocateAll">Allocate all</span>
-    <span class="btn slim" id="unallocateAll">Unallocate All</span>
-    <%}%>
-    <% if(model.orderDate && model.workflow && model.workflow.status !== 'Done'){ %>
-    <span class="btn slim" id="resetPrices">Reset Prices</span>
-    <%}%>
-</div>
-
-<table class="list tableFixed _invoiceTable forSCU">
+<table class="_productTable">
     <colgroup>
         <%if (expense){%>
         <col width="180px">

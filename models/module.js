@@ -10,7 +10,8 @@ module.exports = (function () {
         parrent  : Number,
         sequence : Number,
         link     : Boolean,
-        visible  : Boolean
+        visible  : Boolean,
+        single   : {type: Boolean, default: false}
     }, {collection: 'modules'});
 
     mongoose.model('modules', moduleSchema);

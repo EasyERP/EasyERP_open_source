@@ -133,6 +133,50 @@ module.exports = function (models) {
                 callback(null, query);
             });
         };
+
+        this.create = function (options, callback) {
+            var PaymentMethod;
+            var paymentMethod;
+            var dbName;
+            var body;
+            var err;
+
+            if (typeof options === 'function') {
+                callback = options;
+                options = {};
+            }
+
+            if (typeof callback !== 'function') {
+                callback = function () {
+                    return false;
+                };
+            }
+
+            dbName = options.dbName;
+            body = options.body;
+
+            delete options.dbName;
+            delete options.body;
+
+            if (!dbName || !body) {
+                err = new Error('Invalid input parameters');
+                err.status = 400;
+
+                return callback(err);
+            }
+
+            PaymentMethod = models.get(dbName, 'PaymentMethod', PaymentMethodSchema);
+
+            paymentMethod = new PaymentMethod(body);
+
+            paymentMethod.save(function (err, result) {
+                if (err) {
+                    return callback(err);
+                }
+
+                callback(null, result);
+            });
+        };
     };
 };
 

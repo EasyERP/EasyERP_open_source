@@ -7,7 +7,6 @@
     };
     var redis = require('redis');
     var client = redis.createClient(config.port, config.host, {});
-    var async = require('async');
 
     client.select(config.db, function (err) {
         if (err) {
@@ -30,11 +29,16 @@
     }
 
     function hSetNXToStorage(name, key, value, callback) {
+        callback = callback || function () {
+            };
+
         return client.hsetnx(name, key, value, callback);
     }
 
     function readFromStorage(name, key, callback) {
-        return client.hget(name, key, function (err, value) {
+        callback = callback || function () {
+            };
+        client.hget(name, key, function (err, value) {
             if (err) {
                 callback(err);
             } else {

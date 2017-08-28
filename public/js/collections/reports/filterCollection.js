@@ -1,55 +1,31 @@
 define([
     'Backbone',
-    'models/ratesModel',
     'collections/parent',
-    'helpers/getDateHelper',
-    'constants',
-    'moment'
-], function (Backbone, PaymentModel, Parent, DateHelper, CONSTANTS, moment) {
-    var Collection = Parent.extend({
-        model: PaymentModel,
+    'models/CustomReportsModel',
+    'constants'
+], function (Backbone, Parent, Model, CONSTANTS) {
+    'use strict';
+
+    var CustomReportsCollection = Parent.extend({
+        model   : Model,
+        url     : CONSTANTS.URLS.REPORTS,
+        pageSize: CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE,
 
         initialize: function (options) {
-            var page;
-            var dateRange;
 
-            function _errorHandler(models, xhr) {
+            function _errHandler(models, xhr) {
                 if (xhr.status === 401) {
                     Backbone.history.navigate('#login', {trigger: true});
                 }
             }
 
             options = options || {};
-            page = options.page;
-            options.error = options.error || _errorHandler;
-
-            dateRange = DateHelper.getDate('thisMonth');
-
-            this.startDate = new Date(dateRange[0]);
-            this.endDate = new Date(dateRange[1]);
-
-            options.filter = {};
-
-            options.filter.date = {
-                value: [this.startDate, this.endDate]
-            };
-
-            this.contentType = options.contentType;
-
+            options.error = options.error || _errHandler;
             this.startTime = new Date();
-
-            if (options.url) {
-                this.url = options.url;
-            }
-
-            options.reset = true;
-
-            if (page) {
-                return this.getPage(page, options);
-            }
 
             this.getFirstPage(options);
         }
     });
-    return Collection;
+
+    return CustomReportsCollection;
 });

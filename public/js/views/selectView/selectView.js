@@ -11,7 +11,7 @@ define([
         template       : _.template(selectTemplate),
         contentTemplate: _.template(selectContent),
         className      : 'newSelectList',
-        events: {
+        events         : {
             'click li.miniStylePagination'                     : 'notHide',
             'click li.miniStylePagination .next:not(.disabled)': 'nextSelect',
             'click li.miniStylePagination .prev:not(.disabled)': 'prevSelect',
@@ -74,9 +74,13 @@ define([
             this.responseObj = options.responseObj || [];
             this.e = options.e;
 
-            $target = $(this.e.target);
+            $target = $(this.e.target).closest('.current-selected');
 
-            this.attr = $target.attr('id');
+          if (!$target || !$target.length){
+            $target =  $(this.e.target);
+          }
+
+            this.attr = $target.attr('id') || $target.attr('data-content');
             data = this.responseObj['#' + this.attr];
 
             if (!data || !data.length && ($target.attr('data-content') || $target.parent().attr('data-content'))) {
@@ -84,9 +88,8 @@ define([
                 data = this.responseObj['#' + this.attr];
             }
 
-            if (data && data[0] && data[0].name === 'Select') {
-                select = data.shift();
-            } else {
+            if (data && data[0] && data[0].name !== 'Select') {
+
                 select = _.find(data, function (item) {
                     return item.name === 'CREATE NEW';
                 });
@@ -97,8 +100,6 @@ define([
                     });
                 }
             }
-
-
 
             this.collection = new FilterCollection(data);
             this.filteredCollection = new FilterCollection(data);
