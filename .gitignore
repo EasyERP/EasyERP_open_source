@@ -81,3 +81,4 @@ exportFiles/
 /images/
 /customImages/
 !/public/js/libs/inboundrocket-tracking.min.js
+!/customImages/
