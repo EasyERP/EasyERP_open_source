@@ -1,0 +1,7 @@
+<%data.forEach(function(d){%>
+<tr data-id="<%=isCreate ? null : d.component._id%>" class="productItem">
+    <td data-id="<%=d.component._id%>" class="productsDd text-left"><%=d.component.name + ' ('+ d.component.info.SKU + ')'%></td>
+    <td data-name="availabilityQuantity"><span><%=d.onHand%></span></td>
+    <td data-name="quantity"><span><%=d.quantity * quantity%></span></td>
+</tr>
+<%});%>

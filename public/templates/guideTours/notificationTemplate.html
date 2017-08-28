@@ -1,0 +1,23 @@
+<div class="guide-notify" data-guideGroup="<%= activeGuide %>">
+    <div class="arrow"></div>
+    <span id="closeGuide1" class="closeBtn"></span>
+    <div class="flex">
+        <h3 class="guide-notify-title"><%=data.title%></h3>
+        <div class="guide-notify-description"><%=data.message%></div>
+        <% if(!data.isError){ %>
+        <div class="btn-block">
+            <%if(step)%>
+            <%if (!data.hidePrevButton) {%>
+            <button class="guideStep prev btn blue slim guideAction" data-guideGroup="<%= activeGuide %>" data-counter="<%=index%>" data-step="<%=step-1%>">
+                <span class="icon icon-arrow-left2"></span> <span>Back</span></button>
+            <%}%>
+            <%if(!limit){%>
+            <button class="guideStep next btn blue slim guideAction"  data-guideGroup="<%= activeGuide %>" data-counter="<%=index%>" data-step="<%=step+1%>">
+                <span>Next</span> <span class="icon icon-arrow-right2"></span></button>
+            <%}else{%>
+            <button id="endGuide" class="btn  blue slim end guideAction"><span>End</span> <span>Tour</span></button>
+            <%}%>
+        </div>
+        <%}%>
+    </div>
+</div>

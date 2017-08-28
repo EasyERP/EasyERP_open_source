@@ -1,0 +1,13 @@
+<% workCentersCollection.forEach(function(workCenter, index){ %>
+<tr data-id="<%=workCenter._id%>">
+    <td class="notForm">
+        <label class="_customCHeckbox">
+            <input type="checkbox" value="<%=workCenter._id%>" class="checkbox"/>
+            <span></span>
+        </label>
+    </td>
+    <td><%= workCenter.name%></td>
+    <td><%= workCenter.code%></td>
+    <td><%= (workCenter.costPerHour / 100).toFixed(2)%></td>
+</tr>
+<%})%>

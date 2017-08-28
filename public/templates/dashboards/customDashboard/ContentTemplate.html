@@ -1,0 +1,25 @@
+<%if (guideTours){%>
+<div class="withGuideTour-holder">
+    <div id="withGuideTour" class="withGuideTour">
+        <div class="_customDashboard _chartPlace disabled" id="chartPlace">
+            <div class="_customDashboardActions">
+                <span class="btn" id="changeCharts">Change Date In All Charts</span>
+                <div id="dateFilterMain" class="vocationFilter _filterDropDownWrap"></div>
+                <span id="saveBtn" class="btn" style="display: none;">Save Dates</span>
+            </div>
+            <ul id="grid" class="_customDashboardGrid"></ul>
+
+        </div>
+    </div>
+    <div class="guideTour"></div>
+</div>
+<% } else {%>
+<div class="_customDashboard _chartPlace disabled" id="chartPlace">
+    <div class="_customDashboardActions">
+        <span class="btn" id="changeCharts">Change Date In All Charts</span>
+        <div id="dateFilterMain" class="vocationFilter _filterDropDownWrap"></div>
+        <span id="saveBtn" class="btn" style="display: none;">Save Dates</span>
+    </div>
+    <ul id="grid" class="_customDashboardGrid"></ul>
+</div>
+<%}%>

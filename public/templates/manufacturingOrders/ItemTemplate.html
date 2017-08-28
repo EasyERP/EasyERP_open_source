@@ -1,0 +1,113 @@
+<div class="form-holder _newForm ui-dialog-content ui-widget-content" id="ui-id-10"
+     style="display: block; width: auto; min-height: 99px; max-height: none; height: auto;">
+    <form method="post" action="" class="_leadForm" id="leadForm">
+        <h4 class="_dialogTitlePositioned"><%=data.name%></h4>
+        <div class="_formWrap _enlargedItemMargin">
+            <div class="_formBlock">
+                <div class="_animateSelectBox _withInfo">
+                    <span class="_selectTitle">Product</span>
+                    <div>
+                        <span id="productsDd"><%=data.product.name%></span>
+                    </div>
+                    <span class="tips icon-info" data-id="productsDd"></span>
+                </div>
+                <div class="_animateSelectBox _withInfo">
+                    <span class="_selectTitle">Bill Of Material</span>
+                    <div>
+                        <span id="billOfMaterial"><%=data.billOfMaterial ? data.billOfMaterial.name : 'none'%></span>
+                    </div>
+                    <span class="tips icon-info" data-id="billOfMaterial"></span>
+                </div>
+                <div class="_animateSelectBox _withInfo">
+                    <span class="_selectTitle">Routing</span>
+                    <div>
+                        <span class="" id="routing"><%=data.routing.name%></span>
+                    </div>
+                </div>
+                <div class="_animateSelectBox _withInfo">
+                    <span class="_selectTitle">Deadline Start</span>
+                    <div>
+                        <span class="" id="deadlineStart"><%=data.deadlineStart%></span>
+                    </div>
+                </div>
+                <div class="_animateSelectBox _withInfo">
+                    <span class="_selectTitle">Responsible</span>
+                    <div>
+                        <span id="responsible"><%= data.responsible ? data.responsible.name : 'none' %></span>
+                    </div>
+                    <span class="tips icon-info" data-id="responsible"></span>
+                </div>
+                <div class="_animateSelectBox _withInfo">
+                    <span class="_selectTitle">Source</span>
+                    <div>
+                        <span id="source"><%= data.source ? data.source.name : 'none' %></span>
+                    </div>
+                    <span class="tips icon-info" data-id="source"></span>
+                </div>
+                <div class="_animateSelectBox _withInfo">
+                    <span class="_selectTitle">Warehouse</span>
+                    <div>
+                        <span id="warehouseDd"><%= data.warehouse ? data.warehouse.name : 'none' %></span>
+                    </div>
+                    <span class="tips icon-info" data-id="warehouseDd"></span>
+                </div>
+                <div class="_animateSelectBox _withInfo">
+                    <span class="_selectTitle">Quantity To Produce</span>
+                    <div>
+                        <span id="quantityToProduce"><%= data.quantityToProduce%></span>
+                    </div>
+                    <span class="tips icon-info" data-id="quantityToProduce"></span>
+
+                </div>
+            </div>
+        </div>
+        <div class="_formWrap">
+            <div class="_formBlock counterWrap">
+                <ul class="dialog-tabs">
+                    <li><a href="javascript:;" class="active">Consumed Materials</a></li>
+                   <!-- <li><a href="javascript:;">Finished Products</a></li>
+                    <li><a href="javascript:;">Miscellaneous</a></li>-->
+                </ul>
+                <div class="dialog-tabs-items">
+                    <div class="dialog-tabs-item active">
+                        <div class="_formWrap _enlargedItemMargin">
+                            <div class="_formBlock">
+                                <div class=" customScroll">
+                                    <table class="list stripedList">
+                                        <colgroup>
+                                            <col width="34%">
+                                            <col width="33%">
+                                            <col width="33%">
+                                        </colgroup>
+                                        <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Quantity Available</th>
+                                            <th>To Consume</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="consumedContainer"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dialog-tabs-item">
+                        <div class="_formWrap _enlargedItemMargin">
+                            <div class="_formBlock">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dialog-tabs-item">
+                        <div class="_formWrap _enlargedItemMargin">
+                            <div class="_formBlock">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

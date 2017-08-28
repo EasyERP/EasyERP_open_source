@@ -1,0 +1,13 @@
+<% collection.forEach(function(workCenter, index){ %>
+<tr data-id="<%=workCenter._id%>">
+    <td class="notForm">
+        <label class="_customCHeckbox">
+            <input type="checkbox" value="<%=workCenter._id%>" class="checkbox"/>
+            <span></span>
+        </label>
+    </td>
+    <td><%= workCenter.name%></td>
+    <td><%= workCenter.createdBy ? workCenter.createdBy.date + ' (' + (workCenter.createdBy.user ? workCenter.createdBy.user.login: '') + ')' : ''%>
+    </td>
+</tr>
+<%})%>

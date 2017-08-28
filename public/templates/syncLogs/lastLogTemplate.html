@@ -1,0 +1,104 @@
+<!--
+icons classes:
+syncComplete-true
+syncComplete-false
+syncCritical-true
+syncCritical-false
+syncSuccess1 - success
+syncSuccess2 - unlink
+syncSuccess3 - conflict
+-->
+<div class="syncLog lastSyncLog">
+    <h3><%=channel.channelName%> SyncLog:</h3>
+    <div class="syncLogContent">
+        <div class="toggleEl">
+            <span class="title">Imports (<%=keys.imports.length%>)</span>
+            <div class="toggledContainer hidden">
+                <span class="title"><%keys.imports.forEach(function(log){%></span>
+                <div class="toggleEl">
+                    <div class="logOverview">
+                        <span class="title"><%=log.toUpperCase()%></span>
+                        <div class="statusBar">
+                            <span>Conflicted <%=imports[log].conflicted%></span>
+                            <span>Unlincked <%=imports[log].unlinked%></span>
+                            <span>Succeed <%=imports[log].succeed%></span>
+                        </div>
+                    </div>
+                    <span class="syncComplete-<%=imports[log].isComplete%>"></span>
+                    <div class="toggledContainer hidden">
+                        <div class="toggleEl">
+                            <span class="title">+ Errors</span>
+                            <div class="toggledContainer hidden">
+                                <%imports[log].errors && imports[log].errors.forEach(function(e){%>
+                                <div data-entityId="<%=e.entityId%>">
+                                    <span><%=e.message%></span>
+                                    <span><%=e.entityDescription%></span>
+                                    <span class="syncCritical-<%=e.isCritical%>"></span>
+                                </div>
+                                <% });%>
+                            </div>
+                        </div>
+                        <div class="toggleEl">+ Data
+                            <div class="toggledContainer hidden">
+                                <span class="title"><%imports[log].data && imports[log].data.forEach(function(d){%></span>
+                                <div data-entityId="<%=d.entityId%>">
+                                    <span><%=d.message%></span>
+                                    <span><%=d.entityDescription%></span>
+                                    <span class="syncSuccess<%=d.status%>"></span>
+                                </div>
+                                <% });%>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <%});%>
+            </div>
+        </div>
+        <div class="toggleEl">
+            <span class="title">Exports (<%=keys.exports.length%>)</span>
+            <div class="toggledContainer hidden">
+                <%keys.exports.forEach(function(log){%>
+                <div class="toggleEl">
+                    <div class="logOverview">
+                        <span class="title"><%=log.toUpperCase()%></span>
+                        <div class="statusBar">
+                            <span>Conflicted <%=exports[log].conflicted%></span>
+                            <span>Unlincked <%=exports[log].unlinked%></span>
+                            <span>Succeed <%=exports[log].succeed%></span>
+                        </div>
+                    </div>
+
+                    <span class="syncComplete-<%=exports[log].isComplete%>"></span>
+                    <div class="toggledContainer hidden">
+                        <div class="toggleEl">
+                            <span class="title"> + Errors</span>
+                            <div class="toggledContainer hidden">
+                                <span class="title"><%exports[log].errors && exports[log].errors.forEach(function(e){%></span>
+                                <div data-entityId="<%=e.entityId%>">
+                                    <span><%=e.message%></span>
+                                    <span><%=e.entityDescription%></span>
+                                    <span class="syncCritical-<%=e.isCritical%>"></span>
+                                </div>
+                                <% });%>
+                            </div>
+                        </div>
+                        <div class="toggleEl">
+                            <span class="title">+ Data </span>
+                            <div class="toggledContainer hidden">
+                                <span class="title"><%exports[log].data && exports[log].data.forEach(function(d){%></span>
+                                <div data-entityId="<%=d.entityId%>">
+                                    <span><%=d.message%></span>
+                                    <span><%=d.entityDescription%></span>
+                                    <span class="syncSuccess<%=d.status%>"></span>
+                                </div>
+                                <% });%>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <%});%>
+            </div>
+        </div>
+    </div>
+
+</div>

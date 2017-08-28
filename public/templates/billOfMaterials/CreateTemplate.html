@@ -1,0 +1,85 @@
+<div class="form-holder _newForm">
+    <form method="post" id="billOfMaterialsForm">
+        <h3 class="_dialogMainTitle">Add new Bill Of Materials</h3>
+        <div class="_formWrap">
+            <div class="_formBlock _equal">
+
+                <div class="_animateSelectBox _withInfo">
+                    <span class="_selectTitle">Product</span>
+                    <div class="_newSelectListWrap">
+                        <a href="javascript:;"
+                           class="current-selected"
+                           id="product">Select Product</a>
+                    </div>
+                </div>
+
+                <div class="_animateSelectBox _withInfo">
+                    <span class="_selectTitle">Routing</span>
+                    <div class="_newSelectListWrap">
+                        <a href="javascript:;"
+                           class="current-selected"
+                           id="routing">Select Routing</a>
+                    </div>
+                </div>
+
+                <div class="_formRow _tipsWrap _forCheckBox _checkboxList">
+                    <label>BoM Type:</label>
+
+                    <label class="_animatedCheckbox">
+                        <input id="componentType"
+                               class="checkbox"
+                               name="BoMType"
+                               data-type="true"
+                               type="radio">
+                        <span></span>
+                    </label>
+                    <label for="componentType">Ship as a Component</label>
+
+                    <label class="_animatedCheckbox _withInfo">
+                        <input id="productType"
+                               class="bomType"
+                               name="BoMType"
+                               data-type="false"
+                               type="radio" checked>
+                        <span></span>
+                    </label>
+                    <label for="productType">Manufacture this product</label>
+                </div>
+                <div></div>
+            </div>
+
+            <div class="_formBlock _equal">
+                <div class="_animateInputBox">
+                    <input type="text"
+                           class="_animate forNum"
+                           id="quantity"
+                           name="quantity"
+                           maxlength="60"
+                           value="1"
+                           required />
+                    <label class="_animate">Quantity</label>
+                </div>
+
+                <div class="counterWrap">
+
+                    <div class="jobsWescWrap">
+                        <textarea class="_animate"
+                                  id="description"
+                                  maxlength="500"
+                                  required placeholder="Description"></textarea>
+                    </div>
+                    <div class="counter-wrap">
+                        <span class="counter-label">Characters left:</span>
+                        <span class="counter-value" id="counterValue">500</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="_formWrap">
+            <div class="_formBlock">
+                <div id="productItemsHolder"></div>
+            </div>
+        </div>
+    </form>
+</div>

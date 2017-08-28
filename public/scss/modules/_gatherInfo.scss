@@ -1,0 +1,69 @@
+#gatherView {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  opacity: 1;
+  background: #fff;
+  transition: all .5s ease;
+  z-index: 1000;
+
+  &.unShowen {
+    opacity: 0;
+  }
+}
+
+
+.gatherContent {
+  @extend .loginContent;
+}
+
+.gatherInfoContainer {
+  @extend .loginContainer;
+  height: auto;
+}
+
+.gatherInfoBlock {
+
+  .title {
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .input-group {
+    position: relative;
+    margin-bottom: 10px;
+
+    input {
+      width: 100%;
+      border: 1px solid #cccfdb;
+      box-shadow: none;
+      padding: 9px 16px 8px;
+      height: 40px;
+
+      &:focus {
+        border-color: #00b7db;
+      }
+    }
+  }
+
+  button {
+    width: 100%;
+    height: 38px;
+    border: none;
+
+    &.gatherSubmitBtn {
+      margin-top: 15px;
+      padding: 10px 12px 8px;
+      border-radius: 0;
+      line-height: 18px;
+      font-size: 14px;
+      color: #fff;
+      text-transform: uppercase;
+    }
+  }
+}
+
+//#us_report_button {
+//  display: none;
+//}

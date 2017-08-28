@@ -1,0 +1,93 @@
+<div class="form-holder">
+
+    <form method="post" action="" class="form" id="invoiceForm">
+        <fieldset>
+            <% if(!model.approved){%>
+            <span class="btn blue btnSave saveBtn">Save</span>
+            <%}%>
+            <%var className = notEditable ? '' : 'current-selected';%>
+            <div class="_formWrap _enlargedItemMargin">
+                <div class="_formBlock _equal">
+                    <div class="_animateSelectBox">
+                        <span class="_selectTitle">Supplier</span>
+                        <div class="_newSelectListWrap">
+                            <a id="supplier"
+                               class="current-selected <%=className%>"
+                               data-id="<%=(model.supplier)? model.supplier._id:''%>"
+                               href="javascript:;">
+                                <%=(model.supplier && model.supplier.name)?model.supplier.name.first + ' ' +
+                                model.supplier.name.last:"None"%>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="_animateInputBox">
+                        <span class="_staticLabel">Invoice Number</span>
+                        <input id="supplier_invoice_num"
+                               class="_animate"
+                               value="<%= model.name || '' %>"
+                        <%= notEditable ? 'readonly': '' %>
+                        required/>
+                    </div>
+                </div>
+                <div class="_formBlock _equal">
+                    <div class="_animateInputBox">
+                        <span class="_staticLabel">Invoice Date</span>
+                        <input type="text"
+                               id="invoice_date"
+                               value="<%=(model.invoiceDate) ? model.invoiceDate : ''%>"
+                               maxlength="32"
+                               class="_animate"
+                               placeholder="Invoice Date"
+                               required
+                               readonly/>
+                    </div>
+                    <div class="_animateInputBox">
+                        <span class="_staticLabel">Due Date</span>
+                        <input type="text"
+                               class="date _animate
+                                        <% if (!model.dueDate) {%>
+                                            errorContent"
+                        <% } else { %>
+                        "
+                        <% } %>
+                        id="due_date" value="<%=(model.dueDate) ? model.dueDate : ''%>"
+                        maxlength="32"
+                        placeholder="Due Date"
+                        required
+                        readonly/>
+                    </div>
+                    <div class="_animateSelectBox">
+                        <span class="_selectTitle">Currency</span>
+                        <div class="_newSelectListWrap">
+                            <a id="currencyDd"
+                               class="current-selected <%=className%>"
+                               data-id="<%= model.currency._id ? model.currency._id._id : 'null' %>"
+                               href="javascript:;">
+                                <%= model.currency._id ? model.currency._id.name : '' %>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="_animateSelectBox">
+                        <span class="_selectTitle">Expenses Category</span>
+                        <div class="_newSelectListWrap">
+
+<!--
+                            <div style="display: inline-block" class="<%=model.parent ? model.parent.name : 'Select'%>"></div>
+-->
+
+                            <a id="categories"
+                               class="current-selected"
+                               href="javascript:;">
+                                <%=model.parent ? model.parent.name : 'Select'%>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="_formBlock">
+                <div id="invoiceItemsHolder" class="_formBlock"></div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+

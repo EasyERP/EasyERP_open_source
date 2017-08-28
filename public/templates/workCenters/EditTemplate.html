@@ -1,0 +1,62 @@
+<div class="form-holder _newForm productForm workCenterEdit">
+    <form method="post" action="" id="createEmployeeForm" class="form">
+        <h4 class="_dialogMainTitle">Edit Work Center</h4>
+
+        <div class="dialog-tabs-items mainTabs">
+            <div class="dialog-tabs-item mainTabs active">
+                <div class="_formWrap _enlargedItemMargin">
+                    <div class="_formBlock _equal">
+                        <div class="_animateInputBox _withInfo">
+                            <input type="text"
+                                   class="_animate"
+                                   id="name"
+                                   autofocus
+                                   required
+                                   maxlength="32"
+                                   value="<%=model.name%>"
+                            />
+                            <label class="_animate">Work Center Name</label>
+                            <span></span>
+                        </div>
+                        <div class="_formRow _tipsWrap">
+                            <input type="text"
+                                   class="_animate"
+                                   id="code"
+                                   autofocus
+                                   required
+                                   value="<%=model.code%>"
+
+                                   maxlength="32"/>
+                            <label class="_animate">Code</label>
+                            <span></span>
+                        </div>
+                        <div class="_animateInputBox _withInfo">
+                            <input type="text"
+                                   class="_animate"
+                                   id="description"
+                                   autofocus
+                                   required
+                                   value="<%=model.description%>"
+
+                                   maxlength="32"/>
+                            <label class="_animate">Description</label>
+                            <span></span>
+                        </div>
+                        <div class="_animateInputBox _withInfo">
+                            <input type="text"
+                                   class="_animate forNum"
+                                   id="costPerHour"
+                                   autofocus
+                                   required
+                                   value="<%=(model.costPerHour / 100).toFixed(2) || 0 %>"
+                                   maxlength="32"/>
+                            <label class="_animate">Cost per hour</label>
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+

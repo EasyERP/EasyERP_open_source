@@ -39,7 +39,7 @@ var Categories = function (models, event) {
         AccountsCategory
             .find({})
             .populate('parent', 'name')
-            .sort({'nestingLevel': 1})
+            .sort({nestingLevel: 1})
             .exec(function (err, result) {
                 if (err) {
                     return next(err);
@@ -55,7 +55,7 @@ var Categories = function (models, event) {
         AccountsCategory
             .find()
             .populate('parent', 'name')
-            .sort({'nestingLevel': 1})
+            .sort({nestingLevel: 1})
             .exec(function (err, result) {
                 if (err) {
                     return next(err);

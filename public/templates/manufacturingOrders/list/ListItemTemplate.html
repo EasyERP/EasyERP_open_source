@@ -1,0 +1,36 @@
+<%data.forEach(function(d){ console.log(d);%>
+<% var allocateStatus = d.status ? d.status.allocateStatus : 'NOT' %>
+<% var fulfillStatus = d.status ? d.status.fulfillStatus : 'NOT' %>
+<% var shippingStatus = d.status ? d.status.shippingStatus : 'NOT' %>
+<tr data-id="<%=d._id%>">
+    <td class="notForm centerCell">
+        <label class="_customCHeckbox">
+            <input type="checkbox" value="<%=d._id%>"
+            <% if (!d.removable) { %>
+            class="checkbox notRemovable" disabled='disabled'
+            <% } else {%>
+            class="checkbox"
+            <% } %>
+            />
+            <span></span>
+        </label>
+    </td>
+    >
+    <td><%=d.name%></td>
+    <td><%=d.deadlineStart%></td>
+    <td><%=d.product.name%></td>
+    <td><%=d.quantity%></td>
+    <td class="centerCell _statusOrders smallPadding">
+        <span title="Allocated" class="_allocationed <%=allocateStatus === 'NOA' ? 'icon-checked yellow' : allocateStatus === 'ALL' ? 'icon-checked green' : '_notDid'%>"></span>
+    </td>
+    <td class="centerCell _statusOrders smallPadding">
+        <span title="Fulfilled" class="icon-box <%=fulfillStatus === 'NOA' ? 'yellow' : fulfillStatus === 'ALL' ? 'green' : 'red'%> _fullfilled"></span>
+    </td>
+    <td class="centerCell _statusOrders smallPadding">
+        <span title="Shipped"  class="icon-cargo <%=shippingStatus === 'NOA' ? 'yellow' : shippingStatus === 'ALL' ? 'green' : 'red'%> _shipped"></span>
+    </td>
+    <td><%=d.routing ? d.routing.name : '-'%></td>
+    <td><%=d.source ? d.source.name : '-' %></td>
+    <td class="smallPadding status_Order"><%=d.workflow.name%></td>
+</tr>
+<%});%>

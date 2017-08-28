@@ -40,7 +40,6 @@ module.exports = (function () {
     require('./quotation.js');
     require('./relatedStatus.js');
     require('./source.js');
-    require('./saas.js');
     require('./salary.js');
     require('./salaryCash.js');
     require('./task.js');

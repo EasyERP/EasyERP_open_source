@@ -1,0 +1,25 @@
+<% collection.forEach(function(dashboard, index){ %>
+<tr data-id="<%=dashboard._id%>">
+    <td class="notForm centerCell">
+        <label class="_customCHeckbox">
+            <input type="checkbox"
+                   value="<%=dashboard._id%>"
+                   class="checkbox listCB"/>
+            <span></span>
+        </label>
+    </td>
+    <td class="dashboardName editable"
+        id="<%=dashboard._id%>">
+        <span class="blue"><%=dashboard.name%></span>
+    </td>
+    <td class="dashboardName">
+        <span class="blue"><%=dashboard.description%></span>
+    </td>
+    <td class="size"
+        data-y="<%=dashboard.rows%>"
+        data-x="<%=dashboard.columns%>">
+        <span class="blue"><%=dashboard.rows + 'x' + dashboard.columns%></span>
+    </td>
+    <td><%=dashboard.created%></td>
+</tr>
+<% }) %>

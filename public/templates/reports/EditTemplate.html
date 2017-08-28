@@ -1,0 +1,61 @@
+<div class="form-holder _newForm">
+    <form method="post" action="" id="leadForm">
+        <h4 class="_dialogMainTitle"><%=copyReport ? 'Copy' : 'Edit'%> Reports</h4>
+        <div class="_formWrap">
+            <div class="_formBlock _equal">
+                <div id="dateFilter" class="vocationFilter _filterDropDownWrap"></div>
+                <div class="_animateInputBox">
+                    <input type="text"
+                           name="nameReport"
+                           class="_animate"
+                           id="nameReport"
+                           value="<%= model.name %>"
+                           autofocus
+                           required
+                           maxlength="32"/>
+                    <label class="_animate">Name Report</label>
+                </div>
+                <div class="_animateTextareaBox counterWrap">
+                    <textarea id="description" class="_animate" maxlength="200" required><%= model.description %></textarea>
+                    <label for="description" class="_animate">Description</label>
+                    <div class="counter-wrap">
+                        <span class="counter-label">Characters left:</span>
+                        <span class="counter-value" id="counterValue"><%= 200 - model.description.length %></span>
+                    </div>
+                </div>
+                <div class="_formRow noMargin">
+                    <label class="_animatedCheckbox">
+                        <input id="isPrivate"
+                               type="checkbox" <%= (!model.publicAccess) ? 'checked="checked"':''%>/>
+                        <span></span>
+                    </label>
+                    <label for="isPrivate" class="fontBold">Private</label>
+                </div>
+            </div>
+            <div class="_formBlock _equal">
+                <div class="_reportTabsWrap">
+                    <ul class="_reportTabsList">
+                        <% Object.keys(fields).forEach(function (report) { %>
+                        <li data-ids="<%= report %>"
+                            class="_tabItem <%= report === model.reportCategory ? 'active' : '' %>">
+                            <div class="_reportsBtn reportsBtn"
+                                 data-ids="<%= report %>"><%=
+                                typesReports[report] %>
+                                <span class="icon-arrow-right2"></span></div>
+                            <ul class="_reportsTabs reportsTabs <%= report %>">
+                                <% Object.keys(fields[report]).forEach(function (item, key) { %>
+                                <li class="_reportsTab reportsTab <%= item === model.reportType ? 'active' : '' %>"
+                                    id="<%= item %>">
+                                    <%= typesReports[item] %>
+                                </li>
+                                <% }) %>
+                            </ul>
+                        </li>
+                        <% }) %>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="_formWrap" id="previewForCreate"></div>
+    </form>
+</div>

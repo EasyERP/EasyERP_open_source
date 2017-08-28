@@ -1,0 +1,419 @@
+._statusOrderList {
+  .right {
+    .btn {
+      margin-right: 15px;
+      margin-bottom: 5px;
+    }
+  }
+
+  ._invoiced {
+    height: 26px;
+    line-height: 26px;
+    padding: 0 8px;
+    margin-top: 10px;
+    margin-bottom: 0;
+    background-color: #7eadcc;
+    font-size: 14px;
+    font-family: $semibold-font-family;
+    color: #fff;
+  }
+}
+
+._statusOrders {
+
+  > h3 {
+    height: 26px;
+    line-height: 26px;
+    padding: 0 5px;
+    margin-bottom: 0;
+    background-color: #e7e6e4;
+    font: {
+      size: 14px;
+      family: $semibold-font-family;
+    }
+    color: #364150;
+  }
+
+  ._workflowsDd {
+    display: inline-block;
+    height: 26px;
+    padding: 0 10px;
+    margin-right: 10px;
+    border: 1px solid gray;
+    line-height: 24px;
+  }
+  ._viewEntries {
+    display: inline-block;
+    height: 26px;
+    padding: 0 10px;
+    line-height: 24px;
+    text-align: center;
+  }
+}
+
+._tableOrderList,
+._tableChartList {
+  > .stripedList {
+    min-width: 1000px;
+
+    ._statusOrders {
+      span {
+        margin: 0;
+
+        &._notDid:before {
+          top: -2px;
+        }
+      }
+    }
+  }
+}
+
+._statusOrders {
+  line-height: 30px;
+
+  h3 {
+    padding: 5px;
+    border: 1px solid #fff;
+    border-radius: 5px;
+    background-color: #e7e6e4;
+  }
+
+  span {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 5px;
+    width: 18px;
+    height: 18px;
+    text-align: center;
+    border-radius: 50%;
+
+    &._allocationed  {
+      color: #fff !important;
+      font-size: 15px;
+    }
+
+    &.icon-checked2 {
+      line-height: 16px;
+    }
+
+    &._fullfilled,
+    &._shipped {
+      background-color: transparent !important;
+      font-size: 15px;
+    }
+
+    &._shipped {
+      font-size: 15px;
+    }
+
+    &._notDid {
+      background-color: red;
+      font-size: 14px;
+
+      &:before {
+        content: '\e92a';
+        color: #fff;
+        font-family: $icon-font;
+      }
+    }
+  }
+
+  ._workflowsDd {
+    display: inline-block;
+    border: 1px solid gray;
+    padding: 5px;
+    line-height: 18px;
+    vertical-align: bottom;
+    margin: 4px 0 0 10px;
+  }
+}
+
+._statusOrders,
+._statusIndicators {
+
+  > span {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin: 0 5px;
+    text-align: center;
+    border-radius: 50%;
+
+    &._allocationed  {
+      color: #fff !important;
+      font-size: 15px;
+    }
+
+    &._fullfilled,
+    &._shipped {
+      background-color: transparent !important;
+      font-size: 15px;
+    }
+
+    &._shipped {
+      font-size: 15px;
+    }
+
+    &._notDid {
+      background-color: red;
+      position: relative;
+      line-height: 16px;
+      &:before {
+        color: #fff;
+        content: '!';
+        //position: absolute;
+        //top: -7px;
+        //left: 6px;
+      }
+    }
+  }
+
+  [class*="icon-"] {
+
+    &.green{
+      background-color: #00db30;
+      color: #00db30;
+    }
+
+    &.yellow {
+      background-color:#dfdf2e;
+      color:#dfdf2e;
+    }
+
+    &.red {
+      background-color: #ff0000;
+      color: #ff0000;
+    }
+
+
+
+    &.transparented {
+      background-color: transparent !important;
+    }
+  }
+}
+
+._statusOrderBlock {
+  display: flex;
+  align-items: center;
+  justify-content:flex-end;
+  flex-wrap: wrap;
+
+  > li,
+  > button {
+    margin-right: 10px;
+    margin-bottom: 10px;
+  }
+
+  ._saveEdit,
+  ._statusInfo {
+    margin-right: 10px;
+  }
+
+  ._statusIndicators {
+    display: flex;
+    align-items: center;
+    margin-right: auto;
+  }
+}
+
+._editAllocateAll {
+  float: right;
+
+  > .btn {
+    margin: 6px 1px;
+    background-color: #F9F8F8;
+  }
+}
+
+//Goods out notes start
+._goodOutHolder {
+  height: calc( 100vh - (#{$topbarHeight} + #{$subTopbar} + #{$paginationHeight}) );
+  background-color: #fafafa;
+}
+
+._goodOutWrap {
+  margin: 15px 15px 25px;
+  border-radius: 3px;
+  border: 1px solid #dddddd;
+  color: #444;
+  background: #f3f3f3;
+  box-shadow: 0 10px 10px -5px rgba(0, 0, 0, 0.14);
+  overflow: hidden;
+
+  ._goodOutHeader {
+    padding: 20px 20px 15px;
+    background-color: #ddd;
+  }
+
+  ._invoiceTable {
+    tbody tr:last-child{
+      border-bottom: none;
+    }
+
+    th, td {
+      border-right: 1px dotted #ccc;
+      padding: 10px;
+
+      &:last-child {
+        border-right: none;
+      }
+    }
+
+    th.done {
+      > span {
+        color: #00db30;
+        .edited:before {
+          content: "\e909";
+          font-family: 'erp-icons';
+        }
+      }
+    }
+
+    th.undone {
+      > span {
+        color: #e55253;
+        .edited:before {
+          content: "\e908";
+          font-family: 'erp-icons';
+        }
+      }
+    }
+
+    .edited {
+      &:before{
+        margin: 0 5px;
+      }
+    }
+  }
+}
+
+._goodOutHeader {
+  color: #4c5663;
+
+  ._goodOutTitle {
+    margin-bottom: 25px;
+    color: #4c5663;
+    font-family: $semibold-font-family;
+  }
+
+  ._titleWrap {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+}
+
+._goodOutTitle {
+  @include rem('font-size', 22px);
+
+  ._noteNum {
+    font-family: $semibold-font-family;
+    color: #5c8bab;
+  }
+}
+
+._shippingSteps {
+  display: flex;
+  width: 100%;
+
+  ._stepItem {
+    display: flex;
+    align-items: center;
+    width: 25%;
+    padding-left: 5px;
+
+    + ._stepItem {
+      border-left: 2px solid #ddd;
+    }
+  }
+
+  ._actionTitle,
+  .edited {
+    padding: 5px;
+    white-space: nowrap;
+  }
+
+  ._actionTitle {
+    min-width: 110px;
+  }
+
+  ._actionBody {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-content: center;
+    padding: 15px 15px 15px 0;
+
+    > .btn {
+      margin: 5px;
+    }
+  }
+
+  .edited {
+    font-family: $semibold-font-family;
+    color: #4CAF50;
+  }
+
+  ._itemIcon {
+    width: 55px;
+    text-align: center;
+    font-size: 24px;
+    color: #c1c1c1;
+  }
+}
+
+._goodsDateInput {
+  width: 100px;
+  display: flex;
+  align-items: center;
+
+  input {
+    width: 80px;
+    padding: 0;
+    color: #5181a2;
+    border: none;
+    font-family: $semibold-font-family;
+  }
+
+  label {
+    color: #5c8bab;
+    font-size: 14px;
+  }
+}
+
+._flowTitle {
+  padding: 10px 20px 7px 20px;
+  border-bottom: 1px solid #dddddd;
+  color: #686f79;
+  line-height: 1;
+  font-size: 14px;
+}
+//Goods out notes end
+
+._infoList {
+  display: flex;
+  flex-wrap: wrap;
+
+  ._listItem {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+    white-space: nowrap;
+
+    &:last-child {
+      margin-right: 0;
+    }
+
+    ._key {
+      margin-right: 6px;
+      font-family: $bold-font-family;
+    }
+
+    ._value {
+      font-family: $semibold-font-family;
+    }
+  }
+}

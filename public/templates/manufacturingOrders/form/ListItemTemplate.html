@@ -1,0 +1,26 @@
+<div id="listTable">
+
+    <%collection && collection.length && collection.forEach(function(order){ %>
+    <div class="compactView" data-id="<%=order._id%>">
+
+        <div class="checkboxRow">
+            <label class="_customCHeckbox">
+                <input type="checkbox" value="<%= order._id %>" class="checkbox"/>
+                <span></span>
+            </label>
+        </div>
+
+        <div class="compactRowWrap">
+            <div class="compactRow">
+                <div class="firstName _growed _mainTitle"><%- order.name%></div>
+            </div>
+            <div class="compactRow willHidden">
+                <div class="_static"><%= order.deadlineStart %></div>
+            </div>
+            <div class="compactRow">
+                <div class="_static willHidden"><%=order.workflow ? order.workflow.name: 'Undefinded'%></div>
+            </div>
+        </div>
+    </div>
+    <% }) %>
+</div>

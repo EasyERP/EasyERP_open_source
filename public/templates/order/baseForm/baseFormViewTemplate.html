@@ -1,0 +1,273 @@
+<div class="_baseFormWrap _newForm">
+    <div class="_formWrap">
+        <div class="_formBlock _equal">
+            <% if(model.forSales){ %>
+            <ul class="_statusOrderBlock">
+                <%var allocateStatus = model.status ? model.status.allocateStatus : 'NOT' %>
+                <%var fulfillStatus = model.status ? model.status.fulfillStatus : 'NOT' %>
+                <%var shippingStatus = model.status ? model.status.shippingStatus : 'NOT' %>
+
+                <li class="_statusIndicators">
+                    <span title="Allocated"
+                          class="_allocationed <%=allocateStatus === 'NOA' ? 'icon-checked yellow' : allocateStatus === 'ALL' ? 'icon-checked green' : '_notDid'%>"></span>
+                    <span title="Fulfilled"
+                          class="icon-box <%=fulfillStatus === 'NOA' ? 'yellow' : fulfillStatus === 'ALL' ? 'green' : 'red'%> _fullfilled"></span>
+                    <span title="Shipped"
+                          class="icon-cargo <%=shippingStatus === 'NOA' ? 'yellow' : shippingStatus === 'ALL' ? 'green' : 'red'%> _shipped"></span>
+                </li>
+                <li class="_statusActions">
+                    <a id="workflowsDd" class="btn slim _workflowsDd "
+                       data-id="<%= model.workflow ? model.workflow._id : ''%>"
+                       href="javascript:;"><%= model.workflow ?
+                        model.workflow.name : ''%></a>
+                </li>
+                <%var classNameFulfill = fulfillStatus !== 'ALL' ? 'activeItem' : 'passiveItem';%>
+                <%var classNameCancel = shippingStatus !== 'NOT' ? 'activeItem' : 'passiveItem';%>
+
+                <li class="right fullfillOrderWrap icon-arrow-down2">
+                    <span class="btn slim fullfillOrder">Order Actions</span>
+                    <ul>
+                        <li class="<%=classNameFulfill%>">
+                            <a id="fulfillAll"><span class="fontBold">Fulfill and ship later</span>
+                                <span class="help">Create a goods-out note for all items to ship later</span>
+                            </a>
+                        </li>
+                        <li class="<%=classNameFulfill%>">
+                            <a id="fulfilAndShip"><span class="fontBold">Fulfill and mark as shipped</span>
+                                <span class="help">Create and close a goods-out note for all items</span>
+                                <span class="help">Shipment will be made today.</span>
+                            </a>
+                        </li>
+                        <li class="<%=classNameFulfill%>">
+                            <a id="splitFulfil"><span class="fontBold">Partial/Advanced fulfill</span>
+                                <span class="help">Fulfil only part of the order, goods-out or drop-ship</span>
+                            </a>
+                        </li>
+                        <li class="<%=classNameCancel%>">
+                            <a id="salesReturn"><span class="fontBold">Sales return</span>
+                                <span class="help">Return products (part or all) to warehouse</span>
+                            </a>
+                        </li>
+                        <li class="<%=classNameCancel%>">
+                            <a id="cancelOrder" class="cancelOrder"><span class="fontBold">Cancel</span>
+                                <span class="help">Cancel Order and return all products to warehouse</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="right">
+                    <%if ((fulfillStatus !== 'NOT' && fulfillStatus !== 'NOA') || model.prepayment.sum) {%>
+                    <a title="Journal Entries" id="viewJournalEntries"
+                       class="icon-edit-list2  _viewEntries btn slim" href="javascript:;"></a>
+                    <%}%>
+                </li>
+            </ul>
+            <span class="_orderNumber">#<%=model.name%></span>
+            <%if (model.invoice && model.invoice._id) {%>
+            <%var reference = '#easyErp/invoice/tform/' + model.invoice._id;%>
+            <ul class="_statusOrderList">
+                <li class="left _statusOrders">
+                    <h3 class="_invoiced"><a href="<%=reference%>">#<%=model.invoice.name%></a></h3>
+                </li>
+            </ul>
+            <%}%>
+            <% } else { %>
+            <ul class="_statusOrderBlock" data-class="">
+                <li class="_statusIndicators">
+                    <%var fulfillStatus = model.status ? model.status.fulfillStatus : 'NOT' %>
+                    <span title="Received"
+                          class="icon-box <%=fulfillStatus === 'NOA' ? 'yellow' : fulfillStatus === 'ALL' ? 'green' : 'red'%> _fullfilled"></span>
+                </li>
+                <li class="_statusActions">
+                    <a id="workflowsDd" class="btn slim _workflowsDd"
+                       data-id="<%= model.workflow ? model.workflow._id : ''%>"
+                       href="javascript:;"><%= model.workflow ?
+                        model.workflow.name : ''%></a>
+                </li>
+                <%var classNameFulfill = fulfillStatus !== 'ALL' ? 'activeItem' : 'passiveItem';%>
+                <%var classNameCancel = fulfillStatus !== 'NOT' ? 'activeItem' : 'passiveItem';%>
+
+                <li class="right fullfillOrderWrap icon-arrow-down2">
+                    <span class="btn slim fullfillOrder">Order Actions</span>
+                    <ul>
+                        <li class="<%=classNameFulfill%>">
+                            <a class="receiveInventory"><span class="fontBold">Receive Inventory</span>
+                                <span class="help">Create a goods-in note and take products to warehouse</span>
+                            </a>
+                        </li>
+                        <li class="<%=classNameCancel%>">
+                            <a id="salesReturn"><span class="fontBold">Purchase return</span>
+                                <span class="help">Return products (part or all) to Supplier</span>
+                            </a>
+                        </li>
+                        <li class="<%=classNameCancel%>">
+                            <a class="cancelOrder"><span class="fontBold">Cancel</span>
+                                <span class="help">Cancel Order and return all products to Supplier</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="right">
+                    <%if ((fulfillStatus !== 'NOT' && fulfillStatus !== 'NOA') || model.prepayment.sum) {%>
+                    <a title="Journal Entries" id="viewJournalEntries"
+                       class="icon-edit-list2  _viewEntries btn slim" href="javascript:;"></a>
+                    <%}%>
+                </li>
+
+            </ul>
+            <span class="_orderNumber">#<%=model.name%></span>
+            <%if (model.invoice && model.invoice._id) {%>
+            <%var reference = '#easyErp/purchaseInvoice/tform/' + model.invoice._id;%>
+            <ul class="_statusOrderList">
+                <li class="left _statusOrders">
+                    <h3 class="_invoiced"><a href="<%=reference%>">#<%=model.invoice.name%></a></h3>
+                </li>
+            </ul>
+            <%}%>
+            <% } %>
+        </div>
+    </div>
+    <div class="_formWrap _thin">
+        <div class="_formBlock _equal">
+            <div class="_animateInputBox">
+                <% if(model.forSales){ %>
+                <span class="_staticLabel">Customer</span>
+                <% } else { %>
+                <span class="_staticLabel">Supplier</span>
+                <% } %>
+
+                <%if(model.supplier){%>
+                <span class="_staticInfo"
+                      id="supplierDd"
+                      data-id="<%=model.supplier._id%>"><%= model.supplier.name.first+ ' ' + model.supplier.name.last %></span>
+                <% } else { %>
+                <span class="_staticInfo">Not Selected</span>
+                <% } %>
+            </div>
+            <div class="_animateInputBox">
+                <span class="_staticLabel">Assigned To</span>
+                <span class="_staticInfo"
+                      id="assignedTo"
+                      data-id="<%= model.salesPerson ?
+                                   model.salesPerson._id :
+                                   ''%>"><%= model.salesPerson && model.salesPerson.name ?
+                                             model.salesPerson.name.first +' ' + model.salesPerson.name.last :
+                                             'Not selected'%>
+                </span>
+            </div>
+            <div class="_animateInputBox">
+                <label class="_staticLabel">Payment Due</label>
+                <input id="expectedDate"
+                       class="_animate"
+                       value="<%=model.expectedDate%>"
+                       readonly/>
+            </div>
+        </div>
+        <div class="_formBlock _equal">
+            <div class="_animateInputBox">
+                <span class="_staticLabel">Bank Account</span>
+                <span class="_staticInfo"
+                      id="paymentMethod"
+                      data-id="<%= model.paymentMethod && model.paymentMethod._id ?
+                                   model.paymentMethod._id :
+                       null %>"><%= model.paymentMethod && model.paymentMethod._id ?
+                                    model.paymentMethod.name :
+                                    'Not selected'%>
+                </span>
+            </div>
+            <div class="_animateInputBox">
+                <span class="_staticLabel">Order Date</span>
+                <input class="_animate"
+                       id="orderDate"
+                       value="<%=model.orderDate%>"
+                       readonly/>
+            </div>
+            <% if(model.forSales){ %>
+            <div class="_animateInputBox">
+                <span class="_staticLabel">COGS Account</span>
+                <span class="_staticInfo"
+                      id="account"
+                      data-id="<%= model.account ?
+                                   model.account._id :
+                                   null%>"><%= model.account ?
+                                               model.account.name :
+                                               'Not selected'%>
+                </span>
+            </div>
+            <% } else { %>
+            <div class="_animateInputBox">
+                <span class="_staticLabel">Payable Accrual Account</span>
+                <span class="_staticInfo"
+                      id="account"
+                      data-id="<%= model.account ? model.account._id :
+                                   null%>"><%= model.account ?
+                                               model.account.name :
+                                               'Not selected'%>
+                </span>
+            </div>
+            <% } %>
+        </div>
+        <div class="_formBlock _equal">
+            <% if(model.forSales){ %>
+            <div class="_animateInputBox">
+                <span class="_staticLabel">Price List</span>
+                <span class="_staticInfo"
+                      id="priceList"
+                      data-id="<%= model.priceList ?
+                                   model.priceList._id :
+                                   ''%>"><%= model.priceList ?
+                                             model.priceList.name :
+                                             'Not selected'%>
+                </span>
+            </div>
+            <% } else { %>
+            <div class="_animateInputBox">
+                <span class="_staticLabel">Cost List</span>
+                <span class="_staticInfo"
+                      id="costList"
+                      data-id="<%= model.costList ?
+                                   model.costList._id :
+                                   ''%>"><%= model.costList ?
+                                             model.costList.name :
+                                             'Not selected'%>
+                </span>
+            </div>
+            <% } %>
+
+            <div class="_animateInputBox">
+                <span class="_staticLabel">Warehouse</span>
+                <div class="_staticInfo">
+                    <span id="warehouseDd"
+                          data-id="<%= model.warehouse ?
+                                       model.warehouse._id :
+                                       ''%>"><%= model.warehouse ?
+                                                 model.warehouse.name :
+                                                 'Not selected'%>
+                    </span>
+                </div>
+            </div>
+            <div class="_animateInputBox">
+                <span class="_staticLabel">Currency</span>
+                <span class="_staticInfo"
+                      id="currencyDd"
+                <% if(model.forSales){ %>
+                    data-symbol="<%= model.currency && model.currency._id ?
+                    model.currency._id.symbol :
+                    null %>"
+                <% } %>
+
+                data-id="<%= model.currency && model.currency._id ?
+                             model.currency._id._id :
+                             null%>"><%= model.currency && model.currency._id ?
+                                         model.currency._id.name :
+                                         'Not selected'%>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="_formWrap">
+        <div class="_formBlock _scrollBlock"
+            <div id="productItemsHolder"></div>
+        </div>
+    </div>
+</div>

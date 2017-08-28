@@ -1,0 +1,127 @@
+<div class="form-holder _newForm ui-dialog-content ui-widget-content" id="ui-id-10"
+     style="display: block; width: auto; min-height: 99px; max-height: none; height: auto;">
+    <form method="post" action="" class="_leadForm" id="leadForm">
+        <h4 class="_dialogMainTitle">Add New Manufacturing Order</h4>
+        <div class="_formWrap _enlargedItemMargin">
+            <div class="_formBlock _equal">
+                <div class="_animateSelectBox _withInfo">
+                    <span class="_selectTitle">Product</span>
+                    <div class="_newSelectListWrap">
+                        <a id="productsDd" class="current-selected" href="javascript:;">Select</a>
+                    </div>
+                    <span class="tips icon-info" data-id="productsDd"></span>
+                </div>
+                <div class="_animateSelectBox _withInfo">
+                    <span class="_selectTitle">Status</span>
+                    <div class="_newSelectListWrap _singleSelectBox">
+                        <a id="workflowsDd" class="current-selected"
+                           data-id=""
+                           href="javascript:;">
+                        </a>
+                    </div>
+                </div>
+                <div class="_animateSelectBox _withInfo">
+                    <span class="_selectTitle">Bill Of Material</span>
+                    <div class="_newSelectListWrap _singleSelectBox">
+                        <a id="billOfMaterial" class="current-selected" href="javascript:;">Select</a>
+                    </div>
+                    <span class="tips icon-info" data-id="billOfMaterial"></span>
+                </div>
+                <div class="_animateInputBox _withInfo">
+                    <span class="_staticLabel">Quantity To Produce</span>
+                    <input type="text"
+                           name="quantityToProduce"
+                           class="_animate onlyNumber"
+                           id="quantityToProduce"
+                           value="1" />
+                </div>
+            </div>
+            <div class="_formBlock _equal">
+                <div class="_animateSelectBox _withInfo">
+                    <span class="_selectTitle">Routing</span>
+                    <div class="_newSelectListWrap _singleSelectBox">
+                        <span class="" id="routing">Not Selected</span>
+                    </div>
+                </div>
+                <div class="_animateInputBox _withInfo">
+                    <span class="_staticLabel">Deadline Start</span>
+                    <input class="_animate extrainfo"
+                           type="text"
+                           name="Deadline Start"
+                           id="deadlineStart"
+                           required
+                           readonly="">
+                </div>
+                <div class="_animateSelectBox _withInfo">
+                    <span class="_selectTitle">Responsible</span>
+                    <div class="_newSelectListWrap">
+                        <a id="responsible" class="current-selected" href="javascript:;">Select</a>
+                    </div>
+                    <span class="tips icon-info" data-id="responsible"></span>
+                </div>
+            </div>
+            <div class="_formBlock _equal">
+                <div class="_animateSelectBox _withInfo">
+                    <span class="_selectTitle">Source</span>
+                    <div class="_newSelectListWrap">
+                        <a id="source" class="current-selected" href="javascript:;">Select</a>
+                    </div>
+                    <span class="tips icon-info" data-id="source"></span>
+                </div>
+                <div class="_animateSelectBox _withInfo">
+                    <span class="_selectTitle">Warehouse to allocate from</span>
+                    <div class="_newSelectListWrap">
+                        <a id="warehouseDd" class="current-selected" href="javascript:;">Select</a>
+                    </div>
+                    <span class="tips icon-info" data-id="warehouseDd"></span>
+                </div>
+                <div class="_animateSelectBox _withInfo">
+                    <span class="_selectTitle">Warehouse to manufacture products</span>
+                    <div class="_newSelectListWrap">
+                        <a id="warehouseToDd" class="current-selected" href="javascript:;">Select</a>
+                    </div>
+                    <span class="tips icon-info" data-id="warehouseToDd"></span>
+                </div>
+            </div>
+        </div>
+        <div class="_formWrap">
+            <div class="_formBlock _enlargedItemMargin counterWrap">
+                <div class="dialog-tabs-items">
+                    <div class="dialog-tabs-item active">
+                        <table class="list stripedList">
+                            <colgroup>
+                                <col width="33%">
+                                <col width="33%">
+                                <col width="33%">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th class="text-left">Product</th>
+                                <th>Quantity Available (On hand)</th>
+                                <th>To Consume</th>
+                            </tr>
+                            </thead>
+                            <tbody id="consumedContainer"></tbody>
+                        </table>
+                        <div id="productItemsHolder"></div>
+
+                    </div>
+                    <div class="dialog-tabs-item">
+                        <div class="_formWrap _enlargedItemMargin">
+                            <div class="_formBlock">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dialog-tabs-item">
+                        <div class="_formWrap _enlargedItemMargin">
+                            <div class="_formBlock">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,260 @@
+<div class="top-bar _appsTitleWrap">
+    <h3>Sync Log</h3>
+    <div class="btnsBlock">
+        <a href="#easyErp/integrations" class="btn blue slim ">Back</a>
+    </div>
+</div>
+
+<!--
+icons classes:
+syncComplete-true
+syncComplete-false
+syncCritical-true
+syncCritical-false
+syncSuccess1 - success
+syncSuccess2 - unlink
+syncSuccess3 - conflict
+-->
+
+<%if (!items.length) {%>
+<div>
+    <span>There is no sync logs yet</span>
+</div>
+<%} else {%>
+<div class="syncLogSection">
+    <div class="syncLogWrap">
+        <%items.forEach(function(data){%>
+
+        <div class="syncLog">
+            <div class="title-block">
+                <div class="title-name">
+                    <div class="supTitle">Channel:</div>
+                    <span class="channelImg <%= data.channel.channelName.toLowerCase() %>"></span>
+                    <h3>
+                        <%= data.channel.channelName %>
+                    </h3>
+                </div>
+                <div class="title-date <%=status%> <%= data.status === 1 ? 'succeedBorder': data.status === 2 ? 'conflictedBorder' : 'errorBorder'%>">
+                    <div class="statusItemWrap">
+                        <div class="statusItem">
+                            <div class="channelRowHeader">
+                                <span>Status</span>
+                            </div>
+                            <div class="channelRowValue">
+                                <span class="syncStatus<%=status%> <%= data.status === 1 ? 'succeed': data.status === 2 ? 'conflicted' : 'error'%>"><%= data.status === 1 ? 'Success': data.status === 2 ? 'Warning' : 'Critical'%></span>
+                            </div>
+                        </div>
+                        <div class="statusItem">
+                            <div class="channelRowHeader">
+                                <span>Errors</span>
+                            </div>
+                            <div class="channelRowValue">
+                                <span class="numberVal"><%= data.errorsCount %></span>
+                            </div>
+                        </div>
+                        <div class="statusItem">
+                            <div class="channelRowHeader">
+                                <span>Critical Errors</span>
+                            </div>
+                            <div class="channelRowValue">
+                                <span class="numberVal"><%= data.criticalErrorsCount %></span>
+                            </div>
+                        </div>
+                    </div>
+                    <h3><span>Sync date:</span> <%= data.date %></h3>
+                </div>
+            </div>
+
+            <div class="syncLogContent">
+                <div class="toggleEl">
+                    <div class="toggleElTitle">
+                        <span class="arrow icon-caret-right"> </span>
+                        <span class="title">Imports (<%= keys.imports.length %>)</span>
+                        <img class="importExportIco" src="../../images/svg_icons/import.svg" title="import">
+                    </div>
+                    <div class="toggledContainer hidden">
+                <span class="title">
+                    <% keys.imports.forEach(function(log) {
+                        var dataLog = data.imports[log]; %>
+                </span>
+                        <div class="toggleEl">
+                            <div class="logOverview">
+                                <div class="titleBar">
+                                    <span class="arrow icon-caret-right"> </span>
+                                    <span class="title"><%= log.toUpperCase() %></span>
+                                </div>
+                                <div class="statusBar">
+                                        <span class="succeed" title="succeed"><img class="statusBarIcon"
+                                                                                   src="../../images/svg_icons/succeed.svg"
+                                                                                   title="succeed"> <%= dataLog.succeed %></span>
+                                    <% if (log === 'products' || log === 'orders') { %>
+                                    <span class="unlinked" title="unlinked"><img class="statusBarIcon"
+                                                                                 src="../../images/svg_icons/unlink.svg"
+                                                                                 title="unlinked"> <%= dataLog.unlinked %></span>
+                                    <% if (log === 'products') { %>
+                                    <span class="conflicted" title="conflicted"><img class="statusBarIcon"
+                                                                                     src="../../images/svg_icons/conflict.svg"
+                                                                                     title="conflicted"> <%= dataLog.conflicted %></span>
+                                    <% } %>
+                                    <% } %>
+                                    <span class="error" title="error"><img class="statusBarIcon"
+                                                                           src="../../images/svg_icons/warning.svg"
+                                                                           title="error"> <%= dataLog.errors.length %></span>
+                                </div>
+                            </div>
+                            <span class="syncComplete-<%=data.imports[log].isComplete%>"></span>
+                            <div class="toggledContainer hidden">
+                                <div class="toggleEl">
+                                    <span class="arrow icon-caret-right"></span>
+                                    <span class="title">Errors (<%= dataLog && dataLog.errors && dataLog.errors.length%>)</span>
+                                    <div class="toggledContainer hidden">
+                                        <span class="title"></span>
+                                        <table>
+                                            <thead>
+                                            <th class="align-left">Id</th>
+                                            <th>Description</th>
+                                            <th class="align-right">Message</th>
+                                            <!--<th></th>-->
+                                            </thead>
+                                            <tbody>
+                                            <% dataLog.errors && dataLog.errors.forEach(function(e){ %>
+                                            <tr data-entityId="<%=e.entityId%>">
+                                                <td width="20%"><%=e.entityId%></td>
+                                                <td width="40%"><%=e.entityDescription%></td>
+                                                <td width="40%" class="align-right"><%=e.message%></td>
+                                                <!--<td class="syncCritical-<%=e.isCritical%>"></td>-->
+                                            </tr>
+                                            <% });%>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="toggleEl">
+                                    <span class="arrow icon-caret-right"></span>
+                                    <span class="title">Data (<%= dataLog && dataLog.data && dataLog.data.length %>)</span>
+                                    <div class="toggledContainer hidden">
+                                        <span class="title"></span>
+                                        <table>
+                                            <thead>
+                                            <th class="align-left">Id</th>
+                                            <th>Description</th>
+                                            <th class="align-right">Type</th>
+                                            <!--<th></th>-->
+                                            </thead>
+                                            <tbody>
+                                            <% dataLog.data && dataLog.data.forEach(function(d) { %>
+                                            <tr data-entityId="<%=d.entityId%>">
+                                                <td width="20%"><%=d.entityId%></td>
+                                                <td width="60%"><%= d.entityDescription || d.message %></td>
+                                                <td width="20%" class="align-right"><%=d.type%></td>
+                                                <!--<td class="syncSuccess<%=d.status%>"></td>-->
+                                            </tr>
+                                            <% });%>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <%});%>
+                    </div>
+                </div>
+                <div class="toggleEl">
+                    <div class="toggleElTitle">
+                        <span class="arrow icon-caret-right"></span>
+                        <span class="title">Exports (<%= keys.exports.length %>)</span>
+                        <img class="importExportIco" src="../../images/svg_icons/export.svg" title="export">
+                    </div>
+                    <div class="toggledContainer hidden">
+                        <%keys.exports.forEach(function(log) {
+                        var dataLog = data.exports[log]; %>
+                        <div class="toggleEl">
+                            <div class="logOverview">
+                                <div class="titleBar">
+                                    <span class="arrow icon-caret-right"></span>
+                                    <span class="title"><%= log.toUpperCase() %></span>
+                                </div>
+
+                                <div class="statusBar">
+                                        <span class="succeed" title="succeed"><img class="statusBarIcon"
+                                                                                   src="../../images/svg_icons/succeed.svg"
+                                                                                   title="succeed"> <%= dataLog.succeed %></span>
+                                    <% if (log === 'products') { %>
+                                    <span class="unlinked" title="unlinked"><img class="statusBarIcon"
+                                                                                 src="../../images/svg_icons/unlink.svg"
+                                                                                 title="unlinked"> <%= dataLog.unlinked %></span>
+
+                                    <span class="conflicted" title="conflicted"><img class="statusBarIcon"
+                                                                                     src="../../images/svg_icons/conflict.svg"
+                                                                                     title="conflicted"> <%= dataLog.conflicted %></span>
+                                    <% } %>
+                                    <span class="error" title="error"><img class="statusBarIcon"
+                                                                           src="../../images/svg_icons/warning.svg"
+                                                                           title="error"> <%= dataLog.errors.length %></span>
+                                </div>
+                            </div>
+
+                            <span class="syncComplete-<%=data.exports[log].isComplete%>"></span>
+                            <div class="toggledContainer hidden">
+                                <div class="toggleEl">
+                                    <span class="arrow icon-caret-right"></span>
+                                    <span class="title">Errors (<%= dataLog && dataLog.errors && dataLog.errors.length%>)</span>
+                                    <div class="toggledContainer hidden">
+                                        <span class="title"></span>
+                                        <table>
+                                            <thead>
+                                            <th class="align-left">Id</th>
+                                            <th>Description</th>
+                                            <th class="align-right">Message</th>
+                                            <!--<th></th>-->
+                                            </thead>
+                                            <tbody>
+                                            <% dataLog.errors && dataLog.errors.forEach(function(e) { %>
+                                            <tr data-entityId="<%=e.entityId%>">
+                                                <td width="20%"><%=e.entityId%></td>
+                                                <td width="40%"><%=e.entityDescription%></td>
+                                                <td width="40%" class="align-right"><%=e.message%></td>
+                                                <!--<td class="syncCritical-<%=e.isCritical%>"></td>-->
+                                            </tr>
+                                            <% }); %>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="toggleEl">
+                                    <span class="arrow icon-caret-right"></span>
+                                    <span class="title">Data (<%= dataLog && dataLog.data && dataLog.data.length%>)</span>
+                                    <div class="toggledContainer hidden">
+                                        <span class="title"></span>
+                                        <table>
+                                            <thead>
+                                            <th class="align-left">Id</th>
+                                            <th>Description</th>
+                                            <th class="align-right">Type</th>
+                                            <!--<th></th>-->
+                                            </thead>
+                                            <tbody>
+                                            <% dataLog.data && dataLog.data.forEach(function(d){%>
+                                            <tr data-entityId="<%=d.entityId%>">
+                                                <td width="20%"><%=d.entityId%></td>
+                                                <td width="60%"><%= d.entityDescription || d.message %></td>
+                                                <td width="40%" class="align-right"><%=d.type%></td>
+                                                <!--<td class="syncSuccess<%=d.status%>"></td>-->
+                                            </tr>
+                                            <% }); %>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <%});%>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <%})%>
+    </div>
+</div>
+<%}%>

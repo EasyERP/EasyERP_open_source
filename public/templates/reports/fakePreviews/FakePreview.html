@@ -1,0 +1,41 @@
+<div class="_dragableWrap _customReportTable" id="productItemsHolder">
+    <span class="btn slim" id="checkAll">Check All</span>
+    <table class="stripedList">
+        <thead>
+        <%var headerArray =Object.keys(header); %>
+        <%var index = headerArray.indexOf(header.groupBy);%>
+        <%var splicedArray = index >= 0 ? headerArray.splice(index, 1) : null;%>
+        <% splicedArray && headerArray.unshift(splicedArray[0]);%>
+        <tr>
+            <% headerArray.forEach(function (field, index) { %>
+            <%if (field !== 'groupBy') {%>
+            <th class="headTable <%= field + 'Class' %>"
+                data-name="<%= field %>"
+                data-index="<%=index%>"
+                data-reporttype="<%= field + 'Class' %>">
+                <div class="_handleWrap">
+                    <div class="dragHandle"><%= header[field] %></div>
+                    <label class="_animatedCheckbox _small reportCheckbox">
+                        <input type="checkbox" class="reportCheck">
+                        <span></span>
+                    </label>
+                </div>
+            </th>
+            <%}%>
+            <% }); %>
+        </tr>
+        </thead>
+        <tbody id="listTable">
+
+        <% for (var i = 0; i <= 1; i++){%>
+        <tr>
+        <% headerArray.forEach(function (field, index) { %>
+            <td class="<%= info[i][field] + 'Class' %>" data-reporttype="<%= info[i][field] + 'Class' %>">
+                <div class="_widthLimit"><%= info[i][field] || (typeof(info[i][field]) === 'undefined' ? '&nbsp' : 0) %></div>
+            </td>
+        <% }) %>
+        </tr>
+        <% } %>
+        </tbody>
+    </table>
+</div>

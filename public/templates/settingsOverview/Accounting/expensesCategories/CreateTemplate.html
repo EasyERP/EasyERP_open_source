@@ -1,0 +1,77 @@
+<div class="form-holder _newForm">
+    <h4 class="_dialogMainTitle">Create Category</h4>
+    <div class="_formWrap">
+        <div id="categoryListBlock" class="_formBlock _chooseIcon">
+            <div id="categoryIcon" class="_categoryIcon icon-dollar"></div>
+            <div class="_categoryListWrap">
+                <span class="_showMore" id="showMore">more icons <span class="icon-arrow-right2"></span></span>
+                <ul id="categoryList" class="_categoryList">
+                    <li class="categoryListItem _categoryListItem icon-balloons"
+                        data-class="icon-balloons">
+                    </li>
+                    <li class="categoryListItem _categoryListItem icon-box2"
+                        data-class="icon-box2">
+                    </li>
+                    <li class="categoryListItem _categoryListItem icon-medicine"
+                        data-class="icon-medicine">
+                    </li>
+                    <li class="categoryListItem _categoryListItem icon-credit-card2"
+                        data-class="icon-credit-card2">
+                    </li>
+                    <li class="categoryListItem _categoryListItem icon-food"
+                        data-class="icon-food">
+                    </li>
+                    <li class="categoryListItem _categoryListItem icon-delivery"
+                        data-class="icon-delivery">
+                    </li>
+                    <li class="categoryListItem _categoryListItem icon-dollar"
+                        data-class="icon-dollar">
+                    </li>
+                    <li class="categoryListItem _categoryListItem icon-fitness"
+                        data-class="icon-fitness">
+                    </li>
+                    <li class="categoryListItem _categoryListItem icon-education"
+                        data-class="icon-education">
+                    </li>
+                    <li class="categoryListItem _categoryListItem icon-building2"
+                        data-class="icon-building2">
+                    </li>
+                    <li class="categoryListItem _categoryListItem icon-parking"
+                        data-class="icon-parking">
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="_formBlock _equal _enlargedItemMargin">
+            <div class="_animateInputBox">
+                <input type="text"
+                       class="_animate"
+                       id="name"
+                       required/>
+                <label class="_animate">Category Name</label>
+            </div>
+
+            <div class="_animateSelectBox">
+                <span class="_selectTitle">Parent Category</span>
+                <div class="_newSelectListWrap">
+                    <a id="categories"
+                       class="current-selected"
+                       href="javascript:;">Select parent category
+                    </a>
+                </div>
+            </div>
+
+            <div class="_animateSelectBox">
+                <span class="_selectTitle">Account</span>
+                <div class="_newSelectListWrap">
+                    <a id="account"
+                       name="account"
+                       class="current-selected"
+                       data-id="<%=model.account ? model.account._id: null%>"
+                       href="javascript:;"><%=model.account ? model.account.name : 'Select account'%>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

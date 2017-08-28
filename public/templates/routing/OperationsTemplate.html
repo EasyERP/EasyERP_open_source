@@ -1,0 +1,42 @@
+<div class="productItemsHolder">
+    <table class="_productTable">
+        <colgroup>
+            <col width="168px">
+            <col width="168px">
+            <col width="168px">
+            <col width="30px">
+
+        </colgroup>
+        <thead>
+        <tr class="_deleteHeader">
+            <th>
+                Operation
+            </th>
+            <th>
+                Work Center
+            </th>
+            <th>
+                Duration
+            </th>
+            <th class="deleteCell"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <%operations.forEach(function (el){%>
+        <tr id="<%=el._id%>">
+            <td><%=el.operation%></td>
+            <td><%=el.workCentreObject.name%></td>
+            <td><%=(el.duration / 100).toFixed(2) + ' min'%></td>
+            <td class="deleteCell centerCell">
+                <span title="Delete" class="icon-close5 removeRow"></span>
+            </td>
+        </tr>
+
+        <%})%>
+        <tr>
+            <td class="addProductItem text-left"><a href="javascript:;" class="btn blue slim" id="addItem">Add More</a></td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>

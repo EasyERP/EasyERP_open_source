@@ -1,0 +1,179 @@
+<% var isChecked = JSON.parse(model.isComponent) %>
+
+
+<div class="form-holder">
+    <form class="notDialog" id="componentForm" data-id="<%=model._id%>">
+        <div class="_formWrap">
+            <div class="_formBlock">
+                <a href="javascript:;" class="btn blue" id="saveBtn" title="Save" id="top-bar-saveBtn">Save</a>
+            </div>
+        </div>
+
+        <div class="_formWrap">
+            <div class="_formBlock _equal">
+
+                <div class="_animateSelectBox _withInfo">
+                    <span class="_selectTitle">Product</span>
+                    <div class="_newSelectListWrap">
+                        <a href="javascript:;"
+                           class="current-selected"
+                           data-id="<%= model.productId ?  model.productId : '' %>"
+                           id="product"><%= model.product ? model.product : 'Select Product' %> </a>
+                    </div>
+                </div>
+
+                <div class="_animateSelectBox _withInfo">
+                    <span class="_selectTitle">Routing</span>
+                    <div class="_newSelectListWrap">
+                        <a href="javascript:;"
+                           class="current-selected"
+                           id="routing"><%= model.routing ? model.routing : 'Select Routing' %></a>
+                    </div>
+                </div>
+
+                <div class="_formRow _tipsWrap _checkboxList">
+
+                    <label>BoM Type: </label>
+
+                    <label class="_animatedCheckbox _withInfo">
+                        <input id="componentType"
+                               class="bomType"
+                               name="BoMType"
+                               data-type="true"
+                               type="radio"
+                        <%if (isChecked) {%>
+                        checked
+                        <%}%> />
+                        <span></span>
+                    </label>
+                    <label for="componentType">Ship as a Component</label>
+
+                    <label class="_animatedCheckbox _withInfo">
+                        <input id="productType"
+                               class="bomType"
+                               name="BoMType"
+                               data-type="false"
+                               type="radio"
+                        <%if (!isChecked) {%>
+                        checked
+                        <%}%> />
+                        <span></span>
+                    </label>
+                    <label for="productType">Manufacture this product</label>
+
+                </div>
+
+            </div>
+
+            <div class="_formBlock _equal">
+                <div class="_animateInputBox">
+                    <input type="text"
+                           class="_animate forNum"
+                           id="quantity"
+                           name="quantity"
+                           maxlength="60"
+                           required
+                           value="<%= model.quantity%>"/>
+                    <label class="_animate">Quantity</label>
+                </div>
+
+                <div class=" counterWrap">
+                    <div class="jobsWescWrap">
+                        <textarea class="_animate"
+                                  id="description"
+                                  maxlength="500"
+                                  required placeholder="Description"><%= model.description ? model.description : '' %></textarea>
+                    </div>
+                    <div class="counter-wrap">
+                        <span class="counter-label">Characters left:</span>
+                        <span class="counter-value" id="counterValue">500</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="_formWrap">
+            <div class="_formBlock _scrollBlock" id="productItemsHolder">
+                <div>
+
+                    <table class="_productTable">
+                        <colgroup>
+                            <col width="30%">
+                            <col width="40%">
+                            <col width="30%">
+                            <col width="30px">
+                        </colgroup>
+                        <thead>
+                        <tr class="_deleteHeader">
+                            <th class="text-left" data-sort="Component">Components</th>
+                            <th data-sort="description">Info</th>
+                            <th data-sort="quantity">Quantity</th>
+                            <th class="deleteCell"></th>
+                        </tr>
+                        </thead>
+                        <tbody id="ComponentList">
+                        <% if(model.components.length) { %>
+
+                        <% model.components.forEach(function(component){ %>
+
+                        <tr class="componentItem deleteRow" data-id="<%= component._id %>" data-error="true">
+                            <td data-name="productName"
+                                class="product text-left"
+                                rowspan="2">
+                                <div class="_animateSelectBox">
+                                    <div class="_newSelectListWrap">
+                                        <a class="current-selected componentsDd"
+                                           data-content="product"
+                                           data-id="<%=component.componentId ? component.componentId : '' %>"
+                                           href="javascript:;"><%= component.component ? component.component : 'Select Component' %></a>
+                                    </div>
+                                </div>
+                            </td>
+                            <td data-name="description"
+                                class="description">
+                                <div class="jobsWescWrap">
+                                  <textarea class="_animate componentDescr"
+                                            maxlength="200"
+                                            data-name="info">
+                                      <%= component.info ? component.info : '' %>
+                                  </textarea>
+                                </div>
+                            </td>
+                            <td data-name="quantity">
+                                <input data-name="quantity"
+                                       class="_animate  quantity statusInfo forNum"
+                                       maxlength="9"
+                                       size=7
+                                       type="text"
+                                       value="<%= component.quantity ? component.quantity : '' %>"
+                                       required
+                                />
+                            </td>
+
+                            <td class="deleteCell centerCell">
+                             <span title="Delete"
+                                   class="icon-close5 removeJob"></span>
+                            </td>
+                        </tr>
+                        <tr class="info">
+                            <td colspan="6" class="fullfilledHolder scuItemHolder">
+                                <div class="fullfilledWrap">
+                                    <div class="fullfilledInfo"></div>
+                                </div>
+                            </td>
+                        </tr>
+                        <% }); %>
+                        <% } %>
+                        <tr>
+                            <td colspan="7" class="addProductItem text-left">
+                                <a href="javascript:;" class="btn blue slim">Add an item</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+</div>

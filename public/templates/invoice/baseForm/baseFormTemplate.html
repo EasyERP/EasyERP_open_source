@@ -1,0 +1,519 @@
+<div class="_baseFormWrap _newForm">
+    <%var classNamePayment = model.workflow && model.workflow.status !== 'Done' ?
+    'activeItem' :
+    'passiveItem';%>
+    <%var classNameRefund = model.paymentInfo && model.paymentInfo.total - model.paymentInfo.balance ?
+    'activeItem' :
+    'passiveItem';%>
+    <div class="_formWrap">
+        <div class="_formBlock">
+            <% if(model.forSales){ %>
+            <ul class="_statusOrderBlock">
+                <% if(!isPaid || !model.approved){%>
+                <li>
+                    <span class="btn blue slim btnSave saveBtn">Save</span>
+                </li>
+                <% } %>
+
+                <%if (model.approved) {%>
+                <button id="viewJournalEntries"
+                        class="btn slim"
+                        title="Journal Entries">
+                    <span class="icon-edit-list2"></span>
+                </button>
+                <%}%>
+                <%if(model.workflow && model.workflow.status !== 'Cancelled'){%>
+                <%if(model.workflow.status === 'New'){%>
+                <%if(model.approved){%>
+                <%if(!model.emailed){%>
+                <button class="btn slim sendEmail">
+                    <span>Send email</span>
+                </button>
+                <%} else {%>
+                <button class="btn slim sendEmail">
+                    <span>Resend email</span>
+                </button>
+                <%}%>
+                <button class="btn slim cancelInvoice"
+                        title="Cancel Invoice">
+                    <span>Cancel Invoice</span>
+                </button>
+                <li class="right fullfillOrderWrap icon-arrow-down2">
+                    <a class="btn slim fullfillOrder"
+                       href="javascript:;">
+                        <span>Payments</span>
+                    </a>
+                    <ul>
+                        <li class="<%=classNamePayment%>">
+                            <a class="newPayment"
+                               href="javascript:;">
+                                <span class="fontBold">Create payment</span>
+                            </a>
+                        </li>
+                        <li class="<%=classNameRefund%>">
+                            <a class="refund"
+                               href="javascript:;">
+                                <span class="fontBold">Refund</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <%} else {%>
+                <%if(isFinancial){%>
+                <button class="btn slim sendEmail">
+                    <span>Send email</span>
+                </button>
+                <%} else {%>
+                <span>Draft</span>
+                <%}%>
+                <%}%>
+                <%} else {%>
+                <%if(model.approved){%>
+                <li class="right fullfillOrderWrap icon-arrow-down2">
+                    <a class="btn slim fullfillOrder" href="javascript:;">
+                        <span>Payments</span>
+                    </a>
+                    <ul>
+                        <li class="<%=classNamePayment%>">
+                            <a class="newPayment" href="javascript:;">
+                                <span class="fontBold">Create payment</span></a>
+                        </li>
+                        <li class="<%=classNameRefund%>">
+                            <a class="refund" href="javascript:;">
+                                <span class="fontBold">Refund</span></a>
+                        </li>
+                    </ul>
+                </li>
+                <%} else {%>
+                <%if(isFinancial){%>
+                <button class="btn slim sendEmail">
+                    <span>Send email</span>
+                </button>
+                <%} else {%>
+                <span>Draft</span>
+                <%}%>
+                <%}%>
+                <%}%>
+                <%} else {%>
+                <button class="btn slim borderRed setDraft">
+                    <span>Set Draft</span>
+                </button>
+                <%}%>
+            </ul>
+            <%} else {%>
+            <ul class="_statusOrderBlock">
+                <% if(!isPaid || !model.approved){%>
+                <li>
+                    <span class="btn blue slim btnSave saveBtn">Save</span>
+                </li>
+                <% } %>
+                <%if (model.approved) {%>
+                <button id="viewJournalEntries"
+                        class="btn slim"
+                        title="Journal Entries">
+                    <span class="icon-edit-list2"></span>
+                </button>
+                <%}%>
+                <%if(model.workflow && model.workflow.status !== 'Cancelled'){%>
+                <%if(model.workflow.status === 'New'){%>
+                <%if(model.approved){%>
+                <%if(!model.emailed){%>
+                <button class="btn slim sendEmail">
+                    <span>Send email</span>
+                </button>
+                <%} else {%>
+                <button class="btn slim sendEmail">
+                    <span>Resend email</span>
+                </button>
+                <%}%>
+                <button class="btn slim cancelInvoice"
+                        title="Cancel Invoice">
+                    <span>Cancel Invoice</span>
+                </button>
+                <li class="right fullfillOrderWrap icon-arrow-down2">
+                    <a class="btn slim fullfillOrder"
+                       href="javascript:;">
+                        <span>Payments</span>
+                    </a>
+                    <ul>
+                        <li class="<%=classNamePayment%>">
+                            <a class="newPayment" href="javascript:;">
+                                <span class="fontBold">Create payment</span>
+                            </a>
+                        </li>
+                        <li class="<%=classNameRefund%>">
+                            <a class="refund"
+                               href="javascript:;">
+                                <span class="fontBold">Refund</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <%} else {%>
+                <%if(isFinancial){%>
+                <button class="btn slim sendEmail">
+                    <span>Send email</span>
+                </button>
+                <%} else {%>
+                <span>Draft</span>
+                <%}%>
+                <%}%>
+                <%} else {%>
+                <%if(model.approved){%>
+                <li class="right fullfillOrderWrap icon-arrow-down2">
+                    <a class="btn slim fullfillOrder" href="javascript:;">
+                        <span>Payments</span>
+                    </a>
+                    <ul>
+                        <li class="<%=classNamePayment%>">
+                            <a class="newPayment" href="javascript:;"><span
+                                    class="fontBold">Create payment</span></a>
+                        </li>
+                        <li class="<%=classNameRefund%>">
+                            <a class="refund" href="javascript:;"><span class="fontBold">Refund</span></a>
+                        </li>
+                    </ul>
+                </li>
+                <%} else {%>
+                <%if(isFinancial){%>
+                <button class="btn slim sendEmail">
+                    <span>Send email</span>
+                </button>
+                <%} else {%>
+                <span>Draft</span>
+                <%}%>
+                <%}%>
+                <%}%>
+                <%} else {%>
+                <button class="btn slim borderRed setDraft">
+                    <span>Set Draft</span>
+                </button>
+                <%}%>
+            </ul>
+            <%}%>
+        </div>
+    </div>
+    <div class="_formWrap _thin">
+        <%if(!isPaid || paidAndNotApproved){%>
+        <div class="_formBlock _equal">
+            <%if(model.forSales){%>
+            <div class="_animateInputBox">
+                <span class="_staticLabel"><%= (forSales) ?
+                                                'Customer' :
+                                                'Supplier'%>
+                </span>
+                <span id="supplier"
+                      class="_staticInfo"
+                      data-id="<%= model.supplier ?
+                                model.supplier._id :
+                                ''%>"><%= (model.supplier && model.supplier.name) ?
+                                           model.supplier.name.first + ' ' + model.supplier.name.last :
+                                           "No Supplier" %>
+                </span>
+            </div>
+            <%} else {%>
+                <%if (!model.approved) {%>
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle"><%= (forSales) ?
+                                                    'Customer' :
+                                                    'Supplier'%>
+                    </span>
+                    <div class="_newSelectListWrap">
+                        <a href="javascript:;"
+                           class="current-selected"
+                           id="supplier"
+                           data-id="<%= model.supplier ?
+                                        model.supplier._id :
+                                        ''%>"><%= (model.supplier && model.supplier.name) ?
+                                                    model.supplier.name.first + ' ' + model.supplier.name.last :
+                                                    "Not selected"%>
+                        </a>
+                    </div>
+                </div>
+                <%} else {%>
+                <div class="_animateInputBox">
+                    <span class="_staticLabel"><%= (forSales) ?
+                    'Customer' :
+                    'Supplier'%>
+                    </span>
+                    <span class="_staticLabel"
+                          id="supplier"
+                          data-id="<%= model.supplier ?
+                        model.supplier._id :
+                        ''%>"><%= (model.supplier && model.supplier.name) ?
+                        model.supplier.name.first + ' ' + model.supplier.name.last :
+                        "Not selected"%>
+                        </span>
+                </div>
+                <%}%>
+            <%}%>
+            <%if(model.forSales){%>
+            <div class="_animateInputBox">
+                <span class="_staticLabel">Order Number</span>
+                <%var reference = '#easyErp/order/tform/' + model.sourceDocument._id;%>
+                <span class="_staticInfo"
+                      id="source_document">#
+                        <a href="<%=reference%>"
+                           class="_link"><%= (model.sourceDocument) ?
+                        model.sourceDocument.name :
+                        'Not selected'%>
+                        </a>
+                </span>
+            </div>
+            <%} else {%>
+            <div class="_animateInputBox">
+                <span class="_staticLabel">Order Number</span>
+                <span class="_staticInfo"
+                      id="source_document"><%= (model.sourceDocument) ?
+                                                                model.sourceDocument.name :
+                                                                'Not selected'%></span>
+            </div>
+            <%}%>
+            <div class="_animateInputBox">
+                <input type="text"
+                       class="_animate"
+                       id="supplier_invoice_num"
+                       value="<%= (model.name) ?
+                                   model.name :
+                                   ''%>"
+                       placeholder="Supplier Invoice Number"
+                       maxlength="32"/>
+                <label class="_animate">Invoice Number</label>
+            </div>
+        </div>
+        <div class="_formBlock _equal">
+            <% if (!model.approved) { %>
+            <div class="_animateSelectBox">
+                <span class="_selectTitle">Journal</span>
+                <div class="_newSelectListWrap">
+                    <a id="journal"
+                       class="current-selected"
+                       href="javascript:;"
+                       data-id="<%= model.journal && model.journal._id ?
+                                                   model.journal._id :
+                                                   ''%>"><%= model.journal && model.journal._id ?
+                        model.journal.name :
+                        'Select'%></a>
+                </div>
+            </div>
+            <% } else { %>
+            <div class="_animateInputBox">
+                <span class="_staticLabel">Journal</span>
+                <span class="_staticInfo"
+                      id="journal"><%= model.journal && model.journal._id ?
+                                                       model.journal.name :
+                                                       'Not selected'%>
+                                </span>
+            </div>
+            <% } %>
+
+            <%if (!model.approved) {%>
+            <div class="_animateSelectBox">
+                <span class="_selectTitle">Bank Account</span>
+                <div class="_newSelectListWrap">
+                    <a href="javascript:;"
+                       class="current-selected"
+                    <%if(model.forSales){%>
+                    data-id="<%= model.paymentMethod && model.paymentMethod._id ?
+                    model.paymentMethod._id :
+                    null%>"
+                    <%}%>
+                    id="paymentMethod"><%= model.paymentMethod && model.paymentMethod._id ?
+                    model.paymentMethod.name :
+                    'Select Bank Account'%>
+                    </a>
+                </div>
+            </div>
+            <%} else {%>
+            <div class="_animateInputBox">
+                <span class="_staticLabel">Bank Account</span>
+                <span class="_staticInfo"
+                      id="paymentMethod"
+                      data-id="<%= model.paymentMethod && model.paymentMethod._id ?
+                                                   model.paymentMethod._id :
+                                                   null%>"><%= model.paymentMethod && model.paymentMethod._id ?
+                                                               model.paymentMethod.name :
+                                                               'None'%>
+                                </span>
+            </div>
+            <%}%>
+            <div class="_animateInputBox">
+                <span class="_staticLabel">Invoice Date</span>
+                <input type="text"
+                       class="date _animate"
+                       id="invoice_date"
+                       value="<%= (model.invoiceDate) ?
+                                               model.invoiceDate :
+                                               ''%>"
+                       placeholder="Invoice Date"
+                       maxlength="32"
+                       readonly/>
+            </div>
+        </div>
+        <div class="_formBlock _equal">
+            <%if (!model.approved) {%>
+            <div class="_animateSelectBox">
+                <span class="_selectTitle">Payment Terms</span>
+                <div class="_newSelectListWrap">
+                    <a href="javascript:;"
+                       class="current-selected"
+                       id="paymentTerm">
+                        <% if (model.paymentTerms) { %>
+                        <%=model.paymentTerms.name || 'Select Payment Terms'%>
+                        <% } else { %>
+                        <%=model.paymentTerms || 'Select Payment Terms'%>
+                        <% } %>
+                    </a>
+                </div>
+            </div>
+            <%} else {%>
+            <div class="_animateInputBox">
+                <span class="_staticLabel">Payment Terms</span>
+                <span class="_staticInfo"
+                      id="paymentTerm">
+                                    <% if (model.paymentTerms) { %>
+                                        <%=model.paymentTerms.name || 'Select'%>
+                                    <% } else { %>
+                                        <%=model.paymentTerms || 'Select'%>
+                                    <% } %>
+                            </span>
+            </div>
+            <%}%>
+            <div class="_animateInputBox">
+                <label class="_staticLabel">Due Date </label>
+                <input type="text"
+                       class="date _animate <% (!model.dueDate) ?
+                                                'errorContent' :
+                                                 '' %>"
+                       id="due_date"
+                       value="<%= (model.dueDate) ?
+                                   model.dueDate :
+                                   ''%>"
+                       maxlength="32"
+                       placeholder="Due Date" readonly />
+            </div>
+
+            <div class="_animateInputBox">
+                <label class="_staticLabel">Currency</label>
+                <span class="_staticInfo"
+                      id="currencyDd"
+                      data-id="<%= model.currency && model.currency._id ?
+                                    model.currency._id._id :
+                                    null%>"><%= model.currency && model.currency._id ?
+                                    model.currency._id.name :
+                                    ''%>
+                                    </span>
+            </div>
+        </div>
+        <%} else {%>
+        <div class="_formBlock _equal">
+            <div class="_animateInputBox">
+                <span class="_staticLabel"><%= (forSales) ?
+                                            'Customer' :
+                                            'Supplier'%>
+                </span>
+                <span class="_staticInfo"
+                      id="supplier"
+                      data-id="<%= (model.supplier) ?
+                                    model.supplier._id :
+                                    ''%>"><%= (model.supplier && model.supplier.name) ?
+                                                model.supplier.name.first + ' ' + model.supplier.name.last :
+                                                "" %>
+                </span>
+            </div>
+            <div class="_animateInputBox">
+                <span class="_staticLabel">Order Number</span>
+                <%var reference = '#easyErp/order/tform/' + model.sourceDocument._id;%>
+                <span class="_staticInfo"
+                      id="source_document">#
+                    <a href="<%=reference%>"
+                       class="_link"><%= (model.sourceDocument) ?
+                        model.sourceDocument.name :
+                        'Not selected' %></a>
+                </span>
+            </div>
+            <div class="_animateInputBox">
+                <input type="text"
+                       id="supplier_invoice_num"
+                       class="_animate"
+                       value="<%=(model.name) ? model.name : ''%>"
+                       maxlength="32"/>
+                <label class="_animate">Invoice Number</label>
+            </div>
+        </div>
+        <div class="_formBlock _equal">
+            <%if (!model.approved) {%>
+            <div class="_animateSelectBox">
+                <span class="_selectTitle">Bank Account</span>
+                <div class="_newSelectListWrap">
+                    <a href="javascript:;"
+                       id="paymentMethod"
+                       class="current-selected"
+                    <% if(model.forSales){ %>
+                    data-id="<%=model.paymentMethod && model.paymentMethod._id ? model.paymentMethod._id : null%>"
+                    <% } %>
+                    ><%= model.paymentMethod && model.paymentMethod._id ?
+                         model.paymentMethod.name :
+                         'Select Bank Account'%>
+                    </a>
+                </div>
+            </div>
+            <%} else {%>
+            <div class="_animateInputBox">
+                <span class="_staticLabel">Bank Account</span>
+                <span class="_staticInfo"
+                      id="paymentMethod"><%= model.paymentMethod && model.paymentMethod._id ?
+                                             model.paymentMethod.name :
+                                             'None selected' %>
+                </span>
+            </div>
+            <%}%>
+            <div class="_animateInputBox">
+                <span class="_staticLabel">Invoice Date</span>
+                <span class="_staticInfo"
+                      id="inv_date"><%= (model.invoiceDate) ?
+                                         model.invoiceDate :
+                                         'Not selected' %>
+                </span>
+            </div>
+            <div class="_animateInputBox">
+                <span class="_staticLabel">Payment Terms</span>
+                <span class="_staticInfo"
+                      id="paymentTerm">
+                    <% if (model.paymentTerms) { %>
+                        <%= model.paymentTerms.name || 'Not selected'%>
+                    <% } else { %>
+                        'Custom'
+                    <% } %>
+                </span>
+            </div>
+        </div>
+        <div class="_formBlock _equal">
+            <div class="_animateInputBox">
+                <span class="_staticLabel">Due Date</span>
+                <span class="_staticInfo"
+                      id="d_date"><%= (model.dueDate) ?
+                                       model.dueDate :
+                                       'Not selected'%>
+                </span>
+            </div>
+            <div class="_animateInputBox">
+                <span class="_staticLabel">Currency</span>
+                <span class="_staticInfo"
+                      id="currencyDd"
+                      data-id="<%= model.currency && model.currency._id ?
+                                   model.currency._id :
+                                   null %>">
+                    <%= model.currency && model.currency._id ?
+                        model.currency._id.name :
+                        'Not selected'%>
+                </span>
+            </div>
+        </div>
+        <% } %>
+    </div>
+    <div class="_formWrap">
+        <div class="_formBlock _scrollBlock"
+             id="productItemsHolder"></div>
+    </div>
+</div>

@@ -1,0 +1,33 @@
+<!--
+syncStatus1 - success
+syncStatus2 - warning
+syncStatus3 - critical
+-->
+
+<div class="_channelStatus" data-content="logStat">
+    <div class="_statusItem">
+        <div class="channelRowHeader">
+            <span>Status</span>
+        </div>
+        <div class="channelRowValue">
+            <span class="syncStatus<%=status%>"><%= status %></span>
+        </div>
+    </div>
+    <div class="_statusItem">
+        <div class="channelRowHeader">
+            <span>Errors</span>
+        </div>
+        <div class="channelRowValue">
+            <span><%= errorsCount %></span>
+        </div>
+    </div>
+    <div class="_statusItem">
+        <div class="channelRowHeader">
+            <span>Critical Errors</span>
+        </div>
+        <div class="channelRowValue">
+            <span><%= criticalErrorsCount %></span>
+        </div>
+    </div>
+    <a href="#easyErp/integrations/syncLog/<%=_id%>"  class="btn showLog">View Log</a>
+</div>

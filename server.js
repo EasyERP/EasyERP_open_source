@@ -14,16 +14,11 @@ require('pmx').init();
 process.env.NODE_ENV = process.env.NODE_ENV || 'production';
 require('./config/environment/' + process.env.NODE_ENV);
 
-// replset & mongos are needed when database was split in to replSet and shards
 connectOptions = {
     db    : {native_parser: true},
     server: {poolSize: 5},
-    // replset: { rs_name: 'myReplicaSetName' },
-    // user  : process.env.DB_USER,
-    // pass  : process.env.DB_PASS,
     w     : 1,
     j     : true
-    // mongos: true
 };
 mainDb = mongoose.createConnection(process.env.MAIN_DB_HOST, process.env.MAIN_DB_NAME, process.env.DB_PORT, connectOptions);
 mainDb.on('error', function (err) {
@@ -57,7 +52,7 @@ mainDb.once('open', function callback() {
     }, {collection: 'easyErpDBS'});
 
     main = mainDb.model('easyErpDBS', mainDBSchema);
-    main.find({}).exec(function (err, result) {
+    main.find().exec(function (err, result) {
         if (err) {
             process.exit(1, err);
         }
@@ -70,15 +65,9 @@ mainDb.once('open', function callback() {
             var opts = {
                 db    : {native_parser: true},
                 server: {poolSize: 5},
-                // replset: { rs_name: 'myReplicaSetName' },
-                // user  : _db.user,
-                // pass  : _db.pass,
                 w     : 1,
                 j     : true
-                // mongos: true,
-                // config: { autoIndex: false } // todo uncomment in production
             };
-
             var dbObject = mongoose.createConnection(_db.url, _db.DBname, _db.port, opts);
 
             dbObject.on('error', function (err) {
@@ -99,7 +88,6 @@ mainDb.once('open', function callback() {
             if (err) {
                 return console.error(err);
             }
-
             app = require('./app')(mainDb, dbsNames);
 
             app.listen(port, function () {

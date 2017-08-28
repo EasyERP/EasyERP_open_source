@@ -1,0 +1,139 @@
+#########################
+## Sample Sass Lint by Zmey
+#########################
+# Linter Options
+options:
+  # Don't merge default rules
+  merge-default-rules: false
+  # Set the formatter to 'html'
+  formatter: html
+  # Output file instead of logging results
+#  output-file: 'linters/sass-lint.html'
+# File Options
+files:
+  include: '**/*.scss'
+  ignore:
+    - 'sass/utilities/**/*.*'
+# Rule Configuration
+rules:
+  extends-before-mixins: 2
+  extends-before-declarations: 2
+  placeholder-in-extend: 2
+  mixins-before-declarations:
+    - 2
+    -
+      exclude:
+        - breakpoint
+        - mq
+
+  no-warn: 1
+  no-debug: 1
+  no-ids: 2
+  no-important: 0
+  no-empty-rulesets: 1
+  no-duplicate-properties: 1
+  no-mergeable-selectors: 0
+  no-qualifying-elements:
+      - 1
+      - allow-element-with-attribute: false
+        allow-element-with-class: false
+        allow-element-with-id: false
+
+  no-vendor-prefixes: 1
+  border-zero:
+    - 1
+    - convention: none
+
+  nesting-depth:
+      - 1
+      - max-depth: 3
+
+  class-name-format:
+      - 1
+      - convention: camelcase
+
+  id-name-format:
+      - 1
+      - convention: camelcase
+
+  property-sort-order:
+    - 1
+    -
+      order:
+        - content
+        - position
+        - top
+        - right
+        - bottom
+        - left
+        - z-index
+        - visibility
+        - opacity
+        - display
+        - float
+        - overflow
+        - box-sizing
+        - min-height
+        - height
+        - max-height
+        - min-width
+        - width
+        - max-width
+        - padding
+        - padding-top
+        - padding-right
+        - padding-bottom
+        - padding-left
+        - border
+        - border-top
+        - border-right
+        - border-bottom
+        - border-left
+        - border-width
+        - border-style
+        - border-color
+        - border-radius
+        - outline
+        - outline-width
+        - outline-style
+        - outline-color
+        - outline-offset
+        - margin
+        - margin-top
+        - margin-right
+        - margin-bottom
+        - margin-left
+        - background
+        - background-color
+        - background-image
+        - background-position
+        - background-sizing
+        - background-repeat
+        - font-size
+        - line-height
+        - letter-spacing
+        - font-weight
+        - font-family
+        - font-style
+        - text-align
+        - text-transform
+        - text-decoration
+        - text-shadow
+        - word-wrap
+        - word-spacing
+        - cursor
+        - animation
+        - animation-name
+        - animation-duration
+        - animation-play-state
+        - animation-timing-function
+        - animation-delay
+        - animation-iteration count
+        - animation-direction
+        - transition
+        - transition-duration
+        - transition-timing-function
+        - transition-delay
+        - transition-property
+
+      ignore-custom-properties: true

@@ -1,0 +1,215 @@
+.guide {
+  margin-left: auto;
+}
+
+.guideGroups {
+
+  .subTitle {
+    margin-top: 15px;
+  }
+
+  .guideGroupContent {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+  }
+}
+
+.guideGroup {
+  width: 300px;
+  margin: 0 7px 15px;
+  border: 2px solid #7eadcc;
+  position: relative;
+  height: 250px;
+
+  &::before,
+  &::after {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border: 2px solid #7eadcc;
+    border-radius: 50%;
+    top: 33px;
+    background-color: white;
+    border-top-color: transparent;
+  }
+
+  &::before {
+    left: -9px;
+    border-left-color: transparent;
+    transform: rotate(-45deg);
+  }
+
+  &::after {
+    right: -9px;
+    border-right-color: transparent;
+    transform: rotate(45deg);
+  }
+
+  .titleWrap {
+    background-color: #7eadcc;
+    height: 40px;
+    width: 100%;
+
+    .title {
+      font-size: 20px;
+      color: $white;
+      text-align: center;
+      line-height: 40px;
+      padding: 0 45px;
+    }
+
+    .icon {
+      position: absolute;
+      left: 15px;
+      top: 0;
+      font-size: 22px;
+      color: $white;
+      line-height: 36px;
+
+      &-Inventory::before {
+        content: "\e034";
+      }
+
+      &-Accounting::before {
+        content: "\e04b";
+      }
+
+      &-Sales::before {
+        content: "\e043";
+      }
+
+      &-Purchase::before {
+        content: "\e04e";
+      }
+
+      &-Integration::before {
+        content: "\e94c";
+      }
+    }
+  }
+
+  ul {
+    margin: 10px 10px 20px 30px;
+
+    > li {
+      padding: 5px 0;
+      list-style-type: disc;
+      color: #7eadcc;
+
+
+      a {
+        display: block;
+        font-size: 14px;
+        line-height: 16px;
+        cursor: pointer;
+        color: #7eadcc;
+      }
+    }
+  }
+}
+
+.guide-notify {
+  position: fixed;
+  padding: 25px;
+  border-radius: 5px;
+  background-color: #364150;
+  animation: guide-tooltip .3s forwards;
+  animation-timing-function: cubic-bezier(0, 1.05, .55, 1.18);
+  z-index: 1000;
+
+  &-title {
+    margin-bottom: 20px;
+    color: #7eadcc;
+  }
+
+  &-description {
+    color: #f3f3f3;
+  }
+
+  .closeBtn {
+    position: absolute;
+    top: 10px;
+    right: 16px;
+
+    &::before, &::after {
+      background-color: $white;
+    }
+  }
+
+  .arrow {
+    position: absolute;
+    top: 70px;
+    left: -7px;
+    border: {
+      top: 8px solid transparent;
+      right: 8px solid #364150;
+      bottom: 8px solid transparent;
+    }
+  }
+
+  .flex {
+    display: flex;
+    flex-direction: column;
+    width: 360px;
+    height: 230px;
+  }
+
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-transform: uppercase;
+    font-family: $semibold-font-family;
+
+    span {
+      & + span {
+        margin-left: 5px;
+      }
+    }
+
+    .icon {
+      position: relative;
+      top: -1px;
+      font-size: 18px;
+    }
+  }
+
+  .btn-block {
+    display: flex;
+    margin-top: auto;
+
+    .next,
+    .end {
+      margin-left: auto;
+    }
+  }
+}
+
+@-webkit-keyframes guide-tooltip {
+  0% {
+    -webkit-transform: scale(.1);
+    transform: scale(.1)
+  }
+
+  to {
+    opacity: 1;
+    -webkit-transform: perspective(1px) scale(1);
+    transform: perspective(1px) scale(1)
+  }
+}
+
+@keyframes guide-tooltip {
+  0% {
+    -webkit-transform: scale(.1);
+    transform: scale(.1)
+  }
+
+  to {
+    opacity: 1;
+    -webkit-transform: perspective(1px) scale(1);
+    transform: perspective(1px) scale(1)
+  }
+}

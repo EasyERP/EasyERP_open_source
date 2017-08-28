@@ -1,0 +1,31 @@
+<div class="form-holder _newForm _createCustomDashboard">
+    <form method="post" action="" id="customDashboardForm">
+        <h2 class="_dialogMainTitle"><%= dialogTitle %></h2>
+        <div class="_formWrap _enlargedItemMargin">
+            <div class="_formBlock">
+                <div id="dateFilter" class="_filterDropDownWrap"></div>
+
+                <div class="_animateInputBox">
+                    <input class="_animate" id="inputName" maxlength="48" required>
+                    <label for="inputName" class="_animate">Chart name</label>
+                </div>
+
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Chart type</span>
+                    <div class="_newSelectListWrap">
+                        <a href="javascript:;" class="current-selected" id="typeSelect" data-id="donut">Donut Chart</a>
+                    </div>
+                </div>
+
+                <div class="_animateSelectBox">
+                    <span class="_selectTitle">Data for Chart</span>
+                    <div class="_newSelectListWrap">
+                        <a href="javascript:;" class="current-selected" id="dataSelect">
+                            <span class="_selectPlaceholder">Select data for chart</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

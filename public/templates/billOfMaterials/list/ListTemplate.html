@@ -1,0 +1,27 @@
+<% if(billOfMaterialsCollection.length) { billOfMaterialsCollection.forEach(function( billOfMaterial, index){ %>
+
+<tr data-id="<%=billOfMaterial._id%>">
+
+    <td class="notForm centerCell">
+        <label class="_customCHeckbox">
+            <input type="checkbox" value="<%=billOfMaterial._id%>" class="checkbox">
+            <span></span>
+        </label>
+    </td>
+    <td class="text-left"><%= billOfMaterial.name %></td>
+
+    <td> <%=billOfMaterial.product ? billOfMaterial.product : '-'%></td>
+
+    <td> <%=billOfMaterial.routing ? billOfMaterial.routing : '-'%></td>
+
+    <td>
+        <%= billOfMaterial.quantity %>
+    </td>
+
+    <td>
+        <%= billOfMaterial.description ? billOfMaterial.description : '-' %>
+    </td>
+
+</tr>
+<% }) } %>
+

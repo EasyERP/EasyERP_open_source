@@ -1,0 +1,48 @@
+<%
+var groups;
+if(data && Object.keys(data).length){
+groups = Object.keys(data);
+}
+%>
+
+<div class="form-holder _newForm">
+    <h4 class="_dialogMainTitle">Become master of EasyEPR</h4>
+    <div class="_formWrap _thin">
+        <div id="guideGroups" class="guideGroups">
+            <div class="guideGroupContent">
+                <%if(groups){
+                groups.forEach(function(title){%>
+                <div class="guideGroup">
+                    <div class="titleWrap">
+                        <span class="icon <%= 'icon-' + title %> "></span>
+                        <p class="title"><%= title %></p>
+                    </div>
+
+                    <ul class="_guideList">
+                        <%data[title].forEach(function(g,i){%>
+                        <li class="guideList guideAction" data-counter="<%=i%>" data-id="<%=g.id%>"
+                            data-guideGroup="<%= title %>" data-step="0">
+                            <a><%=g.display%></a>
+                        </li>
+                        <%})%>
+
+                    </ul>
+
+                </div>
+                <%})
+                }%>
+
+
+                <ul id="guidesList" class="_guideList">
+                    <%if(data && data.length) data.forEach(function(g,i){%>
+                    <li class="guideList guideAction" data-counter="<%=i%>" data-id="<%=g.id%>" data-step="0">
+                        <a><%=g.display%></a>
+                    </li>
+                    <%})%>
+                </ul>
+            </div>
+
+
+        </div>
+    </div>
+</div>

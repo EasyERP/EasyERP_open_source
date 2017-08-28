@@ -1,0 +1,50 @@
+<div class="gatherContent">
+
+    <div class="gatherInfoContainer">
+        <form class="gatherInfoBlock">
+            <h3 class="title align-center">Add your company Info</h3>
+            <div class="firstLastnameWrap">
+                <div class="control-group">
+                    <div class="controls">
+                        <div class="input-group">
+                            <input type="text"
+                                   name="firstName"
+                                   class="firstName"
+                                   placeholder="First Name"
+                                   required
+                                   autofocus
+                                   maxlength="60"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <div class="controls">
+                        <div class="input-group">
+                            <input type="text"
+                                   name="lastName"
+                                   class="lastName"
+                                   placeholder="Last Name"
+                                   required
+                                   autofocus
+                                   maxlength="60"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="input-group">
+                <input id="phone" placeholder="Phone number" type="number" required value="<%=user.mobilePhone ? user.mobilePhone.substr(1) : ''%>"/>
+                <div class="requiredField" data-hover="This is required field">*</div>
+            </div>
+            <div class="input-group">
+                <input id="companyName" placeholder="Company name" value="<%=user.company%>"/>
+            </div>
+            <div class="input-group">
+                <input id="website" placeholder="Company website" value="<%=user.website%>"/>
+            </div>
+            <button id="submit" class="btn blue gatherSubmitBtn">Submit</button>
+        </form>
+    </div>
+
+</div>
+
+

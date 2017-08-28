@@ -1,6 +1,3 @@
-/**
- * Created by Roman on 15.04.2015.
- */
 module.exports.noReplay = {
     host     : 'mail.thinkmobiles.com',
     port     : 587,

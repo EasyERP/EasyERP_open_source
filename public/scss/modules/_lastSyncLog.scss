@@ -1,0 +1,250 @@
+$syncLogTogglePadLeft: 10px;
+
+.syncLogSection {
+  background-color: #f3f3f3;
+  height: calc(100% - 40px);
+}
+
+.syncLogWrap {
+  padding: 20px 10px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  background-color: #f3f3f3;
+
+  @media (min-width: 1500px) {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
+}
+
+.syncLog {
+  width: 900px;
+  @include rem(margin, 0 10px 20px);
+
+  > div {
+    box-shadow: 0 5px 3px 2px rgba($black, 0.06);
+  }
+
+  @media (min-width: 1500px) {
+    width: calc(50% - 20px);
+  }
+
+  .title-block {
+    @include rem(padding, 10px 0);
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #d8d8d8;
+    background-color: $white;
+  }
+
+  .title-name {
+    @include rem(padding-bottom, 5px);
+    @include rem(padding-left, 20px);
+    display: flex;
+    align-items: center;
+
+    .supTitle {
+      @include rem(font-size, 14px);
+      align-self: flex-start;
+      color: #3e88b9;
+    }
+
+    h3 {
+      @include rem(font-size, 22px);
+    }
+  }
+
+  .title-date {
+    border-right: 2px solid transparent;
+
+    &.succeedBorder {
+      border-right-color: #00da00;
+    }
+
+    &.conflictedBorder {
+      border-right-color: #ffbe00;
+    }
+
+    &.errorBorder {
+      border-right-color: #E55253;
+    }
+
+    h3 {
+      @include rem(font-size, 15px);
+
+      span {
+        @include rem(font-size, 13px);
+        color: #3e88b9;
+      }
+    }
+
+  }
+
+  h3 {
+    @include rem(padding, 0 20px);
+    color: $black;
+  }
+
+  .channelImg {
+    width: 50px;
+    height: 50px;
+  }
+
+  .statusItemWrap {
+    @include rem(margin-right, 20px);
+    @include rem(margin-bottom, 15px);
+    display: flex;
+    justify-content: flex-end;
+    text-align: center;
+
+    .statusItem:not(:last-child) {
+      @include rem(margin-right, 10px);
+    }
+  }
+
+  .channelRowHeader span {
+    @include rem(padding, 0 5px);
+    font-family: "OpenSans SemiBold", Arial, Helvetica, sans-serif;
+  }
+
+  .channelRowValue {
+    .numberVal {
+      @include rem(padding, 0 5px);
+      border: 1px solid #d8d8d8;
+      border-radius: 5px;
+    }
+
+  }
+}
+
+.syncLogContent {
+  @include rem(padding, 25px 15px 15px);
+  background-color: $white;
+
+  > .toggleEl {
+    border: 1px solid #d8d8d8;
+  }
+
+  .toggleEl {
+    @include rem(padding, 10px);
+    @include rem(margin, 0 5px 10px);
+    border-radius: 5px;
+    background: $white;
+    cursor: pointer;
+
+    .icon-caret-down {
+      @include rem(font-size, 7px);
+    }
+
+    .toggleElTitle {
+      position: relative;
+
+      .title {
+        @include rem(font-size, 14px);
+      }
+    }
+
+    .importExportIco {
+      position: absolute;
+      top: -2px;
+      right: 0;
+      width: 20px;
+      height: 20px;
+    }
+
+    .title {
+      cursor: pointer;
+    }
+
+    .logOverview {
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #d8d8d8;
+
+      .title {
+        @include rem(padding-left, 3px);
+      }
+
+      .statusBar {
+        margin-left: auto;
+
+        &Icon {
+          width: 11px;
+          height: 11px;
+        }
+
+        span {
+          @include rem(padding, 0 5px);
+          position: relative;
+          display: inline-block;
+
+          &:before {
+            content: '';
+            position: absolute;
+            right: -1px;
+            width: 1px;
+            height: 100%;
+            background-color: #d8d8d8;
+          }
+
+          &:last-child {
+            &:before {
+              display: none;
+            }
+          }
+        }
+      }
+    }
+
+    > .toggleEl {
+      padding-left: $syncLogTogglePadLeft;
+
+      > .toggleEl {
+        padding-left: $syncLogTogglePadLeft*2;
+      }
+    }
+  }
+
+  table {
+    thead {
+      background-color: $white;
+      border: {
+        bottom: 2px solid #eaeaea;
+        left: 2px solid $white;
+        right: 2px solid $white;
+      }
+    }
+
+    tbody {
+
+      tr {
+        border: {
+          bottom: 1px solid #eaeaea;
+          left: 2px solid white;
+          right: 2px solid white;
+        }
+        background-color: $white;
+
+        &:nth-child(odd) {
+          background-color: #f8f9fb;
+
+          border: {
+            left-color: #f8f9fb;
+            right-color: #f8f9fb;
+          }
+        }
+      }
+    }
+
+    th {
+      font-family: "OpenSans SemiBold", Arial, Helvetica, sans-serif;
+      @include rem(padding, 10px);
+    }
+
+    td {
+      @include rem(padding, 8px);
+    }
+  }
+}

@@ -21,7 +21,6 @@ var Module = function (models, event) {
     var FilterMapper = require('../helpers/filterMapper');
     var filterMapper = new FilterMapper();
     var HistoryWriter = require('../helpers/historyWriter.js');
-    var Integration = require('../helpers/requestMagento.js')();
     var historyWriter = new HistoryWriter(models);
 
     var HistoryService = require('../services/history.js')(models);
@@ -968,7 +967,7 @@ var Module = function (models, event) {
             data.notes[data.notes.length - 1] = obj;
         }
 
-        //for re-converting date in actual format
+        // for re-converting date in actual format
         if (data.notes && data.notes.length) {
             i = 0;
 
@@ -1028,12 +1027,12 @@ var Module = function (models, event) {
                             name    : elem.name,
                             shortPas: elem.shortPas
                         },
-                        user      : {
+                        user: {
                             _id  : req.session.uId,
                             login: req.session.uName
                         },
-                        date      : new Date()
-                    }
+                        date: new Date()
+                    };
                 });
             }
 
@@ -1079,7 +1078,7 @@ var Module = function (models, event) {
             data.notes[data.notes.length - 1] = obj;
         }
 
-        //for re-converting date in actual format
+        // for re-converting date in actual format
         if (data.notes && data.notes.length) {
             i = 0;
 

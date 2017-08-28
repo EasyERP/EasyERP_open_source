@@ -1,0 +1,40 @@
+<div class="floatLeft _customDashboardInputGroup">
+    <h3 class="hidden" id="editDashTitle">Edit dashboard</h3>
+    <input id="dashboardName" class="cDashboardInput hide" placeholder="Name" type="text" value="<%=dashboardName%>"
+           hidden>
+    <input id="dashboardDescription" class="cDashboardInput hide" placeholder="Description" type="text"
+           value="<%=dashboardDescription%>" hidden>
+    <h3 id="name" style="margin-top: 0"><%=dashboardName%></h3>
+    <div class="clearfix"></div>
+    <!--<h2 id="description" class="_dashBoardDescription"><%=dashboardDescription%></h2>-->
+</div>
+
+<div id="createBtnHolder" class="btnsBlock">
+    <a href="#home/action-<%=contentType%>/Create"
+       class="btn blue slim icon-plus hidden"
+       title="Create"
+       id="top-bar-createBtn">New</a>
+
+    <a href="#home/action-<%=contentType%>/MoveToEdit"
+       class="btn blue slim"
+       title="MoveToEdit"
+       id="top-bar-moveToEditBtn">Edit</a>
+
+    <a href="#easyErp/dashboards"
+       class="btn slim"
+       title="MoveToEdit">Dashboard list</a>
+
+    <a href="#home/action-<%=contentType%>/SaveAll"
+       class="btn blue slim hidden"
+       title="SaveAll"
+       id="top-bar-saveAllBtn">Save Changes</a>
+
+    <a href="#home/action-<%=contentType%>/RemoveAll"
+       class="btn blue slim hidden"
+       title="RemoveAll"
+       id="top-bar-removeAllBtn">Remove All</a>
+    <span class="btn blue slim hidden"
+          title="Cancel"
+          id="top-bar-cancelBtn">Close</span>
+</div>
+

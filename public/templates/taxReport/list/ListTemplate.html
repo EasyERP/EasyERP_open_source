@@ -1,0 +1,15 @@
+<% collection.forEach(function(account, index){ %>
+<tr data-id="<%=account.account._id || null%>" class="mainTr">
+    <td class="expand"><span class="icon-caret-right"></span></td>
+    <td><%=account.account ? account.account.name : ''%></td>
+    <td></td>
+    <td class="money" data-id="debit" data-value="<%=account.debit / 100%>"><%=currencySplitter((account.debit / 100).toFixed(2))%>
+    </td>
+    <td class="money" data-id="credit" data-value="<%=account.credit / 100%>">
+        <%=currencySplitter((account.credit / 100).toFixed(2))%>
+    </td>
+    <td class="money <%= parseInt((account.debit - account.credit).toFixed(2), 10) < 0 ? 'redText' : '' %>">
+        <%=currencySplitter(((account.debit - account.credit) / 100).toFixed(2))%>
+    </td>
+</tr>
+<% }) %>

@@ -1,0 +1,22 @@
+<div class="_tableSalesOrdersWrap" id="toPdf">
+    <table class="list stripedList noFixed <%=type%>Pdf">
+        <thead>
+        <tr>
+            <% Object.keys(headers).forEach(function (item) { %>
+            <% if (item !== '_id') { %>
+            <th class="" data-name="<%= item %>">
+                <div class="_handleWrap">
+                    <div class="dragHandle"><%= headers[item] %></div>
+                    <div class="_headerActions oe_sortable" data-sort="<%= item %>" data-name="<%= item %>">
+                        <span class="arrow down"></span>
+                        <span class="arrow up"></span>
+                    </div>
+                </div>
+            </th>
+            <% } %>
+            <% }); %>
+        </tr>
+        </thead>
+        <tbody id="listTable" class="enableTableOdd"></tbody>
+    </table>
+</div>

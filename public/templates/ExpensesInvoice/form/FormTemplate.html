@@ -1,0 +1,104 @@
+<div class="form-holder">
+    <%var classNamePayment = model.workflow && model.workflow.status !== 'Done' ? true : false;%>
+    <%var classNameRefund = model.paymentInfo && model.paymentInfo.total - model.paymentInfo.balance ? 'activeItem' :
+    'passiveItem';%>
+
+    <fieldset>
+        <div class="inner">
+            <ul class="_btnsBlockFixed" data-class="mainTabs">
+                <li class="left">
+                    <%if (model.approved) {%>
+                    <button id="viewJournalEntries" class="btn slim" title="Journal Entries">
+                        <span class="icon-edit-list2"></span>
+                    </button>
+                    <%}%>
+                    <button id="editButton" class="btn slim" title="Edit">
+                        <span class="icon-pencil2"></span>
+                    </button>
+                    <button id="exportToPdf" class="btn slim" title="Download PDF">
+                        <span class="icon-pdf"></span>
+                    </button>
+                    <button class="btn slim attach_file" id="attachment_file" title="Attach file">
+                        <span class="icon-attach"></span>
+                    </button>
+                    <%if(model.workflow && model.workflow.status !== 'Cancelled'){%>
+                    <%if(model.workflow.status === 'New'){%>
+                    <%if(model.approved){%>
+                    <%if(!model.emailed){%>
+                    <button class="btn slim sendEmail" title="Send email">
+                        <span>Send email</span>
+                    </button>
+                    <%} else {%>
+                    <button class="btn slim sendEmail" title="Resend email">
+                        <span>Resend email</span>
+                    </button>
+                    <%}%>
+                    <%if (classNamePayment) {%>
+                    <button class="btn slim newPayment" title="Create payment">
+                        <span>Create payment</span>
+                    </button>
+                    <%}%>
+                    <%} else {%>
+                    <%if(isFinancial){%>
+                    <button class="btn slim sendEmail" title="Send email">
+                        <span>Send email</span>
+                    </button>
+                    <button class="btn slim approve" title="Approve">
+                        <span>Approve</span>
+                    </button>
+                    <%} else {%>
+                    <span>Draft</span>
+                    <%}%>
+                    <%}%>
+                    <%} else if(model.workflow.status === 'Done'){%>
+                    <% if(paidAndNotApproved) {%>
+                    <button class="btn slim approve" title="Approve">
+                        <span>Approve</span>
+                    </button>
+                    <%}%>
+                    <%if (classNamePayment) {%>
+                    <button class="btn slim newPayment" title="Create payment">
+                        <span>Create payment</span>
+                    </button>
+                    <%}%>
+                    <%} else {%>
+                    <%if(model.approved){%>
+                    <%if (classNamePayment) {%>
+                    <button class="btn slim newPayment" title="Create payment">
+                        <span>Create payment</span>
+                    </button>
+                    <%}%>
+                    <%} else {%>
+                    <%if(isFinancial){%>
+                    <button class="btn slim sendEmail" title="Send email">
+                        <span>Send email</span>
+                    </button>
+                    <button class="btn slim approve" title="Approve">
+                        <span>Approve</span>
+                    </button>
+                    <%} else {%>
+                    <span>Draft</span>
+                    <%}%>
+                    <%}%>
+                    <%}%>
+                    <%} else {%>
+                    <button class="btn slim borderRed setDraft">
+                        <span>Set Draft</span>
+                    </button>
+                    <%}%>
+                </li>
+            </ul>
+            <div class="clearfix"></div>
+            <div class="_templateInvoiceWrp">
+                <div id="templateDiv" class="_templateDiv"></div>
+                <div class="addingInfoWrp">
+                    <div id="historyDiv" class="_pureTemplate"></div>
+                    <div id="attachments" class="invoiceAttachments"></div>
+                </div>
+            </div>
+
+            <div id="payments-container" class="paymentsContainer"></div>
+            <div class="clearfix"></div>
+        </div>
+    </fieldset>
+</div>

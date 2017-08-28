@@ -1,0 +1,57 @@
+<%var checkObj = {};%>
+<% var className = 1;%>
+
+<% var groupByValue = collection.length ? collection[0][groupBy] : null;%>
+<% collection.forEach(function(reportField, index){ %>
+
+<% className = (groupByValue === reportField[groupBy]) && groupByValue ? className : className * (-1);%>
+<% groupByValue = reportField[groupBy];%>
+<%var classValue = '';%>
+<%renderValue = true;%>
+
+<tr data-index="<%=className%>">
+    <% Object.keys(headerMapper).forEach(function (field) { %>
+    <% if (field !== '_id') { %>
+    <% var dataType = dataTypes[field] %>
+
+    <% if (typeof(reportField[field]) === 'object' && reportField[field] !== null && dataType !== 'Address') { %>
+    <td>
+
+        <% Object.keys(reportField[field]).forEach(function (item) { %>
+        <% if (typeof(reportField[field][item]) === 'object' && reportField[field][item] !== null) { %>
+        <% Object.keys(reportField[field][item]).forEach(function (subItem) { %>
+        <%= fieldsMapper(dataType, (reportField[field][item][subItem] || (typeof(reportField[field][item][subItem]) ===
+        'undefined' ? '&nbsp' : 0)), moment) %>
+        <% }); %>
+        <% } else { %>
+        <%= fieldsMapper(dataType, ((!reportField[field][item] && reportField[field][item] !== 0) ? '&nbsp' :
+        reportField[field][item] || (typeof(reportField[field][item]) === 'undefined' ? '&nbsp' : 0)), moment) %>
+        <% } %>
+        <% }); %>
+    </td>
+    <% } else { %>
+
+    <%if (field === groupBy) {%>
+    <% classValue = ((groupByValue !== (collection[index + 1] && collection[index + 1][groupBy])) || !groupByValue) ?'last' : ''%>
+    <%}%>
+
+    <% renderValue = (field === groupBy && groupByValue && groupByValue === (collection[index - 1] && collection[index - 1][groupBy])) ? false: true;%>
+
+    <td class="<%= field === groupBy ? 'fillColor' : '' %> <%= field === groupBy ? classValue : '' %>"><%=renderValue ? fieldsMapper(dataType,
+        ((!reportField[field] && reportField[field] !== 0) ? '&nbsp' : reportField[field] ||(typeof(reportField[field])
+        === 'undefined' ? '&nbsp' : 0)), moment) : '' %>
+    </td>
+    <% } %>
+    <% } %>
+    <% }); %>
+</tr>
+<% }) %>
+
+<% if (total && Object.keys(total).length) { %>
+<tr class="totalRow" title="Total">
+    <% Object.keys(headers).forEach(function(header, index){ %>
+    <% var dataType = dataTypes[header] %>
+    <td><%= fieldsMapper(dataType, total[header], moment) %></td>
+    <% }); %>
+</tr>
+<% } %>

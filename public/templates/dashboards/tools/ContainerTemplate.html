@@ -1,0 +1,27 @@
+<% var isSingleValue = (type === 'singleValue') %>
+
+<div class="panel-heading _customDashboardPanel withActions">
+    <% if(!isSingleValue){%>
+        <div class="panel-descriptions">
+            <span class="chartName"><%= name %></span>
+        </div>
+    <% } %>
+    <div class="_rightPart">
+        <div id="dateFilter" class="vocationFilter _filterDropDownWrap"></div>
+        <% if(!isSingleValue){%>
+        <a id="viewAll" class="_viewAll" href="">View All</a>
+        <% } %>
+        <div class="_panelTopActions">
+            <button class="editChart" aria-label="Edit" title="Edit Chart">
+                <span class="icon-pencil2" aria-hidden="true"></span>
+            </button>
+            <button class="removeChart" aria-label="Close" title="Remove Chart">
+                <span class="icon-close3" aria-hidden="true"></span>
+            </button>
+            <% if(!isSingleValue){%>
+                <span class="_openViewBtn openViewBtn icon-expand hidden"></span>
+            <% } %>
+        </div>
+    </div>
+</div>
+<div class="chartHolder"></div>

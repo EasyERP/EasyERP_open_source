@@ -1,0 +1,35 @@
+<div id="listTable">
+
+    <% billOfMaterials.forEach(function(billOfMaterial){ %>
+    <div class="compactView" data-id="<%=billOfMaterial._id%>">
+
+        <div class="checkboxRow">
+            <label class="_customCHeckbox">
+                <input type="checkbox" value="<%= billOfMaterial._id %>" class="checkbox"/>
+                <span></span>
+            </label>
+        </div>
+
+        <div class="compactRowWrap">
+            <div class="compactRow">
+                <div class="name _mainTitle"><%= billOfMaterial.name%> </div>
+            </div>
+            <div class="compactRow">
+                <div>
+
+                    <% if (billOfMaterial.components) { %>
+                    <% _.each(billOfMaterial.components, function(component){ %>
+
+                    <span title="<%= component.component ? component.component : 'unknown' %>">
+                         <%= component.component ? component.component : 'unknown' %>
+                          <%= component.quantity ?  component.quantity  : '0' %>
+                    </span>
+                    <%}) } %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <% }) %>
+</div>

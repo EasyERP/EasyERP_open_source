@@ -1,0 +1,63 @@
+<div class="form-holder _newForm productForm">
+    <form method="post" action="" id="createEmployeeForm" class="form">
+        <h4 class="_dialogTitlePositioned">Add New Operation</h4>
+
+        <div class="dialog-tabs-items mainTabs">
+            <div class="dialog-tabs-item mainTabs active">
+                <div class="_formWrap _enlargedItemMargin">
+                    <div class="_formBlock _equal">
+                        <div class="_animateInputBox _withInfo">
+                            <input type="text"
+                                   class="_animate"
+                                   id="name"
+                                   autofocus
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">Operation Name</label>
+                        </div>
+                        <div class="_animateInputBox">
+                            <a id="workCentre"
+                               class="current-selected"
+                               href="javascript:;">Select Work Center</a>
+                        </div>
+                        <!--<div>
+                            <span>Duration Computation</span>
+                            <div class="_circleRadioRadianceWrap">
+                                <label for="durationBased">
+                                    Compute based on real time
+                                </label>
+                                <input id="durationBased" name="duration" value="0"
+                                       type="radio" class="_circleRadioRadiance duration" checked/>
+                                <label for="durationBased" class="_circleRadioRadianceLabel"></label>
+                            </div>
+                            <div class="_circleRadioRadianceWrap">
+                                <label for="durationManual">
+                                    Set duration manually
+                                </label>
+                                <input id="durationManual" name="duration" value="1" type="radio"  class="_circleRadioRadiance duration" />
+                                <label for="durationManual" class="_circleRadioRadianceLabel"></label>
+                            </div>
+                        </div>-->
+                        <div class="_animateInputBox _withInfo">
+                            <input type="text"
+                                   class="_animate forNum"
+                                   id="defaultDuration"
+                                   autofocus
+                                   required
+                                   maxlength="32"/>
+                            <label class="_animate">Default Duration (in minutes)</label>
+                        </div>
+                        <div class="_animateTextareaBox offsetTop">
+                        <textarea id="description"
+                                  class="_animate internal_Notes"
+                                  required
+                                  maxlength="500"></textarea>
+                            <label for="description" class="_animate">Description</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+

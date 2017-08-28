@@ -4,8 +4,8 @@ module.exports = function (connection, Store) {
     process.env.SESSION_MAX_AGE = 31 * 24 * 60 * 60 * 1000;
 
     return {
-        name             : 'paas',
-        secret           : 'kdf78945jhnedih62hAsJJ%$hjjshfdKhwger423,cmnbdfnbgfhtyr908765ytu',
+        name             : 'pwd',
+        secret           : 'kdf78945jhnedih62hAsJJ%$hjjshfdKhwger423,cmnbdfnbgfhtyr908765yt1',
         resave           : false,
         rolling          : true,
         saveUninitialized: false,
@@ -16,7 +16,6 @@ module.exports = function (connection, Store) {
 
         cookie: {
             path  : '/',
-            //domain: 'live.easyerp.com',
             maxAge: process.env.SESSION_MAX_AGE
         }
     };

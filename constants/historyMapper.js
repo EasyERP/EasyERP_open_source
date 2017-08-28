@@ -137,7 +137,7 @@ module.exports = {
                 collection: 'workflows',
                 project   : '$tmp.name'
             },
-            
+
             'createdBy.date': {
                 name : 'Creation Date',
                 isRef: false
@@ -207,7 +207,7 @@ module.exports = {
                 isRef: false
             },
 
-            'dateBirth': {
+            dateBirth: {
                 name : 'Date of Birth',
                 isRef: false
             },
@@ -222,7 +222,7 @@ module.exports = {
                 isRef: false
             },
 
-            'jobPosition': {
+            jobPosition: {
                 name : 'Job Position',
                 isRef: false
             },

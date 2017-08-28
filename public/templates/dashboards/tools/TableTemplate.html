@@ -1,0 +1,47 @@
+<%if (oneRow){%>
+<div class="notResize">
+    <div class="revenueCountWrap">
+        <div class="_revenueItem">
+            <span>Count</span>
+            <p class="totalCount fontSemiBold"></p>
+        </div>
+        <div class="_revenueItem">
+            <span>Total</span>
+            <p class="totalRevenue fontSemiBold money"></p>
+        </div>
+    </div>
+    <div class="_overviewOrderWrap">
+
+        <%data.forEach(function (el){%>
+        <div class="_overviewItem _tableTitle">
+            <span class="workflowName"><%=el.name%></span>
+            <span class="count fontSemiBold"><%=el.count%></span>
+        </div>
+        <%})%>
+    </div>
+</div>
+
+<%} else {%>
+<div class="_overviewOrderWrap">
+    <table class="stripedList _overviewTable">
+        <thead>
+        <tr>
+            <%columns.forEach(function (el){%>
+            <th><%=el.text%></th>
+            <%})%>
+        </tr>
+        </thead>
+        <tbody class="enableTableOdd">
+        <%data.forEach(function (el){%>
+        <tr>
+            <td><%=moment(new Date(el.invoiceDate || el.orderDate)).format('DD, MMM YYYY')%></td>
+            <td><%=el.supplier.name%></td>
+            <td><%=(el.currency && el.currency._id ? el.currency._id.symbol : '$') +
+                currencySplitter((el.paymentInfo.total / 100).toFixed(2))%>
+            </td>
+        </tr>
+        <%})%>
+        </tbody>
+    </table>
+</div>
+<%}%>

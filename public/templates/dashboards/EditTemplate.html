@@ -1,0 +1,86 @@
+<div class="form-holder _newForm _editDashboardForm">
+    <form method="post" action="" id="customDashboardForm">
+        <h2 class="_dialogMainTitle">Edit Dashboard</h2>
+
+        <div class="_formWrap _enlargedItemMargin">
+            <div class="_formBlock _equal">
+                <div class="_gridVisualWrap" id="wrap">
+                    <div class="_gridColBar">
+                        <h3 class="_gridListTitle">Columns</h3>
+                        <ul class="gridColList" id="colNumList">
+                            <li class="colValue active" data-id="4">4</li>
+                            <li class="colValue" data-id="6">6</li>
+                            <li class="colValue" data-id="7">7</li>
+                            <li class="colValue" data-id="8">8</li>
+                            <li class="colValue" data-id="9">9</li>
+                        </ul>
+                    </div>
+                    <div class="_gridVisualBoby">
+                        <div class="_gridRowBar">
+                            <h3 class="_gridListTitle">Rows</h3>
+                            <ul class="gridRowList" id="rowNumList">
+                                <li class="rowValue active" data-id="2">2</li>
+                                <li class="rowValue" data-id="3">3</li>
+                                <li class="rowValue" data-id="4">4</li>
+                                <li class="rowValue" data-id="5">5</li>
+                                <li class="rowValue" data-id="6">6</li>
+                            </ul>
+                        </div>
+                        <ul class="_gridVisual" id="gridView"></ul>
+                    </div>
+                </div>
+            </div>
+            <div class="_formBlock _equal _setDescription">
+                <div class="_animateInputBox">
+                    <div class="_animateInputBox">
+                        <input type="text"
+                               class="_animate"
+                               id="name"
+                               placeholder="New Dashboard Name..."
+                               required
+                               value="<%= model.name %>"
+                               maxlength="48"/>
+                        <label for="name" class="_animate">Name</label>
+                    </div>
+                </div>
+                <div class="_circleRadioGroup">
+                    <div class="_circleRadioRadianceWrap">
+                        <label for="privateAccess">
+                            Private
+                        </label>
+                        <input type="radio"
+                               name="accessDashboard"
+                               id="privateAccess"
+                               class="_circleRadioRadiance onlyNumber shippingRadio"
+                        <% if (model.publicAccess === false) { %>
+                        checked
+                        <%}%> ">
+                        <label for="privateAccess" class="_circleRadioRadianceLabel"></label>
+                    </div>
+
+                    <div class="_circleRadioRadianceWrap">
+                        <label for="publicAccess">
+                            Public
+                        </label>
+                        <input type="radio"
+                               name="accessDashboard"
+                               id="publicAccess"
+                               class="_circleRadioRadiance"
+                        <% if (model.publicAccess === true) { %>
+                        checked
+                        <%}%> ">
+                        <label for="publicAccess" class="_circleRadioRadianceLabel"></label>
+                    </div>
+                </div>
+                <div class="_animateTextareaBox counterWrap">
+                    <textarea id="description" class="_animate _withCounter" maxlength="200" required><%= model.description %></textarea>
+                    <label for="description" class="_animate">description</label>
+                    <div class="counter-wrap">
+                        <span class="counter-label">Characters left:</span>
+                        <span class="counter-value" id="counterValue"><%= 200 - (model.description ? model.description.length : 0) %></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

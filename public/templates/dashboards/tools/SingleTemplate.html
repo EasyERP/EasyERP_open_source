@@ -1,0 +1,12 @@
+<div class="singleBlockWrap ">
+    <div class="block-icon" style="background-image: url('');"></div>
+    <div class="block">
+        <% if(data.revenue){%>
+            <span class="blockTitle"><%=title%> revenue</span>
+            <span class="money"><%=currencySplitter(data.revenue.toFixed(2))%></span>
+        <%} else {%>
+            <span class="blockTitle"><%=title%> count</span>
+            <span class=""><%=currencySplitter(data.count.toFixed())%></span>
+        <% } %>
+    </div>
+</div>

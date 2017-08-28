@@ -1,0 +1,66 @@
+<div class="_reportsWrap">
+    <div class="_reportsContent" id="parentEl">
+        <%var dashboardKeys = Object.keys(model);%>
+
+        <div class="reportsList _reportsTabsWrap">
+            <div class="_reportsTabTitle">Categories</div>
+            <ul class="_reportsTabList" id="tabList">
+                <li class="mainList _reportsTabItem" id="recent">Recent</li>
+                <li class="mainList _reportsTabItem" id="favorite">Favorite</li>
+                <li class="mainList _reportsTabItem" id="createdByMe">Created By Me</li>
+                <li class="mainList _reportsTabItem" id="private">Private</li>
+                <li class="mainList _reportsTabItem" id="public">Public</li>
+                <li class="mainList _reportsTabItem" id="all">All</li>
+            </ul>
+        </div>
+        <div class="_reportsView">
+            <div class="_reportsHeader">
+                <table class="stripedList">
+                    <thead>
+                    <tr>
+                        <th>Favorite</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Access</th>
+                        <th>Edited by</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="_reportsList">
+                <% dashboardKeys.forEach(function (key){%>
+                <%var el = model[key];%>
+                <% if (el) {%>
+                <div class="childBlock hidden"
+                     data-id="<%=key%>">
+                    <table class="stripedList">
+                        <tbody>
+                        <%el.forEach(function (elem){%>
+                        <tr class="mainSettings <%=!elem.publicAccess ? 'private' : ''%>"
+                            id="<%=elem._id%>">
+                            <td>
+                                <div class="favourite _actionCircleBtn <%=App.currentUser && App.currentUser.favorite && App.currentUser.favorite.dashboards &&
+                                App.currentUser.favorite.dashboards.indexOf(elem._id) >= 0 ? 'icon-star2' : 'icon-star'%>"></div>
+                            </td>
+                            <td><%=elem.name%></td>
+                            <td><%=elem.description%></td>
+                            <td><%=elem.publicAccess ? 'Public' : 'Private'%></td>
+                            <td><%=elem.editedBy && elem.editedBy.user ? elem.editedBy.user.login : ''%></td>
+                            <td>
+                                <div class="_tableActions">
+                                    <div class="icon-pencil _actionCircleBtn editRow"></div>
+                                    <div class="icon-trash _actionCircleBtn deleteRow"></div>
+                                </div>
+                            </td>
+                        </tr>
+                        <%})%>
+                        </tbody>
+                    </table>
+                </div>
+                <%}%>
+                <%})%>
+            </div>
+        </div>
+    </div>
+</div>

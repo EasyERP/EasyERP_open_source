@@ -75,7 +75,6 @@ module.exports = function (app, mainDb) {
     var prPositionRouter = require('./projectPosition')(models);
     var journalRouter = require('./journals')(models, event);
     var salaryReportRouter = require('./salaryReport')(models);
-    var saasRouter = require('./saas')(mainDb, models, event);
     var userRouter = require('./user')(event, models, mainDb);
     var campaignRouter = require('./campaign')(models);
     var orgSettingsRouter = require('./orgSettings')(models);
@@ -243,7 +242,6 @@ module.exports = function (app, mainDb) {
     app.use('/departments', departmentRouter);
     app.use('/revenue', revenueRouter);
     app.use('/salaryReport', salaryReportRouter);
-    app.use('/saas', saasRouter);
     app.use('/opportunities', opportunityRouter);
     app.use('/leads', leadsRouter);
     app.use('/jobPositions', jobPositionRouter);
@@ -299,7 +297,6 @@ module.exports = function (app, mainDb) {
     app.use('/image', imagesRouter);
     app.use('/stockReturns', stockReturnsRouter);
     app.use('/expensesCategories', expensesCategoriesRouter);
-    //app.use('/customReports', customReportRouter);
     app.use('/clearDemoData', demoDataRouter);
     app.use('/syncLogs', syncLogsRouter);
     app.use('/manufacturingOrders', manufacturingOrderRouter);
@@ -425,14 +422,6 @@ module.exports = function (app, mainDb) {
                 if (err) {
                     return next(err);
                 }
-
-                /* getResponse.getCampaignByName('erp_saas_signup',function (r) {
-
-                 getResponse.sendNewsletter(Object.keys(r.data.result)[0], null, null, 'Hello', 'Hello world!', 'this is plain', '<h1>This is html</h1>',
-                 ['openrate'], null, 'liliya.mykhailova@thinkmobiles.com', function (r) {
-                 console.log(JSON.stringify(r));
-                 });
-                 });*/
             });
 
         }
@@ -466,51 +455,40 @@ module.exports = function (app, mainDb) {
     app.get('/addToSync', syncHelper.getToSync);
 
     app.post('/track', function (req, res) {
-            var RegExp = /production|test_demo/;
-            var body = req.body;
-            var ip = req.headers ? req.headers['x-real-ip'] : req.ip;
-            var geo = geoip.lookup(ip);
-            var sendLetter = false;
+        var RegExp = /production|test_demo/;
+        var body = req.body;
+        var ip = req.headers ? req.headers['x-real-ip'] : req.ip;
+        var geo = geoip.lookup(ip);
+        var sendLetter = false;
 
-            function mapper(body) {
-                body.ip = ip;
-                body.country = (!body.country && geo) ? geo.country : '';
-                body.city = (!body.city && geo) ? geo.city : '';
-                body.region = (!body.region && geo) ? geo.region : '';
+        function mapper(body) {
+            body.ip = ip;
+            body.country = (!body.country && geo) ? geo.country : '';
+            body.city = (!body.city && geo) ? geo.city : '';
+            body.region = (!body.region && geo) ? geo.region : '';
 
-                body.registrType = process.env.SERVER_TYPE;
-                body.server = process.env.SERVER_PLATFORM;
+            body.registrType = process.env.SERVER_TYPE;
+            body.server = process.env.SERVER_PLATFORM;
 
-                if (body.name === 'close' || body.name === 'sessionEnd') {
-                    sendLetter = true;
-                }
-            }
-
-            ip = ip || '127.0.0.1';
-
-            if (body instanceof Array) {
-                body.map(mapper);
-            } else {
-                mapper(body);
-            }
-
-            res.status(200).send();
-
-            if (!RegExp.test(process.env.SERVER_TYPE)) {
-
-                /* if (sendLetter) {
-                 getResponse.getCampaignByName('erp_saas_signup', function (r) {
-
-                 getResponse.sendNewsletter(Object.keys(r.data.result)[0], null, null, 'Hello', 'Hello world!', 'this is plain', '<h1>This is html</h1>',
-                 ['openrate'], null, 'liliya.mykhailova@thinkmobiles.com', function (r) {
-                 console.log(JSON.stringify(r));
-                 });
-                 });
-                 }*/
-                tracker.track(body);
+            if (body.name === 'close' || body.name === 'sessionEnd') {
+                sendLetter = true;
             }
         }
-    );
+
+        ip = ip || '127.0.0.1';
+
+        if (body instanceof Array) {
+            body.map(mapper);
+        } else {
+            mapper(body);
+        }
+
+        res.status(200).send();
+
+        if (!RegExp.test(process.env.SERVER_TYPE)) {
+            tracker.track(body);
+        }
+    });
 
     app.get('/stopserver', function () {
         process.exit(1);
@@ -545,8 +523,6 @@ module.exports = function (app, mainDb) {
             logger.error(err.message + '\n' + err.stack);
         }
     }
-
-    // requestHandler.initScheduler();
 
     app.use(notFound);
     app.use(errorHandler);

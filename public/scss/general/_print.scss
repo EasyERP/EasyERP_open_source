@@ -1,0 +1,187 @@
+@media print {
+
+  ._invoiceTemplate {
+    margin: 0 !important;
+    box-shadow: none !important;
+    padding: 0.580000in 0.350000in 0.580000in 0.50000in;
+  }
+
+  .ribbon {
+    display: none !important;
+  }
+
+  ._templateTable {
+
+    td {
+      border-bottom: none !important;
+    }
+
+    tbody {
+      font-size: 10px !important;
+      tr {
+        page-break-inside: avoid !important;
+        page-break-after: auto !important;
+      }
+    }
+  }
+
+  ._templateDateTable {
+    td {
+      font-size: 7pt !important;
+    }
+  }
+
+  ._templateTable,
+  .templateBottomTable {
+    tr {
+      th {
+        font-size: 7pt !important;
+      }
+      td {
+        font-size: 6pt !important;
+        div {
+          font-size: 6pt !important;
+        }
+      }
+    }
+  }
+
+  ._templateTableFooter {
+    td {
+      font-size: 7pt !important;
+    }
+    tr {
+      height: 30px !important;
+    }
+  }
+
+  ._templateDateBlock {
+    font-size: 10px !important;
+    ._billingBlock ._billingCustomerName {
+      color: #428bca !important;
+    }
+  }
+
+  ._orgName,
+  .templateBottomTable th {
+    font-size: 8pt !important;
+  }
+
+  ._orgLabel,
+  .templateBottomTable td > p,
+  ._templatePaymentInfo > p {
+    font-size: 7pt !important;
+    line-height: 1 !important;
+  }
+
+  ._entityTitle {
+    font-size: 21pt !important;
+  }
+
+  ._entityNumber {
+    font-size: 8pt !important;
+    line-height: 1 !important;
+  }
+
+  ._balanceTitle {
+    font-size: 6pt !important;
+    padding-top: 16px !important;
+  }
+
+  ._balanceValue {
+    font-size: 10pt !important;
+  }
+
+  ._billingTitle {
+    font-size: 8pt !important;
+  }
+
+  ._billingCustomerName {
+    color: #000 !important;
+    font-size: 7pt !important;
+    padding-top: 3pt !important;
+  }
+
+  .templateBottomTable{
+    margin-top: 15pt;
+    margin-bottom: 15pt;
+    thead {
+      tr {
+        border-top: 2pt solid #000;
+      }
+    }
+
+    tbody {
+      tr {
+        page-break-inside: avoid !important;
+        page-break-after: auto !important;
+      }
+    }
+    th, td {
+      padding: 8px 5px !important;
+      text-align: left !important;
+
+      &:nth-child(3){
+        text-align: right !important;
+        padding-right: 0 !important;
+      }
+
+      &:nth-child(1){
+        text-align: left!important;
+        padding-left: 0!important;
+      }
+
+      &:nth-child(2){
+        p {
+          font-weight: 700 !important;
+          color: #000 !important;
+        }
+      }
+    }
+    td {
+      vertical-align: top !important;
+    }
+  }
+
+  ._templatePaymentInfo ._noticeText {
+    padding-top: 10pt !important;
+    margin-top: 10pt !important;
+    border-top: 1pt solid #000 !important;
+  }
+
+  .printPdf {
+    padding: 50px !important;
+    min-width: auto !important;
+
+  }
+
+  #topbar-holder,
+  #submenuHolder,
+  #top-bar,
+  #timeRecivingDataFromServer,
+  .listContentWrap,
+  .pagination,
+  .formContentTitle,
+  ._goodOutWrap {
+    display: none !important;
+  }
+
+  ._templateTable {
+    thead,
+    thead tr,
+    th {
+      background-color: #3c3d3a !important;
+      color: #fff !important;
+    }
+  }
+
+  .content_wrapper {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .form-holder {
+    padding: 0 !important;
+    height: auto !important;
+  }
+}
