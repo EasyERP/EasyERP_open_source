@@ -35,8 +35,6 @@ eventsHandler = function (app, mainDb) {
     var JournalEntryHandler = require('../handlers/journalEntry');
     var journalEntry = new JournalEntryHandler(models);
 
-    var dataBaseManipulator = require('./dataBaseClonner')(mainDb, event, models);
-
     // binding for remove Workflow
     event.on('removeWorkflow', function (req, wId, id) {
         var query;
@@ -535,8 +533,6 @@ eventsHandler = function (app, mainDb) {
     event.on('sendMessage', function (options) {
         io.emit('sendMessage', options);
     });
-
-    event.on('closeConnection', dataBaseManipulator.closeConnection);
 
     event.on('savedCategories', function (options) {
         io.emit('savedCategories', options);

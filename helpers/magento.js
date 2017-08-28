@@ -676,8 +676,6 @@ module.exports = function (models, event) {
         warehouse = opts.warehouseSettings && opts.warehouseSettings.warehouse;
         location = opts.warehouseSettings && opts.warehouseSettings.location;
 
-        console.log(opts.warehouseSettings);
-
         fullRoute = baseUrl + route;
 
         console.log('fullRoute', fullRoute);

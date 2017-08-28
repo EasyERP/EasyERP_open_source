@@ -2,7 +2,6 @@
 
 module.exports = function (models) {
     var async = require('async');
-    console.log('line 5', models);
     var ChannelLinksService = require('../services/channelLinks')(models);
     var OrderService = require('../services/order')(models);
     var ConflictService = require('../services/conflict')(models);

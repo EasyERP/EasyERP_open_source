@@ -511,8 +511,6 @@ module.exports = function (models, event) {
                 allCallback(error);
             }
 
-            console.log(results && results.Items);
-
             products = results && results.Items;
 
             productService.find({}, {

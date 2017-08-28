@@ -20,8 +20,6 @@ module.exports = function (dbsNames, event, models) {
     var i;
     var singleConnect = false;
 
-    console.log(dbsNames);
-
     if (typeof dbsNames === 'string') {
         singleConnect = true;
     } else {
