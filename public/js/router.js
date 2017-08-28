@@ -71,7 +71,7 @@ define([
             'easyErp/Products/thumbnails(/c=:countPerPage)(/filter=:filter)'                                : 'goToProduct',
             'easyErp/import/list(/p=:page)(/c=:countPerPage)'                                               : 'goToImport',
             'login(?password=:password&dbId=:dbId&email=:email)(?ir_hash=:ir_hash)'                         : 'login',
-            'easyErp/gatherInfo': 'goToGatherInfo',
+            'easyErp/gatherInfo'                                                                            : 'goToGatherInfo',
             'easyErp/:contentType/kanban(/:parrentContentId)(/filter=:filter)'                              : 'goToKanban',
             'easyErp/:contentType/datelist(/c=:countPerPage)(/filter=:filter)'                              : 'goToDateList',
             'easyErp/:contentType/thumbnails(/c=:countPerPage)(/filter=:filter)'                            : 'goToThumbnails',

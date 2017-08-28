@@ -4,20 +4,25 @@ define([
     'jQuery',
     'text!templates/login/GatherInfoTemplate.html',
     'dataService',
-    'custom'
-], function (Backbone, _, $, GatherInfoTemplate, dataService, custom) {
+    'helpers/keyValidator'
+], function (Backbone, _, $, GatherInfoTemplate, dataService, keyValidator) {
 
     var GatherInfoView = Backbone.View.extend({
         el      : '#gatherView',
         template: _.template(GatherInfoTemplate),
 
         events: {
-            'click #submit': 'onSubmit'
+            'click #submit'   : 'onSubmit',
+            'keypress .forNum': 'keypressHandler'
         },
 
         initialize: function (options) {
 
             this.render();
+        },
+
+        keypressHandler: function (e) {
+            return keyValidator(e, false, true);
         },
 
         onSubmit: function (e) {
@@ -29,6 +34,9 @@ define([
             var firstName = $thisEl.find('.firstName').val() || '';
             var lastName = $thisEl.find('.lastName').val() || '';
             var err = '';
+            var numberPattern = /\d+/g;
+
+            mobilePhone = (mobilePhone.match(numberPattern)).join('');
 
             var data = {
                 mobilePhone: '+' + mobilePhone,

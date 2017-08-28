@@ -281,10 +281,10 @@ define([
                     self.createMenuViews();
                     self.trigger('rendered');
 
-                    if (!App.currentUser.mobilePhone || App.currentUser.mobilePhone.length === 1) {
+                   // if (!App.currentUser.mobilePhone || App.currentUser.mobilePhone.length === 1) {
                         Backbone.history.fragment = '';
                         Backbone.history.navigate(gatherInfoUrl, {trigger: true});
-                    }
+                   // }
                 });
 
             } else {
