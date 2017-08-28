@@ -16,7 +16,7 @@ You'll need to do mongorestore. For this, please unpack dump.zip and run mongore
 
 This action provides you with our 2 test DBs
 
-One of them is empty (called SaaS), so you can fulfil it manually 
+One of them is empty (called saas), so you can fulfil it manually
 
 Second one (called CRM) contains data
 
