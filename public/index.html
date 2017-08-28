@@ -31,58 +31,10 @@
         window.inboundrocket_ir_nonce = 'e4cc58fa80';
     </script>
     <script data-main="js/main" src="js/libs/require.js"></script>
-
-    <!--
-        <script>FlurryAgent.startSession('VTQ54R3RQ8J5Q7MR9Z9B');</script>
-    -->
-    <script>
-        var googleUser = {};
-        var startApp = function () {
-            gapi.load('auth2', function () {
-                // Retrieve the singleton for the GoogleAuth library and set up the client.
-                auth2 = gapi.auth2.init({
-                    client_id   : 'YOUR_CLIENT_ID.apps.googleusercontent.com',
-                    cookiepolicy: 'single_host_origin',
-                    // Request scopes in addition to 'profile' and 'email'
-                    //scope: 'additional_scope'
-                });
-                attachSignin(document.getElementById('customBtn'));
-            });
-        };
-
-        function attachSignin(element) {
-            console.log(element.id);
-            auth2.attachClickHandler(element, {},
-                function (googleUser) {
-                    document.getElementById('name').innerText = "Signed in: " +
-                        googleUser.getBasicProfile().getName();
-                }, function (error) {
-                    alert(JSON.stringify(error, undefined, 2));
-                });
-        }
-    </script>
 </head>
 <body>
 <div id="fb-root"></div>
 <div id="my-signin2"></div>
-
-<script>(function (d, s, id) {
-    var js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) {
-        return;
-    }
-    js = d.createElement(s);
-    js.id = id;
-    js.src = "//connect.facebook.net/ru_RU/sdk.js#xfbml=1&version=v2.8&appId=2275263652698073";
-    fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));
-</script>
-<script type="text/javascript" src="//platform.linkedin.com/in.js">
-    api_key:   78
-    bmyi32t2i1oc
-    authorize: true
-    lang:      en_US
-</script>
 
 <div id="errorHandler" class="notification"></div>
 <div id="wrapper" class="pageWrapper collapsed"></div>
