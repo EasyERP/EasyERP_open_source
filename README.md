@@ -1,5 +1,4 @@
 ## How to start
-## My Projects
 Please make sure to have installed nodejs starting from 4.0 and mongodb starting from 3.0 and latest version of redis-server 
 
 Open EasyERP.zip with any IDE
