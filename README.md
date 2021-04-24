@@ -14,6 +14,9 @@ As result, you'll get all modules
 ## Now let's move to DB
 
 You'll need to do mongorestore. For this, please unpack dump.zip and run mongorestore in the same directory, where the dump folder appears
+`mongorestore ./dump`
+
+Using mongo and redis docker for demo would be easier. and mongoretore is preinstalled in the mongo docker image.
 
 This action provides you with our 2 test DBs
 

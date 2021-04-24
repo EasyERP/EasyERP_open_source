@@ -12,7 +12,7 @@ module.exports = (function () {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date, default: Date.now}
         },
-
+ 
         editedBy: {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date, default: Date.now}

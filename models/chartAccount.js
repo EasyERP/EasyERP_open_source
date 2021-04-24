@@ -1,3 +1,7 @@
+/**
+ * Chart of Account(AOC) definiton: 
+ * 
+ */
 module.exports = (function () {
 
     var mongoose = require('mongoose');
