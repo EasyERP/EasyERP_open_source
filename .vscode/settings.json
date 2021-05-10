@@ -1,0 +1,4 @@
+{
+    "requireModuleSupport.modulePath": "public/js",
+    "requireModuleSupport.configFile": "main.js"
+}

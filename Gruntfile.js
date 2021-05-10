@@ -8,7 +8,7 @@ module.exports = function (grunt) {
         apidoc: {
             tinyERP: {
                 title  : 'tinyERP documentation',
-                url    : 'http://192.168.88.88',
+                url    : 'localhost',
                 src    : 'routes/',
                 dest   : 'apidoc/',
                 options: {
