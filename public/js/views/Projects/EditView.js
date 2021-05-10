@@ -198,7 +198,7 @@ define([
                          }
                          if (data.workflow._id != workflowStart._id) {
                          var filter = window.location.hash.split('filter=')[1];
-                         var url = '#easyErp/Projects/thumbnails';
+                         var url = '#tinyERP/Projects/thumbnails';
                          if (filter) {
                          url += '/filter=' + filter;
                          }

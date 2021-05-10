@@ -25,45 +25,45 @@ define([
 
             this.views.organizationView = {
                 view       : organizationView,
-                redirectRef: '#easyErp/organizationSettings'
+                redirectRef: '#tinyERP/organizationSettings'
             };
             this.views.accountingView = {
                 view       : accountingView,
-                redirectRef: '#easyErp/Accounts'
+                redirectRef: '#tinyERP/Accounts'
             };
 
             this.views.productsView = {
                 view       : productDetailsView,
-                redirectRef: '#easyErp/productsSettings'
+                redirectRef: '#tinyERP/productsSettings'
             };
 
             this.views.employeesView = {
                 view       : settingsEmployeeView,
-                redirectRef: '#easyErp/settingsEmployee'
+                redirectRef: '#tinyERP/settingsEmployee'
             };
 
             this.views.usersView = {
-                redirectRef: '#easyErp/Users',
+                redirectRef: '#tinyERP/Users',
                 trigger    : true
             };
 
             this.views.profilesView = {
-                redirectRef: '#easyErp/Profiles',
+                redirectRef: '#tinyERP/Profiles',
                 trigger    : true
             };
 
             this.views.departmentsView = {
-                redirectRef: '#easyErp/Departments',
+                redirectRef: '#tinyERP/Departments',
                 trigger    : true
             };
 
             this.views.workflowsView = {
-                redirectRef: '#easyErp/Workflows',
+                redirectRef: '#tinyERP/Workflows',
                 trigger    : true
             };
 
             this.views.integrationsView = {
-                redirectRef: '#easyErp/integrations',
+                redirectRef: '#tinyERP/integrations',
                 trigger    : true
             };
 

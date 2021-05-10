@@ -229,7 +229,7 @@ define([
                 $needAEl.click();
 
                 expect($expectedMenuEl).to.have.class('selected');
-                expect(window.location.hash).to.be.equals('#easyErp/journal');
+                expect(window.location.hash).to.be.equals('#tinyERP/journal');
 
             });
 
@@ -521,7 +521,7 @@ define([
                     server.respond();
 
                     expect(historyNavigateSpy.calledOnce).to.be.true;
-                    expect(window.location.hash).to.be.equals('#easyErp/journal');
+                    expect(window.location.hash).to.be.equals('#tinyERP/journal');
                     $('.ui-dialog').remove();
                 });
 

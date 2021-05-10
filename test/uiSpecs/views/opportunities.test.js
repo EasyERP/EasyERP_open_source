@@ -2609,7 +2609,7 @@ define([
                 $needAEl.click();
 
                 expect($expectedMenuEl).to.have.class('selected');
-                expect(window.location.hash).to.be.equals('#easyErp/Opportunities');
+                expect(window.location.hash).to.be.equals('#tinyERP/Opportunities');
             });
         });
 
@@ -2654,10 +2654,10 @@ define([
                 var $kanBanTypeBtn = topBarView.$el.find('#kanbanBtn');
 
                 $listTypeBtn.click();
-                expect(window.location.hash).to.be.equals('#easyErp/Opportunities/list');
+                expect(window.location.hash).to.be.equals('#tinyERP/Opportunities/list');
 
                 $kanBanTypeBtn.click();
-                expect(window.location.hash).to.be.equals('#easyErp/Opportunities/kanban');
+                expect(window.location.hash).to.be.equals('#tinyERP/Opportunities/kanban');
             });
         });
 
@@ -2923,7 +2923,7 @@ define([
                     var $dialogContainer = $('.ui-dialog');
                     var $saveBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1)');
                     var $customerBtn = $dialogContainer.find('#customerDd');
-                    var hashOpportunityUrl = new RegExp('#easyErp\/Opportunities');
+                    var hashOpportunityUrl = new RegExp('#tinyERP\/Opportunities');
                     var $needSelect;
 
                     $customerBtn.click();
@@ -3054,7 +3054,7 @@ define([
                     $saveBtn.click();
                     server.respond();
 
-                    expect(window.location.hash).to.be.equals('#easyErp/Opportunities/list/p=1/c=100');
+                    expect(window.location.hash).to.be.equals('#tinyERP/Opportunities/list/p=1/c=100');
                 });
 
                 it('Try to cancel dialog', function () {
@@ -3500,7 +3500,7 @@ define([
                 $('.ui-dialog').remove();
 
                 expect(saveOpportunitySpy.calledOnce).to.be.true;
-                expect(window.location.hash).to.be.equals('#easyErp/Opportunities');
+                expect(window.location.hash).to.be.equals('#tinyERP/Opportunities');
 
                 done();
             });

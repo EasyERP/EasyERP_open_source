@@ -839,7 +839,7 @@ define([
                     self.changedModels = {};
 
                     if (!isEmployee) {
-                        return Backbone.history.navigate('easyErp/Applications/kanban', {trigger: true});
+                        return Backbone.history.navigate('tinyERP/Applications/kanban', {trigger: true});
                     }
 
                     if (model.get('relatedUser') === App.currentUser._id) {

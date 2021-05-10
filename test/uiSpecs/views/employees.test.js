@@ -4440,7 +4440,7 @@ define([
                 $needAEl.click();
 
                 expect($expectedMenuEl).to.have.class('selected');
-                expect(window.location.hash).to.be.equals('#easyErp/Employees');
+                expect(window.location.hash).to.be.equals('#tinyERP/Employees');
             });
         });
 
@@ -4507,10 +4507,10 @@ define([
                 var $thumbBtn = $topBarEl.find('#thumbBtn');
 
                 $listBtn.click();
-                expect(window.location.hash).to.be.equals('#easyErp/Employees/list');
+                expect(window.location.hash).to.be.equals('#tinyERP/Employees/list');
 
                 $thumbBtn.click();
-                expect(window.location.hash).to.be.equals('#easyErp/Employees/thumbnails');
+                expect(window.location.hash).to.be.equals('#tinyERP/Employees/thumbnails');
             });
         });
 
@@ -4650,7 +4650,7 @@ define([
                     expect(ajaxResponse.data).to.exist;
                     expect(ajaxResponse.data).to.have.property('count', '25');
                     expect(ajaxResponse.data).to.have.property('page', 1);
-                    expect(window.location.hash).to.be.equals('#easyErp/Employees/list/p=1/c=25');
+                    expect(window.location.hash).to.be.equals('#tinyERP/Employees/list/p=1/c=25');
                 });
 
                 it('Try to select 2 page on list', function () {
@@ -4676,7 +4676,7 @@ define([
                     expect(ajaxResponse.data).to.exist;
                     expect(ajaxResponse.data).to.have.property('count', '25');
                     expect(ajaxResponse.data).to.have.property('page', 2);
-                    expect(window.location.hash).to.be.equals('#easyErp/Employees/list/p=2/c=25');
+                    expect(window.location.hash).to.be.equals('#tinyERP/Employees/list/p=2/c=25');
                 });
 
                 it('Try to select 50 item per page', function () {
@@ -4695,7 +4695,7 @@ define([
                     expect(ajaxResponse.data).to.exist;
                     expect(ajaxResponse.data).to.have.property('count', '50');
                     expect(ajaxResponse.data).to.have.property('page', 1);
-                    expect(window.location.hash).to.be.equals('#easyErp/Employees/list/p=1/c=50');
+                    expect(window.location.hash).to.be.equals('#tinyERP/Employees/list/p=1/c=50');
                 });
 
                 it('Try to select 100 item per page', function () {
@@ -4714,7 +4714,7 @@ define([
                     expect(ajaxResponse.data).to.exist;
                     expect(ajaxResponse.data).to.have.property('count', '100');
                     expect(ajaxResponse.data).to.have.property('page', 1);
-                    expect(window.location.hash).to.be.equals('#easyErp/Employees/list/p=1/c=100');
+                    expect(window.location.hash).to.be.equals('#tinyERP/Employees/list/p=1/c=100');
 
                 });
 
@@ -4734,7 +4734,7 @@ define([
                     expect(ajaxResponse.data).to.exist;
                     expect(ajaxResponse.data).to.have.property('count', '200');
                     expect(ajaxResponse.data).to.have.property('page', 1);
-                    expect(window.location.hash).to.be.equals('#easyErp/Employees/list/p=1/c=200');
+                    expect(window.location.hash).to.be.equals('#tinyERP/Employees/list/p=1/c=200');
                 });
 
                 it('Try to export to Csv', function () {
@@ -5022,7 +5022,7 @@ define([
             var $thisEl;
 
             before(function () {
-                window.location.hash = '#easyErp/Employees/thumbnails';
+                window.location.hash = '#tinyERP/Employees/thumbnails';
                 server = sinon.fakeServer.create();
                 mainSpy = sinon.spy(App, 'render');
                 clock = sinon.useFakeTimers();
@@ -5272,7 +5272,7 @@ define([
 
                 server.respond();
 
-                expect(window.location.hash).to.be.equals('#easyErp/Applications/kanban');
+                expect(window.location.hash).to.be.equals('#tinyERP/Applications/kanban');
                 $dialogEl.remove();
 
             });
@@ -5303,7 +5303,7 @@ define([
 
                 server.respond();
 
-                expect(window.location.hash).to.be.equals('#easyErp/Applications/kanban');
+                expect(window.location.hash).to.be.equals('#tinyERP/Applications/kanban');
                 $dialogEl.remove();
 
             });
@@ -5339,7 +5339,7 @@ define([
                 $deleteBtn.click();
                 server.respond();
 
-                expect(window.location.hash).to.be.equals('#easyErp/Employees');
+                expect(window.location.hash).to.be.equals('#tinyERP/Employees');
 
             });
 

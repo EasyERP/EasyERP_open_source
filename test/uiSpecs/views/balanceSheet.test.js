@@ -157,7 +157,7 @@ define([
                 $needAEl.click();
 
                 expect($expectedMenuEl).to.have.class('selected');
-                expect(window.location.hash).to.be.equals('#easyErp/balanceSheet');
+                expect(window.location.hash).to.be.equals('#tinyERP/balanceSheet');
             });
         });
 

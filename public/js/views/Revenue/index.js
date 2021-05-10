@@ -317,7 +317,7 @@ define([
         },
 
         changeLocation: function (filter) {
-            var url = '#easyErp/Revenue';
+            var url = '#tinyERP/Revenue';
 
             if (filter) {
                 url += '/filter=' + encodeURIComponent(JSON.stringify(filter));

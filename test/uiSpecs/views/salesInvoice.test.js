@@ -1006,7 +1006,7 @@ define([
                 $needAEl.click();
 
                 expect($expectedMenuEl).to.have.class('selected');
-                expect(window.location.hash).to.be.equals('#easyErp/salesInvoices');
+                expect(window.location.hash).to.be.equals('#tinyERP/salesInvoices');
             });
         });
 

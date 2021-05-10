@@ -41,7 +41,7 @@ define([
             this.filter = options.filter;
             this.defaultItemsNumber = this.collection.namberToShow || 100;
             this.newCollection = options.newCollection;
-            this.formUrl = '#easyErp/' + this.contentType + '/tform/';
+            this.formUrl = '#tinyERP/' + this.contentType + '/tform/';
             this.deleteCounter = 0;
             this.page = options.collection.currentPage;
 
@@ -83,9 +83,9 @@ define([
             App.publishProductState = null;
 
             if (self.productId) {
-                url = '#easyErp/Products/tform/' + self.productId + '/p=1/c=50';
+                url = '#tinyERP/Products/tform/' + self.productId + '/p=1/c=50';
             } else {
-                url = '#easyErp/Products/list/p=1/c=50';
+                url = '#tinyERP/Products/list/p=1/c=50';
             }
 
             Backbone.history.fragment = '';
@@ -207,9 +207,9 @@ define([
                 $('#channelStatus div').attr('class', 'channelImg');
 
                 if (self.productId) {
-                    urlHash = '#easyErp/Products/tform/' + self.productId + '/p=1/c=50';
+                    urlHash = '#tinyERP/Products/tform/' + self.productId + '/p=1/c=50';
                 } else {
-                    urlHash = '#easyErp/Products/list/p=1/c=50';
+                    urlHash = '#tinyERP/Products/list/p=1/c=50';
                 }
 
                 App.publishProductState = null;

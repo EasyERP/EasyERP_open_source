@@ -22,7 +22,7 @@ define([
         ListItemView     : ListItemView,
         contentCollection: contentCollection,
         contentType      : 'Companies',
-        formUrl          : '#easyErp/Companies/tform/',
+        formUrl          : '#tinyERP/Companies/tform/',
         exportToXlsxUrl  : '/Customers/exportToXlsx/?type=Companies',
         exportToCsvUrl   : '/Customers/exportToCsv/?type=Companies',
         letterKey        : 'name.first',

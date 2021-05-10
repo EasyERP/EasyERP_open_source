@@ -181,7 +181,7 @@ define([
 
         goToOrders: function (e) {
             var $target = $(e.target);
-            var hash = 'easyErp/order/list/filter=';
+            var hash = 'tinyERP/order/list/filter=';
             var channel = $target.closest('.app').attr('data-id');
             var filter = {
                 channel: {
@@ -207,7 +207,7 @@ define([
 
         goListProducts: function (e) {
             var $target = $(e.target);
-            var hash = '#easyErp/Products/list/filter=';
+            var hash = '#tinyERP/Products/list/filter=';
             var channel = $target.closest('.app').attr('data-id');
 
             var filter = {
@@ -227,7 +227,7 @@ define([
 
         goUnlinkedOrders: function (e) {
             var $target = $(e.target);
-            var hash = 'easyErp/order/list/filter=';
+            var hash = 'tinyERP/order/list/filter=';
             var channel = $target.closest('.app').attr('data-id');
             var filter = {
                 channel: {
@@ -258,7 +258,7 @@ define([
 
         goUnlinkedProducts: function (e) {
             var $target = $(e.target);
-            var hash = 'easyErp/unlinkedProducts/filter=';
+            var hash = 'tinyERP/unlinkedProducts/filter=';
             var channel = $target.closest('.app').attr('data-id');
             var filter = {
                 channel        : channel,

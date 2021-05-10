@@ -183,7 +183,7 @@ define([
                             $('#loginPanel  #userName').text(model.toJSON().login);
                         }
                         Backbone.history.fragment = '';
-                        Backbone.history.navigate('easyErp/myProfile', {trigger: true});
+                        Backbone.history.navigate('tinyERP/myProfile', {trigger: true});
                     },
 
                     error: function (model, xhr) {
@@ -226,7 +226,7 @@ define([
             var itemIndex = $(e.target).closest('a').attr('id');
             e.preventDefault();
 
-            window.location.hash = '#easyErp/Employees/form/' + itemIndex;
+            window.location.hash = '#tinyERP/Employees/form/' + itemIndex;
         },
 
         render: function () {

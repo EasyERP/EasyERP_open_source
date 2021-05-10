@@ -21,7 +21,7 @@ define([
         ListItemView     : ListItemView,
         contentCollection: contentCollection,
         FilterView       : FilterView,
-        formUrl          : '#easyErp/Persons/tform/',
+        formUrl          : '#tinyERP/Persons/tform/',
         contentType      : 'Persons', // needs in view.prototype.changeLocationHash
         viewType         : 'list', // needs in view.prototype.changeLocationHash
         exportToXlsxUrl  : '/Customers/exportToXlsx/?type=Persons',

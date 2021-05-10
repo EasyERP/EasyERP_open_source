@@ -18,7 +18,7 @@ define([
         listTemplate     : _.template(listTemplate),
         ListItemView     : ListItemView,
         ContentCollection: ContentCollection,
-        formUrl          : '#easyErp/Projects/form/',
+        formUrl          : '#tinyERP/Projects/form/',
         contentType      : 'Projects', //  needs in view.prototype.changeLocationHash
 
         initialize: function (options) {

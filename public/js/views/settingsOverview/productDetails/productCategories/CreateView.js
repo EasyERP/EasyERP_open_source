@@ -77,7 +77,7 @@ define([
             this.model.save(data, {
                 success: function (model) {
                     /*Backbone.history.fragment = '';
-                    Backbone.history.navigate('easyErp/productsSettings', {trigger: true});*/
+                    Backbone.history.navigate('tinyERP/productsSettings', {trigger: true});*/
                     self.collection.add(model);
                     self.remove();
                 },

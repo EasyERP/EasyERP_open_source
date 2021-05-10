@@ -170,7 +170,7 @@ define([
                     } else {
                         Backbone.history.fragment = '';
 
-                        navigateUrl = (viewType === 'form') ? '#easyErp/Persons/form/' + res.id : window.location.hash;
+                        navigateUrl = (viewType === 'form') ? '#tinyERP/Persons/form/' + res.id : window.location.hash;
                         Backbone.history.navigate(navigateUrl, {trigger: true});
                     }
 

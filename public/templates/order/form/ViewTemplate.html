@@ -69,7 +69,7 @@
             </ul>
             <span class="_orderNumber">#<%=model.name%></span>
             <%if (model.invoice && model.invoice._id) {%>
-            <%var reference = '#easyErp/invoice/tform/' + model.invoice._id;%>
+            <%var reference = '#tinyERP/invoice/tform/' + model.invoice._id;%>
             <ul class="_statusOrderList">
                 <li class="left _statusOrders">
                     <h3 class="_invoiced"><a href="<%=reference%>">#<%=model.invoice.name%></a></h3>

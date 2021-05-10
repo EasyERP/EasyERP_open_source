@@ -24,7 +24,7 @@
             e.preventDefault();
             itemIndex = $(e.target).closest('a').attr('id');
 
-            Backbone.history.navigate('#easyErp/Persons/form/' + itemIndex, {trigger: true});
+            Backbone.history.navigate('#tinyERP/Persons/form/' + itemIndex, {trigger: true});
         },
 
         render: function (options) {

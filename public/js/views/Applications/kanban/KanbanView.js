@@ -123,9 +123,9 @@
                 if (success) {
                     $('.edit-dialog').remove();
                     Backbone.history.fragment = '';
-                    Backbone.history.navigate('easyErp/Applications', {trigger: true});
+                    Backbone.history.navigate('tinyERP/Applications', {trigger: true});
                 } else {
-                    Backbone.history.navigate('easyErp', {trigger: true});
+                    Backbone.history.navigate('tinyERP', {trigger: true});
                 }
             });
         },

@@ -13,14 +13,14 @@
                         title         : 'Inventory',
                         message       : 'You can access the Inventory section from the main menu. From here you can create and manage all of your products. Clear, then press Next button to go to Products.',
                         selector      : 'i.icon-Inventory',
-                        url           : '#easyErp/reportsDashboard',
+                        url           : '#tinyERP/reportsDashboard',
                         isDefault     : 1,
                         hidePrevButton: true,
                         step          : 0
                     }, {
                         title   : 'Creating A Product & Variant',
                         message : 'Click on "New" button to open create dialog.',
-                        url     : '#easyErp/Products',
+                        url     : '#tinyERP/Products',
                         selector: '#top-bar-createBtn',
                         step    : 1
                     }, {
@@ -38,7 +38,7 @@
                             title         : 'Inventory',
                             message       : 'Go to Inventory -> Products',
                             selector      : 'i.icon-Inventory',
-                            url           : '#easyErp/reportsDashboard',
+                            url           : '#tinyERP/reportsDashboard',
                             step          : 0,
                             hidePrevButton: true,
                             isDefault     : 1
@@ -47,7 +47,7 @@
                             title   : 'Inventory',
                             message : 'Click on the item of products',
                             selector: '#listTable > tr:first',
-                            url     : '#easyErp/Products/list',
+                            url     : '#tinyERP/Products/list',
                             step    : 1,
                             error   : {
                                 title  : 'Error!',
@@ -91,7 +91,7 @@
                             title         : 'Inventory',
                             message       : 'Go to Stock Detail',
                             selector      : 'i.icon-Inventory',
-                            url           : '#easyErp/reportsDashboard',
+                            url           : '#tinyERP/reportsDashboard',
                             step          : 0,
                             hidePrevButton: true,
                             isDefault     : 1
@@ -100,7 +100,7 @@
                             title   : 'CRM',
                             message : 'You can see Stock Detail',
                             selector: 'table.stripedList',
-                            url     : '#easyErp/stockInventory/list',
+                            url     : '#tinyERP/stockInventory/list',
                             step    : 1,
                             isEnd   : true
                         }
@@ -118,7 +118,7 @@
                             title         : 'Accounting',
                             message       : 'Go to Accounting',
                             selector      : 'i.icon-Accounting',
-                            url           : '#easyErp/reportsDashboard',
+                            url           : '#tinyERP/reportsDashboard',
                             step          : 0,
                             hidePrevButton: true,
                             isDefault     : 1
@@ -127,7 +127,7 @@
                             title   : 'Accounting',
                             message : 'Check Your Balance sheet',
                             selector: 'div._totalBalanceTableWrap:last',
-                            url     : '#easyErp/balanceSheet/list',
+                            url     : '#tinyERP/balanceSheet/list',
                             step    : 1,
                             onTop   : 1,
                             isEnd   : true
@@ -143,7 +143,7 @@
                             title         : 'Accounting',
                             message       : 'Go to Accounting',
                             selector      : 'i.icon-Accounting',
-                            url           : '#easyErp/reportsDashboard',
+                            url           : '#tinyERP/reportsDashboard',
                             step          : 0,
                             hidePrevButton: true,
                             isDefault     : 1
@@ -152,7 +152,7 @@
                             title   : 'Accounting',
                             message : 'You can see your profit and loss',
                             selector: 'div._profitTableWrap:first',
-                            url     : '#easyErp/profitAndLoss/list',
+                            url     : '#tinyERP/profitAndLoss/list',
                             step    : 1,
                             isEnd   : true
                         }
@@ -167,7 +167,7 @@
                             title         : 'Accounting',
                             message       : 'Go to Accounting',
                             selector      : 'i.icon-Accounting',
-                            url           : '#easyErp/reportsDashboard',
+                            url           : '#tinyERP/reportsDashboard',
                             step          : 0,
                             hidePrevButton: true,
                             isDefault     : 1
@@ -175,7 +175,7 @@
                         {
                             title   : 'Accounting',
                             message : 'You can see your cash  flow',
-                            url     : '#easyErp/cashFlow/list',
+                            url     : '#tinyERP/cashFlow/list',
                             step    : 1,
                             onTop   : 1,
                             selector: '#totalCashFlow',
@@ -192,7 +192,7 @@
                             title         : 'CRM',
                             message       : 'Go to Invoice Aging',
                             selector      : 'i.icon-Sales',
-                            url           : '#easyErp/reportsDashboard',
+                            url           : '#tinyERP/reportsDashboard',
                             step          : 0,
                             hidePrevButton: true,
                             isDefault     : 1
@@ -201,7 +201,7 @@
                             title   : 'CRM',
                             message : 'You can see Invoice Aging',
                             selector: '#listTable > tr:first',
-                            url     : '#easyErp/invoiceAging/list',
+                            url     : '#tinyERP/invoiceAging/list',
                             step    : 1,
                             isEnd   : true
                         }
@@ -218,14 +218,14 @@
                         title         : 'CRM',
                         message       : 'You can access the CRM section from the main menu. Clear, then press Next button to go to Orders.',
                         selector      : 'i.icon-Sales',
-                        url           : '#easyErp/reportsDashboard',
+                        url           : '#tinyERP/reportsDashboard',
                         step          : 0,
                         hidePrevButton: true,
                         isDefault     : 1
                     }, {
                         title   : 'Creating Orders',
                         message : 'Click on "New" button to open create dialog.',
-                        url     : '#easyErp/order',
+                        url     : '#tinyERP/order',
                         selector: '#top-bar-createBtn',
                         step    : 1,
                         isEnd   : true
@@ -244,7 +244,7 @@
                             title         : 'CRM Deliver Inventory',
                             message       : 'Go to Orders.',
                             selector      : 'i.icon-Sales',
-                            url           : '#easyErp/reportsDashboard',
+                            url           : '#tinyERP/reportsDashboard',
                             hidePrevButton: true,
                             isDefault     : 1
                         },
@@ -253,7 +253,7 @@
                             title   : 'CRM Deliver Inventory',
                             message : 'Go to Orders.',
                             selector: '#listTable>tr>td>span.red._shipped:first',
-                            url     : '#easyErp/order/list',
+                            url     : '#tinyERP/order/list',
                             error   : {
                                 title  : 'Error!',
                                 message: 'It seems like you have no correct Order. Please, create it, you also can path the guide to learn how it goes.'
@@ -297,7 +297,7 @@
                             title         : 'CRM Payment',
                             message       : 'If you want create payment? go to CRM -> Order',
                             selector      : 'i.icon-Sales',
-                            url           : '#easyErp/dashboards',
+                            url           : '#tinyERP/dashboards',
                             step          : 0,
                             hidePrevButton: true,
                             isDefault     : 1
@@ -305,7 +305,7 @@
                         {
                             step    : 1,
                             title   : 'Find your Order',
-                            url     : '#easyErp/order/list',
+                            url     : '#tinyERP/order/list',
                             message : 'Let\'s open previously created order and modify it to Invoice.',
                             selector: '#listTable > tr> td.status_Order:not(:contains("Invoiced")):first',
                             error   : {
@@ -343,7 +343,7 @@
                             title         : 'CRM',
                             message       : 'Go to Orders',
                             selector      : 'i.icon-Sales',
-                            url           : '#easyErp/reportsDashboard',
+                            url           : '#tinyERP/reportsDashboard',
                             step          : 0,
                             hidePrevButton: true,
                             isDefault     : 1
@@ -352,7 +352,7 @@
                             title   : 'CRM',
                             message : 'Click on the Order',
                             selector: '#listTable > tr> td.status_Order:not(:contains("Invoiced")):first',
-                            url     : '#easyErp/order/list',
+                            url     : '#tinyERP/order/list',
                             step    : 1,
                             error   : {
                                 title  : 'Error!',
@@ -393,7 +393,7 @@
                             title         : 'CRM',
                             message       : 'Go to Persons',
                             selector      : 'i.icon-Sales',
-                            url           : '#easyErp/reportsDashboard',
+                            url           : '#tinyERP/reportsDashboard',
                             step          : 0,
                             hidePrevButton: true,
                             isDefault     : 1
@@ -402,7 +402,7 @@
                             title   : 'CRM',
                             message : 'Click on the "New" button',
                             selector: '#top-bar-createBtn',
-                            url     : '#easyErp/Persons/list',
+                            url     : '#tinyERP/Persons/list',
                             step    : 1
                         },
                         {
@@ -427,7 +427,7 @@
                             title         : 'CRM',
                             message       : 'Go to Companies',
                             selector      : 'i.icon-Sales',
-                            url           : '#easyErp/reportsDashboard',
+                            url           : '#tinyERP/reportsDashboard',
                             step          : 0,
                             hidePrevButton: true,
                             isDefault     : 1
@@ -436,7 +436,7 @@
                             title   : 'CRM',
                             message : 'Click on the "New" button',
                             selector: '#createBtnHolder > #top-bar-createBtn',
-                            url     : '#easyErp/Companies/list',
+                            url     : '#tinyERP/Companies/list',
                             step    : 1
                         },
                         {
@@ -463,14 +463,14 @@
                         title         : 'CRM',
                         message       : 'You can access the Purchase section from the main menu. Clear, then press Next button to go to Orders.',
                         selector      : 'i.icon-Purchases',
-                        url           : '#easyErp/reportsDashboard',
+                        url           : '#tinyERP/reportsDashboard',
                         step          : 0,
                         hidePrevButton: true,
                         isDefault     : 1
                     }, {
                         title   : 'Creating Purchase Orders',
                         message : 'Click on "New" button to open create dialog.',
-                        url     : '#easyErp/purchaseOrders/list',
+                        url     : '#tinyERP/purchaseOrders/list',
                         selector: '#top-bar-createBtn',
                         step    : 1,
                         isEnd   : true
@@ -487,14 +487,14 @@
                         title         : 'Opening An Order List',
                         message       : 'To create invoice first you must have an order, so let\'s create it. Go to Orders.',
                         selector      : 'i.icon-Purchases',
-                        url           : '#easyErp/reportsDashboard',
+                        url           : '#tinyERP/reportsDashboard',
                         step          : 0,
                         hidePrevButton: true,
                         isDefault     : 1
                     }, {
                         step    : 1,
                         title   : 'Find your Order',
-                        url     : '#easyErp/purchaseOrders/list',
+                        url     : '#tinyERP/purchaseOrders/list',
                         message : 'Let\'s open previously created order and modify it to Invoice.',
                         selector: '#listTable>tr>td>span.red:first',
                         error   : {
@@ -539,13 +539,13 @@
                         title         : 'Opening An Order List',
                         message       : 'To create invoice first you must have an order, so let\'s create it. Go to Orders.',
                         selector      : 'i.icon-Purchases',
-                        url           : '#easyErp/reportsDashboard',
+                        url           : '#tinyERP/reportsDashboard',
                         hidePrevButton: true,
                         isDefault     : 1
                     }, {
                         step    : 1,
                         title   : 'Find your Order',
-                        url     : '#easyErp/purchaseOrders/list',
+                        url     : '#tinyERP/purchaseOrders/list',
                         message : 'Let\'s open previously created order and modify it to Invoice.',
                         selector: '#listTable > tr> td:nth-child(5):not(:contains("Invoiced received")):first',
                         error   : {
@@ -579,14 +579,14 @@
                         title         : 'Opening An Order List',
                         message       : 'To create invoice first you must have an order, so let\'s create it. Go to Orders.',
                         selector      : 'i.icon-Purchases',
-                        url           : '#easyErp/reportsDashboard',
+                        url           : '#tinyERP/reportsDashboard',
                         hidePrevButton: true,
                         step          : 0,
                         isDefault     : 1
                     }, {
                         step    : 1,
                         title   : 'Find your Order',
-                        url     : '#easyErp/purchaseOrders/list',
+                        url     : '#tinyERP/purchaseOrders/list',
                         message : 'Let\'s open previously created order and modify it to Invoice.',
                         error   : {
                             title  : 'Error!',
@@ -626,7 +626,7 @@
                             title         : 'Integrations',
                             message       : 'To create a new channel, go to "Integrations"',
                             selector      : 'i.icon-integrations',
-                            url           : '#easyErp/reportsDashboard',
+                            url           : '#tinyERP/reportsDashboard',
                             step          : 0,
                             hidePrevButton: true,
                             isDefault     : 1
@@ -635,7 +635,7 @@
                             title   : 'Create new Channel',
                             message : 'To add a new channel, click on the “Add Channel” button.',
                             selector: 'span.actionAddNew',
-                            url     : '#easyErp/integrations',
+                            url     : '#tinyERP/integrations',
                             step    : 1
                         },
                         {
@@ -663,7 +663,7 @@
                             title         : 'HR',
                             message       : 'To create a new employee, go to "HR"',
                             selector      : 'i.icon-HR',
-                            url           : '#easyErp/reportsDashboard',
+                            url           : '#tinyERP/reportsDashboard',
                             step          : 0,
                             hidePrevButton: true,
                             isDefault     : 1
@@ -672,7 +672,7 @@
                             title   : 'Create new Employee',
                             message : 'To add a new employee, click on the “New” button.',
                             selector: '#top-bar-createBtn',
-                            url     : '#easyErp/Employees/list',
+                            url     : '#tinyERP/Employees/list',
                             step    : 1
                         },
                         {
@@ -697,7 +697,7 @@
                             title         : 'HR',
                             message       : 'If you want to see birthdays, go to "HR"',
                             selector      : 'i.icon-HR',
-                            url           : '#easyErp/reportsDashboard',
+                            url           : '#tinyERP/reportsDashboard',
                             step          : 0,
                             hidePrevButton: true,
                             isDefault     : 1
@@ -706,7 +706,7 @@
                             title   : 'Birthdays',
                             message : 'You can view the birthdays of your employees  in current week, next week and current month',
                             selector: '#birthdaysList',
-                            url     : '#easyErp/Birthdays/list',
+                            url     : '#tinyERP/Birthdays/list',
                             step    : 1,
                             isEnd   : true
                         }
@@ -720,7 +720,7 @@
                             title         : 'HR',
                             message       : 'To create a new application, go to "HR"',
                             selector      : 'i.icon-HR',
-                            url           : '#easyErp/reportsDashboard',
+                            url           : '#tinyERP/reportsDashboard',
                             step          : 0,
                             hidePrevButton: true,
                             isDefault     : 1
@@ -729,7 +729,7 @@
                             title   : 'Create new Application',
                             message : 'To add a new application, click on the “New” button.',
                             selector: '#top-bar-createBtn',
-                            url     : '#easyErp/Applications/list',
+                            url     : '#tinyERP/Applications/list',
                             step    : 1
                         },
                         {
@@ -754,7 +754,7 @@
                             title         : 'HR',
                             message       : 'To create a new Job Position, go to "HR"',
                             selector      : 'i.icon-HR',
-                            url           : '#easyErp/reportsDashboard',
+                            url           : '#tinyERP/reportsDashboard',
                             step          : 0,
                             hidePrevButton: true,
                             isDefault     : 1
@@ -763,7 +763,7 @@
                             title   : 'Create new Job Position',
                             message : 'To add a new Job Position, click on the “New” button.',
                             selector: '#top-bar-createBtn',
-                            url     : '#easyErp/JobPositions/list',
+                            url     : '#tinyERP/JobPositions/list',
                             step    : 1
                         },
                         {
@@ -788,7 +788,7 @@
                             title         : 'HR',
                             message       : 'To create a new Job Position, go to "HR"',
                             selector      : 'i.icon-HR',
-                            url           : '#easyErp/reportsDashboard',
+                            url           : '#tinyERP/reportsDashboard',
                             step          : 0,
                             hidePrevButton: true,
                             isDefault     : 1
@@ -797,7 +797,7 @@
                             title   : 'Create new Vacation',
                             message : 'To add a new Vacation, click on the “New” button.',
                             selector: '#top-bar-createBtn',
-                            url     : '#easyErp/Vacation/list',
+                            url     : '#tinyERP/Vacation/list',
                             step    : 1
                         },
                         {
@@ -821,7 +821,7 @@
                             title         : 'HR',
                             message       : 'To view Attendance, go to "HR"',
                             selector      : 'i.icon-HR',
-                            url           : '#easyErp/reportsDashboard',
+                            url           : '#tinyERP/reportsDashboard',
                             step          : 0,
                             hidePrevButton: true,
                             isDefault     : 1
@@ -830,7 +830,7 @@
                             title   : 'Attendance',
                             message : 'You can see Attendance every employee, just select an Employee',
                             selector: 'div.pull-left',
-                            url     : '#easyErp/Attendance',
+                            url     : '#tinyERP/Attendance',
                             step    : 1,
                             isEnd   : true
                         }
@@ -844,7 +844,7 @@
                             title         : 'HR',
                             message       : 'To see a HR Statistic, go to "HR"',
                             selector      : 'i.icon-HR',
-                            url           : '#easyErp/reportsDashboard',
+                            url           : '#tinyERP/reportsDashboard',
                             step          : 0,
                             hidePrevButton: true,
                             isDefault     : 1
@@ -853,7 +853,7 @@
                             title   : 'Statistic',
                             message : 'You can see different HR statistic',
                             selector: 'ul.dashboard> li:first',
-                            url     : '#easyErp/HrDashboard',
+                            url     : '#tinyERP/HrDashboard',
                             step    : 1,
                             isEnd   : true
                         }

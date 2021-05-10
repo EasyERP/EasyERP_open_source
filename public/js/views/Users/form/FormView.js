@@ -25,7 +25,7 @@ define([
                     mid: mid
                 },
                 success: function () {
-                    Backbone.history.navigate('#easyErp/Users/list', {trigger: true});
+                    Backbone.history.navigate('#tinyERP/Users/list', {trigger: true});
                 },
 
                 error: function (model, res) {

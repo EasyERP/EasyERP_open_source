@@ -208,7 +208,7 @@ define([
                     },
                     wait   : true,
                     success: function (savedModel) {
-                        //var redirectUrl = self.forSales ? 'easyErp/salesInvoices' : 'easyErp/Invoices';
+                        //var redirectUrl = self.forSales ? 'tinyERP/salesInvoices' : 'tinyERP/Invoices';
 
                         self.attachView.sendToServer(null, savedModel.changed);
 

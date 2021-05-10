@@ -175,7 +175,7 @@ define([
                 patch  : true,
                 success: function () {
                     self.hideDialog();
-                    Backbone.history.navigate('easyErp/Leads', {trigger: true});
+                    Backbone.history.navigate('tinyERP/Leads', {trigger: true});
                 },
 
                 error: function (model, xhr) {
@@ -199,7 +199,7 @@ define([
                         mid: mid
                     },
                     success: function () {
-                        Backbone.history.navigate('easyErp/' + self.contentType, {trigger: true});
+                        Backbone.history.navigate('tinyERP/' + self.contentType, {trigger: true});
                     },
 
                     error: function (model, xhr) {
@@ -374,7 +374,7 @@ define([
                             success: function () {
                                 $(self).dialog('close');
                                 // that.opportunitiesCollection.add(model);
-                                Backbone.history.navigate('easyErp/Opportunities', {trigger: true});
+                                Backbone.history.navigate('tinyERP/Opportunities', {trigger: true});
                             },
 
                             error: function (model, xhr) {

@@ -184,7 +184,7 @@ define([
         cancelInvoice: function (e) {
             var wId;
             var self = this;
-            var redirectUrl = self.forSales ? 'easyErp/salesInvoices' : 'easyErp/Invoices';
+            var redirectUrl = self.forSales ? 'tinyERP/salesInvoices' : 'tinyERP/Invoices';
 
             e.preventDefault();
 
@@ -235,7 +235,7 @@ define([
                 wId = 'Purchase Invoice';
             }
 
-            redirectUrl = self.forSales ? 'easyErp/salesInvoices' : 'easyErp/Invoices';
+            redirectUrl = self.forSales ? 'tinyERP/salesInvoices' : 'tinyERP/Invoices';
 
             populate.fetchWorkflow({
                 wId: wId

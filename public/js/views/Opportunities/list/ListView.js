@@ -32,7 +32,7 @@ define([
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
         contentCollection: contentCollection,
-        formUrl          : '#easyErp/Opportunities/tform/',
+        formUrl          : '#tinyERP/Opportunities/tform/',
         contentType      : 'Opportunities', // needs in view.prototype.changeLocationHash
         hasPagination    : true,
 

@@ -85,7 +85,7 @@ define([
         removeChannelButtons: function (e, self, conflicted, unlinked) {
             var $target = e ? $(e.target) : null;
             var data = $target ? $target.attr('data-type') : 'remove';
-            var url = '#easyErp/unlinkedProducts/filter=';
+            var url = '#tinyERP/unlinkedProducts/filter=';
             var filter = {
                 channel: this.model.toJSON()._id
             };
@@ -185,7 +185,7 @@ define([
                 }
 
                 Backbone.history.fragment = '';
-                Backbone.history.navigate('#easyErp/integrations', {replace: true, trigger: true});
+                Backbone.history.navigate('#tinyERP/integrations', {replace: true, trigger: true});
             }
 
             if (!warehouse || !location) {
@@ -282,7 +282,7 @@ define([
                     });
 
                     Backbone.history.fragment = '';
-                    Backbone.history.navigate('#easyErp/integrations', {replace: true, trigger: true});
+                    Backbone.history.navigate('#tinyERP/integrations', {replace: true, trigger: true});
                 },
 
                 error: function (model, xhr) {
@@ -429,7 +429,7 @@ define([
                 success: function () {
                     // self.eventsChannel.trigger('closeDialog');
                     Backbone.history.fragment = '';
-                    Backbone.history.navigate('#easyErp/integrations', {replace: true, trigger: true});
+                    Backbone.history.navigate('#tinyERP/integrations', {replace: true, trigger: true});
                 }
             });
         },

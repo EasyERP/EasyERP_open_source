@@ -223,7 +223,7 @@
                     <% product.goodsNotes.forEach(function(elem,ind){%>
                     <%var filter = {name: {key: '_id',value: []}};%>
                     <%filter.name.value.push(elem._id);%>
-                    <%var href = '/#easyErp/goodsOutNotes/tform/'+ elem._id + '/p=1/c=50/filter=' +
+                    <%var href = '/#tinyERP/goodsOutNotes/tform/'+ elem._id + '/p=1/c=50/filter=' +
                     encodeURIComponent(JSON.stringify(filter));%>
                     <a href="<%=href%>"><%=ind !== 0 ? ', ' + elem.name || '___' : elem.name%></a><span><%=' (' + elem.quantity + ')'%></span>
                     <%})} %>

@@ -493,7 +493,7 @@ define([
             var weeksArr;
             var self = this;
             var statictics;
-            var url = '#easyErp/DashBoardVacation';
+            var url = '#tinyERP/DashBoardVacation';
 
             App.filtersObject.filter = filter || {};
 

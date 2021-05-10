@@ -20,7 +20,7 @@ define([
         listTemplate   : _.template(ListItemTemplate),
         contentTemplate: _.template(ContentTemplate),
         ListItemView   : ListItemView,
-        listUrl        : 'easyErp/stockReturns/list/',
+        listUrl        : 'tinyERP/stockReturns/list/',
         contentType    : CONSTANTS.STOCKRETURNS,
         viewType       : 'tform',
         hasPagination  : true,

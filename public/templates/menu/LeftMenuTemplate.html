@@ -12,18 +12,18 @@
     <li class="root<%=(parent.href===currentRoot)? ' active' + (!className ? ' opened' : '') :''%> <%=className%> <%= colorClass %>">
         <!--<i class="fa fa-credit-card" aria-hidden="true"></i>-->
         <i class="icons icon-<%=parent.href%>"></i>
-        <a href="#easyErp/<%=parent.href%>" class="<%=className%>"><%=parent.mname%></a>
+        <a href="#tinyERP/<%=parent.href%>" class="<%=className%>"><%=parent.mname%></a>
 
         <%if (!className) {%>
         <div class="subMenuListWrap">
             <ul class="subMenuList">
                 <li>
-                    <a href="#easyErp/<%=parent.subModules[0].href%>" class="sub_item subItem "><%=parent.mname%></a>
+                    <a href="#tinyERP/<%=parent.subModules[0].href%>" class="sub_item subItem "><%=parent.mname%></a>
                 </li>
                 <% _.forEach(parent.subModules, function(child, index){%>
 
                 <li class="<%=(child.href===currentModule)?'selected':''%>">
-                    <a href="#easyErp/<%=child.href%>" class="subItem"><%=child.mname%></a>
+                    <a href="#tinyERP/<%=child.href%>" class="subItem"><%=child.mname%></a>
                 </li>
                 <%}) %>
             </ul>

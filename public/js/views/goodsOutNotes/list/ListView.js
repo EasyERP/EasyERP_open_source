@@ -41,7 +41,7 @@ define([
             this.startTime = options.startTime;
             this.collection = options.collection;
             this.parrentContentId = options.collection.parrentContentId;
-            this.formUrl = 'easyErp/' + this.contentType + '/tform/';
+            this.formUrl = 'tinyERP/' + this.contentType + '/tform/';
             this.sort = options.sort;
             this.filter = options.filter;
             this.page = options.collection.currentPage;

@@ -182,7 +182,7 @@ define([
         chooseDetails: function (e) {
             var $elem = $(e.target);
             var rowId = $elem.closest('.mainSettings').attr('id');
-            var pathFragment = '#easyErp/reports/';
+            var pathFragment = '#tinyERP/reports/';
             var isPrivate = $elem.closest('.mainSettings').hasClass('private');
             var current;
 
@@ -240,7 +240,7 @@ define([
                 }
 
                 Backbone.history.fragment = '';
-                Backbone.history.navigate('easyErp/reports', {trigger: true});
+                Backbone.history.navigate('tinyERP/reports', {trigger: true});
             });
         },
 

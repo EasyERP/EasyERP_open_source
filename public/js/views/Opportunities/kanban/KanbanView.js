@@ -210,7 +210,7 @@
                 if (success) {
                     self.hideDialog();
                     Backbone.history.fragment = '';
-                    Backbone.history.navigate('easyErp/Opportunities', {trigger: true});
+                    Backbone.history.navigate('tinyERP/Opportunities', {trigger: true});
                 }
             });
         },
@@ -277,7 +277,7 @@
 
         gotoEditForm: function (e) {
             var id = $(e.target).closest('.inner').attr('data-id');
-            var url = '#easyErp/Opportunities/tform/' + id;
+            var url = '#tinyERP/Opportunities/tform/' + id;
 
             e.preventDefault();
             App.ownContentType = true;

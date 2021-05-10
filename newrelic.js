@@ -9,7 +9,7 @@ exports.config = {
      *
      * @env NEW_RELIC_APP_NAME
      */
-    app_name: ['easyERP'],
+    app_name: ['tinyERP'],
     /**
      * The user's license key. Must be set by per-app configuration file.
      *

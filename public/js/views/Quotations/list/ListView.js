@@ -53,7 +53,7 @@ define([
             var self = this;
             $(document).off('click');
 
-            this.formUrl = 'easyErp/' + this.contentType + '/tform/';
+            this.formUrl = 'tinyERP/' + this.contentType + '/tform/';
             self.startTime = options.startTime;
             self.collection = options.collection;
             self.parrentContentId = options.collection.parrentContentId;

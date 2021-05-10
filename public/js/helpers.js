@@ -4,22 +4,17 @@ define([
     function makeFilterString(filter, type) {
         var filterString = '';
 
-        if (filter && type) {
-            filterString = '/?type=' + type + '&filter=' + encodeURIComponent(JSON.stringify(filter));
-
-            return filterString;
-        }
-
-        if (filter && !type) {
-            filterString = '/?filter=' + encodeURIComponent(JSON.stringify(filter));
-
-            return filterString;
-        }
-
-        if (!filter && type) {
+        if( type ){
             filterString = '/?type=' + type;
+        }
 
-            return filterString;
+        if( filter ){
+            if( type )
+                filterString += '&';
+            else
+                filterString = '/?';
+
+            filterString += 'filter=' + encodeURIComponent(JSON.stringify(filter));
         }
 
         return filterString;

@@ -69,7 +69,7 @@ define([
                     self.$el.addClass('hidden');
                     App.currentUser.mobilePhone = mobilePhone;
                     Backbone.history.fragment = '';
-                    Backbone.history.navigate('/easyErp/reportsDashboard', {trigger: true});
+                    Backbone.history.navigate('/tinyERP/reportsDashboard', {trigger: true});
                     return false;
                 }
 

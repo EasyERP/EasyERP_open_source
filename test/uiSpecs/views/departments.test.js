@@ -3331,7 +3331,7 @@ define([
                 $needAEl.click();
 
                 expect($expectedMenuEl).to.have.class('selected');
-                expect(window.location.hash).to.be.equals('#easyErp/Departments');
+                expect(window.location.hash).to.be.equals('#tinyERP/Departments');
             });
         });
 
@@ -3461,7 +3461,7 @@ define([
                 var $deleteBtn = listView.$el.find('#groupList > li:nth-child(1) > span > span.text > span.trash');
                 var departmentsUrl = new RegExp('\/Departments\/', 'i');
 
-                window.location.hash = '#easyErp/Departments';
+                window.location.hash = '#tinyERP/Departments';
 
                 windowConfirmStub.returns(true);
                 server.respondWith('DELETE', departmentsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
@@ -3469,7 +3469,7 @@ define([
                 server.respond();
 
                 expect(windowConfirmStub.called).to.be.true;
-                expect(window.location.hash).to.equals('#easyErp/Departments');
+                expect(window.location.hash).to.equals('#tinyERP/Departments');
                 expect(listView.$el.find('#groupList > li:nth-child(1)').attr('data-id')).to.be.equals('56e6775c5ec71b00429745a4');
             });
 
@@ -3560,7 +3560,7 @@ define([
                 $saveBtn.click();
                 server.respond();
 
-                expect(window.location.hash).to.be.equals('#easyErp/Departments');
+                expect(window.location.hash).to.be.equals('#tinyERP/Departments');
             });
 
             it('Try to delete item from edit form with error', function () {
@@ -3586,7 +3586,7 @@ define([
                 $deleteBtn.click();
                 server.respond();
 
-                expect(window.location.hash).to.be.equals('#easyErp/Departments');
+                expect(window.location.hash).to.be.equals('#tinyERP/Departments');
             });
 
         });
@@ -3705,7 +3705,7 @@ define([
                 $saveBtn.click();
                 server.respond();
 
-                expect(window.location.hash).to.be.equals('#easyErp/Departments');
+                expect(window.location.hash).to.be.equals('#tinyERP/Departments');
             });
 
             it('Try to cancel form', function () {

@@ -790,7 +790,7 @@ define([
                 $needAEl.click();
 
                 expect($expectedMenuEl).to.have.class('selected');
-                expect(window.location.hash).to.be.equals('#easyErp/Workflows');
+                expect(window.location.hash).to.be.equals('#tinyERP/Workflows');
             });
         });
 
@@ -1005,7 +1005,7 @@ define([
 
                     clock.tick(200);
 
-                    expect(window.location.hash).to.equals('#easyErp/Workflows');
+                    expect(window.location.hash).to.equals('#tinyERP/Workflows');
 
                     done();
                 });

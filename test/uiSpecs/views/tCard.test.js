@@ -1181,7 +1181,7 @@ define([
                 $needAEl.click();
 
                 expect($expectedMenuEl).to.have.class('selected');
-                expect(window.location.hash).to.be.equals('#easyErp/wTrack');
+                expect(window.location.hash).to.be.equals('#tinyERP/wTrack');
 
             });
 

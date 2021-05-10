@@ -111,7 +111,7 @@ define([
             this.filter.category = dataCategory;
             this.filter.account = dataId;
 
-            var url = 'easyErp/trialBalance/list/filter=' + encodeURIComponent(JSON.stringify(this.filter));
+            var url = 'tinyERP/trialBalance/list/filter=' + encodeURIComponent(JSON.stringify(this.filter));
 
             Backbone.history.fragment = '';
             Backbone.history.navigate(url, {trigger: true});

@@ -22,7 +22,7 @@ define([
             _.bindAll(this, 'saveItem');
             this.model = new ProjectModel();
             this.responseObj = {};
-            this.url = '#easyErp/Projects/list';
+            this.url = '#tinyERP/Projects/list';
             this.render();
         },
 

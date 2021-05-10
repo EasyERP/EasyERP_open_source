@@ -169,7 +169,7 @@ define([
                         custom.getFiltersValues(self); // added for refreshing filters after creating
 
                         if (viewType !== 'thumbnails') {
-                            navigateUrl = (viewType === 'form') ? '#easyErp/Companies/form/' + res.id : window.location.hash;
+                            navigateUrl = (viewType === 'form') ? '#tinyERP/Companies/form/' + res.id : window.location.hash;
                         }
 
                         Backbone.history.fragment = '';

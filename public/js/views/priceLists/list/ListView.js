@@ -30,7 +30,7 @@ define([
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
         contentCollection: contentCollection,
-        formUrl          : '#easyErp/priceLists/tform/',
+        formUrl          : '#tinyERP/priceLists/tform/',
         contentType      : CONSTANTS.PRICELISTS,
         hasPagination    : false,
 

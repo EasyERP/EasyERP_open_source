@@ -19,7 +19,7 @@ define([
         contentTemplate: _.template(ContentTemplate),
         CreateView     : CreateView,
         EditView       : EditView,
-        listUrl        : 'easyErp/order/list/',
+        listUrl        : 'tinyERP/order/list/',
         contentType    : CONSTANTS.ORDER, // needs in view.prototype.changeLocationHash
         viewType       : 'tform', // needs in view.prototype.changeLocationHash
         hasPagination  : true,

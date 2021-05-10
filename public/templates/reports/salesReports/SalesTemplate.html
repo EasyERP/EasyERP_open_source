@@ -25,7 +25,7 @@
             <% collection.forEach(function(elem, index){ %>
 
             <tr data-id="<%=elem._id%>">
-                <td><a href='<%= '/#easyErp/Products/tform/' + elem._id %>'><%=elem.product%></a></td>
+                <td><a href='<%= '/#tinyERP/Products/tform/' + elem._id %>'><%=elem.product%></a></td>
                 <td><%=elem.sku%></td>
                 <td><span class="money"><%=currencySplitter((elem.taxes / 100).toFixed(2))%></span></td>
                 <td><span class="money"><%=currencySplitter((elem.total / 100).toFixed(2))%></span></td>

@@ -225,10 +225,10 @@ module.exports = {
         ETSY_SHARED_SECRET         : '31km0x4eaq',
         ETSY_BASE_URL              : 'https://openapi.etsy.com/v2',
         ETSY_IMPORT_STATUS_PRODUCT : '/active',
-        REMOTE_ADDRESS             : 'http://testdemo.easyerp.com/channels/auth_callback',
+        REMOTE_ADDRESS             : 'http://testdemo.tinyERP.com/channels/auth_callback',
         //REMOTE_ADDRESS            : 'http://erp0.test.thinkmobiles.com/channels/auth_callback',
-        WOO_IMAGES_REMOTE_URI      : 'http://testdemo.easyerp.com/',
-        WOO_WEBHOOK_REMOTE_URI     : 'http://testdemo.easyerp.com/webhooks/',
+        WOO_IMAGES_REMOTE_URI      : 'http://testdemo.tinyERP.com/',
+        WOO_WEBHOOK_REMOTE_URI     : 'http://testdemo.tinyERP.com/webhooks/',
         SHOPIFY_WEBHOOKS_REMOTE_URI: 'http:\/\/erp0.test.thinkmobiles.com\/webhooks\/shopify'
     },
 

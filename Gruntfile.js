@@ -6,8 +6,8 @@ module.exports = function (grunt) {
     // Project configuration.
     grunt.initConfig({
         apidoc: {
-            easyerp: {
-                title  : 'EasyErp documentation',
+            tinyERP: {
+                title  : 'tinyERP documentation',
                 url    : 'http://192.168.88.88',
                 src    : 'routes/',
                 dest   : 'apidoc/',
@@ -65,5 +65,5 @@ module.exports = function (grunt) {
 
     grunt.registerTask('default', ['karma']);
     grunt.registerTask('dist-css', ['sass', 'postcss:dist']);
-    grunt.registerTask('compile', ['dist-css', 'apidoc:easyerp']);
+    grunt.registerTask('compile', ['dist-css', 'apidoc:tinyERP']);
 };

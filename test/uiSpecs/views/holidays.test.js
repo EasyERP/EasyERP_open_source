@@ -326,7 +326,7 @@ define([
                 $needAEl.click();
 
                 expect($expectedMenuEl).to.have.class('selected');
-                expect(window.location.hash).to.be.equals('#easyErp/Holiday');
+                expect(window.location.hash).to.be.equals('#tinyERP/Holiday');
             });
         });
 

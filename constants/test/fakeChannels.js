@@ -129,7 +129,7 @@ define([], function () {
                active: false,
                updateShippingMethod: false,
                updateShippingStatus: false,
-               baseUrl: "http://magento-easyerp.test.thinkmobiles.com",
+               baseUrl: "http://magento-tinyERP.test.thinkmobiles.com",
                password: "60217475dfe1a8eab8d8ead8cd4a8aad",
                username: "roma",
                user: "5836ec22d291dd500cf6e16a",

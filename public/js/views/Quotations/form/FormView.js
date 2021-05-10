@@ -117,7 +117,7 @@ define([
                         },
                         patch  : true,
                         success: function () {
-                            var redirectUrl = self.forSales ? 'easyErp/salesOrders' : 'easyErp/Orders';
+                            var redirectUrl = self.forSales ? 'tinyERP/salesOrders' : 'tinyERP/Orders';
 
                             if (self.redirect) {
 
@@ -155,7 +155,7 @@ define([
                 currency   : this.currentModel.toJSON().currency,
                 journal    : journal
             };
-            var redirectUrl = self.forSales ? 'easyErp/salesProforma/list' : 'easyErp/Proforma/list';
+            var redirectUrl = self.forSales ? 'tinyERP/salesProforma/list' : 'tinyERP/Proforma/list';
 
             if (e) {
                 e.preventDefault();

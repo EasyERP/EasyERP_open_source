@@ -3,7 +3,7 @@ module.exports.noReplay = {
     port     : 587,
     ignoreTLS: false,
     auth     : {
-        user: 'no-replay@easyerp.com',
+        user: 'no-replay@tinyERP.com',
         pass: '111111'
     },
     tls      : {rejectUnauthorized: false}

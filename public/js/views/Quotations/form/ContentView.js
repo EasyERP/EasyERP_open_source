@@ -20,7 +20,7 @@ define([
         CreateView     : CreateView,
         EditView       : EditView,
 
-        listUrl        : 'easyErp/Quotations/list/',
+        listUrl        : 'tinyERP/Quotations/list/',
         contentType    : CONSTANTS.QUOTATIONS, // needs in view.prototype.changeLocationHash
         viewType       : 'tform', // needs in view.prototype.changeLocationHash
         hasPagination  : true,

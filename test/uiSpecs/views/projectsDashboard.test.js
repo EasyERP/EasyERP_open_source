@@ -440,7 +440,7 @@ define([
                     isEmployee: true,
                     __v: 0
                 },
-                projectName: "EasyERP",
+                projectName: "tinyERP",
                 budget: {
                     projectTeam: [
                         {
@@ -636,7 +636,7 @@ define([
                 $needAEl.click();
 
                 expect($expectedMenuEl).to.have.class('selected');
-                expect(window.location.hash).to.be.equals('#easyErp/projectDashboard');
+                expect(window.location.hash).to.be.equals('#tinyERP/projectDashboard');
 
             });
 
@@ -704,7 +704,7 @@ define([
                     server.respondWith('GET', projectsDashboardUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDashboardProjects)]);
                     $sortEl.click();
                     server.respond();
-                    expect(contentView.$el.find('#ProjectPMContent > tr:nth-child(1) > td:nth-child(3) > a').attr('href')).to.be.equals('#easyErp/Projects/form/56e93c3b07ea2d845ef75dff');
+                    expect(contentView.$el.find('#ProjectPMContent > tr:nth-child(1) > td:nth-child(3) > a').attr('href')).to.be.equals('#tinyERP/Projects/form/56e93c3b07ea2d845ef75dff');
 
                     server.respondWith('GET', projectsDashboardUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
                         data: [
@@ -714,7 +714,7 @@ define([
                     })]);
                     $sortEl.click();
                     server.respond();
-                    expect(contentView.$el.find('#ProjectPMContent > tr:nth-child(1) > td:nth-child(3) > a').attr('href')).to.be.equals('#easyErp/Projects/form/56dff1b4a12a4f3c26919c91');
+                    expect(contentView.$el.find('#ProjectPMContent > tr:nth-child(1) > td:nth-child(3) > a').attr('href')).to.be.equals('#tinyERP/Projects/form/56dff1b4a12a4f3c26919c91');
                 });
 
                 it('Try to click on sales manager', function(){
@@ -725,9 +725,9 @@ define([
                     needItem.click();
 
                     if(firefoxPattern.test(userAgent)){
-                        expect(window.location.hash).to.be.equals('#easyErp/projectDashboard');
+                        expect(window.location.hash).to.be.equals('#tinyERP/projectDashboard');
                     } else {
-                        expect(window.location.hash).to.be.equals('#easyErp/Employees/form/55b92ad221e4b7c40f00004f');
+                        expect(window.location.hash).to.be.equals('#tinyERP/Employees/form/55b92ad221e4b7c40f00004f');
                     }
 
                 });
@@ -740,9 +740,9 @@ define([
                     needItem.click();
 
                     if(firefoxPattern.test(userAgent)){
-                        expect(window.location.hash).to.be.equals('#easyErp/projectDashboard');
+                        expect(window.location.hash).to.be.equals('#tinyERP/projectDashboard');
                     } else {
-                        expect(window.location.hash).to.be.equals('#easyErp/Projects/form/56dff1b4a12a4f3c26919c91');
+                        expect(window.location.hash).to.be.equals('#tinyERP/Projects/form/56dff1b4a12a4f3c26919c91');
                     }
                 });
 

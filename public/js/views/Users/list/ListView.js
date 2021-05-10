@@ -17,7 +17,7 @@ define([
         ListItemView     : ListItemView,
         contentCollection: ContentCollection,
         contentType      : 'Users', // needs in view.prototype.changeLocationHash
-        formUrl          : '#easyErp/Users/form/',
+        formUrl          : '#tinyERP/Users/form/',
 
         events: {
             'click .list td:not(.notForm, .checkbox)': 'gotoEditDialog'

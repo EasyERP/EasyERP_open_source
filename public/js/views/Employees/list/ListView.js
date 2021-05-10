@@ -20,7 +20,7 @@ define([
         hasAlphabet      : true,
         hasPagination    : true,
         contentType      : 'Employees',
-        formUrl          : '#easyErp/Employees/',
+        formUrl          : '#tinyERP/Employees/',
         letterKey        : 'name.last',
         type             : 'Employees',
 

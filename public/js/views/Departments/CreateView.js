@@ -169,7 +169,7 @@ define([
                 },
                 wait   : true,
                 success: function () {
-                    Backbone.history.navigate('easyErp/Departments', {trigger: true});
+                    Backbone.history.navigate('tinyERP/Departments', {trigger: true});
                 },
 
                 error: function (model, xhr) {

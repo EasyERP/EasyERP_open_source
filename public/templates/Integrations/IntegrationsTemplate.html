@@ -5,7 +5,7 @@
         <span class="btn blue slim action actionSync" data-action="sync">Sync</span>
         <% } %>
         <span class="btn blue slim _unlinkedOrders <%= !showUnlinkedBtn ? 'hidden' : ''%>" id="unlinkedOrders">
-        <a href="#easyErp/integrationUnlinkedOrders/list">Unlinked Orders</a>
+        <a href="#tinyERP/integrationUnlinkedOrders/list">Unlinked Orders</a>
         </span>
         <!--<span class="btn blue slim hidden resConflicts">Resolve Conflicts</span>-->
         <span class="btn blue slim action actionAddNew" data-action="add">Add Channel</span>
@@ -117,7 +117,7 @@
                 </div>
             </div>
             <div class="_showLogWrap align-right">
-                <a href="#easyErp/integrations/syncLog/<%=item._id%>" class="btn showLog">View Log</a>
+                <a href="#tinyERP/integrations/syncLog/<%=item._id%>" class="btn showLog">View Log</a>
             </div>
         </div>
         <%}else { %>

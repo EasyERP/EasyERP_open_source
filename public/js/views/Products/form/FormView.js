@@ -272,7 +272,7 @@ define([
 
             dataService.postData(url, {skus: arrayOfDifferent}, function (result) {
                 Backbone.history.fragment = '';
-                Backbone.history.navigate('easyErp/Products/list', {trigger: true});
+                Backbone.history.navigate('tinyERP/Products/list', {trigger: true});
             });
         },
 
@@ -307,7 +307,7 @@ define([
             dataService.postData(url, {variants: this.variantsArr, isNew: true}, function (result) {
                 Backbone.history.fragment = '';
                 Backbone.history.navigate(window.location.hash, {trigger: true});
-                //Backbone.history.navigate('easyErp/Products/list', {trigger: true});
+                //Backbone.history.navigate('tinyERP/Products/list', {trigger: true});
             });
         },
 
@@ -337,7 +337,7 @@ define([
             dataService.postData(url, {variants: checkedBoxes, isNew: false}, function (result) {
                 Backbone.history.fragment = '';
                 Backbone.history.navigate(window.location.hash, {trigger: true});
-                //Backbone.history.navigate('easyErp/Products/list', {trigger: true});
+                //Backbone.history.navigate('tinyERP/Products/list', {trigger: true});
             });
         },
 
@@ -983,7 +983,7 @@ define([
                     mid: mid
                 },
                 success: function () {
-                    Backbone.history.navigate('#easyErp/Products/thumbnails', {trigger: true});
+                    Backbone.history.navigate('#tinyERP/Products/thumbnails', {trigger: true});
                 }
             });
         }

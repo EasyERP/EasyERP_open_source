@@ -15,7 +15,7 @@ define([
         el           : '#content-holder',
         contentType  : CONSTANTS.MANUFACTURINGORDERS,
         template     : _.template(ListTemplate),
-        formUrl      : 'easyErp/manufacturingOrders/tform/',
+        formUrl      : 'tinyERP/manufacturingOrders/tform/',
         ListItemView : ListItemView,
         hasPagination: true,
 

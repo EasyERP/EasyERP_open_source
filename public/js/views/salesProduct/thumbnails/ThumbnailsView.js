@@ -190,7 +190,7 @@ define([
                 e.preventDefault();
                 App.ownContentType = true;
                 var id = $(e.target).closest('.thumbnailwithavatar').attr("id");
-                window.location.hash = "#easyErp/products/form/" + id;
+                window.location.hash = "#tinyERP/products/form/" + id;
             },
 
             gotoEditForm: function (e) {

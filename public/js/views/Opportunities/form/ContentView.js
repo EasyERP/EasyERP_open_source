@@ -18,7 +18,7 @@ define([
         contentTemplate: _.template(ContentTemplate),
         CreateView     : CreateView,
         ListItemView   : ListItemView,
-        listUrl        : 'easyErp/Opportunities/list/',
+        listUrl        : 'tinyERP/Opportunities/list/',
         contentType    : 'Opportunities', // needs in view.prototype.changeLocationHash
         viewType       : 'tform', // needs in view.prototype.changeLocationHash
         hasPagination  : true,

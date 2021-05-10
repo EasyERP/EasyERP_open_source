@@ -3,7 +3,7 @@
 <tr data-id="<%=job._id%>" class="<%=getClass(job)%>">
     <td class="centerCell"><%=startNumber + count + 1%></a></td>
     <td><%=job.project && job.salesManager ? job.salesManager.name.first + ' ' + job.salesManager.name.last : "---"%></td>
-    <td><a href='#easyErp/Projects/form/<%=job.project ? job.project._id : null%>'><%=job.project ?
+    <td><a href='#tinyERP/Projects/form/<%=job.project ? job.project._id : null%>'><%=job.project ?
         job.project.name : "---"%></a></td>
     <td><a data-id="<%=job._id%>" class="jobs"><%=job.name%></a></td>
     <td><%=job.workflow ? job.workflow.name : ''%></td>

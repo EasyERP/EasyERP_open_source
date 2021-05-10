@@ -194,7 +194,7 @@
             }
 
             id = window.location.hash.split('/')[3];
-            url = (id && id.length === 24) ? 'easyErp/Tasks/kanban/' + id : 'easyErp/Tasks/kanban';
+            url = (id && id.length === 24) ? 'tinyERP/Tasks/kanban/' + id : 'tinyERP/Tasks/kanban';
 
             dataService.postData(CONSTANTS.URLS.CURRENT_USER, {'kanbanSettings.tasks.countPerPage': countPerPage}, function (error, success) {
                 if (success) {

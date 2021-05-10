@@ -61,7 +61,7 @@
             var id = $(e.target).closest('a').data('id');
             var count = this.collection.pageSize;
             var page = this.collection.currentPage || 1;
-            var url = '#easyErp/' + CONSTANTS.PERSONS + '/tform/' + id + '/p=' + page + '/c=' + count;
+            var url = '#tinyERP/' + CONSTANTS.PERSONS + '/tform/' + id + '/p=' + page + '/c=' + count;
 
             e.preventDefault();
             App.ownContentType = true;
@@ -77,7 +77,7 @@
             var id = $(e.target).closest('a').data('id');
 
             e.preventDefault();
-            window.location.hash = '#easyErp/' + CONSTANTS.COMPANIES + '/tform/' + id;
+            window.location.hash = '#tinyERP/' + CONSTANTS.COMPANIES + '/tform/' + id;
         },
 
         render: function () {

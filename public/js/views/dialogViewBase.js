@@ -279,7 +279,7 @@
                         $('.edit-dialog').remove();
 
                         Backbone.history.fragment = '';
-                        Backbone.history.navigate('easyErp/' + self.contentType, {trigger: true});
+                        Backbone.history.navigate('tinyERP/' + self.contentType, {trigger: true});
                     },
 
                     error: function (model, xhr) {

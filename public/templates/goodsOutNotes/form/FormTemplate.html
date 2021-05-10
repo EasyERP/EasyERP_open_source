@@ -9,7 +9,7 @@
                     <h2 class="_goodOutTitle"><%=goodsOut ? 'Delivery-out note' : 'Delivery-In note'%>
                         <span><%var name = model.name.split('*');%>
                             <%var order = model.order || model.manufacturingOrder%>
-                        <span id="name">#<a class="_noteNum" href="<%='/#easyErp/' + (goodsOut && model.order ? 'order' : model.manufacturingOrder ? 'manufacturingOrders' : 'purchaseOrders') + '/tform/'+ order._id %>"><%=name[0]%></a>*<%=name[1]%></span>
+                        <span id="name">#<a class="_noteNum" href="<%='/#tinyERP/' + (goodsOut && model.order ? 'order' : model.manufacturingOrder ? 'manufacturingOrders' : 'purchaseOrders') + '/tform/'+ order._id %>"><%=name[0]%></a>*<%=name[1]%></span>
                     </span>
                     </h2>
 

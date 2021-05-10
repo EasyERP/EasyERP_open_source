@@ -281,7 +281,7 @@ define([
                 $needAEl.click();
 
                 expect($expectedMenuEl).to.have.class('selected');
-                expect(window.location.hash).to.be.equals('#easyErp/Dashboard');
+                expect(window.location.hash).to.be.equals('#tinyERP/Dashboard');
 
             });
 

@@ -46,7 +46,7 @@ define([
         },
 
         searchAction: function (value) {
-            var url = 'https://easyerp.com/mini-search/';
+            var url = 'https://tinyERP.com/mini-search/';
             var farme = this.$el.find(this.searchFrame);
 
             if (value) {

@@ -421,7 +421,7 @@ define([
             var self = this;
             var $currentEl = this.$el;
             var filter = this.filter || custom.retriveFromCash('invoiceCharts.filter');
-            var url = '#easyErp/invoiceCharts';
+            var url = '#tinyERP/invoiceCharts';
 
             App.filtersObject.filter = filter || {};
 

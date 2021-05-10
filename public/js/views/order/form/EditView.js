@@ -176,7 +176,7 @@ define([
             this.saveItem(function (err) {
                 if (!err) {
                     dataService.postData(url, data, function (err) {
-                        var redirectUrl = 'easyErp/invoice';
+                        var redirectUrl = 'tinyERP/invoice';
 
                         if (err) {
                             App.render({

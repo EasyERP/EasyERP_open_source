@@ -150,7 +150,7 @@ define([
                 success: function (model) {
                     self.hideDialog();
                     Backbone.history.fragment = '';
-                    Backbone.history.navigate('#easyErp/Persons/form/' + model.id, {trigger: true});
+                    Backbone.history.navigate('#tinyERP/Persons/form/' + model.id, {trigger: true});
                 },
 
                 error: function (model, xhr) {
@@ -178,7 +178,7 @@ define([
 
                     success: function () {
                         $('.edit-person-dialog').remove();
-                        Backbone.history.navigate('easyErp/' + self.contentType, {trigger: true});
+                        Backbone.history.navigate('tinyERP/' + self.contentType, {trigger: true});
                     },
 
                     error: function (model, err) {

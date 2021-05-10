@@ -102,7 +102,7 @@ define([
 
                 $needAEl.click();
                 expect($expectedMenuEl).to.have.class('selected');
-                expect(window.location.hash).to.be.equals('#easyErp/Projects');
+                expect(window.location.hash).to.be.equals('#tinyERP/Projects');
             });
 
         });
@@ -144,10 +144,10 @@ define([
                 var $thumbnailsBtn = topBarView.$el.find('#thumbBtn');
 
                 $thumbnailsBtn.click();
-                expect(window.location.hash).to.be.equals('#easyErp/Projects/thumbnails');
+                expect(window.location.hash).to.be.equals('#tinyERP/Projects/thumbnails');
 
                 $listBtn.click();
-                expect(window.location.hash).to.be.equals('#easyErp/Projects/list');
+                expect(window.location.hash).to.be.equals('#tinyERP/Projects/list');
             });
 
         });
@@ -157,7 +157,7 @@ define([
             var projectModel;
 
             before(function () {
-                window.location.hash = '#easyErp/Projects/form/55b92ad621e4b7c40f00065f';
+                window.location.hash = '#tinyERP/Projects/form/55b92ad621e4b7c40f00065f';
             });
 
             describe('INITIALIZE', function () {
@@ -499,7 +499,7 @@ define([
                     server.respond();
 
                     expect($thisEl.find('#jobsItem[data-id="570cc46ecf6668c214f2ba4b"]')).to.not.exist;
-                    expect(window.location.hash).to.be.equals('#easyErp/Projects/form/55b92ad621e4b7c40f00065f');
+                    expect(window.location.hash).to.be.equals('#tinyERP/Projects/form/55b92ad621e4b7c40f00065f');
                 });
 
             });
@@ -993,7 +993,7 @@ define([
                     $saveBtn.click();
                     server.respond();
 
-                    expect(window.location.hash).to.be.equals('#easyErp/Projects/form/55b92ad621e4b7c40f00065f');
+                    expect(window.location.hash).to.be.equals('#tinyERP/Projects/form/55b92ad621e4b7c40f00065f');
                 });
 
                 it('Try to create quotation', function () {
@@ -2087,7 +2087,7 @@ define([
             var clock;
 
             before(function () {
-                window.location.hash = '#easyErp/Projects/thumbnails';
+                window.location.hash = '#tinyERP/Projects/thumbnails';
                 server = sinon.fakeServer.create();
                 mainSpy = sinon.spy(App, 'render');
                 windowConfirmStub = sinon.stub(window, 'confirm');
@@ -2237,7 +2237,7 @@ define([
                     server.respond();
                     $selectedFilters = $searchContainer.find('.removeValues');
                     expect($selectedFilters).to.have.lengthOf(0);
-                    expect(window.location.hash).to.be.equals('#easyErp/Projects/thumbnails/c=3');
+                    expect(window.location.hash).to.be.equals('#tinyERP/Projects/thumbnails/c=3');
                 });
 
                 it('Try to change project status', function () {
@@ -2255,7 +2255,7 @@ define([
                     server.respond();
                     server.respond();
 
-                    expect(window.location.hash).to.be.equals('#easyErp/Projects/thumbnails/c=3');
+                    expect(window.location.hash).to.be.equals('#tinyERP/Projects/thumbnails/c=3');
 
                     $needItem = $thisEl.find('#55b92ad621e4b7c40f00065f');
                     stage = $needItem.find('a.stageSelect').text().toLowerCase();
@@ -2276,7 +2276,7 @@ define([
                     server.respond();
 
                     expect($needItem.find('.health-container a')).to.have.class('health1');
-                    expect(window.location.hash).to.be.equals('#easyErp/Projects/thumbnails/c=3');
+                    expect(window.location.hash).to.be.equals('#tinyERP/Projects/thumbnails/c=3');
                 });
 
                 it('Try to open CreateView', function () {
@@ -2377,7 +2377,7 @@ define([
                     $createBtn.click();
                     server.respond();
 
-                    expect(window.location.hash).to.be.equals('#easyErp/Projects/thumbnails/c=3');
+                    expect(window.location.hash).to.be.equals('#tinyERP/Projects/thumbnails/c=3');
                 });
 
                 it('Close CreateView', function () {
@@ -2403,7 +2403,7 @@ define([
                     server.respond();
                     server.respond();
 
-                    expect(window.location.hash).to.be.equals('#easyErp/Projects/form/55b92ad621e4b7c40f00065f');
+                    expect(window.location.hash).to.be.equals('#tinyERP/Projects/form/55b92ad621e4b7c40f00065f');
                 });
             });
 
@@ -2481,7 +2481,7 @@ define([
          $statusSelectedItem.click();
          server.respond();
 
-         expect(window.location.hash).to.be.equals('#easyErp/Projects/list/p=1/c=100');
+         expect(window.location.hash).to.be.equals('#tinyERP/Projects/list/p=1/c=100');
          });
          });
          });*/

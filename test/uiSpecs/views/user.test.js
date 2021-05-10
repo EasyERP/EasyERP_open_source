@@ -2946,7 +2946,7 @@ define([
 
             it('Should render menu and subMenu', function () {
                 var $expectedMenuEl;
-                var $needA = view.$el.find('a[href="#easyErp/Users"]');
+                var $needA = view.$el.find('a[href="#tinyERP/Users"]');
 
                 $needA.click();
                 $expectedMenuEl = $needA.closest('li');
@@ -3120,7 +3120,7 @@ define([
                 server.respond();
 
                 expect(createItemSpy.calledTwice).to.be.true;
-                expect(window.location.hash).to.be.equals('#easyErp/Users/list/p=1/c=100');
+                expect(window.location.hash).to.be.equals('#tinyERP/Users/list/p=1/c=100');
             });
 
             it('Try to close create dialog', function () {
@@ -3245,7 +3245,7 @@ define([
                 $saveBtn.click();
                 server.respond();
 
-                expect(window.location.hash).to.be.equals('#easyErp/Users');
+                expect(window.location.hash).to.be.equals('#tinyERP/Users');
             });
 
             it('Try to edit item with error', function () {
@@ -3301,7 +3301,7 @@ define([
                 $deleteBtn.click();
                 server.respond();
 
-                expect(window.location.hash).to.be.equals('#easyErp/Users');
+                expect(window.location.hash).to.be.equals('#tinyERP/Users');
             });
 
             it('Try to cancel dialog', function () {
@@ -3354,7 +3354,7 @@ define([
                 $deleteBtn.click();
                 server.respond();
 
-                expect(window.location.hash).to.equals('#easyErp/Users/list');
+                expect(window.location.hash).to.equals('#tinyERP/Users/list');
             });
 
         });

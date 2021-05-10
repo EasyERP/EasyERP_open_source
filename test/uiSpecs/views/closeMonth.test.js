@@ -178,7 +178,7 @@ define([
                 $needAEl.click();
 
                 expect($expectedMenuEl).to.have.class('selected');
-                expect(window.location.hash).to.be.equals('#easyErp/closeMonth');
+                expect(window.location.hash).to.be.equals('#tinyERP/closeMonth');
             });
 
         });
@@ -367,7 +367,7 @@ define([
                     server.respond();
 
                     expect(recloseSpy.calledTwice).to.be.true;
-                    expect(window.location.hash).to.be.equals('#easyErp/closeMonth');
+                    expect(window.location.hash).to.be.equals('#tinyERP/closeMonth');
                 });
 
                 it('Try to close existMonth', function () {

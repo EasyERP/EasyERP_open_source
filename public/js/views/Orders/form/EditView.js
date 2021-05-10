@@ -263,7 +263,7 @@ define([
                     },
                     success: function () {
                         $('.edit-product-dialog').remove();
-                        Backbone.history.navigate('easyErp/' + self.contentType, {trigger: true});
+                        Backbone.history.navigate('tinyERP/' + self.contentType, {trigger: true});
                     },
 
                     error: function (model, err) {

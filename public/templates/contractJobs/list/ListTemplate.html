@@ -19,7 +19,7 @@
     <td class="_contractJobsStatusBlock <%=el.workflow.name === 'Finished' ? 'finished' : 'inProgress'%> contractCell centerCell">
         <span><%=el.workflow ? el.workflow.name : ''%></span></td>
     <td class="_contractJobsJobBlock">
-        <div class="_contractJobsName"><%=el.name%> in <a href="#easyErp/Projects/form/<%=el.project &&  el.project._id %>"><%=el.project && el.project.name%></a>
+        <div class="_contractJobsName"><%=el.name%> in <a href="#tinyERP/Projects/form/<%=el.project &&  el.project._id %>"><%=el.project && el.project.name%></a>
         </div>
         <div class="_contractJobsCustomer"><span class="fontSemiBold">For </span><span><%=el.customer%></span></div>
         <div class="_contractJobsDates"><span

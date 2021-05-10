@@ -21,7 +21,7 @@ define([
         contentTemplate: _.template(ContentTemplate),
         CreateView     : CreateView,
         ListItemView   : ListItemView,
-        listUrl        : 'easyErp/manufacturingOrders/list/',
+        listUrl        : 'tinyERP/manufacturingOrders/list/',
         contentType    : CONSTANTS.MANUFACTURINGORDERS,
         viewType       : 'tform',
         hasPagination  : true,

@@ -5245,8 +5245,8 @@ define([
             },
             {
                 _id             : "56dff1b4a12a4f3c26919c91",
-                projectName: "EasyERP",
-                projectShortDesc: "EasyERP all jobs"
+                projectName: "tinyERP",
+                projectShortDesc: "tinyERP all jobs"
             },
             {
                 _id             : "55b92ad621e4b7c40f000691",
@@ -6204,7 +6204,7 @@ define([
                 $needAEl.click();
 
                 expect($expectedMenuEl).to.have.class('selected');
-                expect(window.location.hash).to.be.equals('#easyErp/Tasks');
+                expect(window.location.hash).to.be.equals('#tinyERP/Tasks');
             });
         });
 
@@ -6243,7 +6243,7 @@ define([
             it('Try to create TopBarView', function () {
                 var tasksUrl = new RegExp('\/Tasks\/', 'i');
 
-                window.location.hash = '#easyErp/Tasks';
+                window.location.hash = '#tinyERP/Tasks';
 
                 server.respondWith('GET', tasksUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeTasks)]);
                 tasksCollection = new TasksCollection({
@@ -6273,13 +6273,13 @@ define([
                 var $listBtn = topBarView.$el.find('#listBtn');
                 var $kanbanBtn = topBarView.$el.find('#kanbanBtn');
 
-                expect(window.location.hash).to.be.equals('#easyErp/Tasks');
+                expect(window.location.hash).to.be.equals('#tinyERP/Tasks');
 
                 $kanbanBtn.click();
-                expect(window.location.hash).to.be.equals('#easyErp/Tasks/kanban');
+                expect(window.location.hash).to.be.equals('#tinyERP/Tasks/kanban');
 
                 $listBtn.click();
-                expect(window.location.hash).to.be.equals('#easyErp/Tasks/list');
+                expect(window.location.hash).to.be.equals('#tinyERP/Tasks/list');
             });
         });
 
@@ -6521,7 +6521,7 @@ define([
                     $saveBtn.click();
                     server.respond();
 
-                    expect(window.location.hash).to.be.equals('#easyErp/Tasks/list/p=1/c=100');
+                    expect(window.location.hash).to.be.equals('#tinyERP/Tasks/list/p=1/c=100');
                     expect($('.ui-dialog')).to.not.exist;
                 });
 
@@ -6599,7 +6599,7 @@ define([
                     server.respondWith('POST', taskUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({success: 'Created success'})]);
                     $createBtn.click();
                     server.respond();
-                    expect(window.location.hash).to.be.equals('#easyErp/Tasks/list/p=1/c=100');
+                    expect(window.location.hash).to.be.equals('#tinyERP/Tasks/list/p=1/c=100');
 
                 });
 
@@ -6621,7 +6621,7 @@ define([
                     $deleteBtn.click();
                     server.respond();
 
-                    expect(window.location.hash).to.be.equals('#easyErp/Tasks/list/p=1/c=100');
+                    expect(window.location.hash).to.be.equals('#tinyERP/Tasks/list/p=1/c=100');
                 });
 
                 it('Try to filter listView by Project and Task Summary', function () {
@@ -6834,7 +6834,7 @@ define([
 
             before(function () {
                 App.currentViewType = 'kanban';
-                window.location.hash = 'easyErp/Tasks/kanban';
+                window.location.hash = 'tinyERP/Tasks/kanban';
 
                 server = sinon.fakeServer.create();
                 windowConfirmStub = sinon.stub(window, 'confirm');
@@ -6990,7 +6990,7 @@ define([
                     $saveBtn.click();
                     server.respond();
 
-                    expect(window.location.hash).to.be.equals('#easyErp/Tasks/kanban');
+                    expect(window.location.hash).to.be.equals('#tinyERP/Tasks/kanban');
                     expect($('.ui-dialog')).to.not.exist;
                 });
 

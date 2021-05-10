@@ -129,7 +129,7 @@
         },
 
         organizationSettings: {
-            name     : 'This name will be shown on all documents in EasyERP',
+            name     : 'This name will be shown on all documents in tinyERP',
             industry : 'Select the industry for your company',
             currency : 'This base currency will be used for accounting',
             startDate: 'You can set start date only 1 time and this value cannot be changed. Usually this is the date when company has founded.'
@@ -138,8 +138,8 @@
         currency: {
             allCurrencies : '3 characters used in International Currency standard. For example, USD, EUR, JPY',
             currencySymbol: 'Currency symbol, if exists. For example, $, €, ¥',
-            decPlaces     : 'The number of decimals that will be used in EasyERP',
-            active        : 'Check this checkbox is you want to show this currency in EasyERP'
+            decPlaces     : 'The number of decimals that will be used in tinyERP',
+            active        : 'Check this checkbox is you want to show this currency in tinyERP'
         },
 
         rates: {
@@ -171,30 +171,30 @@
         },
 
         priceList: {
-            priceListName: 'This name will be shown in EasyERP documents',
-            priceListCode: 'This price list code will not be shown in EasyERP documents',
+            priceListName: 'This name will be shown in tinyERP documents',
+            priceListCode: 'This price list code will not be shown in tinyERP documents',
             yes          : 'Check this checkbox to apply this price list for purchase orders',
             no           : 'Check this checkbox to apply this price list for sales orders'
         },
 
         shippingMethods: {
-            name   : 'This shipping name will be shown in EasyERP documents',
+            name   : 'This shipping name will be shown in tinyERP documents',
             code   : 'Code for this shipping method',
             account: 'Type of account for this shipping method',
             price  : 'Price that user should pay using this shipping method'
         },
 
         integrations: {
-            channelName   : 'This channel name will be shown in EasyERP',
+            channelName   : 'This channel name will be shown in tinyERP',
             apishop       : 'Shop name as it is shown on ETSY platform',
-            apiuser       : 'API keystring used for connection app on ETSY with EasyERP',
-            apipassword   : 'API shared secret string for connection app on ETSY with EasyERP',
-            warehouse     : 'Warehouse that will be used for synchronizing the products between EasyERP and this ETSY store',
+            apiuser       : 'API keystring used for connection app on ETSY with tinyERP',
+            apipassword   : 'API shared secret string for connection app on ETSY with tinyERP',
+            warehouse     : 'Warehouse that will be used for synchronizing the products between tinyERP and this ETSY store',
             location      : 'Location from warehouse that will be used for synchronization with ETSY',
             priceList     : 'Price list that will be used for this integration',
             bankAccount   : 'Bank account that wil be used for all payments linked to this ecommerce channel.',
-            shippingStatus: 'Check this checkbox if you want to update the shipping status from EasyERP to ETSY',
-            shippingMethod: 'Check this checkbox if you wan to update shipping method from EasyERP to ETSY'
+            shippingStatus: 'Check this checkbox if you want to update the shipping status from tinyERP to ETSY',
+            shippingMethod: 'Check this checkbox if you wan to update shipping method from tinyERP to ETSY'
         },
 
         invoiceEmail: {
@@ -203,7 +203,7 @@
         },
 
         Profiles: {
-            profileName       : 'This profile name will be shown in EasyERP.',
+            profileName       : 'This profile name will be shown in tinyERP.',
             profileDescription: 'Short description for this profile.',
             profilesDd        : 'Settings from this base profile will be applied to this new profile if you check "Use base profile and edit privileges" below',
             baseProfile       : 'Check this checkbox if you would like create new Access Profile by using other already created one editing previleges.',
@@ -219,7 +219,7 @@
         },
 
         Departments: {
-            departmentName   : 'This department name will be used and shown in EasyERP.',
+            departmentName   : 'This department name will be used and shown in tinyERP.',
             departmentManager: 'Select the person who manages this Department',
             parentDepartment : 'Select parent department if it exists',
             isDevelopment    : 'Check this checkbox if you would like to track time for this department in Project\'s time card'

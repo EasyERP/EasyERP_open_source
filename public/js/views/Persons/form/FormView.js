@@ -283,7 +283,7 @@ define([
                     mid: mid
                 },
                 success: function () {
-                    Backbone.history.navigate('#easyErp/Opportunities/kanban', {trigger: true});
+                    Backbone.history.navigate('#tinyERP/Opportunities/kanban', {trigger: true});
                 }
             });
 

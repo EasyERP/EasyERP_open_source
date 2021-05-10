@@ -21,7 +21,7 @@ define([
         contentTemplate: _.template(ContentTemplate),
         CreateView     : CreateView,
         ListItemView   : ListItemView,
-        listUrl        : 'easyErp/stockCorrections/list/',
+        listUrl        : 'tinyERP/stockCorrections/list/',
         contentType    : CONSTANTS.STOCKCORRECTIONS,
         viewType       : 'tform',
         hasPagination  : true,

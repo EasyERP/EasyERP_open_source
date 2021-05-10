@@ -22,7 +22,7 @@ define([
         contentTemplate: _.template(ContentTemplate),
         CreateView     : CreateView,
         ListItemView   : ListItemView,
-        listUrl        : 'easyErp/stockTransactions/list/',
+        listUrl        : 'tinyERP/stockTransactions/list/',
         contentType    : CONSTANTS.STOCKTRANSACTIONS,
         viewType       : 'tform',
         hasPagination  : true,

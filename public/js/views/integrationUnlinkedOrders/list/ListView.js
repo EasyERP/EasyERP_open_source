@@ -32,7 +32,7 @@ define([
                     value: [orderId]
                 }
             };
-            var href = '#easyErp/unlinkedProducts/filter=' + encodeURIComponent(JSON.stringify(filter));
+            var href = '#tinyERP/unlinkedProducts/filter=' + encodeURIComponent(JSON.stringify(filter));
 
             Backbone.history.fragment = '';
             Backbone.history.navigate(href, {trigger: true});

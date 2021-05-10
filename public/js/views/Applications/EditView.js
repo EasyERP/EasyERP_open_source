@@ -885,7 +885,7 @@
                     self.hideDialog();
 
                     if (event === 'hired') {
-                        Backbone.history.navigate('easyErp/Employees', {trigger: true});
+                        Backbone.history.navigate('tinyERP/Employees', {trigger: true});
                     }
                 },
 

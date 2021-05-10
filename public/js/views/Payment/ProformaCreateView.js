@@ -231,15 +231,15 @@ define([
                         var redirectUrl;
 
                         if (self.mid === 97) {
-                            redirectUrl = '#easyErp/ExpensesPayments/list';
+                            redirectUrl = '#tinyERP/ExpensesPayments/list';
                         } else if (self.mid === 100) {
-                            redirectUrl = '#easyErp/DividendPayments/list';
+                            redirectUrl = '#tinyERP/DividendPayments/list';
                         } else if (self.mid === 109) {
-                            redirectUrl = '#easyErp/purchasePayments/list';
+                            redirectUrl = '#tinyERP/purchasePayments/list';
                         } else if (self.mid === 95) {
-                            redirectUrl = '#easyErp/purchasePayments/list';
+                            redirectUrl = '#tinyERP/purchasePayments/list';
                         } else {
-                            redirectUrl = self.forSales ? 'easyErp/customerPayments' : 'easyErp/supplierPayments';
+                            redirectUrl = self.forSales ? 'tinyERP/customerPayments' : 'tinyERP/supplierPayments';
                         }
 
                         self.hideDialog();

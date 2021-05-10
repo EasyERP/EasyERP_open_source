@@ -48,7 +48,7 @@ var Module = function (models, event) {
             var cipher;
             var encryptedPass;
 
-            cipher = crypto.createCipher('aes192', 'easyErp');
+            cipher = crypto.createCipher('aes192', 'tinyERP');
             encryptedPass = cipher.update(password, 'utf8', 'hex');
             encryptedPass += cipher.final('hex');
 
@@ -247,18 +247,18 @@ var Module = function (models, event) {
                         var splitted;
                         var webHookObj;
 
-                        if (_.findWhere(existingWebHooks, {name: 'EASYERP', topic: webHook})) {
+                        if (_.findWhere(existingWebHooks, {name: 'tinyERP', topic: webHook})) {
                             return eCb();
                         }
 
                         splitted = webHook.split('.');
                         webHookObj = {
-                            name        : 'EASYERP',
+                            name        : 'tinyERP',
                             topic       : webHook,
                             resource    : splitted[0],
                             event       : splitted[1],
                             delivery_url: MAINCONSTANTS.INTEGRATION.WOO_WEBHOOK_REMOTE_URI + redisKey.toString() + '/' + db,
-                            secret      : 'EasyERP'
+                            secret      : 'tinyERP'
                         };
 
                         woo.post('webhooks', webHookObj, function (err) {
@@ -674,7 +674,7 @@ var Module = function (models, event) {
             var decryptedPass;
             var decipher;
 
-            decipher = crypto.createDecipher('aes192', 'easyErp');
+            decipher = crypto.createDecipher('aes192', 'tinyERP');
             decryptedPass = decipher.update(password, 'hex', 'utf8');
             decryptedPass += decipher.final('utf8');
 

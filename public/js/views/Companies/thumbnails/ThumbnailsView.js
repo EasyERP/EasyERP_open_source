@@ -79,7 +79,7 @@
             var id = $(e.target).closest('a').data('id');
             var count = this.collection.pageSize;
             var page = this.collection.currentPage || 1;
-            var url = '#easyErp/' + this.contentType + '/tform/' + id + '/p=' + page + '/c=' + count;
+            var url = '#tinyERP/' + this.contentType + '/tform/' + id + '/p=' + page + '/c=' + count;
 
             e.preventDefault();
             App.ownContentType = true;

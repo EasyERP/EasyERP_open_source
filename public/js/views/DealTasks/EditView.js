@@ -86,7 +86,7 @@
 
             $('.edit-dialog').remove();
 
-            Backbone.history.navigate('#easyErp/Tasks/list/p=1/c=100/filter=' + encodeURIComponent(JSON.stringify(filter)), {trigger: true});
+            Backbone.history.navigate('#tinyERP/Tasks/list/p=1/c=100/filter=' + encodeURIComponent(JSON.stringify(filter)), {trigger: true});
         },
 
         chooseOption: function (e) {

@@ -32,7 +32,7 @@ define([
             this.startTime = options.startTime;
             this.collection = options.collection;
             this.filter = options.filter || {};
-            this.formUrl = 'easyErp/' + this.contentType + '/tform/';
+            this.formUrl = 'tinyERP/' + this.contentType + '/tform/';
             this.filter.forSales = {
                 key  : 'forSales',
                 type : 'boolean',

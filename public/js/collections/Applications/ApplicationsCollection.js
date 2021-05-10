@@ -14,7 +14,7 @@ define([
 
         parse: function (response) {
             if (response.data) {
-                _.map(response.data, function (application) {
+                _.map(response.data, function(application) {
 
                     application.creationDate = common.utcDateToLocaleDate(application.creationDate);
                     if (application.nextAction) {

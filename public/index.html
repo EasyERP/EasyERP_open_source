@@ -42,30 +42,5 @@
 <!--<div id="helpContainer"></div>-->
 <div id="loading"></div>
 <div id="gatherView" class="hidden"></div>
-
-<script type="text/javascript">
-    window.onload = function () {
-        (function feedBack() {
-            var s = document.createElement("script");
-            s.type = "text/javascript";
-            s.async = true;
-            s.src = '//api.usersnap.com/load/' + '5a968e74-88e2-4d68-be57-49c7e2ecee0d.js';  //Change only src if account chang
-            var x = document.getElementsByTagName('script')[0];
-
-            x.parentNode.insertBefore(s, x);
-
-            var interval = setInterval(function () {
-                var feedbackEl = document.getElementById('us_report_button');
-                var userSnap = document.getElementById('userSnap');
-
-                if (feedbackEl && userSnap) {
-                    userSnap.appendChild(feedbackEl);
-                    clearInterval(interval)
-                }
-            }, 100);
-        })();
-    }
-</script>
-
 </body>
 </html>

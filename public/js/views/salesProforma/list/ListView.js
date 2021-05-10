@@ -51,7 +51,7 @@ define([
 
             $(document).off('click');
 
-            this.formUrl = 'easyErp/' + this.contentType + '/tform/';
+            this.formUrl = 'tinyERP/' + this.contentType + '/tform/';
             this.EditView = EditView;
             this.CreateView = CreateView;
 

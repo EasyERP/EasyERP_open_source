@@ -68,48 +68,49 @@ define([
 
         routes: {
             home                                                                                            : 'any',
-            'easyErp/Products/thumbnails(/c=:countPerPage)(/filter=:filter)'                                : 'goToProduct',
-            'easyErp/import/list(/p=:page)(/c=:countPerPage)'                                               : 'goToImport',
+            'tinyERP/Products/thumbnails(/c=:countPerPage)(/filter=:filter)'                                : 'goToProduct',
+            'tinyERP/import/list(/p=:page)(/c=:countPerPage)'                                               : 'goToImport',
             'login(?password=:password&dbId=:dbId&email=:email)(?ir_hash=:ir_hash)'                         : 'login',
-            'easyErp/gatherInfo'                                                                            : 'goToGatherInfo',
-            'easyErp/:contentType/kanban(/:parrentContentId)(/filter=:filter)'                              : 'goToKanban',
-            'easyErp/:contentType/datelist(/c=:countPerPage)(/filter=:filter)'                              : 'goToDateList',
-            'easyErp/:contentType/thumbnails(/c=:countPerPage)(/filter=:filter)'                            : 'goToThumbnails',
-            'easyErp/:contentType/tform(/:modelId)(/p=:page)(/c=:countPerPage)(/filter=:filter)'            : 'goToTForm', // FixMe chenge to required Id after test
-            'easyErp/:contentType/form(/:modelId)'                                                          : 'goToForm', // FixMe chenge to required Id after test
-            'easyErp/:contentType/list(/pId=:parrentContentId)(/p=:page)(/c=:countPerPage)(/filter=:filter)': 'goToList',
-            'easyErp/Revenue(/filter=:filter)'                                                              : 'revenue',
-            'easyErp/settingsEmployee(/filter=:filter)'                                                     : 'settingsEmployee',
-            'easyErp/Efficiency'                                                                            : 'hours',
-            'easyErp/Attendance'                                                                            : 'attendance',
-            'easyErp/Profiles'                                                                              : 'goToProfiles',
-            'easyErp/organizationSettings'                                                                  : 'organizationSettings',
-            'easyErp/myProfile'                                                                             : 'goToUserPages',
-            'easyErp/Workflows'                                                                             : 'goToWorkflows',
-            'easyErp/Accounts(/:type)'                                                                      : 'goToAccounts',
-            'easyErp/productsSettings'                                                                      : 'goToProductSettings',
-            'easyErp/settingsOverview'                                                                      : 'goToSettingsOverview',
-            'easyErp/reports(/:modelId)'                                                                    : 'goToReports',
-            //'easyErp/productsReports'                                                                       : 'goToProductsReports',
-            'easyErp/inventoryReports'                                                                      : 'goToInventoryReports',
-            'easyErp/salesReports'                                                                          : 'goToSalesReports',
-            'easyErp/integrations(/:type)(/syncLog/:id)'                                                    : 'goToIntegrations',
-            'easyErp/resolveConflicts'                                                                      : 'resolveConflicts',
-            'easyErp/unlinkedProducts(/filter=:filter)(?fromIntegration=:fromIntegration)'                  : 'unlinkedProducts',
-            'easyErp/Dashboard'                                                                             : 'goToDashboard',
-            'easyErp/reportsDashboard'                                                                      : 'goToCustomDashboard',
-            'easyErp/dashboards'                                                                            : 'goToDashboards',
-            'easyErp/purchaseDashboard'                                                                     : 'goToCustomPurchaseDashboard',
-            'easyErp/payrollDashboard'                                                                      : 'goToPayrollDashboard',
-            'easyErp/DashBoardVacation(/filter=:filter)'                                                    : 'dashBoardVacation',
-            'easyErp/invoiceCharts(/filter=:filter)'                                                        : 'invoiceCharts',
-            'easyErp/HrDashboard'                                                                           : 'hrDashboard',
-            'easyErp/projectDashboard'                                                                      : 'goToProjectDashboard',
-            'easyErp/customDashboardCharts/:modelId'                                                        : 'goToCustomDashboard',
-            //'easyErp/warehouseMovements'                                                                    : 'goToWarehouseMovements',
-            // 'easyErp/billOfMaterials'                                                                       : 'goToBillOfMaterials',
-            'easyErp/:contentType'                                                                          : 'getList',
-            '*any'                                                                                          : 'any'
+            'tinyERP/gatherInfo'                                                                            : 'goToGatherInfo',
+            'tinyERP/:contentType/kanban(/:parrentContentId)(/filter=:filter)'                              : 'goToKanban',
+            'tinyERP/:contentType/datelist(/c=:countPerPage)(/filter=:filter)'                              : 'goToDateList',
+            'tinyERP/:contentType/thumbnails(/c=:countPerPage)(/filter=:filter)'                            : 'goToThumbnails',
+            'tinyERP/:contentType/tform(/:modelId)(/p=:page)(/c=:countPerPage)(/filter=:filter)'            : 'goToTForm', // FixMe chenge to required Id after test
+            'tinyERP/:contentType/form(/:modelId)'                                                          : 'goToForm', // FixMe chenge to required Id after test
+            'tinyERP/:contentType/list(/pId=:parrentContentId)(/p=:page)(/c=:countPerPage)(/filter=:filter)': 'goToList',
+            'tinyERP/Revenue(/filter=:filter)'                                                              : 'revenue',
+            'tinyERP/settingsEmployee(/filter=:filter)'                                                     : 'settingsEmployee',
+            'tinyERP/Efficiency'                                                                            : 'hours',
+            'tinyERP/Attendance'                                                                            : 'attendance',
+            'tinyERP/Profiles'                                                                              : 'goToProfiles',
+            'tinyERP/organizationSettings'                                                                  : 'organizationSettings',
+            'tinyERP/myProfile'                                                                             : 'goToUserPages',
+            'tinyERP/Workflows'                                                                             : 'goToWorkflows',
+            'tinyERP/Accounts(/:type)'                                                                      : 'goToAccounts',
+            'tinyERP/productsSettings'                                                                      : 'goToProductSettings',
+            'tinyERP/settingsOverview'                                                                      : 'goToSettingsOverview',
+            'tinyERP/reports(/:modelId)'                                                                    : 'goToReports',
+            //'tinyERP/productsReports'                                                                       : 'goToProductsReports',
+            'tinyERP/inventoryReports'                                                                      : 'goToInventoryReports',
+            'tinyERP/salesReports'                                                                          : 'goToSalesReports',
+            'tinyERP/integrations(/:type)(/syncLog/:id)'                                                    : 'goToIntegrations',
+            'tinyERP/resolveConflicts'                                                                      : 'resolveConflicts',
+            'tinyERP/unlinkedProducts(/filter=:filter)(?fromIntegration=:fromIntegration)'                  : 'unlinkedProducts',
+            'tinyERP/Dashboard'                                                                             : 'goToDashboard',
+            'tinyERP/reportsDashboard'                                                                      : 'goToCustomDashboard',
+            'tinyERP/dashboards'                                                                            : 'goToDashboards',
+            'tinyERP/purchaseDashboard'                                                                     : 'goToCustomPurchaseDashboard',
+            'tinyERP/payrollDashboard'                                                                      : 'goToPayrollDashboard',
+            'tinyERP/DashBoardVacation(/filter=:filter)'                                                    : 'dashBoardVacation',
+            'tinyERP/invoiceCharts(/filter=:filter)'                                                        : 'invoiceCharts',
+            'tinyERP/HrDashboard'                                                                           : 'hrDashboard',
+            'tinyERP/projectDashboard'                                                                      : 'goToProjectDashboard',
+            'tinyERP/customDashboardCharts/:modelId'                                                        : 'goToCustomDashboard',
+            //'tinyERP/warehouseMovements'                                                                    : 'goToWarehouseMovements',
+            // 'tinyERP/billOfMaterials'                                                                       : 'goToBillOfMaterials',
+            'tinyERP/:contentType'                                                                          : 'getList',
+            // default path match all others
+             '*any'                                                                                          : 'any'
         },
 
         goToGatherInfo: function () {
@@ -165,7 +166,7 @@ define([
         // goToBillOfMaterials: function () {
         //     var self = this;
         //     var currentUser = App.currentUser || {};
-        //     var url = '#easyErp/billOfMaterials';
+        //     var url = '#tinyERP/billOfMaterials';
         //     var urlView = 'views/billOfMaterials/list/ListView';
         //
         //     // tracker.track({
@@ -927,7 +928,7 @@ define([
 
                 require([contentViewUrl], function (contentView) {
                     var contentview = new contentView({startTime: startTime, page: page, count: count});
-                    var url = '#easyErp/import/list';
+                    var url = '#tinyERP/import/list';
 
                     if (page) {
                         url += '/p=' + page;
@@ -994,7 +995,7 @@ define([
 
                     function createViews() {
                         collection.unbind('reset');
-                        var url = '#easyErp/Profiles';
+                        var url = '#tinyERP/Profiles';
                         var topbarView = new topBarView({actionType: 'Content'});
                         var contentview = new contentView({collection: collection, startTime: startTime});
 
@@ -1160,7 +1161,7 @@ define([
         goToIntegrations: function (type, id) {
             var self = this;
             var currentUser = App.currentUser || {};
-            var url = '#easyErp/integrations';
+            var url = '#tinyERP/integrations';
             var urlView = 'views/integrations/integrations';
 
             if (type) {
@@ -1269,7 +1270,7 @@ define([
                         context.changeView(contentView);
                         context.changeTopBarView(topBarView);
 
-                        url = '#easyErp/productsSettings';
+                        url = '#tinyERP/productsSettings';
 
                         Backbone.history.navigate(url, {replace: true});
                     });
@@ -1337,7 +1338,7 @@ define([
                             context.changeView(contentView);
                             context.changeTopBarView(topBarView);
 
-                            url = '#easyErp/dashboards';
+                            url = '#tinyERP/dashboards';
 
                             Backbone.history.navigate(url, {replace: true});
                         }
@@ -1412,7 +1413,7 @@ define([
                             context.changeView(contentView);
                             context.changeTopBarView(topBarView);
 
-                            url = '#easyErp/reports';
+                            url = '#tinyERP/reports';
 
                             Backbone.history.navigate(url, {replace: true});
                         }
@@ -1538,7 +1539,7 @@ define([
 
                         $('#top-bar').html('');
 
-                        url = '#easyErp/salesReports';
+                        url = '#tinyERP/salesReports';
 
                         Backbone.history.navigate(url, {replace: true});
                     });
@@ -1596,7 +1597,7 @@ define([
 
                         $('#top-bar').html('');
 
-                        url = '#easyErp/inventoryReports';
+                        url = '#tinyERP/inventoryReports';
 
                         Backbone.history.navigate(url, {replace: true});
                     });
@@ -1658,7 +1659,7 @@ define([
                         context.changeView(contentView);
                         context.changeTopBarView(topBarView);
 
-                        url = '#easyErp/settingsOverview';
+                        url = '#tinyERP/settingsOverview';
 
                         Backbone.history.navigate(url, {replace: true});
                     });
@@ -1829,7 +1830,7 @@ define([
                         context.changeView(contentView);
                         context.changeTopBarView(topBarView);
 
-                        url = '#easyErp/Products';
+                        url = '#tinyERP/Products';
 
                         Backbone.history.navigate(url, {replace: true});
                     }
@@ -1875,7 +1876,7 @@ define([
                 require([contentViewUrl, topBarViewUrl], function (contentView, topBarView) {
 
                     custom.setCurrentVT('list');
-                    var url = '#easyErp/myProfile';
+                    var url = '#tinyERP/myProfile';
                     var contentview = new contentView({startTime: startTime});
                     var topbarView = new topBarView({actionType: 'Content'});
 
@@ -2081,7 +2082,7 @@ define([
                         custom.setCurrentVT('list');
 
                         function createViews() {
-                            var url = '#easyErp/Workflows';
+                            var url = '#tinyERP/Workflows';
                             var contentview;
                             var topbarView;
 
@@ -2176,7 +2177,7 @@ define([
 
                 if (contentType !== currentContentType) {
                     contentType = currentContentType;
-                    url = '#easyErp/' + contentType + '/list';
+                    url = '#tinyERP/' + contentType + '/list';
 
                     if (parrentContentId) {
                         url += '/' + parrentContentId;
@@ -2613,7 +2614,7 @@ define([
 
                 if (contentType !== currentContentType) {
                     contentType = currentContentType;
-                    url = '#easyErp/' + contentType + '/form';
+                    url = '#tinyERP/' + contentType + '/form';
 
                     if (modelId) {
                         url += '/' + modelId;
@@ -2748,7 +2749,7 @@ define([
                     return require([contentViewUrl, topBarViewUrl, collectionUrl], function (contentView, topBarView, workflowsCollection) {
                         var startTime = new Date();
                         var collection = new workflowsCollection({id: contentType});
-                        var url = 'easyErp/' + contentType + '/kanban';
+                        var url = 'tinyERP/' + contentType + '/kanban';
 
                         App.filtersObject.filter = JSON.parse(filter);
                         collection.bind('reset', _.bind(createViews, self));
@@ -2844,7 +2845,7 @@ define([
 
                 if (contentType !== currentContentType) {
                     contentType = currentContentType;
-                    url = '#easyErp/' + contentType + '/' + viewType;
+                    url = '#tinyERP/' + contentType + '/' + viewType;
 
                     Backbone.history.navigate(url, {replace: true});
                 }
@@ -2932,7 +2933,7 @@ define([
                             var topbarView = new topBarView({actionType: 'Content', collection: collection});
 
                             collection.unbind('reset');
-                            // var url = '#easyErp/' + contentType + '/thumbnails';
+                            // var url = '#tinyERP/' + contentType + '/thumbnails';
                             eventsBinder.subscribeCollectionEvents(collection, contentview);
                             eventsBinder.subscribeTopBarEvents(topbarView, contentview);
 
@@ -2978,7 +2979,7 @@ define([
             contentType = this.testContent(contentType);
             viewType = custom.getCurrentVT({contentType: contentType});
 
-            Backbone.history.navigate('#easyErp/' + contentType + '/' + viewType, {trigger: true, replace: true});
+            Backbone.history.navigate('#tinyERP/' + contentType + '/' + viewType, {trigger: true, replace: true});
         },
 
         changeWrapperView: function (wrapperView) {
