@@ -23,7 +23,7 @@ define([
             var type = target.attr('data-level');
 
             Backbone.history.fragment = '';
-            Backbone.history.navigate('#easyErp/' + type, {trigger: true});
+            Backbone.history.navigate('#tinyERP/' + type, {trigger: true});
         },
 
         chooseOption: function (e) {

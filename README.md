@@ -2,7 +2,7 @@
 
 Please make sure to have installed nodejs starting from 4.0 and mongodb starting from 3.0 and latest version of redis-server 
 
-Open EasyERP.zip with any IDE
+Open tinyERP.zip with any IDE
 
 Please install bower globally (type in 'npm install bower -g' in terminal)
 

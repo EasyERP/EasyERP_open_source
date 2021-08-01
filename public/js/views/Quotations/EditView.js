@@ -142,7 +142,7 @@ define([
                                 },
                                 patch  : true,
                                 success: function () {
-                                    var redirectUrl = self.forSales ? 'easyErp/salesOrders' : 'easyErp/Orders';
+                                    var redirectUrl = self.forSales ? 'tinyERP/salesOrders' : 'tinyERP/Orders';
 
                                     if (self.redirect) {
 
@@ -182,7 +182,7 @@ define([
                 currency   : this.currentModel.toJSON().currency,
                 journal    : journal
             };
-            var redirectUrl = self.forSales ? 'easyErp/salesProforma/list' : 'easyErp/Proforma/list';
+            var redirectUrl = self.forSales ? 'tinyERP/salesProforma/list' : 'tinyERP/Proforma/list';
 
             if (e) {
                 e.preventDefault();
@@ -469,7 +469,7 @@ define([
                     },
                     wait   : true,
                     success: function (res) {
-                        //if (url === '#easyErp/salesQuotations/list') {
+                        //if (url === '#tinyERP/salesQuotations/list') {
                         //    self.hideDialog();
                         //    Backbone.history.fragment = '';
                         //    Backbone.history.navigate(url, {trigger: true});
@@ -544,7 +544,7 @@ define([
         },
 
         redirectAfter: function (content) {
-            var redirectUrl = content.forSales ? 'easyErp/salesQuotations' : 'easyErp/Quotations';
+            var redirectUrl = content.forSales ? 'tinyERP/salesQuotations' : 'tinyERP/Quotations';
 
             $('.edit-dialog').remove();
             //content.hideDialog();

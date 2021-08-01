@@ -100,7 +100,7 @@
             </ul>
             <span class="_orderNumber">#<%=model.name%></span>
             <%if (model.invoice && model.invoice._id) {%>
-            <%var reference = '#easyErp/invoice/tform/' + model.invoice._id;%>
+            <%var reference = '#tinyERP/invoice/tform/' + model.invoice._id;%>
             <ul class="_statusOrderList">
                 <li class="left _statusOrders">
                     <h3 class="_invoiced"><a href="<%=reference%>">#<%=model.invoice.name%></a></h3>
@@ -188,7 +188,7 @@
             </ul>
             <span class="_orderNumber">#<%=model.name%></span>
             <%if (model.invoice && model.invoice._id) {%>
-            <%var reference = '#easyErp/purchaseInvoice/tform/' + model.invoice._id;%>
+            <%var reference = '#tinyERP/purchaseInvoice/tform/' + model.invoice._id;%>
             <ul class="_statusOrderList">
                 <li class="left _statusOrders">
                     <h3 class="_invoiced"><a href="<%=reference%>">#<%=model.invoice.name%></a></h3>
@@ -204,7 +204,7 @@
             <div class="_animateInputBox">
                 <span class="_staticLabel">Customer</span>
                 <% if(model.supplier){ %>
-                <a href="#easyErp/Companies/form/<%=model.supplier._id%>"
+                <a href="#tinyERP/Companies/form/<%=model.supplier._id%>"
                    class="_staticInfo _link"
                    id="supplierDd"
                    data-id="<%=model.supplier._id%>">
@@ -217,7 +217,7 @@
             <% if(model.supplier){ %>
             <div class="_animateInputBox">
                 <span class="_staticLabel">Supplier</span>
-                <a href="#easyErp/Companies/form/<%=model.supplier._id%>"
+                <a href="#tinyERP/Companies/form/<%=model.supplier._id%>"
                    class="_staticInfo _link"
                    id="supplierDd"
                    data-id="<%=model.supplier._id%>"><%=model.supplier.name.first

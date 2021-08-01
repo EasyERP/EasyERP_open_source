@@ -22,7 +22,7 @@ define([
     var CreateView = ParentView.extend({
         el         : '#content-holder',
         contentType: 'billOfMaterials',
-        formUrl    : '#easyErp/billOfMaterials',
+        formUrl    : '#tinyERP/billOfMaterials',
         viewType   : 'list',
         template   : _.template(CreateTemplate),
 

@@ -261,7 +261,7 @@
                     wait   : true,
                     success: function () {
                         self.hideDialog();
-                        Backbone.history.navigate('easyErp/salesInvoices', {trigger: true});
+                        Backbone.history.navigate('tinyERP/salesInvoices', {trigger: true});
                     },
 
                     error: function (model, xhr) {

@@ -104,7 +104,7 @@
             </ul>
             <span class="_orderNumber">#<%=model.name%></span>
             <%if (model.invoice && model.invoice._id) {%>
-            <%var reference = '#easyErp/invoice/tform/' + model.invoice._id;%>
+            <%var reference = '#tinyERP/invoice/tform/' + model.invoice._id;%>
             <ul class="_statusOrderList">
                 <li class="left _statusOrders">
                     <h3 class="_invoiced"><a href="<%=reference%>">#<%=model.invoice.name%></a></h3>
@@ -123,7 +123,7 @@
                                 <dd>
                                     <%if(model.supplier){%>
                                     <a id="supplierDd" data-id="<%=model.supplier._id%>"
-                                       href="#easyErp/Companies/form/<%=model.supplier._id%>"><%=model.supplier.name.first
+                                       href="#tinyERP/Companies/form/<%=model.supplier._id%>"><%=model.supplier.name.first
                                         + ' ' + model.supplier.name.last%></a>
                                     <% } else { %>
                                     <a id="supplierDd" class="current-selected" href="javascript:;">Select

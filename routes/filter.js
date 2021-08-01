@@ -300,7 +300,7 @@ module.exports = function (models) {
              },
              {
                  "_id": "577a66acda57c4f43c69f677",
-                 "name": "EasyERP"
+                 "name": "tinyERP"
              }
          ]
      }

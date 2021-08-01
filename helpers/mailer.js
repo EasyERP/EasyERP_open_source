@@ -42,7 +42,7 @@ module.exports = function () {
         });
 
         mailOptions = {
-            from                : 'easyerp <no-replay@easyerp.com>',
+            from                : 'tinyERP <no-replay@tinyERP.com>',
             to                  : email,
             subject             : 'Change password',
             generateTextFromHTML: true,
@@ -73,7 +73,7 @@ module.exports = function () {
     this.sendInvoice = function (mailOptions, cb) {
         mailOptions = _.extend(baseOptions, mailOptions);
         mailOptions.generateTextFromHTML = true;
-        mailOptions.from = mailOptions.from || 'easyerp <no-replay@easyerp.com>';
+        mailOptions.from = mailOptions.from || 'tinyERP <no-replay@tinyERP.com>';
         mailOptions.html = _.template(fs.readFileSync(pathMod.join(__dirname, '../public/templates/mailer/sendInvoice.html'), encoding = 'utf8'), mailOptions);
 
         deliver(mailOptions, cb);
@@ -82,7 +82,7 @@ module.exports = function () {
     this.sendGoodsNote = function (mailOptions, cb) {
 
         mailOptions.generateTextFromHTML = true;
-        mailOptions.from = mailOptions.from || 'easyerp <no-replay@easyerp.com>';
+        mailOptions.from = mailOptions.from || 'tinyERP <no-replay@tinyERP.com>';
         mailOptions.html = _.template(fs.readFileSync(pathMod.join(__dirname, '../public/templates/mailer/sendGoodsNote.html'), encoding = 'utf8'), {});
 
         deliver(mailOptions, cb);
@@ -98,7 +98,7 @@ module.exports = function () {
         });
 
         mailOptions.generateTextFromHTML = true;
-        mailOptions.from = mailOptions.from || 'ThinkMobiles <no-replay@easyerp.com>';
+        mailOptions.from = mailOptions.from || 'ThinkMobiles <no-replay@tinyERP.com>';
         mailOptions.subject = 'Lead is assigned'; // + name Leads
 
         mailOptions.html = _.template(fs.readFileSync('public/templates/mailer/sendAssignedToLead.html', encoding = 'utf8'), templateOptions);
@@ -120,7 +120,7 @@ module.exports = function () {
         });
 
         mailOptions.generateTextFromHTML = true;
-        mailOptions.from = mailOptions.from || 'ThinkMobiles <no-replay@easyerp.com>';
+        mailOptions.from = mailOptions.from || 'ThinkMobiles <no-replay@tinyERP.com>';
         mailOptions.subject = 'Changed ' + mailOptions.contentName;
 
         mailOptions.html = _.template(fs.readFileSync('public/templates/mailer/historyTemplate.html', encoding = 'utf8'), templateOptions);
@@ -137,7 +137,7 @@ module.exports = function () {
         });
 
         mailOptions.generateTextFromHTML = true;
-        mailOptions.from = mailOptions.from || 'ThinkMobiles <no-replay@easyerp.com>';
+        mailOptions.from = mailOptions.from || 'ThinkMobiles <no-replay@tinyERP.com>';
         mailOptions.subject = 'New Task';
 
         mailOptions.html = _.template(fs.readFileSync('public/templates/mailer/taskTemplate.html', encoding = 'utf8'), templateOptions);
@@ -149,7 +149,7 @@ module.exports = function () {
         var collectionName = mailOptions.collectionName;
         var contentId = mailOptions.contentId;
         var toValidCollectionName = collectionName.substr(0, 1).toUpperCase() + collectionName.substr(1).toLowerCase();
-        var url = 'http://localhost:8089/#easyErp/' + toValidCollectionName + '/tform/' + contentId;
+        var url = 'http://localhost:8089/#tinyERP/' + toValidCollectionName + '/tform/' + contentId;
 
         var templateOptions = _.extend(baseOptions, {
             employee      : mailOptions.employee,
@@ -160,7 +160,7 @@ module.exports = function () {
         });
 
         mailOptions.generateTextFromHTML = true;
-        mailOptions.from = mailOptions.from || 'ThinkMobiles <no-replay@easyerp.com>';
+        mailOptions.from = mailOptions.from || 'ThinkMobiles <no-replay@tinyERP.com>';
         mailOptions.subject = 'You was set as a follower'; // + name Leads
 
         mailOptions.html = _.template(fs.readFileSync('public/templates/mailer/addedFollower.html', encoding = 'utf8'), templateOptions);
@@ -181,15 +181,15 @@ module.exports = function () {
         });
 
         var mailOptions = {
-            from                : 'easyerp <no-replay@easyerp.com>',
-            to                  : 'sales@easyerp.com',
+            from                : 'tinyERP <no-replay@tinyERP.com>',
+            to                  : 'sales@tinyERP.com',
             subject             : 'new user',
             generateTextFromHTML: true,
             html                : _.template(fs.readFileSync('public/templates/mailer/registeredNewUser.html', encoding = 'utf8'), templateOptions)
         };
 
         var mailOptionsUser = {
-            from                : 'easyerp <support@easyerp.com>',
+            from                : 'tinyERP <support@tinyERP.com>',
             to                  : templateOptions.email,
             subject             : 'New registration',
             generateTextFromHTML: true,
@@ -211,17 +211,17 @@ module.exports = function () {
             host    : options.host
         });
         var mailOptions = {
-            from                : 'easyerp <no-replay@easyerp.com>',
-            to                  : 'sales@easyerp.com',
+            from                : 'tinyERP <no-replay@tinyERP.com>',
+            to                  : 'sales@tinyERP.com',
             subject             : 'new user',
             generateTextFromHTML: true,
             html                : _.template(fs.readFileSync('public/templates/mailer/registeredNewUser.html', encoding = 'utf8'), templateOptions)
         };
 
         var mailOptionsUser = {
-            from                : 'easyerp <support@easyerp.com>',
+            from                : 'tinyERP <support@tinyERP.com>',
             to                  : templateOptions.email,
-            subject             : 'Welcome to EasyERP!',
+            subject             : 'Welcome to tinyERP!',
             generateTextFromHTML: true,
             html                : _.template(fs.readFileSync('public/templates/mailer/newUser.html', encoding = 'utf8'), templateOptions)
         };
@@ -238,7 +238,7 @@ module.exports = function () {
         });
 
         mailOptions.generateTextFromHTML = true;
-        mailOptions.subject = 'EasyErp Hepl Message';
+        mailOptions.subject = 'tinyERP Hepl Message';
 
         mailOptions.html = _.template(fs.readFileSync('public/templates/mailer/sendFromHelp.html', encoding = 'utf8'), templateOptions);
 

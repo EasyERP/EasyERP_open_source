@@ -4,13 +4,13 @@
 <% collection.forEach(function(person){ %>
 <div class="inner thumbnailwithavatar thumbnailElement" id="<%=person._id%>">
     <div class="avatar" style="line-height: 140px">
-        <a class="gotoForm" href="#easyErp/Persons/form/<%=person._id%>"
+        <a class="gotoForm" href="#tinyERP/Persons/form/<%=person._id%>"
            title="<%=person.name.first%> <%=person.name.last%>" data-id="<%=person._id%>">
             <img src=""/></a>
     </div>
     <div class="info">
         <div>
-            <a class="gotoForm title" href="#easyErp/Persons/form/<%=person._id%>"
+            <a class="gotoForm title" href="#tinyERP/Persons/form/<%=person._id%>"
                title="<%=person.name.first%> <%=person.name.last%>" data-id="<%=person._id%>"><span><%=person.name.first%> <%=person.name.last%></span></a>
         </div>
 

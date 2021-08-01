@@ -27,7 +27,7 @@ define([
         viewType      : 'list', // needs in view.prototype.changeLocationHash
         responseObj   : {},
         whatToSet     : {},
-        formUrl       : '#easyErp/PayrollExpenses/',
+        formUrl       : '#tinyERP/PayrollExpenses/',
         headerTemplate: _.template(headerTemplate),
         totalTemplate : _.template(totalTemplate),
         // rowTemplate   : _.template(rowTemplate),

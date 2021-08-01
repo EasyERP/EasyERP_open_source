@@ -6022,7 +6022,7 @@ define([
                 $needAEl.click();
 
                 expect($expectedMenuEl).to.have.class('selected');
-                expect(window.location.hash).to.be.equals('#easyErp/Capacity');
+                expect(window.location.hash).to.be.equals('#tinyERP/Capacity');
 
             });
 
@@ -6078,7 +6078,7 @@ define([
             var mainSpy;
 
             before(function () {
-                window.location.hash = '#easyErp/Capacity/list';
+                window.location.hash = '#tinyERP/Capacity/list';
 
                 server = sinon.fakeServer.create();
                 windowConfirmStub = sinon.stub(window, 'confirm');
@@ -6216,14 +6216,14 @@ define([
                 it('Try to save created item', function () {
                     var $saveBtn = topBarView.$el.find('#top-bar-saveBtn');
                     var capacityUrl = new RegExp('\/capacity\/', 'i');
-                    var hashUrlCapacity = new RegExp('#easyErp\/Capacity', 'i');
+                    var hashUrlCapacity = new RegExp('#tinyERP\/Capacity', 'i');
 
                     server.respondWith('GET', capacityUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Created success'})]);
                     $saveBtn.click();
                     server.respond();
 
                     /!*if (firefoxPattern.test(userAgent)) {
-                        expect(window.location.hash).to.be.equals('#easyErp/Capacity');
+                        expect(window.location.hash).to.be.equals('#tinyERP/Capacity');
                     } else {*!/
                         expect(hashUrlCapacity.test(window.location.hash)).to.be.true;
                     /!*}*!/
@@ -6258,7 +6258,7 @@ define([
                     var $anotherTd = $needRow.find('td[data-dayid="1"]');
                     var capacityUrl = new RegExp('\/capacity\/', 'i');
                     var $saveBtn = topBarView.$el.find('#top-bar-saveBtn');
-                    var hashUrlCapacity = new RegExp('#easyErp\/Capacity', 'i');
+                    var hashUrlCapacity = new RegExp('#tinyERP\/Capacity', 'i');
 
                     $editTd.click();
                     $needInput = $editTd.find('input');

@@ -14,7 +14,7 @@ define(['Backbone',
         initialize: function (options) {
             this.collection = options.collection;
             this.startNumber = (parseInt(this.collection.currentPage, 10) - 1) * this.collection.pageSize;
-            this.formUrl = '#easyErp/' + this.contentType + '/tform/';
+            this.formUrl = '#tinyERP/' + this.contentType + '/tform/';
         },
 
         goToForm: function (e) {

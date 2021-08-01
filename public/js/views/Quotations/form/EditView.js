@@ -270,7 +270,7 @@ define([
                     patch  : true,
                     wait   : true,
                     success: function (res) {
-                        //if (url === '#easyErp/salesQuotations/list') {
+                        //if (url === '#tinyERP/salesQuotations/list') {
                         //    self.hideDialog();
                         //    Backbone.history.fragment = '';
                         //    Backbone.history.navigate(url, {trigger: true});

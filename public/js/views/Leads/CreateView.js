@@ -234,7 +234,7 @@ define([
                     /*self.hideDialog();
                      Backbone.history.fragment = '';
                      Backbone.history.navigate(location, {trigger: true});*/
-                    // Backbone.history.navigate('easyErp/users', { trigger: true });
+                    // Backbone.history.navigate('tinyERP/users', { trigger: true });
                 },
 
                 error: function (model, xhr) {

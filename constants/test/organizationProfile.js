@@ -3,7 +3,7 @@ define([], function () {
         data: {
             _id         : "581b46939a01c15a2e3a5302",
             startDate   : "2014-08-14T00:00:00.000Z",
-            name        : "EasyERP Inc",
+            name        : "tinyERP Inc",
             __v         : 0,
             contactName : "Alex xxx",
             user        : null,

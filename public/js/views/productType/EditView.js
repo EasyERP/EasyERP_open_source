@@ -176,7 +176,7 @@ define([
                 wait   : true,
                 success: function (model) {
                     Backbone.history.fragment = '';
-                    Backbone.history.navigate('#easyErp/productSettings', {trigger: true});
+                    Backbone.history.navigate('#tinyERP/productSettings', {trigger: true});
                 },
 
                 error: function (model, xhr) {
@@ -206,7 +206,7 @@ define([
                     },
                     success: function () {
                         $('.edit-dialog').remove();
-                        Backbone.history.navigate('easyErp/' + self.contentType, {trigger: true});
+                        Backbone.history.navigate('tinyERP/' + self.contentType, {trigger: true});
                     },
 
                     error: function (model, xhr) {

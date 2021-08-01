@@ -431,7 +431,7 @@ define([
             gotoForm: function (e) {
                 App.ownContentType = true;
                 var id = $(e.target).closest("tr").data("id");
-                window.location.hash = "#easyErp/Persons/form/" + id;
+                window.location.hash = "#tinyERP/Persons/form/" + id;
             },
 
             createItem: function () {

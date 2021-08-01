@@ -20,7 +20,7 @@ define([
         contentTemplate: _.template(ContentTemplate),
         CreateView     : CreateView,
         EditView       : EditView,
-        listUrl        : 'easyErp/Invoices/list/',
+        listUrl        : 'tinyERP/Invoices/list/',
         contentType    : CONSTANTS.INVOICES, // needs in view.prototype.changeLocationHash
         viewType       : 'tform', // needs in view.prototype.changeLocationHash
         hasPagination  : true,

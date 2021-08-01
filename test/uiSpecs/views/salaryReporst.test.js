@@ -534,7 +534,7 @@ define([
                 $needAEl.click();
 
                 expect($expectedMenuEl).to.have.class('selected');
-                expect(window.location.hash).to.be.equals('#easyErp/salaryReport');
+                expect(window.location.hash).to.be.equals('#tinyERP/salaryReport');
             });
         });
 
@@ -701,7 +701,7 @@ define([
                     server.respond();
 
                     expect(changeDateRangeSpy.calledOnce).to.be.true;
-                    expect(window.location.hash).to.be.equals('#easyErp/salaryReport/list/p=1/c=100/');
+                    expect(window.location.hash).to.be.equals('#tinyERP/salaryReport/list/p=1/c=100/');
                 });
 
                 // test filter view

@@ -34,7 +34,7 @@ define([
         ListItemView     : ListItemView,
         contentCollection: contentCollection,
         contentType      : 'Applications',
-        formUrl          : '#easyErp/Applications/',
+        formUrl          : '#tinyERP/Applications/',
         hasPagination    : true,
         type             : 'Applications',
 

@@ -13921,7 +13921,7 @@ define([
                 $needAEl.click();
 
                 expect($expectedMenuEl).to.have.class('selected');
-                expect(window.location.hash).to.be.equals('#easyErp/JobPositions');
+                expect(window.location.hash).to.be.equals('#tinyERP/JobPositions');
             });
         });
 
@@ -14045,7 +14045,7 @@ define([
                     $secondPageListEl.click();
                     server.respond();
                     expect($pageListEl.find('a:nth-child(2)')).to.have.class('selectedItemsNumber');
-                    expect(window.location.hash).to.be.equals('#easyErp/JobPositions/list/p=1/c=50');
+                    expect(window.location.hash).to.be.equals('#tinyERP/JobPositions/list/p=1/c=50');
                 });
 
                 it('Try to change status in listView', function () {
@@ -14138,7 +14138,7 @@ define([
                     $deleteBtn.click();
                     server.respond();
 
-                    expect(window.location.hash).to.be.equals('#easyErp/JobPositions');
+                    expect(window.location.hash).to.be.equals('#tinyERP/JobPositions');
                 });
 
                 it('Try to save JobPosition', function () {
@@ -14160,7 +14160,7 @@ define([
                     server.respond();
                     server.respond();
 
-                    window.location.hash = '#easyErp/JobPositions/list';
+                    window.location.hash = '#tinyERP/JobPositions/list';
 
                     expect($('.ui-dialog')).to.exist;
 
@@ -14185,12 +14185,12 @@ define([
                     $saveBtn.click();
                     server.respond();
 
-                    expect(window.location.hash).to.be.equals('#easyErp/JobPositions/list');
+                    expect(window.location.hash).to.be.equals('#tinyERP/JobPositions/list');
 
                 });
 
                 it('Try to create CreateView', function () {
-                    window.location.hash = '#easyErp/JobPositions/list';
+                    window.location.hash = '#tinyERP/JobPositions/list';
 
                     var usersForDDUrl = '/users/forDd';
                     var depsForDDUrl = '/departments/getForDD';
@@ -14249,7 +14249,7 @@ define([
                     $saveBtn.click();
                     server.respond();
 
-                    expect(window.location.hash).to.be.equals('#easyErp/JobPositions/list');
+                    expect(window.location.hash).to.be.equals('#tinyERP/JobPositions/list');
                 });
 
                 it('Try to cancel CreateView', function () {
@@ -14333,7 +14333,7 @@ define([
                 formView.deleteItems();
                 server.respond();
 
-                expect(window.location.hash).to.be.equals('#easyErp/JobPositions/list');
+                expect(window.location.hash).to.be.equals('#tinyERP/JobPositions/list');
 
             });
 

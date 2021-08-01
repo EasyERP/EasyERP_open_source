@@ -54,7 +54,7 @@ define([
                 value: ['true']
             };
 
-            this.formUrl = 'easyErp/' + this.contentType + '/tform/';
+            this.formUrl = 'tinyERP/' + this.contentType + '/tform/';
             this.startTime = options.startTime;
             this.collection = options.collection;
             this.parrentContentId = options.collection.parrentContentId;

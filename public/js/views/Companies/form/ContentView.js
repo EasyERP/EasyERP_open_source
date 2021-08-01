@@ -16,7 +16,7 @@ define([
         contentTemplate: _.template(ContentTemplate),
         CreateView     : CreateView,
         ListItemView   : ListItemView,
-        formUrl        : '#easyErp/Companies/form/',
+        formUrl        : '#tinyERP/Companies/form/',
         contentType    : 'Companies', // needs in view.prototype.changeLocationHash
         viewType       : 'tform', // needs in view.prototype.changeLocationHash
         hasPagination  : true,
@@ -24,7 +24,7 @@ define([
         formView       : null,
         ContentModel   : CompaniesModel,
         FormView       : FormView,
-        listUrl        : 'easyErp/Companies/list/',
+        listUrl        : 'tinyERP/Companies/list/',
 
         renderList: function (companies) {
             var $thisEl = this.$el;

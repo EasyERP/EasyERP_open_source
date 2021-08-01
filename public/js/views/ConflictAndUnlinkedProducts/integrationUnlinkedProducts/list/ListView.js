@@ -45,7 +45,7 @@ define([
         saveItem: function () {
             var id = this.filter && this.filter.order ? this.filter.order.value[0] : null;
             var channel = this.filter && this.filter.channel ? this.filter.channel : null;
-            var url = this.isFromForm ? 'easyErp/order/tform/' + id : window.location.hash;
+            var url = this.isFromForm ? 'tinyERP/order/tform/' + id : window.location.hash;
 
             if (!id) {
                 id = channel;

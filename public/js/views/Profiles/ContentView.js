@@ -335,7 +335,7 @@ define([
                     success: function () {
                         self.profilesCollection.trigger('reset');
                         Backbone.history.fragment = '';
-                        Backbone.history.navigate('#easyErp/Profiles', {trigger: true});
+                        Backbone.history.navigate('#tinyERP/Profiles', {trigger: true});
                     },
 
                     error: function (model, xhr) {

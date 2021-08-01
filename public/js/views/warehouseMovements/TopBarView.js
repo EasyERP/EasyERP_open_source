@@ -33,7 +33,7 @@ define([
 
         goBack: function () {
             Backbone.history.fragment = '';
-            Backbone.history.navigate('easyErp/reports', {trigger: true});
+            Backbone.history.navigate('tinyERP/reports', {trigger: true});
         },
 
         exportToPdf: function (event) {

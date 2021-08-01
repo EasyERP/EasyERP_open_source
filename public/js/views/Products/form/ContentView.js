@@ -22,7 +22,7 @@ define([
         contentTemplate: _.template(ContentTemplate),
         CreateView     : CreateView,
         ListItemView   : ListItemView,
-        listUrl        : 'easyErp/Products/list/',
+        listUrl        : 'tinyERP/Products/list/',
         contentType    : CONSTANTS.PRODUCTS, // needs in view.prototype.changeLocationHash
         viewType       : 'tform', // needs in view.prototype.changeLocationHash
         hasPagination  : true,
@@ -158,9 +158,9 @@ define([
                 $('#channelStatus div').attr('class', 'channelImg');
 
                 if (self.productId) {
-                    urlHash = '#easyErp/Products/tform/' + self.productId + '/p=1/c=50';
+                    urlHash = '#tinyERP/Products/tform/' + self.productId + '/p=1/c=50';
                 } else {
-                    urlHash = '#easyErp/Products/list/p=1/c=50';
+                    urlHash = '#tinyERP/Products/list/p=1/c=50';
                 }
 
                 App.publishProductState = null;

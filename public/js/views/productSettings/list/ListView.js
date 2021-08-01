@@ -32,7 +32,7 @@ define([
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
         contentCollection: contentCollection,
-        formUrl          : '#easyErp/productSettings/tform/',
+        formUrl          : '#tinyERP/productSettings/tform/',
         contentType      : CONSTANTS.PRODUCTS_SETTINGS,
         hasPagination    : false,
 

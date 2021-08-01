@@ -193,7 +193,7 @@ define([
                 success: function () {
                     // self.eventsChannel.trigger('closeDialog');
                     Backbone.history.fragment = '';
-                    Backbone.history.navigate('#easyErp/integrations', {replace: true, trigger: true});
+                    Backbone.history.navigate('#tinyERP/integrations', {replace: true, trigger: true});
                 }
             });
         },

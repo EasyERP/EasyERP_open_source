@@ -80,7 +80,7 @@ define([
                 status: 'Cancelled',
                 order : 1
             }, function (workflow) {
-                var redirectUrl = self.forSales ? 'easyErp/salesOrders' : 'easyErp/Orders';
+                var redirectUrl = self.forSales ? 'tinyERP/salesOrders' : 'tinyERP/Orders';
 
                 if (workflow && workflow.error) {
                     return App.render({
@@ -117,7 +117,7 @@ define([
             e.preventDefault();
 
             dataService.postData(url, data, function (err) {
-                var redirectUrl = self.forSales ? 'easyErp/salesInvoices' : 'easyErp/Invoices';
+                var redirectUrl = self.forSales ? 'tinyERP/salesInvoices' : 'tinyERP/Invoices';
 
                 if (err) {
                     App.render({
@@ -139,7 +139,7 @@ define([
             populate.fetchWorkflow({
                 wId: 'Quotation'
             }, function (workflow) {
-                var redirectUrl = self.forSales ? 'easyErp/salesOrders' : 'easyErp/Orders';
+                var redirectUrl = self.forSales ? 'tinyERP/salesOrders' : 'tinyERP/Orders';
 
                 if (workflow && workflow.error) {
                     return App.render({

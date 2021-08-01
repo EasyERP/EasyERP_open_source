@@ -125,7 +125,7 @@ define([
                     self.hideDialog();
                     $('#top-bar-editBtn').hide();
                     $('#top-bar-deleteBtn').hide();
-                    Backbone.history.navigate('easyErp/Profiles', {trigger: true});
+                    Backbone.history.navigate('tinyERP/Profiles', {trigger: true});
                     response.data.profileAccess = models.toJSON().profileAccess;
                     self.profilesCollection.set(response.data, {remove: false});
                 },

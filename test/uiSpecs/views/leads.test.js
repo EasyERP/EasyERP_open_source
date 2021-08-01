@@ -1363,7 +1363,7 @@ define([
                 $needAEl.click();
 
                 expect($expectedMenuEl).to.have.class('selected');
-                expect(window.location.hash).to.be.equals('#easyErp/Leads');
+                expect(window.location.hash).to.be.equals('#tinyERP/Leads');
             });
         });
 
@@ -1567,7 +1567,7 @@ define([
                 expect(ajaxResponse.data).to.exist;
                 expect(ajaxResponse.data).to.have.property('count', '25');
                 expect(ajaxResponse.data).to.have.property('page', 1);
-                expect(window.location.hash).to.be.equals('#easyErp/Leads/list/p=1/c=25');
+                expect(window.location.hash).to.be.equals('#tinyERP/Leads/list/p=1/c=25');
             });
 
             it('Try to select 2 page on list', function () {
@@ -1593,7 +1593,7 @@ define([
                 expect(ajaxResponse.data).to.exist;
                 expect(ajaxResponse.data).to.have.property('count', '25');
                 expect(ajaxResponse.data).to.have.property('page', 2);
-                expect(window.location.hash).to.be.equals('#easyErp/Leads/list/p=2/c=25');
+                expect(window.location.hash).to.be.equals('#tinyERP/Leads/list/p=2/c=25');
             });
 
             it('Try to select 50 item per page', function () {
@@ -1612,7 +1612,7 @@ define([
                 expect(ajaxResponse.data).to.exist;
                 expect(ajaxResponse.data).to.have.property('count', '50');
                 expect(ajaxResponse.data).to.have.property('page', 1);
-                expect(window.location.hash).to.be.equals('#easyErp/Leads/list/p=1/c=50');
+                expect(window.location.hash).to.be.equals('#tinyERP/Leads/list/p=1/c=50');
             });
 
             it('Try to select 100 item per page', function () {
@@ -1631,7 +1631,7 @@ define([
                 expect(ajaxResponse.data).to.exist;
                 expect(ajaxResponse.data).to.have.property('count', '100');
                 expect(ajaxResponse.data).to.have.property('page', 1);
-                expect(window.location.hash).to.be.equals('#easyErp/Leads/list/p=1/c=100');
+                expect(window.location.hash).to.be.equals('#tinyERP/Leads/list/p=1/c=100');
 
             });
 
@@ -1651,7 +1651,7 @@ define([
                 expect(ajaxResponse.data).to.exist;
                 expect(ajaxResponse.data).to.have.property('count', '200');
                 expect(ajaxResponse.data).to.have.property('page', 1);
-                expect(window.location.hash).to.be.equals('#easyErp/Leads/list/p=1/c=200');
+                expect(window.location.hash).to.be.equals('#tinyERP/Leads/list/p=1/c=200');
             });
 
             it('Try to change leads stage', function () {
@@ -1679,7 +1679,7 @@ define([
                 server.respond();
 
                 expect(jQueryAjaxSpy.args[1][0]).to.have.property('url', '/leads/');
-                expect(window.location.hash).to.be.equals('#easyErp/Leads/list/p=1/c=200');
+                expect(window.location.hash).to.be.equals('#tinyERP/Leads/list/p=1/c=200');
             });
 
             it('Try to delete leads with 403 server response', function () {
@@ -1810,7 +1810,7 @@ define([
 
             it('Try to save lead with need data with customer company', function () {
                 var $createBtn = $($('.ui-dialog-buttonset button')[0]);
-                var hashUrlLeads = new RegExp('#easyErp\/Leads', 'i');
+                var hashUrlLeads = new RegExp('#tinyERP\/Leads', 'i');
 
                 server.respondWith('POST', '/leads/', [200, {'Content-Type': 'application/json'}, JSON.stringify({
                     success: 'A new Opportunities create success',
@@ -1843,7 +1843,7 @@ define([
                 var $tabsBtn = $('.dialog-tabs a');
                 var $firstBtn = $($tabsBtn[0]);
                 var customerUrl = new RegExp('\/customers\/', 'i');
-                var hashUrlLeads = new RegExp('#easyErp\/Leads', 'i');
+                var hashUrlLeads = new RegExp('#tinyERP\/Leads', 'i');
 
                 $firstBtn.click();
 
@@ -1980,7 +1980,7 @@ define([
                 $($saveBtn).click();
                 server.respond();
 
-                expect(window.location.hash).to.be.equals('#easyErp/Leads');
+                expect(window.location.hash).to.be.equals('#tinyERP/Leads');
                 expect($('#leadForm')).to.not.exist;
             });
 
@@ -2035,7 +2035,7 @@ define([
                 server.respond();
 
                 expect(deleteEditSpy.calledTwice).to.be.true;
-                expect(window.location.hash).to.be.equals('#easyErp/Leads');
+                expect(window.location.hash).to.be.equals('#tinyERP/Leads');
                 expect(windowConfirmStub.called).to.be.true;
             });
 

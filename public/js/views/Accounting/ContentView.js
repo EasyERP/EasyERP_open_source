@@ -58,7 +58,7 @@ define([
         },
 
         addHash: function (hash) {
-            var newUrl = '#easyErp/' + this.contentType + '/' + hash;
+            var newUrl = '#tinyERP/' + this.contentType + '/' + hash;
 
             Backbone.history.navigate(newUrl, {replace: true});
         },

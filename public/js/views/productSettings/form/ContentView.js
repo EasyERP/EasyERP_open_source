@@ -20,7 +20,7 @@ define([
         contentTemplate: _.template(ContentTemplate),
         CreateView     : CreateView,
         ListItemView   : ListItemView,
-        listUrl        : 'easyErp/productSettings/list/',
+        listUrl        : 'tinyERP/productSettings/list/',
         contentType    : CONSTANTS.PRODUCTS_SETTINGS,
         viewType       : 'tform',
         hasPagination  : true,

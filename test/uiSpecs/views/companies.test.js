@@ -1787,7 +1787,7 @@ define([
                 $needAEl.click();
 
                 expect($expectedMenuEl).to.have.class('selected');
-                expect(window.location.hash).to.be.equals('#easyErp/Companies');
+                expect(window.location.hash).to.be.equals('#tinyERP/Companies');
             });
         });
 
@@ -1856,11 +1856,11 @@ define([
 
                 $listBtn.click();
 
-                expect(window.location.hash).to.equals('#easyErp/Companies/list');
+                expect(window.location.hash).to.equals('#tinyERP/Companies/list');
 
                 $thumbnailsBtn.click();
 
-                expect(window.location.hash).to.equals('#easyErp/Companies/thumbnails');
+                expect(window.location.hash).to.equals('#tinyERP/Companies/thumbnails');
             });
         });
 
@@ -2336,13 +2336,13 @@ define([
                     .to.have.attr('data-id')
                     .and
                     .not.be.empty;
-                expect($gotoFormEl.attr('href')).to.match(/#easyErp\/Companies\/form\//);
+                expect($gotoFormEl.attr('href')).to.match(/#tinyERP\/Companies\/form\//);
                 expect($gotoFormEl.find('img')).to.exist;
 
                 $gotoFormInfoEl = $infoHolder.find('a');
                 expect($gotoFormInfoEl).to.exist;
                 expect($gotoFormInfoEl).to.have.class('gotoForm');
-                expect($gotoFormInfoEl.attr('href')).to.match(/#easyErp\/Companies\/form\//);
+                expect($gotoFormInfoEl.attr('href')).to.match(/#tinyERP\/Companies\/form\//);
                 expect($gotoFormInfoEl)
                     .to.have.attr('data-id')
                     .and
@@ -2790,7 +2790,7 @@ define([
 
                 server.respond();
 
-                expect(window.location.hash).to.be.equals('#easyErp/Companies/form/55b92ad521e4b7c40f00060d');
+                expect(window.location.hash).to.be.equals('#tinyERP/Companies/form/55b92ad521e4b7c40f00060d');
             });
 
             it('Try to open Create opportunity form', function (done) {
@@ -2881,7 +2881,7 @@ define([
 
                 $('.ui-dialog').remove();
 
-                expect(window.location.hash).to.be.equals('#easyErp/Companies/form/55b92ad521e4b7c40f00060d');
+                expect(window.location.hash).to.be.equals('#tinyERP/Companies/form/55b92ad521e4b7c40f00060d');
 
             });
 
@@ -2945,7 +2945,7 @@ define([
 
                 $('.ui-dialog').remove();
 
-                expect(window.location.hash).to.be.equals('#easyErp/Companies/form/55b92ad521e4b7c40f00060d');
+                expect(window.location.hash).to.be.equals('#tinyERP/Companies/form/55b92ad521e4b7c40f00060d');
             });
 
             it('Try to add person', function () {
@@ -3023,14 +3023,14 @@ define([
                 server.respond();
 
                 $('.ui-dialog').remove();
-                expect(window.location.hash).to.be.equals('#easyErp/Persons');
+                expect(window.location.hash).to.be.equals('#tinyERP/Persons');
             });
 
             it('Try to go to person form', function () {
                 var $gotoPersonBtn = $('#persons p > a');
 
                 $gotoPersonBtn.click();
-                expect(window.location.hash).to.equals('#easyErp/Persons/form/55b92ad521e4b7c40f00060c');
+                expect(window.location.hash).to.equals('#tinyERP/Persons/form/55b92ad521e4b7c40f00060c');
             });
 
             // create Edit form into
@@ -3108,7 +3108,7 @@ define([
                 deleteBtn.click();
                 server.respond();
 
-                expect(window.location.hash).to.equals('#easyErp/Companies');
+                expect(window.location.hash).to.equals('#tinyERP/Companies');
             });
 
             it('Try to PATCH company', function () {
@@ -3150,7 +3150,7 @@ define([
                 editBtn.click();
                 server.respond();
 
-                expect(window.location.hash).to.be.equals('#easyErp/Companies/form/55b92ad521e4b7c40f00060d');
+                expect(window.location.hash).to.be.equals('#tinyERP/Companies/form/55b92ad521e4b7c40f00060d');
             });
 
             it('Try to close dialog', function () {
@@ -3208,7 +3208,7 @@ define([
                 $deleteBtn.click();
                 server.respond();
 
-                expect(window.location.hash).to.be.equals('#easyErp/Companies/thumbnails');
+                expect(window.location.hash).to.be.equals('#tinyERP/Companies/thumbnails');
             });
 
         });
@@ -3353,7 +3353,7 @@ define([
                 server.respond();
 
                 expect(saveSpy.calledTwice).to.be.true;
-                expect(window.location.hash).to.be.equals('#easyErp/Companies');
+                expect(window.location.hash).to.be.equals('#tinyERP/Companies');
             });
         });
     });

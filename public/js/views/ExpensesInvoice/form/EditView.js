@@ -142,7 +142,7 @@ define([
         cancelInvoice: function (e) {
             var wId;
             var self = this;
-            var redirectUrl = self.forSales ? 'easyErp/salesInvoices' : 'easyErp/ExpensesInvoice';
+            var redirectUrl = self.forSales ? 'tinyERP/salesInvoices' : 'tinyERP/ExpensesInvoice';
 
             e.preventDefault();
 
@@ -183,7 +183,7 @@ define([
         setDraft: function (e) {
             var self = this;
             var wId;
-            var redirectUrl = self.forSales ? 'easyErp/salesInvoices' : 'easyErp/ExpensesInvoice';
+            var redirectUrl = self.forSales ? 'tinyERP/salesInvoices' : 'tinyERP/ExpensesInvoice';
 
             e.preventDefault();
 
@@ -362,7 +362,7 @@ define([
                             return cb();
                         }
                         self.hideDialog();
-                        Backbone.history.navigate('#easyErp/ExpensesInvoice', {trigger: true});
+                        Backbone.history.navigate('#tinyERP/ExpensesInvoice', {trigger: true});
                     },
 
                     error: function (model, xhr) {

@@ -21,7 +21,7 @@ define([
         contentTemplate: _.template(ContentTemplate),
         CreateView     : CreateView,
         ListItemView   : ListItemView,
-        listUrl        : 'easyErp/billOfMaterials/list/',
+        listUrl        : 'tinyERP/billOfMaterials/list/',
         contentType    : CONSTANTS.BILLOFMATERIALS,
         viewType       : 'tform',
         hasPagination  : true,

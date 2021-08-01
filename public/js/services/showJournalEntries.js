@@ -2,7 +2,7 @@ define([
     'Backbone'
 ], function (Backbone) {
     function showForDocs(e) {
-        var url = '#easyErp/journalEntry/list/filter=';
+        var url = '#tinyERP/journalEntry/list/filter=';
         var filter = {};
         var name = this.currentModel.get('name');
         var payments = this.currentModel.get('payments') || [];

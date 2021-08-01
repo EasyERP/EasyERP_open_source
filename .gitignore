@@ -1,10 +1,10 @@
 /public/css/style.css.map
 /gitflow
-/EasyErp-Desctop.njsproj
+/tinyERP-Desctop.njsproj
 /public/js/libs
 /.ntvs_analysis.dat.tmp
-/EasyErp.sln
-/EasyErp.njsproj
+/tinyERP.sln
+/tinyERP.njsproj
 /doc
 /Test Results - Unnamed.html
 # Created by .ignore support plugin (hsz.mobi)
@@ -45,11 +45,11 @@ menu_Sales_\[quotation|order|Invoice|Product\].js
 public/js/libs/async
 public/js/libs/backbone.memento
 public/js/libs/moment
-EasyErp-Desktop.njsproj
+tinyERP-Desktop.njsproj
 .ntvs_analysis.dat
-EasyErp-Desktop.sln
+tinyERP-Desktop.sln
 .vs
-EasyErp-Desktop.iml
+tinyERP-Desktop.iml
 helpers\redisClient.js
 karma.conf.js
 /.eslintrc

@@ -275,7 +275,7 @@ define([
         },
 
         redirectAfterSave: function (content) {
-            //var redirectUrl = content.forSales ? 'easyErp/salesQuotations' : 'easyErp/Quotations';
+            //var redirectUrl = content.forSales ? 'tinyERP/salesQuotations' : 'tinyERP/Quotations';
 
             Backbone.history.fragment = '';
             Backbone.history.navigate(window.location.hash, {trigger: true});

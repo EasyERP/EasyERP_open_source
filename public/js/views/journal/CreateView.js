@@ -87,7 +87,7 @@ define([
         },
 
         redirectAfterSave: function (content) {
-            var redirectUrl = 'easyErp/journal';
+            var redirectUrl = 'tinyERP/journal';
 
             content.hideDialog();
             Backbone.history.navigate(redirectUrl, {trigger: true});

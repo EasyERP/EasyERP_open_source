@@ -282,7 +282,7 @@ define([
                 $needAEl.click();
 
                 expect($expectedMenuEl).to.have.class('selected');
-                expect(window.location.hash).to.be.equals('#easyErp/productSettings');
+                expect(window.location.hash).to.be.equals('#tinyERP/productSettings');
 
             });
 
@@ -375,7 +375,7 @@ define([
                     $deleteBtn.click();
                     server.respond();
 
-                    expect(window.location.hash).to.be.equals('#easyErp/productSettings');
+                    expect(window.location.hash).to.be.equals('#tinyERP/productSettings');
 
                 });
 
@@ -410,7 +410,7 @@ define([
                     $saveBtn.click();
                     server.respond();
 
-                    expect(window.location.hash).to.be.equals('#easyErp/productSettings');
+                    expect(window.location.hash).to.be.equals('#tinyERP/productSettings');
                 });
 
                 it('Try to delete current category', function () {
@@ -421,7 +421,7 @@ define([
                     $deleteBtn.click();
                     server.respond();
 
-                    expect(window.location.hash).to.be.equals('#easyErp/productSettings');
+                    expect(window.location.hash).to.be.equals('#tinyERP/productSettings');
                     expect($('.ui-dialog')).to.not.exist;
 
                 });
@@ -457,7 +457,7 @@ define([
 
                     $('.ui-dialog').remove();
 
-                    expect(window.location.hash).to.be.equals('#easyErp/productSettings');
+                    expect(window.location.hash).to.be.equals('#tinyERP/productSettings');
                 });
 
             });

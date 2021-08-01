@@ -8,6 +8,6 @@ rspec:
   script:
     - grunt
 
-EasyERP:
+tinyERP:
   script:
     - node server.js

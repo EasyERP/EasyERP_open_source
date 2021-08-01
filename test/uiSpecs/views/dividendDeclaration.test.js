@@ -2173,7 +2173,7 @@ define([
                 $needAEl.click();
 
                 expect($expectedMenuEl).to.have.class('selected');
-                expect(window.location.hash).to.be.equals('#easyErp/DividendInvoice');
+                expect(window.location.hash).to.be.equals('#tinyERP/DividendInvoice');
             });
 
         });
@@ -2400,7 +2400,7 @@ define([
                     expect(ajaxResponse).to.have.property('url', '/invoices/');
                     expect(ajaxResponse.data).to.have.property('contentType').and.to.not.undefined;
                     expect(ajaxResponse.data).to.have.property('page', 2);
-                    expect(window.location.hash).to.be.equals('#easyErp/DividendInvoice/list/p=2/c=100');
+                    expect(window.location.hash).to.be.equals('#tinyERP/DividendInvoice/list/p=2/c=100');
                 });
 
                 it('Try to select 25 items per page', function () {
@@ -2418,7 +2418,7 @@ define([
                     expect(ajaxResponse.data).to.be.exist;
                     expect(ajaxResponse.data).to.have.property('page', 1);
                     expect(ajaxResponse.data).to.have.property('count', '25');
-                    expect(window.location.hash).to.be.equals('#easyErp/DividendInvoice/list/p=1/c=25');
+                    expect(window.location.hash).to.be.equals('#tinyERP/DividendInvoice/list/p=1/c=25');
                 });
 
                 it('Try to select 50 items per page', function () {
@@ -2436,7 +2436,7 @@ define([
                     expect(ajaxResponse.data).to.be.exist;
                     expect(ajaxResponse.data).to.have.property('page', 1);
                     expect(ajaxResponse.data).to.have.property('count', '50');
-                    expect(window.location.hash).to.be.equals('#easyErp/DividendInvoice/list/p=1/c=50');
+                    expect(window.location.hash).to.be.equals('#tinyERP/DividendInvoice/list/p=1/c=50');
                 });
 
                 it('Try to select 100 items per page', function () {
@@ -2454,7 +2454,7 @@ define([
                     expect(ajaxResponse.data).to.be.exist;
                     expect(ajaxResponse.data).to.have.property('page', 1);
                     expect(ajaxResponse.data).to.have.property('count', '100');
-                    expect(window.location.hash).to.be.equals('#easyErp/DividendInvoice/list/p=1/c=100');
+                    expect(window.location.hash).to.be.equals('#tinyERP/DividendInvoice/list/p=1/c=100');
                 });
 
                 it('Try to select 200 items per page', function () {
@@ -2472,7 +2472,7 @@ define([
                     expect(ajaxResponse.data).to.be.exist;
                     expect(ajaxResponse.data).to.have.property('page', 1);
                     expect(ajaxResponse.data).to.have.property('count', '200');
-                    expect(window.location.hash).to.be.equals('#easyErp/DividendInvoice/list/p=1/c=200');
+                    expect(window.location.hash).to.be.equals('#tinyERP/DividendInvoice/list/p=1/c=200');
                 });
 
                 it('Try to delete item with error response', function () {
@@ -2676,7 +2676,7 @@ define([
 
                     expect($('.ui-dialog')).to.not.exist;
                     expect(historyNavigateSpy.calledOnce).to.be.true;
-                    expect(historyNavigateSpy.args[0][0]).to.match(/#easyErp\/DividendInvoice\//);
+                    expect(historyNavigateSpy.args[0][0]).to.match(/#tinyERP\/DividendInvoice\//);
                 });
 
                 it('Try to open not paid item and open CreatePaymentView', function (done) {
@@ -2798,7 +2798,7 @@ define([
                     $saveBtn.click();
                     server.respond();
 
-                    expect(window.location.hash).to.be.equals('#easyErp/DividendPayments/list');
+                    expect(window.location.hash).to.be.equals('#tinyERP/DividendPayments/list');
                 });
 
                 it('Try to filter listView by Assigned and company', function () {

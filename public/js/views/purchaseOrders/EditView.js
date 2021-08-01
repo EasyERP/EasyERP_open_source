@@ -112,7 +112,7 @@ define([
                 status: 'Cancelled',
                 order : 1
             }, function (workflow) {
-                var redirectUrl = self.forSales ? 'easyErp/salesOrders' : 'easyErp/Orders';
+                var redirectUrl = self.forSales ? 'tinyERP/salesOrders' : 'tinyERP/Orders';
 
                 if (workflow && workflow.error) {
                     return App.render({
@@ -151,7 +151,7 @@ define([
             this.saveItem(function (err) {
                 if (!err) {
                     dataService.postData(url, data, function (err) {
-                        var redirectUrl = self.forSales ? 'easyErp/salesInvoices' : 'easyErp/Invoices';
+                        var redirectUrl = self.forSales ? 'tinyERP/salesInvoices' : 'tinyERP/Invoices';
 
                         if (err) {
                             App.render({
@@ -174,7 +174,7 @@ define([
             populate.fetchWorkflow({
                 wId: 'Quotation'
             }, function (workflow) {
-                var redirectUrl = self.forSales ? 'easyErp/salesOrders' : 'easyErp/Orders';
+                var redirectUrl = self.forSales ? 'tinyERP/salesOrders' : 'tinyERP/Orders';
 
                 if (workflow && workflow.error) {
                     return App.render({
@@ -404,7 +404,7 @@ define([
                     },
                     success: function () {
                         $('.edit-product-dialog').remove();
-                        Backbone.history.navigate('easyErp/' + self.contentType, {trigger: true});
+                        Backbone.history.navigate('tinyERP/' + self.contentType, {trigger: true});
                     },
 
                     error: function (model, err) {

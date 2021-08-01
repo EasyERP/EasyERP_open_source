@@ -1960,7 +1960,7 @@ define([
                 $needAEl.click();
 
                 expect($expectedMenuEl).to.have.class('selected');
-                expect(window.location.hash).to.be.equals('#easyErp/Applications');
+                expect(window.location.hash).to.be.equals('#tinyERP/Applications');
             });
         });
 
@@ -2032,7 +2032,7 @@ define([
             var foldUnfoldSpy;
 
             before(function () {
-                window.location.hash = '#easyErp/Applications';
+                window.location.hash = '#tinyERP/Applications';
                 App.currentViewType = 'kanban';
                 server = sinon.fakeServer.create();
                 windowConfirmStub = sinon.stub(window, 'confirm');
@@ -2164,7 +2164,7 @@ define([
                     server.respond();
 
                     expect($('.ui-dialog')).to.not.exist;
-                    expect(window.location.hash).to.be.equals('#easyErp/Applications');
+                    expect(window.location.hash).to.be.equals('#tinyERP/Applications');
 
                 });
 
@@ -2185,7 +2185,7 @@ define([
                     server.respond();
 
                     expect($('.ui-dialog')).to.not.exist;
-                    expect(window.location.hash).to.be.equals('#easyErp/Applications');
+                    expect(window.location.hash).to.be.equals('#tinyERP/Applications');
                 });
 
                 it('Try to open kanban change settings view', function () {
@@ -2237,7 +2237,7 @@ define([
 
                     expect($('.ui-dialog')).to.not.exist;
                     expect(historyNavigateSpy.calledOnce).to.be.true;
-                    expect(window.location.hash).to.be.equals('#easyErp/Applications');
+                    expect(window.location.hash).to.be.equals('#tinyERP/Applications');
                 });
 
                 it('Try to cancel kanban edit settings form', function () {
@@ -2565,7 +2565,7 @@ define([
                     var $selectedItem;
                     var $saveBtn;
 
-                    window.location.hash = '#easyErp/Applications';
+                    window.location.hash = '#tinyERP/Applications';
 
                     $nameInput.val('Test');
                     $relatedUserSelect.click();
@@ -2583,7 +2583,7 @@ define([
                     server.respond();
 
                     expect($('.ui-dialog')).to.not.exist;
-                    expect(window.location.hash).to.be.equals('#easyErp/Employees');
+                    expect(window.location.hash).to.be.equals('#tinyERP/Employees');
 
                 });
 
@@ -2592,7 +2592,7 @@ define([
                     var $needTd = listView.$el.find('#listTable > tr:nth-child(1) > td:nth-child(2)');
                     var applicationUrl = new RegExp('\/applications\/', 'i');
 
-                    window.location.hash = '#easyErp/Applications';
+                    window.location.hash = '#tinyERP/Applications';
 
                     windowConfirmStub.returns(true);
 
@@ -2607,7 +2607,7 @@ define([
                     server.respond();
 
                     expect($('.ui-dialog')).to.not.exist;
-                    expect(window.location.hash).to.be.equals('#easyErp/Applications');
+                    expect(window.location.hash).to.be.equals('#tinyERP/Applications');
                 });
 
             });
@@ -2686,7 +2686,7 @@ define([
                 $createBtn.click();
                 server.respond();
 
-                expect(window.location.hash).to.be.equals('#easyErp/Applications');
+                expect(window.location.hash).to.be.equals('#tinyERP/Applications');
             });
         });
 

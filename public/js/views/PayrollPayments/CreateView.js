@@ -53,7 +53,7 @@ define([
             this.removeDialog();
 
             Backbone.history.fragment = '';
-            Backbone.history.navigate('#easyErp/PayrollPayments/list', {trigger: true});
+            Backbone.history.navigate('#tinyERP/PayrollPayments/list', {trigger: true});
         },
 
         editRow: function (e) {

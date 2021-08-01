@@ -16,7 +16,7 @@ define([
     var QuotationsListView = TFormBaseView.extend({
         listTemplate   : _.template(ListItemTemplate),
         contentTemplate: _.template(ContentTemplate),
-        listUrl        : 'easyErp/salesOrders/list/',
+        listUrl        : 'tinyERP/salesOrders/list/',
         contentType    : CONSTANTS.SALESORDERS, // needs in view.prototype.changeLocationHash
         viewType       : 'tform', // needs in view.prototype.changeLocationHash
         hasPagination  : true,

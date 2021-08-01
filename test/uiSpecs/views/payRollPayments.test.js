@@ -698,7 +698,7 @@ define([
                 $needAEl.click();
 
                 expect($expectedMenuEl).to.have.class('selected');
-                expect(window.location.hash).to.be.equals('#easyErp/PayrollPayments');
+                expect(window.location.hash).to.be.equals('#tinyERP/PayrollPayments');
 
             });
 
@@ -1050,7 +1050,7 @@ define([
 
                     $trBtn.click();
 
-                    expect(window.location.hash).to.be.equals('#easyErp/PayrollExpenses/form/201411');
+                    expect(window.location.hash).to.be.equals('#tinyERP/PayrollExpenses/form/201411');
                 });
 
             });

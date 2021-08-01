@@ -712,7 +712,7 @@ define([
                 $needAEl.click();
 
                 expect($expectedMenuEl).to.have.class('selected');
-                expect(window.location.hash).to.be.equals('#easyErp/salesOrders');
+                expect(window.location.hash).to.be.equals('#tinyERP/salesOrders');
             });
 
         });
@@ -1112,7 +1112,7 @@ define([
 
                     expect(receiveSpy.calledOnce).to.be.true;
                     expect($('.ui-dialog')).to.not.exist;
-                    expect(window.location.hash).to.be.equals('#easyErp/salesInvoices');
+                    expect(window.location.hash).to.be.equals('#tinyERP/salesInvoices');
                 });
 
                 it('Try to edit item', function () {

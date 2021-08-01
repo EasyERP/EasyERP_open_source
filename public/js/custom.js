@@ -39,7 +39,7 @@ define([
         if (success) {
             url = (App.requestedURL === null) ? Backbone.history.fragment : App.requestedURL;
             if ((url === '') || url === 'login' || regExp.test(url)) {
-                url = 'easyErp';
+                url = 'tinyERP';
             }
 
             if (!App.currentDb) {
@@ -86,7 +86,7 @@ define([
         }
 
         viewType = $(event.target).attr('data-view-type');
-        url = '#easyErp/' + this.contentType + '/' + viewType + (browserFilter ? '/filter=' + browserFilter : '');
+        url = '#tinyERP/' + this.contentType + '/' + viewType + (browserFilter ? '/filter=' + browserFilter : '');
 
         if (id) {
             if (viewType !== 'list' && (viewType !== 'thumbnails')) {
@@ -114,9 +114,9 @@ define([
             url += '/filter=' + encodeURIComponent(JSON.stringify(filter));
         } else if (kanbanFilter && (viewType === 'kanban') && (this.contentType === 'Tasks')) {
             if (kanbanFilter.project) {
-                url = '#easyErp/' + this.contentType + '/' + viewType + '/' + kanbanFilter.project.value[0];
+                url = '#tinyERP/' + this.contentType + '/' + viewType + '/' + kanbanFilter.project.value[0];
             } else {
-                url = '#easyErp/' + this.contentType + '/' + viewType;
+                url = '#tinyERP/' + this.contentType + '/' + viewType;
             }
         }
 

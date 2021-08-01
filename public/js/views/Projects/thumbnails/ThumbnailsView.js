@@ -102,7 +102,7 @@
 
             e.preventDefault();
 
-            Backbone.history.navigate('#easyErp/Tasks/list/p=1/c=100/filter=' + encodeURIComponent(JSON.stringify(filter)), {trigger: true});
+            Backbone.history.navigate('#tinyERP/Tasks/list/p=1/c=100/filter=' + encodeURIComponent(JSON.stringify(filter)), {trigger: true});
         },
 
         hideHealth: projects.hideHealth,
@@ -125,7 +125,7 @@
             App.ownContentType = true;
             id = $(e.target).closest('.thumbnail').attr('id');
 
-            window.location.hash = '#easyErp/Projects/form/' + id;
+            window.location.hash = '#tinyERP/Projects/form/' + id;
 
             App.projectInfo = App.projectInfo || {};
             App.projectInfo.currentTab = 'overview';

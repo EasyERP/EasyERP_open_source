@@ -217,7 +217,7 @@ define([
                         self.renderTags();
                     } else if (type === 'converted') {
                         Backbone.history.fragment = '';
-                        Backbone.history.navigate('easyErp/Opportunities', {trigger: true});
+                        Backbone.history.navigate('tinyERP/Opportunities', {trigger: true});
                     } else {
                         self.editorView.renderTimeline();
                         self.renderAbout();
@@ -335,7 +335,7 @@ define([
                     mid: mid
                 },
                 success: function () {
-                    Backbone.history.navigate('#easyErp/Opportunities/kanban', {trigger: true});
+                    Backbone.history.navigate('#tinyERP/Opportunities/kanban', {trigger: true});
                 }
             });
 

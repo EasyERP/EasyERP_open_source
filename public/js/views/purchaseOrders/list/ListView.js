@@ -34,7 +34,7 @@ define([
                 type : 'boolean',
                 value: ['false']
             };
-            this.formUrl = 'easyErp/' + this.contentType + '/tform/';
+            this.formUrl = 'tinyERP/' + this.contentType + '/tform/';
             this.forSales = false;
             this.sort = options.sort;
             this.defaultItemsNumber = this.collection.namberToShow || 100;
@@ -156,7 +156,7 @@ define([
        /* goToEditDialog: function (e) {
             var tr = $(e.target).closest('tr');
             var id = tr.data('id');
-            var url = 'easyErp/' + this.contentType + '/form/' + id;
+            var url = 'tinyERP/' + this.contentType + '/form/' + id;
             var notEditable = tr.hasClass('notEditable');
             var model = new QuotationModel({validate: false});
             var onlyView = false;

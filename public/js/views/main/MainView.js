@@ -17,6 +17,10 @@ define([
 ], function (Backbone, _, $, MainTemplate, EmployeesModel, UsersModel, LeftMenuView, EmployeeEditView, UserEditView, MenuItemsCollection, dataService, CONSTANTS, GA, ga,
              GuideToursListView) {
     'use strict';
+
+    /**
+     * the default frontend view
+     */
     var MainView = Backbone.View.extend({
         el      : '#wrapper',
         template: _.template(MainTemplate),
@@ -171,7 +175,7 @@ define([
                 this.currentRoot = modules[0].href;
                 this.currentModule = modules[0].subModules[0].href;
 
-                Backbone.history.navigate('easyErp/' + this.currentModule, {trigger: true});
+                Backbone.history.navigate('tinyERP/' + this.currentModule, {trigger: true});
             }
 
             this.leftMenu = new LeftMenuView({
@@ -260,7 +264,7 @@ define([
             if (!App.currentUser || !App.currentUser.login) {
 
                 dataService.getData(CONSTANTS.URLS.CURRENT_USER, null, function (response) {
-                    var gatherInfoUrl = '#easyErp/gatherInfo';
+                    var gatherInfoUrl = '#tinyERP/gatherInfo';
                     var currentUser;
 
                     currentUser = response.user || {};
@@ -274,7 +278,7 @@ define([
                     App.filtersObject.savedFilters = response.savedFilters || {};
 
                     if (currentUser.profile && currentUser.profile.profileName === 'baned') {
-                        $('title').text('EasyERP');
+                        $('title').text('tinyERP');
                     }
 
                     self.$el.html(self.template(currentUser));
@@ -289,7 +293,7 @@ define([
 
             } else {
                 if (App.currentUser && App.currentUser.profile && App.currentUser.profile.profileName === 'baned') {
-                    $('title').text('EasyERP');
+                    $('title').text('tinyERP');
                 }
 
                 self.$el.html(self.template(App.currentUser));

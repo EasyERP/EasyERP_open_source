@@ -230,7 +230,7 @@ define([
                     success: function () {
                         var redirectUrl;
 
-                        redirectUrl = model.forSales || model.forSale ? 'easyErp/customerPayments/list' : 'easyErp/purchasePayments/list';
+                        redirectUrl = model.forSales || model.forSale ? 'tinyERP/customerPayments/list' : 'tinyERP/purchasePayments/list';
 
                         self.hideDialog();
 

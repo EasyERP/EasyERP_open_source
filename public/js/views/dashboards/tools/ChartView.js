@@ -405,7 +405,7 @@ define([
         },
 
         setHref: function (href) {
-            var ref = '#easyErp/' + href;
+            var ref = '#tinyERP/' + href;
             this.$el.find('#viewAll').attr('href', ref);
         },
 

@@ -63,7 +63,7 @@ define([
             var type = target.attr('data-level');
 
             Backbone.history.fragment = '';
-            Backbone.history.navigate('#easyErp/Products', {trigger: true});
+            Backbone.history.navigate('#tinyERP/Products', {trigger: true});
         },
 
         template: _.template(productItemTemplate),

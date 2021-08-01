@@ -101,7 +101,7 @@ define([
         chooseDetails: function (e) {
             var $elem = $(e.target);
             var rowId = $elem.closest('.mainSettings').attr('id');
-            var pathFragment = '#easyErp/customDashboardCharts/';
+            var pathFragment = '#tinyERP/customDashboardCharts/';
             var isPrivate = $elem.closest('.mainSettings').hasClass('private');
             var current;
 

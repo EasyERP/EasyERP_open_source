@@ -21,7 +21,7 @@
             e.preventDefault();
             App.ownContentType = true;
             id = $(e.target).closest('a').data('id');
-            window.location.hash = '#easyErp/Employees/form/' + id;
+            window.location.hash = '#tinyERP/Employees/form/' + id;
         },
 
         template: _.template(ListItemTemplate),

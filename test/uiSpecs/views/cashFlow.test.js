@@ -137,7 +137,7 @@ define([
                 $needAEl.click();
 
                 expect($expectedMenuEl).to.have.class('selected');
-                expect(window.location.hash).to.be.equals('#easyErp/cashFlow');
+                expect(window.location.hash).to.be.equals('#tinyERP/cashFlow');
             });
 
         });

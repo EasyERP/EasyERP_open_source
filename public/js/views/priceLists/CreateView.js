@@ -80,7 +80,7 @@ define([
                 wait   : true,
                 success: function (model) {
                     Backbone.history.fragment = '';
-                    Backbone.history.navigate('easyErp/priceLists', {trigger: true});
+                    Backbone.history.navigate('tinyERP/priceLists', {trigger: true});
                 },
 
                 error: function (model, xhr) {

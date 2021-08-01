@@ -26,7 +26,7 @@ define([
         hasPagination           : true,
         contentType             : 'Tasks',
         totalCollectionLengthUrl: '/totalCollectionLength/Tasks',
-        // formUrl                 : "#easyErp/Tasks/form/",
+        // formUrl                 : "#tinyERP/Tasks/form/",
 
         events: {
             'click td:not(:has("input[type="checkbox"]"), :has(.project))': 'goToEditDialog',
@@ -88,7 +88,7 @@ define([
 
             id = $(e.target).closest('tr').data('id');
             //projectId = this.collection.get({'id': id}).toJSON().project._id;
-            //Backbone.history.navigate('easyErp/Projects/form/' + projectId, {trigger: true});
+            //Backbone.history.navigate('tinyERP/Projects/form/' + projectId, {trigger: true});
 
             model = new CurrentModel({validate: false});
 

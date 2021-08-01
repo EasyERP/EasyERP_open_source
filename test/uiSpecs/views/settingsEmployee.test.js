@@ -133,7 +133,7 @@ define([
                 $needAEl.click();
 
                 expect($expectedMenuEl).to.have.class('selected');
-                expect(window.location.hash).to.be.equals('#easyErp/settingsEmployee');
+                expect(window.location.hash).to.be.equals('#tinyERP/settingsEmployee');
             });
 
         });

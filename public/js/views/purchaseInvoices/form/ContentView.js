@@ -19,7 +19,7 @@ define([
         listTemplate   : _.template(ListItemTemplate),
         contentTemplate: _.template(ContentTemplate),
         EditView       : EditView,
-        listUrl        : 'easyErp/purchaseInvoices/list/',
+        listUrl        : 'tinyERP/purchaseInvoices/list/',
         contentType    : CONSTANTS.PURCHASEINVOICES, // needs in view.prototype.changeLocationHash
         viewType       : 'tform', // needs in view.prototype.changeLocationHash
         hasPagination  : true,

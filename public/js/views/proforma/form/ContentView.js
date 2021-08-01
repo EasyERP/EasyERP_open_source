@@ -21,7 +21,7 @@ define([
         contentTemplate: _.template(ContentTemplate),
         //CreateView     : CreateView,
         ListItemView   : ListItemView,
-        listUrl        : 'easyErp/Proforma/list/',
+        listUrl        : 'tinyERP/Proforma/list/',
         contentType    : CONSTANTS.PROFORMA, // needs in view.prototype.changeLocationHash
         viewType       : 'tform', // needs in view.prototype.changeLocationHash
         hasPagination  : true,

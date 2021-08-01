@@ -189,12 +189,12 @@ define([
                 var $expectedMenuEl;
                 var $needAEl;
 
-                $needAEl = $thisEl.find('a[href="#easyErp/integrations"]')[0];
+                $needAEl = $thisEl.find('a[href="#tinyERP/integrations"]')[0];
                 $expectedMenuEl = $($needAEl).closest('li');
 
                 $needAEl.click();
                 expect($expectedMenuEl).to.have.class('selected');
-                expect(window.location.hash).to.be.equals('#easyErp/integrations');
+                expect(window.location.hash).to.be.equals('#tinyERP/integrations');
             });
         });
 

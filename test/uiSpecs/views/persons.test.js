@@ -11433,7 +11433,7 @@ define([
                 $needAEl.click();
 
                 expect($expectedMenuEl).to.have.class('selected');
-                expect(window.location.hash).to.be.equals('#easyErp/Persons');
+                expect(window.location.hash).to.be.equals('#tinyERP/Persons');
             });
         });
 
@@ -11505,10 +11505,10 @@ define([
                 var $thumbnailsBtn = $topBarEl.find('a[data-view-type="thumbnails"]');
 
                 $listBtn.click();
-                expect(window.location.hash).to.equals('#easyErp/Persons/list');
+                expect(window.location.hash).to.equals('#tinyERP/Persons/list');
 
                 $thumbnailsBtn.click();
-                expect(window.location.hash).to.equals('#easyErp/Persons/thumbnails');
+                expect(window.location.hash).to.equals('#tinyERP/Persons/thumbnails');
             });
         });
 
@@ -11851,13 +11851,13 @@ define([
                     .to.have.attr('data-id')
                     .and
                     .not.be.empty;
-                expect($gotoFormEl.attr('href')).to.match(/#easyErp\/Persons\/form\//);
+                expect($gotoFormEl.attr('href')).to.match(/#tinyERP\/Persons\/form\//);
                 expect($gotoFormEl.find('img')).to.exist;
 
                 $gotoFormInfoEl = $infoHolder.find('a');
                 expect($gotoFormInfoEl).to.exist;
                 expect($gotoFormInfoEl).to.have.class('gotoForm');
-                expect($gotoFormInfoEl.attr('href')).to.match(/#easyErp\/Persons\/form\//);
+                expect($gotoFormInfoEl.attr('href')).to.match(/#tinyERP\/Persons\/form\//);
                 expect($gotoFormInfoEl)
                     .to.have.attr('data-id')
                     .and
@@ -11918,7 +11918,7 @@ define([
                 var $firsEl = $thisEl.find('.thumbnailwithavatar').eq(2);
                 var $companyBtn = $firsEl.find('.company');
                 var id = $companyBtn.attr('data-id');
-                var expectedUrl = '#easyErp/Companies/form/' + id;
+                var expectedUrl = '#tinyERP/Companies/form/' + id;
 
                 $companyBtn.click();
                 expect(gotoCompanySpy.calledOnce).to.be.true;
@@ -11929,7 +11929,7 @@ define([
                 var $firsEl = $($thisEl.find('.thumbnailwithavatar')[0]);
                 var $companyBtn = $firsEl.find('.gotoForm').first();
                 var id = $companyBtn.attr('data-id');
-                var expectedUrl = '#easyErp/Persons/form/' + id;
+                var expectedUrl = '#tinyERP/Persons/form/' + id;
 
                 $companyBtn.click();
                 expect(gotoFormSpy.calledOnce).to.be.true;
@@ -12206,7 +12206,7 @@ define([
                 $saveSpan.click();
                 server.respond();
 
-                expect(window.location.hash).to.be.equals('#easyErp/Persons/form/55b92ad521e4b7c40f00060c');
+                expect(window.location.hash).to.be.equals('#tinyERP/Persons/form/55b92ad521e4b7c40f00060c');
             });
 
             it('Try to open Create opportunity form', function () {
@@ -12261,7 +12261,7 @@ define([
 
                 $('.ui-dialog').remove();
 
-                expect(window.location.hash).to.be.equals('#easyErp/Persons/form/55b92ad521e4b7c40f00060c');
+                expect(window.location.hash).to.be.equals('#tinyERP/Persons/form/55b92ad521e4b7c40f00060c');
             });
 
             // create Edit form into
@@ -12350,7 +12350,7 @@ define([
                 server.respond();
 
                 expect(deleteSpy.calledTwice).to.be.true;
-                expect(window.location.hash).to.equals('#easyErp/Persons');
+                expect(window.location.hash).to.equals('#tinyERP/Persons');
             });
 
             it('Try to PATCH company', function () {
@@ -12393,7 +12393,7 @@ define([
                 editBtn.click();
                 server.respond();
 
-                expect(window.location.hash).to.be.equals('#easyErp/Persons/form/55b92ad521e4b7c40f00060c');
+                expect(window.location.hash).to.be.equals('#tinyERP/Persons/form/55b92ad521e4b7c40f00060c');
             });
 
             it('Try to close dialog', function () {

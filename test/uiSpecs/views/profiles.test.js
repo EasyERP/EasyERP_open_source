@@ -9626,7 +9626,7 @@ define([
                 $needAEl.click();
 
                 expect($expectedMenuEl).to.have.class('selected');
-                expect(window.location.hash).to.be.equals('#easyErp/Profiles');
+                expect(window.location.hash).to.be.equals('#tinyERP/Profiles');
 
             });
 
@@ -9702,7 +9702,7 @@ define([
             var $thisEl;
 
             before(function () {
-                window.location.hash = '#easyErp/Profiles';
+                window.location.hash = '#tinyERP/Profiles';
                 server = sinon.fakeServer.create();
                 mainSpy = sinon.spy(App, 'render');
                 windowConfirmStub = sinon.stub(window, 'confirm');
@@ -9789,7 +9789,7 @@ define([
                     listView.saveProfile();
                     server.respond();
 
-                    expect(window.location.hash).to.be.equals('#easyErp/Profiles');
+                    expect(window.location.hash).to.be.equals('#tinyERP/Profiles');
                     expect(listView.$el.find('a[data-id="1438158808000"]').text()).to.be.equals('TEST Profile');
                 });
 
@@ -9804,7 +9804,7 @@ define([
                     server.respond();
 
                     //expect(windowConfirmStub.called).to.be.true;
-                    expect(window.location.hash).to.be.equals('#easyErp/Profiles');
+                    expect(window.location.hash).to.be.equals('#tinyERP/Profiles');
                     expect(listView.$el.find('#profilesList > li:nth-child(1)').text()).to.be.not.equals('Finance Profile');
 
                 });
@@ -9874,7 +9874,7 @@ define([
                  $saveBtn.click();
                  server.respond();
 
-                 expect(window.location.hash).to.be.equals('#easyErp/Profiles');
+                 expect(window.location.hash).to.be.equals('#tinyERP/Profiles');
                  });*/
 
             });

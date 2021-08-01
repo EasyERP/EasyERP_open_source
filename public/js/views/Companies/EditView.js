@@ -161,7 +161,7 @@ define([
                 success: function (model) {
                     $('.edit-companies-dialog').remove();
                     Backbone.history.fragment = '';
-                    Backbone.history.navigate('#easyErp/Companies/form/' + model.id, {trigger: true});
+                    Backbone.history.navigate('#tinyERP/Companies/form/' + model.id, {trigger: true});
                 },
 
                 error: function (model, xhr) {
@@ -185,7 +185,7 @@ define([
 
                     success: function () {
                         $('.edit-companies-dialog').remove();
-                        Backbone.history.navigate('easyErp/' + self.contentType, {trigger: true});
+                        Backbone.history.navigate('tinyERP/' + self.contentType, {trigger: true});
                     },
 
                     error: function (models, err) {

@@ -208,7 +208,7 @@ var App = App || {
             Backbone.View.prototype.changeLocationHash = function (page, count, filter) {
                 var location = window.location.hash;
 
-                var mainLocation = '#easyErp/' + this.contentType + '/' + this.viewType;
+                var mainLocation = '#tinyERP/' + this.contentType + '/' + this.viewType;
                 var pId = (location.split('/pId=')[1]) ? location.split('/pId=')[1].split('/')[0] : '';
                 if (!page && this.viewType == 'list') {
                     page = (location.split('/p=')[1]) ? location.split('/p=')[1].split('/')[0] : 1;

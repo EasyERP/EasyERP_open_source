@@ -5173,7 +5173,7 @@ define([], function () {
                 },
                 {
                     _id : '56dff1b4a12a4f3c26919c91',
-                    name: 'EasyERP'
+                    name: 'tinyERP'
                 },
                 {
                     _id : '55b92ad621e4b7c40f000683',
@@ -8534,7 +8534,7 @@ define([], function () {
                 },
                 {
                     _id : '56dff1b4a12a4f3c26919c91',
-                    name: 'EasyERP'
+                    name: 'tinyERP'
                 },
                 {
                     _id : '55b92ad621e4b7c40f000683',
@@ -9864,7 +9864,7 @@ define([], function () {
                 },
                 {
                     _id : '56dff1b4a12a4f3c26919c91',
-                    name: 'EasyERP'
+                    name: 'tinyERP'
                 },
                 {
                     _id : '55b92ad621e4b7c40f0006d4',
@@ -20360,7 +20360,7 @@ define([], function () {
             },
             {
                 _id: "56dff1b4a12a4f3c26919c91",
-                name: "EasyERP"
+                name: "tinyERP"
             },
             {
                 _id: "55b92ad621e4b7c40f000680",

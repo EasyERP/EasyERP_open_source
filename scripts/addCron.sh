@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-projectDir=~/WebstormProjects/EasyErp-Desktop
+projectDir=~/WebstormProjects/tinyERP-Desktop
 
 crontab -l > synccron
 echo "*/1 * * * *     $projectDir/scripts/sync.sh" >> synccron

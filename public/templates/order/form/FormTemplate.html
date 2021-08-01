@@ -50,7 +50,7 @@
                 <%}%>
                 <%} else {%>
                 <% var filter = {order: {key: 'fields.order', value: [model._id]}};%>
-                <% var href = '#easyErp/unlinkedProducts/filter=' +
+                <% var href = '#tinyERP/unlinkedProducts/filter=' +
                 encodeURIComponent(JSON.stringify(filter)) + '?fromForm=true';%>
                 <%model.conflictTypes && model.conflictTypes.forEach(function (el){%>
                 <%if (el.type === 'product') {%>

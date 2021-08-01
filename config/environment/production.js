@@ -15,5 +15,5 @@ process.env.SOCKET_DB = 9;
 
 process.env.RABBITMQ_HOST = 'localhost';
 process.env.RABBITMQ_PORT = 5672;
-process.env.RABBITMQ_USER = 'easyErp';
+process.env.RABBITMQ_USER = 'tinyERP';
 process.env.RABBITMQ_PASSWORD = '111111';

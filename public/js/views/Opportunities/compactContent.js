@@ -48,7 +48,7 @@
 
             e.preventDefault();
 
-            window.location.hash = '#easyErp/Opportunities/form/' + itemIndex;
+            window.location.hash = '#tinyERP/Opportunities/form/' + itemIndex;
         },
 
         render: function (options) {

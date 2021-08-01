@@ -343,7 +343,7 @@ define([
 
         changeLocationHash: function (page, count, filter, options) {
             var location = Backbone.history.fragment;
-            var mainLocation = '#easyErp/' + this.contentType + '/' + this.viewType;
+            var mainLocation = '#tinyERP/' + this.contentType + '/' + this.viewType;
             var pId = (location.split('/pId=')[1]) ? location.split('/pId=')[1].split('/')[0] : '';
             var url;
             var thumbnails;

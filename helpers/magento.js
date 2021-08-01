@@ -680,7 +680,7 @@ module.exports = function (models, event) {
 
         console.log('fullRoute', fullRoute);
         console.log('accessToken', accessToken);
-        //fullRoute = 'http://magento-test.easyerp.com/rest/V1/orders?searchCriteria[filter_groups][0][filters][0][field]=entity_id& searchCriteria[filter_groups][0][filters][0][value]=1&searchCriteria[filter_groups][0][filters][0][condition_type]=eq'
+        //fullRoute = 'http://magento-test.tinyERP.com/rest/V1/orders?searchCriteria[filter_groups][0][filters][0][field]=entity_id& searchCriteria[filter_groups][0][filters][0][value]=1&searchCriteria[filter_groups][0][filters][0][condition_type]=eq'
 
         function createOrUpdateOrder(orderBody, magentoOrder, warehouse, eCb) {
             var productMagentoIds = _.pluck(magentoOrder.items, 'product_id');
@@ -2161,7 +2161,7 @@ module.exports = function (models, event) {
         }
 
         fullRoute = baseUrl + route;
-        //fullRoute = 'http://magento-easyerp.test.thinkmobiles.com/rest/V1/invoices?searchCriteria[filter_groups][0][filters][0][field]=order_id& searchCriteria[filter_groups][0][filters][0][value]=145& searchCriteria[filter_groups][0][filters][0][condition_type]=eq';
+        //fullRoute = 'http://magento-tinyERP.test.thinkmobiles.com/rest/V1/invoices?searchCriteria[filter_groups][0][filters][0][field]=order_id& searchCriteria[filter_groups][0][filters][0][value]=145& searchCriteria[filter_groups][0][filters][0][condition_type]=eq';
 
         requestHelper.getData(fullRoute, {
             headers: {

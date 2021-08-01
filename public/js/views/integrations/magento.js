@@ -104,7 +104,7 @@ define([
 
         goToBack: function () {
             Backbone.history.fragment = '';
-            Backbone.history.navigate('easyErp/integrations', {trigger: true});
+            Backbone.history.navigate('tinyERP/integrations', {trigger: true});
         },
 
         conflictUnlock: function (e) {

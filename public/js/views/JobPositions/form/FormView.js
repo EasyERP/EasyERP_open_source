@@ -33,7 +33,7 @@ define([
                         mid: mid
                     },
                     success: function () {
-                        Backbone.history.navigate("#easyErp/JobPositions/list", {trigger: true});
+                        Backbone.history.navigate("#tinyERP/JobPositions/list", {trigger: true});
                     }
                 });
             }

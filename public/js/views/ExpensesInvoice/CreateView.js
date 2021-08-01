@@ -236,7 +236,7 @@ define([
                     wait   : true,
                     success: function () {
                         self.hideDialog();
-                        Backbone.history.navigate('#easyErp/ExpensesInvoice', {trigger: true});
+                        Backbone.history.navigate('#tinyERP/ExpensesInvoice', {trigger: true});
                     },
 
                     error: function (model, xhr) {

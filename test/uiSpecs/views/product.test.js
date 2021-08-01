@@ -1088,7 +1088,7 @@ define([
                 $needAEl.click();
 
                 expect($expectedMenuEl).to.have.class('selected');
-                expect(window.location.hash).to.be.equals('#easyErp/Product');
+                expect(window.location.hash).to.be.equals('#tinyERP/Product');
 
             });
 
@@ -1272,7 +1272,7 @@ define([
                     var userAgent = navigator.userAgent;
                     var $saveBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1)')
                     var productUrl = new RegExp('\/Product\/', 'i');
-                    var hashUrlProduct = new RegExp('#easyErp\/Product', 'i');
+                    var hashUrlProduct = new RegExp('#tinyERP\/Product', 'i');
 
                     windowAlertStub.returns(true);
 
@@ -1283,7 +1283,7 @@ define([
                     if (firefoxPattern.test(userAgent)) {
                         expect(hashUrlProduct.test(window.location.hash)).to.be.true;
                     } else {
-                        expect(window.location.hash).to.be.equals('#easyErp/Product/thumbnails/c=100/filter=%7B%22name%22%3A%7B%22key%22%3A%22_id%22%2C%22value%22%3A%5B%225540d528dacb551c24000003%22%5D%2C%22type%22%3Anull%2C%22sort%22%3A%7B%22order%22%3A1%7D%7D%2C%22letter%22%3A%7B%22key%22%3A%22letter%22%2C%22value%22%3A%22B%22%2C%22type%22%3Anull%7D%7D');
+                        expect(window.location.hash).to.be.equals('#tinyERP/Product/thumbnails/c=100/filter=%7B%22name%22%3A%7B%22key%22%3A%22_id%22%2C%22value%22%3A%5B%225540d528dacb551c24000003%22%5D%2C%22type%22%3Anull%2C%22sort%22%3A%7B%22order%22%3A1%7D%7D%2C%22letter%22%3A%7B%22key%22%3A%22letter%22%2C%22value%22%3A%22B%22%2C%22type%22%3Anull%7D%7D');
                     }
 
                 });
@@ -1299,7 +1299,7 @@ define([
                     var productUrl = new RegExp('\/Product\/', 'i');
                     var firefoxPattern = new RegExp('firefox', 'i');
                     var userAgent = navigator.userAgent;
-                    var hashUrlProduct = new RegExp('#easyErp\/Product', 'i');
+                    var hashUrlProduct = new RegExp('#tinyERP\/Product', 'i');
 
                     $firstTab.click();
 
@@ -1322,7 +1322,7 @@ define([
                     if (firefoxPattern.test(userAgent)) {
                         expect(hashUrlProduct.test(window.location.hash)).to.be.true;
                     } else {
-                        expect(window.location.hash).to.be.equals('#easyErp/Product/thumbnails/c=100/filter=%7B%22name%22%3A%7B%22key%22%3A%22_id%22%2C%22value%22%3A%5B%225540d528dacb551c24000003%22%5D%2C%22type%22%3Anull%2C%22sort%22%3A%7B%22order%22%3A1%7D%7D%2C%22letter%22%3A%7B%22key%22%3A%22letter%22%2C%22value%22%3A%22B%22%2C%22type%22%3Anull%7D%7D');
+                        expect(window.location.hash).to.be.equals('#tinyERP/Product/thumbnails/c=100/filter=%7B%22name%22%3A%7B%22key%22%3A%22_id%22%2C%22value%22%3A%5B%225540d528dacb551c24000003%22%5D%2C%22type%22%3Anull%2C%22sort%22%3A%7B%22order%22%3A1%7D%7D%2C%22letter%22%3A%7B%22key%22%3A%22letter%22%2C%22value%22%3A%22B%22%2C%22type%22%3Anull%7D%7D');
                     }
                 });
 
@@ -1355,7 +1355,7 @@ define([
                     var productUrl = new RegExp('\/product\/', 'i');
                     var firefoxPattern = new RegExp('firefox', 'i');
                     var userAgent = navigator.userAgent;
-                    var hashProductUrl = new RegExp('#easyErp\/Product', 'i');
+                    var hashProductUrl = new RegExp('#tinyERP\/Product', 'i');
 
                     windowConfirmStub.returns(true);
 
@@ -1371,7 +1371,7 @@ define([
                         expect(hashProductUrl.test(window.location.hash)).to.be.true;
 
                     } else {
-                        expect(window.location.hash).to.be.equals('#easyErp/Product');
+                        expect(window.location.hash).to.be.equals('#tinyERP/Product');
                     }
                 });
 
@@ -1444,7 +1444,7 @@ define([
                     var productUrl = new RegExp('\/Product\/', 'i');
                     var firefoxPattern = new RegExp('firefox', 'i');
                     var userAgent = navigator.userAgent;
-                    var hashProductUrl = new RegExp('#easyErp\/Product', 'i');
+                    var hashProductUrl = new RegExp('#tinyERP\/Product', 'i');
 
                     // creating barCode
                     $barCode.val('Test');
@@ -1474,7 +1474,7 @@ define([
                     if (firefoxPattern.test(userAgent)) {
                         expect(hashProductUrl.test(window.location.hash)).to.be.true;
                     } else {
-                        expect(window.location.hash).to.be.equals('#easyErp/Product');
+                        expect(window.location.hash).to.be.equals('#tinyERP/Product');
                     }
 
                     $cancelBtn.click();
@@ -1586,7 +1586,7 @@ define([
                     var $topBarDelBtn = topBarView.$el.find('#top-bar-deleteBtn');
                     var $needCheckBox = $thisEl.find('#listTable > tr[data-id="55c0e4a30343b37542000005"] > td.notForm > input');
                     var productUrl = new RegExp('\/product\/', 'i');
-                    var hashUrlProduct = new RegExp('#easyErp\/Product', 'i');
+                    var hashUrlProduct = new RegExp('#tinyERP\/Product', 'i');
 
                     windowConfirmStub.returns(true);
                     $needCheckBox.click();
@@ -1598,7 +1598,7 @@ define([
                     if (firefoxPattern.test(userAgent)) {
                         expect(hashUrlProduct.test(window.location.hash)).to.be.true;
                     } else {
-                        expect(window.location.hash).to.be.equals('#easyErp/Product/list/p=1/c=100');
+                        expect(window.location.hash).to.be.equals('#tinyERP/Product/list/p=1/c=100');
                     }
                 });
 

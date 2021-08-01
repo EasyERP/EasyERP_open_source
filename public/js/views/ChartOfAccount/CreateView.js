@@ -133,7 +133,7 @@ define([
         },
 
         redirectAfterSave: function (content) {
-            var redirectUrl = 'easyErp/ChartOfAccount';
+            var redirectUrl = 'tinyERP/ChartOfAccount';
 
             content.hideDialog();
             Backbone.history.navigate(redirectUrl, {trigger: true});

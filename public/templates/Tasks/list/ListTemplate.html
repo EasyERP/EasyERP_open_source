@@ -10,7 +10,7 @@
     <td><%=(task.project) ? task.project.name : ''%><%=task.taskCount%></td>
     <td><%=task.summary%></td>
     <td class="_forProject">
-        <a href="/#easyErp/Projects/form/<%= task.project._id%>" data-id="<%=task.project._id%>" class="project"><%=task.project.name%></a>
+        <a href="/#tinyERP/Projects/form/<%= task.project._id%>" data-id="<%=task.project._id%>" class="project"><%=task.project.name%></a>
     </td>
     <td id='stages_<%=task._id%>'>
         <div class="_newSelectListWrap">

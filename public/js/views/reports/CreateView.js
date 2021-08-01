@@ -202,7 +202,7 @@ define([
                 success: function (model) {
                     self.hideDialog();
                     Backbone.history.fragment = '';
-                    Backbone.history.navigate('#easyErp/reports', {trigger: true});
+                    Backbone.history.navigate('#tinyERP/reports', {trigger: true});
                 },
 
                 error: function (model, xhr) {

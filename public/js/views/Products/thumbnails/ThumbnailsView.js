@@ -20,7 +20,7 @@
             this.categories = options.categories;
             this.eventChannel = options.eventChannel;
             this.topBar = options.topBar;
-            this.formUrl = '#easyErp/' + this.contentType + '/tform/';
+            this.formUrl = '#tinyERP/' + this.contentType + '/tform/';
 
             this.filter = options.filter;
 

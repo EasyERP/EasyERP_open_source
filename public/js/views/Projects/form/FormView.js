@@ -1208,7 +1208,7 @@ define([
                     mid: mid
                 },
                 success: function () {
-                    Backbone.history.navigate('#easyErp/Projects/thumbnails', {trigger: true});
+                    Backbone.history.navigate('#tinyERP/Projects/thumbnails', {trigger: true});
                 }
             });
 

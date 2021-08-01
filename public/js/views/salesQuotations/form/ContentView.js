@@ -30,7 +30,7 @@ define([
         contentTemplate: _.template(ContentTemplate),
         CreateView     : CreateView,
         EditView       : EditView,
-        listUrl        : 'easyErp/salesQuotations/list/',
+        listUrl        : 'tinyERP/salesQuotations/list/',
         contentType    : CONSTANTS.SALESQUOTATIONS, // needs in view.prototype.changeLocationHash
         viewType       : 'tform', // needs in view.prototype.changeLocationHash
         hasPagination  : true,
