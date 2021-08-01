@@ -1,10 +1,6 @@
 {
-  "name": "roma",
+  "name": "tinyerp",
   "version": "1.0.1",
-  "homepage": "https://github.com/thinkmobiles/tinyERP-Desktop",
-  "authors": [
-    "Roman <roma.buchuk@gmail.com>"
-  ],
   "moduleType": [
     "node"
   ],

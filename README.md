@@ -6,7 +6,7 @@ Open tinyERP.zip with any IDE
 
 Please install bower globally (type in 'npm install bower -g' in terminal)
 
-Use node version 8.12.0 to build the project.
+Use node version 16.5.0(8.12.0) to build the project.
 Run commands 'npm i' & 'bower i' in terminal
 
 As result, you'll get all modules
