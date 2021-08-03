@@ -12,8 +12,7 @@ module.exports = function (mainDb, dbsNames) {
     var consolidate = require('consolidate');
     var app = express();
     var dbsObject = mainDb.dbsObject;
-    var MemoryStore = require('connect-mongo')(session);
-    var sessionConfig = require('./config/session')(mainDb, MemoryStore);
+    var sessionConfig = require('./config/session')(mainDb, session);
     var crypto = require('crypto');
 
     var allowCrossDomain = function (req, res, next) {

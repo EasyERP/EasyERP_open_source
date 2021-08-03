@@ -1332,13 +1332,13 @@ var Module = function (models, event) {
 
             var Model = models.get(req.session.lastDb, 'Order', OrderSchema);
 
-            Model.aggregate({
+            Model.aggregate([{
                 $match: matchQuery
             }, {
                 $project: {
                     _id: 1
                 }
-            }, waterfallCallback);
+            }], waterfallCallback);
         };
 
         contentSearcher = function (quotationsIds, waterfallCallback) {

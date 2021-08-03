@@ -888,7 +888,7 @@ var Employee = function (event, models) {
             };
         }
 
-        Model.aggregate(
+        Model.aggregate([
             {
                 $match: {
                     $and: [
@@ -906,7 +906,7 @@ var Employee = function (event, models) {
             },
             {
                 $match: query
-            },
+            }],
             function (err, result) {
                 if (err) {
                     return next(err);

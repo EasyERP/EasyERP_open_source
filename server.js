@@ -1,6 +1,7 @@
 'use strict';
 
 var mongoose = require('mongoose');
+const util = require('util');
 var async = require('async');
 var dbsObject = {};
 var models = require('./helpers/models')(dbsObject);
@@ -15,16 +16,16 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'production';
 require('./config/environment/' + process.env.NODE_ENV);
 
 connectOptions = {
-    db    : {native_parser: true},
-    server: {poolSize: 5},
-    w     : 1,
-    j     : true
+    useNewUrlParser: true,
+    useFindAndModify: false,
+    useUnifiedTopology: true
 };
-mainDb = mongoose.createConnection(process.env.MAIN_DB_HOST, process.env.MAIN_DB_NAME, process.env.DB_PORT, connectOptions);
+// mongodb://user:pass@localhost:port/database
+const mongoMainDbUri = util.format('mongodb://%s:%s/%s', process.env.MAIN_DB_HOST, process.env.DB_PORT, process.env.MAIN_DB_NAME);
+mainDb = mongoose.createConnection(mongoMainDbUri, connectOptions);
 mainDb.on('error', function (err) {
     err = err || 'connection error';
     console.error(err);
-
     process.exit(1, err);
 });
 mainDb.once('open', function callback() {
@@ -62,13 +63,10 @@ mainDb.once('open', function callback() {
                 DBname: '',
                 url   : ''
             };
-            var opts = {
-                db    : {native_parser: true},
-                server: {poolSize: 5},
-                w     : 1,
-                j     : true
-            };
-            var dbObject = mongoose.createConnection(_db.url, _db.DBname, _db.port, opts);
+
+            // mongodb://user:pass@host:port/database
+            const dbUri = util.format('mongodb://%s:%d/%s', _db.url, _db.port, _db.DBname);
+            var dbObject = mongoose.createConnection(dbUri, connectOptions);
 
             dbObject.on('error', function (err) {
                 console.error(err);

@@ -1,9 +1,8 @@
 module.exports = (function () {
     'use strict';
 
-    var mongoose = require('mongoose');
+    var mongoose = require('mongoose'), extend = require('mongoose-schema-extend');
     var ObjectId = mongoose.Schema.Types.ObjectId;
-    var extend = require('mongoose-schema-extend');
     var Schema = mongoose.Schema;
     var payments;
     var orderSchema;

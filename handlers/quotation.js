@@ -1099,7 +1099,7 @@ var Module = function (models, event) {
 
             var Model = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
 
-            Model.aggregate(
+            Model.aggregate([
                 {
                     $match: matchQuery
                 },
@@ -1107,7 +1107,7 @@ var Module = function (models, event) {
                     $project: {
                         _id: 1
                     }
-                },
+                }],
                 waterfallCallback
             );
         };

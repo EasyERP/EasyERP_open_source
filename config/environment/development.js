@@ -17,3 +17,5 @@ process.env.RABBITMQ_HOST = 'localhost';
 process.env.RABBITMQ_PORT = 5672;
 process.env.RABBITMQ_USER = 'tinyERP';
 process.env.RABBITMQ_PASSWORD = '111111';
+
+process.env.isDev = true;

@@ -1024,13 +1024,13 @@ var Products = function (models, event) {
             };
             var Model = models.get(req.session.lastDb, 'Product', ProductSchema);
 
-            Model.aggregate({
+            Model.aggregate([{
                 $match: matchQuery
             }, {
                 $project: {
                     _id: 1
                 }
-            }, waterfallCallback);
+            }], waterfallCallback);
         };
 
         contentSearcher = function (productsIds, waterfallCallback) {
@@ -2280,14 +2280,14 @@ var Products = function (models, event) {
             var Model = models.get(req.session.lastDb, 'Product', ProductSchema);
 
             Model.aggregate(
-                {
+                [{
                     $match: matchQuery
                 },
                 {
                     $project: {
                         _id: 1
                     }
-                },
+                }],
                 waterfallCallback
             );
         };
