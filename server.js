@@ -50,9 +50,9 @@ mainDb.once('open', function callback() {
         pass  : {type: String, default: ''},
         user  : {type: String, default: ''},
         port  : Number
-    }, {collection: 'easyErpDBS'});
+    }, {collection: 'tinyErpDBS'});
 
-    main = mainDb.model('easyErpDBS', mainDBSchema);
+    main = mainDb.model('tinyErpDBS', mainDBSchema);
     main.find().exec(function (err, result) {
         if (err) {
             process.exit(1, err);
