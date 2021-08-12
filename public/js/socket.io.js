@@ -9,7 +9,7 @@ define([
     'custom'
 ], function (Backbone, _, $, io, JobsCollection, InvoiceCollection, dataService, custom) {
     'use strict';
-    var socket = io.connect();
+    var socket = io();
     var counterForOrdersProgress = 0;
     var counterForProductsProgress = 0;
     var counterForInvoicesProgress = 0;

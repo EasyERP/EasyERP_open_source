@@ -26,13 +26,14 @@ module.exports = function (server) {
         }
     );
 
-    io = require('socket.io')(server);
-
-    io.set('transports', [
-        'websocket',
-        'polling',
-        'xhr-polling'
-    ]);
+    const options = {
+        transports: [
+            'websocket',
+            'polling',
+            'xhr-polling'
+        ]
+    }
+    io = require('socket.io')(server, options);
 
     pub.select(parseInt(process.env.SOCKET_DB, 10));
     sub.select(parseInt(process.env.SOCKET_DB, 10));

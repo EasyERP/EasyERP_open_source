@@ -32,7 +32,7 @@ require.config({
         jqueryBarcode  : './libs/jquery-barcode.min',
         malihuScrollBar: './libs/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar',
         moment         : './libs/moment/moment',
-        socketio       : '/socket.io/socket.io.js',
+        socketio       : 'socket.io',
         backstratch    : './libs/jquery-backstretch/jquery.backstretch.min',
         wickedpicker   : './libs/wickedpicker/dist/wickedpicker.min',
         bxSlider       : './libs/bxslider-4/dist/jquery.bxslider.min',
