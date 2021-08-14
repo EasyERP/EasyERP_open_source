@@ -32,7 +32,7 @@ require.config({
         jqueryBarcode  : './libs/jquery-barcode.min',
         malihuScrollBar: './libs/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar',
         moment         : './libs/moment/moment',
-        socketio       : 'socket.io',
+        socketio       : 'https://cdn.socket.io/4.1.3/socket.io.min',
         backstratch    : './libs/jquery-backstretch/jquery.backstretch.min',
         wickedpicker   : './libs/wickedpicker/dist/wickedpicker.min',
         bxSlider       : './libs/bxslider-4/dist/jquery.bxslider.min',
@@ -48,6 +48,10 @@ require.config({
 
         jQuery: {
             exports: '$'
+        },
+
+        socketio: {
+            exports: 'io'
         },
 
         Backbone: ['Underscore', 'jQuery'],

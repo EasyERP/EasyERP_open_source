@@ -5,7 +5,7 @@ define([
     'router',
     'communication',
     'custom',
-    'socket.io',
+    'socketio',
     'helpers/eventsBinder',
     'services/applyDefaults',
     'helpers/ga'
