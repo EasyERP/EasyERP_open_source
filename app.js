@@ -4,11 +4,9 @@ module.exports = function (mainDb, dbsNames) {
     var http = require('http');
     var path = require('path');
     var express = require('express');
-    // var compression = require('compression');
     var session = require('express-session');
     var logger = require('morgan');
     var cookieParser = require('cookie-parser');
-    var bodyParser = require('body-parser');
     var consolidate = require('consolidate');
     var app = express();
     var dbsObject = mainDb.dbsObject;
@@ -54,9 +52,8 @@ module.exports = function (mainDb, dbsNames) {
     app.set('view engine', 'html');
     app.set('views', __dirname + '/views');
     global.appRoot = path.resolve(__dirname);
-    // app.use(compression());
     app.use(logger('dev'));
-    app.use(bodyParser.json({
+    app.use(express.json({
         strict : false,
         inflate: true,
         limit  : 1024 * 1024 * 200,
@@ -74,7 +71,7 @@ module.exports = function (mainDb, dbsNames) {
             req.buf = buf;
         }
     }));
-    app.use(bodyParser.urlencoded({extended: false, limit: 1024 * 1024 * 200}));
+    app.use(express.urlencoded({extended: false, limit: 1024 * 1024 * 200}));
     app.use(cookieParser('PaaS'));
     app.use('/developer/apidocs', express.static(__dirname + '/apidoc'));
 
