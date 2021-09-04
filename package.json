@@ -111,7 +111,6 @@
     "open": "0.0.5",
     "phantomjs-prebuilt": "2.1.4",
     "pixrem": "^3.0.1",
-//    "requirejs": "2.1.22",
     "sinon": "11.1.2",
     "sinon-chai": "3.7.0",
     "spin": "^0.0.1",
