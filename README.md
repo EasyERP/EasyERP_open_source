@@ -1,11 +1,15 @@
 ## How to start
 
+Please make sure to have installed nodejs starting from 4.0 and mongodb starting from 3.0 and latest version of redis-server 
+
 Open tinyERP.zip with any IDE
 
-Use node version 16.5.0(8.12.0) to build the project.
-Run commands 'npm i' & 'npm run build' in terminal. 
+Please install bower globally (type in 'npm install bower -g' in terminal)
 
-As result, you'll get all modules and webpack will build the client side js bundle
+Use node version 16.5.0(8.12.0) to build the project.
+Run commands 'npm i' & 'bower i' in terminal
+
+As result, you'll get all modules
 
 ## Now let's move to DB
 
