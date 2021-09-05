@@ -6,8 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "test": "mocha test/serverSpecs/**/*.js",
-    "postinstall": "bower install",
-    "build": "webpack --stats-error-details"
+    "postinstall": "bower install"
   },
   "dependencies": {
     "amqp": "0.2.7",
@@ -65,11 +64,9 @@
   "devDependencies": {
     "apidoc": "^0.16.1",
     "autoprefixer": "10.3.1",
-    "backbone": "1.4.0",
     "chai": "4.3.4",
     "chai-jquery": "2.1.0",
     "coveralls": "^2.11.6",
-    "csv-loader": "^3.0.3",
     "customizr": "2.0.3",
     "eslint": "7.32.0",
     "eslint-config-thinkmobiles": "git+https://github.com/ivanlyah/eslint-config-thinkmobiles.git",
@@ -85,10 +82,8 @@
     "grunt-karma": "4.0.2",
     "grunt-modernizr": "3.0.2",
     "grunt-postcss": "^0.8.0",
-    "html-loader": "^2.1.2",
     "istanbul": "^0.4.2",
     "jasmine-core": "^2.4.1",
-    "jquery": "3.6.0",
     "jsdoc": "^3.3.2",
     "karma": "6.3.4",
     "karma-chai": "^0.1.0",
@@ -111,15 +106,9 @@
     "open": "0.0.5",
     "phantomjs-prebuilt": "2.1.4",
     "pixrem": "^3.0.1",
-//    "requirejs": "2.1.22",
+    "requirejs": "2.1.22",
     "sinon": "11.1.2",
     "sinon-chai": "3.7.0",
-    "spin": "^0.0.1",
-    "style-loader": "^3.2.1",
-    "supertest": "1.0.1",
-    "text-loader": "^0.0.1",
-    "webpack": "^5.50.0",
-    "webpack-cli": "^4.8.0",
-    "xml-loader": "^1.2.1"
+    "supertest": "1.0.1"
   }
 }

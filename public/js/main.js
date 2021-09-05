@@ -8,7 +8,7 @@ var App = App || {
         savedFilters : {},
         filtersObject: {}
     };
-/*
+
 require.config({
     // baseUrl: '../public',
     paths: {
@@ -84,10 +84,10 @@ require.config({
             exports: 'dateFormat'
         },
 
-        app: ['Backbone', 'jqueryui', 'ajaxForm', 'imageCrop', 'd3', 'backstratch', 'topojson', 'wickedpicker', 'malihuScrollBar', 'bxSlider', 'dragtable', 'gapi']
+        app: ['Backbone', 'jqueryui', 'ajaxForm', 'imageCrop', 'd3', 'backstratch', 'topojson', 'wickedpicker', 'malihuScrollBar', 'bxSlider', 'dragtable', 'gapi' /*'inbound_rocket'*/]
     }
 });
-*/
+
 require(['Backbone', 'jQuery', 'app'], function (Backbone, $, app) {
 
     App.render = function (data) {
@@ -118,8 +118,11 @@ require(['Backbone', 'jQuery', 'app'], function (Backbone, $, app) {
     };
 
     gapi.load('auth', function () {
+        /*auth2 = gapi.auth2.init({
+         client_id: '34449104416-ks7ifq1re2kgoapmeklqvoc6s19tv8tn.apps.googleusercontent.com',
+         scope    : 'profile'
+         });*/
     });
 
     app.initialize();
 });
-
