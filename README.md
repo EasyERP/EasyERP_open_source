@@ -35,4 +35,4 @@ Choose the db and enter login and pass
 Login to databases CRM and saas is "superAdmin". Password is "111111"
 
 ## Sponsor
-我自己个人花了很多时间来更新和维护这个ERP系统，要是我的努力帮到你，而且希望继续鼓励我，给我买杯咖啡: [支付宝](public/public/images/alipay.jpeg)
+我自己个人花了很多时间来更新和维护这个ERP系统，要是我的努力帮到你，而且希望继续鼓励我，给我买杯咖啡: [支付宝](public/images/alipay.jpeg)
